@@ -5,11 +5,11 @@ import pytest
 import torch
 
 from ecg_experiment import bounded_waveform_cache as bounded
-from scripts.experiments.run_cpc_experiment import DEFAULT_CACHE, Pool, loader
+from scripts.experiments.run_cpc_experiment import Pool, loader
 
 
-def test_real_subset_preserves_waveforms_rows_and_seeded_batches():
-    pool = Pool(DEFAULT_CACHE)
+def test_subset_preserves_waveforms_rows_and_seeded_batches(synthetic_cpc_pool):
+    pool = Pool(synthetic_cpc_pool)
     rows = [pool.train_rows[i] for i in (103, 2, 507, 31, 6, 88, 13, 0)]
     cache = bounded.BoundedWaveformCache(pool, rows, max_bytes=1_000_000,
                                         reserve_bytes=0, chunk_records=3,
@@ -33,8 +33,8 @@ def test_real_subset_preserves_waveforms_rows_and_seeded_batches():
         assert list(old_batch[2]) == list(new_batch[2])
 
 
-def test_rejects_budget_duplicate_or_patient_mismatch(monkeypatch):
-    pool = Pool(DEFAULT_CACHE)
+def test_rejects_budget_duplicate_or_patient_mismatch(synthetic_cpc_pool, monkeypatch):
+    pool = Pool(synthetic_cpc_pool)
     rows = pool.train_rows[:2]
     monkeypatch.setattr(bounded, "_available_memory_bytes", lambda: 1_000_000)
     with pytest.raises(MemoryError, match="max_bytes"):

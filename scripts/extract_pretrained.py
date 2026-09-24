@@ -13,7 +13,9 @@ import json
 import os
 import resource
 import time
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 
@@ -21,8 +23,36 @@ from ecg_experiment.foundation_models import HF_MODELS, checkpoint_info, load_mo
 from ecg_experiment.provenance import git_head
 from ecg_experiment.waveforms import SPLITS, manifest_rows, read_record
 
+ROOT = Path(__file__).resolve().parents[1]
+VIEWS_PER_RECORD = 2
+PROGRESS_INTERVAL = 100
 
-def embed_views(model_name: str, model, views: np.ndarray, device: str) -> np.ndarray:
+
+def embed_views(model_name: str, model: Any, views: np.ndarray, device: str) -> np.ndarray:
+    """
+    Mean-pool the model's token embeddings for each view.
+
+    Parameters
+    ----------
+    model_name : str
+        ``"hubert-small"`` or an ECG-FM model name.
+    model : Any
+        Loaded backbone in evaluation mode.
+    views : np.ndarray
+        Preprocessed views, one per row.
+    device : str
+        Torch device for the forward pass.
+
+    Returns
+    -------
+    np.ndarray
+        One embedding per view.
+
+    Raises
+    ------
+    ValueError
+        If the tokens have an unexpected shape or the embeddings are not finite.
+    """
     import torch
 
     source = torch.from_numpy(np.ascontiguousarray(views)).float().to(device)
@@ -40,7 +70,59 @@ def embed_views(model_name: str, model, views: np.ndarray, device: str) -> np.nd
     return embedded
 
 
-def extract(args: argparse.Namespace) -> dict:
+def _write_features(args: argparse.Namespace, rows: list[dict[str, str]], model: Any,
+                    preprocess: Callable[[np.ndarray], np.ndarray], partial: Path) -> int:
+    """Stream every record through the model into ``partial``; return the feature size."""
+    if not rows:
+        raise ValueError("No records to extract")
+    started = time.monotonic()
+    matrix = None
+    for index in range(0, len(rows), args.batch_size):
+        batch = rows[index : index + args.batch_size]
+        views = np.concatenate([preprocess(read_record(args.raw_dir, row["filename_hr"]))
+                                for row in batch], axis=0)
+        embeddings = embed_views(args.model, model, views, args.device)
+        embeddings = embeddings.reshape(len(batch), VIEWS_PER_RECORD, -1).mean(axis=1)
+        if matrix is None:
+            # The feature size is known only after the first forward pass.
+            matrix = np.lib.format.open_memmap(partial, mode="w+", dtype=np.float32,
+                                               shape=(len(rows), embeddings.shape[1]))
+        matrix[index : index + len(batch)] = embeddings
+        if (index + len(batch)) % PROGRESS_INTERVAL < args.batch_size or index + len(batch) == len(rows):
+            print(f"{args.model}: {index + len(batch)}/{len(rows)} records, "
+                  f"{time.monotonic() - started:.1f}s", flush=True)
+    matrix.flush()
+    return int(matrix.shape[1])
+
+
+def _preprocessing_description(model_name: str) -> str:
+    if model_name == "hubert-small":
+        return ("official HuBERT-ECG FIR 0.05-47 Hz, per-lead min-max [-1,1], "
+                "two 5-second views flattened lead-major then decimated by 5")
+    return "ECG-FM per-lead z-score across 10 seconds, then two 5-second views"
+
+
+def extract(args: argparse.Namespace) -> dict[str, Any]:
+    """
+    Extract and save pooled features for every manifest record.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed command-line arguments from :func:`main`.
+
+    Returns
+    -------
+    dict[str, Any]
+        Metadata written next to the features.
+
+    Raises
+    ------
+    RuntimeError
+        If CUDA was requested but is unavailable.
+    FileExistsError
+        If earlier outputs or a partial extraction exist.
+    """
     import torch
 
     torch.set_num_threads(args.threads)
@@ -59,61 +141,39 @@ def extract(args: argparse.Namespace) -> dict:
     partial = args.output_dir / "features.partial.npy"
     if partial.exists():
         raise FileExistsError(f"Previous partial extraction exists: {partial}")
-    matrix = None
-    try:
-        for index in range(0, len(rows), args.batch_size):
-            batch = rows[index : index + args.batch_size]
-            views = np.concatenate([preprocess(read_record(args.raw_dir, row["filename_hr"]))
-                                    for row in batch], axis=0)
-            embeddings = embed_views(args.model, model, views, args.device).reshape(len(batch), 2, -1).mean(axis=1)
-            if matrix is None:
-                matrix = np.lib.format.open_memmap(partial, mode="w+", dtype=np.float32,
-                                                   shape=(len(rows), embeddings.shape[1]))
-            matrix[index : index + len(batch)] = embeddings
-            if (index + len(batch)) % 100 < args.batch_size or index + len(batch) == len(rows):
-                print(f"{args.model}: {index + len(batch)}/{len(rows)} records, "
-                      f"{time.monotonic() - started:.1f}s", flush=True)
-        assert matrix is not None
-        matrix.flush()
-        del matrix
-        matrix = None
-        ids = np.asarray([row["ecg_id"] for row in rows], dtype=str)
-        np.save(final_ids, ids, allow_pickle=False)
-        os.replace(partial, final_features)
-        elapsed = time.monotonic() - started
-        metadata = {
-            "model": args.model,
-            "record_count": len(rows),
-            "feature_dimension": int(embeddings.shape[1]),
-            "ecg_ids_file": final_ids.name,
-            "features_file": final_features.name,
-            "manifest_sha256": manifest_hashes,
-            "checkpoint": checkpoint_metadata,
-            "input": "standard 12-lead PTB-XL, 500 Hz, 10 seconds",
-            "preprocessing": ("official HuBERT-ECG FIR 0.05-47 Hz, per-lead min-max [-1,1], "
-                              "two 5-second views flattened lead-major then decimated by 5"
-                              if args.model == "hubert-small" else
-                              "ECG-FM per-lead z-score across 10 seconds, then two 5-second views"),
-            "pooling": "mean across model tokens per view, then mean across two views",
-            "elapsed_seconds": elapsed,
-            "records_per_second": len(rows) / elapsed,
-            "peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
-            "torch_version": torch.__version__,
-            "device": args.device,
-            "cuda_device_name": torch.cuda.get_device_name(0) if args.device == "cuda" else None,
-            "peak_cuda_memory_bytes": torch.cuda.max_memory_allocated() if args.device == "cuda" else None,
-            "source_commit": git_head(Path(__file__).resolve().parents[1] / "third_party" /
-                                      ("HuBERT-ECG" if args.model == "hubert-small" else "fairseq-signals")),
-            "split_counts": {split: sum(row["split"] == split for row in rows) for split in SPLITS},
-        }
-        final_meta.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
-        return metadata
-    finally:
-        if matrix is not None:
-            del matrix
+    feature_dimension = _write_features(args, rows, model, preprocess, partial)
+    np.save(final_ids, np.asarray([row["ecg_id"] for row in rows], dtype=str), allow_pickle=False)
+    os.replace(partial, final_features)
+    elapsed = time.monotonic() - started
+    cuda = args.device == "cuda"
+    metadata = {
+        "model": args.model,
+        "record_count": len(rows),
+        "feature_dimension": feature_dimension,
+        "ecg_ids_file": final_ids.name,
+        "features_file": final_features.name,
+        "manifest_sha256": manifest_hashes,
+        "checkpoint": checkpoint_metadata,
+        "input": "standard 12-lead PTB-XL, 500 Hz, 10 seconds",
+        "preprocessing": _preprocessing_description(args.model),
+        "pooling": "mean across model tokens per view, then mean across two views",
+        "elapsed_seconds": elapsed,
+        "records_per_second": len(rows) / elapsed,
+        "peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+        "torch_version": torch.__version__,
+        "device": args.device,
+        "cuda_device_name": torch.cuda.get_device_name(0) if cuda else None,
+        "peak_cuda_memory_bytes": torch.cuda.max_memory_allocated() if cuda else None,
+        "source_commit": git_head(ROOT / "third_party" /
+                                  ("HuBERT-ECG" if args.model == "hubert-small" else "fairseq-signals")),
+        "split_counts": {split: sum(row["split"] == split for row in rows) for split in SPLITS},
+    }
+    final_meta.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+    return metadata
 
 
 def main() -> None:
+    """Parse arguments, extract features and print the metadata."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", choices=tuple(HF_MODELS), required=True)
     parser.add_argument("--manifest-dir", type=Path, required=True)

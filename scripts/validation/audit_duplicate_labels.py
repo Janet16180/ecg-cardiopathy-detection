@@ -9,9 +9,9 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-from ecg_experiment.wfdb_records import 
 from ecg_experiment.files import read_csv, write_csv_atomic
 from ecg_experiment.public_sources import SOURCE, load_view, signal_sha256
+from ecg_experiment.wfdb_records import header_label_codes
 
 ROOT = Path(__file__).resolve().parents[2]
 FIELDS = ("excluded_ecg_id", "retained_ecg_id", "excluded_label_codes", "retained_label_codes",
@@ -61,8 +61,9 @@ def compare_duplicate(row: dict[str, str],
     kept = retained.get(signal_sha256(signal))
     if kept is None:
         raise ValueError(f"Duplicate reference missing for {row['ecg_id']}")
-    excluded_codes = labels(header)
+    excluded_codes = header_label_codes(header)
     retained_codes = kept["label_codes"]
+    # Unlike materialize_challenge_ecg, empty codes are kept: "" vs "1" is a different set.
     same = set(excluded_codes.split(",")) == set(retained_codes.split(","))
     comparison = {"excluded_ecg_id": row["ecg_id"], "retained_ecg_id": kept["ecg_id"],
                   "excluded_label_codes": excluded_codes, "retained_label_codes": retained_codes,

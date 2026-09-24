@@ -21,7 +21,8 @@ def test_missing_leads_are_zeroed_after_normalization():
     for group in (objective.GROUP_A, objective.GROUP_B):
         view = objective.lead_view(normalized, group)
         for lead in range(12):
-            torch.testing.assert_close(view[:, lead], normalized[:, lead] if lead in group else torch.zeros_like(view[:, lead]))
+            expected = normalized[:, lead] if lead in group else torch.zeros_like(view[:, lead])
+            torch.testing.assert_close(view[:, lead], expected)
     assert set(objective.GROUP_A).isdisjoint(objective.GROUP_B)
     assert set(objective.GROUP_A + objective.GROUP_B) == {0, 1, 6, 7, 8, 9, 10, 11}
 
@@ -81,7 +82,8 @@ def test_strict_epoch20_bootstrap_and_source_hashes(tmp_path, monkeypatch):
     normalized.write_text("{}")
     fingerprint = "completed004"
     model_state = cpu_state(source)
-    write_torch_atomic(epoch / "epoch_state.pt", {"fingerprint": fingerprint, "epoch": 20, "model": model_state})
+    write_torch_atomic(epoch / "epoch_state.pt",
+                       {"fingerprint": fingerprint, "epoch": 20, "model": model_state})
     write_torch_atomic(epoch / "encoder.pt", {"fingerprint": fingerprint, "variant": "cpc",
                        "epochs": 20, "encoder": cpu_state(source.encoder)})
     original_path = str((tmp_path / "cache.bin").resolve())
@@ -89,7 +91,8 @@ def test_strict_epoch20_bootstrap_and_source_hashes(tmp_path, monkeypatch):
                       "inputs": {"cache": {original_path: "abc"}}})
     args = Namespace(bootstrap_dir=epoch, manifest_dir=tmp_path)
     encoder, heads, _ = bootstrap(args, {original_path: "abc"})
-    assert len(heads) == 3 and encoder.keys() == source.encoder.state_dict().keys()
+    assert len(heads) == 3
+    assert encoder.keys() == source.encoder.state_dict().keys()
     with pytest.raises(ValueError, match="input changed"):
         bootstrap(args, {original_path: "changed"})
     final = torch.load(epoch / "encoder.pt", weights_only=True)
@@ -138,7 +141,7 @@ def test_epoch_resume_reproduces_shuffle_and_dropout(tmp_path):
 
     def epoch(model, optimizer, generator):
         for indices in torch.randperm(len(dataset), generator=generator).split(2):
-            run.checked_step(model, optimizer, dataset[indices])
+            run.crosslead_step(model, optimizer, dataset[indices])
 
     uninterrupted = setup()
     epoch(*uninterrupted)
@@ -149,7 +152,8 @@ def test_epoch_resume_reproduces_shuffle_and_dropout(tmp_path):
     run.save_epoch(tmp_path, "test-fp", 1, *first, [{"epoch": 1}])
     resumed = setup()
     start, history = run.resume_or_new(tmp_path, "test-fp", *resumed)
-    assert start == 1 and history == [{"epoch": 1}]
+    assert start == 1
+    assert history == [{"epoch": 1}]
     epoch(*resumed)
     for key, value in expected.items():
         torch.testing.assert_close(value, resumed[0].state_dict()[key], atol=0, rtol=0)
@@ -165,7 +169,7 @@ def test_profile_roundtrip_restores_dropout_rng(monkeypatch):
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)
     generator = torch.Generator().manual_seed(42)
     signal = torch.randn(2, 3)
-    run.checked_step(model, optimizer, signal)  # Populate AdamW moments first.
+    run.crosslead_step(model, optimizer, signal)  # Populate AdamW moments first.
     assert run.profile_roundtrip(model, optimizer, signal, "native", generator)
 
 
@@ -199,4 +203,48 @@ def test_all_ssl_precede_all_six_transfers(tmp_path, monkeypatch):
     assert set(transfers) == {(arm, budget) for arm in run.VARIANTS for budget in ("1", "0.1")}
     for arm in run.VARIANTS:
         history = json.loads((args.output_dir / f"{arm}_ssl/history.json").read_text())
-        assert len(history) == 10 and history[-1]["epoch"] == 10
+        assert len(history) == 10
+        assert history[-1]["epoch"] == 10
+
+
+def test_crosslead_step_rejects_nonfinite_parameters():
+    model = TinyPretrainer("native")
+    optimizer = torch.optim.SGD(model.parameters(), lr=float("inf"))
+    with pytest.raises(RuntimeError, match="parameters"):
+        run.crosslead_step(model.train(), optimizer, torch.ones(2, 3))
+
+
+def test_versioned_profile_uses_tolerant_roundtrip(monkeypatch):
+    from scripts.experiments import run_cpc_crosslead_profile_v2 as versioned
+    torch.set_num_threads(1)
+    monkeypatch.setattr(run, "CrossLeadPretrainer", TinyPretrainer)
+    seed_everything(123)
+    model = TinyPretrainer("native")
+    optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)
+    generator = torch.Generator().manual_seed(42)
+    signal = torch.randn(2, 3)
+    run.crosslead_step(model, optimizer, signal)
+    assert versioned.profile_roundtrip(model, optimizer, signal, "native", generator)
+    maxima = {}
+    small = torch.full((2,), 1e-3)
+    versioned.compare_state({"a": small, "n": torch.tensor([1])},
+                            {"a": small + 5e-8, "n": torch.tensor([1])}, "model", maxima)
+    assert 0 < maxima["model"] < 1e-7
+    with pytest.raises(AssertionError, match="keys differ"):
+        versioned.compare_state({"a": 1}, {"b": 1}, "model", {})
+    with pytest.raises(AssertionError):
+        versioned.compare_state({"n": torch.tensor([1])}, {"n": torch.tensor([2])}, "model", {})
+    with pytest.raises(AssertionError, match="scalar differs"):
+        versioned.compare_state([1, 2], [1, 3], "optimizer", {})
+
+
+def test_profile_receives_the_requested_roundtrip(tmp_path, monkeypatch):
+    seen = {}
+    monkeypatch.setattr(run.cpc_pool, "Pool", lambda directory: None)
+    monkeypatch.setattr(run, "source_hashes", lambda args, pool: {})
+    monkeypatch.setattr(run, "bootstrap", lambda args, hashes: ({}, {}, {}))
+    monkeypatch.setattr(run, "fixed_normalization", lambda pool, args, hashes, config: (None, None))
+    monkeypatch.setattr(run, "profile", lambda *args: seen.update(roundtrip=args[-1]))
+    marker = object()
+    run.main(["--stage", "profile", "--device", "cpu", "--output-dir", str(tmp_path)], roundtrip=marker)
+    assert seen["roundtrip"] is marker

@@ -5,12 +5,19 @@ import torch
 
 from ecg_experiment.cpc import CPCPretrainer
 from ecg_experiment.cpc_tokenization import (
-    CLUSTERS, TokenizationPretrainer, fit_kmeans, future_cluster_loss,
-    nearest_cluster, snapshot_teacher_convs, temporal_cpc_loss,
+    CLUSTERS,
+    TokenizationPretrainer,
+    fit_kmeans,
+    future_cluster_loss,
+    nearest_cluster,
+    snapshot_teacher_convs,
+    temporal_cpc_loss,
 )
 from ecg_experiment.reproducibility import cpu_state, seed_everything
 from scripts.experiments.run_cpc_tokenization import (
-    classifier_with_matched_head, load_bootstrap_weights, reset_cluster_heads,
+    classifier_with_matched_head,
+    load_bootstrap_weights,
+    reset_cluster_heads,
 )
 
 
@@ -61,7 +68,8 @@ def test_all_arms_restore_identical_cpc_heads_and_classifier_head():
         teacher = snapshot_teacher_convs(model.encoder) if variant == "clusteraux" else None
         centers = torch.randn(CLUSTERS, 256) if teacher is not None else None
         loss, details = model(signal, beat_boundaries, centers, teacher)
-        assert torch.isfinite(loss) and np.isfinite(list(details.values())).all()
+        assert torch.isfinite(loss)
+        assert np.isfinite(list(details.values())).all()
         classifier = classifier_with_matched_head(variant, "cpu")
         classifier.encoder.load_state_dict(model.encoder.state_dict())
         assert classifier(signal, beat_boundaries).shape == (1,)
@@ -88,7 +96,8 @@ def test_auxiliary_round_reset_preserves_main_optimizer_and_rng():
     reset_cluster_heads(model, optimizer, generator, seed=43)
     torch.testing.assert_close(torch.get_rng_state(), expected_rng, atol=0, rtol=0)
     torch.testing.assert_close(generator.get_state(), expected_loader, atol=0, rtol=0)
-    for parameter, expected, step in zip(model.heads.parameters(), before_main, before_main_state):
+    for parameter, expected, step in zip(model.heads.parameters(), before_main, before_main_state,
+                                         strict=True):
         torch.testing.assert_close(parameter, expected, atol=0, rtol=0)
         torch.testing.assert_close(optimizer.state[parameter]["step"], step, atol=0, rtol=0)
     assert all(parameter not in optimizer.state for parameter in model.cluster_heads.parameters())
@@ -101,4 +110,5 @@ def test_kmeans_fit_is_deterministic_and_uses_unit_inputs():
     second, _ = fit_kmeans(features.copy(), seed=42)
     np.testing.assert_allclose(first, second, atol=0)
     assert first.shape == (CLUSTERS, 256)
-    assert info["samples"] == 128 and info["clusters"] == CLUSTERS
+    assert info["samples"] == 128
+    assert info["clusters"] == CLUSTERS

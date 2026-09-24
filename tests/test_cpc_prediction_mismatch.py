@@ -8,12 +8,16 @@ import numpy as np
 import pytest
 import torch
 from torch import nn
-from torch.nn import functional as F
+from torch.nn import functional as F  # noqa: N812 - conventional alias
 
 from ecg_experiment.cpc import CPCEncoder, CPCPretrainer
 from ecg_experiment.cpc_prediction_mismatch import (
-    aligned_representations, extract_branches, features_for_arm, pool_branch,
-    supervised_indices, validate_bootstrap,
+    aligned_representations,
+    extract_branches,
+    features_for_arm,
+    pool_branch,
+    supervised_indices,
+    validate_bootstrap,
 )
 from scripts.experiments import run_cpc_prediction_mismatch as runner
 
@@ -42,7 +46,8 @@ def test_pooling_and_dimension_matched_controls_use_identical_context_branch():
     context = features_for_arm(branches, "context")
     ordinary = features_for_arm(branches, "ordinary")
     residual = features_for_arm(branches, "residual")
-    assert context.shape == (3, 512) and ordinary.shape == residual.shape == (3, 1024)
+    assert context.shape == (3, 512)
+    assert ordinary.shape == residual.shape == (3, 1024)
     np.testing.assert_array_equal(context, ordinary[:, :512])
     np.testing.assert_array_equal(context, residual[:, :512])
     np.testing.assert_array_equal(ordinary[:, 512:], branches[:, 1])
@@ -74,7 +79,8 @@ def checkpoint_objects():
     model = CPCPretrainer()
     weights = {key: value.detach().clone() for key, value in model.state_dict().items()}
     final = {"variant": "cpc", "epochs": 20, "fingerprint": "test",
-             "encoder": {key.removeprefix("encoder."): value.clone() for key, value in weights.items() if key.startswith("encoder.")}}
+             "encoder": {key.removeprefix("encoder."): value.clone() for key, value in weights.items()
+                         if key.startswith("encoder.")}}
     state = {"epoch": 20, "fingerprint": "test", "model": weights}
     config = {"fingerprint": "test", "inputs": {"settings": {"variant": "cpc", "epochs": 20,
               "seed": 42, "horizons": [4, 8, 12], "cmsc_weight": 0}}}
@@ -84,9 +90,11 @@ def checkpoint_objects():
 def test_checkpoint_requires_the_trained_heads_and_matching_final_encoder():
     final, state, config = checkpoint_objects()
     model = validate_bootstrap(final, state, config)
-    assert not model.training and not any(parameter.requires_grad for parameter in model.parameters())
+    assert not model.training
+    assert not any(parameter.requires_grad for parameter in model.parameters())
     features = extract_branches(model, torch.randn(2, 12, 2500))
-    assert features.shape == (2, 3, 512) and torch.isfinite(features).all()
+    assert features.shape == (2, 3, 512)
+    assert torch.isfinite(features).all()
     bad = {**state, "model": dict(state["model"])}
     del bad["model"]["heads.0.weight"]
     with pytest.raises(ValueError, match="all three"):
@@ -129,9 +137,11 @@ def test_probe_scaler_sees_only_labeled_training_and_candidates_resume(tmp_path,
     features[4:8] = 10000  # Unlabeled rows remain in the feature cache.
     features[12:] = -10000  # Calibration/test data cannot fit the scaler either.
     fingerprint = {"arm": "test", "data": "tiny"}
-    fitted, selection = runner.fit_probe(features, feature_rows, rows, tmp_path, fingerprint, c_values=(0.01, 1.0))
+    fitted, selection = runner.fit_probe(features, feature_rows, rows, tmp_path, fingerprint,
+                                         c_values=(0.01, 1.0))
     np.testing.assert_allclose(fitted["mean"], features[:4].astype(np.float64).mean(axis=0), rtol=0, atol=0)
-    assert selection["C"] == 0.01 and selection["best_development_auroc"] == 1
+    assert selection["C"] == 0.01
+    assert selection["best_development_auroc"] == 1
     def forbid_fit(*args, **kwargs):
         raise AssertionError("Completed candidates should not be refit")
     monkeypatch.setattr(runner.LogisticRegression, "fit", forbid_fit)
@@ -141,7 +151,8 @@ def test_probe_scaler_sees_only_labeled_training_and_candidates_resume(tmp_path,
     for name in fitted:
         np.testing.assert_array_equal(restored[name], fitted[name])
     with pytest.raises(ValueError, match="identity/checksum"):
-        runner.fit_probe(features, feature_rows, rows, tmp_path, {"changed": True}, resume=True, c_values=(0.01, 1.0))
+        runner.fit_probe(features, feature_rows, rows, tmp_path, {"changed": True}, resume=True,
+                         c_values=(0.01, 1.0))
 
 
 def test_extraction_resumes_verified_chunks_without_repeating_completed_rows(tmp_path, monkeypatch):

@@ -38,7 +38,7 @@ COMPLETED_ARTIFACTS = ("config.json", "history.json", "model.pt", "metrics.json"
 # Every file whose code determines CPC pretraining or fine-tuning results.
 CODE_FILES = ("ecg_experiment/cpc.py", "ecg_experiment/cpc_pool.py", "ecg_experiment/evaluation.py",
               "ecg_experiment/files.py", "ecg_experiment/reproducibility.py",
-              "scripts/experiments/run_cpc_experiment.py")
+              "ecg_experiment/training.py", "scripts/experiments/run_cpc_experiment.py")
 
 
 class Pool:

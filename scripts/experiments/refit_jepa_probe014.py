@@ -1,8 +1,11 @@
 """Refit the limited-label JEPA probe when old probe training IDs lack a checksum."""
 
+from __future__ import annotations
+
 import json
 import os
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
@@ -13,35 +16,43 @@ from ecg_experiment.data import read_manifest
 from ecg_experiment.evaluation import partition_validation
 from ecg_experiment.files import sha256_file, write_json_atomic
 
-
 ROOT = Path(__file__).resolve().parents[2]
 LIMITED = ROOT / "data/processed/ptbxl/features_jepa_multiblock_union_seeds42_43_44"
+MANIFEST = ROOT / "data/processed/ptbxl/seed42_fraction0.1"
+OUTPUT = ROOT / "outputs/experiment014_jepa_cpc_fusion"
+LIMITED_SHAPE = (7931, 768)
+TRAIN_RECORDS = 1518
+DEVELOPMENT_RECORDS = 1306
+C_VALUES = (.001, .01, .1, 1., 10., 100.)
+MAX_ITER = 3000
+SEED = 42
 
 
-def main():
-    manifest = ROOT / "data/processed/ptbxl/seed42_fraction0.1"
-    output = ROOT / "outputs/experiment014_jepa_cpc_fusion"
-    model_path = output / "matched_jepa_ten_percent.npz"
-    receipt_path = output / "matched_jepa_ten_percent.json"
-    files = [LIMITED / "features.npy", LIMITED / "ecg_ids.npy", LIMITED / "metadata.json",
-             manifest / "labeled_train.csv", manifest / "validation.csv", Path(__file__).resolve()]
-    fingerprints = {str(p.relative_to(ROOT)): sha256_file(p) for p in files}
-    if receipt_path.exists():
-        receipt = json.loads(receipt_path.read_text())
-        if receipt["inputs_sha256"] != fingerprints or receipt["model_sha256"] != sha256_file(model_path):
-            raise ValueError("Existing matched JEPA probe differs from frozen inputs")
-        print(json.dumps({"status": "verified_completed", "receipt": str(receipt_path)}), flush=True)
-        return
+def load_split_features() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, int, int]:
+    """
+    Gather float64 JEPA features and labels for the exact seed-42 training and development rows.
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, int, int]
+        Training features and labels, development features and labels, and
+        the training and development record counts.
+
+    Raises
+    ------
+    ValueError
+        If the cache is malformed or does not cover the fixed cohorts.
+    """
     ids = np.load(LIMITED / "ecg_ids.npy")
     features = np.load(LIMITED / "features.npy", mmap_mode="r")
-    if features.shape != (7931, 768) or len(ids) != len(features):
+    if features.shape != LIMITED_SHAPE or len(ids) != len(features):
         raise ValueError("Malformed limited JEPA features")
     index = {int(identifier): i for i, identifier in enumerate(ids)}
     if len(index) != len(ids):
         raise ValueError("Duplicate limited JEPA ECG IDs")
-    train = read_manifest(manifest / "labeled_train.csv")
-    development, _ = partition_validation(read_manifest(manifest / "validation.csv"))
-    if len(train) != 1518 or len(development) != 1306:
+    train = read_manifest(MANIFEST / "labeled_train.csv")
+    development, _ = partition_validation(read_manifest(MANIFEST / "validation.csv"))
+    if len(train) != TRAIN_RECORDS or len(development) != DEVELOPMENT_RECORDS:
         raise ValueError("Fixed label/development cohorts changed")
     train_ids = [int(row["ecg_id"]) for row in train]
     dev_ids = [int(row["ecg_id"]) for row in development]
@@ -51,32 +62,110 @@ def main():
     dev_x = np.asarray(features[[index[i] for i in dev_ids]], dtype=np.float64)
     train_y = np.array([int(row["target"]) for row in train])
     dev_y = np.array([int(row["target"]) for row in development])
-    scaler = StandardScaler().fit(train_x)
-    train_scaled = scaler.transform(train_x)
-    dev_scaled = scaler.transform(dev_x)
+    return train_x, train_y, dev_x, dev_y, len(train), len(development)
+
+
+def select_probe(train_scaled: np.ndarray, train_y: np.ndarray, dev_scaled: np.ndarray,
+                 dev_y: np.ndarray) -> tuple[float, float, LogisticRegression, list[dict[str, float]]]:
+    """
+    Fit every regularization value and keep the best development AUROC; the first wins ties.
+
+    Parameters
+    ----------
+    train_scaled : np.ndarray
+        Standardized training features.
+    train_y : np.ndarray
+        Training labels.
+    dev_scaled : np.ndarray
+        Standardized development features.
+    dev_y : np.ndarray
+        Development labels.
+
+    Returns
+    -------
+    tuple[float, float, LogisticRegression, list[dict[str, float]]]
+        Best AUROC, its ``C``, its fitted model, and every candidate's score.
+    """
     choices, best = [], None
-    for c in (.001, .01, .1, 1., 10., 100.):
-        model = LogisticRegression(C=c, max_iter=3000, solver="lbfgs", random_state=42)
+    for c in C_VALUES:
+        model = LogisticRegression(C=c, max_iter=MAX_ITER, solver="lbfgs", random_state=SEED)
         model.fit(train_scaled, train_y)
         auc = float(roc_auc_score(dev_y, model.decision_function(dev_scaled)))
         choices.append({"C": c, "development_auroc": auc})
         if best is None or auc > best[0]:
             best = (auc, c, model)
-    output.mkdir(parents=True, exist_ok=True)
-    temporary = model_path.with_name(model_path.name + f".tmp.{os.getpid()}")
+    return (*best, choices)
+
+
+def save_probe(path: Path, scaler: StandardScaler, model: LogisticRegression) -> None:
+    """
+    Save the standardization and probe weights through a per-process temporary file.
+
+    Parameters
+    ----------
+    path : Path
+        Destination ``.npz``.
+    scaler : StandardScaler
+        Training-only standardization.
+    model : LogisticRegression
+        Selected probe.
+    """
+    temporary = path.with_name(path.name + f".tmp.{os.getpid()}")
     with temporary.open("wb") as handle:
-        np.savez(handle, mean=scaler.mean_, scale=scaler.scale_,
-                 coefficient=best[2].coef_, intercept=best[2].intercept_)
-    os.replace(temporary, model_path)
-    receipt = {"inputs_sha256": fingerprints, "model_sha256": sha256_file(model_path),
-               "source_budget": "seed42_fraction0.1", "exact_labeled_manifest_sha256": sha256_file(manifest / "labeled_train.csv"),
-               "train_ecg_ids_order_sha256": sha256_file(manifest / "labeled_train.csv"),
-               "train_count": len(train), "development_count": len(development),
-               "policy": "StandardScaler labeled train only; LogisticRegression lbfgs max_iter=3000 seed42; six-C development AUROC",
-               "C": best[1], "development_auroc": best[0], "choices": choices}
+        np.savez(handle, mean=scaler.mean_, scale=scaler.scale_, coefficient=model.coef_,
+                 intercept=model.intercept_)
+    os.replace(temporary, path)
+
+
+def input_fingerprints() -> dict[str, str]:
+    """
+    Digest the frozen inputs and this script.
+
+    Returns
+    -------
+    dict[str, str]
+        SHA-256 keyed by repository-relative path.
+    """
+    files = [LIMITED / "features.npy", LIMITED / "ecg_ids.npy", LIMITED / "metadata.json",
+             MANIFEST / "labeled_train.csv", MANIFEST / "validation.csv", Path(__file__).resolve()]
+    return {str(p.relative_to(ROOT)): sha256_file(p) for p in files}
+
+
+def main() -> None:
+    """
+    Fit the matched ten-percent JEPA probe once, or verify the existing one.
+
+    Raises
+    ------
+    ValueError
+        If an existing probe differs from the frozen inputs.
+    """
+    model_path = OUTPUT / "matched_jepa_ten_percent.npz"
+    receipt_path = OUTPUT / "matched_jepa_ten_percent.json"
+    fingerprints = input_fingerprints()
+    if receipt_path.exists():
+        receipt = json.loads(receipt_path.read_text())
+        if receipt["inputs_sha256"] != fingerprints or receipt["model_sha256"] != sha256_file(model_path):
+            raise ValueError("Existing matched JEPA probe differs from frozen inputs")
+        print(json.dumps({"status": "verified_completed", "receipt": str(receipt_path)}), flush=True)
+        return
+    train_x, train_y, dev_x, dev_y, train_count, development_count = load_split_features()
+    scaler = StandardScaler().fit(train_x)
+    auc, c, model, choices = select_probe(scaler.transform(train_x), train_y, scaler.transform(dev_x), dev_y)
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    save_probe(model_path, scaler, model)
+    labeled_sha256 = sha256_file(MANIFEST / "labeled_train.csv")
+    receipt: dict[str, Any] = {
+        "inputs_sha256": fingerprints, "model_sha256": sha256_file(model_path),
+        "source_budget": "seed42_fraction0.1", "exact_labeled_manifest_sha256": labeled_sha256,
+        "train_ecg_ids_order_sha256": labeled_sha256,
+        "train_count": train_count, "development_count": development_count,
+        "policy": "StandardScaler labeled train only; LogisticRegression lbfgs max_iter=3000 seed42; "
+                  "six-C development AUROC",
+        "C": c, "development_auroc": auc, "choices": choices}
     write_json_atomic(receipt_path, receipt, sort_keys=True)
-    print(json.dumps({"status": "complete", "C": best[1], "development_auroc": best[0],
-                      "receipt": str(receipt_path)}), flush=True)
+    print(json.dumps({"status": "complete", "C": c, "development_auroc": auc, "receipt": str(receipt_path)}),
+          flush=True)
 
 
 if __name__ == "__main__":

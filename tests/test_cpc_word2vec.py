@@ -4,11 +4,10 @@ import math
 
 import numpy as np
 import torch
-from torch.nn import functional as F
+from torch.nn import functional as F  # noqa: N812 - conventional alias
 
 from ecg_experiment.cpc import HORIZONS
-from ecg_experiment.cpc_word2vec import (SampledCPCPretrainer, sampled_negative_indices,
-                                         sampled_objective)
+from ecg_experiment.cpc_word2vec import SampledCPCPretrainer, sampled_negative_indices, sampled_objective
 from ecg_experiment.reproducibility import seed_everything
 from scripts.experiments.run_cpc_word2vec import resume_or_new, save_epoch
 
@@ -44,7 +43,7 @@ def test_both_losses_match_reference_on_exact_same_sampled_scores():
     targets = F.normalize(tokens.reshape(4, 32, 256), dim=-1)
     queries = contexts.reshape(4, 32, 256)
     reference_info, reference_sgns = [], []
-    for horizon, head in zip(HORIZONS, heads):
+    for horizon, head in zip(HORIZONS, heads, strict=True):
         indices, valid, positives = sampled_negative_indices(32, horizon, 2, generator, "cpu")
         predictions = F.normalize(head(queries[:, valid]), dim=-1)
         scores = torch.bmm(predictions, targets.transpose(1, 2)) / 0.1
@@ -111,10 +110,11 @@ def test_resume_restores_private_sampler_and_loader_rng(tmp_path):
     rebuilt_sampler = torch.Generator().manual_seed(0)
     epoch, history = resume_or_new(tmp_path, "matching", rebuilt, rebuilt_optimizer,
                                    rebuilt_loader, rebuilt_sampler)
-    assert epoch == 1 and history == [{"epoch": 1}]
+    assert epoch == 1
+    assert history == [{"epoch": 1}]
     torch.testing.assert_close(torch.rand(8, generator=rebuilt_loader), expected_loader, atol=0, rtol=0)
     torch.testing.assert_close(torch.rand(8, generator=rebuilt_sampler), expected_sampler, atol=0, rtol=0)
     torch.testing.assert_close(torch.rand(8), expected_global, atol=0, rtol=0)
-    for expected, actual in zip(model.parameters(), rebuilt.parameters()):
+    for expected, actual in zip(model.parameters(), rebuilt.parameters(), strict=True):
         torch.testing.assert_close(actual, expected, atol=0, rtol=0)
     assert rebuilt_optimizer.state_dict()["state"]

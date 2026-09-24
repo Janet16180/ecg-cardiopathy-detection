@@ -56,14 +56,23 @@ only-include = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
-[tool.ruff.lint]
-select = ["E9", "F63", "F7", "F82"]
+[tool.ruff]
+line-length = 110
 
-# These guarded `del matrix` statements are valid at runtime. Ruff F821 cannot
-# infer the `"matrix" in locals()` guard; keep the frozen experiment files intact.
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "SIM", "C4", "RET", "ANN", "D", "N", "S101", "PT", "C90"]
+# D203/D213 conflict with the NumPy docstring layout; ANN401 allows explicit Any.
+ignore = ["D203", "D212", "ANN401", "RET504", "SIM108"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
 [tool.ruff.lint.per-file-ignores]
-"scripts/experiments/finetune_pretrained.py" = ["F821"]
-"scripts/data/prepare_xecg.py" = ["F821"]
+"tests/**" = ["S101", "D", "ANN"]
+"**/__init__.py" = ["D104"]
 
 [[tool.uv.index]]
 name = "pytorch-cu124"

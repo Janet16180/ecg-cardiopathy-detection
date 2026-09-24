@@ -1,6 +1,9 @@
 """Selection summaries retain zero-accepted groups and distinct exclusion reasons."""
 
-from scripts.validation.audit_ecg_selection_bias import aggregate, age_band, sex_value
+import pytest
+
+from ecg_experiment.files import write_csv_atomic
+from scripts.validation.audit_ecg_selection_bias import age_band, aggregate, outcomes, sex_value
 
 
 def test_demographic_categories_at_boundaries() -> None:
@@ -37,3 +40,14 @@ def test_retention_summary_keeps_zero_accepted_and_sparse_outcomes() -> None:
         "other_outcomes": {"duration_contract": 1}}
     assert result["beta"]["sex"]["male"] == result["beta"]["age_bands"]["over_70"]
     assert aggregate([]) == {}
+
+
+def test_outcomes_merge_accepted_and_excluded_records(tmp_path) -> None:
+    write_csv_atomic(tmp_path / "manifest.csv", [{"exam_id": "1"}], ["exam_id"])
+    write_csv_atomic(tmp_path / "exclusions.csv", [{"exam_id": "2", "reason": "constant_lead"}],
+                     ["exam_id", "reason"])
+    assert outcomes(tmp_path, "CODE", "exam_id", int) == {1: "accepted", 2: "constant_lead"}
+    write_csv_atomic(tmp_path / "exclusions.csv", [{"exam_id": "1", "reason": "constant_lead"}],
+                     ["exam_id", "reason"])
+    with pytest.raises(ValueError, match="Duplicate CODE outcome"):
+        outcomes(tmp_path, "CODE", "exam_id", int)

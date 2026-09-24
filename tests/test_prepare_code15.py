@@ -12,7 +12,10 @@ import h5py
 import numpy as np
 import pytest
 
-from scripts.data.prepare_code15 import inspect_trace, prepare, sha256_file
+from ecg_experiment.code15 import extracted_hdf5, inspect_trace, verify_file
+from ecg_experiment.files import sha256_file
+from scripts.data.prepare_code15 import prepare
+from scripts.validation.audit_code15_duplicate_annotations import relation
 from scripts.validation.verify_code15_prepared import verify
 
 
@@ -110,3 +113,44 @@ def test_signal_qc_exclusions_and_edge_measurement() -> None:
     assert reason is None
     assert (left, right, span) == (48, 65, 3983)
     assert "asymmetric_zero_edges_review" in flags
+
+
+def test_verify_file_requires_official_size_and_md5(tmp_path: Path) -> None:
+    path = tmp_path / "exams.csv"
+    path.write_bytes(b"exam_id\n")
+    verify_file(path, {"size": 8, "checksum": f"md5:{_md5(path)}"})
+    with pytest.raises(ValueError, match="wrong-size"):
+        verify_file(path, {"size": 9, "checksum": f"md5:{_md5(path)}"})
+    with pytest.raises(ValueError, match="checksum mismatch"):
+        verify_file(path, {"size": 8, "checksum": "md5:" + "0" * 32})
+    with pytest.raises(ValueError, match="checksum mismatch"):
+        verify_file(path, {"size": 8, "checksum": f"sha256:{_md5(path)}"})
+
+
+def test_extracted_hdf5_requires_the_single_expected_member(tmp_path: Path) -> None:
+    hdf5_path = tmp_path / "exams_part0.hdf5"
+    with h5py.File(hdf5_path, "w") as handle:
+        handle.create_dataset("exam_id", data=np.array([7]))
+    archive_path = tmp_path / "exams_part0.zip"
+    with zipfile.ZipFile(archive_path, "w") as archive:
+        archive.write(hdf5_path, "exams_part0.hdf5")
+    with extracted_hdf5(archive_path, "exams_part0.hdf5") as handle:
+        assert list(handle["exam_id"][:]) == [7]
+    with pytest.raises(ValueError, match="Unexpected ZIP contents"), \
+            extracted_hdf5(archive_path, "exams_part1.hdf5"):
+        pass
+    with zipfile.ZipFile(archive_path, "a") as archive:
+        archive.writestr("extra.txt", "unexpected")
+    with pytest.raises(ValueError, match="Unexpected ZIP contents"), \
+            extracted_hdf5(archive_path, "exams_part0.hdf5"):
+        pass
+
+
+@pytest.mark.parametrize(("excluded", "retained", "expected"), [
+    ({"AF"}, {"AF"}, "same"),
+    (set(), {"AF"}, "excluded_subset"),
+    ({"AF", "ST"}, {"ST"}, "retained_subset"),
+    ({"AF"}, {"ST"}, "non_nested"),
+])
+def test_duplicate_label_relation(excluded: set[str], retained: set[str], expected: str) -> None:
+    assert relation(excluded, retained) == expected

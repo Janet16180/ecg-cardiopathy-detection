@@ -116,7 +116,8 @@ def smoke(directory: Path) -> dict[str, Any]:
     representatives: dict[str, int] = {}
     for index, row in enumerate(ssl.rows):
         representatives.setdefault(row["source"], index)
-    batch = next(iter(DataLoader(Subset(ssl, list(representatives.values())), batch_size=len(representatives))))
+    subset = Subset(ssl, list(representatives.values()))
+    batch = next(iter(DataLoader(subset, batch_size=len(representatives))))
     require(tuple(batch["signal"].shape) == (len(representatives), 12, 5000), "unexpected SSL batch shape")
     require(not batch["target_available"].any() and bool(torch.all(batch["target"] == -1)),
             "SSL targets are not masked")
@@ -132,7 +133,8 @@ def smoke(directory: Path) -> dict[str, Any]:
     return {"status": "passed_cpu_loader_smoke_not_performance_result", "device": "cpu",
             "dataset_metadata_sha256": file_hash(directory / "metadata.json"),
             "smoke_source_sha256": file_hash(Path(__file__)), "ssl_sources_checked": list(representatives),
-            "ssl_records": len(ssl), "ssl_targets_masked": True, "supervised_fraction0.1_records": len(labeled),
+            "ssl_records": len(ssl), "ssl_targets_masked": True,
+            "supervised_fraction0.1_records": len(labeled),
             "supervised_fraction1_records": len(TrainingECGDataset(directory, "supervised", "1")),
             "real_batch_shape": list(batch["signal"].shape), "finite_backward_and_optimizer_step": True,
             "ptb_train_development_calibration_test_patients_disjoint": True,

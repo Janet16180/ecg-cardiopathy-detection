@@ -2,17 +2,20 @@
 
 import csv
 import json
-from pathlib import Path
 
 import numpy as np
 import pytest
-from scipy.signal import resample
 import torch
+from scipy.signal import resample
 
 from ecg_experiment.xecg import (
-    DEFAULT_CHECKPOINT_DIR, XECGBinaryClassifier, load_xecg, preprocess_xecg,
+    DEFAULT_CHECKPOINT_DIR,
+    LEADS,
+    XECGBinaryClassifier,
+    load_xecg,
+    preprocess_xecg,
 )
-from scripts.data.prepare_xecg import cache_xecg_views
+from scripts.data.prepare_xecg import cache_xecg_views, read_record_float64
 
 
 def test_preprocessing_matches_upstream_fft_resampling():
@@ -27,6 +30,25 @@ def test_preprocessing_matches_upstream_fft_resampling():
         preprocess_xecg(signal, input_fs=100)
     with pytest.raises(ValueError, match="finite"):
         preprocess_xecg(np.full((12, 5000), np.nan))
+
+
+def test_float64_reader_reorders_to_xecg_leads_and_checks_units(tmp_path):
+    import wfdb
+
+    names = list(reversed(LEADS))
+    data = np.tile(np.arange(12, dtype=np.float64), (5000, 1)) / 200
+    wfdb.wrsamp("sample", fs=500, units=["mV"] * 12, sig_name=names, p_signal=data,
+                fmt=["16"] * 12, adc_gain=[200] * 12, baseline=[0] * 12, write_dir=str(tmp_path))
+    signal = read_record_float64(tmp_path, "sample")
+    assert signal.shape == (12, 5000)
+    assert signal.dtype == np.float64
+    np.testing.assert_allclose(signal[:, 0], np.arange(11, -1, -1) / 200)
+    with pytest.raises(ValueError, match="escapes"):
+        read_record_float64(tmp_path / "sub", "../sample")
+    header = tmp_path / "sample.hea"
+    header.write_text(header.read_text().replace("/mV", "/uV"))
+    with pytest.raises(ValueError, match="physical mV"):
+        read_record_float64(tmp_path, "sample")
 
 
 def test_cache_keys_manifest_and_source(monkeypatch, tmp_path):
@@ -45,7 +67,7 @@ def test_cache_keys_manifest_and_source(monkeypatch, tmp_path):
     def fake_read(_, name):
         calls.append(name)
         return np.full((12, 5000), float(name), dtype=np.float32)
-    monkeypatch.setattr(prep, "read_record", fake_read)
+    monkeypatch.setattr(prep, "read_record_float64", fake_read)
     path = cache_xecg_views(tmp_path, manifest, tmp_path / "cache")
     assert np.load(path, mmap_mode="r").shape == (3, 1000, 12)
     assert calls == ["1", "2", "3"]
@@ -60,7 +82,8 @@ def test_cache_keys_manifest_and_source(monkeypatch, tmp_path):
         cache_xecg_views(tmp_path, manifest, path.parent)
 
 
-@pytest.mark.skipif(not (DEFAULT_CHECKPOINT_DIR / "model.safetensors").exists(), reason="released weights unavailable")
+@pytest.mark.skipif(not (DEFAULT_CHECKPOINT_DIR / "model.safetensors").exists(),
+                    reason="released weights unavailable")
 def test_released_weights_strict_load_and_backward():
     from safetensors import safe_open
 
@@ -79,16 +102,20 @@ def test_released_weights_strict_load_and_backward():
     # One patch is enough to exercise all nine official blocks and autograd on CPU.
     model.train()
     pooled, tokens = model(torch.randn(1, 25, 12))
-    assert pooled.shape == (1, 1024) and tokens.shape == (1, 1, 1024)
+    assert pooled.shape == (1, 1024)
+    assert tokens.shape == (1, 1, 1024)
     pooled.square().mean().backward()
     grad = model.patch_embedding.conv.weight.grad
-    assert grad is not None and torch.isfinite(grad).all() and grad.abs().sum() > 0
+    assert grad is not None
+    assert torch.isfinite(grad).all()
+    assert grad.abs().sum() > 0
 
 
 def test_classifier_head_is_plain_linear():
     class FakeBackbone(torch.nn.Module):
         cls_type = "avg"
         embedding_size = 4
+
         def forward(self, signal):
             return torch.ones(signal.shape[0], 4), None
 

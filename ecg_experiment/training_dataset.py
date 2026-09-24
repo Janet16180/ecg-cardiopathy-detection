@@ -20,8 +20,6 @@ LABEL_BUDGETS = ("1", "0.1")
 IDENTIFIED_SOURCES = ("ptbxl", "mimic")
 
 
-
-
 def signal_hash(signal: np.ndarray) -> str:
     """
     Identify a waveform by its little-endian float32 sample bytes.

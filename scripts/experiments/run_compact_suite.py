@@ -8,31 +8,13 @@ import subprocess
 import sys
 from pathlib import Path
 
+from ecg_experiment.processes import run_logged
+
 ROOT = Path(__file__).resolve().parents[2]
 MODELS = (("cnn", "cnn_supervised"), ("transformer", "transformer_supervised"),
           ("mae", "mae_finetuned"), ("jepa", "jepa_finetuned"))
 SSL_MODELS = {"mae", "jepa"}
 SHARED_SSL_SEED = 42
-
-
-def run_logged(command: list[str], log_path: Path) -> None:
-    """
-    Run a command from the repository root, writing its output to a log.
-
-    Parameters
-    ----------
-    command : list[str]
-        Command to run.
-    log_path : Path
-        Log file, overwritten.
-
-    Raises
-    ------
-    subprocess.CalledProcessError
-        If the command fails.
-    """
-    with log_path.open("w") as log:
-        subprocess.run(command, check=True, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
 
 
 def model_command(args: argparse.Namespace, model: str, seed: int, manifest: str) -> list[str]:
@@ -91,7 +73,7 @@ def main() -> None:
                 continue
             command = model_command(args, model, seed, manifest)
             print("Running " + " ".join(command), flush=True)
-            run_logged(command, output / f"{name}_seed{seed}.log")
+            run_logged(command, output / f"{name}_seed{seed}.log", ROOT)
             print(f"Completed {name}, seed {seed}", flush=True)
 
 

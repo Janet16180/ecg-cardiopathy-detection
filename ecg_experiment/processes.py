@@ -336,6 +336,28 @@ class IdleOrchestrator:
         return resumed
 
 
+def run_logged(command: list[str], log_path: Path, cwd: Path) -> None:
+    """
+    Run a command to completion, writing its output to a log file.
+
+    Parameters
+    ----------
+    command : list[str]
+        Command to run.
+    log_path : Path
+        Log file for stdout and stderr, overwritten.
+    cwd : Path
+        Working directory of the command.
+
+    Raises
+    ------
+    subprocess.CalledProcessError
+        If the command exits with a nonzero status.
+    """
+    with log_path.open("w") as log:
+        subprocess.run(command, check=True, cwd=cwd, stdout=log, stderr=subprocess.STDOUT)
+
+
 def _raise_interrupt(signum: int, _frame: object) -> None:
     # Later signals are ignored so they cannot interrupt the cleanup that
     # this first interruption starts.

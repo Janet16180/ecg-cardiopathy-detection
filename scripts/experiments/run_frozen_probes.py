@@ -3,9 +3,10 @@
 Paths are relative to the repository root, where the probes run.
 """
 
-import subprocess
 import sys
 from pathlib import Path
+
+from ecg_experiment.processes import run_logged
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUT = "outputs/experiment001"
@@ -15,26 +16,6 @@ MODELS = {
     "ecg-fm": "data/processed/pretrained/ecg-fm",
     "ecg-jepa": "data/processed/ptbxl/features_jepa_multiblock_union_seeds42_43_44",
 }
-
-
-def run_logged(command: list[str], log_path: Path) -> None:
-    """
-    Run a command from the repository root, writing its output to a log.
-
-    Parameters
-    ----------
-    command : list[str]
-        Command to run.
-    log_path : Path
-        Log file, overwritten.
-
-    Raises
-    ------
-    subprocess.CalledProcessError
-        If the command fails.
-    """
-    with log_path.open("w") as log:
-        subprocess.run(command, check=True, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
 
 
 def main() -> None:
@@ -59,7 +40,7 @@ def main() -> None:
                        "--embeddings-dir", feature_dir, "--name", model,
                        "--manifest-dir", f"data/processed/ptbxl/seed{seed}_fraction0.1",
                        "--seed", str(seed), "--output-dir", OUTPUT]
-            run_logged(command, output / f"{model}_linear_seed{seed}.log")
+            run_logged(command, output / f"{model}_linear_seed{seed}.log", ROOT)
             print(f"Completed frozen {model}, label seed {seed}", flush=True)
 
 

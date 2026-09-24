@@ -55,8 +55,6 @@ def utc_now() -> str:
     return datetime.now(UTC).isoformat()
 
 
-
-
 def rows_by_id(rows: list[dict[str, str]], name: str) -> dict[int, dict[str, str]]:
     """
     Index rows by integer ECG ID.

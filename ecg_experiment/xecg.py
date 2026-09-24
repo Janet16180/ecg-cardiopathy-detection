@@ -39,8 +39,6 @@ BLOCK_CONFIG = ["s", "s", "m", "m", "s", "s", "m", "m", "s"]
 BACKENDS = ("vanilla", "cuda")
 
 
-
-
 def preprocess_xecg(signal_12x5000: np.ndarray, input_fs: int = 500) -> np.ndarray:
     """
     Convert canonical 12-lead PTB-XL mV to the official 100 Hz time-major input.

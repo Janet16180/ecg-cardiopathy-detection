@@ -7,6 +7,7 @@ recorded in queue manifests.
 
 from __future__ import annotations
 
+import json
 import os
 import signal
 import subprocess
@@ -15,6 +16,9 @@ from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from pathlib import Path
 from typing import TypedDict
+
+WAITING_STAGE = "mimic_preparation"
+EXEC_SETTLE_SECONDS = 1.0
 
 
 class ProcessIdentity(TypedDict):
@@ -25,6 +29,18 @@ class ProcessIdentity(TypedDict):
 def _stat_fields(pid: int) -> list[str]:
     # The command name in field 2 may contain spaces and parentheses.
     return Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()
+
+
+def _command_line(pid: int) -> list[str]:
+    # Just after a spawn returns, the child can still be inside execve with
+    # an empty command line; wait briefly for the new arguments.
+    path = Path(f"/proc/{pid}/cmdline")
+    deadline = time.monotonic() + EXEC_SETTLE_SECONDS
+    raw = path.read_bytes()
+    while not raw and time.monotonic() < deadline:
+        time.sleep(0.001)
+        raw = path.read_bytes()
+    return raw.decode().rstrip("\0").split("\0")
 
 
 def process_identity(pid: int) -> ProcessIdentity | None:
@@ -43,13 +59,15 @@ def process_identity(pid: int) -> ProcessIdentity | None:
     """
     try:
         fields = _stat_fields(pid)
-        command = Path(f"/proc/{pid}/cmdline").read_bytes().decode().rstrip("\0").split("\0")
+        alive = fields[0] != "Z"
+        command = _command_line(pid) if alive else []
     except FileNotFoundError:
         return None
-    if fields[0] == "Z":
-        return None
-    # starttime is field 22 of /proc/<pid>/stat, index 19 after the name.
-    return {"start": fields[19], "command": command}
+    identity = None
+    if alive:
+        # starttime is field 22 of /proc/<pid>/stat, index 19 after the name.
+        identity = ProcessIdentity(start=fields[19], command=command)
+    return identity
 
 
 def runs_module(identity: ProcessIdentity | None, module: str) -> bool:
@@ -69,6 +87,23 @@ def runs_module(identity: ProcessIdentity | None, module: str) -> bool:
         True if ``module`` is one of the command-line arguments.
     """
     return identity is not None and module in identity["command"]
+
+
+def is_stopped(pid: int) -> bool:
+    """
+    Check whether the kernel reports a process as stopped.
+
+    Parameters
+    ----------
+    pid : int
+        Process ID of a live process.
+
+    Returns
+    -------
+    bool
+        True for the stopped or traced states.
+    """
+    return _stat_fields(pid)[0] in ("T", "t")
 
 
 def has_children(pid: int) -> bool:
@@ -135,7 +170,7 @@ def stop_process(pid: int, identity: ProcessIdentity, timeout: float = 5.0) -> N
     while time.monotonic() < deadline:
         if process_identity(pid) != identity:
             raise RuntimeError("Orchestrator identity changed while stopping it")
-        if _stat_fields(pid)[0] in ("T", "t"):
+        if is_stopped(pid):
             return
         time.sleep(0.01)
     raise RuntimeError("Timed out confirming the orchestrator stopped")
@@ -187,12 +222,128 @@ def terminate_child(child: subprocess.Popen | None, timeout: float = 30.0) -> No
         child.wait()
 
 
+class IdleOrchestrator:
+    """
+    Pause the legacy MIMIC orchestrator only while it idles waiting for data.
+
+    The orchestrator predates the shared GPU lock.  It is idle when its status
+    file reports the preparation stage as ``waiting``, its data marker is
+    absent and it has no children.  ``paused`` records that this coordinator
+    owns the stop, so cleanup knows to send SIGCONT.
+
+    Parameters
+    ----------
+    pid : int
+        Process ID of the orchestrator.
+    identity : ProcessIdentity | None
+        Identity captured earlier; None means there is nothing to pause.
+    status_path : Path
+        The orchestrator's ``status.json``.
+    ready_path : Path
+        File whose existence means the orchestrator's data is ready.
+    """
+
+    def __init__(self, pid: int, identity: ProcessIdentity | None, status_path: Path,
+                 ready_path: Path) -> None:
+        self.pid = pid
+        self.identity = identity
+        self.status_path = status_path
+        self.ready_path = ready_path
+        self.paused = False
+
+    def is_alive(self) -> bool:
+        """
+        Check whether the identified orchestrator still runs.
+
+        Returns
+        -------
+        bool
+            True if the PID still has the captured identity.
+        """
+        return self.identity is not None and process_identity(self.pid) == self.identity
+
+    def is_idle(self) -> bool:
+        """
+        Check whether the orchestrator only waits for its data.
+
+        Returns
+        -------
+        bool
+            True if it is alive, waiting, without ready data and childless.
+        """
+        if not self.is_alive():
+            return False
+        stages = json.loads(self.status_path.read_text())["stages"]
+        waiting = stages.get(WAITING_STAGE, {}).get("state") == "waiting"
+        return waiting and not self.ready_path.exists() and not has_children(self.pid)
+
+    def pause(self) -> bool:
+        """
+        Stop the orchestrator if it is idle.
+
+        Returns
+        -------
+        bool
+            True if the orchestrator is now stopped by this coordinator.
+        """
+        if not self.is_idle():
+            return False
+        # Claim the stop before sending it so a signal arriving during the
+        # stop still leads cleanup to send SIGCONT.
+        self.paused = True
+        stop_process(self.pid, self.identity)
+        # A child or the data may have appeared before the stop took effect.
+        if not self.is_idle():
+            self.resume()
+        return self.paused
+
+    def pause_when_idle(self, on_wait: Callable[[], None], interval: float = 30.0) -> bool:
+        """
+        Wait until the orchestrator can be paused or has exited.
+
+        Parameters
+        ----------
+        on_wait : Callable[[], None]
+            Called before each sleep, typically to record a status.
+        interval : float
+            Seconds between checks.
+
+        Returns
+        -------
+        bool
+            True if the orchestrator was paused, False if it is gone.
+        """
+        while not self.pause() and self.is_alive():
+            on_wait()
+            time.sleep(interval)
+        return self.paused
+
+    def resume(self) -> bool:
+        """
+        Send SIGCONT if this coordinator stopped the orchestrator.
+
+        Returns
+        -------
+        bool
+            True if a stopped orchestrator was resumed.
+        """
+        if not self.paused:
+            return False
+        resumed = resume_process(self.pid, self.identity)
+        self.paused = False
+        return resumed
+
+
 def _raise_interrupt(signum: int, _frame: object) -> None:
+    # Later signals are ignored so they cannot interrupt the cleanup that
+    # this first interruption starts.
+    signal.signal(signal.SIGTERM, signal.SIG_IGN)
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
     raise KeyboardInterrupt(f"Received signal {signum}")
 
 
 def interrupt_on_termination() -> None:
-    """Raise ``KeyboardInterrupt`` on SIGTERM as well as SIGINT."""
+    """Raise ``KeyboardInterrupt`` once on the first SIGINT or SIGTERM."""
     signal.signal(signal.SIGTERM, _raise_interrupt)
     signal.signal(signal.SIGINT, _raise_interrupt)
 

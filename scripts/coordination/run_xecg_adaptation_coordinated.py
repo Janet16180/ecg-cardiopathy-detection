@@ -1,91 +1,87 @@
 """Run Experiment 008 after successful xECG transfer and its input preparation."""
 
+from __future__ import annotations
+
 import argparse
-from datetime import datetime, timezone
-import hashlib
 import json
-import os
-from pathlib import Path
-import signal
 import subprocess
 import sys
-import time
+from functools import partial
+from pathlib import Path
 
-from scripts.coordination.run_xecg_coordinated import identity
+from ecg_experiment.processes import interrupt_on_termination, wait_while_alive
+from scripts.coordination import common
 
-ROOT = Path(__file__).resolve().parents[2]
+XECG_SSL_READY = Path("data/processed/xecg_ssl_40k/metadata.json")
+XECG_COORDINATION = Path("outputs/experiment007_xecg/coordination.json")
 
 
-def main():
+def parse_args() -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--wait-pid", type=int, required=True)
     parser.add_argument("--preparation-pid", type=int, required=True)
-    parser.add_argument("--mimic-runner-pid", type=int, default=3769)
-    parser.add_argument("--output-dir", type=Path, default=ROOT / "outputs/experiment008_vision_ssl")
-    args = parser.parse_args()
+    parser.add_argument("--mimic-runner-pid", type=int, required=True)
+    parser.add_argument("--output-dir", type=Path, default=common.ROOT / "outputs/experiment008_vision_ssl")
+    return parser.parse_args()
+
+
+def check_xecg_complete() -> None:
+    """
+    Require Experiment 007 to have completed successfully.
+
+    Raises
+    ------
+    RuntimeError
+        If its coordination record is not a clean completion.
+    """
+    earlier = json.loads((common.ROOT / XECG_COORDINATION).read_text())
+    if earlier["state"] != "complete" or earlier.get("returncode") != 0:
+        raise RuntimeError("Experiment 007 did not complete successfully; resolve its failure before adaptation")
+
+
+def main() -> None:
+    """Wait for preparation, Experiment 007 and the idle MIMIC runner, then adapt."""
+    args = parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    previous, preparation, mimic = (identity(pid) for pid in
-        (args.wait_pid, args.preparation_pid, args.mimic_runner_pid))
-    for value, expected in ((previous, b"scripts.coordination.run_xecg_coordinated"),
-                            (preparation, b"scripts.data.prepare_xecg_ssl"),
-                            (mimic, b"scripts.experiments.run_mimic_scale")):
-        if value is not None and expected not in value[1]:
-            raise RuntimeError(f"Unexpected queue process; expected {expected.decode()}")
-    child, paused = None, False
-
-    def status(state, **kwargs):
-        data = {"state": state, "updated_at": datetime.now(timezone.utc).isoformat(),
-                "wrapper_pid": os.getpid(), "predecessor_pid": args.wait_pid, **kwargs}
-        path = args.output_dir / "coordination.json"
-        temp = path.with_suffix(".tmp")
-        temp.write_text(json.dumps(data, indent=2) + "\n")
-        temp.replace(path)
-        print(json.dumps(data), flush=True)
-
-    def wait(pid, expected, reason):
-        while expected is not None and identity(pid) == expected:
-            status("queued", waiting_for_pid=pid, reason=reason)
-            time.sleep(30)
-
-    def interrupt(signum, _frame):
-        raise KeyboardInterrupt(f"Received signal {signum}")
-
-    signal.signal(signal.SIGINT, interrupt)
-    signal.signal(signal.SIGTERM, interrupt)
+    previous = common.expect_module(args.wait_pid, "scripts.coordination.run_xecg_coordinated")
+    preparation = common.expect_module(args.preparation_pid, "scripts.data.prepare_xecg_ssl")
+    orchestrator = common.mimic_orchestrator(args.mimic_runner_pid)
+    status = partial(common.write_status, args.output_dir / "coordination.json",
+                     predecessor_pid=args.wait_pid)
+    child = None
+    interrupt_on_termination()
     try:
-        wait(args.preparation_pid, preparation, "Train-only xECG input preparation")
-        if not (ROOT / "data/processed/xecg_ssl_40k/metadata.json").is_file():
+        wait_while_alive(args.preparation_pid, preparation,
+                         partial(status, "queued", waiting_for_pid=args.preparation_pid,
+                                 reason="Train-only xECG input preparation"),
+                         common.POLL_SECONDS)
+        if not (common.ROOT / XECG_SSL_READY).is_file():
             raise RuntimeError("xECG SSL input preparation did not complete")
-        wait(args.wait_pid, previous, "Experiment 007 xECG fine-tuning")
-        earlier = json.loads((ROOT / "outputs/experiment007_xecg/coordination.json").read_text())
-        if earlier["state"] != "complete" or earlier.get("returncode") != 0:
-            raise RuntimeError("Experiment 007 did not complete successfully; resolve its failure before adaptation")
-        if mimic is not None and identity(args.mimic_runner_pid) == mimic:
-            children = Path(f"/proc/{args.mimic_runner_pid}/task/{args.mimic_runner_pid}/children")
-            ready = ROOT / "data/processed/mimic_ssl_200k/metadata.json"
-            old_status = json.loads((ROOT / "outputs/experiment003_mimic/status.json").read_text())
-            idle = (old_status["stages"]["mimic_preparation"]["state"] == "waiting"
-                    and not ready.exists() and not children.read_text().strip())
-            if idle:
-                os.kill(args.mimic_runner_pid, signal.SIGSTOP)
-                paused = True
-                if ready.exists() or children.read_text().strip():
-                    os.kill(args.mimic_runner_pid, signal.SIGCONT)
-                    paused = False
-                    wait(args.mimic_runner_pid, mimic, "MIMIC training became ready")
-            else:
-                wait(args.mimic_runner_pid, mimic, "MIMIC training active or ready")
-        for name, expected in json.loads((args.output_dir / "provenance/sources.json").read_text()).items():
-            if hashlib.sha256((ROOT / name).read_bytes()).hexdigest() != expected:
-                raise RuntimeError(f"Queued adaptation source changed: {name}")
+        wait_while_alive(args.wait_pid, previous,
+                         partial(status, "queued", waiting_for_pid=args.wait_pid,
+                                 reason="Experiment 007 xECG fine-tuning"),
+                         common.POLL_SECONDS)
+        check_xecg_complete()
+        orchestrator.pause_when_idle(partial(status, "queued", waiting_for_pid=args.mimic_runner_pid,
+                                             reason="MIMIC training active or ready"),
+                                     common.POLL_SECONDS)
+        common.verify_sources(args.output_dir / "provenance/sources.json")
         for stage in ("profile", "all"):
             command = [sys.executable, "-u", "-m", "scripts.experiments.run_xecg_adaptation",
                        "--stage", stage, "--device", "cuda", "--output-dir", str(args.output_dir)]
             if stage == "all":
                 command.append("--resume")
-            child = subprocess.Popen(command, cwd=ROOT)
+            child = subprocess.Popen(command, cwd=common.ROOT)
             status("profiling" if stage == "profile" else "running", child_pid=child.pid,
-                   command=command, mimic_orchestrator_paused=paused)
+                   command=command, mimic_orchestrator_paused=orchestrator.paused)
             code = child.wait()
             if code:
                 status("failed", failed_stage=stage, returncode=code)
@@ -93,20 +89,12 @@ def main():
         status("complete", returncode=0)
     except KeyboardInterrupt as exc:
         status("interrupted", reason=str(exc))
-        raise SystemExit(130)
+        raise SystemExit(130) from exc
     except Exception as exc:
         status("failed", reason=str(exc))
         raise
     finally:
-        if child is not None and child.poll() is None:
-            child.terminate()
-            try:
-                child.wait(timeout=30)
-            except subprocess.TimeoutExpired:
-                child.kill()
-                child.wait()
-        if paused and identity(args.mimic_runner_pid) == mimic:
-            os.kill(args.mimic_runner_pid, signal.SIGCONT)
+        common.stop_child_and_resume(child, orchestrator)
 
 
 if __name__ == "__main__":

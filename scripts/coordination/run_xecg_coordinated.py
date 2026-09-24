@@ -1,120 +1,103 @@
 """Queue xECG fine-tuning after an existing suite, coordinating the older runner."""
 
+from __future__ import annotations
+
 import argparse
-from datetime import datetime, timezone
-import json
-import os
-from pathlib import Path
-import signal
 import subprocess
 import sys
-import time
+from functools import partial
+from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+from ecg_experiment.processes import interrupt_on_termination, wait_while_alive
+from scripts.coordination import common
 
-
-def identity(pid):
-    try:
-        directory = Path(f"/proc/{pid}")
-        fields = (directory / "stat").read_text().rsplit(")", 1)[1].split()
-        if fields[0] == "Z":
-            return None
-        return fields[19], (directory / "cmdline").read_bytes().split(b"\0")
-    except FileNotFoundError:
-        return None
+XECG_VIEWS_READY = Path("data/processed/ptbxl/xecg_views/metadata.json")
 
 
-def main():
+def parse_args() -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--wait-pid", type=int, required=True)
-    parser.add_argument("--mimic-runner-pid", type=int, default=3769)
+    parser.add_argument("--mimic-runner-pid", type=int, required=True)
     parser.add_argument("--preparation-pid", type=int,
                         help="Existing CPU cache preparation to wait for")
     parser.add_argument("--output-dir", type=Path,
-                        default=ROOT / "outputs/experiment007_xecg")
-    args = parser.parse_args()
+                        default=common.ROOT / "outputs/experiment007_xecg")
+    return parser.parse_args()
+
+
+def xecg_command(stage: str, device: str, output_dir: Path) -> list[str]:
+    """
+    Build a fine-tuning runner command.
+
+    Parameters
+    ----------
+    stage : str
+        Runner stage: ``prep``, ``profile`` or ``train``.
+    device : str
+        Torch device name.
+    output_dir : Path
+        Experiment output directory.
+
+    Returns
+    -------
+    list[str]
+        Command line; training resumes from checkpoints.
+    """
+    command = [sys.executable, "-u", "-m", "scripts.experiments.run_xecg_finetune",
+               "--stage", stage, "--budget", "all", "--device", device,
+               "--output-dir", str(output_dir)]
+    if stage == "train":
+        command.append("--resume")
+    return command
+
+
+def main() -> None:
+    """Prepare inputs, wait for the predecessor and idle MIMIC runner, then train."""
+    args = parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    predecessor = identity(args.wait_pid)
-    mimic = identity(args.mimic_runner_pid)
-    preparation = identity(args.preparation_pid) if args.preparation_pid else None
-    if predecessor and b"scripts.coordination.run_cpc_coordinated" not in predecessor[1]:
-        raise RuntimeError("Predecessor is not the expected ECG suite")
-    if mimic and b"scripts.experiments.run_mimic_scale" not in mimic[1]:
-        raise RuntimeError("MIMIC PID belongs to an unexpected process")
-    if preparation and b"scripts.data.prepare_xecg" not in preparation[1]:
-        raise RuntimeError("Preparation PID belongs to an unexpected process")
+    predecessor = common.expect_module(args.wait_pid, "scripts.coordination.run_cpc_coordinated")
+    preparation = common.expect_module(args.preparation_pid, "scripts.data.prepare_xecg")
+    orchestrator = common.mimic_orchestrator(args.mimic_runner_pid)
+    status = partial(common.write_status, args.output_dir / "coordination.json",
+                     predecessor_pid=args.wait_pid)
+    provenance = args.output_dir / "provenance/sources.json"
     child = None
-    paused = False
-
-    def status(state, **details):
-        value = {"state": state, "updated_at": datetime.now(timezone.utc).isoformat(),
-                 "wrapper_pid": os.getpid(), "predecessor_pid": args.wait_pid, **details}
-        target = args.output_dir / "coordination.json"
-        temporary = target.with_suffix(".tmp")
-        temporary.write_text(json.dumps(value, indent=2) + "\n")
-        temporary.replace(target)
-        print(json.dumps(value), flush=True)
-
-    def interrupt(signum, _frame):
-        raise KeyboardInterrupt(f"Received signal {signum}")
-
-    def wait_for(pid, original, reason):
-        while original is not None and identity(pid) == original:
-            status("queued", waiting_for_pid=pid, reason=reason)
-            time.sleep(30)
-
-    signal.signal(signal.SIGINT, interrupt)
-    signal.signal(signal.SIGTERM, interrupt)
+    interrupt_on_termination()
     try:
-        if preparation is not None:
-            wait_for(args.preparation_pid, preparation, "xECG CPU input preparation")
-        if not (ROOT / "data/processed/ptbxl/xecg_views/metadata.json").exists():
-            command = [sys.executable, "-u", "-m", "scripts.experiments.run_xecg_finetune",
-                       "--stage", "prep", "--budget", "all", "--device", "cpu",
-                       "--output-dir", str(args.output_dir)]
-            child = subprocess.Popen(command, cwd=ROOT)
+        wait_while_alive(args.preparation_pid, preparation,
+                         partial(status, "queued", waiting_for_pid=args.preparation_pid,
+                                 reason="xECG CPU input preparation"),
+                         common.POLL_SECONDS)
+        if not (common.ROOT / XECG_VIEWS_READY).exists():
+            command = xecg_command("prep", "cpu", args.output_dir)
+            child = subprocess.Popen(command, cwd=common.ROOT)
             status("preparing", child_pid=child.pid, command=command)
             code = child.wait()
             if code:
                 status("failed", failed_stage="preparation", returncode=code)
                 raise SystemExit(code)
-        wait_for(args.wait_pid, predecessor, "Earlier tokenization suite")
-        # The older MIMIC runner predates the shared GPU lock. Pause it only
-        # while idle waiting for data; if its data is ready, let it finish first.
-        if mimic is not None and identity(args.mimic_runner_pid) == mimic:
-            children_path = Path(f"/proc/{args.mimic_runner_pid}/task/{args.mimic_runner_pid}/children")
-            state_path = ROOT / "outputs/experiment003_mimic/status.json"
-            ready = ROOT / "data/processed/mimic_ssl_200k/metadata.json"
-            state = json.loads(state_path.read_text())
-            idle = (state["stages"]["mimic_preparation"]["state"] == "waiting"
-                    and not ready.exists() and not children_path.read_text().strip())
-            if idle:
-                os.kill(args.mimic_runner_pid, signal.SIGSTOP)
-                paused = True
-                # Close a child-launch race after stopping the orchestrator.
-                if children_path.read_text().strip() or ready.exists():
-                    os.kill(args.mimic_runner_pid, signal.SIGCONT)
-                    paused = False
-                    wait_for(args.mimic_runner_pid, mimic, "MIMIC suite became ready")
-            else:
-                wait_for(args.mimic_runner_pid, mimic, "Active or ready MIMIC suite")
-        provenance = args.output_dir / "provenance/sources.json"
+        wait_while_alive(args.wait_pid, predecessor,
+                         partial(status, "queued", waiting_for_pid=args.wait_pid,
+                                 reason="Earlier tokenization suite"),
+                         common.POLL_SECONDS)
+        orchestrator.pause_when_idle(partial(status, "queued", waiting_for_pid=args.mimic_runner_pid,
+                                             reason="Active or ready MIMIC suite"),
+                                     common.POLL_SECONDS)
         if provenance.exists():
-            import hashlib
-            for name, expected in json.loads(provenance.read_text()).items():
-                actual = hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
-                if actual != expected:
-                    raise RuntimeError(f"Queued xECG source changed: {name}")
+            common.verify_sources(provenance)
         for stage in ("profile", "train"):
-            command = [sys.executable, "-u", "-m", "scripts.experiments.run_xecg_finetune",
-                       "--stage", stage, "--budget", "all", "--device", "cuda",
-                       "--output-dir", str(args.output_dir)]
-            if stage == "train":
-                command.append("--resume")
-            child = subprocess.Popen(command, cwd=ROOT)
-            status("profiling" if stage == "profile" else "running",
-                   child_pid=child.pid, command=command,
-                   mimic_orchestrator_paused=paused)
+            command = xecg_command(stage, "cuda", args.output_dir)
+            child = subprocess.Popen(command, cwd=common.ROOT)
+            status("profiling" if stage == "profile" else "running", child_pid=child.pid,
+                   command=command, mimic_orchestrator_paused=orchestrator.paused)
             code = child.wait()
             if code:
                 status("failed", failed_stage=stage, returncode=code)
@@ -122,21 +105,12 @@ def main():
         status("complete", returncode=0)
     except KeyboardInterrupt as exc:
         status("interrupted", reason=str(exc))
-        raise SystemExit(130)
+        raise SystemExit(130) from exc
     except Exception as exc:
         status("failed", reason=str(exc))
         raise
     finally:
-        if child is not None and child.poll() is None:
-            child.terminate()
-            try:
-                child.wait(timeout=30)
-            except subprocess.TimeoutExpired:
-                child.kill()
-                child.wait()
-        if paused and identity(args.mimic_runner_pid) == mimic:
-            os.kill(args.mimic_runner_pid, signal.SIGCONT)
-            print(f"Resumed MIMIC orchestrator {args.mimic_runner_pid}", flush=True)
+        common.stop_child_and_resume(child, orchestrator)
 
 
 if __name__ == "__main__":

@@ -5,72 +5,54 @@ GPU locks. The older data-waiting MIMIC orchestrator is held during the queue,
 and resumed on completion, failure or a handled interruption.
 """
 
+from __future__ import annotations
+
 import argparse
-from datetime import datetime, timezone
 import fcntl
-import hashlib
 import json
-import os
-from pathlib import Path
-import signal
 import subprocess
-import sys
-import time
+from functools import partial
+from pathlib import Path
+from typing import Any
 
-ROOT = Path(__file__).resolve().parents[2]
+import ecg_experiment.files
+import ecg_experiment.processes
+from ecg_experiment.files import sha256_file, sha256_json, write_json_atomic
+from ecg_experiment.processes import (IdleOrchestrator, interrupt_on_termination, process_identity,
+                                      wait_while_alive)
+from scripts.coordination import common
 
-
-def sha256(path):
-    digest = hashlib.sha256()
-    with Path(path).open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
-
-
-def atomic_json(path, value):
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temp = path.with_suffix(path.suffix + ".tmp")
-    temp.write_text(json.dumps(value, indent=2, allow_nan=False) + "\n")
-    temp.replace(path)
+COMPLETION_MARKER = "priority_queue_completion.json"
 
 
-def identity(pid):
-    try:
-        path = Path(f"/proc/{pid}")
-        fields = (path / "stat").read_text().rsplit(")", 1)[1].split()
-        if fields[0] == "Z":
-            return None
-        return {"start": fields[19], "command":
-                (path / "cmdline").read_bytes().decode().rstrip("\0").split("\0")}
-    except FileNotFoundError:
-        return None
+def coordinator_sha256() -> str:
+    """
+    Fingerprint this coordinator together with the local code it imports.
+
+    Returns
+    -------
+    str
+        SHA-256 of the canonical map from source file name to file digest.
+    """
+    modules = (__file__, common.__file__, ecg_experiment.files.__file__, ecg_experiment.processes.__file__)
+    return sha256_json({Path(path).name: sha256_file(path) for path in modules})
 
 
-def verify_sources(path, expected_map_sha256=None):
-    if expected_map_sha256 is not None and sha256(path) != expected_map_sha256:
-        raise RuntimeError(f"Frozen source hash map changed: {path}")
-    entries = json.loads(Path(path).read_text())
-    for name, expected in entries.items():
-        if sha256(ROOT / name) != expected:
-            raise RuntimeError(f"Queued source changed: {name}")
+def validate_manifest(manifest: dict[str, Any]) -> None:
+    """
+    Check the structure of a queue manifest.
 
+    Parameters
+    ----------
+    manifest : dict[str, Any]
+        Parsed queue manifest.
 
-def wait_stopped(pid, expected, timeout=5.0):
-    """SIGSTOP delivery is asynchronous; observe a stopped parent before racing forks."""
-    deadline = time.monotonic() + timeout
-    while time.monotonic() < deadline:
-        if identity(pid) != expected:
-            raise RuntimeError("Orchestrator identity changed while stopping it")
-        state = Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()[0]
-        if state in ("T", "t"):
-            return
-        time.sleep(0.01)
-    raise RuntimeError("Timed out confirming the orchestrator stopped")
-
-
-def validate_manifest(manifest):
+    Raises
+    ------
+    ValueError
+        If job names repeat, a job lacks stages or artifacts, or a stage is
+        not an explicit ``python -u -m scripts...`` command.
+    """
     jobs = manifest["jobs"]
     if not jobs or len({job["name"] for job in jobs}) != len(jobs):
         raise ValueError("Queue needs uniquely named jobs")
@@ -79,158 +61,270 @@ def validate_manifest(manifest):
             raise ValueError("Each job needs stages and completion artifacts")
         for stage in job["stages"]:
             command = stage["command"]
-            if (not isinstance(command, list) or len(command) < 4
-                    or not all(isinstance(part, str) for part in command)
-                    or command[1:3] != ["-u", "-m"]
-                    or not command[3].startswith("scripts.")):
+            explicit = (isinstance(command, list) and len(command) >= 4
+                        and all(isinstance(part, str) for part in command)
+                        and command[1:3] == ["-u", "-m"] and command[3].startswith("scripts."))
+            if not explicit:
                 raise ValueError("Expected an explicit Python module command")
 
 
+def legacy_orchestrator(manifest: dict[str, Any]) -> IdleOrchestrator | None:
+    """
+    Describe the pinned legacy MIMIC orchestrator of a manifest.
+
+    Parameters
+    ----------
+    manifest : dict[str, Any]
+        Parsed queue manifest.
+
+    Returns
+    -------
+    IdleOrchestrator | None
+        Orchestrator handle, or None if the manifest pins none.
+    """
+    legacy = manifest.get("legacy")
+    if not legacy:
+        return None
+    return IdleOrchestrator(legacy["pid"], legacy["identity"], common.ROOT / legacy["status_path"],
+                            common.ROOT / common.MIMIC_READY)
+
+
 class Coordinator:
-    def __init__(self, manifest, directory, fingerprint):
+    """
+    Run the queue jobs in order and hold the state its cleanup needs.
+
+    Parameters
+    ----------
+    manifest : dict[str, Any]
+        Validated queue manifest.
+    directory : Path
+        Directory for the queue ``status.json``.
+    fingerprint : str
+        SHA-256 of the manifest file.
+    """
+
+    def __init__(self, manifest: dict[str, Any], directory: Path, fingerprint: str) -> None:
         self.manifest = manifest
         self.directory = directory
         self.fingerprint = fingerprint
-        self.child = None
-        self.paused_legacy = False
-        self.current_job = None
+        self.child: subprocess.Popen | None = None
+        self.legacy = legacy_orchestrator(manifest)
+        self.current_job: dict[str, Any] | None = None
 
-    def status(self, state, **kwargs):
-        record = {"state": state, "updated_at": datetime.now(timezone.utc).isoformat(),
-                  "wrapper_pid": os.getpid(), "queue_manifest_sha256": self.fingerprint,
-                  "queue_order": [j["name"] for j in self.manifest["jobs"]], **kwargs}
-        atomic_json(self.directory / "status.json", record)
-        print(json.dumps(record), flush=True)
-        return record
+    def status(self, state: str, **details: Any) -> dict[str, Any]:
+        """
+        Record the queue state.
 
-    def job_status(self, job, state, **kwargs):
-        record = self.status(state, experiment=job["name"], **kwargs)
-        atomic_json(ROOT / job["output_dir"] / "coordination.json", record)
+        Parameters
+        ----------
+        state : str
+            Queue state.
+        **details : Any
+            Extra JSON-serializable fields.
 
-    def wait_predecessor(self):
+        Returns
+        -------
+        dict[str, Any]
+            The written record.
+        """
+        return common.write_status(self.directory / "status.json", state,
+                                   queue_manifest_sha256=self.fingerprint,
+                                   queue_order=[job["name"] for job in self.manifest["jobs"]], **details)
+
+    def job_status(self, job: dict[str, Any], state: str, **details: Any) -> None:
+        """
+        Record the state of one job in the queue and in its output directory.
+
+        Parameters
+        ----------
+        job : dict[str, Any]
+            Manifest job.
+        state : str
+            Job state.
+        **details : Any
+            Extra JSON-serializable fields.
+        """
+        record = self.status(state, experiment=job["name"], **details)
+        write_json_atomic(common.ROOT / job["output_dir"] / "coordination.json", record)
+
+    def wait_predecessor(self) -> None:
+        """
+        Wait for the predecessor suite and require its clean completion.
+
+        Raises
+        ------
+        RuntimeError
+            If the predecessor did not complete with return code 0.
+        """
         previous = self.manifest["predecessor"]
-        while previous["identity"] is not None and identity(previous["pid"]) == previous["identity"]:
-            self.status("queued", waiting_for_pid=previous["pid"],
-                        reason="Let the current tokenization suite finish")
-            time.sleep(30)
-        result = json.loads((ROOT / previous["status_path"]).read_text())
+        wait_while_alive(previous["pid"], previous["identity"],
+                         partial(self.status, "queued", waiting_for_pid=previous["pid"],
+                                 reason="Let the current tokenization suite finish"),
+                         common.POLL_SECONDS)
+        result = json.loads((common.ROOT / previous["status_path"]).read_text())
         if result.get("state") != "complete" or result.get("returncode") != 0:
             raise RuntimeError("Current suite did not finish successfully; queue stopped")
 
-    def coordinate_legacy(self):
-        legacy = self.manifest.get("legacy")
-        if not legacy or legacy["identity"] is None:
+    def coordinate_legacy(self) -> None:
+        """Pause the legacy orchestrator once it idles, or wait for it to exit."""
+        if self.legacy is None:
             return
-        pid = legacy["pid"]
-        while identity(pid) == legacy["identity"]:
-            children = Path(f"/proc/{pid}/task/{pid}/children")
-            state = json.loads((ROOT / legacy["status_path"]).read_text())
-            waiting = state["stages"].get("mimic_preparation", {}).get("state") == "waiting"
-            if waiting and not children.read_text().strip():
-                os.kill(pid, signal.SIGSTOP)
-                self.paused_legacy = True
-                wait_stopped(pid, legacy["identity"])
-                # If a child won the race, allow that active job to finish.
-                if not children.read_text().strip():
-                    self.status("legacy_paused", legacy_pid=pid,
-                                reason="Requested experiment priority; downloader continues")
-                    return
-                os.kill(pid, signal.SIGCONT)
-                self.paused_legacy = False
-            self.status("queued", waiting_for_pid=pid, reason="Existing active MIMIC job")
-            time.sleep(30)
+        on_wait = partial(self.status, "queued", waiting_for_pid=self.legacy.pid,
+                          reason="Existing active MIMIC job")
+        if self.legacy.pause_when_idle(on_wait, common.POLL_SECONDS):
+            self.status("legacy_paused", legacy_pid=self.legacy.pid,
+                        reason="Requested experiment priority; downloader continues")
 
-    def execute_job(self, job):
+    def verify_completion(self, marker: Path) -> None:
+        """
+        Check that a completion marker belongs to this queue and still matches.
+
+        Parameters
+        ----------
+        marker : Path
+            Completion marker of a job.
+
+        Raises
+        ------
+        RuntimeError
+            If the marker is from another queue or an artifact changed.
+        """
+        completion = json.loads(marker.read_text())
+        if completion["queue_manifest_sha256"] != self.fingerprint:
+            raise RuntimeError("Completed job belongs to a different frozen queue")
+        for name, expected in completion["artifacts"].items():
+            if sha256_file(common.ROOT / name) != expected:
+                raise RuntimeError(f"Completed queue artifact changed: {name}")
+
+    def run_stage(self, job: dict[str, Any], stage: dict[str, Any], output: Path) -> None:
+        """
+        Run one job stage as a child process with its output logged.
+
+        Parameters
+        ----------
+        job : dict[str, Any]
+            Manifest job.
+        stage : dict[str, Any]
+            Stage with a ``name`` and a ``command``.
+        output : Path
+            Job output directory.
+
+        Raises
+        ------
+        RuntimeError
+            If the stage exits with a non-zero code.
+        """
+        with (output / "priority_queue.log").open("a", buffering=1) as log:
+            log.write(f"\n{common.utc_now()} {stage['name']}\n")
+            self.child = subprocess.Popen(stage["command"], cwd=common.ROOT,
+                                          stdout=log, stderr=subprocess.STDOUT)
+            self.job_status(job, "profiling" if stage["name"] == "profile" else "running",
+                            stage=stage["name"], child_pid=self.child.pid, command=stage["command"],
+                            mimic_orchestrator_paused=self.legacy is not None and self.legacy.paused)
+            code = self.child.wait()
+            self.child = None
+        if code != 0:
+            raise RuntimeError(f"{job['name']} stage {stage['name']} exited {code}")
+
+    def execute_job(self, job: dict[str, Any]) -> None:
+        """
+        Run every stage of a job, or reuse its verified earlier completion.
+
+        Parameters
+        ----------
+        job : dict[str, Any]
+            Manifest job.
+        """
         self.current_job = job
-        verify_sources(ROOT / job["sources"], job["sources_sha256"])
-        output = ROOT / job["output_dir"]
+        common.verify_sources(common.ROOT / job["sources"], job["sources_sha256"])
+        output = common.ROOT / job["output_dir"]
         output.mkdir(parents=True, exist_ok=True)
-        complete = output / "priority_queue_completion.json"
-        if complete.exists():
-            old = json.loads(complete.read_text())
-            if old["queue_manifest_sha256"] != self.fingerprint:
-                raise RuntimeError("Completed job belongs to a different frozen queue")
-            for name, expected in old["artifacts"].items():
-                if sha256(ROOT / name) != expected:
-                    raise RuntimeError(f"Completed queue artifact changed: {name}")
+        marker = output / COMPLETION_MARKER
+        if marker.exists():
+            self.verify_completion(marker)
             self.job_status(job, "complete", returncode=0, reused=True)
             return
         for stage in job["stages"]:
-            verify_sources(ROOT / job["sources"], job["sources_sha256"])
-            with (output / "priority_queue.log").open("a", buffering=1) as log:
-                log.write(f"\n{datetime.now(timezone.utc).isoformat()} {stage['name']}\n")
-                self.child = subprocess.Popen(stage["command"], cwd=ROOT,
-                                              stdout=log, stderr=subprocess.STDOUT)
-                self.job_status(job, "profiling" if stage["name"] == "profile" else "running",
-                                stage=stage["name"], child_pid=self.child.pid,
-                                command=stage["command"],
-                                mimic_orchestrator_paused=self.paused_legacy)
-                code = self.child.wait()
-                self.child = None
-            if code != 0:
-                raise RuntimeError(f"{job['name']} stage {stage['name']} exited {code}")
-        artifacts = {name: sha256(ROOT / name) for name in job["required_artifacts"]}
-        atomic_json(complete, {"queue_manifest_sha256": self.fingerprint, "artifacts": artifacts})
+            common.verify_sources(common.ROOT / job["sources"], job["sources_sha256"])
+            self.run_stage(job, stage, output)
+        artifacts = {name: sha256_file(common.ROOT / name) for name in job["required_artifacts"]}
+        write_json_atomic(marker, {"queue_manifest_sha256": self.fingerprint, "artifacts": artifacts})
         self.job_status(job, "complete", returncode=0)
 
-    def cleanup(self):
-        if self.child is not None and self.child.poll() is None:
-            self.child.terminate()
-            try:
-                self.child.wait(timeout=30)
-            except subprocess.TimeoutExpired:
-                self.child.kill()
-                self.child.wait()
-        legacy = self.manifest.get("legacy")
-        if self.paused_legacy and identity(legacy["pid"]) == legacy["identity"]:
-            os.kill(legacy["pid"], signal.SIGCONT)
-            print(f"Resumed MIMIC orchestrator {legacy['pid']}", flush=True)
+    def cleanup(self) -> None:
+        """Stop a running stage and resume the legacy orchestrator if paused."""
+        common.stop_child_and_resume(self.child, self.legacy)
 
 
-def main():
+def check_superseded(manifest: dict[str, Any]) -> None:
+    """
+    Refuse to run while a superseded queue coordinator is still alive.
+
+    Parameters
+    ----------
+    manifest : dict[str, Any]
+        Parsed queue manifest.
+
+    Raises
+    ------
+    RuntimeError
+        If a pinned superseded coordinator still runs.
+    """
+    for old in manifest.get("superseded_coordinators", []):
+        if old["identity"] is not None and process_identity(old["pid"]) == old["identity"]:
+            raise RuntimeError(f"Superseded queue coordinator is still active: {old['pid']}")
+
+
+def run_queue(coordinator: Coordinator) -> None:
+    """
+    Run the whole queue, recording failures and always cleaning up.
+
+    Parameters
+    ----------
+    coordinator : Coordinator
+        Coordinator of a verified manifest.
+    """
+    try:
+        check_superseded(coordinator.manifest)
+        coordinator.wait_predecessor()
+        coordinator.coordinate_legacy()
+        for job in coordinator.manifest["jobs"]:
+            coordinator.execute_job(job)
+        coordinator.status("complete", returncode=0)
+    except (Exception, KeyboardInterrupt) as exc:
+        state = "interrupted" if isinstance(exc, KeyboardInterrupt) else "failed"
+        if coordinator.current_job:
+            coordinator.job_status(coordinator.current_job, state, reason=str(exc))
+        else:
+            coordinator.status(state, reason=str(exc))
+        raise
+    finally:
+        coordinator.cleanup()
+
+
+def main() -> None:
+    """Verify the frozen manifest and its sources, then run or only check it."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--manifest-sha256", required=True)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    if sha256(args.manifest) != args.manifest_sha256:
+    if sha256_file(args.manifest) != args.manifest_sha256:
         raise ValueError("Queue manifest changed")
     manifest = json.loads(args.manifest.read_text())
     validate_manifest(manifest)
-    if sha256(Path(__file__)) != manifest["coordinator_sha256"]:
+    if coordinator_sha256() != manifest["coordinator_sha256"]:
         raise ValueError("Queue coordinator source changed")
     for job in manifest["jobs"]:
-        verify_sources(ROOT / job["sources"], job["sources_sha256"])
+        common.verify_sources(common.ROOT / job["sources"], job["sources_sha256"])
     if args.check:
-        print(json.dumps({"status": "verified", "order": [j["name"] for j in manifest["jobs"]]}))
+        print(json.dumps({"status": "verified", "order": [job["name"] for job in manifest["jobs"]]}))
         return
     coordinator = Coordinator(manifest, args.manifest.parent, args.manifest_sha256)
-
-    def interrupted(signum, _frame):
-        raise KeyboardInterrupt(f"Received signal {signum}")
-
-    signal.signal(signal.SIGTERM, interrupted)
-    signal.signal(signal.SIGINT, interrupted)
+    interrupt_on_termination()
     with (args.manifest.parent / "runner.lock").open("a+") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        try:
-            for old in manifest.get("superseded_coordinators", []):
-                if old["identity"] is not None and identity(old["pid"]) == old["identity"]:
-                    raise RuntimeError(f"Superseded queue coordinator is still active: {old['pid']}")
-            coordinator.wait_predecessor()
-            coordinator.coordinate_legacy()
-            for job in manifest["jobs"]:
-                coordinator.execute_job(job)
-            coordinator.status("complete", returncode=0)
-        except (Exception, KeyboardInterrupt) as exc:
-            state = "interrupted" if isinstance(exc, KeyboardInterrupt) else "failed"
-            if coordinator.current_job:
-                coordinator.job_status(coordinator.current_job, state, reason=str(exc))
-            else:
-                coordinator.status(state, reason=str(exc))
-            raise
-        finally:
-            coordinator.cleanup()
+        run_queue(coordinator)
 
 
 if __name__ == "__main__":

@@ -4,115 +4,98 @@ Only the verified idle orchestrator is suspended; the downloader keeps running.
 The orchestrator is resumed on success, failure, SIGINT, or SIGTERM.
 """
 
+from __future__ import annotations
+
 import argparse
-import json
-import os
-from pathlib import Path
-import signal
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from functools import partial
+from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+from ecg_experiment.processes import interrupt_on_termination, process_identity, wait_while_alive
+from scripts.coordination import common
+
+EXPERIMENT_MODULES = ("scripts.experiments.run_cpc_experiment", "scripts.experiments.run_cpc_word2vec",
+                      "scripts.experiments.run_cpc_tokenization")
+CPC_CACHE_READY = Path("data/processed/cpc_pool_40k/complete.json")
+CACHE_TIMEOUT_SECONDS = 6 * 3600
 
 
-def identity(pid):
-    directory = Path(f"/proc/{pid}")
-    # starttime is field 22; the process name may contain spaces.
-    start = (directory / "stat").read_text().rsplit(")", 1)[1].split()[19]
-    command = (directory / "cmdline").read_bytes().split(b"\0")
-    return start, command
+def parse_args() -> argparse.Namespace:
+    """
+    Parse the command line.
 
-
-def main():
+    Returns
+    -------
+    argparse.Namespace
+        Validated arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--waiting-runner-pid", type=int, required=True)
-    parser.add_argument("--output-dir", type=Path, default=ROOT / "outputs/experiment004_cpc_40k")
+    parser.add_argument("--output-dir", type=Path, default=common.ROOT / "outputs/experiment004_cpc_40k")
     parser.add_argument("--wait-cache", action="store_true")
     parser.add_argument("--wait-pid", type=int,
                         help="Wait for an earlier coordinated GPU suite to exit before suspending the MIMIC runner")
-    parser.add_argument("--experiment-module", choices=("scripts.experiments.run_cpc_experiment", "scripts.experiments.run_cpc_word2vec",
-                                                      "scripts.experiments.run_cpc_tokenization"),
-                        default="scripts.experiments.run_cpc_experiment")
+    parser.add_argument("--experiment-module", choices=EXPERIMENT_MODULES, default=EXPERIMENT_MODULES[0])
     parser.add_argument("--ssl-epochs", type=int, default=20)
     args = parser.parse_args()
     if args.ssl_epochs < 1:
         parser.error("ssl-epochs must be positive")
+    return args
+
+
+def wait_for_cache() -> None:
+    """
+    Wait for the audited CPC cache to be marked complete.
+
+    Raises
+    ------
+    RuntimeError
+        If the cache is not ready within ``CACHE_TIMEOUT_SECONDS``.
+    """
+    deadline = time.monotonic() + CACHE_TIMEOUT_SECONDS
+    while not (common.ROOT / CPC_CACHE_READY).exists():
+        if time.monotonic() > deadline:
+            raise RuntimeError("Timed out after six hours waiting for audited CPC cache")
+        print("Waiting for audited CPC cache; MIMIC download/runner unchanged", flush=True)
+        time.sleep(common.POLL_SECONDS)
+
+
+def main() -> None:
+    """Wait for inputs, pause the idle MIMIC runner, then profile and run the suite."""
+    args = parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     if args.wait_pid:
-        try:
-            predecessor = identity(args.wait_pid)
-        except FileNotFoundError:
-            predecessor = None
-        while predecessor is not None:
-            try:
-                current = identity(args.wait_pid)
-                state = Path(f"/proc/{args.wait_pid}/stat").read_text().rsplit(")", 1)[1].split()[0]
-                if current != predecessor or state == "Z":
-                    break
-            except FileNotFoundError:
-                break
-            print(f"Waiting for earlier ECG suite PID {args.wait_pid}", flush=True)
-            time.sleep(30)
+        wait_while_alive(args.wait_pid, process_identity(args.wait_pid),
+                         lambda: print(f"Waiting for earlier ECG suite PID {args.wait_pid}", flush=True),
+                         common.POLL_SECONDS)
     if args.wait_cache:
-        deadline = time.monotonic() + 6 * 3600
-        ready = ROOT / "data/processed/cpc_pool_40k/complete.json"
-        while not ready.exists():
-            if time.monotonic() > deadline:
-                raise RuntimeError("Timed out after six hours waiting for audited CPC cache")
-            print("Waiting for audited CPC cache; MIMIC download/runner unchanged", flush=True)
-            time.sleep(30)
-    pid = args.waiting_runner_pid
-    original = identity(pid)
-    if b"scripts.experiments.run_mimic_scale" not in original[1]:
-        raise RuntimeError("PID is not the expected MIMIC experiment orchestrator")
-    state = json.loads((ROOT / "outputs/experiment003_mimic/status.json").read_text())
-    if state["stages"]["mimic_preparation"]["state"] != "waiting":
-        raise RuntimeError("The MIMIC orchestrator is no longer waiting for preparation")
-    if (ROOT / "data/processed/mimic_ssl_200k/metadata.json").exists():
-        raise RuntimeError("The MIMIC data is ready; explicitly coordinate its active training first")
-    children = Path(f"/proc/{pid}/task/{pid}/children").read_text().strip()
-    if children:
-        raise RuntimeError(f"Waiting orchestrator has active children: {children}")
+        wait_for_cache()
+    status = partial(common.write_status, args.output_dir / "coordination.json",
+                     waiting_runner_pid=args.waiting_runner_pid)
+    orchestrator = common.mimic_orchestrator(args.waiting_runner_pid)
+    profile = [sys.executable, "-u", "-m", args.experiment_module,
+               "--stage", "profile", "--variant", "all", "--device", "cuda", "--threads", "1",
+               "--ssl-epochs", str(args.ssl_epochs)]
+    command = [sys.executable, "-u", "-m", args.experiment_module,
+               "--stage", "all", "--variant", "all", "--labels", "all",
+               "--device", "cuda", "--threads", "1", "--ssl-epochs", str(args.ssl_epochs),
+               "--output-dir", str(args.output_dir)]
     child = None
-    paused = False
-
-    def status(stage, **details):
-        value = {"state": stage, "updated_at": datetime.now(timezone.utc).isoformat(),
-                 "wrapper_pid": os.getpid(), "waiting_runner_pid": pid, **details}
-        path = args.output_dir / "coordination.json"
-        temporary = path.with_suffix(".tmp")
-        temporary.write_text(json.dumps(value, indent=2) + "\n")
-        temporary.replace(path)
-        print(json.dumps(value), flush=True)
-
-    def interrupted(signum, _frame):
-        raise KeyboardInterrupt(f"Received signal {signum}")
-
-    signal.signal(signal.SIGTERM, interrupted)
-    signal.signal(signal.SIGINT, interrupted)
+    interrupt_on_termination()
     try:
-        os.kill(pid, signal.SIGSTOP)
-        paused = True
-        # Check again after stopping to close the ready-data race.
-        if Path(f"/proc/{pid}/task/{pid}/children").read_text().strip():
-            raise RuntimeError("Orchestrator started a child during coordination")
-        profile = [sys.executable, "-u", "-m", args.experiment_module,
-                   "--stage", "profile", "--variant", "all", "--device", "cuda", "--threads", "1",
-                   "--ssl-epochs", str(args.ssl_epochs)]
+        if not orchestrator.pause():
+            raise RuntimeError("The MIMIC orchestrator is not idle waiting for its data; "
+                               "explicitly coordinate its active work first")
         with (args.output_dir / "runtime_profile.log").open("a") as log:
-            child = subprocess.Popen(profile, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
+            child = subprocess.Popen(profile, cwd=common.ROOT, stdout=log, stderr=subprocess.STDOUT)
             status("profiling", child_pid=child.pid, command=profile)
             code = child.wait()
-            if code:
-                status("failed", returncode=code, failed_stage="profile")
-                raise SystemExit(code)
-        command = [sys.executable, "-u", "-m", args.experiment_module,
-                   "--stage", "all", "--variant", "all", "--labels", "all",
-                   "--device", "cuda", "--threads", "1", "--ssl-epochs", str(args.ssl_epochs),
-                   "--output-dir", str(args.output_dir)]
-        child = subprocess.Popen(command, cwd=ROOT)
+        if code:
+            status("failed", returncode=code, failed_stage="profile")
+            raise SystemExit(code)
+        child = subprocess.Popen(command, cwd=common.ROOT)
         status("running", child_pid=child.pid, command=command,
                note="Only waiting MIMIC orchestrator suspended; downloader continues")
         code = child.wait()
@@ -121,22 +104,12 @@ def main():
             raise SystemExit(code)
     except KeyboardInterrupt as exc:
         status("interrupted", reason=str(exc))
-        raise SystemExit(130)
+        raise SystemExit(130) from exc
+    except Exception as exc:
+        status("failed", reason=str(exc))
+        raise
     finally:
-        if child is not None and child.poll() is None:
-            child.terminate()
-            try:
-                child.wait(timeout=30)
-            except subprocess.TimeoutExpired:
-                child.kill()
-                child.wait()
-        if paused:
-            try:
-                if identity(pid) == original:
-                    os.kill(pid, signal.SIGCONT)
-                    print(f"Resumed MIMIC orchestrator {pid}", flush=True)
-            except FileNotFoundError:
-                print("MIMIC orchestrator exited before resume", flush=True)
+        common.stop_child_and_resume(child, orchestrator)
 
 
 if __name__ == "__main__":

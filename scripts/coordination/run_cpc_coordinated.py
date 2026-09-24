@@ -36,7 +36,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, default=common.ROOT / "outputs/experiment004_cpc_40k")
     parser.add_argument("--wait-cache", action="store_true")
     parser.add_argument("--wait-pid", type=int,
-                        help="Wait for an earlier coordinated GPU suite to exit before suspending the MIMIC runner")
+                        help=("Wait for an earlier coordinated GPU suite to exit "
+                              "before suspending the MIMIC runner"))
     parser.add_argument("--experiment-module", choices=EXPERIMENT_MODULES, default=EXPERIMENT_MODULES[0])
     parser.add_argument("--ssl-epochs", type=int, default=20)
     args = parser.parse_args()

@@ -44,7 +44,7 @@ def fixture_job(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[dict[s
     return job, runner
 
 
-def test_source_mutation_fails_before_process_launch(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_source_mutation_fails_before_process_launch(tmp_path, monkeypatch):
     job, runner = fixture_job(tmp_path, monkeypatch)
     (tmp_path / "source.py").write_text("changed\n")
     monkeypatch.setattr(queue.subprocess, "Popen", lambda *a, **k: pytest.fail("launched modified code"))
@@ -52,7 +52,7 @@ def test_source_mutation_fails_before_process_launch(tmp_path: Path, monkeypatch
         runner.execute_job(job)
 
 
-def test_rewriting_source_hash_map_cannot_redefine_frozen_code(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_rewriting_source_hash_map_cannot_redefine_frozen_code(tmp_path, monkeypatch):
     job, runner = fixture_job(tmp_path, monkeypatch)
     (tmp_path / "source.py").write_text("changed\n")
     (tmp_path / "sources.json").write_text(json.dumps({"source.py": sha256_file(tmp_path / "source.py")}))
@@ -61,7 +61,7 @@ def test_rewriting_source_hash_map_cannot_redefine_frozen_code(tmp_path: Path, m
         runner.execute_job(job)
 
 
-def test_failed_stage_cannot_start_next_stage(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_failed_stage_cannot_start_next_stage(tmp_path, monkeypatch):
     job, runner = fixture_job(tmp_path, monkeypatch)
     calls = []
 
@@ -81,7 +81,7 @@ def test_failed_stage_cannot_start_next_stage(tmp_path: Path, monkeypatch: pytes
     assert not (tmp_path / "out/priority_queue_completion.json").exists()
 
 
-def test_coordinator_fingerprint_covers_shared_helpers(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_coordinator_fingerprint_covers_shared_helpers(tmp_path, monkeypatch):
     before = queue.coordinator_sha256()
     copy = tmp_path / "common.py"
     copy.write_text(Path(common.__file__).read_text() + "\n")
@@ -89,7 +89,7 @@ def test_coordinator_fingerprint_covers_shared_helpers(tmp_path: Path, monkeypat
     assert queue.coordinator_sha256() != before
 
 
-def test_complete_reuse_checks_artifacts(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_complete_reuse_checks_artifacts(tmp_path, monkeypatch):
     job, runner = fixture_job(tmp_path, monkeypatch)
     calls = []
 
@@ -113,7 +113,7 @@ def test_complete_reuse_checks_artifacts(tmp_path: Path, monkeypatch: pytest.Mon
         runner.execute_job(job)
 
 
-def test_failed_predecessor_stops_queue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_failed_predecessor_stops_queue(tmp_path, monkeypatch):
     _, runner = fixture_job(tmp_path, monkeypatch)
     (tmp_path / "previous.json").write_text('{"state":"failed","returncode":1}')
     runner.manifest["predecessor"] = {"pid": 123, "identity": {"start": "old", "command": []},
@@ -123,7 +123,7 @@ def test_failed_predecessor_stops_queue(tmp_path: Path, monkeypatch: pytest.Monk
         runner.wait_predecessor()
 
 
-def test_cleanup_resumes_only_the_paused_legacy_runner(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_cleanup_resumes_only_the_paused_legacy_runner(tmp_path, monkeypatch):
     _, runner = fixture_job(tmp_path, monkeypatch)
     legacy = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
     try:
@@ -140,7 +140,7 @@ def test_cleanup_resumes_only_the_paused_legacy_runner(tmp_path: Path, monkeypat
         processes.terminate_child(legacy, timeout=5)
 
 
-def test_manifest_requires_unique_explicit_jobs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_manifest_requires_unique_explicit_jobs(tmp_path, monkeypatch):
     job, runner = fixture_job(tmp_path, monkeypatch)
     queue.validate_manifest(runner.manifest)
     with pytest.raises(ValueError, match="uniquely"):

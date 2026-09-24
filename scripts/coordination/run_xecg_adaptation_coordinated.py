@@ -44,7 +44,8 @@ def check_xecg_complete() -> None:
     """
     earlier = json.loads((common.ROOT / XECG_COORDINATION).read_text())
     if earlier["state"] != "complete" or earlier.get("returncode") != 0:
-        raise RuntimeError("Experiment 007 did not complete successfully; resolve its failure before adaptation")
+        raise RuntimeError("Experiment 007 did not complete successfully; "
+                           "resolve its failure before adaptation")
 
 
 def main() -> None:

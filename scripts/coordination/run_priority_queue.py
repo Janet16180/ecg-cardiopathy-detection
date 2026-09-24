@@ -18,8 +18,12 @@ from typing import Any
 import ecg_experiment.files
 import ecg_experiment.processes
 from ecg_experiment.files import sha256_file, sha256_json, write_json_atomic
-from ecg_experiment.processes import (IdleOrchestrator, interrupt_on_termination, process_identity,
-                                      wait_while_alive)
+from ecg_experiment.processes import (
+    IdleOrchestrator,
+    interrupt_on_termination,
+    process_identity,
+    wait_while_alive,
+)
 from scripts.coordination import common
 
 COMPLETION_MARKER = "priority_queue_completion.json"

@@ -624,7 +624,8 @@ def main() -> None:
     identity = launch["identity"]
     with (new_path.parent / "handoff.lock").open("a+") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        if (new_path.parent / "handoff_launch_intent.json").exists() or (new_path.parent / "launch.json").exists():
+        launch_files = ("handoff_launch_intent.json", "launch.json")
+        if any((new_path.parent / name).exists() for name in launch_files):
             raise RuntimeError("Successor handoff was already launched or attempted")
         action = wait_handoff_gate(old, old_path, args.old_manifest_sha256, args.old_pid, identity,
                                    args.poll_seconds)

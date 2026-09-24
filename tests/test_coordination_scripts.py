@@ -91,7 +91,8 @@ def test_cpc_exception_records_failure_and_resumes(tmp_path: Path, monkeypatch: 
     with pytest.raises(OSError, match="cannot start"):
         run_cpc(monkeypatch, tmp_path / "out", fake_mimic.pid)
     record = json.loads((tmp_path / "out/coordination.json").read_text())
-    assert record["state"] == "failed" and record["reason"] == "cannot start"
+    assert record["state"] == "failed"
+    assert record["reason"] == "cannot start"
     assert not processes.is_stopped(fake_mimic.pid)
 
 

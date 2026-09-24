@@ -67,7 +67,7 @@ def complete_015(tmp_path: Path) -> None:
                        "artifacts": {"015/result.json": sha256_file(tmp_path / "015/result.json")}})
 
 
-def test_never_signals_015_when_015_failed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_never_signals_015_when_015_failed(tmp_path, monkeypatch):
     old, old_path = setup_old(tmp_path, monkeypatch, state="failed")
     monkeypatch.setattr(handoff, "process_identity", lambda pid: IDENTITY)
     monkeypatch.setattr(handoff.os, "kill", lambda *args: pytest.fail("signaled 015"))
@@ -75,7 +75,7 @@ def test_never_signals_015_when_015_failed(tmp_path: Path, monkeypatch: pytest.M
         handoff.wait_handoff_gate(old, old_path, OLD_SHA, 41, IDENTITY, 0.01)
 
 
-def test_017_status_cannot_bypass_015_artifact_gate(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_017_status_cannot_bypass_015_artifact_gate(tmp_path, monkeypatch):
     old, old_path = setup_old(tmp_path, monkeypatch, experiment="017_morphology_templates")
     complete_015(tmp_path)
     (tmp_path / "015/result.json").write_text("changed")
@@ -85,10 +85,11 @@ def test_017_status_cannot_bypass_015_artifact_gate(tmp_path: Path, monkeypatch:
         handoff.wait_handoff_gate(old, old_path, OLD_SHA, 41, IDENTITY, 0.01)
 
 
-def test_identity_change_refuses_signal(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_identity_change_refuses_signal(tmp_path, monkeypatch):
     old, old_path = setup_old(tmp_path, monkeypatch, experiment="017_morphology_templates")
     complete_015(tmp_path)
-    monkeypatch.setattr(handoff, "process_identity", lambda pid: {"start": "reused", "command": IDENTITY["command"]})
+    reused = {"start": "reused", "command": IDENTITY["command"]}
+    monkeypatch.setattr(handoff, "process_identity", lambda pid: reused)
     monkeypatch.setattr(handoff.os, "kill", lambda *args: pytest.fail("signaled reused PID"))
     with pytest.raises(RuntimeError, match="identity changed"):
         handoff.wait_handoff_gate(old, old_path, OLD_SHA, 41, IDENTITY, 0.01)
@@ -96,14 +97,14 @@ def test_identity_change_refuses_signal(tmp_path: Path, monkeypatch: pytest.Monk
         handoff.stop_old(41, IDENTITY, 1, 0.01)
 
 
-def test_verified_015_allows_017_stop_only(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_verified_015_allows_017_stop_only(tmp_path, monkeypatch):
     old, old_path = setup_old(tmp_path, monkeypatch, experiment="017_morphology_templates")
     complete_015(tmp_path)
     monkeypatch.setattr(handoff, "process_identity", lambda pid: IDENTITY)
     assert handoff.wait_handoff_gate(old, old_path, OLD_SHA, 41, IDENTITY, 0.01) == "stop_old_017"
 
 
-def test_old_exited_after_017_completion_refuses_duplicate(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_old_exited_after_017_completion_refuses_duplicate(tmp_path, monkeypatch):
     old, old_path = setup_old(tmp_path, monkeypatch, state="complete",
                               experiment="017_morphology_templates")
     complete_015(tmp_path)
@@ -115,7 +116,7 @@ def test_old_exited_after_017_completion_refuses_duplicate(tmp_path: Path, monke
         handoff.wait_handoff_gate(old, old_path, OLD_SHA, 41, IDENTITY, 0.01)
 
 
-def test_launch_intent_prevents_duplicate_after_launch(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_launch_intent_prevents_duplicate_after_launch(tmp_path, monkeypatch):
     monkeypatch.setattr(common, "ROOT", tmp_path)
     new_path = tmp_path / "new/queue.json"
     new_path.parent.mkdir()
@@ -139,12 +140,15 @@ def test_launch_intent_prevents_duplicate_after_launch(tmp_path: Path, monkeypat
     assert json.loads((new_path.parent / "launch.json").read_text())["pid"] == 314
 
 
+EXP_015 = "015_cached_jepa_distillation"
+EXP_017 = "017_morphology_templates"
+
 @pytest.mark.parametrize(("status", "alive", "first", "second", "expected"), [
-    ({"experiment": "015_cached_jepa_distillation", "state": "running"}, True, False, False, "wait"),
-    ({"experiment": "017_morphology_templates", "state": "running"}, True, True, False, "stop_old_017"),
-    ({"experiment": "017_morphology_templates", "state": "failed"}, True, True, False, "wait"),
-    ({"experiment": "017_morphology_templates", "state": "failed"}, False, True, False, "old_exited"),
-    ({"experiment": "015_cached_jepa_distillation", "state": "running"}, False, True, False, "old_exited"),
+    ({"experiment": EXP_015, "state": "running"}, True, False, False, "wait"),
+    ({"experiment": EXP_017, "state": "running"}, True, True, False, "stop_old_017"),
+    ({"experiment": EXP_017, "state": "failed"}, True, True, False, "wait"),
+    ({"experiment": EXP_017, "state": "failed"}, False, True, False, "old_exited"),
+    ({"experiment": EXP_015, "state": "running"}, False, True, False, "old_exited"),
 ])
 def test_handoff_action_allowed_steps(status: dict[str, str], alive: bool, first: bool, second: bool,
                                       expected: str) -> None:
@@ -152,12 +156,12 @@ def test_handoff_action_allowed_steps(status: dict[str, str], alive: bool, first
 
 
 @pytest.mark.parametrize(("status", "alive", "first", "second", "message"), [
-    ({"experiment": "015_cached_jepa_distillation", "state": "interrupted"}, True, False, False, "015 failed"),
-    ({"experiment": "017_morphology_templates", "state": "running"}, True, False, False, "without verified"),
-    ({"experiment": "015_cached_jepa_distillation", "state": "running"}, False, False, False, "exited before"),
-    ({"experiment": "017_morphology_templates", "state": "running"}, True, True, True, "already completed"),
-    ({"experiment": "017_morphology_templates", "state": "complete"}, True, True, False, "already completed"),
-    ({"experiment": "015_cached_jepa_distillation", "state": "complete"}, True, True, False, "unexpected state"),
+    ({"experiment": EXP_015, "state": "interrupted"}, True, False, False, "015 failed"),
+    ({"experiment": EXP_017, "state": "running"}, True, False, False, "without verified"),
+    ({"experiment": EXP_015, "state": "running"}, False, False, False, "exited before"),
+    ({"experiment": EXP_017, "state": "running"}, True, True, True, "already completed"),
+    ({"experiment": EXP_017, "state": "complete"}, True, True, False, "already completed"),
+    ({"experiment": EXP_015, "state": "complete"}, True, True, False, "unexpected state"),
 ])
 def test_handoff_action_refusals(status: dict[str, str], alive: bool, first: bool, second: bool,
                                  message: str) -> None:

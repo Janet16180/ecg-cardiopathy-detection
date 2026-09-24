@@ -22,6 +22,8 @@ EXEC_SETTLE_SECONDS = 1.0
 
 
 class ProcessIdentity(TypedDict):
+    """PID-independent identity: kernel start time and command line."""
+
     start: str
     command: list[str]
 

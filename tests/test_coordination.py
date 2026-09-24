@@ -189,8 +189,7 @@ def test_cleanup_resumes_orchestrator_despite_signal(tmp_path: Path, monkeypatch
 def test_first_signal_interrupts_and_later_ones_are_ignored(restore_signals: None) -> None:
     processes.interrupt_on_termination()
     with pytest.raises(KeyboardInterrupt, match="Received signal"):
-        os.kill(os.getpid(), signal.SIGTERM)
-        time.sleep(1)
+        signal.raise_signal(signal.SIGTERM)
     os.kill(os.getpid(), signal.SIGINT)
     time.sleep(0.01)
     assert signal.getsignal(signal.SIGINT) is signal.SIG_IGN
@@ -210,4 +209,5 @@ def test_expect_module_rejects_unexpected_process() -> None:
 def test_write_status_records_wrapper_pid(tmp_path: Path) -> None:
     record = common.write_status(tmp_path / "coordination.json", "queued", reason="test")
     assert json.loads((tmp_path / "coordination.json").read_text()) == record
-    assert record["state"] == "queued" and record["wrapper_pid"] == os.getpid()
+    assert record["state"] == "queued"
+    assert record["wrapper_pid"] == os.getpid()

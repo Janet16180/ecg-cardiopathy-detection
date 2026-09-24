@@ -27,7 +27,7 @@ def test_subset_preserves_waveforms_rows_and_seeded_batches(synthetic_cpc_pool):
                       torch.Generator().manual_seed(42), "cpu")
     new_data = loader(cache, rows, mean, std, 3, True,
                       torch.Generator().manual_seed(42), "cpu")
-    for old_batch, new_batch in zip(old_data, new_data):
+    for old_batch, new_batch in zip(old_data, new_data, strict=True):
         torch.testing.assert_close(old_batch[0], new_batch[0], atol=0, rtol=0)
         assert old_batch[1].tolist() == new_batch[1].tolist()
         assert list(old_batch[2]) == list(new_batch[2])
@@ -49,3 +49,19 @@ def test_rejects_budget_duplicate_or_patient_mismatch(synthetic_cpc_pool, monkey
         bounded.BoundedWaveformCache(pool, [changed])
     with pytest.raises(ValueError, match="source"):
         bounded.BoundedWaveformCache(pool, [rows[0]], expected_source="mimic")
+
+
+def test_cgroup_limit_uses_tightest_finite_cap_up_to_root(tmp_path, monkeypatch):
+    monkeypatch.setattr(bounded, "CGROUP_ROOT", tmp_path)
+    leaf = tmp_path / "user.slice" / "job"
+    leaf.mkdir(parents=True)
+    (leaf / "memory.max").write_text("max\n")
+    (leaf / "memory.current").write_text("5\n")
+    (leaf.parent / "memory.max").write_text("1000\n")
+    (leaf.parent / "memory.current").write_text("400\n")
+    (tmp_path / "memory.max").write_text("5000\n")
+    (tmp_path / "memory.current").write_text("4700\n")
+    assert bounded._cgroup_limit("/user.slice/job", 10_000) == 300
+    assert bounded._cgroup_limit("/user.slice/job", 100) == 100
+    (tmp_path / "memory.current").write_text("6000\n")
+    assert bounded._cgroup_limit("/user.slice/job", 10_000) == 0

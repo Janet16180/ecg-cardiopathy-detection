@@ -1,9 +1,21 @@
 """Causality and contrastive invariants of the local CPC experiment."""
 
 import numpy as np
+import pytest
 import torch
+from torch.utils.data import DataLoader, TensorDataset
 
-from ecg_experiment.cpc import CPCEncoder, CPCPretrainer, cmsc_loss, temporal_candidate_mask
+from ecg_experiment.cpc import (
+    CPCEncoder,
+    CPCPretrainer,
+    cmsc_loss,
+    cpc_loss,
+    mean_pair_cosine,
+    prediction_heads,
+    split_halves,
+    temporal_candidate_mask,
+    token_variance,
+)
 from ecg_experiment.cpc_pool import Pool, PoolDataset, resume_or_new, save_epoch
 from ecg_experiment.reproducibility import seed_everything
 
@@ -47,7 +59,38 @@ def test_cpc_mask_uses_only_same_half_distant_negatives():
     assert mask[10, target]
     for offset in (-3, -2, -1, 1, 2, 3):
         assert not mask[10, target + offset]
-    assert mask[10, target - 4] and mask[10, target + 4]
+    assert mask[10, target - 4]
+    assert mask[10, target + 4]
+
+
+def test_split_halves_keeps_each_record_and_half_contiguous():
+    signal = torch.arange(2 * 12 * 2500, dtype=torch.float32).reshape(2, 12, 2500)
+    halves = split_halves(signal)
+    assert halves.shape == (4, 12, 1250)
+    torch.testing.assert_close(halves[1], signal[0, :, 1250:], atol=0, rtol=0)
+    torch.testing.assert_close(halves[2], signal[1, :, :1250], atol=0, rtol=0)
+
+
+def test_later_first_query_removes_early_query_gradients():
+    torch.manual_seed(0)
+    tokens = torch.randn(1, 2, 79, 256)
+    contexts = torch.randn(1, 2, 79, 256, requires_grad=True)
+    heads = prediction_heads()
+    default = cpc_loss(tokens, contexts, heads)
+    explicit = cpc_loss(tokens, contexts, heads, first_query=3)
+    torch.testing.assert_close(default, explicit, atol=0, rtol=0)
+    cpc_loss(tokens, contexts, heads, first_query=24).backward()
+    assert contexts.grad[:, :, :24].abs().sum() == 0
+    with pytest.raises(ValueError, match="too short"):
+        cpc_loss(tokens[:, :, :10], contexts[:, :, :10], heads, first_query=24)
+
+
+def test_collapse_diagnostics():
+    identical = torch.ones(3, 512)
+    assert mean_pair_cosine(identical) == pytest.approx(1.0)
+    assert mean_pair_cosine(identical[:1]) == 0.0
+    assert token_variance(torch.ones(2, 2, 79, 256)) == 0.0
+    assert token_variance(torch.randn(2, 2, 79, 256)) > 0
 
 
 def test_cmsc_ignores_same_patient_off_diagonal():
@@ -85,7 +128,8 @@ def test_pool_global_normalization_uses_only_training_rows(tmp_path):
     signals[2] = 1000
     np.save(directory / "signals.npy", signals)
     np.save(directory / "ecg_ids.npy", np.array(["1", "2", "3"]))
-    (directory / "rows.csv").write_text("ecg_id,patient_id,source,split\n1,a,ptbxl,train\n2,b,ptbxl,train\n3,c,ptbxl,test\n")
+    (directory / "rows.csv").write_text(
+        "ecg_id,patient_id,source,split\n1,a,ptbxl,train\n2,b,ptbxl,train\n3,c,ptbxl,test\n")
     (directory / "complete.json").write_text("{}")
     pool = Pool(directory)
     mean, std = pool.normalization(tmp_path / "out")
@@ -96,8 +140,6 @@ def test_pool_global_normalization_uses_only_training_rows(tmp_path):
 
 
 def test_epoch_checkpoint_restores_optimizer_dropout_and_shuffle(tmp_path):
-    from torch.utils.data import DataLoader, TensorDataset
-
     x = torch.arange(20, dtype=torch.float32).reshape(10, 2)
     dataset = TensorDataset(x)
 
@@ -130,8 +172,9 @@ def test_epoch_checkpoint_restores_optimizer_dropout_and_shuffle(tmp_path):
     rebuilt, rebuilt_optimizer, rebuilt_generator = create()
     start, history, _, _, _ = resume_or_new(tmp_path, "matching", rebuilt,
                                              rebuilt_optimizer, rebuilt_generator)
-    assert start == 1 and history == [{"epoch": 1}]
+    assert start == 1
+    assert history == [{"epoch": 1}]
     resumed_order.append(epoch(rebuilt, rebuilt_optimizer, rebuilt_generator))
     assert baseline_order == resumed_order
-    for expected, actual in zip(baseline.parameters(), rebuilt.parameters()):
+    for expected, actual in zip(baseline.parameters(), rebuilt.parameters(), strict=True):
         torch.testing.assert_close(actual, expected, atol=0, rtol=0)

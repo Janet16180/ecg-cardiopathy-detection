@@ -1,0 +1,58 @@
+# Independent ECG architectures from NLP, genomics and vision
+
+**Research date: 24 September 2026. Status: KDA/CKDA, the genomic hybrid and Mamba-3 are user-authorized and queued for implementation as Experiments 011–013.** See the [persistent queue](experiment-queue.md). They have not been implemented or attached to the automatic GPU scheduler yet. These designs address the user's request for a new model family transferred to ECG. They do not modify xECG. The CPC mismatch and cross-lead work remains separate.
+
+## Two architectural hypotheses worth testing
+
+The strongest focused next experiment is **a small Kimi Delta Attention model versus Complex KDA**, with the current GRU as a practical reference. It tests whether a different recurrent memory update helps a repeating but variable waveform. A second, more ambitious direction is **a compact StripedHyena-style mixture of local and long temporal convolutions**, inspired by genomic sequence modeling. Both would learn directly from twelve-lead waveforms; neither requires assigning ECG samples text or DNA vocabulary IDs.
+
+These are promising mechanisms, with evidence in their source domains, and **no measured improvement on our ECG task**. Recent publication, excellent language/genomics scores, or a familiar biological analogy is not evidence that a model will outperform the compact CPC baseline. No claim is made that these families have never appeared in signal research.
+
+| Priority | Borrowed mechanism | ECG hypothesis | Primary control |
+| --- | --- | --- | --- |
+| 1 | KDA memory with CKDA's extended transition ranges | Signed/rotational state dynamics may preserve useful changing waveform phase | Ordinary KDA with otherwise identical architecture |
+| 2 | StripedHyena-style operators at several temporal scales | Local morphology and relationships across beats may benefit from explicit scale diversity | Same compact hybrid with long operators replaced by local operators |
+
+## 1. NLP memory: KDA versus Complex KDA
+
+Kimi Linear uses Kimi Delta Attention (KDA), a refinement of the gated delta memory update; its large released language model is not the proposed ECG model. [Kimi Linear authors' repository](https://github.com/MoonshotAI/Kimi-Linear).
+
+**Recent evidence.** Complex KDA was submitted on **21 September 2026**. It extends channel-wise transition gates to `[-1,1]` and the delta coefficient to `[0,2]`, enabling rotations while retaining the analyzed diagonal-plus-rank-one, non-expansive transitions. The paper reports improved extrapolation among its tested KDA range variants on synthetic state tracking and periodic audio continuation; its language results are similar to ordinary KDA. [CKDA paper](https://arxiv.org/abs/2609.24797).
+
+The authors' code makes a useful limitation explicit: the audio experiment studies circular shifts of a single fixed synthetic groove, and **GRU is the strongest model on that particular task**. This supports a mechanistic experiment on phase preservation, not a claim that CKDA is already better than GRU for physiological signals. The released CPU reference and tests are useful starting points; neither proves V100 training compatibility. [Official implementation and audio-task description](https://github.com/OpenEuroLLM/ComplexKDA).
+
+**Proposed compact model.** Retain the existing causal twelve-lead CNN waveform stem, its 256-wide output, independent five-second halves, 79 token positions, and mean/max downstream readout. Replace the GRU context mixer with a small stack of KDA blocks; instantiate CKDA using the same blocks and only the documented transition-range changes. Use the same number of blocks, head dimensions, projections, normalization, feedforward paths and dropout in KDA and CKDA. Start with width 256 and two blocks, then count actual parameters and profile; the exact compact configuration is not yet frozen.
+
+Train all models from scratch on the fixed **56,875-record** SSL pool. Copy the same random stem and prediction-head initial states across arms; context modules receive their documented initializers. Importing a trained GRU checkpoint into only one arm would confound architecture with pretraining. There is no assumption that language-model embeddings or text-pretrained weights have ECG semantics.
+
+**Minimal fair experiment.** Three arms: original GRU-CPC, KDA-CPC, CKDA-CPC. KDA and CKDA must be exactly parameter matched; compare their recurrence ranges as the primary effect. Keep the GRU comparison transparent about parameter count. If a parameter-matched GRU is desired, set its width/depth and any common output projection before observing outcomes; report the original GRU too rather than quietly replacing it.
+
+Keep the existing causal CPC objective, horizons 4/8/12, raw-support exclusions, fixed training-only normalization, downstream pooling, label subsets and patient splits. A sensible initial budget is the original **20 SSL epochs**, same batch/examples and optimizer family, followed by the same 10% and full-label transfers. This is a proposed budget, subject to a real-device profile before a protocol is frozen. Report updates, examples, wall time and memory: equal epochs do not imply equal computation. If optimization needs tuning, grant KDA and CKDA the same small development-only grid and report every tried setting.
+
+A later mechanistic ablation can separate the two range extensions with four settings: original ranges, signed channel gates only, expanded delta coefficient only, both. Do not attribute a two-change result uniquely to signed gates without this ablation. A fresh bidirectional masked-prediction study is also possible, but it needs matching bidirectional controls and an input-level mask before any clean waveform information reaches the encoder. Comparing bidirectional masked CKDA directly with causal CPC would mix architecture, available information and training objective.
+
+**What could fail.** ECG timing changes, ectopy and noise are not a stationary oscillator. Persistent phase tracking could emphasize common repetitive patterns while suppressing isolated evidence. A short 79-token context may not exercise the long-sequence strengths of these language models. A theoretically non-expansive state transition does not guarantee stable end-to-end gradients or accurate classification. Optimized recurrent kernels may require hardware features unavailable on the V100; a small correct PyTorch reference could run slower than GRU. Verify recurrence value/gradient agreement and causality before any timing claim.
+
+**Other recent NLP results.** Gated DeltaNet-2 separates erase and write control; Mamba-3 uses a richer discretization, complex-valued state evolution and a MIMO formulation. Their published language comparisons do not establish their ranking at one or two million parameters on ECG. Mamba-3 now has an authorized [Experiment 013 implementation plan](experiment-013-mamba3-plan.md); Gated DeltaNet-2 remains a possible follow-up. [Gated DeltaNet-2, May 2026](https://arxiv.org/abs/2605.22791), [Mamba-3, March 2026](https://arxiv.org/abs/2603.15569). RWKV-7 is another generalized-delta recurrence from language modeling, with the same need for compact waveform adaptation and a matched control. [RWKV-7](https://arxiv.org/abs/2503.14456).
+
+## 2. Genomics: a compact mixture of temporal scales
+
+**Source mechanism.** Evo 2's StripedHyena 2 architecture combines short explicit, medium regularized and long implicit convolution operators with attention. The Nature paper was published on **4 March 2026**. Its genome results motivate testing a mixture of scales, while its billion-parameter size, million-position context and training corpus are far from this ECG setting. [Evo 2 paper](https://www.nature.com/articles/s41586-026-10176-5), [authors' repository](https://github.com/ArcInstitute/evo2).
+
+**Proposed transfer.** Build a new small waveform model with a twelve-lead CNN stem and a handful of width-256 gated temporal blocks. Preserve the input-dependent gating and explicit/implicit temporal-filter idea from the source implementation. Use local operators for short morphology and longer causal operators for relationships across the five-second half. Include a single causal attention block only if it is shared by the proposed arm and its control. Do not call a generic dilated CNN an Evo 2 reproduction.
+
+A clean initial pair uses the same stem, depth, width, gates, attention placement, readout and causal CPC objective. The proposed arm mixes short and long operators. The control restricts all temporal operators to local support, retaining comparable trainable parameter counts and the same FFT/direct convolution implementation where possible. An alternative strict architectural comparison is against a matched Transformer trained with the same stem and loss, but that tests the complete hybrid package rather than the specific contribution of long filters.
+
+All weights are learned on ECG; no released DNA vocabulary, token likelihood or genomic checkpoint is used as an ECG diagnostic score. Use the same fixed pool, 20-epoch candidate budget and downstream manifests as the NLP experiment if this family is later selected. No special genomic preprocessing or expansion to the ongoing 200k acquisition belongs in the initial comparison.
+
+**Why it is second.** Scaling long convolutions from genomic lengths down to 79 tokens may remove their main advantage. Filter construction, padding, FFT circular-wrap prevention and local/long operator balance create more implementation work than the KDA range comparison. The small model is an adaptation inspired by the architecture, not an exact StripedHyena 2 replication. Size and runtime are estimates until implemented and profiled; importing the large released Evo model is not a V100 plan.
+
+## Other domains and evidence standards
+
+The independent [vision shortlist](vision-to-ecg-architecture-candidates.md) covers frozen TiViT/OpenCLIP features, a compact one-dimensional ConvNeXt V2, and transfer of DINOv3 transformer blocks through a new waveform stem. They test image-weight transfer or vision-derived architecture, unlike 008's borrowing of a vision SSL loss while retaining xECG.
+
+Borrowing HuBERT's general lesson means designing waveform inputs and a learning problem that suit the signal, then measuring transfer. A masked discrete-target method would require training-only target construction and appropriate controls; simply attaching text IDs to amplitude bins is not evidence that language pretraining transfers. Experiment 006 already studies learned future target codes, so another code-prediction objective alone would not satisfy the request for a new architecture.
+
+For any chosen candidate, freeze the architecture, data/label manifests, initialization policy, source revisions, optimizer/search budget and primary comparison before test access. Retain calibration-only threshold selection and report actual test sensitivity alongside specificity, AUROC, AP and calibration. Add paired patient-bootstrap differences and, for a promising result, matched additional seeds. Inspect noise sensitivity and diagnostic subgroups where labels allow. The current test set has already been examined; published source-domain state of the art and an isolated point-estimate gain do not establish an ECG state-of-the-art or clinical result.
+
+**Current decision:** implement queued Experiment 011 (KDA versus CKDA with GRU reference), then 012 (the genomic hybrid), then 013 (Mamba-3). These are authorized backlog entries with no implementation, runtime measurements or performance results yet. The [JSON catalog](experiment-queue.json) records their exact next actions and dependencies.

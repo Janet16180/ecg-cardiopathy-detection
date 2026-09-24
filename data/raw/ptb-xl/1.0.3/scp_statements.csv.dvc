@@ -1,0 +1,5 @@
+outs:
+- md5: 733e3dbf3f6bd96c22fd651da003a9ec
+  size: 9720
+  hash: md5
+  path: scp_statements.csv

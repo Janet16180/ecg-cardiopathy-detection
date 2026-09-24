@@ -1,0 +1,5 @@
+outs:
+- md5: 7ebd8e4708ec9cff821d86bf289da805
+  size: 17305274
+  hash: md5
+  path: SHA256SUMS.txt

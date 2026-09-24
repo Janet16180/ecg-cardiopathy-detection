@@ -1,0 +1,86 @@
+{
+  "ptb_metadata_files": 2,
+  "ptb_split_audit": {
+    "heldout_partition": {
+      "patient_counts": {
+        "calibration": 504,
+        "development": 1173,
+        "test": 1653
+      },
+      "record_counts": {
+        "calibration": 564,
+        "development": 1306,
+        "test": 1896
+      }
+    },
+    "patient_counts": {
+      "full_train": 15023,
+      "test": 1653,
+      "validation": 1677
+    },
+    "patient_leakage": 0,
+    "record_counts": {
+      "full_labeled": 15360,
+      "full_train": 17418,
+      "limited_labeled": 1518,
+      "test": 1896,
+      "validation": 1870
+    },
+    "state": "verified"
+  },
+  "schema_version": 1,
+  "sources": [
+    {
+      "files": 43598,
+      "id": "ptbxl_500hz_v1",
+      "official_manifest_sha256": "b7224b92b341511ec3ceb13dc6652079b2c36a06504bcb49506f157f51dc695d",
+      "records": 21799,
+      "source_path": "data/raw/ptb-xl/1.0.3/records500",
+      "state": "verified"
+    },
+    {
+      "files": 43598,
+      "id": "ptbxl_100hz_v1",
+      "official_manifest_sha256": "b7224b92b341511ec3ceb13dc6652079b2c36a06504bcb49506f157f51dc695d",
+      "records": 21799,
+      "source_path": "data/raw/ptb-xl/1.0.3/records100",
+      "state": "verified"
+    },
+    {
+      "files": 6906,
+      "id": "cpsc_2018_extra_raw_v1",
+      "official_manifest_sha256": "90cfba453b46deac18340eb359332aabbc7300d03f4ea421c225d16787121864",
+      "records": 3453,
+      "source_path": "data/raw/challenge-2020/1.0.2/training/cpsc_2018_extra",
+      "state": "verified",
+      "waveform_files": 6906
+    },
+    {
+      "files": 13754,
+      "id": "cpsc_2018_raw_v1",
+      "official_manifest_sha256": "90cfba453b46deac18340eb359332aabbc7300d03f4ea421c225d16787121864",
+      "records": 6877,
+      "source_path": "data/raw/challenge-2020/1.0.2/training/cpsc_2018",
+      "state": "verified",
+      "waveform_files": 13754
+    },
+    {
+      "files": 20688,
+      "id": "georgia_raw_v1",
+      "official_manifest_sha256": "90cfba453b46deac18340eb359332aabbc7300d03f4ea421c225d16787121864",
+      "records": 10344,
+      "source_path": "data/raw/challenge-2020/1.0.2/training/georgia",
+      "state": "verified",
+      "waveform_files": 20688
+    },
+    {
+      "files": 20494,
+      "id": "chapman_shaoxing_raw_v1",
+      "official_manifest_sha256": "f29c2609343c38734f3a3d62be4a9052ca56a9e560e7ad2efc2118563fca2473",
+      "records": 10247,
+      "source_path": "data/raw/challenge-2021/1.0.3/training/chapman_shaoxing",
+      "state": "verified",
+      "waveform_files": 20494
+    }
+  ]
+}

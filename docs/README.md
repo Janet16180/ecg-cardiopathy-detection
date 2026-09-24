@@ -1,0 +1,38 @@
+# Documentation index
+
+## Working on the project
+
+- [Contributor workflow](../CONTRIBUTING.md): setup, reviews, tests, and experiment discipline.
+- [Repository organization](repository-organization.md): where new files belong.
+- [Environment setup](../environments/README.md): uv and pretrained dependencies.
+- [Data versioning](data-versioning.md): DVC, completed datasets, and validation.
+- [Experiment tracking](experiment-tracking.md): MLflow and historical results.
+- [Refactor record](repository-refactor.md): preserved evidence and validation.
+
+## Data
+
+- [Sources and acquisition](data-sources.md)
+- [Quality assessment](data-quality-assessment.md)
+- [Data processing review](data-processing-astra-review.md)
+- [Training dataset v1](training-dataset-v1.md)
+- [Processed ECG exploration](processed-ecg-eda.md)
+- [Challenge postprocessing](challenge-postprocessing.md)
+- [Public-data strategy](public-data-strategy.md)
+
+## Experiments and findings
+
+Start with the [experiment queue](experiment-queue.md) and
+[JSON catalog](experiment-queue.json). They link every active, deferred, completed,
+and proposed experiment to its protocol and evidence. Training remains paused.
+
+- [Model findings](model-findings-report.md)
+- [First experiment protocol](experiment-001.md) and [results](experiment001-results.md)
+- [Pretrained encoders](pretrained-notes.md), [JEPA](jepa-notes.md), and [released CPC](released-ecg-cpc.md)
+- [Important papers](important-papers.md)
+- [Cross-domain architecture candidates](cross-domain-architecture-candidates.md)
+- [Astra proposals](astra-next-model-ideas.md)
+
+Historical protocols retain the commands and environment paths used at the time.
+Use the current environment guide for new setup. The
+[previous root README](archive/README-before-refactor.md) is preserved as migration
+context; its commands are historical.

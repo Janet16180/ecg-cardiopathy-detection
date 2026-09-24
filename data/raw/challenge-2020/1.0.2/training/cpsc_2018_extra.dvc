@@ -1,0 +1,6 @@
+outs:
+- md5: ea0e7de8071881d113341af3c24d12d8.dir
+  size: 661687887
+  nfiles: 6906
+  hash: md5
+  path: cpsc_2018_extra

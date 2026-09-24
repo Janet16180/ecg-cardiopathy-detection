@@ -1,0 +1,117 @@
+schema: '2.0'
+stages:
+  validate_completed_data:
+    cmd: UV_PROJECT_ENVIRONMENT=.venv-uv uv run --locked --group data python -m 
+      scripts.validate_data_versioning
+    deps:
+    - path: configs/datasets.json
+      hash: md5
+      md5: b7efb004dac430bc2c2f95d56f5e798f
+      size: 4015
+    - path: data/acquisition/chapman_shaoxing.json
+      hash: md5
+      md5: c3f339ce4b347c80a05ff3667c63f573
+      size: 518
+    - path: data/acquisition/cpsc_2018.json
+      hash: md5
+      md5: 44658368de20c7bbadd861f654dc05be
+      size: 510
+    - path: data/acquisition/cpsc_2018_extra.json
+      hash: md5
+      md5: 766f2fba5ff277ffe82b310468b4580f
+      size: 513
+    - path: data/acquisition/georgia.json
+      hash: md5
+      md5: 274dc949a7c7f67948d6eba9f0a72d48
+      size: 509
+    - path: data/processed/ptbxl/seed42_fraction0.1/labeled_train.csv
+      hash: md5
+      md5: 836b808fcba210470d5558b1e1c6b643
+      size: 103388
+    - path: data/processed/ptbxl/seed42_fraction1/all_train_ssl.csv
+      hash: md5
+      md5: 82d391124fdf28d5ee2a55d29e5dcf2c
+      size: 1150201
+    - path: data/processed/ptbxl/seed42_fraction1/labeled_train.csv
+      hash: md5
+      md5: f3b18981a698829c90f3bf6045a62778
+      size: 1045159
+    - path: data/processed/ptbxl/seed42_fraction1/test.csv
+      hash: md5
+      md5: 5487e232e88a7c4fb9a6b71832cc5016
+      size: 128901
+    - path: data/processed/ptbxl/seed42_fraction1/validation.csv
+      hash: md5
+      md5: e4eca161dbb5b8bf8359fac65b917068
+      size: 127167
+    - path: data/processed/training_union_500hz_v1/heldout_references.csv
+      hash: md5
+      md5: fc53c537bd97c527e33af60bb40874c7
+      size: 318060
+    - path: data/raw/challenge-2020/1.0.2/SHA256SUMS.txt
+      hash: md5
+      md5: c33e53f6f8948ff09338efb3213d1fb6
+      size: 8372800
+    - path: data/raw/challenge-2020/1.0.2/training/cpsc_2018
+      hash: md5
+      md5: 4caf7860f76e81984f32acdf1ce57274.dir
+      size: 1320990680
+      nfiles: 13754
+    - path: data/raw/challenge-2020/1.0.2/training/cpsc_2018_extra
+      hash: md5
+      md5: ea0e7de8071881d113341af3c24d12d8.dir
+      size: 661687887
+      nfiles: 6906
+    - path: data/raw/challenge-2020/1.0.2/training/georgia
+      hash: md5
+      md5: 77e369da68f1463a1557c6a437bf6155.dir
+      size: 1245905520
+      nfiles: 20688
+    - path: data/raw/challenge-2021/1.0.3/SHA256SUMS.txt
+      hash: md5
+      md5: 7ebd8e4708ec9cff821d86bf289da805
+      size: 17305274
+    - path: data/raw/challenge-2021/1.0.3/training/chapman_shaoxing
+      hash: md5
+      md5: e046591b8466474245842f7f6dd1cb37.dir
+      size: 1237539902
+      nfiles: 20494
+    - path: data/raw/ptb-xl/1.0.3/SHA256SUMS.txt
+      hash: md5
+      md5: f0f51c4ec71157193ff81435a9ca2498
+      size: 8284204
+    - path: data/raw/ptb-xl/1.0.3/ptbxl_database.csv
+      hash: md5
+      md5: 62f764c8be6aa5df7202230fd5123064
+      size: 6594879
+    - path: data/raw/ptb-xl/1.0.3/records100
+      hash: md5
+      md5: 191ab649ebf5d39f626a619a738ff5fe.dir
+      size: 536340888
+      nfiles: 43598
+    - path: data/raw/ptb-xl/1.0.3/records500
+      hash: md5
+      md5: 3c5e66d9543c93472ce893e9aa1c512a.dir
+      size: 2629131065
+      nfiles: 43598
+    - path: data/raw/ptb-xl/1.0.3/scp_statements.csv
+      hash: md5
+      md5: 733e3dbf3f6bd96c22fd651da003a9ec
+      size: 9720
+    - path: pyproject.toml
+      hash: md5
+      md5: b5b09b88db680d7bc7748f9cc832eb7e
+      size: 1612
+    - path: scripts/validate_data_versioning.py
+      hash: md5
+      md5: f8ee736115daa49f868319101dde8189
+      size: 12939
+    - path: uv.lock
+      hash: md5
+      md5: 7b7f1fe31d3cc4af446b9a16e110b5c4
+      size: 289877
+    outs:
+    - path: reports/data-validation.json
+      hash: md5
+      md5: f317dbd559c3dd727416fd6f32356ba8
+      size: 2531

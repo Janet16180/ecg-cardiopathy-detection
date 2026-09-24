@@ -1,0 +1,6 @@
+# Isolated build dependencies for wheels made from the pinned source archives.
+# These are build constraints, not project installation requirements.
+setuptools==78.1.0
+wheel==0.45.1
+cython==3.3.0
+numpy==2.4.6

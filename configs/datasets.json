@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "datasets": [
+    {
+      "id": "ptbxl_500hz_v1",
+      "kind": "ptbxl_records",
+      "path": "data/raw/ptb-xl/1.0.3/records500",
+      "official_manifest": "data/raw/ptb-xl/1.0.3/SHA256SUMS.txt",
+      "official_manifest_sha256": "b7224b92b341511ec3ceb13dc6652079b2c36a06504bcb49506f157f51dc695d",
+      "official_prefix": "records500/",
+      "expected_records": 21799,
+      "expected_files": 43598,
+      "dvc_pointer": "data/raw/ptb-xl/1.0.3/records500.dvc"
+    },
+    {
+      "id": "ptbxl_100hz_v1",
+      "kind": "ptbxl_records",
+      "path": "data/raw/ptb-xl/1.0.3/records100",
+      "official_manifest": "data/raw/ptb-xl/1.0.3/SHA256SUMS.txt",
+      "official_manifest_sha256": "b7224b92b341511ec3ceb13dc6652079b2c36a06504bcb49506f157f51dc695d",
+      "official_prefix": "records100/",
+      "expected_records": 21799,
+      "expected_files": 43598,
+      "dvc_pointer": "data/raw/ptb-xl/1.0.3/records100.dvc"
+    },
+    {
+      "id": "cpsc_2018_extra_raw_v1",
+      "kind": "challenge_pairs",
+      "path": "data/raw/challenge-2020/1.0.2/training/cpsc_2018_extra",
+      "receipt": "data/acquisition/cpsc_2018_extra.json",
+      "official_manifest": "data/raw/challenge-2020/1.0.2/SHA256SUMS.txt",
+      "official_prefix": "training/cpsc_2018_extra/",
+      "expected_records": 3453,
+      "expected_files": 6906,
+      "dvc_pointer": "data/raw/challenge-2020/1.0.2/training/cpsc_2018_extra.dvc"
+    },
+    {
+      "id": "cpsc_2018_raw_v1",
+      "kind": "challenge_pairs",
+      "path": "data/raw/challenge-2020/1.0.2/training/cpsc_2018",
+      "receipt": "data/acquisition/cpsc_2018.json",
+      "official_manifest": "data/raw/challenge-2020/1.0.2/SHA256SUMS.txt",
+      "official_prefix": "training/cpsc_2018/",
+      "expected_records": 6877,
+      "expected_files": 13754,
+      "dvc_pointer": "data/raw/challenge-2020/1.0.2/training/cpsc_2018.dvc"
+    },
+    {
+      "id": "georgia_raw_v1",
+      "kind": "challenge_pairs",
+      "path": "data/raw/challenge-2020/1.0.2/training/georgia",
+      "receipt": "data/acquisition/georgia.json",
+      "official_manifest": "data/raw/challenge-2020/1.0.2/SHA256SUMS.txt",
+      "official_prefix": "training/georgia/",
+      "expected_records": 10344,
+      "expected_files": 20688,
+      "dvc_pointer": "data/raw/challenge-2020/1.0.2/training/georgia.dvc"
+    },
+    {
+      "id": "chapman_shaoxing_raw_v1",
+      "kind": "challenge_pairs",
+      "path": "data/raw/challenge-2021/1.0.3/training/chapman_shaoxing",
+      "receipt": "data/acquisition/chapman_shaoxing.json",
+      "official_manifest": "data/raw/challenge-2021/1.0.3/SHA256SUMS.txt",
+      "official_prefix": "training/chapman_shaoxing/",
+      "expected_records": 10247,
+      "expected_files": 20494,
+      "dvc_pointer": "data/raw/challenge-2021/1.0.3/training/chapman_shaoxing.dvc"
+    }
+  ],
+  "ptb_metadata": [
+    "data/raw/ptb-xl/1.0.3/ptbxl_database.csv",
+    "data/raw/ptb-xl/1.0.3/scp_statements.csv"
+  ],
+  "ptb_split_audit": {
+    "heldout_references": "data/processed/training_union_500hz_v1/heldout_references.csv",
+    "full_train": "data/processed/ptbxl/seed42_fraction1/all_train_ssl.csv",
+    "full_labeled": "data/processed/ptbxl/seed42_fraction1/labeled_train.csv",
+    "limited_labeled": "data/processed/ptbxl/seed42_fraction0.1/labeled_train.csv",
+    "validation": "data/processed/ptbxl/seed42_fraction1/validation.csv",
+    "test": "data/processed/ptbxl/seed42_fraction1/test.csv"
+  },
+  "ptb_split_sha256": {
+    "full_train": "910f59242066bb55b3e784ff43ea9dff2be74176d3242774c457e2d1887fcad5",
+    "full_labeled": "b3b9d463234a4a367f942295f8dfbd9e6e898239112e12519c72c3af6764afe8",
+    "limited_labeled": "8e790dfb093e3e1f176337df1fba6ad2735ac04ec5bbcda1ed9ccfd2a29b843a",
+    "validation": "347a83d308ef80d0c450979655e0e22bb7a798a2984c0d1b5de1a747383f4e8d",
+    "test": "45e57546e179b58f1e1eaf04cf83a60ae5975c6a34c16f88ab64b7671566bf76",
+    "heldout_references": "4f3c3c5476317a4a80d064236b743d15a5b70aafeb8e153ecd1ac1258429f5f2"
+  }
+}

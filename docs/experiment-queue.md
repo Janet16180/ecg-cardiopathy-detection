@@ -1,0 +1,103 @@
+# Experiment queue
+
+**Updated:** 24 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
+
+**PAUSED BY USER (2026-09-24T19:40:47.068565+00:00):** The user is refactoring the repository in another session. Do not launch or resume experiments until the user requests it. No training was active; the waiting MIMIC scheduler (former PID 3769) was stopped after verifying it had no child. The GPU is idle. Downloads continue, so preserve their current source/data paths while they run.
+
+**Refactor handoff:** Completed results and checkpoints remain in place. `outputs/refactor_pause/source_before_refactor.tar.gz` and `source_hashes.json` preserve and verify the pre-refactor source tree; `pause.json` records the stopped scheduler and archive hash. Preserve experiment output/data identities and archived source evidence. After refactoring, verify equivalent preprocessing, patient splits, model initialization and checkpoint loading, then create new source maps/manifests before resuming. Do not silently rewrite old provenance receipts to match refactored code.
+
+**Finding:** The morphology-template arm passed its prespecified development screen at the 1,518-label budget: AUROC **0.9487**, compared with **0.9462** for matched convolution and **0.9431** for no-branch CPC. At full labels, convolution and template tied at about **0.9620**, versus **0.9571** for no branch. These are one-seed development results. A matched second seed and artifact/template dominance checks are required before calibration/test; that follow-up is **not automatically scheduled**. [017 results](../outputs/experiment017_morphology_templates_v2/report.md). Experiments 014 and 015 had negative screens.
+
+## Repository maintenance
+
+The uv, MLflow, DVC, and collaboration cleanup is complete. Its checks and
+maintenance manifest are recorded in [the refactor guide](repository-refactor.md)
+and [completion record](../reports/repository-refactor.json). The experiment pause remains in
+effect. Historical scientific source files, manifests, checkpoints, and results
+are preserved. New maintenance verification uses a separate receipt under
+`outputs/repository_refactor/`; it does not schedule or authorize a GPU job.
+Data stays local while the user evaluates storage options. Do not upload training
+data to GitHub/Git LFS or configure/push a DVC remote until they choose one.
+
+## Pending priority: cheapest likely first
+
+The user authorized **all four Astra proposals**, now Experiments **014–017**. They take priority over the larger architecture implementations. The order below is an implementation priority, not a dependency chain: an unpromising early screen does not block an independent later experiment.
+
+| Priority | Experiment | Status | Expected pilot cost / next work |
+| --- | --- | --- | --- |
+| 1 | 016: xECG probe-initialized fine-tuning | Queued for implementation | Target 30–90 minutes including extraction; frozen probe and matched short fine-tunes |
+| 2 | [011: KDA / CKDA](cross-domain-architecture-candidates.md#1-nlp-memory-kda-versus-complex-kda) | Queued for implementation | Runtime unknown; GRU, KDA and CKDA comparison |
+| 3 | [012: StripedHyena-inspired](cross-domain-architecture-candidates.md#2-genomics-a-compact-mixture-of-temporal-scales) | Queued for implementation | Runtime unknown; mixed temporal supports versus local control |
+| 4 | [013: Mamba-3](experiment-013-mamba3-plan.md) | Queued for implementation | Runtime and V100 backend unverified |
+
+The [Astra research note](astra-next-model-ideas.md) supplies the four new designs, controls and primary sources; the JSON catalog links each proposal's exact section. **These ranges are unmeasured planning estimates, not promised completion times**, and exclude implementation work. Only 014 is clearly the cheapest starting point. The remaining ranges overlap; actual complete-pass timing may change their order. A short GPU compute profile alone is insufficient, as Experiment 010 demonstrated. Include cold/warm loading, every comparison arm, evaluation and checkpoint writes in the working two-hour GPU-pilot planning gate.
+
+**Next architecture implementation task: 016.** Experiments 011–017 are accepted tasks; 014, 015 and 017 have finished. A second-seed 017 follow-up is warranted but not scheduled. New runners, fixed protocols and verification receipts must exist before they are marked runnable. Adding entries here does not schedule an automatic process. Use development patients for early screening, then freeze choices before calibration/test. GPU work remains sequential; the initial CPU-only fusion screen can use existing feature caches.
+
+## Deferred and completed studies
+
+| Experiment | Status | Evidence / recovery |
+| --- | --- | --- |
+| [017: morphology templates](experiment-017-morphology-v2.md) | Complete | [Positive limited-label development screen](../outputs/experiment017_morphology_templates_v2/report.md); requires replication |
+| [015: JEPA-to-CPC distillation](experiment-015-distillation.md) | Complete | [Negative development screen](../outputs/experiment015_jepa_cpc_distillation/report.md); small full-label gain, limited-label loss |
+| [014: JEPA + CPC fusion](experiment-014-fusion.md) | Complete | [Negative development screen](../outputs/experiment014_jepa_cpc_fusion/report.md); JEPA alone selected at both budgets |
+| [008: xECG adaptation](experiment-008-vision-ssl.md) | Deferred for cost | Approximately 27.7-hour profile projection; no resumable arm-A checkpoint |
+| [010: cross-lead CPC](experiment-010-crosslead.md) | Deferred for cost | Actual native epoch 1 took 15.6 minutes; verified epoch-1 checkpoint preserved |
+| [009: prediction mismatch](experiment-009-mismatch.md) | Complete | [Results](../outputs/experiment009_cpc_prediction_mismatch/report.md) |
+| [007: released xECG](experiment-007-xecg.md) | Complete | [Results](../outputs/experiment007_xecg/report.md): AUROC 0.9374 full labels, 0.9283 at 10% |
+| [006: tokenization](experiment-006-tokenization.md) | Complete | [Results](../outputs/experiment006_cpc_tokenization/report.md) |
+
+008 and 010 are excluded from the active priority list and will not automatically restart.
+
+## Coordination
+
+The coordinator is `scripts/run_priority_queue.py`. The original frozen manifest, `outputs/experiment_queue/queue.json`, contained 009 → 007 → 008 → 010 and stopped at the 008 profile on a CUDA out-of-memory error at 04:56 UTC. Its status, launch receipt and failure log remain in that directory. Its successor, `outputs/experiment_queue_recovery_008/queue.json`, profiled 008 successfully and started adaptation, then was interrupted at the user's request. The first 010 profile-only manifest failed a bitwise CUDA save/restore check; its versioned successor passed the profile. The full 010 manifest, `outputs/experiment_queue_full_010/queue.json`, was also interrupted after real data I/O exceeded the cost envelope. **The corrected 017 v2 queue is complete; no experiment queue is active. The earlier 015 queue completed 015 and was then interrupted only at its original 017 stage.** The executable manifests differ from the editable `docs/experiment-queue.json` backlog. Individual runners retain their existing GPU locks; the coordinator itself owns no CUDA context. Jobs use source-map hashes, source hashes and completion-artifact checks.
+
+The old coordinator exited after 008's failed profile and resumed the legacy Experiment 003 orchestrator. The successor launch verified that old coordinator was absent, the downloader remained active and the legacy orchestrator had no child. It paused the legacy orchestrator at 14:50:59 UTC and started the 008 profile. The downloader continues; the legacy orchestrator resumes when the new queue completes, fails or handles an interruption.
+
+At 15:06:30 UTC, the successor 008 coordinator received SIGTERM to honor the user's lower-cost preference. It terminated its GPU child and resumed the legacy runner. The 008 log records arm A updates through 30; no `resume.pt` or completed encoder exists under `outputs/experiment008_vision_ssl/pretrain/`, because periodic checkpoints begin at update 100. Those observed updates are not resumable and would be recomputed if 008 is later selected. All files and the four-arm GPU profile receipt were preserved. A separate verified profile-only manifest, `outputs/experiment_queue_profile_010/queue.json` (SHA-256 `2313405e360737130a8f7b9aceb46e5a81dd36317472dee937ae819e653057b8`), launched at 15:07:28 UTC. It runs only 010's `profile` command and requires the three profile JSON receipts. Its job log and completion marker are isolated under `outputs/experiment_queue_profile_010/job/`, leaving a future full 010 queue's completion identity free. The legacy runner was paused again; the downloader continues.
+
+The initial 010 profile reached a CUDA resume comparison but stopped because strict bitwise equality found a maximum absolute parameter difference of `1.4901161193847656e-08` in 94 of 3,840 elements checked in the first failing tensor. No variant profile JSON was saved. The historical failure remains under `outputs/experiment_queue_profile_010/`. A new file, `scripts/run_cpc_crosslead_profile_v2.py`, reuses the frozen objective/profile code and checks both model and AdamW states after save/restore using FP32 `atol=1e-7`, `rtol=1e-5`, logging maximum absolute differences. Its source SHA-256 is `ca81c8c536b29d814be6c210adfdb4b6fdc0264524f4979d14269f75c62f54d7`. The versioned source map SHA-256 is `d25e53b4b89278d169f42914fa253d26c391dab8606fa3fa7645906f23cbc61d`. A new immutable profile-only manifest, `outputs/experiment_queue_profile_010_v2/queue.json` (SHA-256 `946210121f1a8d38bd00cb891b341fb62d171ef1f47d77e53d294a4555cc2855`), passed `--check` and launched at 15:13:33 UTC. Its job log/completion marker are isolated under `outputs/experiment_queue_profile_010_v2/job/`. No full 010 training is scheduled by this manifest.
+
+The corrected profile completed at 15:17:33 UTC. Its five measured updates per arm estimated 65.06, 62.50 and 63.46 seconds per SSL epoch for native, withinlead and crosslead respectively, with about 3.04 GB peak allocated GPU memory. Multiplying those short-profile figures by ten epochs of three arms gave an initial 31.84-minute SSL estimate. Extrapolating Experiment 004's cumulative supervised histories to six transfers added about 4.29 minutes; that initial estimate omitted the full workload's sustained random cache I/O, as observed below. These are runtime measurements and estimates, not performance results. Profile JSON SHA-256 values are `87f58d33e8f24374b61ef6788470927a1e1c3c15d3cf3fa9bfaf4649ec4784be` (native), `918ed663896af9f831068422ebde7720158ba5b9c8ef8a8da5fe12ee8c9f8b8c` (withinlead), and `dbb5d9917b47cca8811a505dd766fd8c16bb019ab5b753c5eee03bf3887b6eeb` (crosslead). They and their resume checks were verified before launch. A new immutable full manifest, `outputs/experiment_queue_full_010/queue.json` (SHA-256 `3cea5a83ca96cba1c6e392f43fb1b15c611f7bf85b14e90d90207278974738e9`), passed `--check` and launched at 15:18:32 UTC. Its job log and completion marker are isolated under `outputs/experiment_queue_full_010/job/`. It uses the original frozen 010 runner and source map. 008 is excluded.
+
+The short profile underestimated sustained random cache I/O. The full 010 runner passed its profile fingerprint gate and completed native SSL epoch 1 in **934.59 seconds (15.58 minutes)** for 445 updates and 56,875 record exposures, saving `outputs/experiment010_cpc_crosslead/native_ssl/{epoch_state.pt,history.json}` at 15:38:23 UTC. Epoch 2 remained incomplete after four additional minutes. If that observed warm-epoch pace continued, 29 remaining SSL epochs alone would require more than 116 minutes before transfers and other overhead, exceeding the adopted two-hour planning limit. The full coordinator received SIGTERM at 15:42:23 UTC and terminated its GPU child; the legacy MIMIC runner resumed, and the downloader continued. The epoch-1 checkpoint was loaded and verified to contain model, optimizer, RNG, fingerprint and one history row. Its SHA-256 is `808363dbcbfabecfe42a49f2b5e42c4a10adfb27dc833d2e7d61f4ca590652d8` and the history JSON SHA-256 is `bd3e0039384916414477a24d94ff845b41867e22c5c1a23906f089e3e7ac6e46`. Epoch 2's unsaved work would be recomputed if resumed. No 010 classification result exists. The short-profile runtime estimate above is superseded by this actual full-epoch observation.
+
+The queue refuses changed source fingerprints, PID reuse, unsuccessful predecessor completion, or missing expected outputs. Running this coordinator requires the host process namespace, as did the previous coordinators. Its launch receipt records the exact command and process identities. Do not start another copy while it is active.
+
+The successor manifest SHA-256 is `fc900ab16934bc6904be68f11b14743baa254987d768a97238e47486145d8e9a`; its new 008 source map SHA-256 is `d7dc9a47408c0843a5bfbcb2e9af3a937645fde596a3dbc79cd3041f56e5d663`. It verifies the original frozen implementation plus the new `scripts/run_xecg_adaptation_mb4.py` entry point (SHA-256 `d24b074f93c06ce475787cb4f9349a0931a47bc82472011bd5f452209ed6544a`). The original coordinator source is reused unchanged. The successor launched at 14:50:59 UTC with `.venv-pretrained/bin/python -u -m scripts.run_priority_queue --manifest outputs/experiment_queue_recovery_008/queue.json --manifest-sha256 fc900ab16934bc6904be68f11b14743baa254987d768a97238e47486145d8e9a`. The manifest verification command with `--check` passed; the 008 runner's `--stage check --device cpu --threads 1` confirmed the audited 56,875-record pool and microbatch 4 before launch. All four V100 profile arms passed, with peak allocations of 9.16–9.19 GB and checkpoint roundtrips; the [profile receipt](../outputs/experiment008_vision_ssl/profile_cuda.json) SHA-256 is `2de0d0497c2a37178153197f7af45efd23bbefb46d76952077360afb393048ef`. The coordinator launched the 008 `all` stage at 14:54:47 UTC. Profile extrapolation estimates about 22.0 hours for the four SSL arms and 5.65 more hours for supervised transfers; this is an estimate, not a performance finding.
+
+## Current corrected queue and recovery
+
+The most recently completed immutable manifest is `outputs/experiment_queue_017_v2/queue.json`, SHA-256 `91c19b6243629b63af8ce901ba5d1c0d4d3b7a3acb063aae0e5c2fc36c87f8eb`. It passed `scripts.run_priority_queue --check`. Its source map SHA-256 is `cf4daac96656191c2af9f177d6306b075c467402c5fd6f004a4e1f962013d8db`. The v2 CPU receipt SHA-256 is `b10749d8612565ee515869b105cb58b527155c8491e51fabf01bb4b589e698bb`.
+
+`handoff_priority_queue.py` passed six focused tests, verified 015's completion artifacts, and signaled the old coordinator only after it switched to 017. The old 017 child was stopped before its profile produced any output. The original sources and manifests remain unchanged. Handoff helper SHA-256 observed at launch: `b94e64293a6af84627a582696caec214d3e92f8b760332f975f965bfa3b66db4`. The exact launch-time helper is archived as `outputs/experiment_queue_017_v2/handoff_source_at_launch.py`, matching the recorded hash. The current helper received subsequent guard improvements; these did not alter experiment sources. The exact detached commands and PID identities are in `outputs/experiment_queue_017_v2/{handoff_watch.json,launch.json}`; the log confirms successor launch. Do not repeat the watcher or launcher while a coordinator is alive.
+
+Current command:
+
+```bash
+.venv-pretrained/bin/python -u -m scripts.run_priority_queue --manifest outputs/experiment_queue_017_v2/queue.json --manifest-sha256 91c19b6243629b63af8ce901ba5d1c0d4d3b7a3acb063aae0e5c2fc36c87f8eb
+```
+
+This is a recovery command, not an instruction to start a second process. Check `launch.json`, live PID identity and the shared GPU lock first. The profile and train stages use `scripts.run_cpc_morphology017_v2 --stage profile|train --device cuda --threads 1 --max-wall-seconds 7200`. Each five-epoch comparison is resumable. A failed runtime gate stops full training; it does not change the scientific protocol.
+
+## Research branches
+
+The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.md) supplies the rationale for authorized Experiments 011–013. These are independent model families, not xECG modifications. They have no measured project results yet. The additional [vision architectures](vision-to-ecg-architecture-candidates.md) and [xECG modifications](xecg-next-experiments.md) remain research candidates outside this accepted queue.
+
+## Resume after losing conversation context
+
+1. Read `AGENTS.md`, this file, the JSON catalog and the selected experiment's linked plan. User authorization for 011–017 is already recorded; 016 is the next architecture implementation; no repeated confirmation is needed to implement these tasks.
+2. Read live coordination files and inspect the actual process identities/GPU in the host namespace. An old PID or Markdown status does not prove that training is active. The launch receipt contains the exact current command.
+3. Preserve the downloader, legacy runner and frozen sources. Start the next unfinished implementation in new modules. The current pool is 56,875 train ECGs; supervised budgets are the fixed 15,360 and 1,518 labels, with separate development/calibration/test patients.
+4. Before making a new job runnable, freeze its protocol and source revisions, test recurrence/gradient correctness and resume behavior, and create a verified successor executable manifest with the correct predecessor. Keep a real GPU profile as a gate before full training. Do not append to or rewrite a live frozen manifest in place.
+5. Update this file and the JSON catalog as implementation, verification, launch and results arrive. Record concrete commands and artifact paths; missing commands currently mean an implementation task, not a runnable experiment.
+
+### Recovery pointers
+
+- Completed tokenization: `outputs/experiment006_cpc_tokenization/coordination.json` and `runner.log`.
+- Interrupted full 010 queue and epoch-1 checkpoint: `outputs/experiment_queue_full_010/{queue.json,launch.json,status.json,runner.log}` and `outputs/experiment010_cpc_crosslead/native_ssl/`. Completed 010 profile: `outputs/experiment_queue_profile_010_v2/`. First failed 010 profile: `outputs/experiment_queue_profile_010/`. Interrupted 008 recovery: `outputs/experiment_queue_recovery_008/`. Historical failed queue: `outputs/experiment_queue/`.
+- Per-job logs for earlier 009/007/008 stages: `<output_dir>/priority_queue.log`; interrupted full 010 log: `outputs/experiment_queue_full_010/job/priority_queue.log`.
+- Download / older ECG-FM suite: `outputs/experiment003_mimic/{status.json,prepare_mimic_200k.log}`. The downloader remains separate; the legacy runner is resumed after the executable queue and must be coordinated when attaching future jobs.
+- Environment: `.venv-pretrained/bin/python`; one V100 16 GB; shared lock `/tmp/ecg_project_gpu.lock`.
+- Existing completed comparisons: `outputs/experiment004_cpc_40k/report.md` and `outputs/experiment005_cpc_word2vec/report.md`. Interpret them as exploratory PTB-XL proxy results, not validation of healthy status or student referral decisions.

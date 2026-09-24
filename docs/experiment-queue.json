@@ -1,0 +1,509 @@
+{
+  "schema_version": 1,
+  "updated_at_utc": "2026-09-24T20:34:34.580241+00:00",
+  "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
+  "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
+  "status_definitions": {
+    "active_snapshot": "Reported active by the last read of the coordination file; recheck live state.",
+    "queued_runnable": "Implemented and attached to the frozen executable queue; GPU profiling still gates training.",
+    "queued_for_implementation": "User-authorized future experiment; runner and GPU profile are not ready; no automatic launch yet.",
+    "complete": "Study finished successfully; linked reports contain the measured results.",
+    "gpu_profiling": "A live V100 profile is testing forward/backward, optimizer, memory and resume before comparative training.",
+    "training_launched": "Full stage has been launched after the required real GPU profile; check logs and process identities for observed updates.",
+    "training": "Actual training updates have been observed in the live runner log; work remains incomplete.",
+    "deferred_for_cost": "Runner and evidence retained; stopped when actual runtime exceeded the adopted planning gate after the user requested cheaper experiments; no automatic resume.",
+    "gpu_profiling_only": "GPU profile active in a manifest without any full training stage.",
+    "full_stage_launched": "Comparative full stage launched after measured GPU profile; observe actual updates and completion before calling it a result.",
+    "implementing": "Authorized implementation and verification in progress; no executable run is implied."
+  },
+  "runtime": {
+    "executable_manifest": "outputs/experiment_queue_017_v2/queue.json",
+    "launch_receipt": "outputs/experiment_queue_017_v2/launch.json",
+    "live_status": "outputs/experiment_queue_017_v2/status.json",
+    "immutable_manifest_sha256": "91c19b6243629b63af8ce901ba5d1c0d4d3b7a3acb063aae0e5c2fc36c87f8eb",
+    "coordinator_pid_snapshot": 114808,
+    "gpu": "Tesla V100 16 GB",
+    "gpu_lock": "/tmp/ecg_project_gpu.lock",
+    "python": ".venv-pretrained/bin/python",
+    "max_concurrent_gpu_jobs": 1,
+    "last_observation": {
+      "at_utc": "2026-09-24T19:40:47.068565+00:00",
+      "state": "paused_by_user",
+      "active_experiment": null,
+      "gpu_idle": true,
+      "legacy_runner_stopped": true,
+      "downloader_continues": true
+    },
+    "historical_failed_manifest": "outputs/experiment_queue/queue.json",
+    "historical_failed_manifest_sha256": "cc34e02020071a983a71e7d5bab9318de9a58fb96e7c004a08e7c6c54da81bf9",
+    "interrupted_008_manifest": "outputs/experiment_queue_recovery_008/queue.json",
+    "interrupted_008_manifest_sha256": "fc900ab16934bc6904be68f11b14743baa254987d768a97238e47486145d8e9a",
+    "failed_010_profile_manifest": "outputs/experiment_queue_profile_010/queue.json",
+    "failed_010_profile_manifest_sha256": "2313405e360737130a8f7b9aceb46e5a81dd36317472dee937ae819e653057b8",
+    "completed_010_profile_manifest": "outputs/experiment_queue_profile_010_v2/queue.json",
+    "completed_010_profile_manifest_sha256": "946210121f1a8d38bd00cb891b341fb62d171ef1f47d77e53d294a4555cc2855",
+    "last_executable_manifest": "outputs/experiment_queue_full_010/queue.json",
+    "last_executable_manifest_sha256": "3cea5a83ca96cba1c6e392f43fb1b15c611f7bf85b14e90d90207278974738e9",
+    "last_launch_receipt": "outputs/experiment_queue_full_010/launch.json",
+    "last_status": "outputs/experiment_queue_full_010/status.json",
+    "handoff_receipt": "outputs/experiment_queue_017_v2/handoff_watch.json",
+    "handoff_log": "outputs/experiment_queue_017_v2/handoff.log",
+    "handoff_source_at_launch": "outputs/experiment_queue_017_v2/handoff_source_at_launch.py"
+  },
+  "shared_data": {
+    "ssl_training_records": 56875,
+    "sources": {
+      "mimic_iv_ecg": 39457,
+      "ptbxl": 17418
+    },
+    "full_training_labels": 15360,
+    "limited_training_labels": 1518,
+    "development_records": 1306,
+    "calibration_records": 564,
+    "test_records": 1896,
+    "waveform_cache": "data/processed/cpc_pool_40k",
+    "ptb_manifests": "data/processed/ptbxl",
+    "target": "PTB-XL diagnostic abnormality proxy, not person-level health or referral ground truth"
+  },
+  "active": null,
+  "experiments": [
+    {
+      "id": "014",
+      "name": "Cached JEPA + CPC prediction fusion",
+      "status": "complete",
+      "authorized": true,
+      "protocol": "docs/experiment-014-fusion.md",
+      "output_dir": "outputs/experiment014_jepa_cpc_fusion",
+      "arms": [
+        "JEPA alone",
+        "CPC alone",
+        "Equal blend",
+        "Development-selected blend"
+      ],
+      "primary_comparison": "Development-selected blend versus both constituents; fixed equal blend as an untuned control.",
+      "cost_estimate": "Initial cache-only screen approximately 1–15 CPU minutes if saved caches/probes verify; inferred, not measured.",
+      "cost_estimate_measured": false,
+      "next_action": "Completed negative development screen at both label budgets; continue independent Experiment 015.",
+      "constraints": [
+        "Use full/10% probes matched to the exposed label budget.",
+        "Do not choose weights or CPC checkpoints using historical test scores.",
+        "Initial cached CPC probe is distinct from the stronger end-to-end CPC model.",
+        "No GPU needed for the initial cached-feature screen."
+      ],
+      "dependencies": [],
+      "runner": "scripts/run_jepa_cpc_fusion.py",
+      "launch_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv-pretrained/bin/python -u -m scripts.run_jepa_cpc_fusion --output-dir outputs/experiment014_jepa_cpc_fusion",
+      "gpu_profile": null,
+      "results": "outputs/experiment014_jepa_cpc_fusion/report.md",
+      "priority": null,
+      "implementation_started_at_utc": "2026-09-24T16:48:51.263115+00:00",
+      "live_status": "outputs/experiment014_jepa_cpc_fusion/coordination.json",
+      "outcome": "Both budgets chose JEPA alone; no calibration fit or test predictions.",
+      "verification": "Four focused tests and verified receipt reuse; report records hashes and limited-probe refit."
+    },
+    {
+      "id": "015",
+      "name": "Cached JEPA-to-CPC representation distillation",
+      "status": "complete",
+      "authorized": true,
+      "protocol": "docs/experiment-015-distillation.md",
+      "output_dir": "outputs/experiment015_jepa_cpc_distillation",
+      "arms": [
+        "Matched CPC classification control",
+        "CPC classification + cached JEPA feature loss"
+      ],
+      "primary_comparison": "Identical CPC initialization, batches and exposed-label updates with versus without teacher-feature loss.",
+      "cost_estimate": "Profile estimate712.60seconds for four-run training including359.70secondscoldpreload; actual fullstage warm preload5.34seconds.",
+      "cost_estimate_measured": true,
+      "next_action": "Negative prespecified development screen; retain four completed matched runs. No second seed or calibration/test promotion under this protocol.",
+      "constraints": [
+        "Initial teacher cache covers 15,360 eligible training ECGs, a documented subset of the 56,875 pool.",
+        "No hidden labels used in BCE; frozen self-supervised teacher representations may be used for hidden-label records.",
+        "No teacher forward pass during student training; discard projection at inference.",
+        "Record cold disk I/O, checkpoint and evaluation time."
+      ],
+      "dependencies": [],
+      "runner": "scripts/run_jepa_cpc_distillation.py",
+      "launch_command": ".venv-pretrained/bin/python -u -m scripts.run_jepa_cpc_distillation --stage profile --device cuda --threads 1 --max-wall-seconds 7200",
+      "gpu_profile": "outputs/experiment015_jepa_cpc_distillation/profile.json",
+      "results": "outputs/experiment015_jepa_cpc_distillation/report.md",
+      "priority": null,
+      "implementation_started_at_utc": "2026-09-24T16:48:51.263115+00:00",
+      "verification": "outputs/experiment015_jepa_cpc_distillation/provenance/verification.json",
+      "live_status": "outputs/experiment015_jepa_cpc_distillation/coordination.json",
+      "cpu_tests_passed": 3,
+      "executable_manifest": "outputs/experiment_queue_015/queue.json",
+      "gpu_profile_sha256": "c0bcbd385f2b301ff7217dd0f3320f0475e73442e523188ef048dcc64c8bcc9d",
+      "screen_passed": false,
+      "advance_to_second_seed": false,
+      "report_sha256": "d6cda3c99bd5ebd85db10b6fb2fcfbc94418c48e593d9578fa59bcb2e0ae7ce6",
+      "best_development_auroc": {
+        "full_control": 0.9574875291115499,
+        "full_distill": 0.9591118831489922,
+        "limited_control": 0.9378441183780031,
+        "limited_distill": 0.9361300917990618
+      },
+      "actual_five_epoch_arm_seconds": [
+        42.7474510819884,
+        40.440669471005094,
+        40.61484378899331,
+        35.2477948559972
+      ]
+    },
+    {
+      "id": "017",
+      "name": "CPC morphology-template residual branch",
+      "status": "complete",
+      "authorized": true,
+      "protocol": "docs/experiment-017-morphology-v2.md",
+      "output_dir": "outputs/experiment017_morphology_templates_v2",
+      "arms": [
+        "No-branch CPC",
+        "Matched ordinary convolution branch",
+        "Waveform-template distance branch"
+      ],
+      "primary_comparison": "Template-distance branch versus a matched convolution branch, with no-branch CPC as a practical reference.",
+      "cost_estimate": "Measured complete-pass forecast:334.12seconds six-run training,369.33seconds including profile and two preprocessing passes.",
+      "cost_estimate_measured": true,
+      "next_action": "Prepare a separately frozen matched second-seed replication and artifact/template dominance checks before calibration/test; not automatically scheduled.",
+      "constraints": [
+        "Keep native CPC at 250 Hz; a 200 ms template has 50 samples and preserves five-second-half boundaries.",
+        "Use training-only template initialization and identical label budgets, sample order and short training schedules.",
+        "Zero-initialize final branch projection so initial CPC predictions match.",
+        "Distance responses are related to convolution plus window energy; a capacity-only improvement does not establish a template benefit."
+      ],
+      "dependencies": [],
+      "runner": "scripts/run_cpc_morphology017_v2.py",
+      "launch_command": ".venv-pretrained/bin/python -u -m scripts.run_cpc_morphology017_v2 --stage profile --device cuda --threads 1 --max-wall-seconds 7200",
+      "gpu_profile": "outputs/experiment017_morphology_templates_v2/profile.json",
+      "results": "outputs/experiment017_morphology_templates_v2/report.md",
+      "priority": null,
+      "verification": "outputs/experiment017_morphology_templates_v2/provenance/verification.json",
+      "live_status": "outputs/experiment017_morphology_templates_v2/coordination.json",
+      "cpu_tests_passed": 11,
+      "executable_manifest": "outputs/experiment_queue_017_v2/queue.json",
+      "immutable_manifest_sha256": "91c19b6243629b63af8ce901ba5d1c0d4d3b7a3acb063aae0e5c2fc36c87f8eb",
+      "handoff_succeeded": true,
+      "launch_receipt": "outputs/experiment_queue_017_v2/launch.json",
+      "source_map_sha256": "cf4daac96656191c2af9f177d6306b075c467402c5fd6f004a4e1f962013d8db",
+      "verification_sha256": "b10749d8612565ee515869b105cb58b527155c8491e51fabf01bb4b589e698bb",
+      "gpu_profile_sha256": "75454990448082a6608f2c0185733eed93c34c56a1f6096565b798b6c362d3d2",
+      "report_sha256": "f6eae0d6ca50ebc52d6f3db4364964d58b6ec909a89a74ffc7018afcd3b0e482",
+      "completed_at_utc": "2026-09-24T17:31:38.472749+00:00",
+      "screen_passed": true,
+      "advance_to_second_seed": true,
+      "best_development_auroc": {
+        "full_none": 0.957067349202811,
+        "full_conv": 0.9619762803317371,
+        "full_template": 0.9619429733877518,
+        "limited_none": 0.9431271121086114,
+        "limited_conv": 0.9461836647374262,
+        "limited_template": 0.9487431752790738
+      }
+    },
+    {
+      "id": "016",
+      "name": "xECG linear probe followed by short fine-tuning",
+      "status": "queued_for_implementation",
+      "authorized": true,
+      "protocol": "docs/astra-next-model-ideas.md#3-give-xecg-a-trained-classifier-before-adjusting-its-representation",
+      "output_dir": "outputs/experiment016_xecg_probe_finetune",
+      "arms": [
+        "Frozen linear probe",
+        "Random-head short fine-tune",
+        "Probe-initialized short fine-tune"
+      ],
+      "primary_comparison": "Probe-initialized versus random-head fine-tuning with identical backbone, schedule, sample order and optimizer settings.",
+      "cost_estimate": "Target 30–90 minutes for an initial full-label pilot including extraction; inferred and conditional on actual I/O.",
+      "cost_estimate_measured": false,
+      "next_action": "Extract released xECG features once; fit a training-only probe; verify exact scaler-to-affine head transfer; profile a matched short fine-tuning comparison.",
+      "constraints": [
+        "Start both fine-tuned arms from the same released encoder.",
+        "Fold feature standardization into the classifier and verify starting logits.",
+        "Keep optimization identical between fine-tuned arms; do not attribute an LR change to head initialization.",
+        "Do not automatically restart deferred Experiment 008."
+      ],
+      "dependencies": [],
+      "runner": null,
+      "launch_command": null,
+      "gpu_profile": null,
+      "results": null,
+      "priority": 2
+    },
+    {
+      "id": "011",
+      "priority": 3,
+      "name": "Compact KDA versus Complex KDA ECG encoder",
+      "protocol": "docs/cross-domain-architecture-candidates.md#1-nlp-memory-kda-versus-complex-kda",
+      "output_dir": "outputs/experiment011_delta_memory",
+      "arms": [
+        "GRU reference",
+        "KDA",
+        "CKDA"
+      ],
+      "primary_comparison": "CKDA minus KDA; same parameters except the specified transition ranges. GRU is a practical reference with reported capacity.",
+      "learning": "Train fresh compact ECG encoders with a common causal waveform stem and the same CPC objective. Copy the initial stem and prediction heads across arms.",
+      "starting_budget": "Proposed 20 SSL epochs on the fixed 56,875-record pool, then both existing label budgets; freeze exact settings after profiling.",
+      "next_action": "Pin official KDA/CKDA references; implement a compact recurrent encoder in new files; verify recurrence values/gradients, causal alignment and state reset; prepare matched runners and CPU tests.",
+      "constraints": [
+        "No language-model checkpoint required.",
+        "Do not warm-start only the GRU arm from its trained checkpoint.",
+        "CKDA audio evidence is a limited toy and GRU was strongest there.",
+        "Profile correctness and memory on V100; theoretical efficiency does not guarantee kernel compatibility."
+      ],
+      "sources": [
+        "https://github.com/MoonshotAI/Kimi-Linear",
+        "https://arxiv.org/abs/2609.24797",
+        "https://github.com/OpenEuroLLM/ComplexKDA"
+      ],
+      "status": "queued_for_implementation",
+      "authorized": true,
+      "runner": null,
+      "launch_command": null,
+      "gpu_profile": null,
+      "results": null,
+      "historical_run_after": "010",
+      "dependencies": []
+    },
+    {
+      "id": "012",
+      "priority": 4,
+      "name": "Compact StripedHyena-inspired ECG encoder",
+      "protocol": "docs/cross-domain-architecture-candidates.md#2-genomics-a-compact-mixture-of-temporal-scales",
+      "output_dir": "outputs/experiment012_temporal_hybrid",
+      "arms": [
+        "Compact hybrid with local and long temporal operators",
+        "Matched local-support control"
+      ],
+      "primary_comparison": "Mixed temporal supports minus restricted local supports, with matching stem, depth, gates, readout and attention placement.",
+      "learning": "Train a new compact raw-ECG model using the common causal CPC objective; preserve source input-dependent filtering mechanisms.",
+      "starting_budget": "Proposed same fixed pool, 20 SSL epochs and both label budgets as 011; exact architecture and budget remain to be frozen.",
+      "next_action": "Pin source operator definitions; design small explicit/implicit filters and a matched local control; test causal padding, FFT wrap prevention, gradients and resumability.",
+      "constraints": [
+        "No billion-parameter Evo checkpoint or DNA vocabulary.",
+        "Describe as an adaptation, not an exact Evo 2 reproduction.",
+        "Short ECG token sequences may remove the long-context advantage."
+      ],
+      "sources": [
+        "https://www.nature.com/articles/s41586-026-10176-5",
+        "https://github.com/ArcInstitute/evo2"
+      ],
+      "status": "queued_for_implementation",
+      "authorized": true,
+      "runner": null,
+      "launch_command": null,
+      "gpu_profile": null,
+      "results": null,
+      "historical_run_after": "011",
+      "dependencies": []
+    },
+    {
+      "id": "013",
+      "priority": 5,
+      "name": "Compact Mamba-3 ECG encoder",
+      "protocol": "docs/experiment-013-mamba3-plan.md",
+      "output_dir": "outputs/experiment013_mamba3",
+      "arms": [
+        "Compact Mamba-3",
+        "Matched Mamba-2 reference",
+        "GRU practical reference"
+      ],
+      "primary_comparison": "Mamba-3 minus Mamba-2 under a fixed common ECG stem, objective and evaluation; report any parameter/compute difference.",
+      "learning": "Train fresh waveform encoders on the fixed unlabeled pool; reuse the common causal CPC objective for architecture attribution.",
+      "starting_budget": "Candidate 20 SSL epochs and both existing label budgets, subject to actual supported implementation/profile.",
+      "next_action": "Pin official Mamba-3 source; select a documented supported variant, verify recurrence and V100 backend, then freeze a compact paired protocol before implementation/training.",
+      "constraints": [
+        "V100 support for the chosen official kernel is unverified.",
+        "Do not silently substitute Mamba-2 and label it Mamba-3.",
+        "If a reference backend is needed, verify numerical and gradient equivalence and report runtime.",
+        "Specify SISO/MIMO choice before test access; keep its effect distinct from architecture-family comparisons."
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2603.15569",
+        "https://github.com/state-spaces/mamba"
+      ],
+      "status": "queued_for_implementation",
+      "authorized": true,
+      "runner": null,
+      "launch_command": null,
+      "gpu_profile": null,
+      "results": null,
+      "historical_run_after": "012",
+      "dependencies": []
+    },
+    {
+      "id": "008",
+      "priority": null,
+      "name": "Vision-inspired xECG adaptation",
+      "status": "deferred_for_cost",
+      "authorized": true,
+      "protocol": "docs/experiment-008-vision-ssl.md",
+      "output_dir": "outputs/experiment008_vision_ssl",
+      "live_status": "outputs/experiment008_vision_ssl/coordination.json",
+      "run_after": "007",
+      "next_action": "Preserve completed four-arm profile and interrupted files. Do not restart long 008 suite while deferred; arm A has no resume checkpoint and would restart at update 0.",
+      "recovery_runner": "scripts/run_xecg_adaptation_mb4.py",
+      "recovery_source_map": "outputs/experiment_queue_recovery_008/sources_008.json",
+      "recovery_source_map_sha256": "d7dc9a47408c0843a5bfbcb2e9af3a937645fde596a3dbc79cd3041f56e5d663",
+      "microbatch_size": 4,
+      "effective_batch_size": 64,
+      "accumulation_steps": 16,
+      "profile_failure": "2026-09-24T04:56:20Z: CUDA OOM in arm D at microbatch 8; profile A-C succeeded; no arm trained.",
+      "gpu_profile": "outputs/experiment008_vision_ssl/profile_cuda.json",
+      "gpu_profile_sha256": "2de0d0497c2a37178153197f7af45efd23bbefb46d76952077360afb393048ef",
+      "launch_receipt": "outputs/experiment_queue_recovery_008/launch.json",
+      "results": null,
+      "interrupted_status": "outputs/experiment_queue_recovery_008/status.json",
+      "latest_logged_update": 30,
+      "resume_checkpoint_available": false
+    },
+    {
+      "id": "010",
+      "priority": null,
+      "name": "Cross-lead CPC",
+      "status": "deferred_for_cost",
+      "authorized": true,
+      "protocol": "docs/experiment-010-crosslead.md",
+      "output_dir": "outputs/experiment010_cpc_crosslead",
+      "live_status": "outputs/experiment010_cpc_crosslead/coordination.json",
+      "run_after": "008",
+      "next_action": "Do not automatically resume. One native SSL epoch checkpoint is preserved, but actual cache I/O made the projected three-arm suite exceed the two-hour limit; seek a cheaper protocol only with a separately frozen comparison.",
+      "profile_only_manifest": "outputs/experiment_queue_profile_010_v2/queue.json",
+      "profile_only_launch": "outputs/experiment_queue_profile_010_v2/launch.json",
+      "profile_retry_runner": "scripts/run_cpc_crosslead_profile_v2.py",
+      "profile_retry_source_map_sha256": "d25e53b4b89278d169f42914fa253d26c391dab8606fa3fa7645906f23cbc61d",
+      "first_profile_failure": "Bitwise CUDA save/restore assertion at maximum absolute first-tensor difference 1.49e-8; no receipt saved.",
+      "gpu_profiles": {
+        "native": "outputs/experiment010_cpc_crosslead/profile_native.json",
+        "withinlead": "outputs/experiment010_cpc_crosslead/profile_withinlead.json",
+        "crosslead": "outputs/experiment010_cpc_crosslead/profile_crosslead.json"
+      },
+      "full_manifest": "outputs/experiment_queue_full_010/queue.json",
+      "full_launch": "outputs/experiment_queue_full_010/launch.json",
+      "estimated_ssl_minutes": 31.84,
+      "estimated_six_transfers_minutes": 4.29,
+      "results": null,
+      "interrupted_status": "outputs/experiment_queue_full_010/status.json",
+      "native_epoch1_checkpoint": "outputs/experiment010_cpc_crosslead/native_ssl/epoch_state.pt",
+      "native_epoch1_checkpoint_sha256": "808363dbcbfabecfe42a49f2b5e42c4a10adfb27dc833d2e7d61f4ca590652d8",
+      "native_epoch1_seconds": 934.5864694089978,
+      "native_completed_epochs": 1,
+      "epoch2_checkpoint_available": false
+    },
+    {
+      "id": "009",
+      "priority": null,
+      "name": "Frozen CPC prediction mismatch",
+      "status": "complete",
+      "authorized": true,
+      "protocol": "docs/experiment-009-mismatch.md",
+      "output_dir": "outputs/experiment009_cpc_prediction_mismatch",
+      "live_status": "outputs/experiment009_cpc_prediction_mismatch/coordination.json",
+      "run_after": "006",
+      "next_action": "Interpret completed paired comparisons; no further training required for this frozen-feature study.",
+      "results": "outputs/experiment009_cpc_prediction_mismatch/report.md"
+    },
+    {
+      "id": "007",
+      "priority": null,
+      "name": "Released xECG fine-tuning",
+      "status": "complete",
+      "authorized": true,
+      "protocol": "docs/experiment-007-xecg.md",
+      "output_dir": "outputs/experiment007_xecg",
+      "live_status": "outputs/experiment007_xecg/coordination.json",
+      "run_after": "009",
+      "next_action": "Interpret completed results; no further training in the frozen 007 run.",
+      "results": "outputs/experiment007_xecg/report.md"
+    }
+  ],
+  "next_implementation_task": "016",
+  "promotion_requirements": [
+    "Fixed primary comparison and input/label manifests",
+    "Pinned source and documented compact architecture",
+    "Meaningful CPU correctness, leakage and recovery checks",
+    "Runnable resumable stages with output identities and provenance",
+    "Verified successor executable manifest with explicit predecessor and GPU coordination",
+    "For GPU tasks, a real-device correctness profile and representative full-pass I/O timing before full training; CPU-only cached-feature tasks require cache/probe identity and split verification."
+  ],
+  "other_work": {
+    "mimic_download": "200,000 selected MIMIC recordings; downloader continues. Counts overlap the current subset.",
+    "legacy_runner": "Stopped at user request for refactor; see outputs/refactor_pause/pause.json. Do not restart until user resumes.",
+    "unselected_ideas": [
+      "docs/vision-to-ecg-architecture-candidates.md",
+      "docs/xecg-next-experiments.md"
+    ]
+  },
+  "completed_before_queue": [
+    {
+      "id": "006",
+      "name": "CPC tokenization",
+      "status": "complete",
+      "completed_at_utc": "2026-09-24T03:18:20.930808+00:00",
+      "protocol": "docs/experiment-006-tokenization.md",
+      "results": "outputs/experiment006_cpc_tokenization/report.md"
+    }
+  ],
+  "pending_priority_order": [
+    "016",
+    "011",
+    "012",
+    "013"
+  ],
+  "priority_policy": {
+    "basis": "Expected end-to-end cost; only 014 is clearly cheapest because its initial screen uses existing features on CPU. Remaining ordering is provisional until measured.",
+    "order_is_dependency": false,
+    "development_screen_first": true,
+    "gpu_pilot_planning_ceiling_hours": 2,
+    "ceiling_basis": "Working planning gate adopted after user rejected the 22-hour suite; not an explicitly specified user numeric limit.",
+    "include_in_cost": [
+      "cold and warm data loading",
+      "all comparison arms",
+      "evaluation",
+      "checkpoint writes"
+    ],
+    "deferred_experiments": [
+      "008",
+      "010"
+    ],
+    "note": "New tasks are implementation backlog, not executable GPU jobs. Failed/negative early screens need not block independent later experiments."
+  },
+  "data_loading_fix": {
+    "module": "ecg_experiment/bounded_waveform_cache.py",
+    "audit": "docs/data-loading-runtime-fix.md",
+    "verification": "tests/test_bounded_waveform_cache.py",
+    "status": "Real V100 full-pass profile passed:359.70s initial RAM preload;26.71s/8.50s full arms including evaluation and restore; next process warm preload5.34s.",
+    "train_and_development_ram_bytes": 1999920000
+  },
+  "follow_up_required": {
+    "experiment": "017",
+    "task": "Matched second-seed replication and artifact/template dominance audit",
+    "status": "not_scheduled",
+    "basis": "Prespecified limited-label development screen passed; no new test result."
+  },
+  "scheduling": {
+    "state": "paused_by_user",
+    "since_utc": "2026-09-24T19:40:47.068565+00:00",
+    "reason": "Repository refactor; training remains paused until the user requests resumption",
+    "resume_requires_user_request": true,
+    "downloads_continue": true,
+    "pause_receipt": "outputs/refactor_pause/pause.json",
+    "source_snapshot": "outputs/refactor_pause/source_before_refactor.tar.gz"
+  },
+  "repository_maintenance": {
+    "status": "complete",
+    "guide": "docs/repository-refactor.md",
+    "scientific_sources": "109 existing Python/shell source and test files verified unchanged against pause snapshot",
+    "environment": "pyproject.toml + uv.lock; isolated .venv-uv; historical environments preserved",
+    "tracking": "docs/experiment-tracking.md",
+    "data_versioning": "docs/data-versioning.md",
+    "verification_receipt": "outputs/repository_refactor/verification.json",
+    "training_resumed": false,
+    "storage_policy": "Data remains local; no GitHub/Git LFS data uploads or DVC remote until the user chooses storage",
+    "completed_at_utc": "2026-09-24T20:34:34.580241+00:00",
+    "verification_manifest": "outputs/repository_refactor/queue.json",
+    "verification_manifest_sha256": "a38bed319fdfa70c57ed1b7282083469f9709059c71e58dca56b1a4664118789",
+    "verification_source_map_sha256": "97858c333a8f5d12f910963a52ad5ca54c465460236e972259b566c0e9f0487d",
+    "completion_record": "reports/repository-refactor.json"
+  }
+}

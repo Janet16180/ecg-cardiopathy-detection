@@ -1,0 +1,6 @@
+outs:
+- md5: 4caf7860f76e81984f32acdf1ce57274.dir
+  size: 1320990680
+  nfiles: 13754
+  hash: md5
+  path: cpsc_2018

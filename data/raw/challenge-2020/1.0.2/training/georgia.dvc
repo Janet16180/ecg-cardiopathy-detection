@@ -1,0 +1,6 @@
+outs:
+- md5: 77e369da68f1463a1557c6a437bf6155.dir
+  size: 1245905520
+  nfiles: 20688
+  hash: md5
+  path: georgia

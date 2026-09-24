@@ -1,0 +1,6 @@
+outs:
+- md5: 191ab649ebf5d39f626a619a738ff5fe.dir
+  size: 536340888
+  nfiles: 43598
+  hash: md5
+  path: records100

@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "scope": "Repository maintenance; no training or experiment scheduling",
+  "workflow": {
+    "setup": "make setup",
+    "checks": "make check",
+    "data_validation": "make validate-data",
+    "experiment_registry": "make register-runs",
+    "local_tracking_ui": "make mlflow"
+  },
+  "checks": {
+    "ruff": "passed",
+    "cpu_tests": {
+      "passed": 169,
+      "seconds": 72.15,
+      "command": "UV_CACHE_DIR=.uv-cache make check"
+    },
+    "root_uv_lock": "verified: 195 packages",
+    "pretrained_uv_lock": "verified: 110 packages",
+    "package_build": "wheel and sdist built; local data/output/environment exclusion verified",
+    "historical_archive": "all 156 archived entries verified",
+    "scientific_source_preservation": "109 existing scientific source/test files unchanged",
+    "pretrained_native_build": {
+      "python": "uv-managed 3.11.14",
+      "source": "pinned git archives in disposable directories",
+      "imports": "passed from /tmp without PYTHONPATH",
+      "historical_sources_or_environments_modified": false,
+      "wheel_sha256": {
+        "fairseq_signals": "addfe9cb13520c35458fe8c01cb6268ddbd777520194ca9a42279cdf6a4e7916",
+        "hubert_ecg": "599c770eecb42d8f437079ba9665bce10e1c3e885b16069c529f726ebdb46615"
+      }
+    }
+  },
+  "preserved": {
+    "source_archive": "outputs/refactor_pause/source_before_refactor.tar.gz",
+    "source_archive_sha256": "4911551226c3df2d2297895aef65430132a54199ce0edaac63d97b47d2a2f8ed",
+    "old_hash_receipts_rewritten": false,
+    "historical_environments_untouched": [
+      ".venv",
+      ".venv-pretrained"
+    ],
+    "downloads": "MIMIC and CODE paths preserved; running processes observed on host"
+  },
+  "mlflow": {
+    "database": "outputs/mlflow/mlflow.db",
+    "historical_runs": 78,
+    "held_out_test_runs": 66,
+    "development_screen_runs": 12,
+    "reimport": {
+      "imported": 0,
+      "already_present": 78
+    },
+    "historical_config_hashes": 76,
+    "historical_label_counts": 66,
+    "historical_model_parameter_counts": 24,
+    "historical_epoch_budgets": 27
+  },
+  "dvc": {
+    "shared_remote_configured": false,
+    "cache_mode": "copy",
+    "active_mimic_and_code_excluded": true,
+    "validation_report": "reports/data-validation.json",
+    "pointers": 21,
+    "files_versioned": 149053,
+    "content_bytes": 7675037745,
+    "waveform_header_files_verified": 149038,
+    "patient_leakage": 0,
+    "status": "Data and pipelines are up to date.",
+    "pipeline_lock": "dvc.lock",
+    "validation_command": "UV_PROJECT_ENVIRONMENT=.venv-uv uv run --locked --group data dvc repro validate_completed_data"
+  },
+  "training_resumed": false,
+  "limitations": [
+    "DVC and MLflow stores are local; shared hosting and backups need team configuration.",
+    "GPU qualification and resumed training remain gated by explicit user request."
+  ],
+  "storage_policy": {
+    "data_location": "local_only",
+    "git_lfs_configured": false,
+    "data_uploaded": false,
+    "shared_storage_requires_user_choice": true,
+    "git_eligible_data_metadata_files": 22,
+    "git_eligible_data_metadata_bytes": 2180,
+    "dataset_bytes_eligible_for_git": 0
+  },
+  "completed_at_utc": "2026-09-24T20:36:20.930376+00:00",
+  "verification_manifest": {
+    "path": "outputs/repository_refactor/queue.json",
+    "sha256": "a38bed319fdfa70c57ed1b7282083469f9709059c71e58dca56b1a4664118789",
+    "source_map_sha256": "97858c333a8f5d12f910963a52ad5ca54c465460236e972259b566c0e9f0487d",
+    "source_entries": 155,
+    "check": "passed",
+    "scheduler_launched": false
+  },
+  "package_artifacts": [
+    {
+      "path": "dist/ecg_cardiopathy_detection-0.1.0-py3-none-any.whl",
+      "sha256": "5a02b2ad084eb2c49f26d49554c7987fca82bec124beefe23fa6476ef0e5ee52",
+      "bytes": 53277,
+      "entries": 22,
+      "local_data_excluded": true
+    },
+    {
+      "path": "dist/ecg_cardiopathy_detection-0.1.0.tar.gz",
+      "sha256": "4da28bfebf9978ef239d834a436d7d9e799ed87e80f9f142cc1083e230984cb5",
+      "bytes": 271841,
+      "entries": 122,
+      "local_data_excluded": true
+    }
+  ]
+}

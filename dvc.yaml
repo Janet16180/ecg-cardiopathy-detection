@@ -1,0 +1,33 @@
+stages:
+  validate_completed_data:
+    desc: Verify completed public raw ECGs against official hashes and audit PTB patient split isolation.
+    cmd: UV_PROJECT_ENVIRONMENT=.venv-uv uv run --locked --group data python -m scripts.validate_data_versioning
+    deps:
+      - configs/datasets.json
+      - scripts/validate_data_versioning.py
+      - pyproject.toml
+      - uv.lock
+      - data/raw/ptb-xl/1.0.3/SHA256SUMS.txt
+      - data/raw/ptb-xl/1.0.3/records500
+      - data/raw/ptb-xl/1.0.3/records100
+      - data/raw/ptb-xl/1.0.3/ptbxl_database.csv
+      - data/raw/ptb-xl/1.0.3/scp_statements.csv
+      - data/acquisition/cpsc_2018_extra.json
+      - data/acquisition/cpsc_2018.json
+      - data/acquisition/georgia.json
+      - data/acquisition/chapman_shaoxing.json
+      - data/raw/challenge-2020/1.0.2/SHA256SUMS.txt
+      - data/raw/challenge-2020/1.0.2/training/cpsc_2018_extra
+      - data/raw/challenge-2020/1.0.2/training/cpsc_2018
+      - data/raw/challenge-2020/1.0.2/training/georgia
+      - data/raw/challenge-2021/1.0.3/SHA256SUMS.txt
+      - data/raw/challenge-2021/1.0.3/training/chapman_shaoxing
+      - data/processed/ptbxl/seed42_fraction1/all_train_ssl.csv
+      - data/processed/ptbxl/seed42_fraction1/labeled_train.csv
+      - data/processed/ptbxl/seed42_fraction0.1/labeled_train.csv
+      - data/processed/ptbxl/seed42_fraction1/validation.csv
+      - data/processed/ptbxl/seed42_fraction1/test.csv
+      - data/processed/training_union_500hz_v1/heldout_references.csv
+    metrics:
+      - reports/data-validation.json:
+          cache: false

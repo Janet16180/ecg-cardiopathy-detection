@@ -1,0 +1,38 @@
+{
+  "method": "500 paired resamples of test patients, retaining every ECG in a sampled patient; percentile intervals conditional on the fitted models. ECG IDs, patient IDs, and targets are aligned and verified. Single-class draws are omitted. Exploratory contrasts, no multiplicity adjustment.",
+  "seed": 2026,
+  "test_records": 1896,
+  "test_patients": 1653,
+  "comparisons": [
+    {
+      "model": "ecg-fm_adapted_finetuned_seed42",
+      "reference": "ecg-fm_finetuned_seed42",
+      "auroc_difference": 0.0026286416893976927,
+      "paired_patient_bootstrap_ci95": [
+        -0.003079132884693367,
+        0.00813305278035877
+      ],
+      "valid_bootstrap_resamples": 500
+    },
+    {
+      "model": "ecg-fm_pooled_adapted_finetuned_seed42",
+      "reference": "ecg-fm_finetuned_seed42",
+      "auroc_difference": 0.0015960462936990272,
+      "paired_patient_bootstrap_ci95": [
+        -0.004631401190736667,
+        0.007645996064425302
+      ],
+      "valid_bootstrap_resamples": 500
+    },
+    {
+      "model": "ecg-fm_pooled_adapted_finetuned_seed42",
+      "reference": "ecg-fm_adapted_finetuned_seed42",
+      "auroc_difference": -0.0010325953956986655,
+      "paired_patient_bootstrap_ci95": [
+        -0.0023938255477596593,
+        0.00027722227712253725
+      ],
+      "valid_bootstrap_resamples": 500
+    }
+  ]
+}

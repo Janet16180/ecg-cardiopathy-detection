@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "captured_utc": "2026-09-24",
+  "sources": [
+    {
+      "name": "HuBERT-ECG",
+      "path": "third_party/HuBERT-ECG",
+      "repository": "https://github.com/Edoar-do/HuBERT-ECG.git",
+      "commit": "2d0611da529412e021af76d4ed41d5a23a704dc6",
+      "git_tree": "45a5697847403b0bb417c00ae9904372c44f356e",
+      "tracked_worktree_clean": true
+    },
+    {
+      "name": "fairseq-signals",
+      "path": "third_party/fairseq-signals",
+      "repository": "https://github.com/Jwoo5/fairseq-signals.git",
+      "commit": "f8f0ff1c788a82c2059cb452cd5462898867489e",
+      "git_tree": "59535a7b9bf1d321831caa81558dfaa884664d7a",
+      "tracked_worktree_clean": true,
+      "existing_untracked_build_artifacts": {
+        "fairseq_signals/version.py": "73634e11cf3bbbf42212c2e979ac13764dbf72a83aa6e6936f6527f38da7c9d2",
+        "fairseq_signals/data/data_utils_fast.cpython-311-x86_64-linux-gnu.so": "a533bdafac636e60b13a70ddfbcf7d9a107ef059fb7bee39ef3be31700f1cfdb"
+      }
+    }
+  ]
+}

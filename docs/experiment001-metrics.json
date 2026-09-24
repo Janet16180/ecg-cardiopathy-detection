@@ -1,0 +1,2246 @@
+[
+  {
+    "model": "mae_finetuned",
+    "label_seed": 43,
+    "threshold": 0.2277836799621582,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.8947061896324158,
+      "intercept": 0.16592976450920105
+    },
+    "test": {
+      "auroc": 0.8876452646846407,
+      "average_precision": 0.9345845430998027,
+      "sensitivity": 0.9464435146443515,
+      "specificity": 0.4593437945791726,
+      "precision": 0.7490066225165563,
+      "npv": 0.8341968911917098,
+      "f1": 0.8362292051756007,
+      "accuracy": 0.7663502109704642,
+      "brier": 0.13248155567773823,
+      "log_loss": 0.4060091709614494,
+      "tp": 1131,
+      "tn": 322,
+      "fp": 379,
+      "fn": 64,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7964135021097046,
+      "ece_10_bins": 0.028008101093445256
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8721492962321555,
+        0.9027272835755143
+      ],
+      "average_precision": [
+        0.9226053448966074,
+        0.946009619404992
+      ],
+      "sensitivity": [
+        0.9317788289706583,
+        0.959586065912483
+      ],
+      "specificity": [
+        0.4214927654534396,
+        0.4967351842078382
+      ],
+      "precision": [
+        0.7263402158943705,
+        0.7735461700559536
+      ],
+      "brier": [
+        0.1225188879982726,
+        0.1430262387293977
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.464435146443515,
+      "expected_fp_per_1000": 535.2496433666191,
+      "expected_fn_per_1000": 0.535564853556485,
+      "expected_tn_per_1000": 454.7503566333809,
+      "expected_referrals_per_1000": 544.7140785130626,
+      "ppv": 0.017375051462372934
+    }
+  },
+  {
+    "model": "cnn_supervised",
+    "label_seed": 42,
+    "threshold": 0.22556769847869873,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.8079322576522827,
+      "intercept": 0.12146440148353577
+    },
+    "test": {
+      "auroc": 0.9232847277350349,
+      "average_precision": 0.9594918913463342,
+      "sensitivity": 0.9447698744769875,
+      "specificity": 0.5592011412268189,
+      "precision": 0.7851182197496523,
+      "npv": 0.8558951965065502,
+      "f1": 0.8575769084694265,
+      "accuracy": 0.8022151898734177,
+      "brier": 0.10802492968145709,
+      "log_loss": 0.33595794808054075,
+      "tp": 1129,
+      "tn": 392,
+      "fp": 309,
+      "fn": 66,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7584388185654009,
+      "ece_10_bins": 0.028343385531476646
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.9115208520144514,
+        0.9345603958152071
+      ],
+      "average_precision": [
+        0.9523838311584477,
+        0.9664776099350122
+      ],
+      "sensitivity": [
+        0.9314368418844653,
+        0.9584404171014411
+      ],
+      "specificity": [
+        0.5196340052875082,
+        0.5925739512941476
+      ],
+      "precision": [
+        0.7623306352344362,
+        0.8078079156418446
+      ],
+      "brier": [
+        0.09929872621435784,
+        0.11680251735290396
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.447698744769875,
+      "expected_fp_per_1000": 436.39087018544933,
+      "expected_fn_per_1000": 0.5523012552301254,
+      "expected_tn_per_1000": 553.6091298145507,
+      "expected_referrals_per_1000": 445.8385689302192,
+      "ppv": 0.02119085113573606
+    }
+  },
+  {
+    "model": "hubert-small_linear",
+    "label_seed": 44,
+    "threshold": 0.23251976072788239,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 1.0091496706008911,
+      "intercept": 0.017874836921691895
+    },
+    "test": {
+      "auroc": 0.9162678540518923,
+      "average_precision": 0.953578456675987,
+      "sensitivity": 0.9481171548117154,
+      "specificity": 0.543509272467903,
+      "precision": 0.7797660013764625,
+      "npv": 0.8600451467268623,
+      "f1": 0.8557401812688822,
+      "accuracy": 0.7985232067510548,
+      "brier": 0.11265168619601999,
+      "log_loss": 0.35219409457048817,
+      "tp": 1133,
+      "tn": 381,
+      "fp": 320,
+      "fn": 62,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7663502109704642,
+      "ece_10_bins": 0.017787413407836253
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.9020606043018772,
+        0.9287962090486584
+      ],
+      "average_precision": [
+        0.9441299024248916,
+        0.9620550501366812
+      ],
+      "sensitivity": [
+        0.9342876019329508,
+        0.9605058332786055
+      ],
+      "specificity": [
+        0.5085587434429183,
+        0.5820633854421103
+      ],
+      "precision": [
+        0.758187727541855,
+        0.8025118264846914
+      ],
+      "brier": [
+        0.10349978254105299,
+        0.12328030612096756
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.481171548117155,
+      "expected_fp_per_1000": 451.925820256776,
+      "expected_fn_per_1000": 0.5188284518828457,
+      "expected_tn_per_1000": 538.074179743224,
+      "expected_referrals_per_1000": 461.40699180489315,
+      "ppv": 0.020548391585982484
+    }
+  },
+  {
+    "model": "jepa_finetuned",
+    "label_seed": 44,
+    "threshold": 0.22312329709529877,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.5787923336029053,
+      "intercept": 0.1776660978794098
+    },
+    "test": {
+      "auroc": 0.9009985734664765,
+      "average_precision": 0.9451775162915317,
+      "sensitivity": 0.9430962343096234,
+      "specificity": 0.5078459343794579,
+      "precision": 0.765625,
+      "npv": 0.839622641509434,
+      "f1": 0.8451443569553806,
+      "accuracy": 0.7821729957805907,
+      "brier": 0.12340550357458205,
+      "log_loss": 0.3851269989888901,
+      "tp": 1127,
+      "tn": 356,
+      "fp": 345,
+      "fn": 68,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7763713080168776,
+      "ece_10_bins": 0.02466365868689392
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8870661538158883,
+        0.9149833226247457
+      ],
+      "average_precision": [
+        0.9348785007006442,
+        0.9543925933711556
+      ],
+      "sensitivity": [
+        0.9283271620198944,
+        0.9565191874853598
+      ],
+      "specificity": [
+        0.4694300249169435,
+        0.5469029535864979
+      ],
+      "precision": [
+        0.744063292850047,
+        0.7886385691246802
+      ],
+      "brier": [
+        0.11379447084232816,
+        0.13292819367111672
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.430962343096233,
+      "expected_fp_per_1000": 487.2325249643367,
+      "expected_fn_per_1000": 0.5690376569037658,
+      "expected_tn_per_1000": 502.7674750356633,
+      "expected_referrals_per_1000": 496.6634873074329,
+      "ppv": 0.018988636338508415
+    }
+  },
+  {
+    "model": "transformer_supervised",
+    "label_seed": 43,
+    "threshold": 0.21981139481067657,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.8756193518638611,
+      "intercept": 0.7953113317489624
+    },
+    "test": {
+      "auroc": 0.9007836981240188,
+      "average_precision": 0.9447470625214104,
+      "sensitivity": 0.9573221757322176,
+      "specificity": 0.442225392296719,
+      "precision": 0.7452768729641693,
+      "npv": 0.8587257617728532,
+      "f1": 0.8380952380952381,
+      "accuracy": 0.7668776371308017,
+      "brier": 0.12438117237500881,
+      "log_loss": 0.3793202669424116,
+      "tp": 1144,
+      "tn": 310,
+      "fp": 391,
+      "fn": 51,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.8095991561181435,
+      "ece_10_bins": 0.024662029654384875
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8860119319073801,
+        0.9154730394813922
+      ],
+      "average_precision": [
+        0.9344248205796661,
+        0.9545021311108436
+      ],
+      "sensitivity": [
+        0.9445329977628636,
+        0.9688913396360205
+      ],
+      "specificity": [
+        0.4052669917801497,
+        0.4805394939725259
+      ],
+      "precision": [
+        0.7237841994892006,
+        0.7705474278730096
+      ],
+      "brier": [
+        0.11434891172818297,
+        0.1340660340762086
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.573221757322175,
+      "expected_fp_per_1000": 552.1968616262482,
+      "expected_fn_per_1000": 0.4267782426778244,
+      "expected_tn_per_1000": 437.8031383737518,
+      "expected_referrals_per_1000": 561.7700833835703,
+      "ppv": 0.017041174032732687
+    }
+  },
+  {
+    "model": "ecg-fm_adapted_finetuned",
+    "label_seed": 42,
+    "threshold": 0.18952734768390656,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.7930542230606079,
+      "intercept": 0.7967734336853027
+    },
+    "test": {
+      "auroc": 0.9314929658169142,
+      "average_precision": 0.9636364347130483,
+      "sensitivity": 0.9422594142259414,
+      "specificity": 0.6134094151212554,
+      "precision": 0.8060128847530422,
+      "npv": 0.8617234468937875,
+      "f1": 0.8688271604938271,
+      "accuracy": 0.820675105485232,
+      "brier": 0.10246722473111508,
+      "log_loss": 0.32155256221078565,
+      "tp": 1126,
+      "tn": 430,
+      "fp": 271,
+      "fn": 69,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7368143459915611,
+      "ece_10_bins": 0.022010327053535332
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.92067730715819,
+        0.9418838368101884
+      ],
+      "average_precision": [
+        0.9563834484230549,
+        0.9700694070493349
+      ],
+      "sensitivity": [
+        0.9291268797209503,
+        0.9553206094287194
+      ],
+      "specificity": [
+        0.5731231632773011,
+        0.6522662494344744
+      ],
+      "precision": [
+        0.7811359061025889,
+        0.8294897335335194
+      ],
+      "brier": [
+        0.0929964163880099,
+        0.11138378612259445
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.422594142259413,
+      "expected_fp_per_1000": 382.7246790299572,
+      "expected_fn_per_1000": 0.5774058577405861,
+      "expected_tn_per_1000": 607.2753209700428,
+      "expected_referrals_per_1000": 392.1472731722166,
+      "ppv": 0.02402820263427245
+    }
+  },
+  {
+    "model": "mae_finetuned",
+    "label_seed": 42,
+    "threshold": 0.2677706778049469,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.6111870408058167,
+      "intercept": 0.20806962251663208
+    },
+    "test": {
+      "auroc": 0.8891123857728648,
+      "average_precision": 0.9364542220856181,
+      "sensitivity": 0.9380753138075314,
+      "specificity": 0.49358059914407987,
+      "precision": 0.7594850948509485,
+      "npv": 0.8238095238095238,
+      "f1": 0.8393859977536503,
+      "accuracy": 0.7737341772151899,
+      "brier": 0.13134496824149053,
+      "log_loss": 0.40286020528250166,
+      "tp": 1121,
+      "tn": 346,
+      "fp": 355,
+      "fn": 74,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7784810126582279,
+      "ece_10_bins": 0.029748002990671617
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8746501044444266,
+        0.9047904150809915
+      ],
+      "average_precision": [
+        0.9253946796551084,
+        0.9478041133928437
+      ],
+      "sensitivity": [
+        0.9226932077973026,
+        0.9522398156472858
+      ],
+      "specificity": [
+        0.4548013497265959,
+        0.5326777431053386
+      ],
+      "precision": [
+        0.7364457941934679,
+        0.7836270943518954
+      ],
+      "brier": [
+        0.12033477580417774,
+        0.1410106445763531
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.380753138075313,
+      "expected_fp_per_1000": 501.355206847361,
+      "expected_fn_per_1000": 0.619246861924686,
+      "expected_tn_per_1000": 488.64479315263907,
+      "expected_referrals_per_1000": 510.7359599854363,
+      "ppv": 0.018367128757377504
+    }
+  },
+  {
+    "model": "lead_multiscale_supervised",
+    "label_seed": 44,
+    "threshold": 0.2662401497364044,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.7177383303642273,
+      "intercept": -0.0005263687344267964
+    },
+    "test": {
+      "auroc": 0.8857782367090646,
+      "average_precision": 0.9382758441008754,
+      "sensitivity": 0.9246861924686193,
+      "specificity": 0.5292439372325249,
+      "precision": 0.7700348432055749,
+      "npv": 0.8047722342733189,
+      "f1": 0.8403041825095057,
+      "accuracy": 0.7784810126582279,
+      "brier": 0.13358853041323537,
+      "log_loss": 0.41025354595056707,
+      "tp": 1105,
+      "tn": 371,
+      "fp": 330,
+      "fn": 90,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7568565400843882,
+      "ece_10_bins": 0.03231976192075175
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8705336813177906,
+        0.8999824220350621
+      ],
+      "average_precision": [
+        0.9272324655180464,
+        0.9477212692150521
+      ],
+      "sensitivity": [
+        0.9090822456642231,
+        0.9402745124084798
+      ],
+      "specificity": [
+        0.4930167706253835,
+        0.5659725449355218
+      ],
+      "precision": [
+        0.7476324378794209,
+        0.7909929028972873
+      ],
+      "brier": [
+        0.12413362983778725,
+        0.14334519591047123
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.246861924686193,
+      "expected_fp_per_1000": 466.0485021398003,
+      "expected_fn_per_1000": 0.7531380753138073,
+      "expected_tn_per_1000": 523.9514978601997,
+      "expected_referrals_per_1000": 475.2953640644865,
+      "ppv": 0.019454980258195007
+    }
+  },
+  {
+    "model": "cnn_supervised",
+    "label_seed": 43,
+    "threshold": 0.19078406691551208,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.8710697293281555,
+      "intercept": 0.8796537518501282
+    },
+    "test": {
+      "auroc": 0.9228346832677764,
+      "average_precision": 0.9581239071503932,
+      "sensitivity": 0.9573221757322176,
+      "specificity": 0.5092724679029957,
+      "precision": 0.7688172043010753,
+      "npv": 0.875,
+      "f1": 0.8527767424524786,
+      "accuracy": 0.7916666666666666,
+      "brier": 0.1081812974516233,
+      "log_loss": 0.3368086290709053,
+      "tp": 1144,
+      "tn": 357,
+      "fp": 344,
+      "fn": 51,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7848101265822784,
+      "ece_10_bins": 0.0257971496950002
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.9108325885923205,
+        0.9338726827479567
+      ],
+      "average_precision": [
+        0.9504626653375635,
+        0.9654027859838503
+      ],
+      "sensitivity": [
+        0.945624468988955,
+        0.9681970166773249
+      ],
+      "specificity": [
+        0.4707519869574078,
+        0.5456114236877716
+      ],
+      "precision": [
+        0.7458555224465434,
+        0.7934875522707381
+      ],
+      "brier": [
+        0.09915902581852065,
+        0.11778180715259254
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.573221757322175,
+      "expected_fp_per_1000": 485.8202567760342,
+      "expected_fn_per_1000": 0.4267782426778244,
+      "expected_tn_per_1000": 504.1797432239658,
+      "expected_referrals_per_1000": 495.3934785333564,
+      "ppv": 0.01932448078578729
+    }
+  },
+  {
+    "model": "ecg-fm_linear",
+    "label_seed": 44,
+    "threshold": 0.22315561771392822,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.9924211502075195,
+      "intercept": 0.17649690806865692
+    },
+    "test": {
+      "auroc": 0.9228179707411409,
+      "average_precision": 0.9596367539765158,
+      "sensitivity": 0.9422594142259414,
+      "specificity": 0.5848787446504993,
+      "precision": 0.7946365561044461,
+      "npv": 0.8559498956158664,
+      "f1": 0.8621745788667687,
+      "accuracy": 0.810126582278481,
+      "brier": 0.1086336082986695,
+      "log_loss": 0.33744419309106743,
+      "tp": 1126,
+      "tn": 410,
+      "fp": 291,
+      "fn": 69,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7473628691983122,
+      "ece_10_bins": 0.03056658325296384
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.9096861855890396,
+        0.9345488402813485
+      ],
+      "average_precision": [
+        0.9519008546433859,
+        0.9669596505807507
+      ],
+      "sensitivity": [
+        0.9282686043598096,
+        0.9566883875487366
+      ],
+      "specificity": [
+        0.5418800353161902,
+        0.6204274519611521
+      ],
+      "precision": [
+        0.769644041303524,
+        0.8190231534954249
+      ],
+      "brier": [
+        0.09926600916051558,
+        0.11872970617319156
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.422594142259413,
+      "expected_fp_per_1000": 410.9700427960057,
+      "expected_fn_per_1000": 0.5774058577405861,
+      "expected_tn_per_1000": 579.0299572039943,
+      "expected_referrals_per_1000": 420.3926369382651,
+      "ppv": 0.022413794425336538
+    }
+  },
+  {
+    "model": "jepa_finetuned",
+    "label_seed": 43,
+    "threshold": 0.21696288883686066,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.6690802574157715,
+      "intercept": -0.03243374079465866
+    },
+    "test": {
+      "auroc": 0.9080190284053264,
+      "average_precision": 0.9489762992166269,
+      "sensitivity": 0.9556485355648535,
+      "specificity": 0.46219686162624823,
+      "precision": 0.7518104015799868,
+      "npv": 0.8594164456233422,
+      "f1": 0.8415622697126013,
+      "accuracy": 0.7732067510548524,
+      "brier": 0.11947505092323334,
+      "log_loss": 0.3734062165921716,
+      "tp": 1142,
+      "tn": 324,
+      "fp": 377,
+      "fn": 53,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.8011603375527426,
+      "ece_10_bins": 0.02853907645927577
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8951657179049759,
+        0.9223414327707639
+      ],
+      "average_precision": [
+        0.9397507554987209,
+        0.9577483129574835
+      ],
+      "sensitivity": [
+        0.9436128781834257,
+        0.9669572184880492
+      ],
+      "specificity": [
+        0.4259853529600748,
+        0.5025299109826259
+      ],
+      "precision": [
+        0.7309450710015282,
+        0.7758488443938136
+      ],
+      "brier": [
+        0.10946921448096815,
+        0.12871477327463635
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.556485355648535,
+      "expected_fp_per_1000": 532.4251069900143,
+      "expected_fn_per_1000": 0.4435146443514648,
+      "expected_tn_per_1000": 457.5748930099858,
+      "expected_referrals_per_1000": 541.9815923456629,
+      "ppv": 0.017632490642880798
+    }
+  },
+  {
+    "model": "ecg-jepa_linear",
+    "label_seed": 43,
+    "threshold": 0.2980135977268219,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 1.003056287765503,
+      "intercept": 0.1679617464542389
+    },
+    "test": {
+      "auroc": 0.9455338756946146,
+      "average_precision": 0.9715571246566561,
+      "sensitivity": 0.9313807531380753,
+      "specificity": 0.746077032810271,
+      "precision": 0.8621223857474826,
+      "npv": 0.8644628099173554,
+      "f1": 0.8954143201930812,
+      "accuracy": 0.8628691983122363,
+      "brier": 0.08889869614168665,
+      "log_loss": 0.28391497609845023,
+      "tp": 1113,
+      "tn": 523,
+      "fp": 178,
+      "fn": 82,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.6809071729957806,
+      "ece_10_bins": 0.029293254853122126
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.9359556811034511,
+        0.9553528783006877
+      ],
+      "average_precision": [
+        0.9654220353653746,
+        0.9773042320230856
+      ],
+      "sensitivity": [
+        0.9152027645251944,
+        0.9464050367155873
+      ],
+      "specificity": [
+        0.7105982877673171,
+        0.7788995830890496
+      ],
+      "precision": [
+        0.8410863423128865,
+        0.8828239298777003
+      ],
+      "brier": [
+        0.08000784451032472,
+        0.09706985592128257
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.313807531380753,
+      "expected_fp_per_1000": 251.38373751783166,
+      "expected_fn_per_1000": 0.6861924686192467,
+      "expected_tn_per_1000": 738.6162624821683,
+      "expected_referrals_per_1000": 260.6975450492124,
+      "ppv": 0.03572648729631331
+    }
+  },
+  {
+    "model": "hubert-small_linear",
+    "label_seed": 43,
+    "threshold": 0.2701337933540344,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 1.0692558288574219,
+      "intercept": 0.1583556979894638
+    },
+    "test": {
+      "auroc": 0.9215973594207917,
+      "average_precision": 0.9564327374707757,
+      "sensitivity": 0.9405857740585774,
+      "specificity": 0.6105563480741797,
+      "precision": 0.8045812455261274,
+      "npv": 0.8577154308617234,
+      "f1": 0.8672839506172839,
+      "accuracy": 0.8185654008438819,
+      "brier": 0.10865136818240075,
+      "log_loss": 0.3438175467936894,
+      "tp": 1124,
+      "tn": 428,
+      "fp": 273,
+      "fn": 71,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7368143459915611,
+      "ece_10_bins": 0.026385989455203623
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.9095861509108455,
+        0.933600884127292
+      ],
+      "average_precision": [
+        0.9480240933008593,
+        0.9646122860865839
+      ],
+      "sensitivity": [
+        0.9269883428526872,
+        0.9530361974064745
+      ],
+      "specificity": [
+        0.5741550737899536,
+        0.6480438070920551
+      ],
+      "precision": [
+        0.7819484679349594,
+        0.8267524567875876
+      ],
+      "brier": [
+        0.09957478934694958,
+        0.11770332339359528
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.405857740585773,
+      "expected_fp_per_1000": 385.5492154065621,
+      "expected_fn_per_1000": 0.5941422594142265,
+      "expected_tn_per_1000": 604.4507845934379,
+      "expected_referrals_per_1000": 394.95507314714786,
+      "ppv": 0.02381500676934322
+    }
+  },
+  {
+    "model": "ecg-fm_pooled_adapted_finetuned",
+    "label_seed": 42,
+    "threshold": 0.18814487755298615,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.8307639956474304,
+      "intercept": 0.8687019944190979
+    },
+    "test": {
+      "auroc": 0.9304603704212155,
+      "average_precision": 0.9631774305670365,
+      "sensitivity": 0.9439330543933054,
+      "specificity": 0.6191155492154066,
+      "precision": 0.8086021505376344,
+      "npv": 0.8662674650698603,
+      "f1": 0.871042471042471,
+      "accuracy": 0.8238396624472574,
+      "brier": 0.10328978705060538,
+      "log_loss": 0.32367478997802307,
+      "tp": 1128,
+      "tn": 434,
+      "fp": 267,
+      "fn": 67,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7357594936708861,
+      "ece_10_bins": 0.02365829229535618
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.919230264283362,
+        0.9410664840564494
+      ],
+      "average_precision": [
+        0.9558472695728369,
+        0.9698844746098279
+      ],
+      "sensitivity": [
+        0.9308770135796751,
+        0.9572671709847987
+      ],
+      "specificity": [
+        0.5809053498729683,
+        0.6575679971741434
+      ],
+      "precision": [
+        0.7842532592230713,
+        0.833162347012239
+      ],
+      "brier": [
+        0.09353544889474373,
+        0.11235055108085915
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.439330543933055,
+      "expected_fp_per_1000": 377.0756062767475,
+      "expected_fn_per_1000": 0.5606694560669456,
+      "expected_tn_per_1000": 612.9243937232525,
+      "expected_referrals_per_1000": 386.5149368206806,
+      "ppv": 0.024421644921609666
+    }
+  },
+  {
+    "model": "mae_finetuned",
+    "label_seed": 44,
+    "threshold": 0.27124732732772827,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.6929821968078613,
+      "intercept": 0.4718919098377228
+    },
+    "test": {
+      "auroc": 0.8765457594948043,
+      "average_precision": 0.9294387424057202,
+      "sensitivity": 0.9330543933054394,
+      "specificity": 0.48787446504992865,
+      "precision": 0.7564450474898237,
+      "npv": 0.8104265402843602,
+      "f1": 0.8355189209441738,
+      "accuracy": 0.7684599156118144,
+      "brier": 0.13823728146752812,
+      "log_loss": 0.42186772194842914,
+      "tp": 1115,
+      "tn": 342,
+      "fp": 359,
+      "fn": 80,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7774261603375527,
+      "ece_10_bins": 0.01924301712785528
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8601925243840008,
+        0.8942865919386711
+      ],
+      "average_precision": [
+        0.9168249444130283,
+        0.9410869069884977
+      ],
+      "sensitivity": [
+        0.918146029623492,
+        0.9471205439828936
+      ],
+      "specificity": [
+        0.450388941416891,
+        0.5224575090554472
+      ],
+      "precision": [
+        0.7339101799783536,
+        0.7795395773557805
+      ],
+      "brier": [
+        0.12699218019064376,
+        0.14816284487290085
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.330543933054393,
+      "expected_fp_per_1000": 507.00427960057056,
+      "expected_fn_per_1000": 0.6694560669456062,
+      "expected_tn_per_1000": 482.9957203994294,
+      "expected_referrals_per_1000": 516.3348235336249,
+      "ppv": 0.01807072370056165
+    }
+  },
+  {
+    "model": "transformer_supervised",
+    "label_seed": 42,
+    "threshold": 0.2499672770500183,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 1.020477056503296,
+      "intercept": 0.9354396462440491
+    },
+    "test": {
+      "auroc": 0.8914175206966737,
+      "average_precision": 0.9371993292873447,
+      "sensitivity": 0.9430962343096234,
+      "specificity": 0.4921540656205421,
+      "precision": 0.7599460552933244,
+      "npv": 0.8353510895883777,
+      "f1": 0.8416728902165795,
+      "accuracy": 0.7763713080168776,
+      "brier": 0.1298509992468999,
+      "log_loss": 0.39891211546097133,
+      "tp": 1127,
+      "tn": 345,
+      "fp": 356,
+      "fn": 68,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7821729957805907,
+      "ece_10_bins": 0.023403974014181147
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8766869759328467,
+        0.9060894319980752
+      ],
+      "average_precision": [
+        0.9249767384542894,
+        0.9479207671685221
+      ],
+      "sensitivity": [
+        0.9301523348229971,
+        0.956250061945587
+      ],
+      "specificity": [
+        0.45627575215735056,
+        0.5300157657657658
+      ],
+      "precision": [
+        0.7356951678920878,
+        0.7826734615474167
+      ],
+      "brier": [
+        0.11992939247677267,
+        0.13965154638915409
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.430962343096233,
+      "expected_fp_per_1000": 502.7674750356633,
+      "expected_fn_per_1000": 0.5690376569037658,
+      "expected_tn_per_1000": 487.2325249643367,
+      "expected_referrals_per_1000": 512.1984373787595,
+      "ppv": 0.01841271205621083
+    }
+  },
+  {
+    "model": "lead_multiscale_innovation",
+    "label_seed": 44,
+    "threshold": 0.22987480461597443,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.5603461265563965,
+      "intercept": 0.07932383567094803
+    },
+    "test": {
+      "auroc": 0.8619031986582228,
+      "average_precision": 0.9223861708540185,
+      "sensitivity": 0.9447698744769875,
+      "specificity": 0.41797432239657634,
+      "precision": 0.7345478204294079,
+      "npv": 0.8161559888579387,
+      "f1": 0.8265007320644217,
+      "accuracy": 0.75,
+      "brier": 0.14841353425493733,
+      "log_loss": 0.447806409735198,
+      "tp": 1129,
+      "tn": 293,
+      "fp": 408,
+      "fn": 66,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.8106540084388185,
+      "ece_10_bins": 0.04862576052310724
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8440507984717179,
+        0.8795699139594089
+      ],
+      "average_precision": [
+        0.9102280871386658,
+        0.9334698281947302
+      ],
+      "sensitivity": [
+        0.9316367458993605,
+        0.9587334561806087
+      ],
+      "specificity": [
+        0.3819357149411097,
+        0.45147024386826023
+      ],
+      "precision": [
+        0.7105051442834531,
+        0.7571950453094894
+      ],
+      "brier": [
+        0.13842816817344833,
+        0.15862267431253319
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.447698744769875,
+      "expected_fp_per_1000": 576.2054208273894,
+      "expected_fn_per_1000": 0.5523012552301254,
+      "expected_tn_per_1000": 413.79457917261055,
+      "expected_referrals_per_1000": 585.6531195721593,
+      "ppv": 0.0161319020236275
+    }
+  },
+  {
+    "model": "ecg-fm_linear",
+    "label_seed": 43,
+    "threshold": 0.21480926871299744,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 1.1365408897399902,
+      "intercept": 0.24327924847602844
+    },
+    "test": {
+      "auroc": 0.921928625573747,
+      "average_precision": 0.9595440890913222,
+      "sensitivity": 0.9372384937238494,
+      "specificity": 0.5820256776034237,
+      "precision": 0.7926397735314933,
+      "npv": 0.84472049689441,
+      "f1": 0.8588957055214724,
+      "accuracy": 0.8059071729957806,
+      "brier": 0.10876106678334904,
+      "log_loss": 0.34025789570066867,
+      "tp": 1120,
+      "tn": 408,
+      "fp": 293,
+      "fn": 75,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.745253164556962,
+      "ece_10_bins": 0.0301708252640011
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.9094034819461118,
+        0.9334689289228376
+      ],
+      "average_precision": [
+        0.9516372135539565,
+        0.966582661910082
+      ],
+      "sensitivity": [
+        0.9217303107979603,
+        0.9529802117032552
+      ],
+      "specificity": [
+        0.5412862268194949,
+        0.6186246370603075
+      ],
+      "precision": [
+        0.7669565176785601,
+        0.8161933382903722
+      ],
+      "brier": [
+        0.09901010824932735,
+        0.11893801448848648
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.372384937238493,
+      "expected_fp_per_1000": 413.7945791726105,
+      "expected_fn_per_1000": 0.6276150627615062,
+      "expected_tn_per_1000": 576.2054208273895,
+      "expected_referrals_per_1000": 423.166964109849,
+      "ppv": 0.022148196178200564
+    }
+  },
+  {
+    "model": "lead_multiscale_latent",
+    "label_seed": 44,
+    "threshold": 0.23304729163646698,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.5755012631416321,
+      "intercept": 0.21113839745521545
+    },
+    "test": {
+      "auroc": 0.863720089053892,
+      "average_precision": 0.9255961296092641,
+      "sensitivity": 0.9456066945606695,
+      "specificity": 0.34236804564907275,
+      "precision": 0.71024512884978,
+      "npv": 0.7868852459016393,
+      "f1": 0.8111988513998565,
+      "accuracy": 0.7225738396624473,
+      "brier": 0.14489348858376735,
+      "log_loss": 0.4383317506087023,
+      "tp": 1130,
+      "tn": 240,
+      "fp": 461,
+      "fn": 65,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.8391350210970464,
+      "ece_10_bins": 0.029311791671447873
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8473911935370279,
+        0.8805703920479147
+      ],
+      "average_precision": [
+        0.9123990970300534,
+        0.9372435211759796
+      ],
+      "sensitivity": [
+        0.9333880726015558,
+        0.9579127111630398
+      ],
+      "specificity": [
+        0.3095039434304779,
+        0.3803979264949637
+      ],
+      "precision": [
+        0.6886572353889296,
+        0.734662124600338
+      ],
+      "brier": [
+        0.1354051161972196,
+        0.15426423685487126
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.456066945606695,
+      "expected_fp_per_1000": 651.055634807418,
+      "expected_fn_per_1000": 0.5439330543933052,
+      "expected_tn_per_1000": 338.94436519258204,
+      "expected_referrals_per_1000": 660.5117017530247,
+      "ppv": 0.014316274670849755
+    }
+  },
+  {
+    "model": "transformer_supervised",
+    "label_seed": 44,
+    "threshold": 0.2400510311126709,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.8013675212860107,
+      "intercept": 0.8513343930244446
+    },
+    "test": {
+      "auroc": 0.8975044616477358,
+      "average_precision": 0.9421334911771302,
+      "sensitivity": 0.9372384937238494,
+      "specificity": 0.5206847360912982,
+      "precision": 0.7692307692307693,
+      "npv": 0.8295454545454546,
+      "f1": 0.8449641644662391,
+      "accuracy": 0.7832278481012658,
+      "brier": 0.12655801996302327,
+      "log_loss": 0.3876958649520879,
+      "tp": 1120,
+      "tn": 365,
+      "fp": 336,
+      "fn": 75,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7679324894514767,
+      "ece_10_bins": 0.026903254465290398
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8830417685127587,
+        0.9133732717325873
+      ],
+      "average_precision": [
+        0.9313417509447878,
+        0.9527662207896959
+      ],
+      "sensitivity": [
+        0.9228079164798565,
+        0.9530918039769478
+      ],
+      "specificity": [
+        0.4844817046546153,
+        0.558125
+      ],
+      "precision": [
+        0.74650729556804,
+        0.7942273065543717
+      ],
+      "brier": [
+        0.11527878341745224,
+        0.13662744191656273
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.372384937238493,
+      "expected_fp_per_1000": 474.5221112696148,
+      "expected_fn_per_1000": 0.6276150627615062,
+      "expected_tn_per_1000": 515.4778887303852,
+      "expected_referrals_per_1000": 483.8944962068533,
+      "ppv": 0.019368653726600814
+    }
+  },
+  {
+    "model": "jepa_finetuned",
+    "label_seed": 42,
+    "threshold": 0.21902300417423248,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.5461564660072327,
+      "intercept": 0.389019638299942
+    },
+    "test": {
+      "auroc": 0.906873026578886,
+      "average_precision": 0.9478507072025293,
+      "sensitivity": 0.9506276150627615,
+      "specificity": 0.48359486447931527,
+      "precision": 0.7583444592790387,
+      "npv": 0.8517587939698492,
+      "f1": 0.843668770887486,
+      "accuracy": 0.7779535864978903,
+      "brier": 0.11961373665345425,
+      "log_loss": 0.3743711880857024,
+      "tp": 1136,
+      "tn": 339,
+      "fp": 362,
+      "fn": 59,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.790084388185654,
+      "ece_10_bins": 0.02845449854505846
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8937495288249447,
+        0.92045346573204
+      ],
+      "average_precision": [
+        0.9384299614975949,
+        0.9570568119837422
+      ],
+      "sensitivity": [
+        0.9371907119028646,
+        0.9634809568797766
+      ],
+      "specificity": [
+        0.44840148206960434,
+        0.5210367156033686
+      ],
+      "precision": [
+        0.736343305264967,
+        0.7822136994332617
+      ],
+      "brier": [
+        0.11031017295272587,
+        0.12872268751778942
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.506276150627615,
+      "expected_fp_per_1000": 511.24108416547784,
+      "expected_fn_per_1000": 0.493723849372385,
+      "expected_tn_per_1000": 478.7589158345221,
+      "expected_referrals_per_1000": 520.7473603161054,
+      "ppv": 0.01825506353955801
+    }
+  },
+  {
+    "model": "lead_multiscale_supervised",
+    "label_seed": 42,
+    "threshold": 0.24070534110069275,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.6354665160179138,
+      "intercept": -0.33956822752952576
+    },
+    "test": {
+      "auroc": 0.8877085335354753,
+      "average_precision": 0.939388423676295,
+      "sensitivity": 0.9347280334728033,
+      "specificity": 0.47218259629101283,
+      "precision": 0.7511768661735037,
+      "npv": 0.8092909535452323,
+      "f1": 0.8329604772557793,
+      "accuracy": 0.7637130801687764,
+      "brier": 0.13167989331688235,
+      "log_loss": 0.4076865709271211,
+      "tp": 1117,
+      "tn": 331,
+      "fp": 370,
+      "fn": 78,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7842827004219409,
+      "ece_10_bins": 0.03195864712045319
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8728958833029387,
+        0.9031561020663293
+      ],
+      "average_precision": [
+        0.9287951218967231,
+        0.9495450524464704
+      ],
+      "sensitivity": [
+        0.9189466657840152,
+        0.9505301302169297
+      ],
+      "specificity": [
+        0.43552032019704434,
+        0.5116754578320394
+      ],
+      "precision": [
+        0.7276053267140749,
+        0.7761401601265198
+      ],
+      "brier": [
+        0.12210397968541738,
+        0.1407810640942102
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.347280334728033,
+      "expected_fp_per_1000": 522.5392296718973,
+      "expected_fn_per_1000": 0.6527196652719669,
+      "expected_tn_per_1000": 467.4607703281027,
+      "expected_referrals_per_1000": 531.8865100066253,
+      "ppv": 0.017573824789449168
+    }
+  },
+  {
+    "model": "lead_multiscale_supervised",
+    "label_seed": 43,
+    "threshold": 0.22631719708442688,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.554915726184845,
+      "intercept": 0.5727962851524353
+    },
+    "test": {
+      "auroc": 0.8773061794567236,
+      "average_precision": 0.9354574285573883,
+      "sensitivity": 0.9188284518828452,
+      "specificity": 0.4579172610556348,
+      "precision": 0.7428958051420839,
+      "npv": 0.7679425837320574,
+      "f1": 0.8215488215488216,
+      "accuracy": 0.7484177215189873,
+      "brier": 0.13816562861847687,
+      "log_loss": 0.4210144845527915,
+      "tp": 1098,
+      "tn": 321,
+      "fp": 380,
+      "fn": 97,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7795358649789029,
+      "ece_10_bins": 0.053508641388864575
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.861061629291587,
+        0.8941113446416126
+      ],
+      "average_precision": [
+        0.925304078269569,
+        0.946705673153208
+      ],
+      "sensitivity": [
+        0.9010755027814756,
+        0.9359137187528825
+      ],
+      "specificity": [
+        0.4174041297935103,
+        0.4952621512151215
+      ],
+      "precision": [
+        0.7210813622082193,
+        0.7676567656765677
+      ],
+      "brier": [
+        0.12650087906602364,
+        0.14865168973468373
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.188284518828452,
+      "expected_fp_per_1000": 536.6619115549215,
+      "expected_fn_per_1000": 0.8117154811715477,
+      "expected_tn_per_1000": 453.3380884450784,
+      "expected_referrals_per_1000": 545.85019607375,
+      "ppv": 0.016832978324307534
+    }
+  },
+  {
+    "model": "ecg-fm_finetuned",
+    "label_seed": 42,
+    "threshold": 0.16250711679458618,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.5701279640197754,
+      "intercept": 0.560844898223877
+    },
+    "test": {
+      "auroc": 0.9288643241275165,
+      "average_precision": 0.9626194760125011,
+      "sensitivity": 0.9564853556485355,
+      "specificity": 0.5049928673323824,
+      "precision": 0.7671140939597315,
+      "npv": 0.8719211822660099,
+      "f1": 0.8513966480446927,
+      "accuracy": 0.7895569620253164,
+      "brier": 0.10375272525643242,
+      "log_loss": 0.3251279342309096,
+      "tp": 1143,
+      "tn": 354,
+      "fp": 347,
+      "fn": 52,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7858649789029536,
+      "ece_10_bins": 0.019966013947666825
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.9173737189205015,
+        0.9402720180699052
+      ],
+      "average_precision": [
+        0.955136222962632,
+        0.9696461598107972
+      ],
+      "sensitivity": [
+        0.9456592680705929,
+        0.9695076508530421
+      ],
+      "specificity": [
+        0.4659176225234619,
+        0.5428406965456827
+      ],
+      "precision": [
+        0.7437685797523536,
+        0.7903072502210433
+      ],
+      "brier": [
+        0.09426606008851289,
+        0.1128383433014423
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.564853556485355,
+      "expected_fp_per_1000": 490.05706134094146,
+      "expected_fn_per_1000": 0.4351464435146446,
+      "expected_tn_per_1000": 499.94293865905854,
+      "expected_referrals_per_1000": 499.6219148974268,
+      "ppv": 0.01914418337404002
+    }
+  },
+  {
+    "model": "ecg-jepa_linear",
+    "label_seed": 44,
+    "threshold": 0.26827892661094666,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.9856986999511719,
+      "intercept": 0.11591964960098267
+    },
+    "test": {
+      "auroc": 0.9396701663493277,
+      "average_precision": 0.968855653620247,
+      "sensitivity": 0.9330543933054394,
+      "specificity": 0.7004279600570613,
+      "precision": 0.8415094339622642,
+      "npv": 0.8598949211908932,
+      "f1": 0.8849206349206349,
+      "accuracy": 0.8470464135021097,
+      "brier": 0.09357047981511192,
+      "log_loss": 0.296717429989368,
+      "tp": 1115,
+      "tn": 491,
+      "fp": 210,
+      "fn": 80,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.6988396624472574,
+      "ece_10_bins": 0.01697996667712015
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.9296282138668641,
+        0.9496089195435897
+      ],
+      "average_precision": [
+        0.9624021218175475,
+        0.9746313748345293
+      ],
+      "sensitivity": [
+        0.91803782890038,
+        0.9491924531962364
+      ],
+      "specificity": [
+        0.6628866849546318,
+        0.7336426729971044
+      ],
+      "precision": [
+        0.8194722782959767,
+        0.8623634115364435
+      ],
+      "brier": [
+        0.08467438130478228,
+        0.10232289005953686
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.330543933054393,
+      "expected_fp_per_1000": 296.57631954350927,
+      "expected_fn_per_1000": 0.6694560669456062,
+      "expected_tn_per_1000": 693.4236804564907,
+      "expected_referrals_per_1000": 305.9068634765637,
+      "ppv": 0.030501257235665883
+    }
+  },
+  {
+    "model": "ecg-jepa_linear",
+    "label_seed": 42,
+    "threshold": 0.25286754965782166,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.9425631165504456,
+      "intercept": 0.18202906847000122
+    },
+    "test": {
+      "auroc": 0.9406991804893189,
+      "average_precision": 0.9692525161902616,
+      "sensitivity": 0.9397489539748954,
+      "specificity": 0.6718972895863052,
+      "precision": 0.8300073909830007,
+      "npv": 0.8674033149171271,
+      "f1": 0.8814756671899528,
+      "accuracy": 0.8407172995780591,
+      "brier": 0.0927508419637427,
+      "log_loss": 0.29593164558756074,
+      "tp": 1123,
+      "tn": 471,
+      "fp": 230,
+      "fn": 72,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7136075949367089,
+      "ece_10_bins": 0.024865867594480017
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.9303035694667102,
+        0.9511022118186215
+      ],
+      "average_precision": [
+        0.9629616367796527,
+        0.9753044319829884
+      ],
+      "sensitivity": [
+        0.9251806067557811,
+        0.9538013131449635
+      ],
+      "specificity": [
+        0.6341897491414066,
+        0.7086334417796517
+      ],
+      "precision": [
+        0.8084770990912036,
+        0.8528537996093932
+      ],
+      "brier": [
+        0.08346128593998582,
+        0.10113227200244383
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.397489539748955,
+      "expected_fp_per_1000": 324.82168330955784,
+      "expected_fn_per_1000": 0.6025104602510456,
+      "expected_tn_per_1000": 665.1783166904422,
+      "expected_referrals_per_1000": 334.2191728493068,
+      "ppv": 0.028117745189879063
+    }
+  },
+  {
+    "model": "ecg-fm_linear",
+    "label_seed": 42,
+    "threshold": 0.23257876932621002,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 1.0107396841049194,
+      "intercept": 0.3152153491973877
+    },
+    "test": {
+      "auroc": 0.9230364273393061,
+      "average_precision": 0.9594821636481914,
+      "sensitivity": 0.9464435146443515,
+      "specificity": 0.5877318116975749,
+      "precision": 0.7964788732394367,
+      "npv": 0.865546218487395,
+      "f1": 0.8650095602294455,
+      "accuracy": 0.8138185654008439,
+      "brier": 0.10837238223349575,
+      "log_loss": 0.33880293629612246,
+      "tp": 1131,
+      "tn": 412,
+      "fp": 289,
+      "fn": 64,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7489451476793249,
+      "ece_10_bins": 0.024999356736283625
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.9112452599246265,
+        0.9353499135314913
+      ],
+      "average_precision": [
+        0.9516453151830758,
+        0.9665017074504884
+      ],
+      "sensitivity": [
+        0.9330796360789204,
+        0.9596963772655592
+      ],
+      "specificity": [
+        0.5505537391784859,
+        0.6267952630237691
+      ],
+      "precision": [
+        0.7739982468029937,
+        0.8214605219577032
+      ],
+      "brier": [
+        0.09857075145497686,
+        0.11753561136718105
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.464435146443515,
+      "expected_fp_per_1000": 408.1455064194008,
+      "expected_fn_per_1000": 0.535564853556485,
+      "expected_tn_per_1000": 581.8544935805992,
+      "expected_referrals_per_1000": 417.60994156584434,
+      "ppv": 0.02266333773318771
+    }
+  },
+  {
+    "model": "lead_multiscale_latent",
+    "label_seed": 42,
+    "threshold": 0.2602411210536957,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.6772186756134033,
+      "intercept": 0.7515652179718018
+    },
+    "test": {
+      "auroc": 0.8650176973719552,
+      "average_precision": 0.9286008705558517,
+      "sensitivity": 0.9205020920502092,
+      "specificity": 0.4079885877318117,
+      "precision": 0.7260726072607261,
+      "npv": 0.7506561679790026,
+      "f1": 0.8118081180811808,
+      "accuracy": 0.7310126582278481,
+      "brier": 0.14376828841385672,
+      "log_loss": 0.4332887417313217,
+      "tp": 1100,
+      "tn": 286,
+      "fp": 415,
+      "fn": 95,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7990506329113924,
+      "ece_10_bins": 0.03859648117520513
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8482142808194505,
+        0.8824243035275412
+      ],
+      "average_precision": [
+        0.9163404072599752,
+        0.9396623384803394
+      ],
+      "sensitivity": [
+        0.9036820911820912,
+        0.9366161626703179
+      ],
+      "specificity": [
+        0.3712480589326971,
+        0.44488362068965515
+      ],
+      "precision": [
+        0.7022478013141805,
+        0.7503299384375995
+      ],
+      "brier": [
+        0.13454053565474364,
+        0.1533059694861775
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.205020920502092,
+      "expected_fp_per_1000": 586.0912981455065,
+      "expected_fn_per_1000": 0.7949790794979084,
+      "expected_tn_per_1000": 403.9087018544936,
+      "expected_referrals_per_1000": 595.2963190660086,
+      "ppv": 0.015462922624726337
+    }
+  },
+  {
+    "model": "hubert-small_finetuned",
+    "label_seed": 42,
+    "threshold": 0.18700261414051056,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.5566874742507935,
+      "intercept": 0.21200726926326752
+    },
+    "test": {
+      "auroc": 0.9269650648505722,
+      "average_precision": 0.9612827475297271,
+      "sensitivity": 0.9573221757322176,
+      "specificity": 0.5035663338088445,
+      "precision": 0.7667560321715817,
+      "npv": 0.8737623762376238,
+      "f1": 0.8515072571641236,
+      "accuracy": 0.7895569620253164,
+      "brier": 0.10483358004462708,
+      "log_loss": 0.3277545476898472,
+      "tp": 1144,
+      "tn": 353,
+      "fp": 348,
+      "fn": 51,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7869198312236287,
+      "ece_10_bins": 0.01602162485293858
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.9146274707093478,
+        0.9378868559858374
+      ],
+      "average_precision": [
+        0.9529732536738523,
+        0.9680497806295952
+      ],
+      "sensitivity": [
+        0.9454755996691481,
+        0.9680435715618586
+      ],
+      "specificity": [
+        0.46642904940704116,
+        0.5416204794445814
+      ],
+      "precision": [
+        0.7442772045398687,
+        0.7899214262122661
+      ],
+      "brier": [
+        0.09651156165280211,
+        0.11400147489407458
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.573221757322175,
+      "expected_fp_per_1000": 491.4693295292439,
+      "expected_fn_per_1000": 0.4267782426778244,
+      "expected_tn_per_1000": 498.5306704707561,
+      "expected_referrals_per_1000": 501.0425512865661,
+      "ppv": 0.019106604284886114
+    }
+  },
+  {
+    "model": "lead_multiscale_latent",
+    "label_seed": 43,
+    "threshold": 0.2329883575439453,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.6049728393554688,
+      "intercept": 0.736116886138916
+    },
+    "test": {
+      "auroc": 0.8542154364058518,
+      "average_precision": 0.9227890502134564,
+      "sensitivity": 0.9255230125523013,
+      "specificity": 0.3566333808844508,
+      "precision": 0.7103403982016698,
+      "npv": 0.7374631268436578,
+      "f1": 0.8037790697674418,
+      "accuracy": 0.7151898734177216,
+      "brier": 0.14984883872099247,
+      "log_loss": 0.4480045428947366,
+      "tp": 1106,
+      "tn": 250,
+      "fp": 451,
+      "fn": 89,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.8212025316455697,
+      "ece_10_bins": 0.04334672439827698
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8368697047539737,
+        0.8730397226129453
+      ],
+      "average_precision": [
+        0.9105707002051323,
+        0.9340843210922756
+      ],
+      "sensitivity": [
+        0.9093916456304496,
+        0.9405326672433112
+      ],
+      "specificity": [
+        0.3197212769871014,
+        0.3893312727681022
+      ],
+      "precision": [
+        0.6841832643265009,
+        0.7362462529192373
+      ],
+      "brier": [
+        0.13934589455204527,
+        0.1597197953382305
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.255230125523013,
+      "expected_fp_per_1000": 636.9329529243937,
+      "expected_fn_per_1000": 0.7447698744769871,
+      "expected_tn_per_1000": 353.0670470756063,
+      "expected_referrals_per_1000": 646.1881830499167,
+      "ppv": 0.014322809312048447
+    }
+  },
+  {
+    "model": "lead_multiscale_innovation",
+    "label_seed": 43,
+    "threshold": 0.1989668905735016,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.5601089596748352,
+      "intercept": -0.08263406902551651
+    },
+    "test": {
+      "auroc": 0.8631793194420403,
+      "average_precision": 0.9245957998072796,
+      "sensitivity": 0.9481171548117154,
+      "specificity": 0.3609129814550642,
+      "precision": 0.7166350411132195,
+      "npv": 0.8031746031746032,
+      "f1": 0.8162824207492796,
+      "accuracy": 0.7310126582278481,
+      "brier": 0.14689112706256016,
+      "log_loss": 0.4473114446496764,
+      "tp": 1133,
+      "tn": 253,
+      "fp": 448,
+      "fn": 62,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.8338607594936709,
+      "ece_10_bins": 0.04698343180662283
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8457485073842234,
+        0.880337773215202
+      ],
+      "average_precision": [
+        0.91233064948984,
+        0.9359159328240695
+      ],
+      "sensitivity": [
+        0.9359459457487421,
+        0.9605485919802518
+      ],
+      "specificity": [
+        0.3220028480835064,
+        0.3957543508746332
+      ],
+      "precision": [
+        0.6928276251545719,
+        0.7404318796096935
+      ],
+      "brier": [
+        0.13684196177607888,
+        0.15710185651962463
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.481171548117155,
+      "expected_fp_per_1000": 632.6961483594864,
+      "expected_fn_per_1000": 0.5188284518828457,
+      "expected_tn_per_1000": 357.3038516405135,
+      "expected_referrals_per_1000": 642.1773199076035,
+      "ppv": 0.014764102147801337
+    }
+  },
+  {
+    "model": "hubert-small_linear",
+    "label_seed": 42,
+    "threshold": 0.24630308151245117,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.9763324856758118,
+      "intercept": 0.13431724905967712
+    },
+    "test": {
+      "auroc": 0.9203994293865905,
+      "average_precision": 0.9560127171123776,
+      "sensitivity": 0.9531380753138076,
+      "specificity": 0.5406562054208274,
+      "precision": 0.7796030116358659,
+      "npv": 0.871264367816092,
+      "f1": 0.8576807228915663,
+      "accuracy": 0.8006329113924051,
+      "brier": 0.11010167317486032,
+      "log_loss": 0.3468033806522966,
+      "tp": 1139,
+      "tn": 379,
+      "fp": 322,
+      "fn": 56,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7705696202531646,
+      "ece_10_bins": 0.028441760082874572
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.9080154879778172,
+        0.9331903884268677
+      ],
+      "average_precision": [
+        0.9473922772097166,
+        0.9640527533815751
+      ],
+      "sensitivity": [
+        0.9408284023668639,
+        0.9646564289432586
+      ],
+      "specificity": [
+        0.5038575004469873,
+        0.5835424116945855
+      ],
+      "precision": [
+        0.7568840937208261,
+        0.8033919049370231
+      ],
+      "brier": [
+        0.10081478497166423,
+        0.11918821685696582
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.531380753138075,
+      "expected_fp_per_1000": 454.7503566333809,
+      "expected_fn_per_1000": 0.46861924686192435,
+      "expected_tn_per_1000": 535.2496433666191,
+      "expected_referrals_per_1000": 464.28173738651896,
+      "ppv": 0.0205293036223889
+    }
+  },
+  {
+    "model": "cnn_supervised",
+    "label_seed": 44,
+    "threshold": 0.2086988389492035,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.6024776101112366,
+      "intercept": 0.09131116420030594
+    },
+    "test": {
+      "auroc": 0.9190421334734001,
+      "average_precision": 0.9570965575835583,
+      "sensitivity": 0.9506276150627615,
+      "specificity": 0.5106990014265336,
+      "precision": 0.7680865449628127,
+      "npv": 0.8585131894484412,
+      "f1": 0.8496634255796559,
+      "accuracy": 0.7879746835443038,
+      "brier": 0.11082779829696776,
+      "log_loss": 0.3447540416627148,
+      "tp": 1136,
+      "tn": 358,
+      "fp": 343,
+      "fn": 59,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7800632911392406,
+      "ece_10_bins": 0.0227345411374945
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.9073555023895564,
+        0.9297557669799337
+      ],
+      "average_precision": [
+        0.9493068117709308,
+        0.9643014863150862
+      ],
+      "sensitivity": [
+        0.9384576045432793,
+        0.9618682621978086
+      ],
+      "specificity": [
+        0.4746168582375479,
+        0.5478550268807373
+      ],
+      "precision": [
+        0.7433081674673988,
+        0.7902371718644225
+      ],
+      "brier": [
+        0.10233314173752703,
+        0.11991559920669143
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.506276150627615,
+      "expected_fp_per_1000": 484.4079885877318,
+      "expected_fn_per_1000": 0.493723849372385,
+      "expected_tn_per_1000": 505.5920114122682,
+      "expected_referrals_per_1000": 493.9142647383594,
+      "ppv": 0.019246814334595828
+    }
+  },
+  {
+    "model": "lead_multiscale_innovation",
+    "label_seed": 42,
+    "threshold": 0.23686446249485016,
+    "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
+    "calibration": {
+      "method": "Platt logistic scaling",
+      "records": 564,
+      "slope": 0.5456032752990723,
+      "intercept": 0.12414808571338654
+    },
+    "test": {
+      "auroc": 0.8794083765571002,
+      "average_precision": 0.9347622873272121,
+      "sensitivity": 0.9313807531380753,
+      "specificity": 0.4593437945791726,
+      "precision": 0.7459785522788204,
+      "npv": 0.7970297029702971,
+      "f1": 0.828433196873837,
+      "accuracy": 0.7568565400843882,
+      "brier": 0.13725650447191287,
+      "log_loss": 0.4189354049908212,
+      "tp": 1113,
+      "tn": 322,
+      "fp": 379,
+      "fn": 82,
+      "n": 1896,
+      "prevalence": 0.6302742616033755,
+      "predicted_positive_rate": 0.7869198312236287,
+      "ece_10_bins": 0.029534860341200595
+    },
+    "test_ci95_patient_bootstrap": {
+      "auroc": [
+        0.8635310236441214,
+        0.8950462005526021
+      ],
+      "average_precision": [
+        0.9235188102208292,
+        0.9449487714574341
+      ],
+      "sensitivity": [
+        0.9160714285714285,
+        0.9470586830862026
+      ],
+      "specificity": [
+        0.4193042168674699,
+        0.49686903212465483
+      ],
+      "precision": [
+        0.7220892218580565,
+        0.7703032128937667
+      ],
+      "brier": [
+        0.12714175559957885,
+        0.14674938619492073
+      ]
+    },
+    "hypothetical_1pct_prevalence": {
+      "expected_tp_per_1000": 9.313807531380753,
+      "expected_fp_per_1000": 535.2496433666191,
+      "expected_fn_per_1000": 0.6861924686192467,
+      "expected_tn_per_1000": 454.7503566333809,
+      "expected_referrals_per_1000": 544.5634508979999,
+      "ppv": 0.017103254939386827
+    }
+  }
+]

@@ -1,0 +1,5 @@
+outs:
+- md5: 766f2fba5ff277ffe82b310468b4580f
+  size: 513
+  hash: md5
+  path: cpsc_2018_extra.json

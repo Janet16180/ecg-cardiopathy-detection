@@ -1,0 +1,12 @@
+# Incomplete downloads and large legacy outputs are outside the DVC catalog.
+.venv/
+.venv-*/
+.uv-cache/
+third_party/
+outputs/
+data/raw/mimic-iv-ecg/
+data/raw/code-15pct/
+data/processed/training_union_500hz_v1/*.npy
+data/processed/mimic_ssl_200k/
+data/processed/mimic_ssl_40k_cpc/
+data/processed/pretrained/

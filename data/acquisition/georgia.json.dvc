@@ -1,0 +1,5 @@
+outs:
+- md5: 274dc949a7c7f67948d6eba9f0a72d48
+  size: 509
+  hash: md5
+  path: georgia.json

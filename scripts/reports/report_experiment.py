@@ -48,10 +48,6 @@ TOP_CURVES = 4
 REFERENCE_MODEL = "cnn_supervised"
 CALIBRATION_BINS = 8
 TARGET_SENSITIVITY = 0.95
-COLORMAP = "tab20"
-REFERENCE_LINE = "gray"
-DIAGONAL = "k--"
-FIGURE_DPI = 170
 
 SCREENING_SECTION = [
     "", "## Hypothetical low-prevalence screening", "",
@@ -514,7 +510,7 @@ def plot_operating_points(ax: Any, primary: list[dict[str, Any]], labels: list[s
     for record, label in zip(primary, labels, strict=True):
         ax.scatter(record["test"]["specificity"], record["test"]["sensitivity"],
                    label=label, color=colors[record["model"]])
-    ax.axhline(TARGET_SENSITIVITY, color=REFERENCE_LINE, linestyle="--", linewidth=1)
+    ax.axhline(TARGET_SENSITIVITY, color="gray", linestyle="--", linewidth=1)
     ax.set(xlabel="Test specificity", ylabel="Test sensitivity",
            title="Threshold fixed on calibration patients")
 
@@ -531,10 +527,10 @@ def plot_curves(roc_ax: Any, calibration_ax: Any, records: list[dict[str, Any]],
                                                 strategy="quantile")
         calibration_ax.plot(predicted, observed, "o-", markersize=3, label=name,
                             color=colors[record["model"]])
-    roc_ax.plot([0, 1], [0, 1], DIAGONAL, linewidth=0.7)
+    roc_ax.plot([0, 1], [0, 1], "k--", linewidth=0.7)
     roc_ax.set(xlabel="False-positive rate", ylabel="True-positive rate", title="Test ROC curves")
     roc_ax.legend(fontsize=8, loc="lower right")
-    calibration_ax.plot([0, 1], [0, 1], DIAGONAL, linewidth=0.7)
+    calibration_ax.plot([0, 1], [0, 1], "k--", linewidth=0.7)
     calibration_ax.set(xlabel="Mean calibrated probability", ylabel="Observed positive fraction",
                        title="Calibration on the PTB-XL proxy")
 
@@ -552,7 +548,7 @@ def plot_results(primary: list[dict[str, Any]], output_dir: Path) -> None:
     """
     fig, axes = plt.subplots(2, 2, figsize=(16, 12), constrained_layout=True)
     labels = [display_name(r["model"]) for r in primary]
-    colors = {record["model"]: plt.get_cmap(COLORMAP)(i) for i, record in enumerate(primary)}
+    colors = {record["model"]: plt.get_cmap("tab20")(i) for i, record in enumerate(primary)}
     plot_auroc_intervals(axes[0, 0], primary, labels)
     plot_operating_points(axes[0, 1], primary, labels, colors)
     plot_curves(axes[1, 0], axes[1, 1], curve_records(primary), colors)
@@ -561,7 +557,7 @@ def plot_results(primary: list[dict[str, Any]], output_dir: Path) -> None:
         axis.grid(alpha=0.15)
     fig.suptitle("ECG experiment: 10% labeled training patients\n"
                  "PTB-XL diagnostic proxy; not student screening validation", fontsize=13)
-    fig.savefig(output_dir / "experiment001-results.png", dpi=FIGURE_DPI)
+    fig.savefig(output_dir / "experiment001-results.png", dpi=170)
     fig.savefig(output_dir / "experiment001-results.pdf")
 
 

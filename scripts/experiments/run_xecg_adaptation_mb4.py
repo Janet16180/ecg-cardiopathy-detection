@@ -8,6 +8,5 @@ import sys
 
 from scripts.experiments.run_xecg_adaptation import main
 
-
 if __name__ == "__main__":
     main([*sys.argv[1:], "--microbatch-size", "4"])

@@ -2,11 +2,8 @@
 
 import json
 import sys
-import tempfile
-import unittest
-from pathlib import Path
-from unittest import mock
 
+import pytest
 import torch
 
 from scripts.experiments import adapt_ecgfm
@@ -34,78 +31,89 @@ class InterruptingBackbone(TinyBackbone):
         return super().extract_features(source, **kwargs)
 
 
-class AdaptBudgetTest(unittest.TestCase):
-    def test_budget_requires_enough_complete_batches(self):
-        self.assertEqual(adapt_ecgfm.update_budget(5, 2, 2, 3), (2, True))
-        self.assertEqual(adapt_ecgfm.update_budget(5, 2, 2, None), (3, False))
-        for settings in [(5, 2, 2, 5), (1, 2, 2, 1), (5, 2, 2, 0)]:
-            with self.subTest(settings=settings), self.assertRaises(ValueError):
-                adapt_ecgfm.update_budget(*settings)
-
-    def test_stops_within_epoch_and_counts_examples(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            checkpoint = root / "checkpoint.pt"
-            metadata = root / "checkpoint.json"
-            checkpoint.write_bytes(b"checkpoint")
-            metadata.write_text(json.dumps({"checkpoint": {"sha256": "fake"}}))
-            rows = [{"ecg_id": str(i), "patient_id": str(i), "filename_hr": str(i)}
-                    for i in range(5)]
-            args = ["adapt_ecgfm", "--manifest-dir", directory, "--raw-dir", directory,
-                    "--checkpoint", str(checkpoint), "--checkpoint-metadata", str(metadata),
-                    "--output-dir", str(root / "output"), "--device", "cpu", "--workers", "0",
-                    "--batch-size", "2", "--epochs", "2", "--max-updates", "3"]
-
-            def sample(_, index):
-                value = float(index + 1)
-                views = torch.tensor([[[value, 1.0]], [[1.0, value + 1.0]]])
-                return views, index
-
-            with mock.patch.object(sys, "argv", args), \
-                 mock.patch.object(adapt_ecgfm, "training_rows", return_value=(rows, {})), \
-                 mock.patch.object(adapt_ecgfm, "sha256_file", return_value="fake"), \
-                 mock.patch.object(adapt_ecgfm, "git_head", return_value="fake"), \
-                 mock.patch.object(adapt_ecgfm, "load_model", side_effect=lambda *a: (TinyBackbone(), None)), \
-                 mock.patch.object(adapt_ecgfm.TrainingWaveforms, "__getitem__", sample):
-                adapt_ecgfm.main()
-
-            output = root / "output"
-            history = json.loads((output / "history.json").read_text())
-            completion = json.loads((output / "completion.json").read_text())
-            self.assertEqual([item["updates"] for item in history], [2, 3])
-            self.assertEqual([item["records"] for item in history], [4, 2])
-            self.assertEqual([item["complete_epoch"] for item in history], [True, False])
-            self.assertEqual(completion["updates"], 3)
-            self.assertEqual(completion["seen_examples"], 6)
-            self.assertEqual(completion["completed_epochs"], 1)
-            self.assertFalse((output / "resume.pt").exists())
-
-            reference = torch.load(output / "adapted_backbone.pt", map_location="cpu",
-                                   weights_only=True)["backbone"]
-            interrupted_args = args.copy()
-            interrupted_args[interrupted_args.index("--output-dir") + 1] = str(root / "interrupted")
-            with mock.patch.object(sys, "argv", interrupted_args), \
-                 mock.patch.object(adapt_ecgfm, "training_rows", return_value=(rows, {})), \
-                 mock.patch.object(adapt_ecgfm, "sha256_file", return_value="fake"), \
-                 mock.patch.object(adapt_ecgfm, "git_head", return_value="fake"), \
-                 mock.patch.object(adapt_ecgfm, "load_model", side_effect=lambda *a: (InterruptingBackbone(), None)), \
-                 mock.patch.object(adapt_ecgfm.TrainingWaveforms, "__getitem__", sample):
-                with self.assertRaisesRegex(RuntimeError, "simulated interruption"):
-                    adapt_ecgfm.main()
-            self.assertTrue((root / "interrupted" / "resume.pt").is_file())
-
-            with mock.patch.object(sys, "argv", interrupted_args + ["--resume"]), \
-                 mock.patch.object(adapt_ecgfm, "training_rows", return_value=(rows, {})), \
-                 mock.patch.object(adapt_ecgfm, "sha256_file", return_value="fake"), \
-                 mock.patch.object(adapt_ecgfm, "git_head", return_value="fake"), \
-                 mock.patch.object(adapt_ecgfm, "load_model", side_effect=lambda *a: (TinyBackbone(), None)), \
-                 mock.patch.object(adapt_ecgfm.TrainingWaveforms, "__getitem__", sample):
-                adapt_ecgfm.main()
-            resumed = torch.load(root / "interrupted" / "adapted_backbone.pt",
-                                 map_location="cpu", weights_only=True)["backbone"]
-            for name in reference:
-                self.assertTrue(torch.equal(reference[name], resumed[name]), name)
+def test_budget_requires_enough_complete_batches():
+    assert adapt_ecgfm.update_budget(5, 2, 2, 3) == (2, True)
+    assert adapt_ecgfm.update_budget(5, 2, 2, None) == (3, False)
 
 
-if __name__ == "__main__":
-    unittest.main()
+@pytest.mark.parametrize("settings", [(5, 2, 2, 5), (1, 2, 2, 1), (5, 2, 2, 0)])
+def test_budget_rejects_unreachable_updates(settings):
+    with pytest.raises(ValueError, match="max-updates"):
+        adapt_ecgfm.update_budget(*settings)
+
+
+def test_contrastive_loss_is_invariant_to_record_order():
+    features = torch.randn(4, 2, 3, generator=torch.Generator().manual_seed(1))
+    patients = torch.tensor([0, 1, 1, 2])
+    order = torch.tensor([2, 0, 3, 1])
+    torch.testing.assert_close(adapt_ecgfm.temporal_contrastive_loss(features, patients),
+                               adapt_ecgfm.temporal_contrastive_loss(features[order], patients[order]))
+    with pytest.raises(ValueError, match="at least two ECGs"):
+        adapt_ecgfm.temporal_contrastive_loss(features[:1], patients[:1])
+
+
+@pytest.fixture
+def mocked_adaptation(tmp_path, monkeypatch):
+    checkpoint = tmp_path / "checkpoint.pt"
+    metadata = tmp_path / "checkpoint.json"
+    checkpoint.write_bytes(b"checkpoint")
+    metadata.write_text(json.dumps({"checkpoint": {"sha256": "fake"}}))
+    rows = [{"ecg_id": str(i), "patient_id": str(i), "filename_hr": str(i)} for i in range(5)]
+
+    def sample(_, index):
+        value = float(index + 1)
+        views = torch.tensor([[[value, 1.0]], [[1.0, value + 1.0]]])
+        return views, index
+
+    monkeypatch.setattr(adapt_ecgfm, "training_rows", lambda *args: (rows, {}))
+    monkeypatch.setattr(adapt_ecgfm, "sha256_file", lambda path: "fake")
+    monkeypatch.setattr(adapt_ecgfm, "git_head", lambda path: "fake")
+    monkeypatch.setattr(adapt_ecgfm.TrainingWaveforms, "__getitem__", sample)
+
+    def run(output, backbone, *extra):
+        monkeypatch.setattr(adapt_ecgfm, "load_model", lambda *args: (backbone(), None))
+        monkeypatch.setattr(sys, "argv", [
+            "adapt_ecgfm", "--manifest-dir", str(tmp_path), "--raw-dir", str(tmp_path),
+            "--checkpoint", str(checkpoint), "--checkpoint-metadata", str(metadata),
+            "--output-dir", str(output), "--device", "cpu", "--workers", "0",
+            "--batch-size", "2", "--epochs", "2", "--max-updates", "3", *extra])
+        adapt_ecgfm.main()
+
+    return run
+
+
+def test_stops_within_epoch_and_counts_examples(tmp_path, mocked_adaptation):
+    output = tmp_path / "output"
+    mocked_adaptation(output, TinyBackbone)
+    history = json.loads((output / "history.json").read_text())
+    completion = json.loads((output / "completion.json").read_text())
+    assert [item["updates"] for item in history] == [2, 3]
+    assert [item["records"] for item in history] == [4, 2]
+    assert [item["complete_epoch"] for item in history] == [True, False]
+    assert completion["updates"] == 3
+    assert completion["seen_examples"] == 6
+    assert completion["completed_epochs"] == 1
+    assert not (output / "resume.pt").exists()
+
+
+def test_resume_after_interruption_matches_uninterrupted_run(tmp_path, mocked_adaptation):
+    mocked_adaptation(tmp_path / "output", TinyBackbone)
+    reference = torch.load(tmp_path / "output" / "adapted_backbone.pt", map_location="cpu",
+                           weights_only=True)["backbone"]
+    interrupted = tmp_path / "interrupted"
+    with pytest.raises(RuntimeError, match="simulated interruption"):
+        mocked_adaptation(interrupted, InterruptingBackbone)
+    assert (interrupted / "resume.pt").is_file()
+    mocked_adaptation(interrupted, TinyBackbone, "--resume")
+    resumed = torch.load(interrupted / "adapted_backbone.pt", map_location="cpu",
+                         weights_only=True)["backbone"]
+    for name in reference:
+        assert torch.equal(reference[name], resumed[name]), name
+
+
+def test_fresh_run_refuses_nonempty_output(tmp_path, mocked_adaptation):
+    output = tmp_path / "output"
+    output.mkdir()
+    (output / "stale.txt").write_text("x")
+    with pytest.raises(FileExistsError, match="not empty"):
+        mocked_adaptation(output, TinyBackbone)

@@ -1,22 +1,40 @@
 """Loss semantics, train-only streams, and exact step-boundary SSL recovery."""
 
+import hashlib
+import json
+import random
 from dataclasses import replace
 from pathlib import Path
-import random
 
 import numpy as np
 import pytest
 import torch
 from torch import nn
-from torch.nn import functional as F
+from torch.nn import functional as F  # noqa: N812 - conventional PyTorch alias
 
 from ecg_experiment.xecg_adaptation import (
-    AdaptationConfig, AdaptationModel, ShuffledStream, coding_rate, contiguous_masks,
-    encode_tokens, gram_loss, rarity_weights, ssl_parameter_groups, update_ema,
+    AdaptationConfig,
+    AdaptationModel,
+    ShuffledStream,
+    coding_rate,
+    contiguous_masks,
+    encode_tokens,
+    gram_loss,
+    rarity_weights,
+    ssl_parameter_groups,
+    update_ema,
     visible_loss,
 )
-from scripts.experiments.run_xecg_adaptation import load_ssl_resume, save_ssl_resume, ssl_update
+from scripts.experiments.run_xecg_adaptation import (
+    SSL_ARTIFACTS,
+    diagnostic_indices,
+    load_ssl_resume,
+    save_ssl_resume,
+    ssl_completion,
+    ssl_update,
+)
 
+RELEASED_WEIGHTS = Path(__file__).resolve().parents[1] / "third_party/checkpoints/xecg/model.safetensors"
 
 class TinyCore(nn.Module):
     def __init__(self, dimension):
@@ -44,7 +62,8 @@ class TinyEncoder(nn.Module):
         return self.projection(x.reshape(len(x), -1, 25 * 12))
 
     def get_padding_mask(self, x):
-        return (x.abs().sum(dim=-1) == 0).reshape(len(x), -1, 25)[:, :, 0, None].expand(-1, -1, self.embedding_size)
+        padding = (x.abs().sum(dim=-1) == 0).reshape(len(x), -1, 25)[:, :, 0, None]
+        return padding.expand(-1, -1, self.embedding_size)
 
     def pooling(self, tokens, padding):
         return tokens.masked_fill(padding, 0).sum(dim=1) / (~padding).sum(dim=1).clamp_min(1), tokens
@@ -69,7 +88,8 @@ def test_masks_replace_embedding_and_preserve_real_positions():
     patches = encoder.patch_embedding(signal)
     torch.testing.assert_close(seen[0][masks[:, 0]], encoder.mask_token.expand(16, -1))
     torch.testing.assert_close(seen[0][~masks[:, 0]], patches[~masks[:, 0]])
-    assert valid.all() and tokens.shape == (2, 40, 6)
+    assert valid.all()
+    assert tokens.shape == (2, 40, 6)
     # Raw physical zeros do not become invented padding in this full-record cache.
     signal[:, 0] = 0
     assert encode_tokens(encoder, signal)[2].all()
@@ -97,17 +117,21 @@ def test_gram_and_visible_losses_exclude_hidden_positions_and_tie_weights():
     loss = gram_loss(student, frozen, visible) + visible_loss(student, frozen, visible)
     gradient, = torch.autograd.grad(loss, student)
     assert gradient[~visible].count_nonzero() == 0
-    assert gradient[visible].abs().sum() > 0 and frozen.grad is None
+    assert gradient[visible].abs().sum() > 0
+    assert frozen.grad is None
     changed = student.detach().clone()
     changed[~visible] += 1000
     torch.testing.assert_close(gram_loss(changed, frozen, visible), gram_loss(student, frozen, visible))
     equal_tokens = torch.ones(2, 10, 6, requires_grad=True)
     weights, rarity = rarity_weights(equal_tokens)
-    assert not weights.requires_grad and not rarity.requires_grad
+    assert not weights.requires_grad
+    assert not rarity.requires_grad
     torch.testing.assert_close(weights, torch.full((2, 10), 1.5))
-    torch.testing.assert_close(visible_loss(student, frozen, visible, weights), visible_loss(student, frozen, visible))
+    torch.testing.assert_close(visible_loss(student, frozen, visible, weights),
+                               visible_loss(student, frozen, visible))
     varied, _ = rarity_weights(frozen)
-    assert varied.min() >= 1 and varied.max() <= 2
+    assert varied.min() >= 1
+    assert varied.max() <= 2
 
 
 def test_all_arms_stop_teacher_gradients_and_ema_preserves_anchor():
@@ -120,7 +144,8 @@ def test_all_arms_stop_teacher_gradients_and_ema_preserves_anchor():
         masks = contiguous_masks(2, 10, 2, torch.Generator().manual_seed(77))
         loss, terms = model(signal, masks, arm, config)
         loss.backward()
-        assert torch.isfinite(loss) and model.student.projection.weight.grad.abs().sum() > 0
+        assert torch.isfinite(loss)
+        assert model.student.projection.weight.grad.abs().sum() > 0
         assert all(p.grad is None for p in model.ema.parameters())
         assert all(p.grad is None for p in model.anchor.parameters())
         assert set(terms) == {"masked", "pooled", "expansion", "gram", "visible_uniform", "visible_weighted"}
@@ -157,7 +182,8 @@ def test_exact_ssl_resume_including_ema_optimizer_stream_masks_and_rng(tmp_path)
     interrupted = setup(11, config)
     interrupted_trace, history = "0" * 64, []
     for step in range(2):
-        row, interrupted_trace, _ = ssl_update(*interrupted[:2], views, *interrupted[2:], config, "d", step, "cpu", interrupted_trace)
+        row, interrupted_trace, _ = ssl_update(*interrupted[:2], views, *interrupted[2:], config, "d", step,
+                                               "cpu", interrupted_trace)
         history.append(row)
     path = tmp_path / "resume.pt"
     save_ssl_resume(path, fingerprint, *interrupted, 2, history, interrupted_trace, 1.0)
@@ -169,15 +195,55 @@ def test_exact_ssl_resume_including_ema_optimizer_stream_masks_and_rng(tmp_path)
     saved = load_ssl_resume(path, fingerprint, *resumed)
     resumed_trace = saved["trace_sha256"]
     for step in range(saved["step"], 4):
-        row, resumed_trace, _ = ssl_update(*resumed[:2], views, *resumed[2:], config, "d", step, "cpu", resumed_trace)
+        row, resumed_trace, _ = ssl_update(*resumed[:2], views, *resumed[2:], config, "d", step, "cpu",
+                                           resumed_trace)
         history.append(row)
-    assert trace == resumed_trace and history == expected_history
+    assert trace == resumed_trace
+    assert history == expected_history
     for name, value in continuous[0].state_dict().items():
         torch.testing.assert_close(value, resumed[0].state_dict()[name], rtol=0, atol=0)
     assert random.random() == expected_draws[0]
     assert np.random.random() == expected_draws[1]
     torch.testing.assert_close(torch.rand(1), expected_draws[2], rtol=0, atol=0)
-    assert not path.with_name("resume.pt.partial").exists()
+    assert [item.name for item in tmp_path.iterdir()] == ["resume.pt"]
+
+
+def test_cpu_resume_rejects_saved_cuda_state(tmp_path, monkeypatch):
+    config = replace(AdaptationConfig(), effective_batch_size=2, microbatch_size=2, mask_tokens=2)
+    state = setup(3, config)
+    path = tmp_path / "resume.pt"
+    save_ssl_resume(path, {}, *state, 0, [], "0" * 64, 0.0)
+    saved = torch.load(path, weights_only=True)
+    saved["rng"]["cuda"] = [torch.zeros(8, dtype=torch.uint8)]
+    torch.save(saved, path)
+    monkeypatch.setattr(torch.cuda, "is_available", lambda: False)
+    with pytest.raises(ValueError, match="without CUDA"):
+        load_ssl_resume(path, {}, *setup(4, config))
+
+
+def test_ssl_completion_verifies_fingerprint_and_artifacts(tmp_path):
+    assert ssl_completion(tmp_path, {"arm": "a"}) is None
+    for name in SSL_ARTIFACTS:
+        (tmp_path / name).write_text(name)
+    hashes = {name: hashlib.sha256(name.encode()).hexdigest() for name in SSL_ARTIFACTS}
+    (tmp_path / "complete.json").write_text(json.dumps({"fingerprint": {"arm": "a"}, "sha256": hashes}))
+    assert ssl_completion(tmp_path, {"arm": "a"})["sha256"] == hashes
+    with pytest.raises(ValueError, match="differs from requested inputs"):
+        ssl_completion(tmp_path, {"arm": "b"})
+    (tmp_path / "encoder.pt").write_text("changed")
+    with pytest.raises(ValueError, match="checksum mismatch"):
+        ssl_completion(tmp_path, {"arm": "a"})
+
+
+def test_diagnostic_indices_are_fixed_and_source_balanced():
+    rows = [{"source": "ptbxl" if i % 3 else "mimic"} for i in range(30)]
+    state = torch.get_rng_state()
+    first = diagnostic_indices(rows)
+    assert torch.equal(first, diagnostic_indices(rows))
+    assert torch.equal(torch.get_rng_state(), state)
+    assert [rows[i]["source"] for i in first.tolist()] == ["ptbxl"] * 4 + ["mimic"] * 4
+    with pytest.raises(ValueError, match="four training records per source"):
+        diagnostic_indices(rows[:9])
 
 
 def test_sampler_and_mask_stream_do_not_depend_on_model_rng():
@@ -187,10 +253,11 @@ def test_sampler_and_mask_stream_do_not_depend_on_model_rng():
         first = data_a.take(7), contiguous_masks(7, 40, 8, mask_a)
         torch.randn(300)
         second = data_b.take(7), contiguous_masks(7, 40, 8, mask_b)
-        assert torch.equal(first[0], second[0]) and torch.equal(first[1], second[1])
+        assert torch.equal(first[0], second[0])
+        assert torch.equal(first[1], second[1])
 
 
-@pytest.mark.skipif(not Path("third_party/checkpoints/xecg/model.safetensors").exists(), reason="released encoder unavailable")
+@pytest.mark.skipif(not RELEASED_WEIGHTS.exists(), reason="released encoder unavailable")
 def test_released_small_forward_equivalence_and_token_alignment():
     from ecg_experiment.xecg import load_xecg
 
@@ -202,7 +269,8 @@ def test_released_small_forward_equivalence_and_token_alignment():
         pooled, tokens, valid = encode_tokens(encoder, signal)
     torch.testing.assert_close(pooled, expected_pool, rtol=0, atol=0)
     torch.testing.assert_close(tokens, expected_tokens, rtol=0, atol=0)
-    assert valid.all() and torch.isfinite(tokens).all()
+    assert valid.all()
+    assert torch.isfinite(tokens).all()
     # The actual released wrapper performs eight flips, restoring position order.
     blocks, norm = encoder.core.model.blocks, encoder.core.model.post_blocks_norm
     encoder.core.model.blocks = nn.ModuleList(nn.Identity() for _ in range(9))

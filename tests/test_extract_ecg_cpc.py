@@ -1,8 +1,12 @@
 """Numerical and strict-loading checks for released S4 inference."""
-import torch
-import pytest
 
-from scripts.features.extract_ecg_cpc import load_exact, torch_cauchy_conj
+import io
+import pickle
+
+import pytest
+import torch
+
+from scripts.features.extract_ecg_cpc import MetadataUnpickler, load_exact, torch_cauchy_conj
 
 
 def test_cauchy_reduction_matches_official_real_component_algebra():
@@ -38,3 +42,20 @@ def test_strict_assignment_supports_expanded_official_s4_buffers():
     target = torch.randn(3, 4)
     load_exact(model, {"model.expanded": target}, "model.")
     torch.testing.assert_close(model.expanded, target, atol=0, rtol=0)
+
+
+def pickled_global(module, name):
+    # Protocol-2 GLOBAL opcode followed by STOP, so no real class needs to exist.
+    return io.BytesIO(b"c" + module.encode() + b"\n" + name.encode() + b"\n.")
+
+
+def test_metadata_unpickler_replaces_only_framework_config_classes():
+    first = MetadataUnpickler(pickled_global("clinical_ts.template_modules", "ShapeConfig")).load()
+    again = MetadataUnpickler(pickled_global("clinical_ts.template_modules", "ShapeConfig")).load()
+    assert isinstance(first, type)
+    assert first.__name__ == "ShapeConfig"
+    assert first is again
+    assert MetadataUnpickler(pickled_global("collections", "OrderedDict")).load().__name__ == "OrderedDict"
+    with pytest.raises(ValueError, match="Unexpected checkpoint object"):
+        MetadataUnpickler(pickled_global("clinical_ts.ts.encoder", "RNNEncoder")).load()
+    assert pickle.loads(pickle.dumps([1, 2])) == [1, 2]

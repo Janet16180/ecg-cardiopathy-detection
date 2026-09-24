@@ -18,7 +18,7 @@ from pathlib import Path
 
 import numpy as np
 
-from extract_pretrained import git_head, manifest_rows, read_record, sha256
+from scripts.extract_pretrained import git_head, manifest_rows, read_record, sha256
 
 
 ROOT = Path(__file__).resolve().parents[2]

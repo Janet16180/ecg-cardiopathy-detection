@@ -75,5 +75,8 @@ This is a master's project at Tecnológico de Monterrey. Team: José Emiliano Lu
 López, Andre Nicolai Gutierrez Bautista, and Clara Janet Rivera Medina.
 Sponsor: Gerardo Jesús Camacho González, TEC, Computer Science Department.
 
+This repository was developed with the assistance of AI tools (large language
+models). The team reviews and is responsible for all code, analyses, and results.
+
 Code is licensed under [Apache 2.0](LICENSE). Dataset access and reuse follow each
 upstream source's terms.

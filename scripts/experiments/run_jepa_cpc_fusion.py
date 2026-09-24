@@ -19,7 +19,7 @@ from sklearn.model_selection import StratifiedGroupKFold
 
 from ecg_experiment.data import read_manifest
 from ecg_experiment.evaluation import metrics, partition_validation, patient_bootstrap, select_threshold
-from ecg_experiment.files import read_csv, sha256_file
+from ecg_experiment.files import read_csv, sha256_file, write_json_atomic
 
 ROOT = Path(__file__).resolve().parents[2]
 PROTOCOL = ROOT / "docs/experiment-014-fusion.md"
@@ -55,25 +55,6 @@ def utc_now() -> str:
     return datetime.now(UTC).isoformat()
 
 
-def atomic_json(path: str | Path, value: Any) -> None:
-    """
-    Write sorted, indented JSON through a per-process temporary file.
-
-    Parameters
-    ----------
-    path : str | Path
-        Destination file; parent directories are created.
-    value : Any
-        JSON-serializable value without NaN or infinity.
-    """
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(path.name + f".tmp.{os.getpid()}")
-    try:
-        temporary.write_text(json.dumps(value, indent=2, sort_keys=True, allow_nan=False) + "\n")
-        os.replace(temporary, path)
-    finally:
-        temporary.unlink(missing_ok=True)
 
 
 def rows_by_id(rows: list[dict[str, str]], name: str) -> dict[int, dict[str, str]]:
@@ -821,8 +802,9 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, default=OUTPUT)
     args = parser.parse_args()
     start = time.monotonic()
-    atomic_json(args.output_dir / "coordination.json", {"state": "running", "pid": os.getpid(),
-                "started_at_utc": utc_now(), "command": " ".join(sys.argv), "returncode": None})
+    coordination = args.output_dir / "coordination.json"
+    write_json_atomic(coordination, {"state": "running", "pid": os.getpid(), "started_at_utc": utc_now(),
+                                     "command": " ".join(sys.argv), "returncode": None}, sort_keys=True)
     receipts = {}
     for budget in ("full", "ten_percent"):
         data = load_budget(budget)
@@ -839,16 +821,17 @@ def main() -> None:
             receipts[budget] = receipt
             continue
         result = screen_budget(data, fingerprint)
-        atomic_json(output, result)
+        write_json_atomic(output, result, sort_keys=True)
         receipts[budget] = {"path": str(output), "sha256": sha256_file(output)}
         decision = result["development"]["gate"]
         print(json.dumps({"budget": budget, "gate": decision,
                           "selected_alpha": result["development"]["selected_alpha"],
                           "seconds_elapsed": time.monotonic() - start, "sha256": sha256_file(output)}),
               flush=True)
-    atomic_json(args.output_dir / "coordination.json", {"state": "complete", "pid": os.getpid(),
-                "completed_at_utc": utc_now(), "command": " ".join(sys.argv), "returncode": 0,
-                "elapsed_seconds": time.monotonic() - start, "receipts": receipts})
+    write_json_atomic(coordination, {"state": "complete", "pid": os.getpid(), "completed_at_utc": utc_now(),
+                                     "command": " ".join(sys.argv), "returncode": 0,
+                                     "elapsed_seconds": time.monotonic() - start, "receipts": receipts},
+                      sort_keys=True)
 
 
 if __name__ == "__main__":

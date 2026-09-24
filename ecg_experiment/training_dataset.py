@@ -20,21 +20,6 @@ LABEL_BUDGETS = ("1", "0.1")
 IDENTIFIED_SOURCES = ("ptbxl", "mimic")
 
 
-def file_hash(path: str | Path) -> str:
-    """
-    Compute the SHA-256 digest of a dataset file.
-
-    Parameters
-    ----------
-    path : str | Path
-        File to hash.
-
-    Returns
-    -------
-    str
-        Hexadecimal digest.
-    """
-    return sha256_file(path)
 
 
 def signal_hash(signal: np.ndarray) -> str:
@@ -172,7 +157,7 @@ class TrainingECGDataset:
         if max_open_shards < 1:
             raise ValueError("max_open_shards must be positive")
         for name, expected in self.metadata["table_sha256"].items():
-            if file_hash(checked_path(self.directory, name)) != expected:
+            if sha256_file(checked_path(self.directory, name)) != expected:
                 raise ValueError(f"Dataset table hash mismatch: {name}")
         self.rows = read_csv(self.directory / "train_manifest.csv")
         _validate_training_rows(self.rows, self.metadata["record_count"])
@@ -199,7 +184,7 @@ class TrainingECGDataset:
             path = checked_path(self.directory, name)
             expected = self.metadata["shards"][name]
             if name not in self._verified_shards:
-                if file_hash(path) != expected["sha256"]:
+                if sha256_file(path) != expected["sha256"]:
                     raise ValueError(f"Shard hash mismatch: {name}")
                 self._verified_shards.add(name)
             array = np.load(path, mmap_mode="r", allow_pickle=False)

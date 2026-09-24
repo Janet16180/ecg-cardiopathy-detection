@@ -9,7 +9,8 @@ import pytest
 from torch.utils.data import DataLoader
 
 import scripts.data.build_training_dataset as builder
-from ecg_experiment.training_dataset import TrainingECGDataset, file_hash, signal_hash, verify_dataset
+from ecg_experiment.files import sha256_file
+from ecg_experiment.training_dataset import TrainingECGDataset, signal_hash, verify_dataset
 from scripts.data.build_training_dataset import FIELDS, build, decode, write_csv
 
 
@@ -32,16 +33,16 @@ def dataset(tmp_path: Path) -> Path:
                   [{"record_id": "ptbxl:1", "patient_id": "ptbxl:99", "target": 1}])
     metadata = {"complete": True, "schema_version": 1, "record_count": 2, "shape_per_record": [12, 5000],
                 "sampling_rate_hz": 500, "units": "mV",
-                "shards": {"shard_00000.npy": {"sha256": file_hash(tmp_path / "shard_00000.npy"),
+                "shards": {"shard_00000.npy": {"sha256": sha256_file(tmp_path / "shard_00000.npy"),
                                                "shape": [2, 12, 5000]}},
-                "table_sha256": {p.name: file_hash(p) for p in tmp_path.glob("*.csv")}}
+                "table_sha256": {p.name: sha256_file(p) for p in tmp_path.glob("*.csv")}}
     (tmp_path / "metadata.json").write_text(json.dumps(metadata))
     return tmp_path
 
 
 def _rehash_table(dataset: Path, path: Path) -> None:
     metadata = json.loads((dataset / "metadata.json").read_text())
-    metadata["table_sha256"][path.name] = file_hash(path)
+    metadata["table_sha256"][path.name] = sha256_file(path)
     (dataset / "metadata.json").write_text(json.dumps(metadata))
 
 
@@ -111,13 +112,13 @@ def test_swapped_ptb_bytes_fail_before_decoding(tmp_path: Path, monkeypatch: pyt
         decode(row)
 
 
-def test_semantically_bad_waveform_rejected_even_with_new_file_hash(dataset: Path) -> None:
+def test_semantically_bad_waveform_rejected_even_with_new_sha256_file(dataset: Path) -> None:
     path = dataset / "shard_00000.npy"
     signals = np.load(path)
     signals[0, 10] = 0
     np.save(path, signals)
     metadata = json.loads((dataset / "metadata.json").read_text())
-    metadata["shards"][path.name]["sha256"] = file_hash(path)
+    metadata["shards"][path.name]["sha256"] = sha256_file(path)
     (dataset / "metadata.json").write_text(json.dumps(metadata))
     with pytest.raises(ValueError, match="Full constant lead"):
         TrainingECGDataset(dataset)[0]

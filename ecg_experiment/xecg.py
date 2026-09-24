@@ -39,21 +39,6 @@ BLOCK_CONFIG = ["s", "s", "m", "m", "s", "s", "m", "m", "s"]
 BACKENDS = ("vanilla", "cuda")
 
 
-def sha256(path: str | Path) -> str:
-    """
-    Compute the SHA-256 digest of a file.
-
-    Parameters
-    ----------
-    path : str | Path
-        File to hash.
-
-    Returns
-    -------
-    str
-        Hexadecimal digest.
-    """
-    return sha256_file(path)
 
 
 def preprocess_xecg(signal_12x5000: np.ndarray, input_fs: int = 500) -> np.ndarray:
@@ -182,7 +167,7 @@ def load_xecg(
     config_path = checkpoint_dir / "config.json"
     weight_path = checkpoint_dir / "model.safetensors"
     for filename, expected_hash in RELEASE_SHA256.items():
-        if sha256(checkpoint_dir / filename) != expected_hash:
+        if sha256_file(checkpoint_dir / filename) != expected_hash:
             raise ValueError(f"Released xECG {filename} SHA-256 mismatch")
     config = json.loads(config_path.read_text())
     if backend not in BACKENDS:

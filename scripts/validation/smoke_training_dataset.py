@@ -9,7 +9,8 @@ from typing import Any
 import torch
 from torch.utils.data import DataLoader, Subset
 
-from ecg_experiment.training_dataset import TrainingECGDataset, file_hash, read_csv
+from ecg_experiment.files import sha256_file
+from ecg_experiment.training_dataset import TrainingECGDataset, read_csv
 
 HELDOUT_SPLITS = ("development", "calibration", "test")
 
@@ -131,8 +132,8 @@ def smoke(directory: Path) -> dict[str, Any]:
     references = read_csv(directory / "heldout_references.csv")
     check_patient_separation(ssl.rows, references)
     return {"status": "passed_cpu_loader_smoke_not_performance_result", "device": "cpu",
-            "dataset_metadata_sha256": file_hash(directory / "metadata.json"),
-            "smoke_source_sha256": file_hash(Path(__file__)), "ssl_sources_checked": list(representatives),
+            "dataset_metadata_sha256": sha256_file(directory / "metadata.json"),
+            "smoke_source_sha256": sha256_file(Path(__file__)), "ssl_sources_checked": list(representatives),
             "ssl_records": len(ssl), "ssl_targets_masked": True,
             "supervised_fraction0.1_records": len(labeled),
             "supervised_fraction1_records": len(TrainingECGDataset(directory, "supervised", "1")),

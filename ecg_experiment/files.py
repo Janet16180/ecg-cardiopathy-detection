@@ -10,8 +10,6 @@ from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
 
-import torch
-
 
 def sha256_file(path: str | Path) -> str:
     """
@@ -105,6 +103,9 @@ def write_torch_atomic(path: str | Path, value: Any) -> None:
     value : Any
         Object accepted by ``torch.save``.
     """
+    # Imported here so download entry points that hash files do not load torch.
+    import torch
+
     path = Path(path)
     temporary = _temporary_path(path)
     torch.save(value, temporary)

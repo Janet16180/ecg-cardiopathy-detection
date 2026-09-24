@@ -20,11 +20,11 @@ from pathlib import Path
 import numpy as np
 import wfdb
 
-from ecg_experiment.run import partition_validation
+from ecg_experiment.downloads import parse_checksums
+from ecg_experiment.evaluation import partition_validation
 from ecg_experiment.training_dataset import file_hash, read_csv, signal_hash, validate_signal, verify_dataset
+from ecg_experiment.waveforms import LEADS, read_record
 from scripts.validation.audit_public_pool_overlap import _load_candidates, _verify_candidate_views, _load_ptb_reference, _load_mimic_reference
-from scripts.extract_pretrained import LEADS, read_record
-from scripts.download_ptbxl_waveforms import parse_checksums
 
 ROOT = Path(__file__).resolve().parents[2]
 FIELDS = ('record_id', 'source_record_id', 'source', 'patient_id', 'patient_identity_known',
@@ -234,7 +234,8 @@ def _build_locked(output, workers=4, shard_size=128):
                     'table_sha256': {p.name: file_hash(p) for p in stage.iterdir() if p.suffix in ('.csv','.json')},
                     'git_revision': subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip(),
                     'source_sha256': {str(p.relative_to(ROOT)): file_hash(p) for p in
-                                      (Path(__file__), ROOT/'ecg_experiment/training_dataset.py', ROOT/'ecg_experiment/run.py', ROOT/'scripts/extract_pretrained.py', ROOT/'scripts/validation/audit_public_pool_overlap.py')},
+                                      (Path(__file__), ROOT/'ecg_experiment/training_dataset.py', ROOT/'ecg_experiment/run.py', ROOT/'scripts/extract_pretrained.py', ROOT/'scripts/validation/audit_public_pool_overlap.py',
+                                       ROOT/'ecg_experiment/evaluation.py', ROOT/'ecg_experiment/waveforms.py', ROOT/'ecg_experiment/downloads.py', ROOT/'ecg_experiment/public_sources.py')},
                     'command': [sys.executable, *sys.argv], 'build_seconds': time.monotonic()-started}
         (stage / 'metadata.json').write_text(json.dumps(metadata, indent=2) + '\n')
         print('Independently verifying every new shard and both label budgets', flush=True)

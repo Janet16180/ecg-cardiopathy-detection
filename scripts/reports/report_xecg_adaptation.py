@@ -4,8 +4,8 @@ import argparse
 import json
 from pathlib import Path
 
-from scripts.experiments.run_cpc_experiment import paired_comparison
-from scripts.experiments.run_xecg_finetune import save_atomic_json
+from ecg_experiment.evaluation import paired_comparison
+from ecg_experiment.files import write_json_atomic
 
 ROOT = Path(__file__).resolve().parents[2]
 LABELS = {"a": "A: continuation", "b": "B: Gram retention",
@@ -55,7 +55,7 @@ def report(output_dir: Path, bootstrap: int = 500, baseline_dir: Path | None = N
         "A favorable result does not establish a better encoder architecture or university screening performance. "
         "Rarity weights are an unsupervised feature heuristic and may emphasize artifacts. Keep negative "
         "results and inspect the saved training-only diagnostics. No test-selected winner is promoted automatically.", ""]
-    save_atomic_json(output_dir / "paired_comparisons.json", comparisons)
+    write_json_atomic(output_dir / "paired_comparisons.json", comparisons)
     (output_dir / "report.md").write_text("\n".join(lines))
     return comparisons
 

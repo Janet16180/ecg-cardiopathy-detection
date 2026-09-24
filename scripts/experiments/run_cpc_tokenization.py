@@ -15,12 +15,16 @@ from sklearn.metrics import roc_auc_score
 from torch import nn
 from torch.utils.data import DataLoader
 
+from ecg_experiment import cpc_pool
 from ecg_experiment.cpc_tokenization import (
     CLUSTERS, CLUSTER_WEIGHT, FIT_RECORDS, TOKENS_PER_RECORD,
     TokenizationClassifier, TokenizationPretrainer, cnn_tokens, fit_kmeans,
     snapshot_teacher_convs,
 )
-from scripts.experiments import run_cpc_experiment as base
+from ecg_experiment.evaluation import evaluate_predictions, paired_comparison, partition_validation
+from ecg_experiment.files import sha256_file, sha256_json, write_json_atomic, write_torch_atomic
+from ecg_experiment.gpu import GPU_LOCK_PATH
+from ecg_experiment.reproducibility import capture_rng_state, cpu_state, restore_rng_state, seed_everything
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -31,7 +35,7 @@ VARIANTS = ("continuation", "clusteraux", "fixedchunk", "beatchunk", "learnedchu
 CHUNK_VARIANTS = ("fixedchunk", "beatchunk", "learnedchunk")
 
 
-class BeatPoolDataset(base.PoolDataset):
+class BeatPoolDataset(cpc_pool.PoolDataset):
     def __init__(self, pool, rows, mean, std, boundaries):
         super().__init__(pool, rows, mean, std)
         self.boundaries = boundaries
@@ -53,14 +57,14 @@ def load_beats(path, pool):
     info = json.loads((path / "complete.json").read_text())
     identity = info["identity"]
     if (identity["cache_signals_sha256"] != pool.metadata["signals_sha256"]
-            or identity["cache_complete_sha256"] != base.digest_file(pool.directory / "complete.json")
-            or identity["detector_code_sha256"] != base.digest_file(ROOT / "ecg_experiment/ecg_tokenizers.py")):
+            or identity["cache_complete_sha256"] != sha256_file(pool.directory / "complete.json")
+            or identity["detector_code_sha256"] != sha256_file(ROOT / "ecg_experiment/ecg_tokenizers.py")):
         raise ValueError("Beat metadata uses different waveforms or detector code")
     return load_beat_metadata(path, pool.ids)
 
 
 def source_hashes(args, pool):
-    hashes = base.make_source_hashes(pool, args.manifest_dir)
+    hashes = cpc_pool.make_source_hashes(pool, args.manifest_dir)
     paths = [ROOT / name for name in (
         "ecg_experiment/cpc_tokenization.py", "scripts/experiments/run_cpc_tokenization.py",
         "ecg_experiment/ecg_tokenizers.py", "scripts/data/prepare_beat_tokens.py")]
@@ -68,7 +72,7 @@ def source_hashes(args, pool):
         "complete.json", "ecg_ids.npy", "boundaries.npy", "peaks.npy",
         "confirmations.npy", "counts.npy", "forced.npy")]
     paths += [args.bootstrap_dir / name for name in ("encoder.pt", "epoch_state.pt", "config.json")]
-    hashes.update({str(path.resolve()): base.digest_file(path) for path in paths})
+    hashes.update({str(path.resolve()): sha256_file(path) for path in paths})
     return hashes
 
 
@@ -112,7 +116,7 @@ def classifier_with_matched_head(variant, device):
     cpu_rng = torch.random.get_rng_state()
     try:
         torch.random.manual_seed(42)
-        shared_head = base.cpu_state(nn.Linear(512, 1))
+        shared_head = cpu_state(nn.Linear(512, 1))
     finally:
         torch.random.set_rng_state(cpu_rng)
     model = TokenizationClassifier(variant)
@@ -122,7 +126,7 @@ def classifier_with_matched_head(variant, device):
 
 def reset_cluster_heads(model, optimizer, generator, seed=43):
     """New K-means IDs get new class heads; leave CPC weights and RNG untouched."""
-    snapshot = base.rng_state(generator)
+    snapshot = capture_rng_state(generator)
     try:
         torch.manual_seed(seed)
         for head in model.cluster_heads:
@@ -130,7 +134,7 @@ def reset_cluster_heads(model, optimizer, generator, seed=43):
             for parameter in head.parameters():
                 optimizer.state.pop(parameter, None)
     finally:
-        base.restore_rng(snapshot, generator)
+        restore_rng_state(snapshot, generator)
 
 
 def boundary_disagreement(encoder):
@@ -155,7 +159,7 @@ def selected_features(args, pool, mean, std, teacher_convs, row_indices, positio
     """Extract the same fixed train-record/token sample for each codebook round."""
     teacher_convs.eval().to(args.device)
     selected_rows = [pool.train_rows[int(i)] for i in row_indices]
-    data = base.loader(pool, selected_rows, mean, std, 64, False,
+    data = cpc_pool.loader(pool, selected_rows, mean, std, 64, False,
                        torch.Generator().manual_seed(4242), args.device)
     features = np.empty((len(row_indices) * positions.shape[1], 256), dtype=np.float32)
     offset = 0
@@ -176,18 +180,18 @@ def selected_features(args, pool, mean, std, teacher_convs, row_indices, positio
 def fit_round(args, pool, mean, std, teacher, row_indices, positions, seed):
     """No fitting RNG leaks into training dropout or shuffled data order."""
     dummy_loader_generator = torch.Generator().manual_seed(0)
-    snapshot = base.rng_state(dummy_loader_generator)
+    snapshot = capture_rng_state(dummy_loader_generator)
     try:
         features = selected_features(args, pool, mean, std, teacher, row_indices, positions)
         centers, fit = fit_kmeans(features, seed=seed)
     finally:
-        base.restore_rng(snapshot, dummy_loader_generator)
+        restore_rng_state(snapshot, dummy_loader_generator)
     return torch.from_numpy(centers).to(args.device), fit
 
 
 def initial_codebook(args, pool, mean, std, source_hashes, encoder_state):
     path = args.output_dir / "cluster_codebook_round0.pt"
-    input_fp = base.digest_json({"source_hashes": source_hashes,
+    input_fp = sha256_json({"source_hashes": source_hashes,
                                  "normalization": [mean.tolist(), std.tolist()],
                                  "fit_records": FIT_RECORDS,
                                  "tokens_per_record": TOKENS_PER_RECORD,
@@ -203,11 +207,11 @@ def initial_codebook(args, pool, mean, std, source_hashes, encoder_state):
     rows, positions = codebook_selection(pool)
     centers, fit = fit_round(args, pool, mean, std, teacher_convs, rows, positions, 42)
     saved = {"input_fingerprint": input_fp, "centers": centers.cpu(),
-             "teacher_state": base.cpu_state(teacher_convs),
+             "teacher_state": cpu_state(teacher_convs),
              "row_indices": torch.from_numpy(rows),
              "positions": torch.from_numpy(positions), "fit": fit,
              "training_ecg_ids": [pool.train_rows[int(i)]["ecg_id"] for i in rows]}
-    base.atomic_torch(path, saved)
+    write_torch_atomic(path, saved)
     return saved
 
 
@@ -228,29 +232,29 @@ def ssl_settings(args, variant, codebook_hash=None):
 def save_ssl_epoch(directory, fingerprint, epoch, model, optimizer, generator,
                    history, centers=None, teacher=None, codebook_round=0,
                    round_fits=None):
-    base.atomic_torch(directory / "epoch_state.pt", {
+    write_torch_atomic(directory / "epoch_state.pt", {
         "fingerprint": fingerprint, "epoch": epoch,
-        "model": base.cpu_state(model), "optimizer": optimizer.state_dict(),
-        "rng": base.rng_state(generator), "history": history,
+        "model": cpu_state(model), "optimizer": optimizer.state_dict(),
+        "rng": capture_rng_state(generator), "history": history,
         "centers": centers.detach().cpu() if centers is not None else None,
-        "teacher_state": base.cpu_state(teacher) if teacher is not None else None,
+        "teacher_state": cpu_state(teacher) if teacher is not None else None,
         "codebook_round": codebook_round, "round_fits": round_fits or []})
-    base.atomic_json(directory / "history.json", history)
+    write_json_atomic(directory / "history.json", history)
 
 
 def pretrain(args, pool, mean, std, boundaries, source_hashes, bootstrap_weights,
              variant, codebook=None):
     encoder_state, head_state, _ = bootstrap_weights
-    base.seed_all(42)
+    seed_everything(42)
     directory = args.output_dir / f"{variant}_ssl"
     directory.mkdir(parents=True, exist_ok=True)
-    codebook_hash = base.digest_file(args.output_dir / "cluster_codebook_round0.pt") if codebook else None
-    fp, inputs = base.fingerprint(pool, source_hashes, mean, std,
+    codebook_hash = sha256_file(args.output_dir / "cluster_codebook_round0.pt") if codebook else None
+    fp, inputs = cpc_pool.fingerprint(pool, source_hashes, mean, std,
                                   ssl_settings(args, variant, codebook_hash))
     config_path = directory / "config.json"
     if config_path.exists() and json.loads(config_path.read_text())["fingerprint"] != fp:
         raise ValueError(f"Existing SSL config differs: {directory}")
-    base.atomic_json(config_path, {"fingerprint": fp, "inputs": inputs,
+    write_json_atomic(config_path, {"fingerprint": fp, "inputs": inputs,
         "description": "All arms continue completed Experiment 004 CPC encoder and future heads",
         "cluster_teacher": "Frozen CNN snapshot per five-epoch round; refit codebook after epoch five and reset auxiliary class heads" if codebook else None})
     complete = directory / "encoder.pt"
@@ -279,7 +283,7 @@ def pretrain(args, pool, mean, std, boundaries, source_hashes, bootstrap_weights
             raise ValueError(f"SSL resume fingerprint mismatch: {directory}")
         model.load_state_dict(state["model"])
         optimizer.load_state_dict(state["optimizer"])
-        base.restore_rng(state["rng"], generator)
+        restore_rng_state(state["rng"], generator)
         start_epoch, history = state["epoch"], state["history"]
         centers = state["centers"].to(args.device) if codebook else None
         if codebook:
@@ -290,7 +294,7 @@ def pretrain(args, pool, mean, std, boundaries, source_hashes, bootstrap_weights
             raise ValueError("History exists without resumable SSL state")
         start_epoch, history = 0, []
         # This reset makes dropout sequences identical despite variant-specific construction.
-        base.seed_all(42)
+        seed_everything(42)
     started = time.monotonic()
     previous_elapsed = history[-1]["elapsed_seconds"] if history else 0.0
     for epoch in range(start_epoch, args.ssl_epochs):
@@ -342,7 +346,7 @@ def pretrain(args, pool, mean, std, boundaries, source_hashes, bootstrap_weights
         save_ssl_epoch(directory, fp, epoch + 1, model, optimizer, generator,
                        history, centers, teacher, codebook_round, round_fits)
         print(json.dumps({"stage": "pretrain", "variant": variant, **record}), flush=True)
-    base.atomic_torch(complete, {"fingerprint": fp, "encoder": base.cpu_state(model.encoder),
+    write_torch_atomic(complete, {"fingerprint": fp, "encoder": cpu_state(model.encoder),
         "variant": variant, "epochs": args.ssl_epochs, "seed": 42,
         "bootstrap_epoch": 20, "training_records": len(pool.train_rows),
         "codebook_round": codebook_round if codebook else None,
@@ -359,8 +363,8 @@ def predict(model, data, device):
 
 
 def fine_tune(args, pool, mean, std, boundaries, source_hashes, variant, budget):
-    rows, manifest_hashes = base.manifest_rows(pool, args.manifest_dir, budget)
-    base.seed_all(42)
+    rows, manifest_hashes = cpc_pool.manifest_rows(pool, args.manifest_dir, budget)
+    seed_everything(42)
     directory = args.output_dir / f"{variant}_fraction{budget}_seed42"
     directory.mkdir(parents=True, exist_ok=True)
     ssl_path = args.output_dir / f"{variant}_ssl" / "encoder.pt"
@@ -369,15 +373,15 @@ def fine_tune(args, pool, mean, std, boundaries, source_hashes, variant, budget)
                 "batch_size": args.batch_size, "encoder_lr": 3e-4,
                 "head_lr": 1e-3, "weight_decay": 0.01,
                 "augmentation": "none", "manifest_sha256": manifest_hashes,
-                "ssl_checkpoint_sha256": base.digest_file(ssl_path)}
-    fp, inputs = base.fingerprint(pool, source_hashes, mean, std, settings)
+                "ssl_checkpoint_sha256": sha256_file(ssl_path)}
+    fp, inputs = cpc_pool.fingerprint(pool, source_hashes, mean, std, settings)
     completion = directory / "completion.json"
     if completion.exists():
         saved = json.loads(completion.read_text())
         if saved["fingerprint"] != fp:
             raise ValueError(f"Completed fine-tune fingerprint mismatch: {directory}")
         for name, declared in saved["artifacts"].items():
-            if base.digest_file(directory / name) != declared:
+            if sha256_file(directory / name) != declared:
                 raise ValueError(f"Completed fine-tune artifact changed: {directory / name}")
         return
     model = classifier_with_matched_head(variant, args.device)
@@ -389,19 +393,19 @@ def fine_tune(args, pool, mean, std, boundaries, source_hashes, variant, budget)
                                    "lr": 3e-4}, {"params": model.head.parameters(), "lr": 1e-3}],
                                   weight_decay=0.01)
     generator = torch.Generator().manual_seed(42)
-    development, calibration = base.partition_validation(rows["validation"])
+    development, calibration = partition_validation(rows["validation"])
     train_data = loader(pool, rows["labeled_train"], mean, std, boundaries,
                         args.batch_size, True, generator, args.device)
     dev_data = loader(pool, development, mean, std, boundaries,
                       args.batch_size, False, None, args.device)
-    start_epoch, history, best_model, best_auc, best_epoch = base.resume_or_new(
+    start_epoch, history, best_model, best_auc, best_epoch = cpc_pool.resume_or_new(
         directory, fp, model, optimizer, generator)
     if start_epoch == 0:
-        base.seed_all(42)
+        seed_everything(42)
     config_path = directory / "config.json"
     if config_path.exists() and json.loads(config_path.read_text())["fingerprint"] != fp:
         raise ValueError(f"Existing fine-tune config differs: {directory}")
-    base.atomic_json(config_path, {"fingerprint": fp, "inputs": inputs,
+    write_json_atomic(config_path, {"fingerprint": fp, "inputs": inputs,
         "architecture": variant, "model_parameters": sum(p.numel() for p in model.parameters()),
         "encoder_parameters": sum(p.numel() for p in model.encoder.parameters()),
         "labeled_training_records": len(rows["labeled_train"]),
@@ -438,7 +442,7 @@ def fine_tune(args, pool, mean, std, boundaries, source_hashes, variant, budget)
             exposures += len(signal)
         dev_auc = float(roc_auc_score(dev_y, predict(model, dev_data, args.device)))
         if dev_auc > best_auc:
-            best_auc, best_epoch, best_model = dev_auc, epoch + 1, base.cpu_state(model)
+            best_auc, best_epoch, best_model = dev_auc, epoch + 1, cpu_state(model)
         record = {"epoch": epoch + 1, "train_loss": total / len(rows["labeled_train"]),
                   "development_auroc": dev_auc, "best_epoch": best_epoch,
                   "optimizer_updates": updates, "record_exposures": exposures,
@@ -446,31 +450,31 @@ def fine_tune(args, pool, mean, std, boundaries, source_hashes, variant, budget)
         if variant in CHUNK_VARIANTS:
             record["boundary_disagreement_with_fixed"] = disagreement_total / exposures
         history.append(record)
-        base.save_epoch(directory, fp, epoch + 1, model, optimizer, generator,
+        cpc_pool.save_epoch(directory, fp, epoch + 1, model, optimizer, generator,
                         history, best_model, best_auc, best_epoch)
         print(json.dumps({"stage": "train", "variant": variant,
                           "budget": budget, **record}), flush=True)
     if best_model is None:
         raise RuntimeError("No fine-tune epoch completed")
     model.load_state_dict(best_model)
-    base.atomic_torch(directory / "model.pt", {"fingerprint": fp, "model": best_model,
+    write_torch_atomic(directory / "model.pt", {"fingerprint": fp, "model": best_model,
                     "best_epoch": best_epoch, "best_development_auroc": best_auc})
     calibration_logits = predict(model, loader(pool, calibration, mean, std, boundaries,
                                  args.batch_size, False, None, args.device), args.device)
     test_logits = predict(model, loader(pool, rows["test"], mean, std, boundaries,
                             args.batch_size, False, None, args.device), args.device)
-    base.evaluate_predictions(f"{variant}_fraction{budget}", calibration_logits,
+    evaluate_predictions(f"{variant}_fraction{budget}", calibration_logits,
         test_logits, calibration, rows["test"], directory, 42, args.bootstrap)
     names = ("config.json", "history.json", "model.pt", "metrics.json",
              "test_predictions.csv", "calibration_predictions.npz")
-    base.atomic_json(completion, {"fingerprint": fp,
-                      "artifacts": {name: base.digest_file(directory / name) for name in names}})
+    write_json_atomic(completion, {"fingerprint": fp,
+                      "artifacts": {name: sha256_file(directory / name) for name in names}})
 
 
 def profile(args, pool, mean, std, boundaries, bootstrap_weights):
     encoder_state, head_state, _ = bootstrap_weights
     for variant in (VARIANTS if args.variant == "all" else (args.variant,)):
-        base.seed_all(42)
+        seed_everything(42)
         model = TokenizationPretrainer(variant).to(args.device)
         load_bootstrap_weights(model, encoder_state, head_state)
         optimizer = torch.optim.AdamW((p for p in model.parameters() if p.requires_grad),
@@ -547,13 +551,13 @@ def report(args):
             lines.append(f"| {variant} | {result['auroc']:.3f} | {result['average_precision']:.3f} | {result['sensitivity']:.3f} | {result['specificity']:.3f} |")
         lines.append("")
         for left, right in comparisons_to_make:
-            comparison = base.paired_comparison(paths[left], paths[right], args.bootstrap)
+            comparison = paired_comparison(paths[left], paths[right], args.bootstrap)
             comparisons[f"fraction{budget}_{left}_minus_{right}"] = comparison
             auc = comparison["auroc"]
             lines.append(f"{left} minus {right}: AUROC {auc['difference']:+.3f} "
                          f"(paired patient 95% CI {auc['ci95'][0]:+.3f} to {auc['ci95'][1]:+.3f}).")
         lines.append("")
-    base.atomic_json(args.output_dir / "paired_comparisons.json", comparisons)
+    write_json_atomic(args.output_dir / "paired_comparisons.json", comparisons)
     (args.output_dir / "report.md").write_text("\n".join(lines) + "\n")
 
 
@@ -562,10 +566,10 @@ def main():
     parser.add_argument("--stage", choices=("profile", "pretrain", "train", "all"), default="all")
     parser.add_argument("--variant", choices=(*VARIANTS, "all"), default="all")
     parser.add_argument("--labels", choices=("0.1", "1", "all"), default="all")
-    parser.add_argument("--cache-dir", type=Path, default=base.DEFAULT_CACHE)
+    parser.add_argument("--cache-dir", type=Path, default=cpc_pool.DEFAULT_CACHE)
     parser.add_argument("--beat-dir", type=Path, default=DEFAULT_BEATS)
     parser.add_argument("--bootstrap-dir", type=Path, default=DEFAULT_BOOTSTRAP)
-    parser.add_argument("--manifest-dir", type=Path, default=base.DEFAULT_MANIFEST)
+    parser.add_argument("--manifest-dir", type=Path, default=cpc_pool.DEFAULT_MANIFEST)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
     parser.add_argument("--threads", type=int, default=1)
@@ -585,11 +589,11 @@ def main():
     torch.set_num_threads(args.threads)
     if args.stage != "profile":
         args.output_dir.mkdir(parents=True, exist_ok=True)
-    with base.GPU_LOCK.open("a+") as lock:
+    with GPU_LOCK_PATH.open("a+") as lock:
         if args.device == "cuda":
-            print(f"Waiting for GPU lock {base.GPU_LOCK}", flush=True)
+            print(f"Waiting for GPU lock {GPU_LOCK_PATH}", flush=True)
             fcntl.flock(lock, fcntl.LOCK_EX)
-        pool = base.Pool(args.cache_dir)
+        pool = cpc_pool.Pool(args.cache_dir)
         hashes = source_hashes(args, pool)
         beats = load_beats(args.beat_dir, pool)
         if args.stage == "profile":

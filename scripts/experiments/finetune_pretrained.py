@@ -3,7 +3,7 @@
 
 Run with ``.venv-pretrained/bin/python -m scripts.experiments.finetune_pretrained``. The
 published checkpoint is used as an encoder only: no disease-trained head is
-loaded. Waveform preprocessing matches ``scripts.extract_pretrained``.
+loaded. Waveform preprocessing matches ``ecg_experiment.foundation_models``.
 """
 
 from __future__ import annotations
@@ -22,25 +22,21 @@ from sklearn.metrics import roc_auc_score
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from ecg_experiment.run import evaluate_predictions, partition_validation, read_manifest
-from scripts.extract_pretrained import (
-    checkpoint_info, git_head, load_model, preprocess_ecg_fm, preprocess_hubert,
-    read_record, sha256,
+from ecg_experiment.data import read_manifest
+from ecg_experiment.evaluation import evaluate_predictions, partition_validation
+from ecg_experiment.files import sha256_file
+from ecg_experiment.foundation_models import (
+    checkpoint_info, load_model, preprocess_ecg_fm, preprocess_hubert, preprocessing_source_sha256,
 )
-
-
-def seed_everything(seed: int) -> None:
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(seed)
+from ecg_experiment.provenance import git_head
+from ecg_experiment.reproducibility import cpu_state, seed_everything
+from ecg_experiment.waveforms import read_record
 
 
 def manifest_data(manifest_dir: Path):
     names = ("labeled_train", "validation", "test")
     rows = {name: read_manifest(manifest_dir / f"{name}.csv") for name in names}
-    hashes = {f"{name}.csv": sha256(manifest_dir / f"{name}.csv") for name in names}
+    hashes = {f"{name}.csv": sha256_file(manifest_dir / f"{name}.csv") for name in names}
     ids = [row["ecg_id"] for name in names for row in rows[name]]
     if len(ids) != len(set(ids)):
         raise ValueError("ECG IDs overlap across labeled train, validation, and test")
@@ -62,7 +58,7 @@ def cache_views(model_name: str, raw_dir: Path, cache_dir: Path, rows, manifest_
     cache_dir.mkdir(parents=True, exist_ok=True)
     meta_path = cache_dir / "metadata.json"
     array_path = cache_dir / "views.npy"
-    source_hash = sha256(Path(__file__).resolve().parents[2] / "scripts/extract_pretrained.py")
+    source_hash = preprocessing_source_sha256()
     requested = {
         "model": model_name,
         "raw_dir": str(raw_dir.resolve()),
@@ -155,10 +151,6 @@ def predict(model, loader, device):
     for views, _ in loader:
         result.append(model(views.to(device)).cpu().numpy())
     return np.concatenate(result)
-
-
-def cpu_state(model):
-    return {name: value.detach().cpu().clone() for name, value in model.state_dict().items()}
 
 
 def save_resume_checkpoint(path, fingerprint, model, optimizer, best_state,
@@ -265,14 +257,14 @@ def main():
         if (adaptation_meta["official_checkpoint"]["sha256"] != checkpoint_meta["sha256"]
                 or adaptation_meta["training_ecg_ids"] != [r["ecg_id"] for r in expected_ssl]
                 or adaptation_meta["manifest_sha256"]["all_train_ssl.csv"]
-                != sha256(args.manifest_dir / "all_train_ssl.csv")):
+                != sha256_file(args.manifest_dir / "all_train_ssl.csv")):
             raise ValueError("Adaptation checkpoint source or training manifest differs")
         heldout_patients = {r["patient_id"] for name in ("validation", "test") for r in rows[name]}
         if heldout_patients & set(adaptation_meta["training_patient_ids"]):
             raise ValueError("Adaptation checkpoint encountered held-out patients")
         check_adaptation_budget(adaptation_meta, adapted["history"])
         backbone.load_state_dict(adapted["backbone"], strict=True)
-        adaptation_meta = {**adaptation_meta, "checkpoint_sha256": sha256(args.adapted_backbone)}
+        adaptation_meta = {**adaptation_meta, "checkpoint_sha256": sha256_file(args.adapted_backbone)}
         del adapted
     if args.model == "hubert-small":
         # The SSL model's time/feature masking is an upstream objective, not
@@ -325,7 +317,8 @@ def main():
         "adaptation_checkpoint_sha256": (adaptation_meta["checkpoint_sha256"]
                                          if adaptation_meta else None),
         "extractor_source_sha256": cache_meta["extractor_sha256"],
-        "finetune_source_sha256": sha256(Path(__file__)),
+        "finetune_source_sha256": sha256_file(Path(__file__)),
+        "reproducibility_source_sha256": sha256_file(Path(__file__).resolve().parents[2] / "ecg_experiment/reproducibility.py"),
     }
     best_auc, best_epoch, best_state = -1.0, 0, None
     history = []
@@ -381,7 +374,7 @@ def main():
         "official_source_commit": git_head(Path(__file__).resolve().parents[2] / "third_party" /
             ("HuBERT-ECG" if args.model == "hubert-small" else "fairseq-signals")),
         "extractor_source_sha256": cache_meta["extractor_sha256"],
-        "finetune_source_sha256": sha256(Path(__file__)),
+        "finetune_source_sha256": sha256_file(Path(__file__)),
         "manifest_sha256": manifest_hashes, "cache_dir": str(cache_dir.resolve()),
         "cache_shape": cache_meta["shape"], "preprocessing": cache_meta["preprocessing"],
         "views": "two nonoverlapping 5-second views, mean of token means",

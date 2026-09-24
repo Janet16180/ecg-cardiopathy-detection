@@ -10,8 +10,12 @@ from sklearn.metrics import roc_auc_score
 from sklearn.preprocessing import StandardScaler
 
 from ecg_experiment.data import read_manifest
-from ecg_experiment.run import partition_validation
-from scripts.experiments.run_jepa_cpc_fusion import LIMITED, ROOT, atomic_json, digest
+from ecg_experiment.evaluation import partition_validation
+from ecg_experiment.files import sha256_file, write_json_atomic
+
+
+ROOT = Path(__file__).resolve().parents[2]
+LIMITED = ROOT / "data/processed/ptbxl/features_jepa_multiblock_union_seeds42_43_44"
 
 
 def main():
@@ -21,10 +25,10 @@ def main():
     receipt_path = output / "matched_jepa_ten_percent.json"
     files = [LIMITED / "features.npy", LIMITED / "ecg_ids.npy", LIMITED / "metadata.json",
              manifest / "labeled_train.csv", manifest / "validation.csv", Path(__file__).resolve()]
-    fingerprints = {str(p.relative_to(ROOT)): digest(p) for p in files}
+    fingerprints = {str(p.relative_to(ROOT)): sha256_file(p) for p in files}
     if receipt_path.exists():
         receipt = json.loads(receipt_path.read_text())
-        if receipt["inputs_sha256"] != fingerprints or receipt["model_sha256"] != digest(model_path):
+        if receipt["inputs_sha256"] != fingerprints or receipt["model_sha256"] != sha256_file(model_path):
             raise ValueError("Existing matched JEPA probe differs from frozen inputs")
         print(json.dumps({"status": "verified_completed", "receipt": str(receipt_path)}), flush=True)
         return
@@ -64,13 +68,13 @@ def main():
         np.savez(handle, mean=scaler.mean_, scale=scaler.scale_,
                  coefficient=best[2].coef_, intercept=best[2].intercept_)
     os.replace(temporary, model_path)
-    receipt = {"inputs_sha256": fingerprints, "model_sha256": digest(model_path),
-               "source_budget": "seed42_fraction0.1", "exact_labeled_manifest_sha256": digest(manifest / "labeled_train.csv"),
-               "train_ecg_ids_order_sha256": digest(manifest / "labeled_train.csv"),
+    receipt = {"inputs_sha256": fingerprints, "model_sha256": sha256_file(model_path),
+               "source_budget": "seed42_fraction0.1", "exact_labeled_manifest_sha256": sha256_file(manifest / "labeled_train.csv"),
+               "train_ecg_ids_order_sha256": sha256_file(manifest / "labeled_train.csv"),
                "train_count": len(train), "development_count": len(development),
                "policy": "StandardScaler labeled train only; LogisticRegression lbfgs max_iter=3000 seed42; six-C development AUROC",
                "C": best[1], "development_auroc": best[0], "choices": choices}
-    atomic_json(receipt_path, receipt)
+    write_json_atomic(receipt_path, receipt, sort_keys=True)
     print(json.dumps({"status": "complete", "C": best[1], "development_auroc": best[0],
                       "receipt": str(receipt_path)}), flush=True)
 

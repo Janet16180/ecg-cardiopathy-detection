@@ -22,7 +22,7 @@ import numpy as np
 from ecg_experiment.ecg_tokenizers import (
     GRID_STEPS, MAX_EVENTS, beat_metadata, _sha256,
 )
-from scripts.prepare_mimic_ssl import atomic_text
+from ecg_experiment.files import write_text_atomic
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -99,7 +99,7 @@ def prepare(cache_dir: Path, output_dir: Path, workers: int = 2):
         done = 0
         for name in ARRAYS:
             (output_dir / f"{name}.partial.npy").unlink(missing_ok=True)
-        atomic_text(progress_path, json.dumps({"identity": identity, "completed_rows": 0}) + "\n")
+        write_text_atomic(progress_path, json.dumps({"identity": identity, "completed_rows": 0}) + "\n")
     matrices = {}
     if done < count:
         for name, (dtype, suffix) in ARRAYS.items():
@@ -124,7 +124,7 @@ def prepare(cache_dir: Path, output_dir: Path, workers: int = 2):
                         matrices[name][index] = value
                 for matrix in matrices.values():
                     matrix.flush()
-                atomic_text(progress_path, json.dumps({"identity": identity,
+                write_text_atomic(progress_path, json.dumps({"identity": identity,
                                                        "completed_rows": stop}) + "\n")
                 if stop % 1000 == 0 or stop == count:
                     print(f"Beat metadata {stop:,}/{count:,} ECGs; "
@@ -159,7 +159,7 @@ def prepare(cache_dir: Path, output_dir: Path, workers: int = 2):
         "sha256": {name: _sha256(output_dir / name) for name in
                    ("ecg_ids.npy", *(f"{name}.npy" for name in ARRAYS))},
     }
-    atomic_text(complete_path, json.dumps(info, indent=2, allow_nan=False) + "\n")
+    write_text_atomic(complete_path, json.dumps(info, indent=2, allow_nan=False) + "\n")
     progress_path.unlink(missing_ok=True)
     return info
 

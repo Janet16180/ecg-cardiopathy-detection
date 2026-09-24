@@ -9,7 +9,7 @@ from torch.nn import functional as F
 from ecg_experiment.cpc import HORIZONS
 from ecg_experiment.cpc_word2vec import (SampledCPCPretrainer, sampled_negative_indices,
                                          sampled_objective)
-from scripts.experiments import run_cpc_experiment as base
+from ecg_experiment.reproducibility import seed_everything
 from scripts.experiments.run_cpc_word2vec import resume_or_new, save_epoch
 
 
@@ -77,7 +77,7 @@ def test_same_initialization_finite_gradients_and_collapse_metrics():
     signal = torch.randn(2, 12, 2500)
     states = []
     for variant in ("sampled_info", "sgns"):
-        base.seed_all(42)
+        seed_everything(42)
         model = SampledCPCPretrainer(variant)
         states.append({name: value.detach().clone() for name, value in model.state_dict().items()})
         loss, details = model(signal, torch.Generator().manual_seed(7))
@@ -92,7 +92,7 @@ def test_same_initialization_finite_gradients_and_collapse_metrics():
 
 
 def test_resume_restores_private_sampler_and_loader_rng(tmp_path):
-    base.seed_all(42)
+    seed_everything(42)
     model = torch.nn.Linear(2, 1)
     optimizer = torch.optim.AdamW(model.parameters())
     loader_generator = torch.Generator().manual_seed(42)

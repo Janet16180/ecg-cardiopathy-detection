@@ -23,10 +23,11 @@ from torch.nn import functional as F
 
 from ecg_experiment.bounded_waveform_cache import BoundedWaveformCache
 from ecg_experiment.cpc import CPCClassifier, CPCEncoder
+from ecg_experiment.cpc_pool import Pool
 from ecg_experiment.data import read_manifest
-from ecg_experiment.evaluation import select_threshold
-from ecg_experiment.run import cpu_state, partition_validation
-from scripts.experiments.run_cpc_experiment import Pool, atomic_json, atomic_torch, digest_file, seed_all
+from ecg_experiment.evaluation import partition_validation, select_threshold
+from ecg_experiment.files import sha256_file, write_json_atomic, write_torch_atomic
+from ecg_experiment.reproducibility import cpu_state, seed_everything
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -144,7 +145,7 @@ def load_inputs(args):
     teacher_meta = json.loads((args.teacher_dir / "metadata.json").read_text())
     if teacher_meta.get("feature_dimension") != 768 or teacher_meta.get("record_count") != 19126:
         raise ValueError("Unexpected JEPA teacher cache metadata")
-    full_manifest_hash = digest_file(args.manifest_dir / "seed42_fraction1/labeled_train.csv")
+    full_manifest_hash = sha256_file(args.manifest_dir / "seed42_fraction1/labeled_train.csv")
     if teacher_meta.get("manifest_sha256", {}).get("labeled_train.csv") != full_manifest_hash:
         raise ValueError("Teacher training manifest differs from this label pool")
     teacher_ids = [str(item) for item in np.load(args.teacher_dir / "ecg_ids.npy", allow_pickle=False)]
@@ -194,7 +195,7 @@ def load_inputs(args):
         if prior_hash == pool.metadata[metadata_key] and prior_stat == before:
             actual = prior_hash
         else:
-            actual = digest_file(path)
+            actual = sha256_file(path)
             if file_identity(path) != before:
                 raise ValueError(f"Waveform pool {filename} changed during hashing")
             pool_hash_mode = "full_content_sha256"
@@ -202,18 +203,20 @@ def load_inputs(args):
             raise ValueError(f"Waveform pool {filename} changed")
         pool_hashes[filename] = actual
         pool_stats[filename] = before
-    provenance = {"sources": {str(path.resolve()): digest_file(path) for path in
+    provenance = {"sources": {str(path.resolve()): sha256_file(path) for path in
                               [args.ssl, args.ssl.parent / "epoch_state.pt",
                                args.ssl.parent / "config.json", args.normalization,
                                args.teacher_dir / "metadata.json",
                                args.teacher_dir / "ecg_ids.npy", args.teacher_dir / "features.npy", *manifest_paths]},
-                  "code": {name: digest_file(ROOT / name) for name in
+                  "code": {name: sha256_file(ROOT / name) for name in
                            ("scripts/experiments/run_jepa_cpc_distillation.py", "ecg_experiment/cpc.py",
                             "ecg_experiment/bounded_waveform_cache.py",
                             "scripts/experiments/run_cpc_experiment.py", "ecg_experiment/data.py",
+                            "ecg_experiment/cpc_pool.py", "ecg_experiment/files.py",
+                            "ecg_experiment/reproducibility.py",
                             "ecg_experiment/run.py", "ecg_experiment/evaluation.py",
                             "docs/astra-next-model-ideas.md", "docs/experiment-015-distillation.md")},
-                  "pool_complete_sha256": digest_file(args.cache_dir / "complete.json"),
+                  "pool_complete_sha256": sha256_file(args.cache_dir / "complete.json"),
                   "pool_content_sha256": pool_hashes,
                   "base_cpc_config_fingerprint": base_config["fingerprint"],
                   "teacher_metadata": teacher_meta,
@@ -238,7 +241,7 @@ def load_inputs(args):
 
 
 def make_model(ssl_path, device):
-    seed_all(SEED)
+    seed_everything(SEED)
     model = Student()
     checkpoint = torch.load(ssl_path, map_location="cpu", weights_only=True)
     if checkpoint.get("variant") != "cpc" or checkpoint.get("epochs") != 20:
@@ -271,8 +274,8 @@ def save_state(directory, fingerprint, model, optimizer, epoch, batch, history, 
              "optimizer": optimizer.state_dict(), "rng": rng_state(),
              "epoch": epoch, "batch": batch, "history": history, "best": best,
              "totals": totals, "elapsed_seconds": elapsed}
-    atomic_torch(directory / "resume.pt", state)
-    atomic_json(directory / "history.json", history)
+    write_torch_atomic(directory / "resume.pt", state)
+    write_json_atomic(directory / "history.json", history)
 
 
 def load_state(directory, fingerprint, model, optimizer):
@@ -375,7 +378,7 @@ def run_arm(args, data, budget, arm, directory, max_epochs, provenance, deadline
         if done["fingerprint"] != fingerprint:
             raise ValueError("Completed arm fingerprint mismatch")
         for name, field in (("history.json", "history_sha256"), ("best_student.pt", "best_student_sha256")):
-            if digest_file(directory / name) != done[field]:
+            if sha256_file(directory / name) != done[field]:
                 raise ValueError(f"Completed artifact changed: {name}")
         return json.loads((directory / "history.json").read_text())
     config_path = directory / "config.json"
@@ -384,7 +387,7 @@ def run_arm(args, data, budget, arm, directory, max_epochs, provenance, deadline
     model = make_model(args.ssl, args.device)
     optimizer = make_optimizer(model)
     epoch, batch_pos, history, best, totals, elapsed = load_state(directory, fingerprint, model, optimizer)
-    atomic_json(config_path, {"fingerprint": fingerprint, "identity": identity,
+    write_json_atomic(config_path, {"fingerprint": fingerprint, "identity": identity,
                               "model_parameters": sum(p.numel() for p in model.parameters()),
                               "inference_parameters": sum(p.numel() for p in model.encoder.parameters()) + sum(p.numel() for p in model.head.parameters()),
                               "exposed_training_labels": int(exposed.sum())})
@@ -429,7 +432,7 @@ def run_arm(args, data, budget, arm, directory, max_epochs, provenance, deadline
             raise RuntimeError("Nonfinite model weights")
         if screen["auroc"] > best["auc"]:
             best = {"auc": screen["auroc"], "epoch": epoch + 1, "model": model.classifier_state()}
-            atomic_torch(directory / "best_student.pt", {"fingerprint": fingerprint,
+            write_torch_atomic(directory / "best_student.pt", {"fingerprint": fingerprint,
                          "epoch": epoch + 1, "model": best["model"]})
         record = {"epoch": epoch + 1, "arm": arm, "budget": budget,
                   "train_bce_mean_batch": totals["bce_sum"] / totals["updates"],
@@ -445,10 +448,10 @@ def run_arm(args, data, budget, arm, directory, max_epochs, provenance, deadline
         save_state(directory, fingerprint, model, optimizer, epoch, 0, history, best, totals,
                    elapsed + time.monotonic() - started)
     if epoch == EPOCHS and max_epochs == EPOCHS:
-        atomic_json(completion, {"fingerprint": fingerprint,
+        write_json_atomic(completion, {"fingerprint": fingerprint,
                     "best_epoch": best["epoch"], "best_development_auroc": best["auc"],
-                    "history_sha256": digest_file(directory / "history.json"),
-                    "best_student_sha256": digest_file(directory / "best_student.pt")})
+                    "history_sha256": sha256_file(directory / "history.json"),
+                    "best_student_sha256": sha256_file(directory / "best_student.pt")})
     return history
 
 
@@ -502,11 +505,11 @@ def report_pilot(output_dir):
               "", "The teacher has external pretraining exposure and uncertain overlap. "
               "The endpoint is a diagnostic annotation proxy, not verified health or referral need.", ""]
     (output_dir / "report.md").write_text("\n".join(lines))
-    atomic_json(output_dir / "completion.json", {"status": "development_pilot_complete",
-                "report_sha256": digest_file(output_dir / "report.md"),
+    write_json_atomic(output_dir / "completion.json", {"status": "development_pilot_complete",
+                "report_sha256": sha256_file(output_dir / "report.md"),
                 "advance_to_second_seed": bool(positive and other_budget_safe and sensitivity_safe),
                 "arm_completions_sha256": {
-                    f"{arm}_fraction{budget}_seed42": digest_file(output_dir / f"{arm}_fraction{budget}_seed42/completion.json")
+                    f"{arm}_fraction{budget}_seed42": sha256_file(output_dir / f"{arm}_fraction{budget}_seed42/completion.json")
                     for budget in ("1", "0.1") for arm in ("control", "distill")}})
 
 
@@ -548,7 +551,7 @@ def main():
                        "pool_file_stats": data["pool_stats"],
                        "fingerprint": sha_json(data["provenance"]),
                        "provenance": data["provenance"]}
-            atomic_json(args.output_dir / "provenance/verification.json", receipt)
+            write_json_atomic(args.output_dir / "provenance/verification.json", receipt)
             print(json.dumps({key: value for key, value in receipt.items() if key != "provenance"}), flush=True)
             return
         check_path = args.output_dir / "provenance/verification.json"
@@ -579,7 +582,7 @@ def main():
                            "peak_gpu_bytes": torch.cuda.max_memory_allocated() if args.device == "cuda" else None,
                            "fingerprint": sha_json(data["provenance"])}
                 args.output_dir.mkdir(parents=True, exist_ok=True)
-                atomic_json(args.output_dir / "profile.json", receipt)
+                write_json_atomic(args.output_dir / "profile.json", receipt)
                 print(json.dumps(receipt), flush=True)
             return
         receipt_path = args.output_dir / "profile.json"

@@ -9,140 +9,17 @@ averaged to one row. Input files are streamed, never held as one ECG array.
 from __future__ import annotations
 
 import argparse
-import csv
-import hashlib
 import json
 import os
 import resource
-import subprocess
 import time
 from pathlib import Path
 
 import numpy as np
 
-
-LEADS = ("I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6")
-SPLITS = ("labeled_train", "validation", "test")
-SAMPLE_RATE = 500
-SAMPLES_PER_VIEW = 2500
-HF_MODELS = {
-    "hubert-small": ("Edoardo-Coppola/hubert-ecg-small", "model.safetensors"),
-    "ecg-fm": ("wanglab/ecg-fm", "mimic_iv_ecg_physionet_pretrained.pt"),
-}
-
-
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
-def manifest_rows(manifest_dir: Path, limit: int | None) -> tuple[list[dict[str, str]], dict[str, str]]:
-    rows: list[dict[str, str]] = []
-    hashes = {}
-    seen = set()
-    for split in SPLITS:
-        path = manifest_dir / f"{split}.csv"
-        hashes[path.name] = sha256(path)
-        with path.open(newline="", encoding="utf-8") as stream:
-            reader = csv.DictReader(stream)
-            if not {"ecg_id", "filename_hr"}.issubset(reader.fieldnames or []):
-                raise ValueError(f"{path} needs ecg_id and filename_hr columns")
-            for row in reader:
-                ecg_id = row["ecg_id"].strip()
-                if ecg_id in seen:
-                    raise ValueError(f"Duplicate ecg_id across manifests: {ecg_id}")
-                seen.add(ecg_id)
-                rows.append({"ecg_id": ecg_id, "filename_hr": row["filename_hr"].strip(), "split": split})
-    if limit is not None:
-        rows = rows[:limit]
-    if not rows:
-        raise ValueError("No records selected")
-    return rows, hashes
-
-
-def read_record(raw_dir: Path, relative_name: str) -> np.ndarray:
-    import wfdb
-
-    path = (raw_dir / relative_name).resolve()
-    if not path.is_relative_to(raw_dir.resolve()):
-        raise ValueError(f"Waveform path escapes raw directory: {relative_name}")
-    record = wfdb.rdrecord(str(path))
-    if record.fs != SAMPLE_RATE:
-        raise ValueError(f"Expected 500 Hz, got {record.fs} at {path}")
-    names = tuple(record.sig_name)
-    upper_names = tuple(name.upper() for name in names)
-    upper_leads = tuple(name.upper() for name in LEADS)
-    if set(upper_names) != set(upper_leads) or len(names) != 12:
-        raise ValueError(f"Unexpected lead names at {path}: {names}")
-    signal = np.asarray(record.p_signal, dtype=np.float32)
-    if signal.shape[0] != 5000:
-        raise ValueError(f"Expected a 10-second ECG at {path}; got {signal.shape}")
-    signal = signal[:, [upper_names.index(name) for name in upper_leads]].T
-    if not np.isfinite(signal).all():
-        raise ValueError(f"Nonfinite waveform at {path}")
-    return signal
-
-
-def preprocess_hubert(signal: np.ndarray) -> np.ndarray:
-    """Official FIR/min-max pipeline followed by the official flattened decimation."""
-    from scipy import signal as scipy_signal
-    from hubert_ecg.utils import ecg_preprocessing
-
-    normalized = ecg_preprocessing(signal, original_frequency=SAMPLE_RATE)
-    views = []
-    for start in (0, SAMPLES_PER_VIEW):
-        view = normalized[:, start : start + SAMPLES_PER_VIEW]
-        # ECGDataset flattens the 12 leads before decimating by five.
-        views.append(scipy_signal.decimate(view.reshape(-1), 5).astype(np.float32))
-    return np.stack(views)
-
-
-def preprocess_ecg_fm(signal: np.ndarray) -> np.ndarray:
-    """Official 500 Hz lead-wise z-score, then nonoverlapping 5-second views."""
-    mean = signal.mean(axis=1, keepdims=True)
-    std = signal.std(axis=1, keepdims=True)
-    standardized = np.divide(signal - mean, std, out=np.zeros_like(signal), where=std > 0)
-    return np.stack((standardized[:, :SAMPLES_PER_VIEW], standardized[:, SAMPLES_PER_VIEW:]))
-
-
-def checkpoint_info(model_name: str) -> tuple[Path | None, dict]:
-    from huggingface_hub import HfApi, hf_hub_download
-
-    repo, filename = HF_MODELS[model_name]
-    revision = HfApi().model_info(repo).sha
-    local_dir = Path(__file__).resolve().parents[1] / "third_party" / "checkpoints" / model_name
-    checkpoint = hf_hub_download(repo_id=repo, filename=filename, revision=revision,
-                                 local_dir=local_dir)
-    if model_name == "hubert-small":
-        hf_hub_download(repo_id=repo, filename="config.json", revision=revision,
-                        local_dir=local_dir)
-    return Path(checkpoint), {"repo": repo, "revision": revision, "filename": filename,
-                              "sha256": sha256(Path(checkpoint))}
-
-
-def load_model(model_name: str, checkpoint: Path | None, device: str):
-    import torch
-
-    if model_name == "hubert-small":
-        import hubert_ecg  # noqa: F401 - registers the Hugging Face model type
-        from transformers import AutoModel
-
-        # Use the downloaded snapshot cache. The official model implementation
-        # registers its custom architecture when hubert_ecg is imported.
-        assert checkpoint is not None
-        model = AutoModel.from_pretrained(str(checkpoint.parent), local_files_only=True)
-        preprocess = preprocess_hubert
-    else:
-        from fairseq_signals.models import build_model_from_checkpoint
-
-        assert checkpoint is not None
-        model = build_model_from_checkpoint(str(checkpoint))
-        preprocess = preprocess_ecg_fm
-    model.eval().to(device)
-    return model, preprocess
+from ecg_experiment.foundation_models import HF_MODELS, checkpoint_info, load_model
+from ecg_experiment.provenance import git_head
+from ecg_experiment.waveforms import SPLITS, manifest_rows, read_record
 
 
 def embed_views(model_name: str, model, views: np.ndarray, device: str) -> np.ndarray:
@@ -161,14 +38,6 @@ def embed_views(model_name: str, model, views: np.ndarray, device: str) -> np.nd
     if not np.isfinite(embedded).all():
         raise ValueError("Model returned nonfinite embeddings")
     return embedded
-
-
-def git_head(path: Path) -> str | None:
-    try:
-        return subprocess.check_output(["git", "-C", str(path), "rev-parse", "HEAD"],
-                                       stderr=subprocess.DEVNULL, text=True).strip()
-    except (OSError, subprocess.CalledProcessError):
-        return None
 
 
 def extract(args: argparse.Namespace) -> dict:

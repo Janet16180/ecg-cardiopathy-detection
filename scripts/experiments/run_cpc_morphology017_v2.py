@@ -10,8 +10,8 @@ CPU checkpoint tensors on the same device.
 import argparse
 from pathlib import Path
 
+from ecg_experiment.files import sha256_file
 from scripts.experiments import run_cpc_morphology017 as original
-from scripts.experiments.run_cpc_experiment import digest_file
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -23,7 +23,7 @@ ORIGINAL_VERIFY_ROUNDTRIP = original.verify_roundtrip
 def load_inputs(args):
     data = ORIGINAL_LOAD_INPUTS(args)
     data['provenance']['code'].update({
-        name: digest_file(ROOT / name) for name in (
+        name: sha256_file(ROOT / name) for name in (
             'scripts/experiments/run_cpc_morphology017_v2.py',
             'docs/experiment-017-morphology-v2.md',
         )

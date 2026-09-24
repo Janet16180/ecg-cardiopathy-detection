@@ -5,7 +5,8 @@ import unittest
 import zipfile
 from pathlib import Path
 
-from scripts.download_ptbxl_waveforms import download, parse_checksums, waveform_paths
+from ecg_experiment.downloads import parse_checksums
+from scripts.download_ptbxl_waveforms import download, waveform_paths
 
 
 class DownloadWaveformsTests(unittest.TestCase):

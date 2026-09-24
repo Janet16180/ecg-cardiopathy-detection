@@ -24,11 +24,14 @@ from sklearn.preprocessing import StandardScaler
 from threadpoolctl import threadpool_limits
 import torch
 
+from ecg_experiment import cpc_pool
 from ecg_experiment.cpc_prediction_mismatch import (
     ARMS, BRANCH_WIDTH, FIRST_QUERY, FIRST_TARGET, HORIZON,
     extract_branches, features_for_arm, load_bootstrap, supervised_indices,
 )
-from scripts.experiments import run_cpc_experiment as base
+from ecg_experiment.evaluation import evaluate_predictions, paired_comparison, partition_validation
+from ecg_experiment.files import sha256_file, sha256_json, write_json_atomic
+from ecg_experiment.gpu import GPU_LOCK_PATH
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -44,8 +47,9 @@ ARTIFACTS = ("config.json", "linear_model.npz", "selection.json", "metrics.json"
 def source_hashes():
     files = ("ecg_experiment/cpc_prediction_mismatch.py", "scripts/experiments/run_cpc_prediction_mismatch.py",
              "ecg_experiment/cpc.py", "scripts/experiments/run_cpc_experiment.py",
-             "ecg_experiment/run.py", "ecg_experiment/evaluation.py", "ecg_experiment/data.py")
-    return {name: base.digest_file(ROOT / name) for name in files}
+             "ecg_experiment/run.py", "ecg_experiment/evaluation.py", "ecg_experiment/data.py",
+             "ecg_experiment/cpc_pool.py", "ecg_experiment/files.py")
+    return {name: sha256_file(ROOT / name) for name in files}
 
 
 def read_rows(path):
@@ -57,7 +61,7 @@ def read_rows(path):
 def load_manifests(pool, root):
     manifests, hashes, headers = {}, {}, {}
     for budget, (fraction, count) in BUDGETS.items():
-        rows, fingerprints = base.manifest_rows(pool, root, fraction)
+        rows, fingerprints = cpc_pool.manifest_rows(pool, root, fraction)
         if len(rows["labeled_train"]) != count or len(rows["validation"]) != 1870 or len(rows["test"]) != 1896:
             raise ValueError("Supervised manifests differ from the fixed PTB label budgets")
         if {row["target"] for row in rows["labeled_train"]} != {"0", "1"}:
@@ -68,7 +72,7 @@ def load_manifests(pool, root):
         patients = [{row["patient_id"] for row in rows[name]} for name in ("all_train_ssl", "validation", "test")]
         if any(patients[i] & patients[j] for i in range(3) for j in range(i + 1, 3)):
             raise ValueError("Training, validation and test patients overlap")
-        development, calibration = base.partition_validation(rows["validation"])
+        development, calibration = partition_validation(rows["validation"])
         if (len(development), len(calibration)) != (1306, 564):
             raise ValueError("Development/calibration partition differs from the fixed protocol")
         manifests[budget] = {**rows, "development": development, "calibration": calibration}
@@ -90,21 +94,21 @@ def load_manifests(pool, root):
 
 
 def prepare_inputs(args):
-    pool = base.Pool(args.cache_dir)
-    data_hashes = base.make_source_hashes(pool, args.manifest_root)
+    pool = cpc_pool.Pool(args.cache_dir)
+    data_hashes = cpc_pool.make_source_hashes(pool, args.manifest_root)
     model, config = load_bootstrap(args.bootstrap_dir)
-    if base.digest_json(config["inputs"]) != config["fingerprint"]:
+    if sha256_json(config["inputs"]) != config["fingerprint"]:
         raise ValueError("Original CPC configuration fingerprint is invalid")
     for path, expected in config["inputs"]["cache"].items():
         if path in data_hashes and data_hashes[path] != expected:
             raise ValueError(f"CPC checkpoint source identity changed: {path}")
     for name, expected in config["inputs"]["code"].items():
-        if base.digest_file(ROOT / name) != expected:
+        if sha256_file(ROOT / name) != expected:
             raise ValueError(f"Frozen CPC implementation changed: {name}")
     normalization_path = args.bootstrap_dir.parent / "normalization.json"
     normalization = json.loads(normalization_path.read_text())
-    expected_source = {"train_ids_sha256": base.digest_json([row["ecg_id"] for row in pool.train_rows]),
-                       "rows_sha256": base.digest_file(pool.directory / "rows.csv"),
+    expected_source = {"train_ids_sha256": sha256_json([row["ecg_id"] for row in pool.train_rows]),
+                       "rows_sha256": sha256_file(pool.directory / "rows.csv"),
                        "signals_sha256": data_hashes[str((pool.directory / "signals.npy").resolve())],
                        "method": "global per-lead mean and population std, training waveforms only"}
     if normalization.get("source") != expected_source or normalization.get("count") != len(pool.train_rows) * 2500:
@@ -116,13 +120,13 @@ def prepare_inputs(args):
            for key, value in (("mean", mean), ("std", std))):
         raise ValueError("Normalization does not match the pretrained CPC input statistics")
     manifests, rows, manifest_hashes, headers = load_manifests(pool, args.manifest_root)
-    checkpoint_hashes = {name: base.digest_file(args.bootstrap_dir / name)
+    checkpoint_hashes = {name: sha256_file(args.bootstrap_dir / name)
                          for name in ("encoder.pt", "epoch_state.pt", "config.json")}
     identity = {"experiment": 9, "sources": source_hashes(), "checkpoint": checkpoint_hashes,
                 "checkpoint_fingerprint": config["fingerprint"], "data": data_hashes,
-                "normalization_sha256": base.digest_file(normalization_path),
+                "normalization_sha256": sha256_file(normalization_path),
                 "manifests": manifest_hashes, "manifest_headers": headers,
-                "feature_rows_sha256": base.digest_json(rows), "feature_header": list(FEATURE_FIELDS),
+                "feature_rows_sha256": sha256_json(rows), "feature_header": list(FEATURE_FIELDS),
                 "token_selection": {"horizon": HORIZON, "first_query": FIRST_QUERY, "first_target": FIRST_TARGET,
                                     "half_tokens": 79, "retained_tokens_per_half": 72},
                 "pooling": "Per-half mean/max, then mean across halves; same retained positions in every branch",
@@ -136,7 +140,7 @@ def gpu_lock(device):
     if device != "cuda":
         yield
         return
-    with base.GPU_LOCK.open("a+") as handle:
+    with GPU_LOCK_PATH.open("a+") as handle:
         try:
             fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as exc:
@@ -184,7 +188,7 @@ def profile(args, pool, model, mean, std, rows, identity):
               "encoder_parameters": sum(p.numel() for p in model.encoder.parameters()),
               "head_parameters": sum(p.numel() for p in model.heads[0].parameters()),
               "finite": bool(np.isfinite(features).all())}
-    base.atomic_json(args.output_dir / "profile.json", result)
+    write_json_atomic(args.output_dir / "profile.json", result)
     print(json.dumps({"stage": "mismatch_profile", **{k: v for k, v in result.items() if k != "fingerprint"}}), flush=True)
     return result
 
@@ -196,7 +200,7 @@ def feature_completion(directory, fingerprint):
     metadata = json.loads(path.read_text())
     if metadata.get("fingerprint") != fingerprint:
         raise ValueError("Completed mismatch features have different input identities")
-    if metadata["sha256"] != {name: base.digest_file(directory / name) for name in ("features.npy", "rows.csv")}:
+    if metadata["sha256"] != {name: sha256_file(directory / name) for name in ("features.npy", "rows.csv")}:
         raise ValueError("Frozen feature cache checksum mismatch")
     return metadata
 
@@ -247,7 +251,7 @@ def extract(args, pool, model, mean, std, rows, identity):
         if partial.exists() or final.exists():
             raise FileExistsError("Feature array exists without a recovery cursor")
         values = np.lib.format.open_memmap(partial, mode="w+", dtype=np.float32, shape=(len(rows), 3, BRANCH_WIDTH))
-        base.atomic_json(progress_path, {"fingerprint": fingerprint, "completed_rows": 0,
+        write_json_atomic(progress_path, {"fingerprint": fingerprint, "completed_rows": 0,
                                         "chunks": [], "elapsed_seconds": 0.0})
     if values.shape != (len(rows), 3, BRANCH_WIDTH) or values.dtype != np.float32:
         raise ValueError("Feature cache shape/dtype differs")
@@ -260,17 +264,17 @@ def extract(args, pool, model, mean, std, rows, identity):
         values[start:stop] = batch
         values.flush()
         chunks.append({"start": start, "stop": stop, "sha256": hashlib.sha256(batch.tobytes()).hexdigest()})
-        base.atomic_json(progress_path, {"fingerprint": fingerprint, "completed_rows": stop, "chunks": chunks,
+        write_json_atomic(progress_path, {"fingerprint": fingerprint, "completed_rows": stop, "chunks": chunks,
                                         "elapsed_seconds": previous + time.monotonic() - started})
         if stop % (args.batch_size * 10) == 0 or stop == len(rows):
             print(json.dumps({"stage": "mismatch_extract", "records": stop, "total": len(rows)}), flush=True)
     del values
     if partial.exists():
         os.replace(partial, final)
-    base.atomic_json(directory / "metadata.json", {"fingerprint": fingerprint,
+    write_json_atomic(directory / "metadata.json", {"fingerprint": fingerprint,
                      "shape": [len(rows), 3, BRANCH_WIDTH], "dtype": "float32", "branch_order": list(ARMS),
                      "elapsed_seconds": previous + time.monotonic() - started,
-                     "sha256": {name: base.digest_file(directory / name) for name in ("features.npy", "rows.csv")}})
+                     "sha256": {name: sha256_file(directory / name) for name in ("features.npy", "rows.csv")}})
     progress_path.unlink(missing_ok=True)
 
 
@@ -322,7 +326,7 @@ def fit_probe(features, feature_rows, rows, directory, fingerprint, resume=False
                 raise FileExistsError("Prior classifier candidates exist; use --resume")
             choice = json.loads(marker_path.read_text())
             if (choice["fingerprint"] != fingerprint or choice["C"] != c
-                    or choice["sha256"] != base.digest_file(candidate_path)):
+                    or choice["sha256"] != sha256_file(candidate_path)):
                 raise ValueError("Classifier candidate identity/checksum mismatch")
             saved = np.load(candidate_path)
             if not np.array_equal(saved["mean"], scaler.mean_) or not np.array_equal(saved["scale"], scaler.scale_):
@@ -342,8 +346,8 @@ def fit_probe(features, feature_rows, rows, directory, fingerprint, resume=False
             choice = {"fingerprint": fingerprint, "C": c, "development_auroc": auc,
                       "iterations": estimator.n_iter_.tolist(), "seconds": time.monotonic() - started,
                       "convergence_warnings": [str(message.message) for message in messages],
-                      "sha256": base.digest_file(candidate_path)}
-            base.atomic_json(marker_path, choice)
+                      "sha256": sha256_file(candidate_path)}
+            write_json_atomic(marker_path, choice)
             print(json.dumps({"stage": "mismatch_probe", "directory": str(directory), "C": c,
                               "development_auroc": auc}), flush=True)
         choices.append({key: value for key, value in choice.items() if key not in ("fingerprint", "sha256")})
@@ -354,7 +358,7 @@ def fit_probe(features, feature_rows, rows, directory, fingerprint, resume=False
     atomic_npz(directory / "linear_model.npz", **arrays)
     selection = {"C": best_c, "best_development_auroc": best_auc, "candidates": choices,
                  "tie_rule": "First C in ascending grid wins ties", "selection_split": "development only"}
-    base.atomic_json(directory / "selection.json", selection)
+    write_json_atomic(directory / "selection.json", selection)
     return arrays, selection
 
 
@@ -367,7 +371,7 @@ def train_probe(args, branches, feature_rows, rows, feature_metadata, identity, 
     completion = directory / "complete.json"
     if completion.exists():
         saved = json.loads(completion.read_text())
-        if saved["fingerprint"] != fingerprint or saved["sha256"] != {name: base.digest_file(directory / name) for name in ARTIFACTS}:
+        if saved["fingerprint"] != fingerprint or saved["sha256"] != {name: sha256_file(directory / name) for name in ARTIFACTS}:
             raise ValueError("Completed classifier artifacts or configuration differ")
         return
     if directory.exists() and any(directory.iterdir()) and not args.resume:
@@ -381,18 +385,18 @@ def train_probe(args, branches, feature_rows, rows, feature_metadata, identity, 
               "encoder_frozen": True, "normalization": "Frozen Experiment 004 training-pool mean/std",
               "retained_target_positions": "7..78 in each 79-token half", "prediction_query_positions": "3..74",
               "task": "PTB-XL diagnostic abnormality proxy; exploratory previously inspected test cohort"}
-    base.atomic_json(directory / "config.json", config)
+    write_json_atomic(directory / "config.json", config)
     started = time.monotonic()
     fitted, selection = fit_probe(features, feature_rows, rows, directory, fingerprint, resume=args.resume)
     calibration_indices = supervised_indices(feature_rows, rows["calibration"], "validation")
     test_indices = supervised_indices(feature_rows, rows["test"], "test")
-    base.evaluate_predictions(f"cpc_mismatch_{arm}_{budget}", linear_logits(features[calibration_indices], fitted),
+    evaluate_predictions(f"cpc_mismatch_{arm}_{budget}", linear_logits(features[calibration_indices], fitted),
                                linear_logits(features[test_indices], fitted), rows["calibration"], rows["test"],
                                directory, 42, args.bootstrap)
     config.update({"C": selection["C"], "best_development_auroc": selection["best_development_auroc"],
                    "seconds_this_invocation": time.monotonic() - started})
-    base.atomic_json(directory / "config.json", config)
-    base.atomic_json(completion, {"fingerprint": fingerprint, "sha256": {name: base.digest_file(directory / name) for name in ARTIFACTS}})
+    write_json_atomic(directory / "config.json", config)
+    write_json_atomic(completion, {"fingerprint": fingerprint, "sha256": {name: sha256_file(directory / name) for name in ARTIFACTS}})
 
 
 def report(args):
@@ -415,7 +419,7 @@ def report(args):
                          f"{metrics['sensitivity']:.4f} | {metrics['specificity']:.4f} | {metrics['brier']:.4f} |")
         lines += ["", "| Paired comparison | AUROC difference | Patient bootstrap 95% interval |", "| --- | ---: | --- |"]
         for left, right in (("residual", "ordinary"), ("ordinary", "context"), ("residual", "context")):
-            comparison = base.paired_comparison(paths[left], paths[right], args.bootstrap)
+            comparison = paired_comparison(paths[left], paths[right], args.bootstrap)
             comparisons[f"{budget}_{left}_minus_{right}"] = comparison
             auc = comparison["auroc"]
             lines.append(f"| {left} minus {right} | {auc['difference']:+.4f} | [{auc['ci95'][0]:+.4f}, {auc['ci95'][1]:+.4f}] |")
@@ -426,19 +430,19 @@ def report(args):
               "A large mismatch can reflect noise or artifacts, so this feature is not a clinical abnormality score. "
               "One seed and a previously used test cohort support exploratory conclusions only. Paired intervals describe "
               "patient sampling uncertainty, not retraining variation.", ""]
-    base.atomic_json(args.output_dir / "paired_comparisons.json", comparisons)
+    write_json_atomic(args.output_dir / "paired_comparisons.json", comparisons)
     (args.output_dir / "report.md").write_text("\n".join(lines))
-    base.atomic_json(args.output_dir / "complete.json", {
-        "sha256": {name: base.digest_file(args.output_dir / name) for name in ("report.md", "paired_comparisons.json")},
-        "probe_completions": {f"{arm}_{budget}": base.digest_file(args.output_dir / f"{arm}_{budget}_seed42/complete.json")
+    write_json_atomic(args.output_dir / "complete.json", {
+        "sha256": {name: sha256_file(args.output_dir / name) for name in ("report.md", "paired_comparisons.json")},
+        "probe_completions": {f"{arm}_{budget}": sha256_file(args.output_dir / f"{arm}_{budget}_seed42/complete.json")
                               for arm in ARMS for budget in BUDGETS}})
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--stage", choices=("check", "profile", "extract", "train", "all"), default="all")
-    parser.add_argument("--cache-dir", type=Path, default=base.DEFAULT_CACHE)
-    parser.add_argument("--manifest-root", type=Path, default=base.DEFAULT_MANIFEST)
+    parser.add_argument("--cache-dir", type=Path, default=cpc_pool.DEFAULT_CACHE)
+    parser.add_argument("--manifest-root", type=Path, default=cpc_pool.DEFAULT_MANIFEST)
     parser.add_argument("--bootstrap-dir", type=Path, default=DEFAULT_BOOTSTRAP)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
@@ -456,7 +460,7 @@ def main(argv=None):
     with (args.output_dir / "runner.lock").open("a+") as lock, threadpool_limits(limits=args.threads):
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         pool, model, mean, std, manifests, rows, identity = prepare_inputs(args)
-        base.atomic_json(args.output_dir / "preflight.json", {"identity": identity, "feature_records": len(rows),
+        write_json_atomic(args.output_dir / "preflight.json", {"identity": identity, "feature_records": len(rows),
                          "budgets": {name: len(value["labeled_train"]) for name, value in manifests.items()},
                          "encoder_frozen": not any(p.requires_grad for p in model.parameters())})
         print(json.dumps({"stage": "mismatch_check", "records": len(rows), "arms": list(ARMS)}), flush=True)

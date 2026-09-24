@@ -18,9 +18,13 @@ from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
 
-from scripts.download_ptbxl_waveforms import parse_checksums, sha256
-from scripts.extract_pretrained import read_record
-from scripts.data.prepare_public_ecg import ROOT, signal_sha256
+from ecg_experiment.downloads import parse_checksums
+from ecg_experiment.files import sha256_file
+from ecg_experiment.public_sources import signal_sha256
+from ecg_experiment.waveforms import read_record
+
+
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def read_csv(path: Path) -> list[dict]:
@@ -58,7 +62,7 @@ def _load_candidates(candidate_dir: Path, pin: PinInput) -> tuple[list[dict], di
     """Load the curated SSL candidate and enforce its declared eligibility."""
     candidate_path = pin(candidate_dir / 'challenge_ssl_curated_manifest.csv')
     receipt = json.loads(pin(candidate_dir / 'challenge_ssl_curated_receipt.json').read_text())
-    if sha256(candidate_path) != receipt['curated_manifest_sha256']:
+    if sha256_file(candidate_path) != receipt['curated_manifest_sha256']:
         raise ValueError('Curated candidate manifest mismatch')
     rows = read_csv(candidate_path)
     if not rows or len(rows) != receipt['counts']['selected_total']:
@@ -78,8 +82,8 @@ def _verify_candidate_views(rows: list[dict], receipt: dict, pin: PinInput) -> N
         directory = ROOT / 'data/processed/challenge_ecg_views' / view
         manifest_path = pin(directory / 'manifest.csv')
         materialized = json.loads(pin(directory / 'metadata.json').read_text())
-        if (not materialized.get('complete') or sha256(manifest_path) != receipt[receipt_key] or
-                sha256(manifest_path) != materialized['manifest_sha256']):
+        if (not materialized.get('complete') or sha256_file(manifest_path) != receipt[receipt_key] or
+                sha256_file(manifest_path) != materialized['manifest_sha256']):
             raise ValueError('Published Challenge view identity mismatch')
         views[view] = {row['ecg_id']: row for row in read_csv(manifest_path)}
     for row in rows:
@@ -102,7 +106,7 @@ def _load_ptb_reference(pin: PinInput) -> set[str]:
     hashes_payload = json.dumps(reference['hashes'], separators=(',', ':')).encode()
     hashes_digest = hashlib.sha256(hashes_payload).hexdigest()
     if (reference.get('schema_version') != 2 or
-            pilot['ptb_reference_receipt_sha256'] != sha256(reference_path) or
+            pilot['ptb_reference_receipt_sha256'] != sha256_file(reference_path) or
             reference['hashes_sha256'] != hashes_digest):
         raise ValueError('PTB reference lacks matching completed official-byte verification')
     return set(reference['hashes'])
@@ -113,7 +117,7 @@ def _load_mimic_reference(pin: PinInput) -> tuple[set[str], set[str]]:
     mimic = ROOT / 'data/processed/mimic_ssl_40k_cpc'
     metadata = json.loads(pin(mimic / 'metadata.json').read_text())
     manifest = pin(mimic / 'ssl_manifest.csv')
-    if sha256(manifest) != metadata['manifest_sha256']:
+    if sha256_file(manifest) != metadata['manifest_sha256']:
         raise ValueError('Frozen MIMIC manifest mismatch')
     rows = read_csv(manifest)
     database = pin(mimic / 'audit.sqlite3')
@@ -136,14 +140,14 @@ def _load_georgia_reference(pin: PinInput) -> tuple[set[str], set[str]]:
     georgia = ROOT / 'data/processed/georgia_ssl_g1'
     metadata = json.loads(pin(georgia / 'metadata.json').read_text())
     manifest = pin(georgia / 'ssl_manifest.csv')
-    if sha256(manifest) != metadata['manifest_sha256']:
+    if sha256_file(manifest) != metadata['manifest_sha256']:
         raise ValueError('Frozen Georgia manifest mismatch')
     rows = read_csv(manifest)
     if len(rows) != metadata['accepted_records']:
         raise ValueError('Frozen Georgia count mismatch')
     raw = ROOT / 'data/raw/challenge-2020/1.0.2'
     sums_file = pin(raw / 'SHA256SUMS.txt')
-    if sha256(sums_file) != metadata['checksums_sha256']:
+    if sha256_file(sums_file) != metadata['checksums_sha256']:
         raise ValueError('Georgia official checksum reference mismatch')
     sums = parse_checksums(sums_file.read_text())
     hashes = set()
@@ -154,7 +158,7 @@ def _load_georgia_reference(pin: PinInput) -> tuple[set[str], set[str]]:
         for suffix in ('.hea', '.mat'):
             name = stem + suffix
             path = (raw / name).resolve()
-            if not path.is_relative_to(raw.resolve()) or sha256(path) != sums.get(name):
+            if not path.is_relative_to(raw.resolve()) or sha256_file(path) != sums.get(name):
                 raise ValueError('Georgia official raw checksum mismatch')
         hashes.add(signal_sha256(read_record(raw, stem)))
     return hashes, {row['ecg_id'] for row in rows}
@@ -191,9 +195,9 @@ def _publish_audit(output_dir: Path, rows: list[dict], novel: list[dict],
             'overlap_by_record_id': sum(row['existing_record_id'] == 'true' for row in overlap),
             'novel_source_counts': dict(Counter(row['source'] for row in novel)),
             'input_sha256': inputs,
-            'source_sha256': sha256(Path(__file__)),
+            'source_sha256': sha256_file(Path(__file__)),
             'output_sha256': {
-                name: sha256(stage / name)
+                name: sha256_file(stage / name)
                 for name in ('overlaps.csv', 'novel_challenge_ssl_manifest.csv')
             },
             'limitations': [
@@ -224,7 +228,7 @@ def audit(candidate_dir: Path, output_dir: Path) -> dict:
     inputs: dict[str, str] = {}
 
     def pin(path: Path) -> Path:
-        inputs[str(path.resolve())] = sha256(path)
+        inputs[str(path.resolve())] = sha256_file(path)
         return path
 
     rows, receipt = _load_candidates(candidate_dir, pin)
@@ -235,7 +239,7 @@ def audit(candidate_dir: Path, output_dir: Path) -> dict:
     novel, overlap = classify_overlap(rows, pools, mimic_ids | georgia_ids)
 
     for path, digest in inputs.items():
-        if sha256(Path(path)) != digest:
+        if sha256_file(Path(path)) != digest:
             raise ValueError(f'Input changed during audit: {path}')
     return _publish_audit(output_dir, rows, novel, overlap, pools, inputs)
 

@@ -10,8 +10,9 @@ from pathlib import Path, PurePosixPath
 import numpy as np
 import wfdb
 
-from scripts.download_ptbxl_waveforms import fetch_file, parse_checksums, sha256
-from scripts.extract_pretrained import read_record
+from ecg_experiment.downloads import fetch_file, parse_checksums
+from ecg_experiment.files import sha256_file
+from ecg_experiment.waveforms import read_record
 
 
 BASE = "https://physionet.org/files/challenge-2020/1.0.2"
@@ -46,9 +47,9 @@ def main():
 
     def download(name):
         destination = args.raw_dir / name
-        if not destination.exists() or sha256(destination) != checksums[name]:
+        if not destination.exists() or sha256_file(destination) != checksums[name]:
             fetch_file(BASE + "/" + name, destination, 60, 3,
-                       lambda file: sha256(file) == checksums[name])
+                       lambda file: sha256_file(file) == checksums[name])
         return destination.stat().st_size
 
     total_bytes = 0
@@ -96,8 +97,8 @@ def main():
     metadata = {
         "source_url": BASE, "license": "CC BY 4.0", "selection": "all records in g1 folder; convenience pilot, not random/full cohort",
         "downloaded_records": len(stems), "accepted_records": len(accepted), "excluded": excluded,
-        "downloaded_bytes": total_bytes, "checksums_sha256": sha256(checksum_path),
-        "manifest_sha256": sha256(destination), "signal_identity": "SHA256 of canonical lead-ordered float32 physical mV",
+        "downloaded_bytes": total_bytes, "checksums_sha256": sha256_file(checksum_path),
+        "manifest_sha256": sha256_file(destination), "signal_identity": "SHA256 of canonical lead-ordered float32 physical mV",
         "ptbxl_records_checked": len(ptb_rows),
         "patient_identity": "Not available; patient_id denotes record grouping only. Same-person records may remain.",
         "labels": "No Georgia diagnoses or reports used for training or evaluation.",

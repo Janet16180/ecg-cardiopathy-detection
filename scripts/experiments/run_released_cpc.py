@@ -8,7 +8,10 @@ from pathlib import Path
 import subprocess
 import sys
 
-from scripts.features.extract_ecg_cpc import ROOT, atomic_json
+from ecg_experiment.files import write_json_atomic
+
+
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def main():
@@ -21,7 +24,7 @@ def main():
     with (output / "released_runner.lock").open("a+") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         try:
-            atomic_json(state_path, {"stage": "extraction", "pid": os.getpid()})
+            write_json_atomic(state_path, {"stage": "extraction", "pid": os.getpid()})
             subprocess.run([sys.executable, "-m", "scripts.features.extract_ecg_cpc"], cwd=ROOT, env=env, check=True)
             features = output / "released_features"
             provenance = json.loads((features / "metadata.json").read_text())
@@ -33,7 +36,7 @@ def main():
                     suffix = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
                     directory.rename(directory.with_name(directory.name + "_interrupted_" + suffix))
                 if not directory.exists():
-                    atomic_json(state_path, {"stage": "linear_probe", "label_fraction": fraction, "pid": os.getpid()})
+                    write_json_atomic(state_path, {"stage": "linear_probe", "label_fraction": fraction, "pid": os.getpid()})
                     subprocess.run([sys.executable, "-m", "scripts.experiments.probe_pretrained", "--embeddings-dir", str(features),
                                     "--name", "ecg-cpc_released", "--manifest-dir",
                                     str(ROOT / "data/processed/ptbxl" / f"seed42_fraction{fraction}"),
@@ -44,10 +47,10 @@ def main():
                 config["released_model"] = {key: provenance[key] for key in (
                     "checkpoint_source", "license", "reported_pretraining", "comparison_limit", "cauchy_backend")}
                 config["released_model"]["checkpoint_sha256"] = provenance["identity"]["checkpoint_sha256"]
-                atomic_json(config_path, config)
-            atomic_json(state_path, {"stage": "complete", "pid": os.getpid(), "label_fractions": ["1", "0.1"]})
+                write_json_atomic(config_path, config)
+            write_json_atomic(state_path, {"stage": "complete", "pid": os.getpid(), "label_fractions": ["1", "0.1"]})
         except Exception as exc:
-            atomic_json(state_path, {"stage": "failed", "pid": os.getpid(), "error": str(exc)})
+            write_json_atomic(state_path, {"stage": "failed", "pid": os.getpid(), "error": str(exc)})
             raise
 
 

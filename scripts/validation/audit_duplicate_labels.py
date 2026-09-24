@@ -9,9 +9,10 @@ import json
 from collections import Counter
 from pathlib import Path
 
-from scripts.data.prepare_public_ecg import ROOT, SOURCE, load_view, signal_sha256
+from ecg_experiment.public_sources import SOURCE, load_view, signal_sha256
 
 
+ROOT = Path(__file__).resolve().parents[2]
 FIELDS = ("excluded_ecg_id", "retained_ecg_id", "excluded_label_codes", "retained_label_codes",
           "same_label_set")
 

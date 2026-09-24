@@ -10,8 +10,9 @@ from torch import nn
 
 from ecg_experiment import cpc_crosslead as objective
 from ecg_experiment.cpc import CPCEncoder, CPCPretrainer
+from ecg_experiment.files import sha256_file, write_json_atomic, write_torch_atomic
+from ecg_experiment.reproducibility import cpu_state, seed_everything
 from scripts.experiments import run_cpc_crosslead as run
-from scripts.experiments import run_cpc_experiment as base
 from scripts.experiments.run_cpc_tokenization import bootstrap
 
 
@@ -79,12 +80,12 @@ def test_strict_epoch20_bootstrap_and_source_hashes(tmp_path, monkeypatch):
     normalized = epoch.parent / "normalization.json"
     normalized.write_text("{}")
     fingerprint = "completed004"
-    model_state = base.cpu_state(source)
-    base.atomic_torch(epoch / "epoch_state.pt", {"fingerprint": fingerprint, "epoch": 20, "model": model_state})
-    base.atomic_torch(epoch / "encoder.pt", {"fingerprint": fingerprint, "variant": "cpc",
-                       "epochs": 20, "encoder": base.cpu_state(source.encoder)})
+    model_state = cpu_state(source)
+    write_torch_atomic(epoch / "epoch_state.pt", {"fingerprint": fingerprint, "epoch": 20, "model": model_state})
+    write_torch_atomic(epoch / "encoder.pt", {"fingerprint": fingerprint, "variant": "cpc",
+                       "epochs": 20, "encoder": cpu_state(source.encoder)})
     original_path = str((tmp_path / "cache.bin").resolve())
-    base.atomic_json(epoch / "config.json", {"fingerprint": fingerprint,
+    write_json_atomic(epoch / "config.json", {"fingerprint": fingerprint,
                       "inputs": {"cache": {original_path: "abc"}}})
     args = Namespace(bootstrap_dir=epoch, manifest_dir=tmp_path)
     encoder, heads, _ = bootstrap(args, {original_path: "abc"})
@@ -93,14 +94,14 @@ def test_strict_epoch20_bootstrap_and_source_hashes(tmp_path, monkeypatch):
         bootstrap(args, {original_path: "changed"})
     final = torch.load(epoch / "encoder.pt", weights_only=True)
     final["encoder"][next(iter(encoder))] += 1
-    base.atomic_torch(epoch / "encoder.pt", final)
+    write_torch_atomic(epoch / "encoder.pt", final)
     with pytest.raises(ValueError, match="differs"):
         bootstrap(args, {original_path: "abc"})
     (tmp_path / "cache.bin").write_bytes(b"x")
-    monkeypatch.setattr(run.base, "make_source_hashes", lambda pool, manifest: {})
+    monkeypatch.setattr(run.cpc_pool, "make_source_hashes", lambda pool, manifest: {})
     hashes = run.source_hashes(args, object())
     imported = str((run.ROOT / "scripts/experiments/run_cpc_tokenization.py").resolve())
-    assert hashes[imported] == base.digest_file(imported)
+    assert hashes[imported] == sha256_file(imported)
     assert str(normalized.resolve()) in hashes
 
 
@@ -129,7 +130,7 @@ def test_epoch_resume_reproduces_shuffle_and_dropout(tmp_path):
     dataset = torch.arange(18, dtype=torch.float32).reshape(6, 3) / 10
 
     def setup():
-        base.seed_all(42)
+        seed_everything(42)
         model = TinyPretrainer("native")
         optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)
         generator = torch.Generator().manual_seed(42)
@@ -142,7 +143,7 @@ def test_epoch_resume_reproduces_shuffle_and_dropout(tmp_path):
     uninterrupted = setup()
     epoch(*uninterrupted)
     epoch(*uninterrupted)
-    expected = base.cpu_state(uninterrupted[0])
+    expected = cpu_state(uninterrupted[0])
     first = setup()
     epoch(*first)
     run.save_epoch(tmp_path, "test-fp", 1, *first, [{"epoch": 1}])
@@ -159,7 +160,7 @@ def test_epoch_resume_reproduces_shuffle_and_dropout(tmp_path):
 def test_profile_roundtrip_restores_dropout_rng(monkeypatch):
     torch.set_num_threads(1)
     monkeypatch.setattr(run, "CrossLeadPretrainer", TinyPretrainer)
-    base.seed_all(123)
+    seed_everything(123)
     model = TinyPretrainer("native")
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)
     generator = torch.Generator().manual_seed(42)
@@ -171,25 +172,25 @@ def test_profile_roundtrip_restores_dropout_rng(monkeypatch):
 def test_all_ssl_precede_all_six_transfers(tmp_path, monkeypatch):
     torch.set_num_threads(1)
     monkeypatch.setattr(run, "CrossLeadPretrainer", TinyPretrainer)
-    monkeypatch.setattr(run.base, "Pool", lambda directory: Namespace(train_rows=[{}] * 14))
+    monkeypatch.setattr(run.cpc_pool, "Pool", lambda directory: Namespace(train_rows=[{}] * 14))
     monkeypatch.setattr(run, "source_hashes", lambda args, pool: {"synthetic": "fixed"})
-    base.seed_all(42)
+    seed_everything(42)
     bootstrap_model = TinyPretrainer("native")
     monkeypatch.setattr(run, "bootstrap", lambda args, hashes: (
-        base.cpu_state(bootstrap_model.encoder), base.cpu_state(bootstrap_model.heads), {}))
+        cpu_state(bootstrap_model.encoder), cpu_state(bootstrap_model.heads), {}))
     monkeypatch.setattr(run, "fixed_normalization", lambda pool, args, hashes, config: (
         np.zeros(12, dtype=np.float32), np.ones(12, dtype=np.float32)))
     monkeypatch.setattr(run, "ssl_fingerprint", lambda args, pool, mean, std, hashes, variant: (
         f"{variant}-fixed", {"variant": variant}))
     batches = [(torch.randn(2, 3), None, None) for _ in range(7)]
-    monkeypatch.setattr(run.base, "loader", lambda *args: batches)
+    monkeypatch.setattr(run.cpc_pool, "loader", lambda *args: batches)
     transfers = []
 
     def fake_transfer(args, pool, mean, std, hashes, variant, budget):
         assert all((args.output_dir / f"{arm}_ssl/encoder.pt").exists() for arm in run.VARIANTS)
         transfers.append((variant, budget))
 
-    monkeypatch.setattr(run.base, "fine_tune", fake_transfer)
+    monkeypatch.setattr(run.cpc_pool, "fine_tune", fake_transfer)
     args = Namespace(stage="all", variant="all", labels="all", cache_dir=tmp_path,
                      manifest_dir=tmp_path, bootstrap_dir=tmp_path, output_dir=tmp_path / "out",
                      device="cpu", threads=1, batch_size=2, ssl_batch_size=2, ssl_epochs=10,

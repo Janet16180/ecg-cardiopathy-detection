@@ -11,7 +11,8 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 from ecg_experiment.data import read_manifest
-from ecg_experiment.run import evaluate_predictions, partition_validation, save_json
+from ecg_experiment.evaluation import evaluate_predictions, partition_validation
+from ecg_experiment.files import write_json_atomic
 
 
 def main():
@@ -55,7 +56,7 @@ def main():
     scaler, classifier = best.steps[0][1], best.steps[1][1]
     np.savez(directory / "linear_model.npz", mean=scaler.mean_, scale=scaler.scale_,
              coefficient=classifier.coef_, intercept=classifier.intercept_)
-    save_json(directory / "config.json", {"model": args.name, "seed": args.seed, "C": best_c,
+    write_json_atomic(directory / "config.json", {"model": args.name, "seed": args.seed, "C": best_c,
         "best_development_auroc": best_auc, "regularization_search": choices,
         "labeled_training_records": len(train), "development_records": len(development),
         "calibration_records": len(calibration), "test_records": len(test),

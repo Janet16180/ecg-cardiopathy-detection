@@ -10,6 +10,7 @@ import json
 
 import torch
 
+from ecg_experiment.reproducibility import capture_rng_state, cpu_state, restore_rng_state
 from scripts.experiments import run_cpc_crosslead as crosslead
 
 
@@ -42,23 +43,23 @@ def compare_state(left, right, path, maxima):
 
 
 def profile_roundtrip(model, optimizer, signal, variant, generator):
-    snapshot = {"model": crosslead.base.cpu_state(model),
+    snapshot = {"model": cpu_state(model),
                 "optimizer": copy.deepcopy(optimizer.state_dict()),
-                "rng": crosslead.base.rng_state(generator)}
+                "rng": capture_rng_state(generator)}
     duplicate = crosslead.CrossLeadPretrainer(variant).to(signal.device)
     duplicate.load_state_dict(snapshot["model"])
     copy_optimizer = torch.optim.AdamW(duplicate.parameters(), lr=1e-3, weight_decay=0.01)
     copy_optimizer.load_state_dict(snapshot["optimizer"])
-    crosslead.base.restore_rng(snapshot["rng"], generator)
+    restore_rng_state(snapshot["rng"], generator)
     crosslead.checked_step(model, optimizer, signal)
-    expected_model = crosslead.base.cpu_state(model)
+    expected_model = cpu_state(model)
     expected_optimizer = copy.deepcopy(optimizer.state_dict())
-    crosslead.base.restore_rng(snapshot["rng"], generator)
+    restore_rng_state(snapshot["rng"], generator)
     crosslead.checked_step(duplicate, copy_optimizer, signal)
     maxima = {}
-    compare_state(expected_model, crosslead.base.cpu_state(duplicate), "model", maxima)
+    compare_state(expected_model, cpu_state(duplicate), "model", maxima)
     compare_state(expected_optimizer, copy_optimizer.state_dict(), "optimizer", maxima)
-    crosslead.base.restore_rng(snapshot["rng"], generator)
+    restore_rng_state(snapshot["rng"], generator)
     print(json.dumps({"stage": "profile_resume_check", "variant": variant,
                       "atol": ATOL, "rtol": RTOL, "max_abs_delta": maxima}), flush=True)
     return True

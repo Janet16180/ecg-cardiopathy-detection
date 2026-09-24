@@ -25,8 +25,11 @@ from sklearn.metrics import roc_auc_score
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from ecg_experiment.run import evaluate_predictions, partition_validation, read_manifest
-from scripts.extract_pretrained import git_head, sha256
+from ecg_experiment.data import read_manifest
+from ecg_experiment.evaluation import evaluate_predictions, partition_validation
+from ecg_experiment.files import sha256_file
+from ecg_experiment.provenance import git_head
+from ecg_experiment.reproducibility import cpu_state, seed_everything
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -48,14 +51,6 @@ def budgets(value: str) -> tuple[str, ...]:
 
 def manifest_dir(root: Path, budget: str) -> Path:
     return root / ("seed42_fraction1" if budget == "full" else "seed42_fraction0.1")
-
-
-def seed_all(seed: int) -> None:
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(seed)
 
 
 def _identities(rows):
@@ -96,9 +91,9 @@ def load_manifests(root: Path, budget: str):
     development, calibration = partition_validation(rows["validation"])
     if len(development) != 1306 or len(calibration) != 564:
         raise ValueError("Development/calibration split differs from the fixed protocol")
-    hashes = {f"{name}.csv": sha256(manifest_dir(root, budget) / f"{name}.csv") for name in names}
-    hashes["full_labeled_train.csv"] = sha256(full / "labeled_train.csv")
-    hashes["ten_percent_labeled_train.csv"] = sha256(small / "labeled_train.csv")
+    hashes = {f"{name}.csv": sha256_file(manifest_dir(root, budget) / f"{name}.csv") for name in names}
+    hashes["full_labeled_train.csv"] = sha256_file(full / "labeled_train.csv")
+    hashes["ten_percent_labeled_train.csv"] = sha256_file(small / "labeled_train.csv")
     return rows, development, calibration, hashes
 
 
@@ -158,10 +153,6 @@ def make_scheduler(optimizer, steps_per_epoch: int, epochs: int):
         return 0.5 * (1.0 + math.cos(math.pi * progress))
 
     return torch.optim.lr_scheduler.LambdaLR(optimizer, factor)
-
-
-def cpu_state(model):
-    return {key: value.detach().cpu().clone() for key, value in model.state_dict().items()}
 
 
 def save_atomic_torch(path: Path, value):
@@ -299,7 +290,7 @@ def fit(model, optimizer, scheduler, train_loader, dev_loader, development_y,
 
 
 def completion_hashes(output_dir: Path):
-    return {name: sha256(output_dir / name) for name in
+    return {name: sha256_file(output_dir / name) for name in
             ("model.pt", "metrics.json", "test_predictions.csv", "calibration_predictions.npz",
              "config.json", "history.json")}
 
@@ -338,7 +329,7 @@ def checkpoint_fingerprint(checkpoint_dir: Path):
     for name in required:
         if not (checkpoint_dir / name).is_file():
             raise FileNotFoundError(f"Missing official xECG checkpoint component: {checkpoint_dir / name}")
-    return {name: sha256(checkpoint_dir / name) for name in required}
+    return {name: sha256_file(checkpoint_dir / name) for name in required}
 
 
 def source_tree_sha256(root: Path):
@@ -348,7 +339,7 @@ def source_tree_sha256(root: Path):
         raise FileNotFoundError(f"No Python source files in {root}")
     for path in files:
         digest.update(str(path.relative_to(root)).encode())
-        digest.update(bytes.fromhex(sha256(path)))
+        digest.update(bytes.fromhex(sha256_file(path)))
     return digest.hexdigest()
 
 
@@ -380,23 +371,23 @@ def cache_fingerprint(cache_dir: Path, raw_dir: Path, full_manifest_dir: Path):
         raise ValueError("xECG cache metadata does not match waveform array")
     if metadata.get("raw_dir") != str(raw_dir.resolve()):
         raise ValueError("xECG cache was made from another PTB-XL waveform directory")
-    requested = {name: sha256(full_manifest_dir / name) for name in
+    requested = {name: sha256_file(full_manifest_dir / name) for name in
                  ("labeled_train.csv", "validation.csv", "test.csv")}
     if metadata.get("manifest_sha256") != requested:
         raise ValueError("xECG cache was made from another full-label manifest")
-    if (metadata.get("preparation_sha256") != sha256(ROOT / "scripts/data/prepare_xecg.py")
-            or metadata.get("adapter_sha256") != sha256(ROOT / "ecg_experiment/xecg.py")):
+    if (metadata.get("preparation_sha256") != sha256_file(ROOT / "scripts/data/prepare_xecg.py")
+            or metadata.get("adapter_sha256") != sha256_file(ROOT / "ecg_experiment/xecg.py")):
         raise ValueError("xECG cache preprocessing source differs from current source")
     return views, {ecg_id: index for index, ecg_id in enumerate(ids)}, {
-        "metadata_sha256": sha256(metadata_path),
-        "views_sha256": sha256(views_path), "metadata": metadata,
+        "metadata_sha256": sha256_file(metadata_path),
+        "views_sha256": sha256_file(views_path), "metadata": metadata,
     }
 
 
 def run_profile(args, rows, development, views, index, checkpoint_hashes, cache_hashes):
     from ecg_experiment.xecg import XECGBinaryClassifier, load_xecg
 
-    seed_all(args.seed)
+    seed_everything(args.seed)
     backbone = load_xecg(args.checkpoint_dir, backend="vanilla", device=args.device,
                          drop_path_prob=0.5)
     model = XECGBinaryClassifier(backbone).to(args.device)
@@ -471,13 +462,14 @@ def train_budget(args, budget, rows, development, calibration, hashes, views, in
         "checkpoint_dir": str(args.checkpoint_dir.resolve()), "checkpoint_sha256": checkpoint_hashes,
         "cache_sha256": {k: v for k, v in cache_hashes.items() if k != "metadata"},
         "manifest_sha256": hashes,
-        "runner_source_sha256": sha256(Path(__file__)),
-        "adapter_source_sha256": sha256(ROOT / "ecg_experiment/xecg.py"),
+        "runner_source_sha256": sha256_file(Path(__file__)),
+        "adapter_source_sha256": sha256_file(ROOT / "ecg_experiment/xecg.py"),
         "xlstm_python_source_sha256": source_tree_sha256(ROOT / "third_party/xecg-deps/xlstm"),
-        "official_ptbxl_config_sha256": sha256(ROOT / "third_party/bench-xecg/configs/ptb-xl/xlstm_ft.yaml"),
-        "official_ptbxl_defaults_sha256": sha256(ROOT / "third_party/bench-xecg/config_defaults/train_ptb_xl_defaults.yaml"),
-        "evaluation_source_sha256": sha256(ROOT / "ecg_experiment/evaluation.py"),
-        "run_source_sha256": sha256(ROOT / "ecg_experiment/run.py"),
+        "official_ptbxl_config_sha256": sha256_file(ROOT / "third_party/bench-xecg/configs/ptb-xl/xlstm_ft.yaml"),
+        "official_ptbxl_defaults_sha256": sha256_file(ROOT / "third_party/bench-xecg/config_defaults/train_ptb_xl_defaults.yaml"),
+        "evaluation_source_sha256": sha256_file(ROOT / "ecg_experiment/evaluation.py"),
+        "run_source_sha256": sha256_file(ROOT / "ecg_experiment/run.py"),
+        "reproducibility_source_sha256": sha256_file(ROOT / "ecg_experiment/reproducibility.py"),
         "pretrained_checkpoint_source_commit": git_head(ROOT / "third_party/bench-xecg"),
     }
     if valid_completion(directory, fingerprint):
@@ -488,7 +480,7 @@ def train_budget(args, budget, rows, development, calibration, hashes, views, in
         existing = json.loads((directory / "config.json").read_text())
         if existing.get("fingerprint") != fingerprint:
             raise ValueError(f"xECG resume configuration differs: {directory}")
-    seed_all(args.seed)
+    seed_everything(args.seed)
     backbone = load_xecg(args.checkpoint_dir, backend="vanilla", device=args.device,
                          drop_path_prob=0.5)
     model = XECGBinaryClassifier(backbone).to(args.device)

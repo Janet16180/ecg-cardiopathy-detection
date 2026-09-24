@@ -11,7 +11,7 @@ import torch
 
 from scripts.experiments import run_cpc_morphology017 as original
 from scripts.experiments import run_cpc_morphology017_v2 as versioned
-from scripts.experiments.run_cpc_experiment import digest_file
+from ecg_experiment.files import sha256_file
 
 
 class VersionedProfileTests(unittest.TestCase):
@@ -36,7 +36,7 @@ class VersionedProfileTests(unittest.TestCase):
         for name in ('scripts/experiments/run_cpc_morphology017_v2.py',
                      'docs/experiment-017-morphology-v2.md'):
             self.assertEqual(loaded['provenance']['code'][name],
-                             digest_file(versioned.ROOT / name))
+                             sha256_file(versioned.ROOT / name))
 
     def test_entry_point_wires_versioned_functions_and_output(self):
         prior = (original.load_inputs, original.verify_roundtrip, original.OUTPUT)

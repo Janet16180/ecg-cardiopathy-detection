@@ -63,7 +63,7 @@ class AdaptBudgetTest(unittest.TestCase):
 
             with mock.patch.object(sys, "argv", args), \
                  mock.patch.object(adapt_ecgfm, "training_rows", return_value=(rows, {})), \
-                 mock.patch.object(adapt_ecgfm, "sha256", return_value="fake"), \
+                 mock.patch.object(adapt_ecgfm, "sha256_file", return_value="fake"), \
                  mock.patch.object(adapt_ecgfm, "git_head", return_value="fake"), \
                  mock.patch.object(adapt_ecgfm, "load_model", side_effect=lambda *a: (TinyBackbone(), None)), \
                  mock.patch.object(adapt_ecgfm.TrainingWaveforms, "__getitem__", sample):
@@ -86,7 +86,7 @@ class AdaptBudgetTest(unittest.TestCase):
             interrupted_args[interrupted_args.index("--output-dir") + 1] = str(root / "interrupted")
             with mock.patch.object(sys, "argv", interrupted_args), \
                  mock.patch.object(adapt_ecgfm, "training_rows", return_value=(rows, {})), \
-                 mock.patch.object(adapt_ecgfm, "sha256", return_value="fake"), \
+                 mock.patch.object(adapt_ecgfm, "sha256_file", return_value="fake"), \
                  mock.patch.object(adapt_ecgfm, "git_head", return_value="fake"), \
                  mock.patch.object(adapt_ecgfm, "load_model", side_effect=lambda *a: (InterruptingBackbone(), None)), \
                  mock.patch.object(adapt_ecgfm.TrainingWaveforms, "__getitem__", sample):
@@ -96,7 +96,7 @@ class AdaptBudgetTest(unittest.TestCase):
 
             with mock.patch.object(sys, "argv", interrupted_args + ["--resume"]), \
                  mock.patch.object(adapt_ecgfm, "training_rows", return_value=(rows, {})), \
-                 mock.patch.object(adapt_ecgfm, "sha256", return_value="fake"), \
+                 mock.patch.object(adapt_ecgfm, "sha256_file", return_value="fake"), \
                  mock.patch.object(adapt_ecgfm, "git_head", return_value="fake"), \
                  mock.patch.object(adapt_ecgfm, "load_model", side_effect=lambda *a: (TinyBackbone(), None)), \
                  mock.patch.object(adapt_ecgfm.TrainingWaveforms, "__getitem__", sample):

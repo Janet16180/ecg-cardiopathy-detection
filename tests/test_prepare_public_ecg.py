@@ -7,7 +7,8 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from scripts.data.prepare_public_ecg import load_view, prepare
+from ecg_experiment.public_sources import load_view
+from scripts.data.prepare_public_ecg import prepare
 
 
 LEADS = ["V6", "V5", "V4", "V3", "V2", "V1", "aVF", "aVL", "aVR", "III", "II", "I"]
@@ -22,7 +23,7 @@ def fake_record(samples: int = 6000) -> SimpleNamespace:
 def test_ssl_crop_preserves_raw_record_and_reorders_leads(tmp_path: Path) -> None:
     raw = fake_record()
     original = raw.p_signal.copy()
-    with patch("scripts.data.prepare_public_ecg.wfdb.rdrecord", return_value=raw):
+    with patch("ecg_experiment.public_sources.wfdb.rdrecord", return_value=raw):
         view, start, samples, flags = load_view(tmp_path, "record", "ssl_center_crop")
     assert (start, samples, flags) == (500, 6000, "")
     assert view.shape == (12, 5000)
@@ -31,7 +32,7 @@ def test_ssl_crop_preserves_raw_record_and_reorders_leads(tmp_path: Path) -> Non
 
 
 def test_strict_rejects_non_ten_second_record(tmp_path: Path) -> None:
-    with patch("scripts.data.prepare_public_ecg.wfdb.rdrecord", return_value=fake_record()):
+    with patch("ecg_experiment.public_sources.wfdb.rdrecord", return_value=fake_record()):
         with pytest.raises(ValueError, match="duration_contract"):
             load_view(tmp_path, "record", "strict_10s")
 
@@ -39,7 +40,7 @@ def test_strict_rejects_non_ten_second_record(tmp_path: Path) -> None:
 def test_constant_lead_is_excluded(tmp_path: Path) -> None:
     raw = fake_record(5000)
     raw.p_signal[:, 0] = 0
-    with patch("scripts.data.prepare_public_ecg.wfdb.rdrecord", return_value=raw):
+    with patch("ecg_experiment.public_sources.wfdb.rdrecord", return_value=raw):
         with pytest.raises(ValueError, match="constant_lead"):
             load_view(tmp_path, "record", "strict_10s")
 
@@ -52,7 +53,7 @@ def test_preparation_refuses_output_inside_raw(tmp_path: Path) -> None:
 
 
 def test_unknown_policy_cannot_silently_select_first_window(tmp_path: Path) -> None:
-    with patch("scripts.data.prepare_public_ecg.wfdb.rdrecord") as reader:
+    with patch("ecg_experiment.public_sources.wfdb.rdrecord") as reader:
         with pytest.raises(ValueError, match="unknown_policy"):
             load_view(tmp_path, "record", "typo")
     reader.assert_not_called()

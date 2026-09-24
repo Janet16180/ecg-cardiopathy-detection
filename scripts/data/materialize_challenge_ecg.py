@@ -20,11 +20,13 @@ from pathlib import Path
 
 import numpy as np
 
-from scripts.download_ptbxl_waveforms import parse_checksums, sha256
-from scripts.extract_pretrained import LEADS
-from scripts.data.prepare_public_ecg import ROOT, SOURCE, load_view, signal_sha256
+from ecg_experiment.downloads import parse_checksums
+from ecg_experiment.files import sha256_file
+from ecg_experiment.public_sources import SOURCE, load_view, signal_sha256
+from ecg_experiment.waveforms import LEADS
 
 
+ROOT = Path(__file__).resolve().parents[2]
 FIELDS = (
     "ecg_id", "source", "patient_id", "patient_identity_known", "filename_hr",
     "source_samples", "window_start", "window_samples", "sampling_rate_hz",
@@ -64,9 +66,9 @@ def load_input(prepared_dir: Path, allow_incomplete: bool) -> tuple[dict, list[d
     meta = json.loads(meta_file.read_text())
     if meta["policy"] not in {"strict_10s", "ssl_center_crop"}:
         raise ValueError("Unsupported audited view policy")
-    if sha256(manifest_file) != meta["manifest_sha256"]:
+    if sha256_file(manifest_file) != meta["manifest_sha256"]:
         raise ValueError("Audited manifest hash mismatch")
-    if sha256(exclusions_file) != meta["exclusions_sha256"]:
+    if sha256_file(exclusions_file) != meta["exclusions_sha256"]:
         raise ValueError("Audited exclusions hash mismatch")
     rows = read_csv(manifest_file)
     exclusions = read_csv(exclusions_file)
@@ -88,7 +90,7 @@ def load_input(prepared_dir: Path, allow_incomplete: bool) -> tuple[dict, list[d
         provenance = meta["provenance"][source]
         checksum_path = (ROOT / provenance["checksum_file"]).resolve()
         expected_path = (ROOT / "data/raw" / project / version / "SHA256SUMS.txt").resolve()
-        if checksum_path != expected_path or sha256(checksum_path) != provenance["checksum_sha256"]:
+        if checksum_path != expected_path or sha256_file(checksum_path) != provenance["checksum_sha256"]:
             raise ValueError(f"Official checksum manifest mismatch: {source}")
         receipt = ROOT / "data/acquisition" / f"{source}.json"
         if not allow_incomplete and json.loads(receipt.read_text())["state"] != "complete":
@@ -127,7 +129,7 @@ def conflicted_ids(rows: list[dict], exclusions: list[dict], comparisons: Path |
         stem = str(header.relative_to(raw_dir).with_suffix(""))
         for suffix in (".hea", ".mat"):
             name = stem + suffix
-            if checksums[source].get(name) != sha256(raw_dir / name):
+            if checksums[source].get(name) != sha256_file(raw_dir / name):
                 raise ValueError(f"Official duplicate file checksum mismatch: {name}")
         actual_label = next((line.split(":", 1)[1].strip()
                              for line in header.read_text().splitlines()
@@ -162,7 +164,7 @@ def _write_shard(stage: Path, number: int, batch: list[np.ndarray]) -> dict:
         handle.flush()
         os.fsync(handle.fileno())
     os.replace(temporary, destination)
-    return {"file": name, "records": len(batch), "sha256": sha256(destination),
+    return {"file": name, "records": len(batch), "sha256": sha256_file(destination),
             "bytes": destination.stat().st_size}
 
 
@@ -210,7 +212,7 @@ def verify_materialized(output_dir: Path) -> dict:
     if metadata.get("policy") not in {"strict_10s", "ssl_center_crop"}:
         raise ValueError("Unsupported materialized policy")
     manifest = output_dir / "manifest.csv"
-    if sha256(manifest) != metadata["manifest_sha256"]:
+    if sha256_file(manifest) != metadata["manifest_sha256"]:
         raise ValueError("Materialized manifest hash mismatch")
     rows = read_csv(manifest)
     if len(rows) != metadata["materialized_records"]:
@@ -231,7 +233,7 @@ def verify_materialized(output_dir: Path) -> dict:
     cursor = 0
     for shard in metadata["shards"]:
         path = output_dir / shard["file"]
-        if sha256(path) != shard["sha256"] or path.stat().st_size != shard["bytes"]:
+        if sha256_file(path) != shard["sha256"] or path.stat().st_size != shard["bytes"]:
             raise ValueError(f"Materialized shard hash mismatch: {path}")
         array = np.load(path, mmap_mode="r", allow_pickle=False)
         if array.dtype != np.float32 or array.shape != (shard["records"], 12, 5000):
@@ -287,7 +289,7 @@ def materialize(prepared_dir: Path, output_dir: Path, *, shard_size: int = 128,
             for suffix in (".hea", ".mat"):
                 name = stem + suffix
                 file = raw_dir / name
-                if checksums[source].get(name) != sha256(file):
+                if checksums[source].get(name) != sha256_file(file):
                     raise ValueError(f"Official raw file checksum mismatch: {name}")
             signal, start, samples, flags = load_view(raw_dir, stem, meta["policy"])
             if signal.dtype != np.float32 or signal.shape != (12, 5000) or not np.isfinite(signal).all():
@@ -349,19 +351,19 @@ def materialize(prepared_dir: Path, output_dir: Path, *, shard_size: int = 128,
             "sampling_rate_hz": 500, "lead_order": list(LEADS),
             "filtering": "none", "amplitude_scaling": "none",
             "input_prepared_dir": str(prepared_dir),
-            "input_metadata_sha256": sha256(prepared_dir / "metadata.json"),
+            "input_metadata_sha256": sha256_file(prepared_dir / "metadata.json"),
             "input_manifest_sha256": meta["manifest_sha256"],
             "input_exclusions_sha256": meta["exclusions_sha256"],
             "input_preparation_source_sha256": meta["preparation_source_sha256"],
             "official_provenance": meta["provenance"],
-            "duplicate_comparisons_sha256": sha256(comparisons) if meta["policy"] == "strict_10s" and comparisons and comparisons.is_file() else None,
-            "overlap_manifest_sha256": sha256(overlap_manifest) if overlap_manifest else None,
+            "duplicate_comparisons_sha256": sha256_file(comparisons) if meta["policy"] == "strict_10s" and comparisons and comparisons.is_file() else None,
+            "overlap_manifest_sha256": sha256_file(overlap_manifest) if overlap_manifest else None,
             "candidate_records": meta["candidate_records"], "accepted_records": len(rows),
             "excluded_records": len(exclusions), "materialized_records": len(output_rows),
             "counts": dict(counts), "shard_size": shard_size, "shards": shards,
-            "manifest_sha256": sha256(manifest),
-            "materialization_source_sha256": sha256(Path(__file__)),
-            "canonicalization_source_sha256": sha256(ROOT / "scripts/data/prepare_public_ecg.py") if (ROOT / "scripts/data/prepare_public_ecg.py").exists() else None,
+            "manifest_sha256": sha256_file(manifest),
+            "materialization_source_sha256": sha256_file(Path(__file__)),
+            "canonicalization_source_sha256": sha256_file(ROOT / "ecg_experiment/public_sources.py") if (ROOT / "ecg_experiment/public_sources.py").exists() else None,
             "label_policy": "Strict nonconflicting records retain original annotations for later adjudication; none are mapped to the PTB-XL endpoint or marked endpoint-supervised eligible. All centered-window views are SSL-only.",
             "patient_policy": "Challenge record IDs are not verified patient IDs; no patient-independent evaluation claim.",
             "overlap_policy": "Exact canonical signal and ECG-ID overlap with specified other view; near-duplicates and patient overlap remain unknown.",

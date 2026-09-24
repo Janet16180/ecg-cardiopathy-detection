@@ -8,7 +8,7 @@ from ecg_experiment.cpc_tokenization import (
     CLUSTERS, TokenizationPretrainer, fit_kmeans, future_cluster_loss,
     nearest_cluster, snapshot_teacher_convs, temporal_cpc_loss,
 )
-from scripts.experiments import run_cpc_experiment as base
+from ecg_experiment.reproducibility import cpu_state, seed_everything
 from scripts.experiments.run_cpc_tokenization import (
     classifier_with_matched_head, load_bootstrap_weights, reset_cluster_heads,
 )
@@ -45,9 +45,9 @@ def test_common_query_coverage_and_future_mask():
 
 def test_all_arms_restore_identical_cpc_heads_and_classifier_head():
     torch.set_num_threads(1)
-    base.seed_all(42)
+    seed_everything(42)
     source = CPCPretrainer()
-    enc_state, head_state = base.cpu_state(source.encoder), base.cpu_state(source.heads)
+    enc_state, head_state = cpu_state(source.encoder), cpu_state(source.heads)
     beat_boundaries = torch.zeros(1, 2, 79, dtype=torch.bool)
     beat_boundaries[:, :, 15::16] = True
     beat_boundaries[:, :, -1] = True
@@ -65,14 +65,14 @@ def test_all_arms_restore_identical_cpc_heads_and_classifier_head():
         classifier = classifier_with_matched_head(variant, "cpu")
         classifier.encoder.load_state_dict(model.encoder.state_dict())
         assert classifier(signal, beat_boundaries).shape == (1,)
-        classifier_heads.append(base.cpu_state(classifier.head))
+        classifier_heads.append(cpu_state(classifier.head))
     for state in classifier_heads[1:]:
         for name in state:
             torch.testing.assert_close(state[name], classifier_heads[0][name], atol=0, rtol=0)
 
 
 def test_auxiliary_round_reset_preserves_main_optimizer_and_rng():
-    base.seed_all(42)
+    seed_everything(42)
     model = TokenizationPretrainer("clusteraux")
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
     generator = torch.Generator().manual_seed(42)

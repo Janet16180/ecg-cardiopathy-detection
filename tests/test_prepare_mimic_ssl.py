@@ -9,7 +9,7 @@ from unittest.mock import patch
 import numpy as np
 import wfdb
 
-from scripts.prepare_mimic_ssl import (
+from ecg_experiment.mimic import (
     audit, check_waveform, lock_selection, read_patients, required_checksums,
     select_patients, selection_hash, signal_hash,
 )
@@ -86,13 +86,13 @@ class PrepareMimicTests(unittest.TestCase):
         output.mkdir()
         first = np.ones((12, 5000), dtype=np.float32)
         other = np.zeros((12, 5000), dtype=np.float32)
-        with patch("scripts.prepare_mimic_ssl.check_waveform", side_effect=[first, first, other]) as read:
+        with patch("ecg_experiment.mimic.check_waveform", side_effect=[first, first, other]) as read:
             accepted, reasons = audit(rows, self.root, output, "selection", {signal_hash(other)})
             self.assertEqual(read.call_count, 3)
         self.assertEqual(len(accepted), 1)
         self.assertEqual(reasons["exact_duplicate_mimic"], 1)
         self.assertEqual(reasons["exact_duplicate_ptbxl"], 1)
-        with patch("scripts.prepare_mimic_ssl.check_waveform", side_effect=AssertionError("redecoded")):
+        with patch("ecg_experiment.mimic.check_waveform", side_effect=AssertionError("redecoded")):
             resumed, again = audit(rows, self.root, output, "selection", {signal_hash(other)})
         self.assertEqual(resumed, accepted)
         self.assertEqual(again, reasons)

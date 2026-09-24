@@ -46,7 +46,7 @@ class CpcDataTests(unittest.TestCase):
             writer = csv.DictWriter(stream, fieldnames=rows[0])
             writer.writeheader()
             writer.writerows(rows)
-        from scripts.prepare_mimic_ssl import read_patients, select_patients, selection_hash
+        from ecg_experiment.mimic import read_patients, select_patients, selection_hash
         patients = read_patients(official)
         parent_rows, _ = select_patients(patients, 42, 7)
         parent = self.root / "parent"

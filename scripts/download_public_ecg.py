@@ -14,7 +14,8 @@ from pathlib import Path, PurePosixPath
 
 import requests
 
-from scripts.download_ptbxl_waveforms import parse_checksums, sha256
+from ecg_experiment.downloads import parse_checksums
+from ecg_experiment.files import sha256_file
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -105,7 +106,7 @@ def physionet(cohort: str, workers: int, limit: int | None) -> None:
     receipt_path = ROOT / "data/acquisition" / f"{cohort}.json"
     receipt = {"dataset": cohort, "source": base, "source_version": version,
                "source_manifest": str(manifest.relative_to(ROOT)),
-               "source_manifest_sha256": sha256(manifest),
+               "source_manifest_sha256": sha256_file(manifest),
                "local_root": str(root.relative_to(ROOT)),
                "expected_records": len(stems), "expected_files": len(files),
                "verified_files": 0, "state": "running",

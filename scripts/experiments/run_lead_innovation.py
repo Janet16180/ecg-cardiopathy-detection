@@ -5,7 +5,6 @@ import argparse
 import hashlib
 import json
 import math
-import random
 import time
 from pathlib import Path
 
@@ -17,21 +16,15 @@ from torch.utils.data import DataLoader, Dataset
 
 from ecg_experiment.data import ECGDataset, Waveforms, read_manifest
 from ecg_experiment.lead_innovation import LEAD_INDICES, LeadClassifier, LeadMultiscaleEncoder, LeadSSL
-from ecg_experiment.run import cpu_state, evaluate_predictions, partition_validation, save_json
+from ecg_experiment.evaluation import evaluate_predictions, partition_validation
+from ecg_experiment.files import write_json_atomic
+from ecg_experiment.reproducibility import cpu_state, seed_everything
 
 
 NAMES = {"supervised": "lead_multiscale_supervised",
          "ordinary": "lead_multiscale_latent",
          "innovation": "lead_multiscale_innovation"}
 SSL_SEED = 42
-
-
-def seed_everything(seed):
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(seed)
 
 
 class EightLeadDataset(Dataset):
@@ -108,12 +101,12 @@ def pretrain(args, waveforms, all_train, scale):
         record = {"epoch": epoch + 1, "lr": lr, "seconds": time.monotonic() - started,
                   **{key: value / observations for key, value in totals.items()}}
         history.append(record)
-        save_json(directory / "history.json", history)
+        write_json_atomic(directory / "history.json", history)
         print(json.dumps({"stage": f"lead_{args.variant}_ssl", **record}), flush=True)
     torch.save({"encoder": cpu_state(model.encoder), "scale": scale.tolist(),
                 "variant": args.variant, "seed": SSL_SEED, "epochs": args.ssl_epochs,
                 "training_ecg_ids": expected_ids}, checkpoint)
-    save_json(directory / "config.json", {
+    write_json_atomic(directory / "config.json", {
         "architecture": repr(model), "variant": args.variant,
         "ordinary_weight": 1.0, "innovation_weight": model.innovation_weight,
         "variance_weight": 0.1, "ssl_epochs": args.ssl_epochs,
@@ -179,7 +172,7 @@ def supervised(args, waveforms, train, validation, test, all_train, scale):
         record = {"epoch": epoch + 1, "loss": total_loss / len(train),
                   "development_auroc": dev_auc, "seconds": time.monotonic() - started}
         history.append(record)
-        save_json(directory / "history.json", history)
+        write_json_atomic(directory / "history.json", history)
         print(json.dumps({"stage": name, "label_seed": args.seed, **record}), flush=True)
         if epoch + 1 - best_epoch >= args.patience:
             break
@@ -191,7 +184,7 @@ def supervised(args, waveforms, train, validation, test, all_train, scale):
         predict(model, make_loader(waveforms, calibration, scale, args.batch_size), args.device),
         predict(model, make_loader(waveforms, test, scale, args.batch_size), args.device),
         calibration, test, directory, args.seed, args.bootstrap)
-    save_json(directory / "config.json", {
+    write_json_atomic(directory / "config.json", {
         "architecture": repr(model), "variant": args.variant,
         "parameters": sum(p.numel() for p in model.parameters()),
         "encoder_parameters": sum(p.numel() for p in model.encoder.parameters()),

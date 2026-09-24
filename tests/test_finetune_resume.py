@@ -9,8 +9,8 @@ import numpy as np
 import torch
 from torch import nn
 
-from scripts.experiments.finetune_pretrained import (cpu_state, load_resume_checkpoint,
-                                         save_resume_checkpoint)
+from ecg_experiment.reproducibility import cpu_state
+from scripts.experiments.finetune_pretrained import load_resume_checkpoint, save_resume_checkpoint
 
 
 class FineTuneResumeTest(unittest.TestCase):

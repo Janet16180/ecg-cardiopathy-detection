@@ -18,7 +18,9 @@ from pathlib import Path
 
 import numpy as np
 
-from scripts.extract_pretrained import git_head, manifest_rows, read_record, sha256
+from ecg_experiment.files import sha256_file
+from ecg_experiment.provenance import git_head
+from ecg_experiment.waveforms import manifest_rows, read_record
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -72,7 +74,7 @@ def extract(args: argparse.Namespace) -> dict:
     if any(path.exists() for path in (final_features, final_ids, final_meta, partial)):
         raise FileExistsError(f"Output files already exist in {args.output_dir}")
 
-    checkpoint_hash = sha256(args.checkpoint)
+    checkpoint_hash = sha256_file(args.checkpoint)
     encoder, dimension = load_encoder(args.checkpoint, args.device)
     started = time.monotonic()
     matrix = np.lib.format.open_memmap(partial, mode="w+", dtype=np.float32,

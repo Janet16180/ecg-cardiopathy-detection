@@ -21,11 +21,12 @@ import numpy as np
 import scipy
 from scipy.signal import resample_poly
 
-from scripts.extract_pretrained import read_record
-from scripts.prepare_mimic_ssl import (
-    audit, atomic_text, lock_selection, ptbxl_hashes, read_patients,
-    required_checksums, select_patients, selection_hash, sha256, write_outputs,
+from ecg_experiment.files import sha256_file, write_text_atomic
+from ecg_experiment.mimic import (
+    audit, lock_selection, ptbxl_hashes, read_patients, required_checksums,
+    select_patients, selection_hash, write_outputs,
 )
+from ecg_experiment.waveforms import read_record
 
 PTB_SPLITS = ("all_train_ssl", "validation", "test")
 ROW_FIELDS = ("ecg_id", "patient_id", "source", "split")
@@ -36,7 +37,7 @@ def read_locked_prefix(parent: Path, cap: int, seed: int, record_list: Path):
     parent_config = json.loads((parent / "selection.json").read_text())
     if parent_config["seed"] != seed or parent_config["max_records"] < cap:
         raise ValueError("Parent selection has incompatible seed or cap")
-    list_hash = sha256(record_list)
+    list_hash = sha256_file(record_list)
     if parent_config["record_list_sha256"] != list_hash:
         raise ValueError("Official record list changed since parent selection")
     patients = read_patients(record_list)
@@ -54,10 +55,10 @@ def read_locked_prefix(parent: Path, cap: int, seed: int, record_list: Path):
 def verify_selected_files(rows, raw_dir: Path, sums_path: Path, list_path: Path):
     """Fail closed on missing or corrupt pairs; make no changes to raw files."""
     checksums = required_checksums(sums_path, {row[2] for row in rows})
-    if sha256(list_path) != checksums["record_list.csv"]:
+    if sha256_file(list_path) != checksums["record_list.csv"]:
         raise ValueError("Official record_list.csv SHA256 mismatch")
     license_path = raw_dir / "LICENSE.txt"
-    if not license_path.is_file() or sha256(license_path) != checksums["LICENSE.txt"]:
+    if not license_path.is_file() or sha256_file(license_path) != checksums["LICENSE.txt"]:
         raise ValueError("Official LICENSE.txt missing or SHA256 mismatch")
     total_bytes = 0
     start = time.monotonic()
@@ -67,7 +68,7 @@ def verify_selected_files(rows, raw_dir: Path, sums_path: Path, list_path: Path)
             path = raw_dir / relative
             if not path.is_file():
                 raise FileNotFoundError(f"Selected raw file is missing: {path}")
-            if sha256(path) != checksums[relative]:
+            if sha256_file(path) != checksums[relative]:
                 raise ValueError(f"Official SHA256 mismatch: {path}")
             total_bytes += path.stat().st_size
         if index % 5000 == 0 or index == len(rows):
@@ -82,7 +83,7 @@ def read_ptb_rows(manifest_dir: Path, ptb_dir: Path):
     rows, hashes, ids, patients = [], {}, set(), {split: set() for split in PTB_SPLITS}
     for split in PTB_SPLITS:
         path = manifest_dir / f"{split}.csv"
-        hashes[path.name] = sha256(path)
+        hashes[path.name] = sha256_file(path)
         with path.open(newline="", encoding="utf-8") as stream:
             reader = csv.DictReader(stream)
             if not {"ecg_id", "patient_id", "filename_hr"}.issubset(reader.fieldnames or ()):
@@ -170,7 +171,7 @@ def build_cache(ptb_rows, mimic_rows, ptb_hashes, mimic_metadata: dict,
                        f"(up=1, down={500 // rate}, axis=1), then concatenate; "
                        "SciPy default Kaiser beta=5 FIR, length 2*10*down+1 taps; "
                        "canonical lead order, physical mV, no per-record normalization"),
-        "rows_sha256": sha256(row_path), "ecg_ids_sha256": sha256(ids_path),
+        "rows_sha256": sha256_file(row_path), "ecg_ids_sha256": sha256_file(ids_path),
         "mimic_selection_sha256": mimic_metadata["selection_sha256"],
         "mimic_manifest_sha256": mimic_metadata["manifest_sha256"],
         "ptb_manifest_sha256": ptb_hashes,
@@ -181,7 +182,7 @@ def build_cache(ptb_rows, mimic_rows, ptb_hashes, mimic_metadata: dict,
         if any(old.get(key) != value for key, value in identity.items()):
             raise ValueError("Existing completed cache has different inputs")
         signal_path = output_dir / "signals.npy"
-        if not signal_path.is_file() or sha256(signal_path) != old["signals_sha256"]:
+        if not signal_path.is_file() or sha256_file(signal_path) != old["signals_sha256"]:
             raise ValueError("Completed CPC cache SHA256 mismatch")
         return old
     partial = output_dir / "signals.partial.npy"
@@ -196,8 +197,8 @@ def build_cache(ptb_rows, mimic_rows, ptb_hashes, mimic_metadata: dict,
             info = {**identity, "record_count": len(rows),
                     "split_counts": dict(Counter(row["split"] for row in rows)),
                     "source_counts": dict(Counter(row["source"] for row in rows)),
-                    "signals_sha256": sha256(signal_path)}
-            atomic_text(complete, json.dumps(info, indent=2) + "\n")
+                    "signals_sha256": sha256_file(signal_path)}
+            write_text_atomic(complete, json.dumps(info, indent=2) + "\n")
             progress.unlink()
             return info
         if not partial.is_file() or signal_path.exists():
@@ -210,7 +211,7 @@ def build_cache(ptb_rows, mimic_rows, ptb_hashes, mimic_metadata: dict,
             raise ValueError("Partial CPC array has no progress checkpoint")
         done = 0
         matrix = np.lib.format.open_memmap(partial, mode="w+", dtype=np.float32, shape=shape)
-        atomic_text(progress, json.dumps({"identity": identity, "completed_rows": 0}) + "\n")
+        write_text_atomic(progress, json.dumps({"identity": identity, "completed_rows": 0}) + "\n")
     started = time.monotonic()
     def decode(row):
         raw = read_record(Path(row["raw_dir"]), row["filename_hr"])
@@ -223,7 +224,7 @@ def build_cache(ptb_rows, mimic_rows, ptb_hashes, mimic_metadata: dict,
             for index, future in enumerate(futures, start):
                 matrix[index] = future.result()
             matrix.flush()
-            atomic_text(progress, json.dumps({"identity": identity, "completed_rows": stop}) + "\n")
+            write_text_atomic(progress, json.dumps({"identity": identity, "completed_rows": stop}) + "\n")
             if stop % 1000 == 0 or stop == len(rows):
                 print(f"CPC cache {stop:,}/{len(rows):,} ECGs; "
                       f"{time.monotonic()-started:.1f}s this run", flush=True)
@@ -233,8 +234,8 @@ def build_cache(ptb_rows, mimic_rows, ptb_hashes, mimic_metadata: dict,
     info = {**identity, "record_count": len(rows),
             "split_counts": dict(Counter(row["split"] for row in rows)),
             "source_counts": dict(Counter(row["source"] for row in rows)),
-            "signals_sha256": sha256(signal_path)}
-    atomic_text(complete, json.dumps(info, indent=2) + "\n")
+            "signals_sha256": sha256_file(signal_path)}
+    write_text_atomic(complete, json.dumps(info, indent=2) + "\n")
     progress.unlink()
     return info
 
@@ -245,9 +246,9 @@ def prepare(args):
     if args.cache_only:
         metadata = json.loads((args.mimic_output / "metadata.json").read_text())
         manifest_path = args.mimic_output / "ssl_manifest.csv"
-        if sha256(manifest_path) != metadata["manifest_sha256"]:
+        if sha256_file(manifest_path) != metadata["manifest_sha256"]:
             raise ValueError("Audited MIMIC manifest SHA256 mismatch")
-        if sha256(args.mimic_output / "selected_records.csv") != metadata["selected_records_sha256"]:
+        if sha256_file(args.mimic_output / "selected_records.csv") != metadata["selected_records_sha256"]:
             raise ValueError("Locked MIMIC selection SHA256 mismatch")
         if (metadata["selected_records"] != metadata["download"]["verified_records"] or
                 metadata["ptbxl_records_checked"] != 21799):
@@ -275,7 +276,7 @@ def prepare(args):
     accepted, reasons = audit(rows, raw_dir, args.mimic_output, digest, ptb_hashes)
     write_outputs(args.mimic_output, raw_dir, rows, subjects, accepted, reasons,
                   stats, args.seed, args.max_records, digest, list_hash,
-                  sha256(sums_path), sha256(raw_dir / "LICENSE.txt"),
+                  sha256_file(sums_path), sha256_file(raw_dir / "LICENSE.txt"),
                   sum(map(len, patients.values())), len(patients), ptb_count)
     if args.audit_only:
         return

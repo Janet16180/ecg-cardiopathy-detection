@@ -17,7 +17,7 @@ from ecg_experiment.cpc_morphology import (
 )
 from scripts.experiments.run_cpc_morphology017 import (ROOT, SSL, fixed_batches, make_model,
     template_windows, save_state, load_state, file_identity, verified_pool_hashes)
-from scripts.experiments.run_cpc_experiment import digest_file
+from ecg_experiment.files import sha256_file
 
 
 class MorphologyTests(unittest.TestCase):
@@ -96,8 +96,8 @@ class MorphologyTests(unittest.TestCase):
                 torch.testing.assert_close(z, z0, rtol=0, atol=0)
                 torch.testing.assert_close(c, c0, rtol=0, atol=0)
         # Explicitly compare the no-branch arm with original CPCClassifier.
-        from scripts.experiments.run_cpc_experiment import seed_all
-        seed_all(42)
+        from ecg_experiment.reproducibility import seed_everything
+        seed_everything(42)
         reference = CPCClassifier().eval()
         saved = torch.load(SSL, map_location='cpu', weights_only=True)
         reference.encoder.load_state_dict(saved['encoder'])
@@ -171,13 +171,13 @@ class MorphologyTests(unittest.TestCase):
             keys = ('signals_sha256', 'rows_sha256', 'ecg_ids_sha256')
             for name in names:
                 (directory / name).write_bytes(name.encode())
-            hashes = {name: digest_file(directory / name) for name in names}
+            hashes = {name: sha256_file(directory / name) for name in names}
             pool = SimpleNamespace(metadata=dict(zip(keys, hashes.values())))
             receipt = {'stage': 'check',
                        'pool_file_stats': {name: file_identity(directory / name) for name in names},
                        'provenance': {'pool_content_sha256': hashes,
                          'code': {'scripts/experiments/run_jepa_cpc_distillation.py':
-                                  digest_file(ROOT / 'scripts/experiments/run_jepa_cpc_distillation.py')}}}
+                                  sha256_file(ROOT / 'scripts/experiments/run_jepa_cpc_distillation.py')}}}
             from scripts.experiments.run_cpc_morphology017 import digest_json
             receipt['fingerprint'] = digest_json(receipt['provenance'])
             receipt_path = directory / 'receipt.json'

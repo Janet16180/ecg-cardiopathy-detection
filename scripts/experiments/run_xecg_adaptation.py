@@ -17,6 +17,9 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
+from ecg_experiment.evaluation import evaluate_predictions
+from ecg_experiment.files import sha256_file
+from ecg_experiment.reproducibility import cpu_state, seed_everything
 from ecg_experiment.xecg import load_xecg, XECGBinaryClassifier
 from ecg_experiment.xecg_adaptation import (
     ARMS, AdaptationConfig, AdaptationModel, ShuffledStream, contiguous_masks,
@@ -59,7 +62,7 @@ def save_ssl_resume(path, fingerprint, model, optimizer, stream, mask_generator,
                     step, history, trace, elapsed):
     ft.save_atomic_torch(path, {
         "version": 1, "fingerprint": fingerprint, "step": step,
-        "student": ft.cpu_state(model.student), "ema": ft.cpu_state(model.ema),
+        "student": cpu_state(model.student), "ema": cpu_state(model.ema),
         "optimizer": optimizer.state_dict(), "sampler": stream.state_dict(),
         "mask_rng": mask_generator.get_state(), "rng": rng_state(),
         # The LR/EMA schedules are pure functions of this counter and config.
@@ -110,23 +113,24 @@ def load_ssl_cache(path: Path):
             raise ValueError(f"SSL metadata order differs for {field}")
     if len(set(metadata["ecg_ids"])) != len(rows):
         raise ValueError("Duplicate SSL ECG identity")
-    checksums = {"rows_sha256": ft.sha256(path / "rows.csv"),
-                 "views_sha256": ft.sha256(path / "views.npy"),
-                 "raw_sha256_file_sha256": ft.sha256(path / "raw_sha256.npy")}
+    checksums = {"rows_sha256": sha256_file(path / "rows.csv"),
+                 "views_sha256": sha256_file(path / "views.npy"),
+                 "raw_sha256_file_sha256": sha256_file(path / "raw_sha256.npy")}
     if any(metadata.get(key) != value for key, value in checksums.items()):
         raise ValueError("SSL cache checksum mismatch")
     views = np.load(path / "views.npy", mmap_mode="r")
     if views.shape != (56875, 1000, 12) or views.dtype != np.float32 or metadata.get("shape") != list(views.shape):
         raise ValueError("SSL cache must contain full float32 ten-second ECGs")
-    return views, rows, {**checksums, "metadata_sha256": ft.sha256(path / "metadata.json")}
+    return views, rows, {**checksums, "metadata_sha256": sha256_file(path / "metadata.json")}
 
 
 def source_identity():
     files = ("ecg_experiment/xecg_adaptation.py", "scripts/experiments/run_xecg_adaptation.py",
              "ecg_experiment/xecg.py", "scripts/experiments/run_xecg_finetune.py",
              "scripts/data/prepare_xecg_ssl.py", "ecg_experiment/run.py", "ecg_experiment/evaluation.py",
-             "scripts/reports/report_xecg_adaptation.py", "scripts/experiments/run_cpc_experiment.py")
-    return {**{name: ft.sha256(ROOT / name) for name in files},
+             "scripts/reports/report_xecg_adaptation.py", "scripts/experiments/run_cpc_experiment.py",
+             "ecg_experiment/reproducibility.py")
+    return {**{name: sha256_file(ROOT / name) for name in files},
             "xlstm_python_tree": ft.source_tree_sha256(ROOT / "third_party/xecg-deps/xlstm")}
 
 
@@ -141,7 +145,7 @@ def make_fingerprint(args, config, cache_hashes, arm):
 
 
 def make_ssl_state(args, config, pool_size):
-    ft.seed_all(config.seed)
+    seed_everything(config.seed)
     backbone = load_xecg(args.checkpoint_dir, backend="vanilla", device=args.device, drop_path_prob=0.0)
     model = AdaptationModel(backbone).to(device=args.device, dtype=torch.float32)
     optimizer = torch.optim.AdamW(ssl_parameter_groups(model.student, config), lr=config.learning_rate)
@@ -215,7 +219,7 @@ def ssl_completion(directory: Path, fingerprint):
     saved = json.loads(marker.read_text())
     if saved.get("fingerprint") != fingerprint:
         raise ValueError(f"Completed SSL arm has different inputs: {directory}")
-    if saved.get("sha256") != {name: ft.sha256(directory / name) for name in ("encoder.pt", "history.json", "config.json")}:
+    if saved.get("sha256") != {name: sha256_file(directory / name) for name in ("encoder.pt", "history.json", "config.json")}:
         raise ValueError(f"Completed SSL artifact checksum mismatch: {directory}")
     return saved
 
@@ -268,14 +272,14 @@ def pretrain_arm(args, config, views, rows, cache_hashes, arm):
             save_ssl_resume(resume_path, fingerprint, model, optimizer, stream, masks,
                             step + 1, history, trace, time.monotonic() - started)
             ft.save_atomic_json(directory / "history.json", history)
-    ft.save_atomic_torch(directory / "encoder.pt", {"student": ft.cpu_state(model.student),
+    ft.save_atomic_torch(directory / "encoder.pt", {"student": cpu_state(model.student),
                          "fingerprint": fingerprint, "updates": config.updates,
                          "selection": "final_student", "trace_sha256": trace})
     ft.save_atomic_json(directory / "history.json", history)
     receipt = {"fingerprint": fingerprint, "updates": config.updates, "trace_sha256": trace,
                "elapsed_seconds": time.monotonic() - started,
                "peak_cuda_memory_bytes": torch.cuda.max_memory_allocated() if args.device == "cuda" else None,
-               "sha256": {name: ft.sha256(directory / name) for name in ("encoder.pt", "history.json", "config.json")}}
+               "sha256": {name: sha256_file(directory / name) for name in ("encoder.pt", "history.json", "config.json")}}
     ft.save_atomic_json(directory / "complete.json", receipt)
     resume_path.unlink(missing_ok=True)
     print(json.dumps({"stage": "ssl_complete", "arm": arm, "updates": config.updates,
@@ -382,11 +386,11 @@ def transfer(args, config, arm, budget, manifests, views, index, cache_hashes, s
     resume = ft.resume_for_budget(directory, args.resume)
     if (directory / "config.json").exists() and json.loads((directory / "config.json").read_text())["fingerprint"] != fingerprint:
         raise ValueError("Transfer resume configuration differs")
-    ft.seed_all(42)
+    seed_everything(42)
     backbone = load_xecg(args.checkpoint_dir, backend="vanilla", device=args.device, drop_path_prob=0.5)
     adapted = torch.load(encoder_path, map_location="cpu", weights_only=True)
     if (adapted["fingerprint"] != ssl_receipt["fingerprint"] or adapted["updates"] != config.updates
-            or adapted["selection"] != "final_student" or ft.sha256(encoder_path) != fingerprint["adapted_encoder_sha256"]):
+            or adapted["selection"] != "final_student" or sha256_file(encoder_path) != fingerprint["adapted_encoder_sha256"]):
         raise ValueError("Adapted encoder source/selection mismatch")
     backbone.load_state_dict(adapted["student"], strict=True)
     del adapted
@@ -406,11 +410,11 @@ def transfer(args, config, arm, budget, manifests, views, index, cache_hashes, s
     result = ft.fit(model, optimizer, scheduler, train_loader, dev_loader,
                     np.asarray([int(r["target"]) for r in development]), directory, fingerprint,
                     generator, args.device, args.epochs, args.patience, 64, resume=resume)
-    ft.save_atomic_torch(directory / "model.pt", {"model": ft.cpu_state(model), "fingerprint": fingerprint,
+    ft.save_atomic_torch(directory / "model.pt", {"model": cpu_state(model), "fingerprint": fingerprint,
                                                  "best_epoch": result["best_epoch"]})
     calibration_loader = DataLoader(ft.CachedECGs(views, index, calibration), batch_size=args.finetune_microbatch_size, num_workers=0)
     test_loader = DataLoader(ft.CachedECGs(views, index, rows["test"]), batch_size=args.finetune_microbatch_size, num_workers=0)
-    ft.evaluate_predictions(f"xecg_adaptation_{arm}_{budget}",
+    evaluate_predictions(f"xecg_adaptation_{arm}_{budget}",
                             ft.predict(model, calibration_loader, args.device),
                             ft.predict(model, test_loader, args.device), calibration, rows["test"],
                             directory, 42, args.bootstrap)
@@ -477,9 +481,9 @@ def main(argv=None):
                 from scripts.reports.report_xecg_adaptation import report
                 report(args.output_dir, args.bootstrap)
                 ft.save_atomic_json(args.output_dir / "complete.json", {
-                    "all_ssl_sha256": ft.sha256(args.output_dir / "all_ssl_complete.json"),
-                    "report_sha256": ft.sha256(args.output_dir / "report.md"),
-                    "paired_comparisons_sha256": ft.sha256(args.output_dir / "paired_comparisons.json")})
+                    "all_ssl_sha256": sha256_file(args.output_dir / "all_ssl_complete.json"),
+                    "report_sha256": sha256_file(args.output_dir / "report.md"),
+                    "paired_comparisons_sha256": sha256_file(args.output_dir / "paired_comparisons.json")})
 
 
 if __name__ == "__main__":

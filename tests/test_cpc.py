@@ -4,12 +4,13 @@ import numpy as np
 import torch
 
 from ecg_experiment.cpc import CPCEncoder, CPCPretrainer, cmsc_loss, temporal_candidate_mask
-from scripts.experiments.run_cpc_experiment import Pool, PoolDataset, resume_or_new, save_epoch, seed_all
+from ecg_experiment.cpc_pool import Pool, PoolDataset, resume_or_new, save_epoch
+from ecg_experiment.reproducibility import seed_everything
 
 
 def test_future_perturbation_preserves_past_tokens_and_contexts():
     torch.set_num_threads(1)
-    seed_all(42)
+    seed_everything(42)
     model = CPCEncoder().eval()
     signal = torch.randn(1, 12, 2500)
     changed = signal.clone()
@@ -64,7 +65,7 @@ def test_cpc_and_hybrid_have_finite_nonzero_encoder_and_head_gradients():
     torch.set_num_threads(1)
     signal = torch.randn(2, 12, 2500)
     for hybrid in (False, True):
-        seed_all(42)
+        seed_everything(42)
         model = CPCPretrainer(hybrid=hybrid)
         loss, details = model(signal, ["patient-1", "patient-2"])
         assert torch.isfinite(loss)
@@ -117,11 +118,11 @@ def test_epoch_checkpoint_restores_optimizer_dropout_and_shuffle(tmp_path):
             optimizer.step()
         return sequence
 
-    seed_all(42)
+    seed_everything(42)
     baseline, baseline_optimizer, baseline_generator = create()
     baseline_order = [epoch(baseline, baseline_optimizer, baseline_generator) for _ in range(2)]
 
-    seed_all(42)
+    seed_everything(42)
     interrupted, interrupted_optimizer, interrupted_generator = create()
     resumed_order = [epoch(interrupted, interrupted_optimizer, interrupted_generator)]
     save_epoch(tmp_path, "matching", 1, interrupted, interrupted_optimizer,

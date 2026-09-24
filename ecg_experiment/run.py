@@ -1,55 +1,28 @@
 """Train and evaluate the compact PTB-XL experiment on fixed patient manifests."""
 
 import argparse
-import copy
-import csv
 import hashlib
 import json
 import math
-import random
 import time
 from pathlib import Path
 
 import numpy as np
 import torch
-from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
-from sklearn.model_selection import GroupShuffleSplit
 from torch import nn
 from torch.utils.data import DataLoader
 
 from .data import ECGDataset, Waveforms, build_cache, read_manifest
-from .evaluation import metrics, patient_bootstrap, scenario_ppv, select_threshold
+from .evaluation import evaluate_predictions, partition_validation
+from .files import write_json_atomic
 from .models import CNN, JEPA, Classifier, MaskedAutoencoder, PatchTransformer
-
-
-def seed_everything(seed):
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-
-
-def save_json(path, value):
-    Path(path).write_text(json.dumps(value, indent=2, allow_nan=False) + "\n")
-
-
-def cpu_state(model):
-    return {name: value.detach().cpu().clone() for name, value in model.state_dict().items()}
+from .reproducibility import cpu_state, seed_everything
 
 
 def make_loader(waveforms, rows, scale, batch_size, shuffle=False):
     return DataLoader(ECGDataset(waveforms, rows, scale), batch_size=batch_size,
                       shuffle=shuffle, num_workers=0, drop_last=False)
-
-
-def partition_validation(rows):
-    splitter = GroupShuffleSplit(n_splits=1, test_size=0.3, random_state=9001)
-    development, calibration = next(splitter.split(rows, groups=[r["patient_id"] for r in rows]))
-    partitions = [rows[i] for i in development], [rows[i] for i in calibration]
-    for partition in partitions:
-        if {r["target"] for r in partition} != {"0", "1"}:
-            raise ValueError("Development and calibration partitions must each contain both classes")
-    return partitions
 
 
 def pretrain(args, waveforms, train, scale):
@@ -98,11 +71,11 @@ def pretrain(args, waveforms, train, scale):
                **{key: value / observations for key, value in totals.items()}}
         history.append(row)
         print(json.dumps({"stage": args.model + "_ssl", **row}), flush=True)
-        save_json(directory / "history.json", history)
+        write_json_atomic(directory / "history.json", history)
     torch.save({"encoder": cpu_state(model.encoder), "scale": scale.tolist(),
                 "model": args.model, "seed": args.seed, "epochs": args.ssl_epochs,
                 "training_records": len(train), "training_ecg_ids": [r["ecg_id"] for r in train]}, checkpoint)
-    save_json(directory / "config.json", {"architecture": repr(model), "ssl_epochs": args.ssl_epochs,
+    write_json_atomic(directory / "config.json", {"architecture": repr(model), "ssl_epochs": args.ssl_epochs,
                "ssl_batch_size": args.ssl_batch_size, "seed": args.seed,
                "seconds": time.monotonic() - start, "trainable_parameters": sum(p.numel() for p in model.parameters() if p.requires_grad)})
     return checkpoint
@@ -113,44 +86,6 @@ def predict(model, loader):
     model.eval()
     device = next(model.parameters()).device
     return np.concatenate([model(signal.to(device)).cpu().numpy() for signal, _ in loader])
-
-
-def evaluate_predictions(name, calibration_logits, test_logits, calibration_rows, test_rows,
-                         output_dir, seed, bootstrap=500):
-    """Calibrate and choose the operating threshold using calibration patients only."""
-    calibration_y = np.array([int(r["target"]) for r in calibration_rows])
-    test_y = np.array([int(r["target"]) for r in test_rows])
-    calibrator = LogisticRegression(C=1e6, solver="lbfgs", max_iter=1000)
-    calibrator.fit(np.asarray(calibration_logits).reshape(-1, 1), calibration_y)
-    if calibrator.coef_[0, 0] <= 0:
-        raise RuntimeError("Nonpositive calibration slope: investigate the model before evaluation")
-    calibration_p = calibrator.predict_proba(np.asarray(calibration_logits).reshape(-1, 1))[:, 1]
-    test_p = calibrator.predict_proba(np.asarray(test_logits).reshape(-1, 1))[:, 1]
-    threshold = select_threshold(calibration_y, calibration_p, 0.95)
-    test_metrics = metrics(test_y, test_p, threshold)
-    result = {"model": name, "label_seed": seed, "threshold": threshold,
-              "threshold_selection": "Maximum threshold attaining >=95% sensitivity on calibration patients",
-              "calibration": {"method": "Platt logistic scaling", "records": len(calibration_rows),
-                              "slope": float(calibrator.coef_[0, 0]), "intercept": float(calibrator.intercept_[0])},
-              "test": test_metrics,
-              "test_ci95_patient_bootstrap": patient_bootstrap(test_y, test_p,
-                    [r["patient_id"] for r in test_rows], threshold, repeats=bootstrap, seed=2026),
-              "hypothetical_1pct_prevalence": scenario_ppv(test_metrics["sensitivity"],
-                    test_metrics["specificity"], 0.01)}
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    save_json(output_dir / "metrics.json", result)
-    with (output_dir / "test_predictions.csv").open("w", newline="") as handle:
-        writer = csv.writer(handle)
-        writer.writerow(["ecg_id", "patient_id", "target", "raw_logit", "probability", "prediction"])
-        for row, logit, probability in zip(test_rows, test_logits, test_p):
-            writer.writerow([row["ecg_id"], row["patient_id"], row["target"], float(logit),
-                             float(probability), int(probability >= threshold)])
-    np.savez(output_dir / "calibration_predictions.npz", logits=calibration_logits,
-             targets=calibration_y, probabilities=calibration_p,
-             ecg_ids=np.array([int(r["ecg_id"]) for r in calibration_rows]))
-    print(json.dumps({"model": name, "label_seed": seed, "test": test_metrics}), flush=True)
-    return result
 
 
 def supervised(args, waveforms, train, validation, test, scale, ssl_checkpoint=None):
@@ -206,7 +141,7 @@ def supervised(args, waveforms, train, validation, test, scale, ssl_checkpoint=N
                "seconds": time.monotonic() - start}
         history.append(row)
         print(json.dumps({"stage": name, "label_seed": args.seed, **row}), flush=True)
-        save_json(directory / "history.json", history)
+        write_json_atomic(directory / "history.json", history)
         if epoch + 1 - best_epoch >= args.patience:
             break
     model.load_state_dict(best_state)
@@ -229,7 +164,7 @@ def supervised(args, waveforms, train, validation, test, scale, ssl_checkpoint=N
               "label_manifest_sha256": hashlib.sha256((args.manifest_dir / "labeled_train.csv").read_bytes()).hexdigest(),
               "normalization": "Per-record per-lead demeaning, training-only per-lead RMS scaling, clipping +/-20",
               "pretraining_exposure": "Own SSL uses official folds1-8 only; no validation/test waveforms"}
-    save_json(directory / "config.json", config)
+    write_json_atomic(directory / "config.json", config)
     return result
 
 

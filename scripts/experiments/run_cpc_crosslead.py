@@ -12,8 +12,12 @@ from pathlib import Path
 import torch
 from torch import nn
 
+from ecg_experiment import cpc_pool
 from ecg_experiment.cpc_crosslead import AUX_WEIGHT, GROUP_A, GROUP_B, VARIANTS, CrossLeadPretrainer
-from scripts.experiments import run_cpc_experiment as base
+from ecg_experiment.evaluation import paired_comparison
+from ecg_experiment.files import sha256_file, write_json_atomic, write_torch_atomic
+from ecg_experiment.gpu import GPU_LOCK_PATH
+from ecg_experiment.reproducibility import capture_rng_state, cpu_state, restore_rng_state, seed_everything
 from scripts.experiments.run_cpc_tokenization import bootstrap
 
 
@@ -24,7 +28,7 @@ PROFILE_WARMUP = 2
 
 
 def source_hashes(args, pool):
-    hashes = base.make_source_hashes(pool, args.manifest_dir)
+    hashes = cpc_pool.make_source_hashes(pool, args.manifest_dir)
     paths = [ROOT / name for name in (
         "ecg_experiment/cpc_crosslead.py", "scripts/experiments/run_cpc_crosslead.py",
         # bootstrap() is imported, so its implementation is part of this run.
@@ -32,7 +36,7 @@ def source_hashes(args, pool):
     paths += [args.bootstrap_dir / name for name in
               ("encoder.pt", "epoch_state.pt", "config.json")]
     paths.append(args.bootstrap_dir.parent / "normalization.json")
-    hashes.update({str(path.resolve()): base.digest_file(path) for path in paths})
+    hashes.update({str(path.resolve()): sha256_file(path) for path in paths})
     return hashes
 
 
@@ -50,7 +54,7 @@ def fixed_normalization(pool, args, hashes, bootstrap_config):
 
 
 def ssl_settings(args, variant):
-    return {"stage": "pretrain", "variant": variant, "seed": base.SSL_SEED,
+    return {"stage": "pretrain", "variant": variant, "seed": cpc_pool.SSL_SEED,
             "epochs": args.ssl_epochs, "batch_size": args.ssl_batch_size,
             "bootstrap": "Experiment004 CPC completed epoch20 encoder and all three heads",
             "optimizer": "AdamW", "lr": 1e-3, "weight_decay": 0.01,
@@ -64,7 +68,7 @@ def ssl_settings(args, variant):
 
 
 def ssl_fingerprint(args, pool, mean, std, hashes, variant):
-    return base.fingerprint(pool, hashes, mean, std, ssl_settings(args, variant))
+    return cpc_pool.fingerprint(pool, hashes, mean, std, ssl_settings(args, variant))
 
 
 def profile_path(args, variant):
@@ -104,31 +108,31 @@ def checked_step(model, optimizer, signal):
 
 def profile_roundtrip(model, optimizer, signal, variant, generator):
     """Verify a saved model/optimizer/RNG state reproduces the next dropout update."""
-    snapshot = {"model": base.cpu_state(model), "optimizer": copy.deepcopy(optimizer.state_dict()),
-                "rng": base.rng_state(generator)}
+    snapshot = {"model": cpu_state(model), "optimizer": copy.deepcopy(optimizer.state_dict()),
+                "rng": capture_rng_state(generator)}
     duplicate = CrossLeadPretrainer(variant).to(signal.device)
     duplicate.load_state_dict(snapshot["model"])
     copy_optimizer = torch.optim.AdamW(duplicate.parameters(), lr=1e-3, weight_decay=0.01)
     copy_optimizer.load_state_dict(snapshot["optimizer"])
-    base.restore_rng(snapshot["rng"], generator)
+    restore_rng_state(snapshot["rng"], generator)
     checked_step(model, optimizer, signal)
-    expected = base.cpu_state(model)
-    base.restore_rng(snapshot["rng"], generator)
+    expected = cpu_state(model)
+    restore_rng_state(snapshot["rng"], generator)
     checked_step(duplicate, copy_optimizer, signal)
     for key, tensor in expected.items():
         torch.testing.assert_close(tensor, duplicate.state_dict()[key].cpu(), atol=0, rtol=0)
     # Restore so the profile itself has no hidden difference after the check.
-    base.restore_rng(snapshot["rng"], generator)
+    restore_rng_state(snapshot["rng"], generator)
     return True
 
 
 def profile(args, pool, mean, std, hashes, encoder, heads, variants):
     for variant in variants:
-        base.seed_all(base.SSL_SEED)
+        seed_everything(cpc_pool.SSL_SEED)
         model = new_model(variant, encoder, heads, args.device)
         optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=0.01)
-        generator = torch.Generator().manual_seed(base.SSL_SEED)
-        data = base.loader(pool, pool.train_rows, mean, std, args.ssl_batch_size,
+        generator = torch.Generator().manual_seed(cpc_pool.SSL_SEED)
+        data = cpc_pool.loader(pool, pool.train_rows, mean, std, args.ssl_batch_size,
                            True, generator, args.device)
         model.train()
         started = None
@@ -164,7 +168,7 @@ def profile(args, pool, mean, std, hashes, encoder, heads, variants):
                   "estimated_ssl_epoch_seconds": len(pool.train_rows) * seconds / measured_records,
                   "peak_gpu_gb": torch.cuda.max_memory_allocated() / 1e9 if args.device == "cuda" else None,
                   "resume_roundtrip": roundtrip, "loss": loss, "gradient_norm": grad_norm, **details}
-        base.atomic_json(profile_path(args, variant), record)
+        write_json_atomic(profile_path(args, variant), record)
         print(json.dumps({k: v for k, v in record.items() if k != "inputs"}), flush=True)
 
 
@@ -179,20 +183,20 @@ def resume_or_new(directory, fingerprint, model, optimizer, generator):
         raise ValueError(f"Resume fingerprint mismatch: {directory}")
     model.load_state_dict(state["model"])
     optimizer.load_state_dict(state["optimizer"])
-    base.restore_rng(state["rng"], generator)
+    restore_rng_state(state["rng"], generator)
     return state["epoch"], state["history"]
 
 
 def save_epoch(directory, fingerprint, epoch, model, optimizer, generator, history):
-    base.atomic_torch(directory / "epoch_state.pt", {
-        "fingerprint": fingerprint, "epoch": epoch, "model": base.cpu_state(model),
-        "optimizer": optimizer.state_dict(), "rng": base.rng_state(generator),
+    write_torch_atomic(directory / "epoch_state.pt", {
+        "fingerprint": fingerprint, "epoch": epoch, "model": cpu_state(model),
+        "optimizer": optimizer.state_dict(), "rng": capture_rng_state(generator),
         "history": history})
-    base.atomic_json(directory / "history.json", history)
+    write_json_atomic(directory / "history.json", history)
 
 
 def pretrain(args, pool, mean, std, hashes, encoder, heads, variant):
-    base.seed_all(base.SSL_SEED)
+    seed_everything(cpc_pool.SSL_SEED)
     directory = args.output_dir / f"{variant}_ssl"
     directory.mkdir(parents=True, exist_ok=True)
     fp, inputs = ssl_fingerprint(args, pool, mean, std, hashes, variant)
@@ -201,7 +205,7 @@ def pretrain(args, pool, mean, std, hashes, encoder, heads, variant):
     config_path = directory / "config.json"
     if config_path.exists() and json.loads(config_path.read_text())["fingerprint"] != fp:
         raise ValueError(f"Existing SSL config fingerprint mismatch: {directory}")
-    base.atomic_json(config_path, {"fingerprint": fp, "inputs": inputs})
+    write_json_atomic(config_path, {"fingerprint": fp, "inputs": inputs})
     complete = directory / "encoder.pt"
     if complete.exists():
         saved = torch.load(complete, map_location="cpu", weights_only=True)
@@ -210,8 +214,8 @@ def pretrain(args, pool, mean, std, hashes, encoder, heads, variant):
         return complete
     model = new_model(variant, encoder, heads, args.device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=0.01)
-    generator = torch.Generator().manual_seed(base.SSL_SEED)
-    data = base.loader(pool, pool.train_rows, mean, std, args.ssl_batch_size,
+    generator = torch.Generator().manual_seed(cpc_pool.SSL_SEED)
+    data = cpc_pool.loader(pool, pool.train_rows, mean, std, args.ssl_batch_size,
                        True, generator, args.device)
     start_epoch, history = resume_or_new(directory, fp, model, optimizer, generator)
     started = time.monotonic()
@@ -244,8 +248,8 @@ def pretrain(args, pool, mean, std, hashes, encoder, heads, variant):
         history.append(record)
         save_epoch(directory, fp, epoch + 1, model, optimizer, generator, history)
         print(json.dumps({"stage": "pretrain", "variant": variant, **record}), flush=True)
-    base.atomic_torch(complete, {"fingerprint": fp, "encoder": base.cpu_state(model.encoder),
-                      "variant": variant, "epochs": args.ssl_epochs, "seed": base.SSL_SEED,
+    write_torch_atomic(complete, {"fingerprint": fp, "encoder": cpu_state(model.encoder),
+                      "variant": variant, "epochs": args.ssl_epochs, "seed": cpc_pool.SSL_SEED,
                       "training_records": len(pool.train_rows),
                       "parameters": sum(p.numel() for p in model.parameters())})
     return complete
@@ -285,13 +289,13 @@ def report(args):
             lines.append(f"| {variant} | {result['auroc']:.3f} | {result['average_precision']:.3f} | {result['sensitivity']:.3f} | {result['specificity']:.3f} |")
         lines.append("")
         for left, right in (("crosslead", "withinlead"), ("withinlead", "native")):
-            comparison = base.paired_comparison(paths[left], paths[right], args.bootstrap)
+            comparison = paired_comparison(paths[left], paths[right], args.bootstrap)
             comparisons[f"fraction{budget}_{left}_minus_{right}"] = comparison
             lines += [f"{left} minus {right} (paired patient bootstrap):", ""]
             for name, result in comparison.items():
                 lines.append(f"- {name}: {result['difference']:+.3f} (95% CI {result['ci95'][0]:+.3f} to {result['ci95'][1]:+.3f})")
             lines.append("")
-    base.atomic_json(args.output_dir / "paired_comparisons.json", comparisons)
+    write_json_atomic(args.output_dir / "paired_comparisons.json", comparisons)
     (args.output_dir / "report.md").write_text("\n".join(lines) + "\n")
 
 
@@ -304,11 +308,11 @@ def run(args):
         raise RuntimeError("CUDA requested but unavailable")
     torch.set_num_threads(args.threads)
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    with base.GPU_LOCK.open("a+") as lock:
+    with GPU_LOCK_PATH.open("a+") as lock:
         if args.device == "cuda" and args.stage != "check":
-            print(f"Waiting for GPU lock {base.GPU_LOCK}", flush=True)
+            print(f"Waiting for GPU lock {GPU_LOCK_PATH}", flush=True)
             fcntl.flock(lock, fcntl.LOCK_EX)
-        pool = base.Pool(args.cache_dir)
+        pool = cpc_pool.Pool(args.cache_dir)
         hashes = source_hashes(args, pool)
         encoder, heads, bootstrap_config = bootstrap(args, hashes)
         mean, std = fixed_normalization(pool, args, hashes, bootstrap_config)
@@ -330,7 +334,7 @@ def run(args):
             require_all_ssl(args, pool, mean, std, hashes)
             for budget in (("1", "0.1") if args.labels == "all" else (args.labels,)):
                 for variant in variants:
-                    base.fine_tune(args, pool, mean, std, hashes, variant, budget)
+                    cpc_pool.fine_tune(args, pool, mean, std, hashes, variant, budget)
             report(args)
 
 
@@ -339,8 +343,8 @@ def main(argv=None):
     parser.add_argument("--stage", choices=("check", "profile", "pretrain", "train", "all"), default="all")
     parser.add_argument("--variant", choices=(*VARIANTS, "all"), default="all")
     parser.add_argument("--labels", choices=("0.1", "1", "all"), default="all")
-    parser.add_argument("--cache-dir", type=Path, default=base.DEFAULT_CACHE)
-    parser.add_argument("--manifest-dir", type=Path, default=base.DEFAULT_MANIFEST)
+    parser.add_argument("--cache-dir", type=Path, default=cpc_pool.DEFAULT_CACHE)
+    parser.add_argument("--manifest-dir", type=Path, default=cpc_pool.DEFAULT_MANIFEST)
     parser.add_argument("--bootstrap-dir", type=Path, default=DEFAULT_BOOTSTRAP)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")

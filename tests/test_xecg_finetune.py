@@ -10,8 +10,9 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
+from ecg_experiment.reproducibility import cpu_state
 from scripts.experiments.run_xecg_finetune import (
-    budgets, cpu_state, layerwise_parameter_groups, load_resume, make_scheduler,
+    budgets, layerwise_parameter_groups, load_resume, make_scheduler,
     resume_for_budget,
     save_resume, train_epoch,
 )

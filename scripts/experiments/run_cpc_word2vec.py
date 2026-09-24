@@ -12,8 +12,12 @@ from pathlib import Path
 import torch
 from torch import nn
 
+from ecg_experiment import cpc_pool
 from ecg_experiment.cpc_word2vec import SampledCPCPretrainer
-from scripts.experiments import run_cpc_experiment as base
+from ecg_experiment.evaluation import paired_comparison
+from ecg_experiment.files import sha256_file, write_json_atomic, write_torch_atomic
+from ecg_experiment.gpu import GPU_LOCK_PATH
+from ecg_experiment.reproducibility import capture_rng_state, cpu_state, restore_rng_state, seed_everything
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -23,15 +27,15 @@ SAMPLER_SEED = 424242
 
 
 def source_hashes_with_new_code(pool, manifest_dir):
-    hashes = base.make_source_hashes(pool, manifest_dir)
+    hashes = cpc_pool.make_source_hashes(pool, manifest_dir)
     for name in ("ecg_experiment/cpc_word2vec.py", "scripts/experiments/run_cpc_word2vec.py"):
         path = ROOT / name
-        hashes[str(path.resolve())] = base.digest_file(path)
+        hashes[str(path.resolve())] = sha256_file(path)
     return hashes
 
 
 def settings(args, variant):
-    return {"stage": "pretrain", "variant": variant, "seed": base.SSL_SEED,
+    return {"stage": "pretrain", "variant": variant, "seed": cpc_pool.SSL_SEED,
             "sampler_seed": SAMPLER_SEED, "epochs": args.ssl_epochs,
             "batch_size": args.ssl_batch_size, "optimizer": "AdamW",
             "lr": 1e-3, "weight_decay": 0.01, "warmup_epochs": 2,
@@ -55,30 +59,30 @@ def resume_or_new(directory, fingerprint, model, optimizer, loader_generator,
         raise ValueError(f"Resume fingerprint mismatch: {directory}")
     model.load_state_dict(state["model"])
     optimizer.load_state_dict(state["optimizer"])
-    base.restore_rng(state["rng"], loader_generator)
+    restore_rng_state(state["rng"], loader_generator)
     sampler_generator.set_state(state["sampler_rng"])
     return state["epoch"], state["history"]
 
 
 def save_epoch(directory, fingerprint, epoch, model, optimizer, loader_generator,
                sampler_generator, history):
-    base.atomic_torch(directory / "epoch_state.pt", {
+    write_torch_atomic(directory / "epoch_state.pt", {
         "fingerprint": fingerprint, "epoch": epoch,
-        "model": base.cpu_state(model), "optimizer": optimizer.state_dict(),
-        "rng": base.rng_state(loader_generator),
+        "model": cpu_state(model), "optimizer": optimizer.state_dict(),
+        "rng": capture_rng_state(loader_generator),
         "sampler_rng": sampler_generator.get_state(), "history": history})
-    base.atomic_json(directory / "history.json", history)
+    write_json_atomic(directory / "history.json", history)
 
 
 def pretrain(args, pool, mean, std, source_hashes, variant):
-    base.seed_all(base.SSL_SEED)
+    seed_everything(cpc_pool.SSL_SEED)
     directory = args.output_dir / f"{variant}_ssl"
     directory.mkdir(parents=True, exist_ok=True)
-    fp, inputs = base.fingerprint(pool, source_hashes, mean, std, settings(args, variant))
+    fp, inputs = cpc_pool.fingerprint(pool, source_hashes, mean, std, settings(args, variant))
     config_path = directory / "config.json"
     if config_path.exists() and json.loads(config_path.read_text())["fingerprint"] != fp:
         raise ValueError(f"Existing SSL config fingerprint mismatch: {directory}")
-    base.atomic_json(config_path, {"fingerprint": fp, "inputs": inputs,
+    write_json_atomic(config_path, {"fingerprint": fp, "inputs": inputs,
              "description": "Same compact causal CNN/GRU encoder and heads as experiment 004; sampled losses only",
              "loss_scale_note": "SGNS sums sixteen negative terms; raw loss is not comparable to InfoNCE"})
     complete = directory / "encoder.pt"
@@ -89,9 +93,9 @@ def pretrain(args, pool, mean, std, source_hashes, variant):
         return complete
     model = SampledCPCPretrainer(variant).to(args.device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=0.01)
-    loader_generator = torch.Generator().manual_seed(base.SSL_SEED)
+    loader_generator = torch.Generator().manual_seed(cpc_pool.SSL_SEED)
     sampler_generator = torch.Generator().manual_seed(SAMPLER_SEED)
-    data = base.loader(pool, pool.train_rows, mean, std, args.ssl_batch_size,
+    data = cpc_pool.loader(pool, pool.train_rows, mean, std, args.ssl_batch_size,
                        True, loader_generator, args.device)
     start_epoch, history = resume_or_new(directory, fp, model, optimizer,
                                          loader_generator, sampler_generator)
@@ -133,9 +137,9 @@ def pretrain(args, pool, mean, std, source_hashes, variant):
         save_epoch(directory, fp, epoch + 1, model, optimizer,
                    loader_generator, sampler_generator, history)
         print(json.dumps({"stage": "pretrain", "variant": variant, **record}), flush=True)
-    base.atomic_torch(complete, {"fingerprint": fp,
-                "encoder": base.cpu_state(model.encoder), "variant": variant,
-                "epochs": args.ssl_epochs, "seed": base.SSL_SEED,
+    write_torch_atomic(complete, {"fingerprint": fp,
+                "encoder": cpu_state(model.encoder), "variant": variant,
+                "epochs": args.ssl_epochs, "seed": cpc_pool.SSL_SEED,
                 "sampler_seed": SAMPLER_SEED, "training_records": len(pool.train_rows),
                 "parameters": sum(p.numel() for p in model.parameters())})
     return complete
@@ -143,12 +147,12 @@ def pretrain(args, pool, mean, std, source_hashes, variant):
 
 def profile(args, pool, mean, std):
     for variant in (VARIANTS if args.variant == "all" else (args.variant,)):
-        base.seed_all(base.SSL_SEED)
+        seed_everything(cpc_pool.SSL_SEED)
         model = SampledCPCPretrainer(variant).to(args.device)
         optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=0.01)
-        loader_generator = torch.Generator().manual_seed(base.SSL_SEED)
+        loader_generator = torch.Generator().manual_seed(cpc_pool.SSL_SEED)
         sampler_generator = torch.Generator().manual_seed(SAMPLER_SEED)
-        data = base.loader(pool, pool.train_rows, mean, std, args.ssl_batch_size,
+        data = cpc_pool.loader(pool, pool.train_rows, mean, std, args.ssl_batch_size,
                            True, loader_generator, args.device)
         started = None
         measured_records = 0
@@ -209,14 +213,14 @@ def report(args):
         for variant, path in paths.items():
             result = json.loads((path / "metrics.json").read_text())["test"]
             lines.append(f"| {variant} | {result['auroc']:.3f} | {result['average_precision']:.3f} | {result['sensitivity']:.3f} | {result['specificity']:.3f} |")
-        comparison = base.paired_comparison(paths["sgns"], paths["sampled_info"], args.bootstrap)
+        comparison = paired_comparison(paths["sgns"], paths["sampled_info"], args.bootstrap)
         comparisons[f"fraction{budget}_sgns_minus_sampled_info"] = comparison
         lines += ["", "SGNS minus sampled InfoNCE (paired test-patient bootstrap):", ""]
         for name, result in comparison.items():
             lines.append(f"- {name}: {result['difference']:+.3f} "
                          f"(95% CI {result['ci95'][0]:+.3f} to {result['ci95'][1]:+.3f})")
         lines.append("")
-    base.atomic_json(args.output_dir / "paired_comparisons.json", comparisons)
+    write_json_atomic(args.output_dir / "paired_comparisons.json", comparisons)
     (args.output_dir / "report.md").write_text("\n".join(lines) + "\n")
 
 
@@ -225,8 +229,8 @@ def main():
     parser.add_argument("--stage", choices=("profile", "pretrain", "train", "all"), default="all")
     parser.add_argument("--variant", choices=(*VARIANTS, "all"), default="all")
     parser.add_argument("--labels", choices=("0.1", "1", "all"), default="all")
-    parser.add_argument("--cache-dir", type=Path, default=base.DEFAULT_CACHE)
-    parser.add_argument("--manifest-dir", type=Path, default=base.DEFAULT_MANIFEST)
+    parser.add_argument("--cache-dir", type=Path, default=cpc_pool.DEFAULT_CACHE)
+    parser.add_argument("--manifest-dir", type=Path, default=cpc_pool.DEFAULT_MANIFEST)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
     parser.add_argument("--threads", type=int, default=1)
@@ -246,11 +250,11 @@ def main():
     torch.set_num_threads(args.threads)
     if args.stage != "profile":
         args.output_dir.mkdir(parents=True, exist_ok=True)
-    with base.GPU_LOCK.open("a+") as lock:
+    with GPU_LOCK_PATH.open("a+") as lock:
         if args.device == "cuda":
-            print(f"Waiting for GPU lock {base.GPU_LOCK}", flush=True)
+            print(f"Waiting for GPU lock {GPU_LOCK_PATH}", flush=True)
             fcntl.flock(lock, fcntl.LOCK_EX)
-        pool = base.Pool(args.cache_dir)
+        pool = cpc_pool.Pool(args.cache_dir)
         source_hashes = source_hashes_with_new_code(pool, args.manifest_dir)
         if args.stage == "profile":
             with tempfile.TemporaryDirectory(prefix="cpc_word2vec_profile_") as temporary:
@@ -264,7 +268,7 @@ def main():
         if args.stage in ("train", "all"):
             for budget in (("1", "0.1") if args.labels == "all" else (args.labels,)):
                 for variant in (VARIANTS if args.variant == "all" else (args.variant,)):
-                    base.fine_tune(args, pool, mean, std, source_hashes, variant, budget)
+                    cpc_pool.fine_tune(args, pool, mean, std, source_hashes, variant, budget)
             report(args)
 
 

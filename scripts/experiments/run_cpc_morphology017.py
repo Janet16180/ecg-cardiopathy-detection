@@ -21,10 +21,11 @@ from torch.nn import functional as F
 from ecg_experiment.bounded_waveform_cache import BoundedWaveformCache
 from ecg_experiment.cpc import CPCClassifier
 from ecg_experiment.cpc_morphology import MorphologyCPCClassifier, TEMPLATES, SUPPORT
+from ecg_experiment.cpc_pool import Pool
 from ecg_experiment.data import read_manifest
-from ecg_experiment.evaluation import select_threshold
-from ecg_experiment.run import cpu_state, partition_validation
-from scripts.experiments.run_cpc_experiment import Pool, atomic_json, atomic_torch, digest_file, seed_all
+from ecg_experiment.evaluation import partition_validation, select_threshold
+from ecg_experiment.files import sha256_file, write_json_atomic, write_torch_atomic
+from ecg_experiment.reproducibility import cpu_state, seed_everything
 
 ROOT = Path(__file__).resolve().parents[2]
 CACHE = ROOT / 'data/processed/cpc_pool_40k'
@@ -62,7 +63,7 @@ def verified_pool_hashes(args, pool):
     if receipt.get('stage') != 'check' or receipt.get('fingerprint') != digest_json(receipt.get('provenance')):
         raise ValueError('Invalid pool verification receipt')
     source_hash = receipt.get('provenance', {}).get('code', {}).get('scripts/experiments/run_jepa_cpc_distillation.py')
-    if source_hash != digest_file(ROOT / 'scripts/experiments/run_jepa_cpc_distillation.py'):
+    if source_hash != sha256_file(ROOT / 'scripts/experiments/run_jepa_cpc_distillation.py'):
         raise ValueError('Frozen pool verifier source changed')
     hashes = receipt['provenance']['pool_content_sha256']
     for filename, key in (('signals.npy', 'signals_sha256'), ('rows.csv', 'rows_sha256'),
@@ -71,7 +72,7 @@ def verified_pool_hashes(args, pool):
             raise ValueError(f'CPC pool differs from verified receipt: {filename}')
     if any(file_identity(args.cache_dir / name) != before[name] for name in before):
         raise ValueError('CPC pool changed while checking receipt')
-    return hashes, before, source_hash, digest_file(args.pool_verification)
+    return hashes, before, source_hash, sha256_file(args.pool_verification)
 
 
 def stopping(_signum, _frame):
@@ -169,18 +170,20 @@ def load_inputs(args):
                       for budget in ('1', '0.1') for name in ('labeled_train', 'validation', 'test')]
     manifest_paths.append(args.manifest_dir / 'seed42_fraction1/all_train_ssl.csv')
     for name, expected in pool.metadata.get('ptb_manifest_sha256', {}).items():
-        if digest_file(args.manifest_dir / 'seed42_fraction1' / name) != expected:
+        if sha256_file(args.manifest_dir / 'seed42_fraction1' / name) != expected:
             raise ValueError(f'Frozen pool PTB manifest changed: {name}')
     code_paths = ('scripts/experiments/run_cpc_morphology017.py', 'ecg_experiment/cpc_morphology.py',
                   'ecg_experiment/cpc.py', 'ecg_experiment/bounded_waveform_cache.py',
                   'scripts/experiments/run_cpc_experiment.py', 'ecg_experiment/data.py',
+                  'ecg_experiment/cpc_pool.py', 'ecg_experiment/files.py',
+                  'ecg_experiment/reproducibility.py',
                   'ecg_experiment/run.py', 'ecg_experiment/evaluation.py',
                   'docs/experiment-017-morphology.md')
-    provenance = {'sources': {str(path.resolve()): digest_file(path) for path in
+    provenance = {'sources': {str(path.resolve()): sha256_file(path) for path in
                               [args.ssl, args.ssl.parent / 'epoch_state.pt',
                                args.ssl.parent / 'config.json', args.normalization, *manifest_paths]},
-                  'code': {name: digest_file(ROOT / name) for name in code_paths},
-                  'pool_complete_sha256': digest_file(args.cache_dir / 'complete.json'),
+                  'code': {name: sha256_file(ROOT / name) for name in code_paths},
+                  'pool_complete_sha256': sha256_file(args.cache_dir / 'complete.json'),
                   'pool_content_sha256': hashes,
                   'pool_file_stats': pool_stats,
                   'pool_verifier_source_sha256': verifier_source_hash,
@@ -204,7 +207,7 @@ def load_inputs(args):
 
 
 def make_model(args, kind, bank):
-    seed_all(SEED)
+    seed_everything(SEED)
     # Construct the common original classifier first: adding a branch must not
     # shift the classifier-head RNG stream across comparison arms.
     reference = CPCClassifier()
@@ -220,7 +223,7 @@ def make_model(args, kind, bank):
     model = model.to(args.device)
     # The first training dropout mask is also common across arms. Resume state
     # overrides this with its exact saved RNG state.
-    seed_all(SEED + 12345)
+    seed_everything(SEED + 12345)
     return model
 
 
@@ -248,10 +251,10 @@ def restore_rng(state):
 
 
 def save_state(directory, fingerprint, model, optimizer, epoch, batch, history, best, totals, elapsed):
-    atomic_torch(directory / 'resume.pt', {'fingerprint': fingerprint, 'model': cpu_state(model),
+    write_torch_atomic(directory / 'resume.pt', {'fingerprint': fingerprint, 'model': cpu_state(model),
         'optimizer': optimizer.state_dict(), 'rng': rng_state(), 'epoch': epoch,
         'batch': batch, 'history': history, 'best': best, 'totals': totals, 'elapsed_seconds': elapsed})
-    atomic_json(directory / 'history.json', history)
+    write_json_atomic(directory / 'history.json', history)
 
 
 def load_state(directory, fingerprint, model, optimizer):
@@ -320,7 +323,7 @@ def run_arm(args, data, budget, kind, directory, max_epochs, deadline):
     completion = directory / 'completion.json'
     if completion.exists():
         done = json.loads(completion.read_text())
-        if done['fingerprint'] != fingerprint or digest_file(directory / 'history.json') != done['history_sha256'] or digest_file(directory / 'best_model.pt') != done['best_model_sha256']:
+        if done['fingerprint'] != fingerprint or sha256_file(directory / 'history.json') != done['history_sha256'] or sha256_file(directory / 'best_model.pt') != done['best_model_sha256']:
             raise ValueError('Completed arm fingerprint or artifact mismatch')
         return json.loads((directory / 'history.json').read_text())
     config = directory / 'config.json'
@@ -329,7 +332,7 @@ def run_arm(args, data, budget, kind, directory, max_epochs, deadline):
     model = make_model(args, kind, data['bank'])
     optimizer = optimizer_for(model)
     epoch, batch_pos, history, best, totals, elapsed = load_state(directory, fingerprint, model, optimizer)
-    atomic_json(config, {'fingerprint': fingerprint, 'identity': identity(data, budget, kind),
+    write_json_atomic(config, {'fingerprint': fingerprint, 'identity': identity(data, budget, kind),
                          'parameter_count': sum(p.numel() for p in model.parameters()),
                          'exposed_labels': 15360 if budget == '1' else 1518})
     limited_ids = {r['ecg_id'] for r in data['limited']}
@@ -373,7 +376,7 @@ def run_arm(args, data, budget, kind, directory, max_epochs, deadline):
             raise RuntimeError('Nonfinite model weights')
         if screen['auroc'] > best['auc']:
             best = {'auc': screen['auroc'], 'epoch': epoch + 1}
-            atomic_torch(directory / 'best_model.pt', {'fingerprint': fingerprint,
+            write_torch_atomic(directory / 'best_model.pt', {'fingerprint': fingerprint,
                          'epoch': epoch + 1, 'model': cpu_state(model)})
         row = {'epoch': epoch + 1, 'budget': budget, 'arm': kind,
                'mean_batch_loss': totals['loss_sum'] / totals['updates'],
@@ -387,10 +390,10 @@ def run_arm(args, data, budget, kind, directory, max_epochs, deadline):
         save_state(directory, fingerprint, model, optimizer, epoch, 0, history, best, totals,
                    elapsed + time.monotonic() - started)
     if epoch == EPOCHS and max_epochs == EPOCHS:
-        atomic_json(completion, {'fingerprint': fingerprint, 'best_epoch': best['epoch'],
+        write_json_atomic(completion, {'fingerprint': fingerprint, 'best_epoch': best['epoch'],
             'best_development_auroc': best['auc'],
-            'history_sha256': digest_file(directory / 'history.json'),
-            'best_model_sha256': digest_file(directory / 'best_model.pt')})
+            'history_sha256': sha256_file(directory / 'history.json'),
+            'best_model_sha256': sha256_file(directory / 'best_model.pt')})
     return history
 
 
@@ -461,9 +464,9 @@ def report_pilot(output):
                   'Template matches are not validated explanations. The binary endpoint is an ECG diagnostic annotation proxy, not verified health or referral need.', ''])
     output.mkdir(parents=True, exist_ok=True)
     (output / 'report.md').write_text('\n'.join(lines))
-    atomic_json(output / 'completion.json', {'status': 'development_pilot_complete',
-        'report_sha256': digest_file(output / 'report.md'), 'advance_to_second_seed': bool(advance),
-        'arm_completions_sha256': {f'{kind}_fraction{budget}_seed42': digest_file(output / f'{kind}_fraction{budget}_seed42/completion.json')
+    write_json_atomic(output / 'completion.json', {'status': 'development_pilot_complete',
+        'report_sha256': sha256_file(output / 'report.md'), 'advance_to_second_seed': bool(advance),
+        'arm_completions_sha256': {f'{kind}_fraction{budget}_seed42': sha256_file(output / f'{kind}_fraction{budget}_seed42/completion.json')
             for budget in ('1', '0.1') for kind in ('none', 'conv', 'template')}})
 
 
@@ -498,7 +501,7 @@ def main():
         data = load_inputs(args)
         if args.stage == 'check':
             args.output_dir.mkdir(parents=True, exist_ok=True)
-            atomic_json(args.output_dir / 'provenance/verification.json', {
+            write_json_atomic(args.output_dir / 'provenance/verification.json', {
                 'stage': 'check', 'fingerprint': digest_json(data['provenance']),
                 'provenance': data['provenance'],
                 'source_015_receipt_sha256_for_audit': data['pool_receipt_hash'],
@@ -537,7 +540,7 @@ def main():
                     'peak_gpu_bytes': torch.cuda.max_memory_allocated() if args.device == 'cuda' else None,
                     'fingerprint': digest_json(data['provenance'])}
                 args.output_dir.mkdir(parents=True, exist_ok=True)
-                atomic_json(args.output_dir / 'profile.json', receipt)
+                write_json_atomic(args.output_dir / 'profile.json', receipt)
                 print(json.dumps(receipt), flush=True)
             return
         if args.device == 'cuda':

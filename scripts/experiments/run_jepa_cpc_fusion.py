@@ -18,8 +18,8 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedGroupKFold
 
 from ecg_experiment.data import read_manifest
-from ecg_experiment.evaluation import metrics, patient_bootstrap, select_threshold
-from ecg_experiment.run import partition_validation
+from ecg_experiment.evaluation import metrics, partition_validation, patient_bootstrap, select_threshold
+from ecg_experiment.files import sha256_file
 
 ROOT = Path(__file__).resolve().parents[2]
 PROTOCOL = ROOT / "docs/experiment-014-fusion.md"
@@ -27,14 +27,6 @@ FULL = ROOT / "data/processed/pretrained/ecg-jepa-full-public"
 LIMITED = ROOT / "data/processed/ptbxl/features_jepa_multiblock_union_seeds42_43_44"
 CPC = ROOT / "outputs/experiment009_cpc_prediction_mismatch/features"
 GRID = (0.0, 0.25, 0.5, 0.75, 1.0)
-
-
-def digest(path):
-    h = hashlib.sha256()
-    with Path(path).open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def atomic_json(path, value):
@@ -200,7 +192,7 @@ def gate(scores, chosen, bootstrap):
 def verify_feature_hashes(jepa_dir):
     metadata = json.loads((jepa_dir / "metadata.json").read_text())
     cpc_metadata = json.loads((CPC / "metadata.json").read_text())
-    if cpc_metadata["sha256"] != {name: digest(CPC / name) for name in ("features.npy", "rows.csv")}:
+    if cpc_metadata["sha256"] != {name: sha256_file(CPC / name) for name in ("features.npy", "rows.csv")}:
         raise ValueError("CPC cache checksum differs from extraction receipt")
     if metadata["model"] != "ecg-jepa-multiblock" or metadata["feature_dimension"] != 768:
         raise ValueError("JEPA cache provenance differs")
@@ -220,21 +212,21 @@ def load_budget(budget):
     validation = read_manifest(manifest / "validation.csv")
     development, calibration = partition_validation(validation)
     if budget == "full":
-        if digest(manifest / "labeled_train.csv") != jepa_meta["manifest_sha256"]["labeled_train.csv"]:
+        if sha256_file(manifest / "labeled_train.csv") != jepa_meta["manifest_sha256"]["labeled_train.csv"]:
             raise ValueError("Full JEPA probe label IDs differ from designated budget manifest")
     else:
         union = ROOT / "data/processed/ptbxl/probe_union_seeds42_43_44/labeled_train.csv"
-        if digest(union) != jepa_meta["manifest_sha256"]["labeled_train.csv"]:
+        if sha256_file(union) != jepa_meta["manifest_sha256"]["labeled_train.csv"]:
             raise ValueError("Limited JEPA union extraction manifest changed")
         matched = json.loads(jepa_config_path.read_text())
-        if matched["exact_labeled_manifest_sha256"] != digest(manifest / "labeled_train.csv") or matched["model_sha256"] != digest(jepa_model):
+        if matched["exact_labeled_manifest_sha256"] != sha256_file(manifest / "labeled_train.csv") or matched["model_sha256"] != sha256_file(jepa_model):
             raise ValueError("Matched limited JEPA probe provenance differs")
-    if digest(manifest / "validation.csv") != jepa_meta["manifest_sha256"]["validation.csv"]:
+    if sha256_file(manifest / "validation.csv") != jepa_meta["manifest_sha256"]["validation.csv"]:
         raise ValueError("JEPA validation manifest changed")
-    if digest(manifest / "test.csv") != jepa_meta["manifest_sha256"]["test.csv"]:
+    if sha256_file(manifest / "test.csv") != jepa_meta["manifest_sha256"]["test.csv"]:
         raise ValueError("JEPA test manifest changed")
     config = json.loads((cpc_probe / "config.json").read_text())
-    if config["fingerprint"]["inputs"]["manifests"][budget]["labeled_train"] != digest(manifest / "labeled_train.csv"):
+    if config["fingerprint"]["inputs"]["manifests"][budget]["labeled_train"] != sha256_file(manifest / "labeled_train.csv"):
         raise ValueError("CPC probe label IDs differ from designated budget manifest")
     if config["arm"] != "ordinary" or config["fingerprint"]["budget"] != budget:
         raise ValueError("Wrong CPC probe")
@@ -281,7 +273,7 @@ def load_budget(budget):
             "cpc_probe": cpc_probe, "train": train, "development": development, "calibration": calibration,
             "jepa_index": jepa_index, "cpc_rows": cpc_rows, "jepa_x": jepa_x, "cpc_x": cpc_x,
             "jepa_dev": jepa_norm[split:], "cpc_dev": cpc_norm[split:], "jepa_stats": js, "cpc_stats": cs,
-            "development_y": y, "hashes": {str(path.relative_to(ROOT)): digest(path) for path in files},
+            "development_y": y, "hashes": {str(path.relative_to(ROOT)): sha256_file(path) for path in files},
             "reproduced_probe_dev_auroc": {"jepa": jepa_auc, "cpc": cpc_auc},
             "records": {"train": len(train), "development": len(development), "calibration": len(calibration)}}
 
@@ -339,8 +331,8 @@ def main():
             saved = json.loads(output.read_text())
             if saved["fingerprint"] != fingerprint or saved.get("completed") is not True:
                 raise ValueError(f"Existing {budget} receipt fingerprint differs")
-            print(json.dumps({"budget": budget, "status": "verified_completed", "sha256": digest(output)}), flush=True)
-            receipts[budget] = {"path": str(output), "sha256": digest(output)}
+            print(json.dumps({"budget": budget, "status": "verified_completed", "sha256": sha256_file(output)}), flush=True)
+            receipts[budget] = {"path": str(output), "sha256": sha256_file(output)}
             continue
         y = data["development_y"]
         je, cp = data["jepa_dev"], data["cpc_dev"]
@@ -361,9 +353,9 @@ def main():
         if decision["pass"]:
             result["evaluation"] = evaluate_if_pass(data, chosen)
         atomic_json(output, result)
-        receipts[budget] = {"path": str(output), "sha256": digest(output)}
+        receipts[budget] = {"path": str(output), "sha256": sha256_file(output)}
         print(json.dumps({"budget": budget, "gate": decision, "selected_alpha": chosen,
-                          "seconds_elapsed": time.monotonic() - start, "sha256": digest(output)}), flush=True)
+                          "seconds_elapsed": time.monotonic() - start, "sha256": sha256_file(output)}), flush=True)
     atomic_json(args.output_dir / "coordination.json", {"state": "complete", "pid": os.getpid(),
                 "completed_at_utc": stamp(), "command": " ".join(sys.argv), "returncode": 0,
                 "elapsed_seconds": time.monotonic() - start, "receipts": receipts})

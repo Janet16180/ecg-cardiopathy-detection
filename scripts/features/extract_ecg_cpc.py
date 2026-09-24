@@ -21,7 +21,9 @@ import numpy as np
 import torch
 from torch import nn
 
-from scripts.extract_pretrained import git_head, manifest_rows, read_record, sha256
+from ecg_experiment.files import sha256_file, write_json_atomic
+from ecg_experiment.provenance import git_head
+from ecg_experiment.waveforms import manifest_rows, read_record
 
 ROOT = Path(__file__).resolve().parents[2]
 CHECKPOINT_SHA256 = "bc253edc6ac279ce2caec86d3c3a21b740e43735ca03be1dc7c50e630b0ad4cf"
@@ -46,7 +48,7 @@ class MetadataUnpickler(pickle.Unpickler):
 
 
 def checkpoint_state(path):
-    if sha256(path) != CHECKPOINT_SHA256:
+    if sha256_file(path) != CHECKPOINT_SHA256:
         raise ValueError("Checkpoint SHA256 differs from verified Figshare release")
     payload = torch.load(path, map_location="cpu", weights_only=False,
                          pickle_module=types.SimpleNamespace(
@@ -130,12 +132,6 @@ def preprocess(signal):
     return np.stack(views).astype(np.float32)
 
 
-def atomic_json(path, value):
-    temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(json.dumps(value, indent=2, allow_nan=False) + "\n")
-    os.replace(temporary, path)
-
-
 def extract(args):
     os.environ.setdefault("MPLCONFIGDIR", "/tmp/ecg-cpc-mpl")
     os.environ.setdefault("KEOPS_CACHE_FOLDER", "/tmp/ecg-cpc-keops")
@@ -143,16 +139,16 @@ def extract(args):
     rows, manifests = manifest_rows(args.manifest_dir, args.limit)
     output = args.output_dir
     output.mkdir(parents=True, exist_ok=True)
-    identity = {"checkpoint_sha256": sha256(args.checkpoint), "repository_commit": git_head(args.repository),
+    identity = {"checkpoint_sha256": sha256_file(args.checkpoint), "repository_commit": git_head(args.repository),
                 "manifests": manifests, "ecg_ids": [row["ecg_id"] for row in rows],
-                "extractor_sha256": sha256(Path(__file__)), "preprocessing": "four 2.5-second 500Hz mV crops, resampy 500->240Hz, no normalization",
+                "extractor_sha256": sha256_file(Path(__file__)), "preprocessing": "four 2.5-second 500Hz mV crops, resampy 500->240Hz, no normalization",
                 "pooling": "mean over 300 S4 tokens per crop, then mean across four crops"}
     if (output / "metadata.json").exists():
         old = json.loads((output / "metadata.json").read_text())
         if old["identity"] != identity:
             raise ValueError("Completed feature extraction has different inputs")
         for name, digest in old["output_sha256"].items():
-            if sha256(output / name) != digest:
+            if sha256_file(output / name) != digest:
                 raise ValueError(f"Completed feature checksum mismatch: {name}")
         return old
     model = ReleasedCPC(args.repository, args.checkpoint).to(args.device)
@@ -174,7 +170,7 @@ def extract(args):
             raise ValueError("Feature array exists without progress metadata")
         done = 0
         features = np.lib.format.open_memmap(partial_path, mode="w+", dtype=np.float32, shape=(len(rows), 512))
-        atomic_json(progress_path, {"identity": identity, "completed": 0})
+        write_json_atomic(progress_path, {"identity": identity, "completed": 0})
     started = time.monotonic()
     for start in range(done, len(rows), args.batch_size):
         batch = rows[start:start + args.batch_size]
@@ -183,7 +179,7 @@ def extract(args):
             embedded = model(torch.from_numpy(views).to(args.device)).reshape(len(batch), 4, 512).mean(dim=1)
         features[start:start + len(batch)] = embedded.cpu().numpy()
         features.flush()
-        atomic_json(progress_path, {"identity": identity, "completed": start + len(batch)})
+        write_json_atomic(progress_path, {"identity": identity, "completed": start + len(batch)})
         if start == done or (start // args.batch_size) % 20 == 0 or start + len(batch) == len(rows):
             print(json.dumps({"completed": start + len(batch), "records": len(rows),
                               "elapsed_seconds_this_invocation": time.monotonic() - started}), flush=True)
@@ -197,8 +193,8 @@ def extract(args):
                 "comparison_limit": "Project linear probe; not a reproduction of the publication's full benchmark or query-attention frozen evaluation",
                 "parameters": sum(p.numel() for p in model.parameters()), **model.loading_info,
                 "records": len(rows), "device": args.device,
-                "output_sha256": {name: sha256(output / name) for name in ("features.npy", "ecg_ids.npy")}}
-    atomic_json(output / "metadata.json", metadata)
+                "output_sha256": {name: sha256_file(output / name) for name in ("features.npy", "ecg_ids.npy")}}
+    write_json_atomic(output / "metadata.json", metadata)
     progress_path.unlink()
     return metadata
 

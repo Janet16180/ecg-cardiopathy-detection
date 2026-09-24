@@ -2,7 +2,8 @@
 """Audit and index public WFDB cohorts without modifying raw ECG files.
 
 The output is a manifest of canonical ten-second views plus explicit exclusions.
-`load_view` implements the same read-only transformation for downstream consumers.
+`ecg_experiment.public_sources.load_view` implements the same read-only
+transformation for downstream consumers.
 No labels are mapped to the PTB-XL abnormality proxy here.
 """
 
@@ -22,59 +23,18 @@ from pathlib import Path
 import numpy as np
 import wfdb
 
-from scripts.download_ptbxl_waveforms import parse_checksums, sha256
-from scripts.extract_pretrained import LEADS, read_record
+from ecg_experiment import public_sources
+from ecg_experiment.downloads import parse_checksums
+from ecg_experiment.files import sha256_file
+from ecg_experiment.public_sources import SOURCE, load_view, signal_sha256
+from ecg_experiment.waveforms import read_record
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = {
-    "georgia": ("challenge-2020", "1.0.2", "training/georgia"),
-    "cpsc_2018": ("challenge-2020", "1.0.2", "training/cpsc_2018"),
-    "cpsc_2018_extra": ("challenge-2020", "1.0.2", "training/cpsc_2018_extra"),
-    "chapman_shaoxing": ("challenge-2021", "1.0.3", "training/chapman_shaoxing"),
-}
 MANIFEST_FIELDS = ("ecg_id", "patient_id", "patient_identity_known", "source", "raw_dir",
                    "filename_hr", "source_samples", "window_start", "label_codes", "signal_sha256",
                    "qc_flags")
 EXCLUSION_FIELDS = ("ecg_id", "source", "reason", "detail")
-
-
-def signal_sha256(signal: np.ndarray) -> str:
-    return hashlib.sha256(np.ascontiguousarray(signal, dtype="<f4").tobytes()).hexdigest()
-
-
-def load_view(raw_dir: Path, stem: str, policy: str) -> tuple[np.ndarray, int, int, str]:
-    """Return canonical [12,5000] physical-mV float32, start, full length, QC flags."""
-    if policy not in {"strict_10s", "ssl_center_crop"}:
-        raise ValueError("unknown_policy")
-    path = (raw_dir / stem).resolve()
-    if not path.is_relative_to(raw_dir.resolve()):
-        raise ValueError("unsafe_path")
-    record = wfdb.rdrecord(str(path))
-    names = [name.upper() for name in record.sig_name]
-    if record.fs != 500 or len(names) != 12 or set(names) != {x.upper() for x in LEADS}:
-        raise ValueError("lead_or_rate_contract")
-    if record.units != ["mV"] * 12:
-        raise ValueError("units_contract")
-    waveform = np.asarray(record.p_signal, dtype=np.float32)
-    if waveform.ndim != 2 or waveform.shape[1] != 12:
-        raise ValueError("nonfinite_or_shape")
-    samples = waveform.shape[0]
-    if samples < 5000 or (policy == "strict_10s" and samples != 5000):
-        raise ValueError("duration_contract")
-    start = (samples - 5000) // 2 if policy == "ssl_center_crop" else 0
-    signal = waveform[start:start + 5000, [names.index(x.upper()) for x in LEADS]].T.copy()
-    if signal.shape != (12, 5000) or not np.isfinite(signal).all():
-        raise ValueError("nonfinite_or_shape")
-    spread = np.ptp(signal, axis=1)
-    if np.any(spread == 0):
-        raise ValueError("constant_lead")
-    flags = []
-    if np.any(signal.std(axis=1) < 0.01):
-        flags.append("near_flat_lead_review")
-    if np.max(np.abs(signal)) > 10:
-        flags.append("amplitude_over_10mV_review")
-    return signal, start, samples, ";".join(flags)
 
 
 def ptb_reference_hashes(cache: Path) -> set[str]:
@@ -88,7 +48,7 @@ def ptb_reference_hashes(cache: Path) -> set[str]:
     metadata = raw / "ptbxl_database.csv"
     checksum_path = raw / "SHA256SUMS.txt"
     checksums = parse_checksums(checksum_path.read_text())
-    fingerprint = sha256(metadata)
+    fingerprint = sha256_file(metadata)
     if checksums.get("ptbxl_database.csv") != fingerprint:
         raise ValueError("PTB-XL metadata official checksum mismatch")
     with metadata.open(newline="", encoding="utf-8") as handle:
@@ -99,13 +59,13 @@ def ptb_reference_hashes(cache: Path) -> set[str]:
         for suffix in (".hea", ".dat"):
             name = row["filename_hr"] + suffix
             path = (raw / name).resolve()
-            if not path.is_relative_to(raw.resolve()) or checksums.get(name) != sha256(path):
+            if not path.is_relative_to(raw.resolve()) or checksums.get(name) != sha256_file(path):
                 raise ValueError(f"PTB-XL waveform official checksum mismatch: {name}")
     decoder_source = inspect.getsource(read_record) + inspect.getsource(signal_sha256)
     identity = {
         "schema_version": 2,
         "ptbxl_database_sha256": fingerprint,
-        "official_checksums_sha256": sha256(checksum_path),
+        "official_checksums_sha256": sha256_file(checksum_path),
         "records_checked": len(rows),
         "decoder_sha256": hashlib.sha256(decoder_source.encode()).hexdigest(),
         "wfdb_version": wfdb.__version__, "numpy_version": np.__version__,
@@ -152,7 +112,7 @@ def selected_files(sources: list[str], limit: int | None,
             stems = stems[:limit]
         manifests[source] = {"source_url": f"https://physionet.org/files/{project}/{version}",
                              "checksum_file": str(checksum_file.relative_to(ROOT)),
-                             "checksum_sha256": sha256(checksum_file),
+                             "checksum_sha256": sha256_file(checksum_file),
                              "candidate_records": len(stems)}
         for stem in stems:
             selected.append((source, raw_dir, stem))
@@ -205,7 +165,7 @@ def _prepare(sources: list[str], policy: str, output_dir: Path,
             for extension in (".hea", ".mat"):
                 name = stem + extension
                 file = raw_dir / name
-                if name not in checksums or not file.is_file() or sha256(file) != checksums[name]:
+                if name not in checksums or not file.is_file() or sha256_file(file) != checksums[name]:
                     raise ValueError("official_checksum_or_missing_file")
             signal, start, samples, flags = load_view(raw_dir, stem, policy)
             digest = signal_sha256(signal)
@@ -243,7 +203,7 @@ def _prepare(sources: list[str], policy: str, output_dir: Path,
         writer.writerows(excluded)
     result = {"schema_version": 2, "complete": True,
               "limit_per_source": limit, "allow_incomplete_acquisition": allow_incomplete,
-              "ptb_reference_receipt_sha256": sha256(reference_cache),
+              "ptb_reference_receipt_sha256": sha256_file(reference_cache),
               "policy": policy, "sources": sources, "provenance": provenance,
               "candidate_records": len(candidates), "accepted_records": len(accepted),
               "excluded_records": len(excluded), "counts": dict(counts),
@@ -252,8 +212,9 @@ def _prepare(sources: list[str], policy: str, output_dir: Path,
               "label_rule": "Original Challenge SNOMED codes preserved, not mapped to PTB-XL proxy",
               "strict_rule": "500Hz, twelve named leads, physical mV, finite, 5000 samples, no constant lead",
               "ssl_crop_rule": "long records center-cropped to 5000 samples; labels not valid for a cropped window without review",
-              "manifest_sha256": sha256(manifest), "exclusions_sha256": sha256(exclusions),
-              "preparation_source_sha256": sha256(Path(__file__))}
+              "manifest_sha256": sha256_file(manifest), "exclusions_sha256": sha256_file(exclusions),
+              "preparation_source_sha256": sha256_file(Path(__file__)),
+              "canonicalization_source_sha256": sha256_file(Path(public_sources.__file__))}
     (output_dir / "metadata.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
     return result
 

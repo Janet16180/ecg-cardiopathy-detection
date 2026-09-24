@@ -8,9 +8,9 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from scripts.download_ptbxl_waveforms import sha256
+from ecg_experiment.files import sha256_file
+from ecg_experiment.public_sources import signal_sha256
 from scripts.data.materialize_challenge_ecg import materialize, read_csv, verify_materialized
-from scripts.data.prepare_public_ecg import signal_sha256
 
 
 def write_csv(path: Path, rows: list[dict]) -> None:
@@ -40,7 +40,7 @@ def fixture(tmp_path: Path, *, crop: bool = False, conflict: bool = False):
         (path.with_suffix(".mat")).write_bytes(b"raw signal fixture")
         for suffix in (".hea", ".mat"):
             file = path.with_suffix(suffix)
-            checksum_lines.append(f"{sha256(file)}  {stem}{suffix}")
+            checksum_lines.append(f"{sha256_file(file)}  {stem}{suffix}")
     checksums = raw / "SHA256SUMS.txt"
     checksums.write_text("\n".join(checksum_lines) + "\n")
     prepared = root / "data/processed/audit"
@@ -60,11 +60,11 @@ def fixture(tmp_path: Path, *, crop: bool = False, conflict: bool = False):
     meta = {"policy": "ssl_center_crop" if crop else "strict_10s",
             "sources": ["georgia"], "accepted_records": 1,
             "excluded_records": len(excluded), "candidate_records": 1 + len(excluded),
-            "manifest_sha256": sha256(prepared / "manifest.csv"),
-            "exclusions_sha256": sha256(prepared / "exclusions.csv"),
+            "manifest_sha256": sha256_file(prepared / "manifest.csv"),
+            "exclusions_sha256": sha256_file(prepared / "exclusions.csv"),
             "preparation_source_sha256": "historical-revision",
             "provenance": {"georgia": {"checksum_file": str(checksums.relative_to(root)),
-                                        "checksum_sha256": sha256(checksums),
+                                        "checksum_sha256": sha256_file(checksums),
                                         "source_url": "https://physionet.org/files/challenge-2020/1.0.2",
                                         "candidate_records": 1 + len(excluded)}}}
     (prepared / "metadata.json").write_text(json.dumps(meta))
@@ -80,7 +80,7 @@ def fixture(tmp_path: Path, *, crop: bool = False, conflict: bool = False):
 def test_strict_conflict_retained_copy_is_not_label_eligible(tmp_path: Path) -> None:
     root, raw, prepared, comparisons, signal = fixture(tmp_path, conflict=True)
     output = root / "data/processed/views/strict"
-    raw_before = {file: sha256(file) for file in raw.rglob("*") if file.is_file()}
+    raw_before = {file: sha256_file(file) for file in raw.rglob("*") if file.is_file()}
     with patch("scripts.data.materialize_challenge_ecg.ROOT", root), patch(
             "scripts.data.materialize_challenge_ecg.load_view", return_value=(signal, 0, 5000, "")):
         result = materialize(prepared, output, comparisons=comparisons)
@@ -94,7 +94,7 @@ def test_strict_conflict_retained_copy_is_not_label_eligible(tmp_path: Path) -> 
     assert array.shape == (1, 12, 5000) and array.dtype == np.float32
     assert signal_sha256(array[0]) == row["signal_sha256"]
     assert verify_materialized(output)["verified_records"] == 1
-    assert {file: sha256(file) for file in raw.rglob("*") if file.is_file()} == raw_before
+    assert {file: sha256_file(file) for file in raw.rglob("*") if file.is_file()} == raw_before
 
 
 def test_center_crop_is_machine_readable_ssl_only(tmp_path: Path) -> None:
@@ -186,7 +186,7 @@ def test_verifier_rejects_semantic_corruption_even_when_rehashed(
     write_csv(output / "manifest.csv", records)
     metadata_file = output / "metadata.json"
     metadata = json.loads(metadata_file.read_text())
-    metadata["manifest_sha256"] = sha256(output / "manifest.csv")
+    metadata["manifest_sha256"] = sha256_file(output / "manifest.csv")
     metadata_file.write_text(json.dumps(metadata))
     with pytest.raises(ValueError, match=error):
         verify_materialized(output)

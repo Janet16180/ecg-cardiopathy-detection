@@ -5,15 +5,14 @@ from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import os
-import re
 import time
-import urllib.error
-import urllib.request
 import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path, PurePosixPath
+
+from ecg_experiment.downloads import fetch_file, parse_checksums
+from ecg_experiment.files import sha256_file
 
 
 BASE_URL = "https://physionet-open.s3.amazonaws.com/ptb-xl/1.0.3"
@@ -47,35 +46,12 @@ def waveform_paths(metadata_path: Path, sampling_rate: int, limit: int | None = 
     return paths
 
 
-def parse_checksums(contents: str) -> dict[str, str]:
-    checksums = {}
-    for line in contents.splitlines():
-        if not line.strip():
-            continue
-        match = re.fullmatch(r"([0-9a-fA-F]{64})[ \t]+\*?(?:\./)?(.+)", line)
-        if not match:
-            raise ValueError(f"Invalid SHA256SUMS line: {line[:100]!r}")
-        digest, name = match.groups()
-        if name in checksums and checksums[name] != digest.lower():
-            raise ValueError(f"Conflicting checksum for {name}")
-        checksums[name] = digest.lower()
-    return checksums
-
-
 def fetch_manifest(metadata_dir: Path, base_url: str, timeout: float, retries: int) -> dict[str, str]:
     path = metadata_dir / MANIFEST_NAME
     if not path.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
         fetch_file(f"{base_url.rstrip('/')}/{MANIFEST_NAME}", path, timeout, retries)
     return parse_checksums(path.read_text(encoding="utf-8"))
-
-
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def validate_file(path: Path, relative: str, sampling_rate: int, checksum: str) -> bool:
@@ -95,27 +71,7 @@ def validate_file(path: Path, relative: str, sampling_rate: int, checksum: str) 
                 return False
         except (UnicodeError, IndexError, ValueError):
             return False
-    return sha256(path) == checksum
-
-
-def fetch_file(url: str, destination: Path, timeout: float, retries: int,
-               verify=None) -> None:
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    partial = destination.with_name(destination.name + ".part")
-    for attempt in range(retries + 1):
-        try:
-            with urllib.request.urlopen(url, timeout=timeout) as response, partial.open("wb") as handle:
-                while chunk := response.read(1024 * 1024):
-                    handle.write(chunk)
-            if verify is not None and not verify(partial):
-                raise ValueError(f"Integrity check failed for {url}")
-            os.replace(partial, destination)
-            return
-        except (OSError, urllib.error.URLError, ValueError):
-            partial.unlink(missing_ok=True)
-            if attempt == retries:
-                raise
-            time.sleep(min(2 ** attempt, 30))
+    return sha256_file(path) == checksum
 
 
 def download_pair(base: str, metadata_dir: Path, sampling_rate: int,

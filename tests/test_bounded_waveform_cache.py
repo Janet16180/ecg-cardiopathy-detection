@@ -5,7 +5,7 @@ import pytest
 import torch
 
 from ecg_experiment import bounded_waveform_cache as bounded
-from scripts.experiments.run_cpc_experiment import Pool, loader
+from ecg_experiment.cpc_pool import Pool, loader
 
 
 def test_subset_preserves_waveforms_rows_and_seeded_batches(synthetic_cpc_pool):

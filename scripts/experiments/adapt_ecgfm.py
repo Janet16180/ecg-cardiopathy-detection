@@ -25,7 +25,10 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader, Dataset
 
-from scripts.extract_pretrained import git_head, load_model, preprocess_ecg_fm, read_record, sha256
+from ecg_experiment.files import sha256_file, write_json_atomic
+from ecg_experiment.foundation_models import load_model, preprocess_ecg_fm, preprocessing_source_sha256
+from ecg_experiment.provenance import git_head
+from ecg_experiment.waveforms import read_record
 
 
 def training_rows(manifest_dir: Path, raw_dir: Path):
@@ -54,7 +57,7 @@ def training_rows(manifest_dir: Path, raw_dir: Path):
     heldout_patients = {r["patient_id"] for r in official.values() if int(r["strat_fold"]) >= 9}
     if heldout_patients & {r["patient_id"] for r in rows}:
         raise ValueError("Held-out patient present in SSL data")
-    hashes = {path.name: sha256(path), "ptbxl_database.csv": sha256(metadata_path)}
+    hashes = {path.name: sha256_file(path), "ptbxl_database.csv": sha256_file(metadata_path)}
     return rows, hashes
 
 
@@ -122,10 +125,6 @@ def temporal_contrastive_loss(features, patient_ids, temperature=0.1):
     return (forward.mean() + backward.mean()) / 2
 
 
-def save_json(path, value):
-    Path(path).write_text(json.dumps(value, indent=2, allow_nan=False) + "\n")
-
-
 def update_budget(records: int, batch_size: int, epochs: int, max_updates: int | None):
     """Return steps per epoch and whether the final batch must be omitted.
 
@@ -188,7 +187,7 @@ def main():
     except ValueError as exc:
         parser.error(str(exc))
     original_meta = json.loads(args.checkpoint_metadata.read_text())["checkpoint"]
-    if original_meta["sha256"] != sha256(args.checkpoint):
+    if original_meta["sha256"] != sha256_file(args.checkpoint):
         raise ValueError("Official checkpoint differs from recorded extraction metadata")
     config = {
         "model": "ecg-fm", "objective": "CMSC-style symmetric cross-view patient-aware contrastive adaptation; not full WCR",
@@ -198,7 +197,7 @@ def main():
         "training_records": len(rows), "heldout_patient_overlap": None if extra_rows else 0,
         "ptbxl_heldout_patient_overlap": 0,
         "ptbxl_training_records": len(ptbxl_rows),
-        "external_ssl": ({"manifest_sha256": sha256(args.extra_ssl_manifest),
+        "external_ssl": ({"manifest_sha256": sha256_file(args.extra_ssl_manifest),
                           "records": len(extra_rows), "source_counts": dict(Counter(r["source"] for r in extra_rows)),
                           "grouping_description": args.extra_grouping_description,
                           "waveforms": extra_rows,
@@ -212,8 +211,8 @@ def main():
         "seed": args.seed, "workers": args.workers, "threads": args.threads,
         "checkpoint_selection": "Final state after fixed epoch budget; no validation/test selection",
         "protocol_note": args.protocol_note,
-        "source_sha256": sha256(Path(__file__)),
-        "extractor_source_sha256": sha256(Path(__file__).resolve().parents[2] / "scripts/extract_pretrained.py"),
+        "source_sha256": sha256_file(Path(__file__)),
+        "extractor_source_sha256": preprocessing_source_sha256(),
         "official_source_commit": git_head(Path(__file__).resolve().parents[2] / "third_party" / "fairseq-signals"),
     }
     if args.max_updates is not None:
@@ -230,7 +229,7 @@ def main():
         raise ValueError("Resume configuration differs")
     if args.resume and not resume_path.is_file():
         raise FileNotFoundError("No completed-epoch resume checkpoint exists; restart this run in a clean output directory")
-    save_json(args.output_dir / "config.json", config)
+    write_json_atomic(args.output_dir / "config.json", config)
     (args.output_dir / "source_snapshot.py").write_bytes(Path(__file__).read_bytes())
     model, _ = load_model("ecg-fm", args.checkpoint, args.device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate, weight_decay=0.01)
@@ -298,7 +297,7 @@ def main():
             entry.update({"updates": updates_completed, "seen_examples": seen_examples,
                           "complete_epoch": complete_epoch})
         history.append(entry)
-        save_json(args.output_dir / "history.json", history)
+        write_json_atomic(args.output_dir / "history.json", history)
         print(json.dumps({"stage": "ecg-fm_cmsc_adaptation", **entry}), flush=True)
         if complete_epoch:
             temporary = args.output_dir / "resume.partial.pt"
@@ -315,7 +314,7 @@ def main():
         raise RuntimeError("Nonfinite adapted checkpoint")
     path = args.output_dir / "adapted_backbone.pt"
     torch.save({"backbone": backbone, "metadata": config, "history": history}, path)
-    completion = {"checkpoint": path.name, "sha256": sha256(path),
+    completion = {"checkpoint": path.name, "sha256": sha256_file(path),
               "completed_epochs": len(history), "seconds": elapsed_before + time.monotonic() - started,
               "torch_version": str(torch.__version__),
               "device": torch.cuda.get_device_name() if args.device == "cuda" else "cpu",
@@ -323,7 +322,7 @@ def main():
     if args.max_updates is not None:
         completion.update({"updates": updates_completed, "seen_examples": seen_examples,
                            "completed_epochs": sum(item["complete_epoch"] for item in history)})
-    save_json(args.output_dir / "completion.json", completion)
+    write_json_atomic(args.output_dir / "completion.json", completion)
     # The completed portable backbone supersedes this run's optimizer resume file.
     resume_path.unlink(missing_ok=True)
     print(f"Completed adaptation: {path}", flush=True)

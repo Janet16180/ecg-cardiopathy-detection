@@ -9,12 +9,12 @@ import torch
 from ecg_experiment.cpc import CPCEncoder
 from ecg_experiment.ecg_tokenizers import (
     CausalChunkEncoder,
-    _sha256,
     beat_metadata,
     causal_beat_boundaries,
     detect_confirmed_beats,
     load_beat_metadata,
 )
+from ecg_experiment.files import sha256_file
 from scripts.data.prepare_beat_tokens import prepare
 
 
@@ -173,8 +173,8 @@ def test_small_cache_produces_hashed_aligned_metadata(tmp_path):
     np.save(cache / "ecg_ids.npy", ids)
     (cache / "complete.json").write_text(json.dumps({
         "record_count": 3, "shape": [3, 12, 2500],
-        "signals_sha256": _sha256(cache / "signals.npy"),
-        "ecg_ids_sha256": _sha256(cache / "ecg_ids.npy")}))
+        "signals_sha256": sha256_file(cache / "signals.npy"),
+        "ecg_ids_sha256": sha256_file(cache / "ecg_ids.npy")}))
     info = prepare(cache, output, workers=2)
     assert info["record_count"] == 3
     boundaries = load_beat_metadata(output, ids)

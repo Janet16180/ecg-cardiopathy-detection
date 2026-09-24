@@ -55,8 +55,11 @@ tests in `tests/`, experiment settings in `configs/`, and explanations in `docs/
 Use `uv run python -m scripts.<area>.<command>` from the project root; see
 the [command guide](scripts/README.md). Group commands by purpose. Classes should
 encapsulate state and responsibilities; keep stateless operations as functions.
-New code should be small, typed where useful, and readable without a notebook.
-Ruff checks correctness errors across the code. Preserve historical experiment
+Scripts import shared logic from `ecg_experiment/`, never from other scripts.
+Prefer flat control flow with guard clauses, let unexpected errors raise, and
+give every function type hints and a NumPy-style docstring. Ruff enforces these
+rules, import order, and a complexity limit; run `uv run ruff check ecg_experiment
+scripts tests` before pushing. Preserve historical experiment
 receipts; code changes need new manifests before execution. Use Git history for
 maintenance changes instead of separate refactor journals.
 

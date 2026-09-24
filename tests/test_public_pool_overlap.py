@@ -1,5 +1,5 @@
 import pytest
-from scripts.audit_public_pool_overlap import classify_overlap
+from scripts.validation.audit_public_pool_overlap import classify_overlap
 
 
 def test_same_identity_under_different_record_id_cannot_append():

@@ -9,8 +9,8 @@ import numpy as np
 import pytest
 
 from scripts.download_ptbxl_waveforms import sha256
-from scripts.materialize_challenge_ecg import materialize, read_csv, verify_materialized
-from scripts.prepare_public_ecg import signal_sha256
+from scripts.data.materialize_challenge_ecg import materialize, read_csv, verify_materialized
+from scripts.data.prepare_public_ecg import signal_sha256
 
 
 def write_csv(path: Path, rows: list[dict]) -> None:
@@ -81,8 +81,8 @@ def test_strict_conflict_retained_copy_is_not_label_eligible(tmp_path: Path) -> 
     root, raw, prepared, comparisons, signal = fixture(tmp_path, conflict=True)
     output = root / "data/processed/views/strict"
     raw_before = {file: sha256(file) for file in raw.rglob("*") if file.is_file()}
-    with patch("scripts.materialize_challenge_ecg.ROOT", root), patch(
-            "scripts.materialize_challenge_ecg.load_view", return_value=(signal, 0, 5000, "")):
+    with patch("scripts.data.materialize_challenge_ecg.ROOT", root), patch(
+            "scripts.data.materialize_challenge_ecg.load_view", return_value=(signal, 0, 5000, "")):
         result = materialize(prepared, output, comparisons=comparisons)
     row = read_csv(output / "manifest.csv")[0]
     assert result["counts"]["label_conflict_retained"] == 1
@@ -102,8 +102,8 @@ def test_center_crop_is_machine_readable_ssl_only(tmp_path: Path) -> None:
     overlap = root / "other.csv"
     write_csv(overlap, [{"ecg_id": "georgia:E00001", "signal_sha256": signal_sha256(signal)}])
     output = root / "data/processed/views/crop"
-    with patch("scripts.materialize_challenge_ecg.ROOT", root), patch(
-            "scripts.materialize_challenge_ecg.load_view", return_value=(signal, 500, 6000, "")):
+    with patch("scripts.data.materialize_challenge_ecg.ROOT", root), patch(
+            "scripts.data.materialize_challenge_ecg.load_view", return_value=(signal, 500, 6000, "")):
         materialize(prepared, output, overlap_manifest=overlap)
     row = read_csv(output / "manifest.csv")[0]
     assert row["label_scope"] == "ssl_only_crop"
@@ -116,8 +116,8 @@ def test_changed_raw_file_fails_without_publishing_output(tmp_path: Path) -> Non
     root, raw, prepared, _, signal = fixture(tmp_path)
     (raw / "training/georgia/g1/E00001.mat").write_bytes(b"changed")
     output = root / "data/processed/views/strict"
-    with patch("scripts.materialize_challenge_ecg.ROOT", root), patch(
-            "scripts.materialize_challenge_ecg.load_view", return_value=(signal, 0, 5000, "")):
+    with patch("scripts.data.materialize_challenge_ecg.ROOT", root), patch(
+            "scripts.data.materialize_challenge_ecg.load_view", return_value=(signal, 0, 5000, "")):
         with pytest.raises(ValueError, match="Official raw file checksum mismatch"):
             materialize(prepared, output)
     assert not output.exists()
@@ -126,8 +126,8 @@ def test_changed_raw_file_fails_without_publishing_output(tmp_path: Path) -> Non
 def test_strict_original_annotation_is_unmapped_and_not_endpoint_ready(tmp_path: Path) -> None:
     root, _, prepared, _, signal = fixture(tmp_path)
     output = root / "data/processed/views/strict"
-    with patch("scripts.materialize_challenge_ecg.ROOT", root), patch(
-            "scripts.materialize_challenge_ecg.load_view", return_value=(signal, 0, 5000, "")):
+    with patch("scripts.data.materialize_challenge_ecg.ROOT", root), patch(
+            "scripts.data.materialize_challenge_ecg.load_view", return_value=(signal, 0, 5000, "")):
         materialize(prepared, output)
     row = read_csv(output / "manifest.csv")[0]
     assert row["record_annotation_available"] == "true"
@@ -140,8 +140,8 @@ def test_changed_canonical_view_fails_without_publishing_output(tmp_path: Path) 
     output = root / "data/processed/views/strict"
     modified = signal.copy()
     modified[0, 0] += 0.5
-    with patch("scripts.materialize_challenge_ecg.ROOT", root), patch(
-            "scripts.materialize_challenge_ecg.load_view", return_value=(modified, 0, 5000, "")):
+    with patch("scripts.data.materialize_challenge_ecg.ROOT", root), patch(
+            "scripts.data.materialize_challenge_ecg.load_view", return_value=(modified, 0, 5000, "")):
         with pytest.raises(ValueError, match="Materialized view differs"):
             materialize(prepared, output)
     assert not output.exists()
@@ -149,7 +149,7 @@ def test_changed_canonical_view_fails_without_publishing_output(tmp_path: Path) 
 
 def test_output_inside_raw_is_rejected(tmp_path: Path) -> None:
     root, raw, prepared, _, _ = fixture(tmp_path)
-    with patch("scripts.materialize_challenge_ecg.ROOT", root):
+    with patch("scripts.data.materialize_challenge_ecg.ROOT", root):
         with pytest.raises(ValueError, match="outside data/raw"):
             materialize(prepared, raw / "bad")
 
@@ -157,8 +157,8 @@ def test_output_inside_raw_is_rejected(tmp_path: Path) -> None:
 def test_verifier_rejects_changed_shard(tmp_path: Path) -> None:
     root, _, prepared, _, signal = fixture(tmp_path)
     output = root / "data/processed/views/strict"
-    with patch("scripts.materialize_challenge_ecg.ROOT", root), patch(
-            "scripts.materialize_challenge_ecg.load_view", return_value=(signal, 0, 5000, "")):
+    with patch("scripts.data.materialize_challenge_ecg.ROOT", root), patch(
+            "scripts.data.materialize_challenge_ecg.load_view", return_value=(signal, 0, 5000, "")):
         materialize(prepared, output)
     shard = output / "shard_00000.npy"
     with shard.open("ab") as handle:
@@ -178,8 +178,8 @@ def test_verifier_rejects_semantic_corruption_even_when_rehashed(
         tmp_path: Path, field: str, value: str, error: str) -> None:
     root, _, prepared, _, signal = fixture(tmp_path)
     output = root / "data/processed/views/strict"
-    with patch("scripts.materialize_challenge_ecg.ROOT", root), patch(
-            "scripts.materialize_challenge_ecg.load_view", return_value=(signal, 0, 5000, "")):
+    with patch("scripts.data.materialize_challenge_ecg.ROOT", root), patch(
+            "scripts.data.materialize_challenge_ecg.load_view", return_value=(signal, 0, 5000, "")):
         materialize(prepared, output)
     records = read_csv(output / "manifest.csv")
     records[0][field] = value
@@ -195,8 +195,8 @@ def test_verifier_rejects_semantic_corruption_even_when_rehashed(
 def test_verifier_rejects_incomplete_publication(tmp_path: Path) -> None:
     root, _, prepared, _, signal = fixture(tmp_path)
     output = root / "data/processed/views/strict"
-    with patch("scripts.materialize_challenge_ecg.ROOT", root), patch(
-            "scripts.materialize_challenge_ecg.load_view", return_value=(signal, 0, 5000, "")):
+    with patch("scripts.data.materialize_challenge_ecg.ROOT", root), patch(
+            "scripts.data.materialize_challenge_ecg.load_view", return_value=(signal, 0, 5000, "")):
         materialize(prepared, output)
     path = output / "metadata.json"
     metadata = json.loads(path.read_text())

@@ -3,12 +3,12 @@ import signal
 
 import pytest
 
-from scripts import handoff_priority_queue as handoff
-from scripts import run_priority_queue as queue
+from scripts.coordination import handoff_priority_queue as handoff
+from scripts.coordination import run_priority_queue as queue
 
 
 OLD_SHA = "a" * 64
-IDENTITY = {"start": "123", "command": ["python", "-u", "-m", "scripts.run_priority_queue"]}
+IDENTITY = {"start": "123", "command": ["python", "-u", "-m", "scripts.coordination.run_priority_queue"]}
 
 
 def setup_old(tmp_path, monkeypatch, state="profiling", experiment="015_cached_jepa_distillation"):

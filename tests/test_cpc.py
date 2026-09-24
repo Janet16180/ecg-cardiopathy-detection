@@ -4,7 +4,7 @@ import numpy as np
 import torch
 
 from ecg_experiment.cpc import CPCEncoder, CPCPretrainer, cmsc_loss, temporal_candidate_mask
-from scripts.run_cpc_experiment import Pool, PoolDataset, resume_or_new, save_epoch, seed_all
+from scripts.experiments.run_cpc_experiment import Pool, PoolDataset, resume_or_new, save_epoch, seed_all
 
 
 def test_future_perturbation_preserves_past_tokens_and_contexts():

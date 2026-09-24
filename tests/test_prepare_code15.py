@@ -12,8 +12,8 @@ import h5py
 import numpy as np
 import pytest
 
-from scripts.prepare_code15 import inspect_trace, prepare, sha256_file
-from scripts.verify_code15_prepared import verify
+from scripts.data.prepare_code15 import inspect_trace, prepare, sha256_file
+from scripts.validation.verify_code15_prepared import verify
 
 
 def _md5(path: Path) -> str:

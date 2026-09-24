@@ -3,10 +3,13 @@
 ## Repository workflow after the refactor
 
 - Read `CONTRIBUTING.md` and `docs/README.md` for setup and document locations.
-- Use `make setup` / `make check`, or set `UV_PROJECT_ENVIRONMENT=.venv-uv`
-  before `uv` commands. Preserve `.venv` and `.venv-pretrained` while downloads
-  or historical jobs use them. Root dependencies live in `pyproject.toml` and
-  `uv.lock`; old requirements files are archival receipts under `environments/archive/`.
+- Use direct `uv` commands with the default `.venv`; see `CONTRIBUTING.md`.
+  Root dependencies live in `pyproject.toml` and `uv.lock`. Preserve installed
+  runtime dependencies while downloaders use them; use `uv sync --inexact`
+  and inspect its dry run before syncing an active environment.
+- Group commands by purpose under `scripts/`; reusable logic belongs in
+  `ecg_experiment/`. Keep active download entry points and dependencies stable.
+- Use Git history for maintenance changes; retain scientific protocols and evidence.
 - DVC covers completed verified sources and fixed patient split manifests only.
   Never add active MIMIC/CODE download trees. See `docs/data-versioning.md`.
 - The user wants data kept local while evaluating affordable storage. Do not

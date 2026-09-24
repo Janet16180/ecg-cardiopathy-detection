@@ -9,8 +9,8 @@ from torch.nn import functional as F
 from ecg_experiment.cpc import HORIZONS
 from ecg_experiment.cpc_word2vec import (SampledCPCPretrainer, sampled_negative_indices,
                                          sampled_objective)
-from scripts import run_cpc_experiment as base
-from scripts.run_cpc_word2vec import resume_or_new, save_epoch
+from scripts.experiments import run_cpc_experiment as base
+from scripts.experiments.run_cpc_word2vec import resume_or_new, save_epoch
 
 
 def test_sampled_negatives_are_distant_same_half_and_reproducible():

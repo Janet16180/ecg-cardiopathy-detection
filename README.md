@@ -15,27 +15,16 @@ The verified environment uses **Python 3.11**, `uv`, and the pinned PyTorch 2.6 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then:
 
 ```bash
-make setup
-make check
-```
-
-Use `make mlflow` to view the local experiment register, `make register-runs` to
-import completed results, and `make validate-data` to verify the DVC dataset catalog.
-
-Without Make:
-
-```bash
-export UV_PROJECT_ENVIRONMENT=.venv-uv
 uv sync --locked --group data --group tracking
 uv run --locked ruff check ecg_experiment scripts tests
 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 CUDA_VISIBLE_DEVICES='' \
   uv run --locked --group data --group tracking python -m pytest -q
 ```
 
-`pyproject.toml` declares dependencies; `uv.lock` fixes their resolved versions.
-`.venv-uv` keeps the new setup separate from historical environments used by
-downloaders. Follow [the environment guide](environments/README.md) for pretrained
-encoders and archived environment receipts.
+uv uses `.venv` by default. `pyproject.toml` declares dependencies and `uv.lock`
+fixes their resolved versions. See the [environment guide](environments/README.md)
+for pretrained encoders and syncing while downloaders are active.
+GitHub Actions runs Ruff, CPU tests, and a package build on pull requests and pushes.
 
 ## Shared workflow
 
@@ -44,7 +33,7 @@ encoders and archived environment receipts.
 | Contribute code and review changes | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | Version completed local datasets with DVC | [Data versioning](docs/data-versioning.md) |
 | Search and compare recorded runs in MLflow | [Experiment tracking](docs/experiment-tracking.md) |
-| Understand the folder structure | [Repository organization](docs/repository-organization.md) |
+| Find command entry points | [Command guide](scripts/README.md) |
 | Find protocols, results, and data documentation | [Documentation index](docs/README.md) |
 | Recover paused work | [Queue](docs/experiment-queue.md) and [machine-readable catalog](docs/experiment-queue.json) |
 
@@ -66,13 +55,12 @@ data/             Local raw and derived datasets; Git tracks only DVC metadata/d
 notebooks/        Optional exploration
 reports/          Reviewed aggregate reports for new work
 docs/             Scientific protocols, results index, and working guides
-environments/     Environment setup and immutable historical receipts
+environments/     Main and pretrained environment setup
 outputs/          Local experiment results, checkpoints, and verification evidence
 ```
 
 The layout follows [Cookiecutter Data Science](https://cookiecutter-data-science.drivendata.org/using-the-template/)
-with existing scientific paths retained for reproducibility. See the
-[refactor record](docs/repository-refactor.md) for the migration and verification.
+with reusable code separated from commands, local data, and experiment outputs.
 
 ## Research context
 

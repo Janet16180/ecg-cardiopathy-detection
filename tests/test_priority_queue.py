@@ -4,7 +4,7 @@ import signal
 
 import pytest
 
-from scripts import run_priority_queue as queue
+from scripts.coordination import run_priority_queue as queue
 
 
 def fixture_job(tmp_path, monkeypatch):
@@ -95,7 +95,7 @@ def test_failed_predecessor_stops_queue(tmp_path, monkeypatch):
 
 def test_resume_legacy_only_if_owned_identity_matches(tmp_path, monkeypatch):
     _, runner = fixture_job(tmp_path, monkeypatch)
-    expected = {"start": "original", "command": ["scripts.run_mimic_scale"]}
+    expected = {"start": "original", "command": ["scripts.experiments.run_mimic_scale"]}
     runner.manifest["legacy"] = {"pid": 123, "identity": expected}
     runner.paused_legacy = True
     calls = []

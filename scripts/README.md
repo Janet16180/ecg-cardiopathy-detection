@@ -1,28 +1,31 @@
 # Command guide
 
-Run commands from the repository root using `python -m scripts.NAME` inside the
-appropriate uv environment. Consult the command's protocol before acquisition
-or experiment work; some legacy entry points encode a fixed protocol.
+Run commands from the repository root with
+`uv run --locked python -m scripts.<folder>.<name>` in the appropriate
+environment. Use `uv run --locked python -m scripts.<name>` for the few
+entrypoints retained at the `scripts/` root. Check the selected protocol and
+the [experiment queue](../docs/experiment-queue.md) before any scientific run;
+training and scheduling remain paused.
 
-| Work | Entry points |
-| --- | --- |
-| Repository checks | `make check`, `scripts.verify_refactor` |
-| Completed data validation | `make validate-data`, `scripts.validate_data_versioning` |
-| MLflow register | `make register-runs`, `scripts.import_mlflow_history` |
-| PTB acquisition | `download_ptbxl_metadata`, `download_ptbxl_waveforms` |
-| Other public acquisition | `download_public_ecg`, `download_missing_ecg.sh` |
-| MIMIC selection/acquisition | `prepare_mimic_ssl` |
-| Preparation | `prepare_ptbxl`, `prepare_public_ecg`, `prepare_code15`, `build_training_dataset` |
-| Quality and overlap | `audit_dataset_quality`, `audit_public_pool_overlap`, `audit_ecg_selection_bias` |
-| Cached features | `extract_pretrained`, `extract_jepa`, `extract_ecg_cpc` |
-| Scientific runs and reports | Use the selected protocol linked in the [queue](../docs/experiment-queue.md) |
+| Folder | Purpose | Example module |
+| --- | --- | --- |
+| `data/` | Download metadata, prepare sources, build datasets | `scripts.data.prepare_ptbxl` |
+| `features/` | Extract and combine cached features | `scripts.features.extract_jepa` |
+| `experiments/` | Train, probe, and evaluate models | `scripts.experiments.run_cpc_experiment` |
+| `coordination/` | Queue and handoff commands | `scripts.coordination.run_priority_queue` |
+| `reports/` | Analysis and report generation | `scripts.reports.eda_processed_ecg` |
+| `validation/` | Audits and source checks | `scripts.validation.validate_data_versioning` |
+| `tracking/` | MLflow indexing | `scripts.tracking.import_mlflow_history` |
 
-Acquisition commands are resumable but may take substantial time. Check existing
-processes and their receipt paths before starting another copy. Data validation
-does not perform acquisition or training.
+Active download entrypoints remain at the root: `scripts.prepare_mimic_ssl`,
+`scripts.download_public_ecg`, `scripts.download_ptbxl_waveforms`, and
+`scripts.extract_pretrained`. The active `scripts/download_missing_ecg.sh`
+driver remains there too. Use
+`uv run --locked --group data dvc repro validate_completed_data` for completed
+data checks.
+Acquisition can take substantial time, so inspect live coordination files before
+starting a copy. Data validation does not acquire data or start training.
 
-The `run_*`, `handoff_*`, and versioned profile modules belong to historical
-experiments with frozen source hashes. Their names and paths are intentional
-provenance. Follow the queue's pause and successor-manifest rules before using
-them. New reusable logic belongs in `ecg_experiment/`; a script should provide
-arguments and call that logic.
+Moving a command changes its source hash and module path. Existing checkpoints,
+receipts, and executable manifests remain historical evidence; prepare a new
+verified manifest before resuming work.

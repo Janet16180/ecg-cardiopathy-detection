@@ -1,6 +1,6 @@
 """Selection summaries retain zero-accepted groups and distinct exclusion reasons."""
 
-from scripts.audit_ecg_selection_bias import aggregate, age_band, sex_value
+from scripts.validation.audit_ecg_selection_bias import aggregate, age_band, sex_value
 
 
 def test_demographic_categories_at_boundaries() -> None:

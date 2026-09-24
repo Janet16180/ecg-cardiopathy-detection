@@ -1,10 +1,11 @@
 stages:
   validate_completed_data:
     desc: Verify completed public raw ECGs against official hashes and audit PTB patient split isolation.
-    cmd: UV_PROJECT_ENVIRONMENT=.venv-uv uv run --locked --group data python -m scripts.validate_data_versioning
+    cmd: uv run --locked --group data python -m scripts.validation.validate_data_versioning
     deps:
       - configs/datasets.json
-      - scripts/validate_data_versioning.py
+      - scripts/validation/validate_data_versioning.py
+      - ecg_experiment/data_validation.py
       - pyproject.toml
       - uv.lock
       - data/raw/ptb-xl/1.0.3/SHA256SUMS.txt

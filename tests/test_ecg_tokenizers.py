@@ -11,7 +11,7 @@ from ecg_experiment.ecg_tokenizers import (
     CausalChunkEncoder, beat_metadata, causal_beat_boundaries,
     detect_confirmed_beats, load_beat_metadata, _sha256,
 )
-from scripts.prepare_beat_tokens import prepare
+from scripts.data.prepare_beat_tokens import prepare
 
 
 def synthetic_half(seed=1):

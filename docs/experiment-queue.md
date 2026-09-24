@@ -8,17 +8,6 @@
 
 **Finding:** The morphology-template arm passed its prespecified development screen at the 1,518-label budget: AUROC **0.9487**, compared with **0.9462** for matched convolution and **0.9431** for no-branch CPC. At full labels, convolution and template tied at about **0.9620**, versus **0.9571** for no branch. These are one-seed development results. A matched second seed and artifact/template dominance checks are required before calibration/test; that follow-up is **not automatically scheduled**. [017 results](../outputs/experiment017_morphology_templates_v2/report.md). Experiments 014 and 015 had negative screens.
 
-## Repository maintenance
-
-The uv, MLflow, DVC, and collaboration cleanup is complete. Its checks and
-maintenance manifest are recorded in [the refactor guide](repository-refactor.md)
-and [completion record](../reports/repository-refactor.json). The experiment pause remains in
-effect. Historical scientific source files, manifests, checkpoints, and results
-are preserved. New maintenance verification uses a separate receipt under
-`outputs/repository_refactor/`; it does not schedule or authorize a GPU job.
-Data stays local while the user evaluates storage options. Do not upload training
-data to GitHub/Git LFS or configure/push a DVC remote until they choose one.
-
 ## Pending priority: cheapest likely first
 
 The user authorized **all four Astra proposals**, now Experiments **014–017**. They take priority over the larger architecture implementations. The order below is an implementation priority, not a dependency chain: an unpromising early screen does not block an independent later experiment.
@@ -51,7 +40,9 @@ The [Astra research note](astra-next-model-ideas.md) supplies the four new desig
 
 ## Coordination
 
-The coordinator is `scripts/run_priority_queue.py`. The original frozen manifest, `outputs/experiment_queue/queue.json`, contained 009 → 007 → 008 → 010 and stopped at the 008 profile on a CUDA out-of-memory error at 04:56 UTC. Its status, launch receipt and failure log remain in that directory. Its successor, `outputs/experiment_queue_recovery_008/queue.json`, profiled 008 successfully and started adaptation, then was interrupted at the user's request. The first 010 profile-only manifest failed a bitwise CUDA save/restore check; its versioned successor passed the profile. The full 010 manifest, `outputs/experiment_queue_full_010/queue.json`, was also interrupted after real data I/O exceeded the cost envelope. **The corrected 017 v2 queue is complete; no experiment queue is active. The earlier 015 queue completed 015 and was then interrupted only at its original 017 stage.** The executable manifests differ from the editable `docs/experiment-queue.json` backlog. Individual runners retain their existing GPU locks; the coordinator itself owns no CUDA context. Jobs use source-map hashes, source hashes and completion-artifact checks.
+The coordinator is `scripts/coordination/run_priority_queue.py`. Historical commands
+and source hashes below refer to the original checkout; use its recorded revision
+or the pause snapshot for recovery. New execution requires a freshly verified manifest. The original frozen manifest, `outputs/experiment_queue/queue.json`, contained 009 → 007 → 008 → 010 and stopped at the 008 profile on a CUDA out-of-memory error at 04:56 UTC. Its status, launch receipt and failure log remain in that directory. Its successor, `outputs/experiment_queue_recovery_008/queue.json`, profiled 008 successfully and started adaptation, then was interrupted at the user's request. The first 010 profile-only manifest failed a bitwise CUDA save/restore check; its versioned successor passed the profile. The full 010 manifest, `outputs/experiment_queue_full_010/queue.json`, was also interrupted after real data I/O exceeded the cost envelope. **The corrected 017 v2 queue is complete; no experiment queue is active. The earlier 015 queue completed 015 and was then interrupted only at its original 017 stage.** The executable manifests differ from the editable `docs/experiment-queue.json` backlog. Individual runners retain their existing GPU locks; the coordinator itself owns no CUDA context. Jobs use source-map hashes, source hashes and completion-artifact checks.
 
 The old coordinator exited after 008's failed profile and resumed the legacy Experiment 003 orchestrator. The successor launch verified that old coordinator was absent, the downloader remained active and the legacy orchestrator had no child. It paused the legacy orchestrator at 14:50:59 UTC and started the 008 profile. The downloader continues; the legacy orchestrator resumes when the new queue completes, fails or handles an interruption.
 

@@ -12,7 +12,7 @@ import torch
 from ecg_experiment.xecg import (
     DEFAULT_CHECKPOINT_DIR, XECGBinaryClassifier, load_xecg, preprocess_xecg,
 )
-from scripts.prepare_xecg import cache_xecg_views
+from scripts.data.prepare_xecg import cache_xecg_views
 
 
 def test_preprocessing_matches_upstream_fft_resampling():
@@ -30,7 +30,7 @@ def test_preprocessing_matches_upstream_fft_resampling():
 
 
 def test_cache_keys_manifest_and_source(monkeypatch, tmp_path):
-    import scripts.prepare_xecg as prep
+    import scripts.data.prepare_xecg as prep
 
     manifest = tmp_path / "manifest"
     manifest.mkdir()

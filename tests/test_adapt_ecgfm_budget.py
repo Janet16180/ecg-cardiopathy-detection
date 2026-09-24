@@ -9,7 +9,7 @@ from unittest import mock
 
 import torch
 
-from scripts import adapt_ecgfm
+from scripts.experiments import adapt_ecgfm
 
 
 class TinyBackbone(torch.nn.Module):

@@ -15,7 +15,7 @@ from ecg_experiment.cpc_prediction_mismatch import (
     aligned_representations, extract_branches, features_for_arm, pool_branch,
     supervised_indices, validate_bootstrap,
 )
-from scripts import run_cpc_prediction_mismatch as runner
+from scripts.experiments import run_cpc_prediction_mismatch as runner
 
 
 def test_horizon_alignment_uses_only_the_past_query_and_retains_error_magnitude():

@@ -9,9 +9,9 @@ from unittest.mock import patch
 
 import torch
 
-from scripts import run_cpc_morphology017 as original
-from scripts import run_cpc_morphology017_v2 as versioned
-from scripts.run_cpc_experiment import digest_file
+from scripts.experiments import run_cpc_morphology017 as original
+from scripts.experiments import run_cpc_morphology017_v2 as versioned
+from scripts.experiments.run_cpc_experiment import digest_file
 
 
 class VersionedProfileTests(unittest.TestCase):
@@ -33,7 +33,7 @@ class VersionedProfileTests(unittest.TestCase):
         with patch.object(versioned, 'ORIGINAL_LOAD_INPUTS', return_value=data):
             loaded = versioned.load_inputs(SimpleNamespace())
         self.assertEqual(loaded['provenance']['code']['original.py'], 'original-hash')
-        for name in ('scripts/run_cpc_morphology017_v2.py',
+        for name in ('scripts/experiments/run_cpc_morphology017_v2.py',
                      'docs/experiment-017-morphology-v2.md'):
             self.assertEqual(loaded['provenance']['code'][name],
                              digest_file(versioned.ROOT / name))

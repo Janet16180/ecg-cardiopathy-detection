@@ -3,7 +3,7 @@
 import numpy as np
 import torch
 
-from scripts.run_jepa_cpc_distillation import fixed_batches, load_state, masked_loss, save_state
+from scripts.experiments.run_jepa_cpc_distillation import fixed_batches, load_state, masked_loss, save_state
 
 torch.set_num_threads(1)
 

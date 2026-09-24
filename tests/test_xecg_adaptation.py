@@ -15,7 +15,7 @@ from ecg_experiment.xecg_adaptation import (
     encode_tokens, gram_loss, rarity_weights, ssl_parameter_groups, update_ema,
     visible_loss,
 )
-from scripts.run_xecg_adaptation import load_ssl_resume, save_ssl_resume, ssl_update
+from scripts.experiments.run_xecg_adaptation import load_ssl_resume, save_ssl_resume, ssl_update
 
 
 class TinyCore(nn.Module):

@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.prepare_ptbxl import prepare
+from scripts.data.prepare_ptbxl import prepare
 
 
 class PreparePTBXLTests(unittest.TestCase):

@@ -3,12 +3,12 @@ repos:
     hooks:
       - id: ruff
         name: Python correctness (locked Ruff)
-        entry: env UV_PROJECT_ENVIRONMENT=.venv-uv uv run --locked ruff check
+        entry: uv run --locked ruff check
         language: system
         types: [python]
       - id: tests
         name: CPU tests
-        entry: make test
+        entry: env CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run --locked --group data --group tracking python -m pytest -q
         language: system
         pass_filenames: false
         always_run: true

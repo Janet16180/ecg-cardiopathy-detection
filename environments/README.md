@@ -4,23 +4,22 @@ The root `pyproject.toml` and `uv.lock` are the source of truth for the main
 project. The lock was verified on Linux x86_64 with Python 3.11 and CUDA 12.4
 PyTorch wheels. Use Python 3.11 on the same platform for the closest match.
 
-The existing `.venv` and `.venv-pretrained` contain historical experiment
-dependencies. They may be in use by running data downloaders. Keep them intact.
-Set `UV_PROJECT_ENVIRONMENT` before every root-level `uv sync` or `uv run` so uv
-does not replace either environment:
+uv uses the root `.venv` by default:
 
 ```sh
-export UV_PROJECT_ENVIRONMENT=.venv-uv
 uv sync --locked --group tracking --group data
-uv run --locked --group tracking --group data python -m pytest -q
-uv run --locked --group tracking --group data ruff check ecg_experiment scripts tests
+uv run --locked ruff check ecg_experiment scripts tests
+OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 CUDA_VISIBLE_DEVICES='' \
+  uv run --locked --group tracking --group data python -m pytest -q
 ```
 
-The `dev` group is installed by default. The optional `tracking` group installs
-MLflow and the optional `data` group installs DVC. `uv sync` is exact by default:
-omitting a group on a later sync removes its tools from `.venv-uv`. For local
-tracking, point MLflow at an ignored local store; DVC data pointers are
-versioned separately from dataset bytes.
+The `dev` group is installed by default; `tracking` adds MLflow and `data` adds
+DVC. `uv sync` is exact: omitted groups are removed. While a downloader uses an
+existing environment, inspect `uv sync --locked --inexact --group tracking
+--group data --dry-run` first, then sync with those options only if it does not
+replace runtime dependencies. `--inexact` preserves extra packages but still
+updates conflicting versions. Current constraints preserve the active acquisition
+runtime. Keep `.venv-pretrained` intact while historical jobs refer to it.
 
 The pretrained encoders require an older Hugging Face Hub version, so
 [`pretrained/pyproject.toml`](pretrained/pyproject.toml) and its own `uv.lock`
@@ -33,9 +32,7 @@ git clone https://github.com/Edoar-do/HuBERT-ECG.git third_party/HuBERT-ECG
 git -C third_party/HuBERT-ECG checkout 2d0611da529412e021af76d4ed41d5a23a704dc6
 git clone https://github.com/Jwoo5/fairseq-signals.git third_party/fairseq-signals
 git -C third_party/fairseq-signals checkout f8f0ff1c788a82c2059cb452cd5462898867489e
-cd environments/pretrained
-UV_PROJECT_ENVIRONMENT=../../.venv-pretrained-uv uv sync --locked
-cd ../..
+uv sync --locked --project environments/pretrained
 ```
 
 The uv lock covers Python dependencies. It does not build the third-party
@@ -67,7 +64,7 @@ uv build --wheel \
   --build-constraint "$ECG_REPO/environments/pretrained/build-constraints.txt" \
   --directory /tmp/ecg-pretrained-build/HuBERT-ECG \
   --out-dir /tmp/ecg-pretrained-build/dist
-uv pip install --python .venv-pretrained-uv/bin/python --no-deps \
+uv pip install --python environments/pretrained/.venv/bin/python --no-deps \
   /tmp/ecg-pretrained-build/dist/fairseq_signals-1.0.0a0-cp311-cp311-linux_x86_64.whl \
   /tmp/ecg-pretrained-build/dist/hubert_ecg-1.0.0-py3-none-any.whl
 ```
@@ -77,24 +74,20 @@ Python versions. Both wheels built successfully from their pinned archives
 with these build constraints.
 The fairseq isolated build compiled its Cython extension without PyTorch in
 the build environment; its optional PyTorch C++ extensions were not built.
-The wheels installed into `.venv-pretrained-uv` with `--no-deps`, and imports
-passed from `/tmp` without `PYTHONPATH` using that environment's Python 3.11.2.
-`uv sync` is exact and removes these separately installed wheels; repeat wheel
+Package and compiled-extension imports were verified with these wheels and
+locked dependencies in an isolated environment. Model execution was not tested.
+`uv sync` is exact and removes separately installed wheels; repeat their
 installation after any later sync of the pretrained project.
 
-The following import check passed from `/tmp` with the installed wheels and
-locked dependency environment:
+Check the installation:
 
 ```sh
 ECG_REPO=$PWD
 cd /tmp
-"$ECG_REPO/.venv-pretrained-uv/bin/python" -c \
+"$ECG_REPO/environments/pretrained/.venv/bin/python" -c \
   'import hubert_ecg, fairseq_signals; from fairseq_signals.data import data_utils_fast; from fairseq_signals.models import build_model_from_checkpoint'
 ```
 
-This verifies package loading and the compiled extension; model execution was
-not tested. Historical installed versions are archived in
-[`archive/requirements-pretrained-lock.txt`](archive/requirements-pretrained-lock.txt).
 The original source setup procedure is in
-[`docs/pretrained-notes.md`](../docs/pretrained-notes.md). Keep `.venv-pretrained`
-intact: historical executable manifests still refer to it.
+[`docs/pretrained-notes.md`](../docs/pretrained-notes.md). Git history preserves
+previous dependency definitions and setup instructions.

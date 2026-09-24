@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 import numpy as np
 
-from scripts.prepare_xecg_ssl import prepare
+from scripts.data.prepare_xecg_ssl import prepare
 
 
 class SSLCacheTests(unittest.TestCase):
@@ -32,12 +32,12 @@ class SSLCacheTests(unittest.TestCase):
                     raise RuntimeError("simulated interruption")
                 return read(directory, relative)
 
-            with patch("scripts.prepare_xecg_ssl.selected_rows", return_value=requested), \
-                 patch("scripts.prepare_xecg_ssl.read_record", side_effect=interrupted):
+            with patch("scripts.data.prepare_xecg_ssl.selected_rows", return_value=requested), \
+                 patch("scripts.data.prepare_xecg_ssl.read_record", side_effect=interrupted):
                 with self.assertRaisesRegex(RuntimeError, "simulated"):
                     prepare(root / "resumed", workers=1)
-            with patch("scripts.prepare_xecg_ssl.selected_rows", return_value=requested), \
-                 patch("scripts.prepare_xecg_ssl.read_record", side_effect=read):
+            with patch("scripts.data.prepare_xecg_ssl.selected_rows", return_value=requested), \
+                 patch("scripts.data.prepare_xecg_ssl.read_record", side_effect=read):
                 actual = prepare(root / "resumed", workers=1)
                 expected = prepare(root / "fresh", workers=1)
                 np.testing.assert_array_equal(np.load(root / "resumed/views.npy"),
@@ -45,7 +45,7 @@ class SSLCacheTests(unittest.TestCase):
                 self.assertEqual(actual["views_sha256"], expected["views_sha256"])
                 self.assertEqual(actual["ecg_ids"], [str(i) for i in range(130)])
                 self.assertTrue(actual["all_train_only"])
-            with patch("scripts.prepare_xecg_ssl.selected_rows", return_value=(rows, {"fixture": "changed"})):
+            with patch("scripts.data.prepare_xecg_ssl.selected_rows", return_value=(rows, {"fixture": "changed"})):
                 with self.assertRaisesRegex(ValueError, "identity differs"):
                     prepare(root / "resumed", workers=1)
 

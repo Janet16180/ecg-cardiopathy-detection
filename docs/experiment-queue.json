@@ -91,7 +91,7 @@
         "No GPU needed for the initial cached-feature screen."
       ],
       "dependencies": [],
-      "runner": "scripts/run_jepa_cpc_fusion.py",
+      "runner": "scripts/experiments/run_jepa_cpc_fusion.py",
       "launch_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv-pretrained/bin/python -u -m scripts.run_jepa_cpc_fusion --output-dir outputs/experiment014_jepa_cpc_fusion",
       "gpu_profile": null,
       "results": "outputs/experiment014_jepa_cpc_fusion/report.md",
@@ -123,7 +123,7 @@
         "Record cold disk I/O, checkpoint and evaluation time."
       ],
       "dependencies": [],
-      "runner": "scripts/run_jepa_cpc_distillation.py",
+      "runner": "scripts/experiments/run_jepa_cpc_distillation.py",
       "launch_command": ".venv-pretrained/bin/python -u -m scripts.run_jepa_cpc_distillation --stage profile --device cuda --threads 1 --max-wall-seconds 7200",
       "gpu_profile": "outputs/experiment015_jepa_cpc_distillation/profile.json",
       "results": "outputs/experiment015_jepa_cpc_distillation/report.md",
@@ -173,7 +173,7 @@
         "Distance responses are related to convolution plus window energy; a capacity-only improvement does not establish a template benefit."
       ],
       "dependencies": [],
-      "runner": "scripts/run_cpc_morphology017_v2.py",
+      "runner": "scripts/experiments/run_cpc_morphology017_v2.py",
       "launch_command": ".venv-pretrained/bin/python -u -m scripts.run_cpc_morphology017_v2 --stage profile --device cuda --threads 1 --max-wall-seconds 7200",
       "gpu_profile": "outputs/experiment017_morphology_templates_v2/profile.json",
       "results": "outputs/experiment017_morphology_templates_v2/report.md",
@@ -342,7 +342,7 @@
       "live_status": "outputs/experiment008_vision_ssl/coordination.json",
       "run_after": "007",
       "next_action": "Preserve completed four-arm profile and interrupted files. Do not restart long 008 suite while deferred; arm A has no resume checkpoint and would restart at update 0.",
-      "recovery_runner": "scripts/run_xecg_adaptation_mb4.py",
+      "recovery_runner": "scripts/experiments/run_xecg_adaptation_mb4.py",
       "recovery_source_map": "outputs/experiment_queue_recovery_008/sources_008.json",
       "recovery_source_map_sha256": "d7dc9a47408c0843a5bfbcb2e9af3a937645fde596a3dbc79cd3041f56e5d663",
       "microbatch_size": 4,
@@ -370,7 +370,7 @@
       "next_action": "Do not automatically resume. One native SSL epoch checkpoint is preserved, but actual cache I/O made the projected three-arm suite exceed the two-hour limit; seek a cheaper protocol only with a separately frozen comparison.",
       "profile_only_manifest": "outputs/experiment_queue_profile_010_v2/queue.json",
       "profile_only_launch": "outputs/experiment_queue_profile_010_v2/launch.json",
-      "profile_retry_runner": "scripts/run_cpc_crosslead_profile_v2.py",
+      "profile_retry_runner": "scripts/experiments/run_cpc_crosslead_profile_v2.py",
       "profile_retry_source_map_sha256": "d25e53b4b89278d169f42914fa253d26c391dab8606fa3fa7645906f23cbc61d",
       "first_profile_failure": "Bitwise CUDA save/restore assertion at maximum absolute first-tensor difference 1.49e-8; no receipt saved.",
       "gpu_profiles": {
@@ -486,24 +486,10 @@
     "since_utc": "2026-09-24T19:40:47.068565+00:00",
     "reason": "Repository refactor; training remains paused until the user requests resumption",
     "resume_requires_user_request": true,
+    "resume_requires_new_source_manifests": true,
+    "historical_launch_commands": "Recorded launch commands use the original source layout; see scripts/README.md for current modules",
     "downloads_continue": true,
     "pause_receipt": "outputs/refactor_pause/pause.json",
     "source_snapshot": "outputs/refactor_pause/source_before_refactor.tar.gz"
-  },
-  "repository_maintenance": {
-    "status": "complete",
-    "guide": "docs/repository-refactor.md",
-    "scientific_sources": "109 existing Python/shell source and test files verified unchanged against pause snapshot",
-    "environment": "pyproject.toml + uv.lock; isolated .venv-uv; historical environments preserved",
-    "tracking": "docs/experiment-tracking.md",
-    "data_versioning": "docs/data-versioning.md",
-    "verification_receipt": "outputs/repository_refactor/verification.json",
-    "training_resumed": false,
-    "storage_policy": "Data remains local; no GitHub/Git LFS data uploads or DVC remote until the user chooses storage",
-    "completed_at_utc": "2026-09-24T20:34:34.580241+00:00",
-    "verification_manifest": "outputs/repository_refactor/queue.json",
-    "verification_manifest_sha256": "a38bed319fdfa70c57ed1b7282083469f9709059c71e58dca56b1a4664118789",
-    "verification_source_map_sha256": "97858c333a8f5d12f910963a52ad5ca54c465460236e972259b566c0e9f0487d",
-    "completion_record": "reports/repository-refactor.json"
   }
 }

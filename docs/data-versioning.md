@@ -20,12 +20,12 @@ MIMIC downloads and CODE-15% archives are outside DVC tracking while incomplete 
 
 ## Commands
 
-Install the optional data tools with `UV_PROJECT_ENVIRONMENT=.venv-uv uv sync --locked --group data`. Then, from the repository root:
+Install the optional data tools with `uv sync --locked --group data`. Then, from the repository root:
 
 ```bash
-UV_PROJECT_ENVIRONMENT=.venv-uv uv run --locked --group data dvc status
-UV_PROJECT_ENVIRONMENT=.venv-uv uv run --locked --group data dvc repro validate_completed_data
-UV_PROJECT_ENVIRONMENT=.venv-uv uv run --locked --group data python -m pytest -q tests/test_data_versioning.py
+uv run --locked --group data dvc status
+uv run --locked --group data dvc repro validate_completed_data
+uv run --locked --group data python -m pytest -q tests/test_data_versioning.py
 ```
 
 To track another **completed, stable** dataset, first verify its acquisition receipt and license, then add an entry to `configs/datasets.json` and the appropriate validation checks. Use `dvc add --no-relink PATH` only after confirming the directory is not being written by a downloader. Review the generated pointer and `.gitignore` entry. Never run `dvc add` over an active download path. Do not rerun `dvc init` on an initialized clone.

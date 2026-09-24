@@ -3,11 +3,10 @@
 ## Working on the project
 
 - [Contributor workflow](../CONTRIBUTING.md): setup, reviews, tests, and experiment discipline.
-- [Repository organization](repository-organization.md): where new files belong.
+- [Command guide](../scripts/README.md): script folders and entry points.
 - [Environment setup](../environments/README.md): uv and pretrained dependencies.
 - [Data versioning](data-versioning.md): DVC, completed datasets, and validation.
 - [Experiment tracking](experiment-tracking.md): MLflow and historical results.
-- [Refactor record](repository-refactor.md): preserved evidence and validation.
 
 ## Data
 
@@ -33,6 +32,5 @@ and proposed experiment to its protocol and evidence. Training remains paused.
 - [Astra proposals](astra-next-model-ideas.md)
 
 Historical protocols retain the commands and environment paths used at the time.
-Use the current environment guide for new setup. The
-[previous root README](archive/README-before-refactor.md) is preserved as migration
-context; its commands are historical.
+Use the current environment and command guides for new work. Reproduce old runs
+from their recorded source revision or snapshot; new runs require fresh manifests.

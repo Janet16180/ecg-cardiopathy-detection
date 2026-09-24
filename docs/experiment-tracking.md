@@ -5,10 +5,9 @@ The JSON results and frozen queue receipts under `outputs/` remain the scientifi
 ## Use locally
 
 ```bash
-export UV_PROJECT_ENVIRONMENT=.venv-uv
 uv sync --locked --group tracking --group data
-uv run --locked --group tracking --group data python -m scripts.import_mlflow_history --dry-run
-uv run --locked --group tracking --group data python -m scripts.import_mlflow_history
+uv run --locked --group tracking --group data python -m scripts.tracking.import_mlflow_history --dry-run
+uv run --locked --group tracking --group data python -m scripts.tracking.import_mlflow_history
 uv run --locked --group tracking --group data mlflow ui --backend-store-uri sqlite:///outputs/mlflow/mlflow.db
 ```
 
@@ -46,9 +45,8 @@ Valid stages are `development_screen`, `calibration`, and `held_out_test`; the h
 For a shared registry, run an MLflow tracking server with a database backend and an artifact destination accessible to that server. Point each teammate's client at the same HTTPS endpoint, then run the importer once:
 
 ```bash
-export UV_PROJECT_ENVIRONMENT=.venv-uv
 export MLFLOW_TRACKING_URI=https://your-mlflow-host.example
-uv run --locked --group tracking --group data python -m scripts.import_mlflow_history
+uv run --locked --group tracking --group data python -m scripts.tracking.import_mlflow_history
 ```
 
 The local SQLite file is suitable for one machine. A team server should use a managed PostgreSQL or MySQL backend and appropriate authentication, access controls, and backups. Store connection details outside Git. Keep the existing source receipts and queue documents as the authority for frozen execution. For future runners, record the label budget, seed, objective, model size, development metrics, and eventually calibration/test metrics only after their planned gates.

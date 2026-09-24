@@ -1,8 +1,0 @@
-numpy
-pandas
-scipy
-scikit-learn
-wfdb
-matplotlib
-torch==2.6.0
-timm==1.0.8

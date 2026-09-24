@@ -9,7 +9,7 @@ import numpy as np
 import torch
 from torch import nn
 
-from scripts.finetune_pretrained import (cpu_state, load_resume_checkpoint,
+from scripts.experiments.finetune_pretrained import (cpu_state, load_resume_checkpoint,
                                          save_resume_checkpoint)
 
 

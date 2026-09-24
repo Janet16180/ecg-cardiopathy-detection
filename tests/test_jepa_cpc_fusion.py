@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from scripts.run_jepa_cpc_fusion import (check_alignment, dev_score, development_folds, gate,
+from scripts.experiments.run_jepa_cpc_fusion import (check_alignment, dev_score, development_folds, gate,
                                           normalized_train_logits, select)
 
 

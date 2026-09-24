@@ -7,7 +7,7 @@ import pytest
 from torch.utils.data import DataLoader
 
 from ecg_experiment.training_dataset import TrainingECGDataset, file_hash, signal_hash, verify_dataset
-from scripts.build_training_dataset import build, decode, write_csv, FIELDS
+from scripts.data.build_training_dataset import build, decode, write_csv, FIELDS
 
 
 @pytest.fixture
@@ -88,7 +88,7 @@ def test_single_builder_lock_prevents_duplicate_work(tmp_path):
 
 
 def test_swapped_ptb_bytes_fail_before_decoding(tmp_path, monkeypatch):
-    import scripts.build_training_dataset as builder
+    import scripts.data.build_training_dataset as builder
     monkeypatch.setattr(builder, 'ROOT', tmp_path)
     (tmp_path/'example.hea').write_text('other valid record bytes')
     row = dict(origin_index='', origin_path='example', record_id='ptbxl:1',

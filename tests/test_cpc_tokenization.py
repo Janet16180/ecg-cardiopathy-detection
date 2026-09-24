@@ -8,8 +8,8 @@ from ecg_experiment.cpc_tokenization import (
     CLUSTERS, TokenizationPretrainer, fit_kmeans, future_cluster_loss,
     nearest_cluster, snapshot_teacher_convs, temporal_cpc_loss,
 )
-from scripts import run_cpc_experiment as base
-from scripts.run_cpc_tokenization import (
+from scripts.experiments import run_cpc_experiment as base
+from scripts.experiments.run_cpc_tokenization import (
     classifier_with_matched_head, load_bootstrap_weights, reset_cluster_heads,
 )
 

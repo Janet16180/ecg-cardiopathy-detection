@@ -28,6 +28,12 @@ data = ["dvc>=3,<4"]
 
 [tool.uv]
 default-groups = ["dev"]
+# Preserve the installed acquisition runtime while downloaders use .venv.
+constraint-dependencies = [
+    "filelock==4.0.1",
+    "fonttools==4.65.0",
+    "setuptools==78.1.0",
+]
 
 [build-system]
 requires = ["hatchling>=1.27,<2"]
@@ -56,8 +62,8 @@ select = ["E9", "F63", "F7", "F82"]
 # These guarded `del matrix` statements are valid at runtime. Ruff F821 cannot
 # infer the `"matrix" in locals()` guard; keep the frozen experiment files intact.
 [tool.ruff.lint.per-file-ignores]
-"scripts/finetune_pretrained.py" = ["F821"]
-"scripts/prepare_xecg.py" = ["F821"]
+"scripts/experiments/finetune_pretrained.py" = ["F821"]
+"scripts/data/prepare_xecg.py" = ["F821"]
 
 [[tool.uv.index]]
 name = "pytorch-cu124"

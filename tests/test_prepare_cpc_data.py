@@ -9,7 +9,7 @@ from unittest.mock import patch
 import numpy as np
 from scipy.signal import resample_poly
 
-from scripts.prepare_cpc_data import (
+from scripts.data.prepare_cpc_data import (
     build_cache, read_locked_prefix, read_ptb_rows, resample_halves,
     verify_selected_files,
 )
@@ -94,7 +94,7 @@ class CpcDataTests(unittest.TestCase):
                  "raw_dir": str(self.root), "filename_hr": "mimic"}
         metadata = {"selection_sha256": "selection", "manifest_sha256": "manifest"}
         raw = np.zeros((12, 5000), dtype=np.float32)
-        with patch("scripts.prepare_cpc_data.read_record", return_value=raw) as reader:
+        with patch("scripts.data.prepare_cpc_data.read_record", return_value=raw) as reader:
             info = build_cache([row], [mimic], {"all_train_ssl.csv": "hash"}, metadata,
                                self.root / "cache", 250)
             self.assertEqual(reader.call_count, 2)
@@ -102,7 +102,7 @@ class CpcDataTests(unittest.TestCase):
         self.assertEqual(info["shape"], [2, 12, 2500])
         self.assertEqual(np.load(cache / "signals.npy", mmap_mode="r").shape, (2, 12, 2500))
         self.assertEqual(np.load(cache / "ecg_ids.npy").tolist(), ["1", "mimic:40000001"])
-        with patch("scripts.prepare_cpc_data.read_record", side_effect=AssertionError("redecoded")):
+        with patch("scripts.data.prepare_cpc_data.read_record", side_effect=AssertionError("redecoded")):
             build_cache([row], [mimic], {"all_train_ssl.csv": "hash"}, metadata, cache, 250)
         with self.assertRaisesRegex(ValueError, "different inputs"):
             build_cache([row], [mimic], {"all_train_ssl.csv": "changed"}, metadata, cache, 250)
@@ -123,11 +123,11 @@ class CpcDataTests(unittest.TestCase):
             return raw
 
         cache = self.root / "cache"
-        with patch("scripts.prepare_cpc_data.read_record", side_effect=fail_after_checkpoint):
+        with patch("scripts.data.prepare_cpc_data.read_record", side_effect=fail_after_checkpoint):
             with self.assertRaisesRegex(RuntimeError, "interrupted"):
                 build_cache(rows, [], {}, metadata, cache, 250)
         self.assertEqual(json.loads((cache / "progress.json").read_text())["completed_rows"], 100)
-        with patch("scripts.prepare_cpc_data.read_record", return_value=raw) as reader:
+        with patch("scripts.data.prepare_cpc_data.read_record", return_value=raw) as reader:
             build_cache(rows, [], {}, metadata, cache, 250)
             self.assertEqual(reader.call_count, 1)
         self.assertEqual(np.load(cache / "signals.npy", mmap_mode="r").shape, (101, 12, 2500))

@@ -15,9 +15,9 @@ from ecg_experiment.cpc_morphology import (
     MorphologyCPCClassifier, local_response, native_windows,
     TEMPLATES, LEADS, SUPPORT, TOKEN_COUNT, WINDOW_ELEMENTS,
 )
-from scripts.run_cpc_morphology017 import (ROOT, SSL, fixed_batches, make_model,
+from scripts.experiments.run_cpc_morphology017 import (ROOT, SSL, fixed_batches, make_model,
     template_windows, save_state, load_state, file_identity, verified_pool_hashes)
-from scripts.run_cpc_experiment import digest_file
+from scripts.experiments.run_cpc_experiment import digest_file
 
 
 class MorphologyTests(unittest.TestCase):
@@ -96,7 +96,7 @@ class MorphologyTests(unittest.TestCase):
                 torch.testing.assert_close(z, z0, rtol=0, atol=0)
                 torch.testing.assert_close(c, c0, rtol=0, atol=0)
         # Explicitly compare the no-branch arm with original CPCClassifier.
-        from scripts.run_cpc_experiment import seed_all
+        from scripts.experiments.run_cpc_experiment import seed_all
         seed_all(42)
         reference = CPCClassifier().eval()
         saved = torch.load(SSL, map_location='cpu', weights_only=True)
@@ -177,8 +177,8 @@ class MorphologyTests(unittest.TestCase):
                        'pool_file_stats': {name: file_identity(directory / name) for name in names},
                        'provenance': {'pool_content_sha256': hashes,
                          'code': {'scripts/run_jepa_cpc_distillation.py':
-                                  digest_file(ROOT / 'scripts/run_jepa_cpc_distillation.py')}}}
-            from scripts.run_cpc_morphology017 import digest_json
+                                  digest_file(ROOT / 'scripts/experiments/run_jepa_cpc_distillation.py')}}}
+            from scripts.experiments.run_cpc_morphology017 import digest_json
             receipt['fingerprint'] = digest_json(receipt['provenance'])
             receipt_path = directory / 'receipt.json'
             receipt_path.write_text(json.dumps(receipt))

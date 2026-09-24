@@ -2,7 +2,7 @@
 import torch
 import pytest
 
-from scripts.extract_ecg_cpc import load_exact, torch_cauchy_conj
+from scripts.features.extract_ecg_cpc import load_exact, torch_cauchy_conj
 
 
 def test_cauchy_reduction_matches_official_real_component_algebra():

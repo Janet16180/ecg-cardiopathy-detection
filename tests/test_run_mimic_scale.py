@@ -5,8 +5,8 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from scripts.finetune_pretrained import check_adaptation_budget
-from scripts.run_mimic_scale import ensure_stage, wait_for_artifact
+from scripts.experiments.finetune_pretrained import check_adaptation_budget
+from scripts.experiments.run_mimic_scale import ensure_stage, wait_for_artifact
 
 
 class MimicScaleRunnerTest(unittest.TestCase):
@@ -27,7 +27,7 @@ class MimicScaleRunnerTest(unittest.TestCase):
             stage = root / "stage"
             stage.mkdir()
             (stage / "history.json").write_text("[]")
-            with mock.patch("scripts.run_mimic_scale.run_stage") as launch:
+            with mock.patch("scripts.experiments.run_mimic_scale.run_stage") as launch:
                 with self.assertRaisesRegex(RuntimeError, "Incomplete existing"):
                     ensure_stage(root, "ptb_adaptation", stage, ["python"], lambda: {},
                                  resumable=True)
@@ -36,7 +36,7 @@ class MimicScaleRunnerTest(unittest.TestCase):
     def test_reused_wait_pid_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             artifact = Path(directory) / "metrics.json"
-            with mock.patch("scripts.run_mimic_scale.process_cmdline",
+            with mock.patch("scripts.experiments.run_mimic_scale.process_cmdline",
                             return_value="python another_task.py"):
                 with self.assertRaisesRegex(RuntimeError, "no longer identifies"):
                     wait_for_artifact(4607, "finetune_pretrained", artifact, lambda: None)
@@ -48,7 +48,7 @@ class MimicScaleRunnerTest(unittest.TestCase):
             stage.mkdir()
             (stage / "resume.pt").write_bytes(b"checkpoint")
             (stage / "history.json").write_text("[]")
-            with mock.patch("scripts.run_mimic_scale.run_stage", return_value={"ok": True}) as launch:
+            with mock.patch("scripts.experiments.run_mimic_scale.run_stage", return_value={"ok": True}) as launch:
                 result = ensure_stage(root, "ptb_finetune", stage, ["python"], lambda: {},
                                       resumable=True, completion_marker="metrics.json")
             self.assertEqual(result, {"ok": True})
@@ -61,7 +61,7 @@ class MimicScaleRunnerTest(unittest.TestCase):
             stage.mkdir()
             (stage / "resume.pt").write_bytes(b"checkpoint")
             (stage / "metrics.json").write_text("{}")
-            with mock.patch("scripts.run_mimic_scale.run_stage", return_value={}) as launch:
+            with mock.patch("scripts.experiments.run_mimic_scale.run_stage", return_value={}) as launch:
                 ensure_stage(root, "ptb_finetune", stage, ["python"],
                              mock.Mock(side_effect=FileNotFoundError),
                              resumable=True, completion_marker="metrics.json")

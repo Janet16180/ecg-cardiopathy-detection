@@ -36,10 +36,9 @@ UV_CACHE_DIR=/tmp/ecg-uv-cache uv pip install --python .venv-pretrained/bin/pyth
 
 Use `--device cpu` with a CPU PyTorch wheel when no compatible GPU is present.
 The Tesla V100 used for this project works with the CUDA 12.4 wheel above.
-[`environments/archive/requirements-pretrained-lock.txt`](../environments/archive/requirements-pretrained-lock.txt)
-records the versions actually used, including editable
-source paths; check out the recorded revisions before installing from it. CUDA packages need
-the matching PyTorch package index. The official source trees were unmodified in these runs.
+For current setup, use the [locked environment guide](../environments/README.md).
+Git history preserves the dependencies and source setup used for earlier runs.
+The official source trees were unmodified in these runs.
 
 Run a separate 100-record timing check first, then extract the full selected
 set. Use a fresh output directory for each run:

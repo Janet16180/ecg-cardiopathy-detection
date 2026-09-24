@@ -10,9 +10,9 @@ from torch import nn
 
 from ecg_experiment import cpc_crosslead as objective
 from ecg_experiment.cpc import CPCEncoder, CPCPretrainer
-from scripts import run_cpc_crosslead as run
-from scripts import run_cpc_experiment as base
-from scripts.run_cpc_tokenization import bootstrap
+from scripts.experiments import run_cpc_crosslead as run
+from scripts.experiments import run_cpc_experiment as base
+from scripts.experiments.run_cpc_tokenization import bootstrap
 
 
 def test_missing_leads_are_zeroed_after_normalization():
@@ -99,7 +99,7 @@ def test_strict_epoch20_bootstrap_and_source_hashes(tmp_path, monkeypatch):
     (tmp_path / "cache.bin").write_bytes(b"x")
     monkeypatch.setattr(run.base, "make_source_hashes", lambda pool, manifest: {})
     hashes = run.source_hashes(args, object())
-    imported = str((run.ROOT / "scripts/run_cpc_tokenization.py").resolve())
+    imported = str((run.ROOT / "scripts/experiments/run_cpc_tokenization.py").resolve())
     assert hashes[imported] == base.digest_file(imported)
     assert str(normalized.resolve()) in hashes
 

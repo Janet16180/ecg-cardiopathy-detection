@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts.validate_data_versioning import validate_source, validate_splits
+from ecg_experiment.data_validation import DatasetValidator, validate_source, validate_splits
 
 
 def _split(path: Path, rows: list[tuple[str, str, str]]) -> None:
@@ -124,3 +124,38 @@ def test_development_calibration_partition_and_patient_isolation(tmp_path: Path)
                        "ptbxl:5,ptbxl:p3,calibration\nptbxl:4,ptbxl:p4,test\n")
     with pytest.raises(ValueError, match="patient mapping differs"):
         validate_splits(tmp_path, paths)
+
+
+def test_validator_orchestrates_frozen_hashes_and_source_checks(tmp_path: Path) -> None:
+    source = _source_fixture(tmp_path)
+    splits = _split_fixture(tmp_path)
+    metadata = tmp_path / "ptb_metadata.csv"
+    metadata.write_bytes(b"metadata")
+    manifest = tmp_path / "data/raw/ptb-xl/1.0.3/SHA256SUMS.txt"
+    manifest.parent.mkdir(parents=True)
+    manifest.write_text(f"{hashlib.sha256(metadata.read_bytes()).hexdigest()} ptb_metadata.csv\n")
+    config = tmp_path / "datasets.json"
+    settings = {
+        "schema_version": 1,
+        "datasets": [source],
+        "ptb_metadata": [metadata.name],
+        "ptb_split_audit": splits,
+        "ptb_split_sha256": {
+            name: hashlib.sha256((tmp_path / relative).read_bytes()).hexdigest()
+            for name, relative in splits.items()
+        },
+    }
+    config.write_text(json.dumps(settings), encoding="utf-8")
+    validator = DatasetValidator(tmp_path, config)
+    report = validator.validate()
+    assert report["sources"][0]["files"] == 2
+    assert report["ptb_split_audit"]["record_counts"]["full_train"] == 2
+
+    (tmp_path / splits["test"]).write_text("ecg_id,patient_id,target\n4,p4,0\n")
+    with pytest.raises(ValueError, match="Frozen PTB split checksum mismatch: test"):
+        validator.validate()
+
+    _split(tmp_path / splits["test"], [("4", "p4", "1")])
+    (tmp_path / source["path"] / "g1/Q1.mat").write_bytes(b"tampered")
+    with pytest.raises(ValueError, match="checksum mismatch: g1/Q1.mat"):
+        validator.validate()

@@ -1,8 +1,8 @@
 schema: '2.0'
 stages:
   validate_completed_data:
-    cmd: UV_PROJECT_ENVIRONMENT=.venv-uv uv run --locked --group data python -m 
-      scripts.validate_data_versioning
+    cmd: uv run --locked --group data python -m 
+      scripts.validation.validate_data_versioning
     deps:
     - path: configs/datasets.json
       hash: md5
@@ -98,18 +98,22 @@ stages:
       hash: md5
       md5: 733e3dbf3f6bd96c22fd651da003a9ec
       size: 9720
+    - path: ecg_experiment/data_validation.py
+      hash: md5
+      md5: 361b27283c17304673ea330749ba1403
+      size: 12434
     - path: pyproject.toml
       hash: md5
-      md5: b5b09b88db680d7bc7748f9cc832eb7e
-      size: 1612
-    - path: scripts/validate_data_versioning.py
+      md5: 4f324efd7d8637d6a54f419b7c4ac76f
+      size: 1807
+    - path: scripts/validation/validate_data_versioning.py
       hash: md5
-      md5: f8ee736115daa49f868319101dde8189
-      size: 12939
+      md5: 395b0ea1e19e61bc8c614984ec61f7fa
+      size: 990
     - path: uv.lock
       hash: md5
-      md5: 7b7f1fe31d3cc4af446b9a16e110b5c4
-      size: 289877
+      md5: 5e43081c60329e368d32e8aabcafb90b
+      size: 290062
     outs:
     - path: reports/data-validation.json
       hash: md5

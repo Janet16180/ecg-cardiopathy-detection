@@ -61,7 +61,7 @@ def verified_pool_hashes(args, pool):
     receipt = json.loads(args.pool_verification.read_text())
     if receipt.get('stage') != 'check' or receipt.get('fingerprint') != digest_json(receipt.get('provenance')):
         raise ValueError('Invalid pool verification receipt')
-    source_hash = receipt.get('provenance', {}).get('code', {}).get('scripts/run_jepa_cpc_distillation.py')
+    source_hash = receipt.get('provenance', {}).get('code', {}).get('scripts/experiments/run_jepa_cpc_distillation.py')
     if source_hash != digest_file(ROOT / 'scripts/experiments/run_jepa_cpc_distillation.py'):
         raise ValueError('Frozen pool verifier source changed')
     hashes = receipt['provenance']['pool_content_sha256']

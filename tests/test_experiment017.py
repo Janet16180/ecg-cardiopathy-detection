@@ -176,7 +176,7 @@ class MorphologyTests(unittest.TestCase):
             receipt = {'stage': 'check',
                        'pool_file_stats': {name: file_identity(directory / name) for name in names},
                        'provenance': {'pool_content_sha256': hashes,
-                         'code': {'scripts/run_jepa_cpc_distillation.py':
+                         'code': {'scripts/experiments/run_jepa_cpc_distillation.py':
                                   digest_file(ROOT / 'scripts/experiments/run_jepa_cpc_distillation.py')}}}
             from scripts.experiments.run_cpc_morphology017 import digest_json
             receipt['fingerprint'] = digest_json(receipt['provenance'])

@@ -246,31 +246,64 @@ def run_stage(output: Path, name: str, command: list[str], validate, *, resume: 
     return result
 
 
+def existing_stage(name: str, directory: Path, command: list[str], validate, *, resumable: bool,
+                   marker: str) -> tuple[dict | None, list[str], bool]:
+    """
+    Inspect a stage directory before running it.
+
+    Parameters
+    ----------
+    name : str
+        Stage name used in error messages.
+    directory : Path
+        Stage output directory.
+    command : list[str]
+        Command that runs the stage.
+    validate : Callable[[], dict]
+        Validator for completed stage outputs.
+    resumable : bool
+        Whether the stage can continue from ``resume.pt``.
+    marker : str
+        File whose presence marks a completed stage.
+
+    Returns
+    -------
+    tuple[dict | None, list[str], bool]
+        Validated result of a completed stage (or None), the command to run,
+        and whether the command resumes a partial run.
+
+    Raises
+    ------
+    RuntimeError
+        If the directory holds incomplete output that cannot be resumed.
+    """
+    if (directory / marker).is_file():
+        try:
+            return validate(), command, False
+        except (FileNotFoundError, ValueError, KeyError, json.JSONDecodeError):
+            if (not resumable or not (directory / "resume.pt").is_file()
+                    or (directory / "config.json").is_file()):
+                raise
+    if not directory.exists() or not any(directory.iterdir()):
+        return None, command, False
+    if not resumable or not (directory / "resume.pt").is_file():
+        raise RuntimeError(f"Incomplete existing {name} output at {directory}; inspect it before rerunning")
+    return None, [*command, "--resume"], True
+
+
 def ensure_stage(output: Path, name: str, directory: Path, command: list[str], validate,
                  *, resumable: bool = False, completion_marker: str | None = None) -> dict:
+    marker = completion_marker or ("completion.json" if resumable else "metrics.json")
     try:
-        marker = completion_marker or ("completion.json" if resumable else "metrics.json")
-        if (directory / marker).is_file():
-            try:
-                result = validate()
-            except (FileNotFoundError, ValueError, KeyError, json.JSONDecodeError):
-                if (not resumable or not (directory / "resume.pt").is_file()
-                        or (directory / "config.json").is_file()):
-                    raise
-            else:
-                record_status(output, name, "complete", result=result, skipped_existing=True)
-                return result
-        resume = False
-        if directory.exists() and any(directory.iterdir()):
-            if resumable and (directory / "resume.pt").is_file():
-                resume = True
-                command = [*command, "--resume"]
-            else:
-                raise RuntimeError(f"Incomplete existing {name} output at {directory}; inspect it before rerunning")
-        return run_stage(output, name, command, validate, resume=resume)
+        result, command, resume = existing_stage(name, directory, command, validate,
+                                                 resumable=resumable, marker=marker)
     except BaseException as exc:
         record_status(output, name, "failed", error=str(exc))
         raise
+    if result is not None:
+        record_status(output, name, "complete", result=result, skipped_existing=True)
+        return result
+    return run_stage(output, name, command, validate, resume=resume)
 
 
 def adaptation_command(directory: Path, epochs: int, extra: Path | None = None) -> list[str]:

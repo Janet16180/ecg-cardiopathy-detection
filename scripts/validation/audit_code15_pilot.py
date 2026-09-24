@@ -15,6 +15,8 @@ from pathlib import Path
 import h5py
 import numpy as np
 
+from scripts.data.prepare_code15 import verify_file
+
 
 ROOT = Path(__file__).resolve().parents[2]
 ARCHIVE = ROOT / "data/raw/code-15pct/zenodo-4916206/exams_part0.zip"
@@ -25,8 +27,10 @@ SAMPLE_SIZE = 64
 
 def main() -> None:
     receipt = json.loads((ROOT / "data/acquisition/code_15pct.json").read_text())
-    if not any(item["name"] == ARCHIVE.name for item in receipt["verified_files"]):
+    expected = next((item for item in receipt["verified_files"] if item["name"] == ARCHIVE.name), None)
+    if expected is None:
         raise ValueError("CODE part 0 lacks an official checksum receipt")
+    verify_file(ARCHIVE, expected)
     with zipfile.ZipFile(ARCHIVE) as archive:
         members = archive.infolist()
         if len(members) != 1 or members[0].filename != "exams_part0.hdf5":

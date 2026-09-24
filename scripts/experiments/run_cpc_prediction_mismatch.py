@@ -304,6 +304,8 @@ def linear_logits(features, saved):
 
 def fit_probe(features, feature_rows, rows, directory, fingerprint, resume=False, c_values=C_VALUES):
     """Candidate boundaries are resumable; scaler and classifier see train rows only."""
+    if not c_values:
+        raise ValueError("At least one regularization value is required")
     directory.mkdir(parents=True, exist_ok=True)
     train_indices = supervised_indices(feature_rows, rows["labeled_train"], "train")
     dev_indices = supervised_indices(feature_rows, rows["development"], "validation")

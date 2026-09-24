@@ -45,7 +45,6 @@ RATE_PENALTY_WEIGHT = 0.1
 _SOS = butter(2, (5, 18), btype="bandpass", fs=SAMPLE_RATE, output="sos")
 
 # Retained name: scripts.data.prepare_beat_tokens imports it.
-_sha256 = sha256_file
 
 
 def detect_confirmed_beats(half: np.ndarray) -> tuple[np.ndarray, np.ndarray]:

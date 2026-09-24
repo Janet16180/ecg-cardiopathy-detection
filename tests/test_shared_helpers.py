@@ -38,7 +38,7 @@ def test_write_json_atomic_matches_previous_bytes(tmp_path):
 
 
 def test_write_json_atomic_rejects_nan_by_default(tmp_path):
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="not JSON compliant"):
         files.write_json_atomic(tmp_path / "nan.json", {"value": float("nan")})
     files.write_json_atomic(tmp_path / "nan.json", {"value": float("nan")}, allow_nan=True)
 
@@ -47,6 +47,15 @@ def test_csv_roundtrip(tmp_path):
     rows = [{"ecg_id": "1", "target": "0"}, {"ecg_id": "2", "target": "1"}]
     files.write_csv_atomic(tmp_path / "rows.csv", rows, ("ecg_id", "target"))
     assert files.read_csv(tmp_path / "rows.csv") == rows
+
+
+def test_csv_and_text_roundtrip_non_ascii_as_utf8(tmp_path):
+    rows = [{"ecg_id": "1", "note": "señal ñ µV"}]
+    files.write_csv_atomic(tmp_path / "rows.csv", rows, ("ecg_id", "note"))
+    assert files.read_csv(tmp_path / "rows.csv") == rows
+    assert "señal".encode() in (tmp_path / "rows.csv").read_bytes()
+    files.write_text_atomic(tmp_path / "note.txt", "µV")
+    assert (tmp_path / "note.txt").read_bytes() == "µV".encode()
 
 
 def test_write_torch_atomic_roundtrip(tmp_path):
@@ -62,7 +71,8 @@ def test_rng_state_roundtrip_restores_every_generator():
     reproducibility.restore_rng_state(state, generator)
     actual = (random.random(), np.random.rand(), torch.rand(1), torch.rand(1, generator=generator))
     assert expected[:2] == actual[:2]
-    assert torch.equal(expected[2], actual[2]) and torch.equal(expected[3], actual[3])
+    assert torch.equal(expected[2], actual[2])
+    assert torch.equal(expected[3], actual[3])
 
 
 def test_cpu_state_is_an_independent_copy():
@@ -77,17 +87,18 @@ def test_gpu_lock_skips_cpu_and_rejects_held_lock(tmp_path):
     path = tmp_path / "gpu.lock"
     with gpu.gpu_lock("cpu", path=path):
         assert not path.exists()
-    with gpu.gpu_lock("cuda", blocking=False, path=path):
-        with pytest.raises(RuntimeError, match="reserved"):
-            with gpu.gpu_lock("cuda", blocking=False, path=path):
-                pass
+    with (gpu.gpu_lock("cuda", blocking=False, path=path),
+          pytest.raises(RuntimeError, match="reserved"),
+          gpu.gpu_lock("cuda", blocking=False, path=path)):
+        pass
 
 
 def test_process_identity_and_pause_resume():
     child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
     try:
         identity = processes.process_identity(child.pid)
-        assert identity is not None and identity["command"][0] == sys.executable
+        assert identity is not None
+        assert identity["command"][0] == sys.executable
         assert processes.runs_module({"start": "1", "command": ["python", "-m", "a.b"]}, "a.b")
         assert not processes.runs_module(None, "a.b")
         processes.stop_process(child.pid, identity)

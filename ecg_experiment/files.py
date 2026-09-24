@@ -68,7 +68,7 @@ def write_text_atomic(path: str | Path, text: str) -> None:
     """
     path = Path(path)
     temporary = _temporary_path(path)
-    temporary.write_text(text)
+    temporary.write_text(text, encoding="utf-8")
     os.replace(temporary, path)
 
 
@@ -126,7 +126,7 @@ def read_csv(path: str | Path) -> list[dict[str, str]]:
     list[dict[str, str]]
         One dictionary per row, keyed by column name.
     """
-    with Path(path).open(newline="") as handle:
+    with Path(path).open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle))
 
 
@@ -146,7 +146,7 @@ def write_csv_atomic(path: str | Path, rows: Iterable[Mapping[str, Any]],
     """
     path = Path(path)
     temporary = _temporary_path(path)
-    with temporary.open("w", newline="") as handle:
+    with temporary.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(fieldnames))
         writer.writeheader()
         writer.writerows(rows)

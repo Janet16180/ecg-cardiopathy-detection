@@ -25,7 +25,9 @@ class MemoryClient:
         self.artifacts = []
 
     def get_experiment_by_name(self, name):
-        return None if not hasattr(self, "experiment_id") else SimpleNamespace(experiment_id=self.experiment_id)
+        if not hasattr(self, "experiment_id"):
+            return None
+        return SimpleNamespace(experiment_id=self.experiment_id)
 
     def create_experiment(self, name):
         self.experiment_id = "1"
@@ -118,11 +120,11 @@ def test_incomplete_import_requires_review_and_artifact_is_sanitized(tmp_path):
 def test_verified_result_requires_frozen_hashes_and_finite_metrics(tmp_path):
     receipt = tmp_path / "outputs/experiment018/receipt.json"
     _write(receipt, {"status": "development_complete"})
-    arguments = dict(root=tmp_path, receipt=receipt, tracking_uri="unused",
-                     name="018-seed42", stage="development_screen",
-                     metrics={"auroc": 0.91}, params={"seed": 42, "objective": "bce"},
-                     manifest_sha256="a" * 64, code_sha256="b" * 64,
-                     data_sha256="c" * 64)
+    arguments = {"root": tmp_path, "receipt": receipt, "tracking_uri": "unused",
+                 "name": "018-seed42", "stage": "development_screen",
+                 "metrics": {"auroc": 0.91}, "params": {"seed": 42, "objective": "bce"},
+                 "manifest_sha256": "a" * 64, "code_sha256": "b" * 64,
+                 "data_sha256": "c" * 64}
     client = MemoryClient()
     assert record_verified_result(**arguments, client=client) is True
     assert record_verified_result(**arguments, client=client) is False
@@ -179,3 +181,49 @@ def test_config_enrichment_is_allowlisted_and_detects_changes(tmp_path):
     _write(run_dir / "config.json", {"model_parameters": 1001})
     with pytest.raises(ValueError, match="Registry tag conflict"):
         import_historical_runs(tmp_path, "unused", client=client)
+
+
+def test_pilot_arm_hash_is_checked_against_parent_receipt(tmp_path):
+    pilot = tmp_path / "outputs/experiment015_pilot"
+    arm = pilot / "arm/completion.json"
+    _write(arm, {"best_development_auroc": 0.7})
+    _write(pilot / "completion.json", {"status": "development_pilot_complete",
+                                       "arm_completions_sha256": {"arm": "0" * 64}})
+    with pytest.raises(ValueError, match="Parent receipt hash mismatch"):
+        discover_historical_runs(tmp_path)
+    _write(pilot / "completion.json", {"status": "development_pilot_complete",
+                                       "arm_completions_sha256": {
+                                           "arm": hashlib.sha256(arm.read_bytes()).hexdigest()}})
+    (run,) = discover_historical_runs(tmp_path)
+    assert run.metrics == {"development.best_auroc": 0.7}
+    assert run.params == {"arm": "arm"}
+
+
+def test_config_values_fall_back_to_fingerprint_and_record_counts(tmp_path):
+    run_dir = tmp_path / "outputs/experiment004_cpc/arm"
+    _write(run_dir / "metrics.json", {"test": {"auroc": 0.9},
+                                      "test_ci95_patient_bootstrap": {"auroc": [0.8, None],
+                                                                      "brier": [0.1]}})
+    _write(run_dir / "config.json", {"fingerprint": {"seed": 7, "runner_source_sha256": "f" * 64,
+                                                     "lr": float("inf")},
+                                     "records": {"train": 12}, "batch_size": True})
+    (run,) = discover_historical_runs(tmp_path)
+    assert run.params == {"model": "arm", "seed": "7", "labeled_training_records": "12"}
+    assert run.tags["ecg.runner_source_sha256"] == "f" * 64
+    assert run.metrics == {"test.auroc": 0.9, "test.ci95.auroc.lower": 0.8}
+
+
+def test_verified_result_rejects_identifier_names_and_mismatched_status(tmp_path):
+    receipt = tmp_path / "outputs/experiment018/receipt.json"
+    _write(receipt, {})
+    arguments = {"name": "018", "stage": "development_screen", "metrics": {}, "params": {},
+                 "manifest_sha256": "a" * 64, "code_sha256": "b" * 64, "data_sha256": "c" * 64,
+                 "client": MemoryClient()}
+    with pytest.raises(ValueError, match="Invalid aggregate metric name"):
+        record_verified_result(tmp_path, receipt, "unused", **(arguments | {"metrics": {"patient_id": 1}}))
+    with pytest.raises(ValueError, match="Invalid parameter name"):
+        record_verified_result(tmp_path, receipt, "unused", **(arguments | {"params": {"record_id": 1}}))
+    with pytest.raises(ValueError, match="execution_failed"):
+        record_verified_result(tmp_path, receipt, "unused", **(arguments | {"status": "FAILED"}))
+    with pytest.raises(ValueError, match="outputs directory"):
+        record_verified_result(tmp_path, tmp_path / "receipt.json", "unused", **arguments)

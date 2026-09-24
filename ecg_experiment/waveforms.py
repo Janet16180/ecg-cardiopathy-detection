@@ -1,5 +1,8 @@
 """Decoding of raw twelve-lead WFDB records and labeled PTB-XL split manifests."""
 
+# read_record cannot gain a docstring or inline noqa: its exact text is frozen.
+# ruff: noqa: D103
+
 from __future__ import annotations
 
 import csv
@@ -8,7 +11,6 @@ from pathlib import Path
 import numpy as np
 
 from .files import sha256_file
-
 
 LEADS = ("I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6")
 SPLITS = ("labeled_train", "validation", "test")

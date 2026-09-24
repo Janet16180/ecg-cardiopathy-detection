@@ -14,14 +14,15 @@ import re
 import sqlite3
 import time
 from collections import Counter, defaultdict
+from collections.abc import Iterable
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import wfdb
 
-from .files import sha256_file, write_text_atomic
+from .files import sha256_file, write_json_atomic
 from .waveforms import read_record
-
 
 BASE = "https://physionet.org/files/mimic-iv-ecg/1.0"
 FIELDS = ("ecg_id", "patient_id", "raw_dir", "filename_hr", "source")
@@ -202,7 +203,8 @@ def required_checksums(manifest: Path, paths: set[str]) -> dict[str, str]:
     ValueError
         If a line is malformed, a required file repeats, or any is missing.
     """
-    wanted = {"record_list.csv", "LICENSE.txt"} | {name + extension for name in paths for extension in (".hea", ".dat")}
+    wanted = {"record_list.csv", "LICENSE.txt"} | {name + extension for name in paths
+                                                   for extension in (".hea", ".dat")}
     found = {}
     with manifest.open(encoding="utf-8") as handle:
         for line in handle:
@@ -331,28 +333,7 @@ def audit(rows: list[tuple[str, str, str]], raw_dir: Path, output_dir: Path,
         reasons = Counter()
         started = time.monotonic()
         for index, (subject, study, name) in enumerate(rows, 1):
-            outcome = db.execute("SELECT status, signal_sha256, reason, detail FROM outcomes WHERE name=?",
-                                 (name,)).fetchone()
-            if outcome is None:
-                try:
-                    digest = signal_hash(check_waveform(raw_dir, name))
-                    if digest in ptb_hashes:
-                        status, reason = "excluded", "exact_duplicate_ptbxl"
-                    elif digest in seen:
-                        status, reason = "excluded", "exact_duplicate_mimic"
-                    else:
-                        status, reason = "accepted", None
-                    detail = None
-                except (ValueError, OSError, TypeError, IndexError) as error:
-                    status, digest, reason, detail = "excluded", None, "input_contract", str(error)
-                db.execute("INSERT INTO outcomes VALUES (?, ?, ?, ?, ?)",
-                           (name, status, digest, reason, detail))
-            else:
-                status, digest, reason, detail = outcome
-                if status == "accepted" and digest in ptb_hashes:
-                    raise ValueError(f"Previously accepted {name} now matches PTB-XL")
-                if status == "accepted" and digest in seen:
-                    raise ValueError(f"Audit cache has duplicate accepted hash at {name}")
+            status, digest, reason = _audit_outcome(db, raw_dir, name, ptb_hashes, seen)
             if status == "accepted":
                 seen.add(digest)
                 accepted.append({"ecg_id": "mimic:" + study,
@@ -371,6 +352,37 @@ def audit(rows: list[tuple[str, str, str]], raw_dir: Path, output_dir: Path,
         return accepted, reasons
     finally:
         db.close()
+
+
+def _new_outcome(raw_dir: Path, name: str, ptb_hashes: set[str],
+                 seen: set[str]) -> tuple[str, str | None, str | None, str | None]:
+    """Decode and classify one record not yet in the audit database."""
+    try:
+        digest = signal_hash(check_waveform(raw_dir, name))
+    except (ValueError, OSError, TypeError, IndexError) as error:
+        return "excluded", None, "input_contract", str(error)
+    status, reason = "accepted", None
+    if digest in ptb_hashes:
+        status, reason = "excluded", "exact_duplicate_ptbxl"
+    elif digest in seen:
+        status, reason = "excluded", "exact_duplicate_mimic"
+    return status, digest, reason, None
+
+
+def _audit_outcome(db: sqlite3.Connection, raw_dir: Path, name: str, ptb_hashes: set[str],
+                   seen: set[str]) -> tuple[str, str | None, str | None]:
+    """Return the cached or newly recorded ``(status, signal_sha256, reason)`` of one record."""
+    outcome = db.execute("SELECT status, signal_sha256, reason, detail FROM outcomes WHERE name=?",
+                         (name,)).fetchone()
+    if outcome is None:
+        outcome = _new_outcome(raw_dir, name, ptb_hashes, seen)
+        db.execute("INSERT INTO outcomes VALUES (?, ?, ?, ?, ?)", (name, *outcome))
+    status, digest, reason, _ = outcome
+    if status == "accepted" and digest in ptb_hashes:
+        raise ValueError(f"Previously accepted {name} now matches PTB-XL")
+    if status == "accepted" and digest in seen:
+        raise ValueError(f"Audit cache has duplicate accepted hash at {name}")
+    return status, digest, reason
 
 
 def lock_selection(output_dir: Path, rows: list[tuple[str, str, str]],
@@ -415,14 +427,18 @@ def lock_selection(output_dir: Path, rows: list[tuple[str, str, str]],
         return
     if any(output_dir.iterdir()):
         raise ValueError("Output directory contains files but no selection lock")
-    selected_path = output_dir / "selected_records.csv"
-    temporary = selected_path.with_name(selected_path.name + ".partial")
+    _write_rows_partial(output_dir / "selected_records.csv", ("subject_id", "study_id", "path"), rows)
+    write_json_atomic(config_path, config)
+
+
+def _write_rows_partial(path: Path, header: Iterable[str], rows: Iterable[Iterable[Any]]) -> None:
+    """Write CSV rows through a ``.partial`` file and rename it into place."""
+    temporary = path.with_name(path.name + ".partial")
     with temporary.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle)
-        writer.writerow(("subject_id", "study_id", "path"))
+        writer.writerow(header)
         writer.writerows(rows)
-    os.replace(temporary, selected_path)
-    write_text_atomic(config_path, json.dumps(config, indent=2) + "\n")
+    os.replace(temporary, path)
 
 
 def write_outputs(output_dir: Path, raw_dir: Path, rows: list[tuple[str, str, str]],
@@ -469,24 +485,16 @@ def write_outputs(output_dir: Path, raw_dir: Path, rows: list[tuple[str, str, st
         PTB-XL records checked for exact duplicates.
     """
     destination = output_dir / "ssl_manifest.csv"
-    temporary = destination.with_name(destination.name + ".partial")
-    with temporary.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=FIELDS)
-        writer.writeheader()
-        writer.writerows(accepted)
-    os.replace(temporary, destination)
+    _write_rows_partial(destination, FIELDS, (tuple(row[field] for field in FIELDS) for row in accepted))
+    exclusion_path = output_dir / "exclusions.csv"
     with sqlite3.connect(output_dir / "audit.sqlite3") as db:
-        exclusions = db.execute("SELECT name, reason, detail FROM outcomes WHERE status='excluded' ORDER BY name")
-        exclusion_path = output_dir / "exclusions.csv"
-        temporary = exclusion_path.with_name(exclusion_path.name + ".partial")
-        with temporary.open("w", newline="", encoding="utf-8") as handle:
-            writer = csv.writer(handle)
-            writer.writerow(("filename_hr", "reason", "detail"))
-            writer.writerows(exclusions)
-        os.replace(temporary, exclusion_path)
+        exclusions = db.execute(
+            "SELECT name, reason, detail FROM outcomes WHERE status='excluded' ORDER BY name")
+        _write_rows_partial(exclusion_path, ("filename_hr", "reason", "detail"), exclusions)
     metadata = {
         "source_url": BASE, "license": "PhysioNet MIMIC-IV-ECG 1.0; see official LICENSE.txt",
-        "selection": "Seeded SHA256 rank of subject_id; take complete patients until next would exceed max_records",
+        "selection": ("Seeded SHA256 rank of subject_id; take complete patients until next would "
+                      "exceed max_records"),
         "seed": seed, "max_records": cap,
         "source_records": source_records, "source_patients": source_patients,
         "selected_records": len(rows),
@@ -499,14 +507,15 @@ def write_outputs(output_dir: Path, raw_dir: Path, rows: list[tuple[str, str, st
         "selected_records_sha256": sha256_file(output_dir / "selected_records.csv"),
         "manifest_sha256": sha256_file(destination), "exclusions_sha256": sha256_file(exclusion_path),
         "ptbxl_records_checked": ptb_count,
-        "patient_identity": "subject_id from official MIMIC-IV-ECG record_list.csv; all selected records of each chosen subject kept before waveform audit",
+        "patient_identity": ("subject_id from official MIMIC-IV-ECG record_list.csv; all selected "
+                             "records of each chosen subject kept before waveform audit"),
         "signal_identity": "SHA256 of canonical lead-ordered float32 physical-mV 12 x 5000 decoded samples",
         "contract": "12 named leads, physical mV, 500 Hz, 5000 samples, finite decoded signal",
         "labels": "No diagnostic labels, machine measurements, reports, or ECG times used",
         "raw_dir": str(raw_dir.resolve()),
         "download": stats,
     }
-    write_text_atomic(output_dir / "metadata.json", json.dumps(metadata, indent=2, allow_nan=False) + "\n")
+    write_json_atomic(output_dir / "metadata.json", metadata)
     print(json.dumps({"manifest": str(destination), "selected_records": len(rows),
                       "accepted_records": len(accepted), "excluded": dict(reasons)}, indent=2), flush=True)
 

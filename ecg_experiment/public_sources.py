@@ -1,5 +1,8 @@
 """Public Challenge ECG releases and their canonical ten-second views."""
 
+# signal_sha256 cannot gain a docstring or inline noqa: its exact text is frozen.
+# ruff: noqa: D103
+
 from __future__ import annotations
 
 import hashlib
@@ -10,7 +13,10 @@ import wfdb
 
 from .waveforms import LEADS
 
-
+VIEW_SAMPLES = 5000
+SAMPLING_RATE = 500
+NEAR_FLAT_STD_MV = 0.01
+HIGH_AMPLITUDE_MV = 10
 SOURCE = {
     "georgia": ("challenge-2020", "1.0.2", "training/georgia"),
     "cpsc_2018": ("challenge-2020", "1.0.2", "training/cpsc_2018"),
@@ -59,26 +65,31 @@ def load_view(raw_dir: Path, stem: str, policy: str) -> tuple[np.ndarray, int, i
         raise ValueError("unsafe_path")
     record = wfdb.rdrecord(str(path))
     names = [name.upper() for name in record.sig_name]
-    if record.fs != 500 or len(names) != 12 or set(names) != {x.upper() for x in LEADS}:
+    if record.fs != SAMPLING_RATE or len(names) != len(LEADS) or set(names) != {x.upper() for x in LEADS}:
         raise ValueError("lead_or_rate_contract")
-    if record.units != ["mV"] * 12:
+    if record.units != ["mV"] * len(LEADS):
         raise ValueError("units_contract")
     waveform = np.asarray(record.p_signal, dtype=np.float32)
-    if waveform.ndim != 2 or waveform.shape[1] != 12:
+    if waveform.ndim != 2 or waveform.shape[1] != len(LEADS):
         raise ValueError("nonfinite_or_shape")
     samples = waveform.shape[0]
-    if samples < 5000 or (policy == "strict_10s" and samples != 5000):
+    if samples < VIEW_SAMPLES or (policy == "strict_10s" and samples != VIEW_SAMPLES):
         raise ValueError("duration_contract")
-    start = (samples - 5000) // 2 if policy == "ssl_center_crop" else 0
-    signal = waveform[start:start + 5000, [names.index(x.upper()) for x in LEADS]].T.copy()
-    if signal.shape != (12, 5000) or not np.isfinite(signal).all():
+    start = (samples - VIEW_SAMPLES) // 2 if policy == "ssl_center_crop" else 0
+    signal = waveform[start:start + VIEW_SAMPLES, [names.index(x.upper()) for x in LEADS]].T.copy()
+    if signal.shape != (len(LEADS), VIEW_SAMPLES) or not np.isfinite(signal).all():
         raise ValueError("nonfinite_or_shape")
     spread = np.ptp(signal, axis=1)
     if np.any(spread == 0):
         raise ValueError("constant_lead")
+    return signal, start, samples, _review_flags(signal)
+
+
+def _review_flags(signal: np.ndarray) -> str:
+    """Semicolon-separated QC flags for manual review; they do not exclude a record."""
     flags = []
-    if np.any(signal.std(axis=1) < 0.01):
+    if np.any(signal.std(axis=1) < NEAR_FLAT_STD_MV):
         flags.append("near_flat_lead_review")
-    if np.max(np.abs(signal)) > 10:
+    if np.max(np.abs(signal)) > HIGH_AMPLITUDE_MV:
         flags.append("amplitude_over_10mV_review")
-    return signal, start, samples, ";".join(flags)
+    return ";".join(flags)

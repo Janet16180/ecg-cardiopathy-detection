@@ -11,7 +11,6 @@ import numpy as np
 from .files import sha256_file, sha256_json
 from .waveforms import SAMPLE_RATE
 
-
 ROOT = Path(__file__).resolve().parents[1]
 SAMPLES_PER_VIEW = 2500
 HF_MODELS = {
@@ -50,8 +49,8 @@ def preprocess_hubert(signal: np.ndarray) -> np.ndarray:
     np.ndarray
         Float32 ``[2, 6000]`` array, one flattened view per row.
     """
-    from scipy import signal as scipy_signal
     from hubert_ecg.utils import ecg_preprocessing
+    from scipy import signal as scipy_signal
 
     normalized = ecg_preprocessing(signal, original_frequency=SAMPLE_RATE)
     views = []
@@ -132,20 +131,25 @@ def load_model(model_name: str, checkpoint: Path | None,
     -------
     tuple[Any, Callable[[np.ndarray], np.ndarray]]
         The model and the matching record preprocessing function.
+
+    Raises
+    ------
+    ValueError
+        If ``checkpoint`` is missing.
     """
+    if checkpoint is None:
+        raise ValueError(f"{model_name} requires a downloaded checkpoint")
     if model_name == "hubert-small":
         import hubert_ecg  # noqa: F401 - registers the Hugging Face model type
         from transformers import AutoModel
 
         # Use the downloaded snapshot cache. The official model implementation
         # registers its custom architecture when hubert_ecg is imported.
-        assert checkpoint is not None
         model = AutoModel.from_pretrained(str(checkpoint.parent), local_files_only=True)
         preprocess = preprocess_hubert
     else:
         from fairseq_signals.models import build_model_from_checkpoint
 
-        assert checkpoint is not None
         model = build_model_from_checkpoint(str(checkpoint))
         preprocess = preprocess_ecg_fm
     model.eval().to(device)

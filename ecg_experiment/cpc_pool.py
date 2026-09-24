@@ -20,11 +20,21 @@ from .evaluation import evaluate_predictions, partition_validation
 from .files import sha256_file, sha256_json, write_json_atomic, write_torch_atomic
 from .reproducibility import capture_rng_state, cpu_state, restore_rng_state, seed_everything
 
-
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CACHE = ROOT / "data/processed/cpc_pool_40k"
 DEFAULT_MANIFEST = ROOT / "data/processed/ptbxl"
 SSL_SEED = 42
+SIGNAL_LEADS = 12
+SIGNAL_SAMPLES = 2500
+NORMALIZATION_CHUNK_RECORDS = 128
+MIN_STD = 1e-6
+ENCODER_LR = 3e-4
+HEAD_LR = 1e-3
+WEIGHT_DECAY = 0.01
+GRADIENT_CLIP = 1.0
+LABEL_MANIFESTS = ("all_train_ssl", "labeled_train", "validation", "test")
+COMPLETED_ARTIFACTS = ("config.json", "history.json", "model.pt", "metrics.json",
+                       "test_predictions.csv", "calibration_predictions.npz")
 # Every file whose code determines CPC pretraining or fine-tuning results.
 CODE_FILES = ("ecg_experiment/cpc.py", "ecg_experiment/cpc_pool.py", "ecg_experiment/evaluation.py",
               "ecg_experiment/files.py", "ecg_experiment/reproducibility.py",
@@ -58,7 +68,8 @@ class Pool:
         self.signals = np.load(directory / "signals.npy", mmap_mode="r")
         self.ids = np.load(directory / "ecg_ids.npy", allow_pickle=False)
         self.rows = read_manifest(directory / "rows.csv")
-        if self.signals.dtype != np.float32 or self.signals.ndim != 3 or self.signals.shape[1:] != (12, 2500):
+        if (self.signals.dtype != np.float32 or self.signals.ndim != 3
+                or self.signals.shape[1:] != (SIGNAL_LEADS, SIGNAL_SAMPLES)):
             raise ValueError("Expected float32 cache [N,12,2500]")
         if len(self.ids) != len(self.rows) or len(self.ids) != len(self.signals):
             raise ValueError("Cache ID, row, and signal counts differ")
@@ -125,16 +136,18 @@ class Pool:
             if info["source"] != source:
                 raise ValueError("Existing normalization uses different training data")
             return np.asarray(info["mean"], dtype=np.float32), np.asarray(info["std"], dtype=np.float32)
-        totals = np.zeros(12, dtype=np.float64)
-        squares = np.zeros(12, dtype=np.float64)
+        totals = np.zeros(SIGNAL_LEADS, dtype=np.float64)
+        squares = np.zeros(SIGNAL_LEADS, dtype=np.float64)
         indices = self.indices(self.train_rows)
-        for start in range(0, len(indices), 128):
-            block = np.asarray(self.signals[indices[start:start + 128]], dtype=np.float64)
+        # Fixed chunking keeps the float64 accumulation order, and so the statistics, reproducible.
+        for start in range(0, len(indices), NORMALIZATION_CHUNK_RECORDS):
+            block = np.asarray(self.signals[indices[start:start + NORMALIZATION_CHUNK_RECORDS]],
+                               dtype=np.float64)
             totals += block.sum(axis=(0, 2))
             squares += np.square(block).sum(axis=(0, 2))
-        count = len(indices) * 2500
+        count = len(indices) * SIGNAL_SAMPLES
         mean = totals / count
-        std = np.maximum(np.sqrt(np.maximum(squares / count - mean ** 2, 0)), 1e-6)
+        std = np.maximum(np.sqrt(np.maximum(squares / count - mean ** 2, 0)), MIN_STD)
         write_json_atomic(path, {"source": source, "count": count,
                                  "mean": mean.tolist(), "std": std.tolist()})
         return mean.astype(np.float32), std.astype(np.float32)
@@ -163,13 +176,16 @@ class PoolDataset(Dataset):
         self.std = std[:, None]
 
     def __len__(self) -> int:
+        """Return the number of records."""
         return len(self.rows)
 
     def __getitem__(self, index: int) -> tuple[torch.Tensor, float, str]:
+        """Return the normalized signal, target and patient ID of record ``index``."""
         signal = np.array(self.pool.signals[self.indices[index]], copy=True)
         signal -= self.mean
         signal /= self.std
-        return torch.from_numpy(signal), float(self.rows[index].get("target", -1)), self.rows[index]["patient_id"]
+        row = self.rows[index]
+        return torch.from_numpy(signal), float(row.get("target", -1)), row["patient_id"]
 
 
 def loader(pool: Pool, rows: list[dict[str, str]], mean: np.ndarray, std: np.ndarray,
@@ -231,13 +247,14 @@ def manifest_rows(pool: Pool, manifest_dir: str | Path,
         If a manifest record's source, split or patient differs from the pool.
     """
     directory = Path(manifest_dir) / f"seed42_fraction{budget}"
-    files = {name: directory / f"{name}.csv" for name in ("all_train_ssl", "labeled_train", "validation", "test")}
+    files = {name: directory / f"{name}.csv" for name in LABEL_MANIFESTS}
     rows = {name: read_manifest(path) for name, path in files.items()}
     for name, expected_split in (("all_train_ssl", "train"), ("labeled_train", "train"),
                                  ("validation", "validation"), ("test", "test")):
         for row in rows[name]:
             cache_row = pool.rows[pool.index[row["ecg_id"]]]
-            if (cache_row["source"], cache_row["split"], cache_row["patient_id"]) != ("ptbxl", expected_split, row["patient_id"]):
+            identity = (cache_row["source"], cache_row["split"], cache_row["patient_id"])
+            if identity != ("ptbxl", expected_split, row["patient_id"]):
                 raise ValueError(f"PTB manifest/cache mismatch for {row['ecg_id']}")
     return rows, {name: sha256_file(path) for name, path in files.items()}
 
@@ -293,7 +310,7 @@ def make_source_hashes(pool: Pool, manifest_dir: str | Path) -> dict[str, str]:
     """
     paths = [pool.directory / name for name in ("complete.json", "rows.csv", "ecg_ids.npy", "signals.npy")]
     paths += [Path(manifest_dir) / f"seed42_fraction{budget}" / f"{name}.csv"
-              for budget in ("0.1", "1") for name in ("all_train_ssl", "labeled_train", "validation", "test")]
+              for budget in ("0.1", "1") for name in LABEL_MANIFESTS]
     hashes = {str(path.resolve()): sha256_file(path) for path in paths}
     for filename, key in (("signals.npy", "signals_sha256"), ("rows.csv", "rows_sha256"),
                           ("ecg_ids.npy", "ecg_ids_sha256")):
@@ -307,9 +324,10 @@ def make_source_hashes(pool: Pool, manifest_dir: str | Path) -> dict[str, str]:
     return hashes
 
 
-def resume_or_new(directory: Path, fingerprint_value: str, model: nn.Module,
-                  optimizer: torch.optim.Optimizer,
-                  generator: torch.Generator) -> tuple[int, list[dict[str, Any]], dict[str, torch.Tensor] | None, float, int]:
+def resume_or_new(
+    directory: Path, fingerprint_value: str, model: nn.Module, optimizer: torch.optim.Optimizer,
+    generator: torch.Generator,
+) -> tuple[int, list[dict[str, Any]], dict[str, torch.Tensor] | None, float, int]:
     """
     Restore the last completed epoch, or start fresh.
 
@@ -348,7 +366,8 @@ def resume_or_new(directory: Path, fingerprint_value: str, model: nn.Module,
     model.load_state_dict(state["model"])
     optimizer.load_state_dict(state["optimizer"])
     restore_rng_state(state["rng"], generator)
-    return state["epoch"], state["history"], state.get("best_model"), state.get("best_auc", -1.0), state.get("best_epoch", 0)
+    return (state["epoch"], state["history"], state.get("best_model"), state.get("best_auc", -1.0),
+            state.get("best_epoch", 0))
 
 
 def save_epoch(directory: Path, fingerprint_value: str, epoch: int, model: nn.Module,
@@ -412,6 +431,51 @@ def predict(model: nn.Module, data: DataLoader, device: str) -> np.ndarray:
                            for signal, _, _ in data])
 
 
+def _verify_completed(completion: Path, directory: Path, fingerprint_value: str) -> None:
+    """Check a completed stage's fingerprint and recorded artifact digests."""
+    saved = json.loads(completion.read_text())
+    if saved["fingerprint"] != fingerprint_value:
+        raise ValueError(f"Completed training fingerprint mismatch: {directory}")
+    for name, expected_hash in saved["artifacts"].items():
+        if sha256_file(directory / name) != expected_hash:
+            raise ValueError(f"Completed artifact changed: {directory / name}")
+
+
+def _classifier(args: argparse.Namespace, checkpoint: Path | None, variant: str) -> CPCClassifier:
+    """Build the classifier, loading the pretrained encoder when a checkpoint is given."""
+    model = CPCClassifier().to(args.device)
+    if checkpoint:
+        saved = torch.load(checkpoint, map_location="cpu", weights_only=True)
+        if saved["variant"] != variant or saved["epochs"] != args.ssl_epochs:
+            raise ValueError("SSL checkpoint variant or duration mismatch")
+        model.encoder.load_state_dict(saved["encoder"])
+    return model
+
+
+def _train_epoch(model: nn.Module, train_data: DataLoader, optimizer: torch.optim.Optimizer,
+                 device: str) -> tuple[float, int, int]:
+    """Train one supervised epoch; return summed record loss, updates and exposures."""
+    total = 0.0
+    updates = 0
+    exposures = 0
+    for signal, target, _ in train_data:
+        signal = signal.to(device, non_blocking=True)
+        target = target.to(device, dtype=torch.float32, non_blocking=True)
+        optimizer.zero_grad(set_to_none=True)
+        loss = nn.functional.binary_cross_entropy_with_logits(model(signal), target)
+        if not torch.isfinite(loss):
+            raise RuntimeError("Nonfinite supervised loss")
+        loss.backward()
+        norm = nn.utils.clip_grad_norm_(model.parameters(), GRADIENT_CLIP)
+        if not torch.isfinite(norm):
+            raise RuntimeError("Nonfinite supervised gradients")
+        optimizer.step()
+        total += float(loss.detach()) * len(signal)
+        updates += 1
+        exposures += len(signal)
+    return total, updates, exposures
+
+
 def fine_tune(args: argparse.Namespace, pool: Pool, mean: np.ndarray, std: np.ndarray,
               source_hashes: dict[str, str], variant: str, budget: str) -> None:
     """
@@ -455,38 +519,32 @@ def fine_tune(args: argparse.Namespace, pool: Pool, mean: np.ndarray, std: np.nd
     checkpoint_hash = sha256_file(checkpoint) if checkpoint else None
     settings = {"stage": "train", "variant": variant, "budget": budget, "seed": SSL_SEED,
                 "epochs": args.epochs, "patience": args.patience, "batch_size": args.batch_size,
-                "encoder_lr": 3e-4, "head_lr": 1e-3, "weight_decay": 0.01,
+                "encoder_lr": ENCODER_LR, "head_lr": HEAD_LR, "weight_decay": WEIGHT_DECAY,
                 "augmentation": "none", "ssl_checkpoint_sha256": checkpoint_hash,
                 "manifest_sha256": manifest_hashes}
     fp, inputs = fingerprint(pool, source_hashes, mean, std, settings)
     completion = directory / "completion.json"
     if completion.exists():
-        saved = json.loads(completion.read_text())
-        if saved["fingerprint"] != fp:
-            raise ValueError(f"Completed training fingerprint mismatch: {directory}")
-        for name, expected_hash in saved["artifacts"].items():
-            if sha256_file(directory / name) != expected_hash:
-                raise ValueError(f"Completed artifact changed: {directory / name}")
+        _verify_completed(completion, directory, fp)
         return
-    model = CPCClassifier().to(args.device)
-    if checkpoint:
-        saved = torch.load(checkpoint, map_location="cpu", weights_only=True)
-        if saved["variant"] != variant or saved["epochs"] != args.ssl_epochs:
-            raise ValueError("SSL checkpoint variant or duration mismatch")
-        model.encoder.load_state_dict(saved["encoder"])
-    optimizer = torch.optim.AdamW([{"params": model.encoder.parameters(), "lr": 3e-4},
-                                   {"params": model.head.parameters(), "lr": 1e-3}], weight_decay=0.01)
+    model = _classifier(args, checkpoint, variant)
+    optimizer = torch.optim.AdamW([{"params": model.encoder.parameters(), "lr": ENCODER_LR},
+                                   {"params": model.head.parameters(), "lr": HEAD_LR}],
+                                  weight_decay=WEIGHT_DECAY)
     generator = torch.Generator().manual_seed(SSL_SEED)
     development, calibration = partition_validation(rows["validation"])
     train_data = loader(pool, rows["labeled_train"], mean, std, args.batch_size, True, generator, args.device)
     dev_data = loader(pool, development, mean, std, args.batch_size, False, None, args.device)
-    start_epoch, history, best_model, best_auc, best_epoch = resume_or_new(directory, fp, model, optimizer, generator)
-    write_json_atomic(directory / "config.json", {"fingerprint": fp, "inputs": inputs,
-                      "model_parameters": sum(p.numel() for p in model.parameters()),
-                      "encoder_parameters": sum(p.numel() for p in model.encoder.parameters()),
-                      "labeled_training_records": len(rows["labeled_train"]),
-                      "development_records": len(development), "calibration_records": len(calibration),
-                      "test_records": len(rows["test"]), "description": "Mean/max context pooling over each half, then average halves"})
+    start_epoch, history, best_model, best_auc, best_epoch = resume_or_new(
+        directory, fp, model, optimizer, generator)
+    write_json_atomic(directory / "config.json", {
+        "fingerprint": fp, "inputs": inputs,
+        "model_parameters": sum(p.numel() for p in model.parameters()),
+        "encoder_parameters": sum(p.numel() for p in model.encoder.parameters()),
+        "labeled_training_records": len(rows["labeled_train"]),
+        "development_records": len(development), "calibration_records": len(calibration),
+        "test_records": len(rows["test"]),
+        "description": "Mean/max context pooling over each half, then average halves"})
     dev_y = np.array([int(row["target"]) for row in development])
     started = time.monotonic()
     previous_elapsed = history[-1]["elapsed_seconds"] if history else 0.0
@@ -494,24 +552,7 @@ def fine_tune(args: argparse.Namespace, pool: Pool, mean: np.ndarray, std: np.nd
         if epoch - best_epoch >= args.patience:
             break
         model.train()
-        total = 0.0
-        updates = 0
-        exposures = 0
-        for signal, target, _ in train_data:
-            signal = signal.to(args.device, non_blocking=True)
-            target = target.to(args.device, dtype=torch.float32, non_blocking=True)
-            optimizer.zero_grad(set_to_none=True)
-            loss = nn.functional.binary_cross_entropy_with_logits(model(signal), target)
-            if not torch.isfinite(loss):
-                raise RuntimeError("Nonfinite supervised loss")
-            loss.backward()
-            norm = nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-            if not torch.isfinite(norm):
-                raise RuntimeError("Nonfinite supervised gradients")
-            optimizer.step()
-            total += float(loss.detach()) * len(signal)
-            updates += 1
-            exposures += len(signal)
+        total, updates, exposures = _train_epoch(model, train_data, optimizer, args.device)
         dev_auc = float(roc_auc_score(dev_y, predict(model, dev_data, args.device)))
         if dev_auc > best_auc:
             best_auc, best_epoch, best_model = dev_auc, epoch + 1, cpu_state(model)
@@ -528,11 +569,12 @@ def fine_tune(args: argparse.Namespace, pool: Pool, mean: np.ndarray, std: np.nd
     model.load_state_dict(best_model)
     write_torch_atomic(directory / "model.pt", {"fingerprint": fp, "model": best_model,
                        "best_epoch": best_epoch, "best_development_auroc": best_auc})
-    calibration_logits = predict(model, loader(pool, calibration, mean, std, args.batch_size, False, None, args.device), args.device)
-    test_logits = predict(model, loader(pool, rows["test"], mean, std, args.batch_size, False, None, args.device), args.device)
+    calibration_data = loader(pool, calibration, mean, std, args.batch_size, False, None, args.device)
+    calibration_logits = predict(model, calibration_data, args.device)
+    test_data = loader(pool, rows["test"], mean, std, args.batch_size, False, None, args.device)
+    test_logits = predict(model, test_data, args.device)
     evaluate_predictions(f"{variant}_fraction{budget}", calibration_logits, test_logits,
                          calibration, rows["test"], directory, SSL_SEED, args.bootstrap)
-    artifact_names = ("config.json", "history.json", "model.pt", "metrics.json",
-                      "test_predictions.csv", "calibration_predictions.npz")
     write_json_atomic(completion, {"fingerprint": fp,
-                                   "artifacts": {name: sha256_file(directory / name) for name in artifact_names}})
+                                   "artifacts": {name: sha256_file(directory / name)
+                                                 for name in COMPLETED_ARTIFACTS}})

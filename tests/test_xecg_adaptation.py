@@ -118,7 +118,11 @@ def test_gram_and_visible_losses_exclude_hidden_positions_and_tie_weights():
     changed = student.detach().clone()
     changed[~visible] += 1000
     torch.testing.assert_close(gram_loss(changed, frozen, visible), gram_loss(student, frozen, visible))
-    equal_tokens = torch.ones(2, 10, 6, requires_grad=True)
+    # One-hot tokens keep every similarity exactly 1.0 whatever the BLAS summation
+    # order, so all rarities tie; torch.ones would not be exact on every CPU.
+    equal_tokens = torch.zeros(2, 10, 6)
+    equal_tokens[..., 0] = 1.0
+    equal_tokens.requires_grad_(True)
     weights, rarity = rarity_weights(equal_tokens)
     assert not weights.requires_grad
     assert not rarity.requires_grad

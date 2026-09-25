@@ -1,6 +1,9 @@
 # CPC improvement investigation backlog
 
-**Status:** queued for evidence review and experiment design; no executable
+**Status, 25 September 2026:** evidence review and ranked design complete; see
+the [research findings](cpc-improvement-research-2026-09-25.md) and the recommended
+[CPU-only equal-width local-readout proposal](cpc-local-readout-v1.md).
+Implementation and verification remain pending; no new fit, executable
 manifest or training job. This task does not change the priority or status of
 Experiments 011–013, and it does not restart deferred Experiment 010.
 

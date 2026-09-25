@@ -44,3 +44,11 @@ evaluation, checkpoint writing, and recovery on the V100. A proposed 20 SSL
 epochs remains provisional until the complete-pass cost fits the planning gate.
 Development patients are for model screening; calibration and test remain
 separate.
+
+`scripts/experiments/profile_delta_memory011.py` is a cost-only pretraining
+profile. It checks the existing 250 Hz cache against its SHA-256 receipt, reuses
+the frozen training-only normalization, and runs one shuffled SSL epoch per arm
+with batch 128, AdamW at learning rate 0.001 and weight decay 0.01. It measures
+actual cache loading, forward/backward and optimizer time, memory, and CPU
+checkpoint roundtrip. It produces no encoder for downstream use. The full
+runner, development evaluation, and executable queue manifest remain pending.

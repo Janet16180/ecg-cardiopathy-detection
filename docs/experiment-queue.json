@@ -253,7 +253,7 @@
       "primary_comparison": "CKDA minus KDA; same parameters except the specified transition ranges. GRU is a practical reference with reported capacity.",
       "learning": "Train fresh compact ECG encoders with a common causal waveform stem and the same CPC objective. Copy the initial stem and prediction heads across arms.",
       "starting_budget": "Proposed 20 SSL epochs on the fixed 56,875-record pool, then both existing label budgets; freeze exact settings after profiling.",
-      "next_action": "Complete a resumable three-arm runner, source/input fingerprinting and full data-path V100 profile. The reference recurrence and four CPU correctness tests are implemented; no executable manifest or GPU result exists yet.",
+      "next_action": "Run the verified complete-pass V100 cost profile, then complete a resumable three-arm runner and source/input fingerprinted executable manifest. Four CPU correctness tests and a synthetic compute probe have passed; no ECG model result exists yet.",
       "constraints": [
         "No language-model checkpoint required.",
         "Do not warm-start only the GRU arm from its trained checkpoint.",
@@ -275,7 +275,8 @@
       "dependencies": [],
       "implementation": "ecg_experiment/cpc_delta_memory.py",
       "cpu_tests": "tests/test_cpc_delta_memory.py",
-      "compute_only_probe": "outputs/experiment011_delta_memory/implementation_compute_probe.json"
+      "compute_only_probe": "outputs/experiment011_delta_memory/implementation_compute_probe.json",
+      "real_data_profile_runner": "scripts/experiments/profile_delta_memory011.py"
     },
     {
       "id": "012",

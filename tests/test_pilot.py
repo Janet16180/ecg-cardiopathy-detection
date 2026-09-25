@@ -2,6 +2,7 @@
 
 import csv
 import json
+import signal
 import time
 from types import SimpleNamespace
 
@@ -11,9 +12,10 @@ import torch
 from conftest import write_synthetic_cpc_pool
 from sklearn.model_selection import StratifiedGroupKFold
 
-from ecg_experiment import pilot
+from ecg_experiment import pilot, receipts
 from ecg_experiment.cpc_pool import Pool
 from ecg_experiment.evaluation import partition_validation, select_threshold
+from ecg_experiment.files import read_csv
 
 
 @pytest.fixture(autouse=True)
@@ -62,8 +64,8 @@ def test_load_partitions_accepts_frozen_layout_and_rejects_changed_budgets(tmp_p
 
 def test_load_partitions_rejects_cache_split_mismatch(tmp_path, monkeypatch):
     pool, manifests = synthetic_manifests(tmp_path, monkeypatch)
-    test = pilot.read_manifest(manifests / "seed42_fraction1/test.csv")
-    swapped = [*pilot.read_manifest(manifests / "seed42_fraction1/labeled_train.csv")[:-1], test[0]]
+    test = read_csv(manifests / "seed42_fraction1/test.csv")
+    swapped = [*read_csv(manifests / "seed42_fraction1/labeled_train.csv")[:-1], test[0]]
     write_manifest(manifests / "seed42_fraction1/labeled_train.csv", swapped)
     write_manifest(manifests / "seed42_fraction0.1/labeled_train.csv", swapped[::4])
     with pytest.raises(ValueError, match="Manifest/cache mismatch"):
@@ -126,32 +128,36 @@ def test_interrupted_by_signal_or_deadline():
     assert not pilot.interrupted(None)
     assert not pilot.interrupted(time.monotonic() + 60)
     assert pilot.interrupted(time.monotonic() - 1)
-    pilot.request_stop(15, None)
-    assert pilot.stop_requested()
-    assert pilot.interrupted(None)
+    previous = signal.getsignal(signal.SIGTERM)
+    try:
+        pilot.install_stop_handler()
+        signal.raise_signal(signal.SIGTERM)
+        assert pilot.interrupted(None)
+    finally:
+        signal.signal(signal.SIGTERM, previous)
 
 
 def test_completion_roundtrip_detects_changed_artifacts(tmp_path):
     artifacts = {"history.json": "history_sha256", "best.pt": "best_sha256"}
     (tmp_path / "history.json").write_text(json.dumps([{"epoch": 1}]))
     (tmp_path / "best.pt").write_bytes(b"model")
-    pilot.write_completion(tmp_path, "fp", {"auc": 0.7, "epoch": 1}, artifacts)
+    receipts.write_completion(tmp_path, "fp", {"auc": 0.7, "epoch": 1}, artifacts)
     saved = json.loads((tmp_path / "completion.json").read_text())
     assert list(saved) == ["fingerprint", "best_epoch", "best_development_auroc", "history_sha256",
                            "best_sha256"]
-    assert pilot.check_completion(tmp_path, "fp", artifacts) == [{"epoch": 1}]
+    assert receipts.check_completion(tmp_path, "fp", artifacts) == [{"epoch": 1}]
     with pytest.raises(ValueError, match="fingerprint"):
-        pilot.check_completion(tmp_path, "other", artifacts)
+        receipts.check_completion(tmp_path, "other", artifacts)
     (tmp_path / "best.pt").write_bytes(b"changed")
     with pytest.raises(ValueError, match="best.pt"):
-        pilot.check_completion(tmp_path, "fp", artifacts)
+        receipts.check_completion(tmp_path, "fp", artifacts)
 
 
 def test_existing_config_and_history_guards(tmp_path):
-    pilot.check_existing_config(tmp_path / "config.json", "fp")
+    receipts.check_existing_config(tmp_path / "config.json", "fp")
     (tmp_path / "config.json").write_text(json.dumps({"fingerprint": "old"}))
     with pytest.raises(ValueError, match="different inputs"):
-        pilot.check_existing_config(tmp_path / "config.json", "fp")
+        receipts.check_existing_config(tmp_path / "config.json", "fp")
     model = torch.nn.Linear(1, 1)
     optimizer = torch.optim.AdamW(model.parameters())
     assert pilot.load_state(tmp_path, "fp", model, optimizer, {"auc": -1.0}).epoch == 0
@@ -198,8 +204,8 @@ def test_profile_arms_and_deadline_between_arms(tmp_path):
 def test_require_receipt(tmp_path):
     path = tmp_path / "receipt.json"
     with pytest.raises(ValueError, match="missing"):
-        pilot.require_receipt(path, "fp", "missing or changed")
+        receipts.require_receipt(path, "fp", "missing or changed")
     path.write_text(json.dumps({"fingerprint": "fp", "value": 1}))
-    assert pilot.require_receipt(path, "fp", "missing or changed")["value"] == 1
+    assert receipts.require_receipt(path, "fp", "missing or changed")["value"] == 1
     with pytest.raises(ValueError, match="changed"):
-        pilot.require_receipt(path, "other", "missing or changed")
+        receipts.require_receipt(path, "other", "missing or changed")

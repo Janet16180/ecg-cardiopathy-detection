@@ -773,7 +773,7 @@ def pretrain(args: argparse.Namespace, pool: cpc_pool.Pool, mean: np.ndarray, st
     directory.mkdir(parents=True, exist_ok=True)
     codebook_hash = sha256_file(args.output_dir / "cluster_codebook_round0.pt") if codebook else None
     settings = ssl_settings(args, variant, codebook_hash)
-    fp, inputs = cpc_pool.fingerprint(pool, source_hashes, mean, std, settings)
+    fp, inputs = cpc_pool.fingerprint(source_hashes, mean, std, settings)
     config_path = directory / "config.json"
     if config_path.exists() and json.loads(config_path.read_text())["fingerprint"] != fp:
         raise ValueError(f"Existing SSL config differs: {directory}")
@@ -1003,7 +1003,7 @@ def fine_tune(args: argparse.Namespace, pool: cpc_pool.Pool, mean: np.ndarray, s
                 "head_lr": HEAD_LR, "weight_decay": WEIGHT_DECAY,
                 "augmentation": "none", "manifest_sha256": manifest_hashes,
                 "ssl_checkpoint_sha256": sha256_file(ssl_path)}
-    fp, inputs = cpc_pool.fingerprint(pool, source_hashes, mean, std, settings)
+    fp, inputs = cpc_pool.fingerprint(source_hashes, mean, std, settings)
     if completed_fine_tune(directory, fp):
         return
     model = continued_classifier(variant, ssl_path, args.ssl_epochs, args.device)

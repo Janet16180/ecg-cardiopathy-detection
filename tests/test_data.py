@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 import torch
 
-from ecg_experiment.data import LEADS, ECGDataset, Waveforms, build_cache, read_manifest
+from ecg_experiment.data import LEADS, ECGDataset, Waveforms, build_cache
 
 
 def _write_cache(directory, signals, ids):
@@ -22,12 +22,6 @@ def _write_manifest(path, rows):
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
-
-
-def test_read_manifest_returns_string_rows(tmp_path):
-    _write_manifest(tmp_path / "rows.csv", [{"ecg_id": 1, "target": 0}, {"ecg_id": 2, "target": 1}])
-    assert read_manifest(tmp_path / "rows.csv") == [{"ecg_id": "1", "target": "0"},
-                                                    {"ecg_id": "2", "target": "1"}]
 
 
 def test_training_scale_is_demeaned_rms_over_training_rows_only(tmp_path):

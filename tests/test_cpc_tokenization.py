@@ -3,7 +3,7 @@
 import numpy as np
 import torch
 
-from ecg_experiment.cpc import CPCPretrainer
+from ecg_experiment.cpc import CPCPretrainer, cpc_loss
 from ecg_experiment.cpc_tokenization import (
     CLUSTERS,
     TokenizationPretrainer,
@@ -11,7 +11,6 @@ from ecg_experiment.cpc_tokenization import (
     future_cluster_loss,
     nearest_cluster,
     snapshot_teacher_convs,
-    temporal_cpc_loss,
 )
 from ecg_experiment.reproducibility import cpu_state, seed_everything
 from scripts.experiments.run_cpc_tokenization import (
@@ -43,7 +42,7 @@ def test_common_query_coverage_and_future_mask():
     tokens = torch.randn(2, 2, 79, 256, requires_grad=True)
     contexts = torch.randn_like(tokens, requires_grad=True)
     heads = torch.nn.ModuleList(torch.nn.Linear(256, 256, bias=False) for _ in range(3))
-    loss = temporal_cpc_loss(tokens, contexts, heads, first_query=24)
+    loss = cpc_loss(tokens, contexts, heads, first_query=24)
     assert torch.isfinite(loss)
     loss.backward()
     assert contexts.grad[:, :, :24].abs().sum() == 0

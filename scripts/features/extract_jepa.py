@@ -21,8 +21,8 @@ import numpy as np
 import torch
 
 from ecg_experiment.files import sha256_file, write_json_atomic
-from ecg_experiment.finetuning import peak_cuda_memory, require_cuda
 from ecg_experiment.provenance import git_head
+from ecg_experiment.training import peak_gpu_bytes, require_cuda
 from ecg_experiment.waveforms import manifest_rows, read_record
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -209,7 +209,7 @@ def extract(args: argparse.Namespace) -> dict[str, Any]:
         "timm_version": timm.__version__,
         "device": args.device,
         "cuda_device_name": torch.cuda.get_device_name(0) if args.device == "cuda" else None,
-        "peak_cuda_memory_bytes": peak_cuda_memory(args.device),
+        "peak_cuda_memory_bytes": peak_gpu_bytes(args.device),
         "source_commit": git_head(SOURCE_DIR),
         "split_counts": {split: sum(row["split"] == split for row in rows) for split in SPLITS},
     }

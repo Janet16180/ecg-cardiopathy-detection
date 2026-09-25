@@ -17,8 +17,8 @@ from ecg_experiment.mimic import (
     required_checksums,
     select_patients,
     selection_hash,
-    signal_hash,
 )
+from ecg_experiment.public_sources import signal_sha256
 from scripts.prepare_mimic_ssl import verify_or_fetch
 
 
@@ -90,17 +90,17 @@ def test_exact_dedup_and_resume(tmp_path):
     first = np.ones((12, 5000), dtype=np.float32)
     other = np.zeros((12, 5000), dtype=np.float32)
     with patch("ecg_experiment.mimic.check_waveform", side_effect=[first, first, other]) as read:
-        accepted, reasons = audit(rows, tmp_path, output, "selection", {signal_hash(other)})
+        accepted, reasons = audit(rows, tmp_path, output, "selection", {signal_sha256(other)})
         assert read.call_count == 3
     assert len(accepted) == 1
     assert reasons["exact_duplicate_mimic"] == 1
     assert reasons["exact_duplicate_ptbxl"] == 1
     with patch("ecg_experiment.mimic.check_waveform", side_effect=AssertionError("redecoded")):
-        resumed, again = audit(rows, tmp_path, output, "selection", {signal_hash(other)})
+        resumed, again = audit(rows, tmp_path, output, "selection", {signal_sha256(other)})
     assert resumed == accepted
     assert again == reasons
     with pytest.raises(ValueError, match="different patient selection"):
-        audit(rows, tmp_path, output, "other", {signal_hash(other)})
+        audit(rows, tmp_path, output, "other", {signal_sha256(other)})
 
 
 def test_verified_file_is_kept_and_unsafe_path_rejected(tmp_path):

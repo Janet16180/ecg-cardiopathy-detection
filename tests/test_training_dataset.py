@@ -10,7 +10,8 @@ from torch.utils.data import DataLoader
 
 import scripts.data.build_training_dataset as builder
 from ecg_experiment.files import sha256_file
-from ecg_experiment.training_dataset import TrainingECGDataset, signal_hash, verify_dataset
+from ecg_experiment.public_sources import signal_sha256
+from ecg_experiment.training_dataset import TrainingECGDataset, verify_dataset
 from scripts.data.build_training_dataset import FIELDS, build, decode, write_csv
 
 
@@ -26,7 +27,7 @@ def dataset(tmp_path: Path) -> Path:
                      "patient_identity_known": "true" if index == 0 else "false", "split": "train",
                      "label_scope": "ptbxl_proxy_available_separately" if index == 0 else "ssl_only",
                      "shard": "shard_00000.npy", "shard_index": index,
-                     "signal_sha256": signal_hash(signals[index])})
+                     "signal_sha256": signal_sha256(signals[index])})
     write_csv(tmp_path / "train_manifest.csv", FIELDS, rows)
     for budget in ("1", "0.1"):
         write_csv(tmp_path / f"labels_fraction{budget}.csv", ("record_id", "patient_id", "target"),

@@ -1,11 +1,13 @@
 """Experiment 017 causal local morphology branches for native-grid CPC."""
 
+from __future__ import annotations
+
 import numpy as np
 import torch
 from torch import nn
 from torch.nn import functional as F  # noqa: N812 - conventional PyTorch alias
 
-from ecg_experiment.cpc import LEADS, SIGNAL_SAMPLES, TOKEN_COUNT, WIDTH, CPCEncoder, split_halves
+from .cpc import LEADS, TOKEN_COUNT, WIDTH, CPCEncoder, check_signal_batch, split_halves
 
 TEMPLATES = 32
 SUPPORT = 50
@@ -14,30 +16,6 @@ WINDOW_ELEMENTS = LEADS * SUPPORT
 BRANCH_HIDDEN = 64
 RESPONSE_KINDS = ("template", "conv")
 BRANCH_KINDS = ("none", *RESPONSE_KINDS)
-
-
-def native_windows(signal: torch.Tensor) -> torch.Tensor:
-    """
-    Split signals into independent five-second halves, matching CPCEncoder's input layout.
-
-    Parameters
-    ----------
-    signal : torch.Tensor
-        Signals of shape [batch, 12, 2500] at 250 Hz.
-
-    Returns
-    -------
-    torch.Tensor
-        Halves of shape [batch * 2, 12, 1250].
-
-    Raises
-    ------
-    ValueError
-        If the signal shape is wrong.
-    """
-    if signal.ndim != 3 or tuple(signal.shape[1:]) != (LEADS, SIGNAL_SAMPLES):
-        raise ValueError("Expected native 250 Hz signals [batch,12,2500]")
-    return split_halves(signal)
 
 
 def local_response(halves: torch.Tensor, bank: torch.Tensor, kind: str) -> torch.Tensor:
@@ -130,10 +108,13 @@ class MorphologyCPCEncoder(CPCEncoder):
 
         Raises
         ------
+        ValueError
+            If the signal shape is not [batch, 12, 2500].
         RuntimeError
             If the CNN or morphology token grid differs from 79 steps.
         """
-        halves = native_windows(signal)
+        check_signal_batch(signal)
+        halves = split_halves(signal)
         batch = len(signal)
         tokens = self.convs(halves).transpose(1, 2)
         if tokens.shape[1] != TOKEN_COUNT:

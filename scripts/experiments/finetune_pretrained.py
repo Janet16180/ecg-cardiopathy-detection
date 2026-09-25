@@ -22,10 +22,8 @@ from sklearn.metrics import roc_auc_score
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from ecg_experiment.data import read_manifest
 from ecg_experiment.evaluation import evaluate_predictions, partition_validation
-from ecg_experiment.files import sha256_file, write_json_atomic, write_torch_atomic
-from ecg_experiment.finetuning import flat_rng_state, peak_cuda_memory, require_cuda, restore_flat_rng_state
+from ecg_experiment.files import read_csv, sha256_file, write_json_atomic, write_torch_atomic
 from ecg_experiment.foundation_models import (
     checkpoint_info,
     load_model,
@@ -34,7 +32,8 @@ from ecg_experiment.foundation_models import (
     preprocessing_source_sha256,
 )
 from ecg_experiment.provenance import git_head
-from ecg_experiment.reproducibility import cpu_state, seed_everything
+from ecg_experiment.reproducibility import cpu_state, flat_rng_state, restore_flat_rng_state, seed_everything
+from ecg_experiment.training import peak_gpu_bytes, require_cuda
 from ecg_experiment.waveforms import read_record
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -71,7 +70,7 @@ def manifest_data(manifest_dir: Path) -> tuple[dict[str, Rows], dict[str, str]]:
     ValueError
         If ECG IDs overlap, a split is empty, or training lacks a class.
     """
-    rows = {name: read_manifest(manifest_dir / f"{name}.csv") for name in SPLITS}
+    rows = {name: read_csv(manifest_dir / f"{name}.csv") for name in SPLITS}
     hashes = {f"{name}.csv": sha256_file(manifest_dir / f"{name}.csv") for name in SPLITS}
     ids = [row["ecg_id"] for name in SPLITS for row in rows[name]]
     if len(ids) != len(set(ids)):
@@ -527,7 +526,7 @@ def load_adapted_backbone(args: argparse.Namespace, backbone: nn.Module, checkpo
     """
     adapted = torch.load(args.adapted_backbone, map_location="cpu", weights_only=True)
     metadata = adapted["metadata"]
-    expected_ssl = read_manifest(args.manifest_dir / "all_train_ssl.csv")
+    expected_ssl = read_csv(args.manifest_dir / "all_train_ssl.csv")
     if (metadata["official_checkpoint"]["sha256"] != checkpoint_meta["sha256"]
             or metadata["training_ecg_ids"] != [r["ecg_id"] for r in expected_ssl]
             or metadata["manifest_sha256"]["all_train_ssl.csv"]
@@ -776,7 +775,7 @@ def main() -> None:
         "extractor_source_sha256": cache_meta["extractor_sha256"],
         "finetune_source_sha256": sha256_file(Path(__file__)),
         "reproducibility_source_sha256": sha256_file(ROOT / "ecg_experiment/reproducibility.py"),
-        "finetuning_source_sha256": sha256_file(ROOT / "ecg_experiment/finetuning.py"),
+        "training_source_sha256": sha256_file(ROOT / "ecg_experiment/training.py"),
     }
     best_state, best_epoch, best_auc, started = fit(args, model, optimizer, train_loader, dev_loader,
                                                     development_y, directory, fingerprint)
@@ -809,7 +808,7 @@ def main() -> None:
         "device": args.device,
         "device_name": torch.cuda.get_device_name(0) if args.device == "cuda" else None,
         "torch_version": torch.__version__, "elapsed_seconds": time.monotonic() - started,
-        "peak_cuda_memory_bytes": peak_cuda_memory(args.device),
+        "peak_cuda_memory_bytes": peak_gpu_bytes(args.device),
         "adaptation": adaptation_meta,
     }
     write_json_atomic(directory / "config.json", config)

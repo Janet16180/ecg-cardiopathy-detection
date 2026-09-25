@@ -10,6 +10,8 @@ from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
 
+SHA256_HEX_LENGTH = 64
+
 
 def sha256_file(path: str | Path) -> str:
     """
@@ -96,6 +98,8 @@ def write_torch_atomic(path: str | Path, value: Any) -> None:
     """
     Save a torch object through a temporary file and rename it into place.
 
+    The bytes equal those of a plain ``torch.save(value, path)``.
+
     Parameters
     ----------
     path : str | Path
@@ -107,8 +111,34 @@ def write_torch_atomic(path: str | Path, value: Any) -> None:
     import torch
 
     path = Path(path)
-    temporary = _temporary_path(path)
+    # torch names the archive after the file stem, so the temporary keeps the
+    # destination name inside a hidden staging directory.
+    staging = path.parent / f".{path.name}.tmp"
+    staging.mkdir(parents=True, exist_ok=True)
+    temporary = staging / path.name
     torch.save(value, temporary)
+    os.replace(temporary, path)
+    staging.rmdir()
+
+
+def write_npz_atomic(path: str | Path, **arrays: Any) -> None:
+    """
+    Save arrays with ``numpy.savez`` through a temporary file and rename it into place.
+
+    Parameters
+    ----------
+    path : str | Path
+        Destination file, used exactly; no ``.npz`` suffix is added.
+    **arrays : Any
+        Arrays stored under their keyword names, in order.
+    """
+    # Imported here for the same reason as torch in write_torch_atomic.
+    import numpy as np
+
+    path = Path(path)
+    temporary = _temporary_path(path)
+    with temporary.open("wb") as handle:
+        np.savez(handle, **arrays)
     os.replace(temporary, path)
 
 

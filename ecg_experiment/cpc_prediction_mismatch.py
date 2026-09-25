@@ -16,13 +16,11 @@ import torch
 from torch import nn
 from torch.nn import functional as F  # noqa: N812 - conventional PyTorch alias
 
-from ecg_experiment.cpc import HORIZONS, CPCEncoder, CPCPretrainer
+from .cpc import FIRST_QUERY, HORIZONS, WIDTH, CPCEncoder, CPCPretrainer
 
 ARMS = ("context", "ordinary", "residual")
 HORIZON = 4
-FIRST_QUERY = 3
 FIRST_TARGET = FIRST_QUERY + HORIZON
-WIDTH = 256
 BRANCH_WIDTH = 2 * WIDTH
 BOOTSTRAP_EPOCHS = 20
 BOOTSTRAP_SEED = 42
@@ -157,23 +155,6 @@ def aligned_representations(tokens: torch.Tensor, contexts: torch.Tensor,
             "prediction": predicted, "residual": observed - predicted}
 
 
-def pool_branch(values: torch.Tensor) -> torch.Tensor:
-    """
-    Mean/max within each independent half, then mean across the two halves.
-
-    Parameters
-    ----------
-    values : torch.Tensor
-        Representations of shape [batch, 2, time, width].
-
-    Returns
-    -------
-    torch.Tensor
-        Pooled features of shape [batch, 2 * width].
-    """
-    return CPCEncoder.pooled(values)
-
-
 @torch.inference_mode()
 def extract_branches(model: CPCPretrainer, normalized_signal: torch.Tensor) -> torch.Tensor:
     """
@@ -200,7 +181,7 @@ def extract_branches(model: CPCPretrainer, normalized_signal: torch.Tensor) -> t
         raise ValueError("Feature extraction requires an eval-mode frozen CPC model")
     tokens, contexts = model.encoder(normalized_signal)
     aligned = aligned_representations(tokens, contexts, model.heads[0])
-    branches = torch.stack([pool_branch(aligned[arm]) for arm in ARMS], dim=1)
+    branches = torch.stack([CPCEncoder.pooled(aligned[arm]) for arm in ARMS], dim=1)
     if branches.shape[1:] != (len(ARMS), BRANCH_WIDTH) or not torch.isfinite(branches).all():
         raise ValueError("Nonfinite or malformed frozen CPC features")
     return branches

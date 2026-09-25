@@ -1,4 +1,4 @@
-"""Optimizer steps, learning-rate schedule, and profile timing shared by training runners."""
+"""Optimizer steps, learning-rate schedule, device checks, and profile timing shared by training runners."""
 
 from __future__ import annotations
 
@@ -157,6 +157,41 @@ def time_updates(batches: Iterable[Any], step: Callable[[Any], tuple[Any, int]],
     return ProfileTiming(update, measured_records, time.monotonic() - started, last)
 
 
+def require_cuda(device: str) -> None:
+    """
+    Fail early when CUDA is requested on a machine without it.
+
+    Parameters
+    ----------
+    device : str
+        Torch device name.
+
+    Raises
+    ------
+    RuntimeError
+        If ``device`` is ``"cuda"`` and CUDA is unavailable.
+    """
+    if device == "cuda" and not torch.cuda.is_available():
+        raise RuntimeError("CUDA requested but unavailable")
+
+
+def peak_gpu_bytes(device: str) -> int | None:
+    """
+    Peak allocated CUDA memory in bytes.
+
+    Parameters
+    ----------
+    device : str
+        Torch device.
+
+    Returns
+    -------
+    int | None
+        Peak memory since the last reset, or ``None`` off CUDA.
+    """
+    return torch.cuda.max_memory_allocated() if device == "cuda" else None
+
+
 def peak_gpu_gb(device: str) -> float | None:
     """
     Peak allocated CUDA memory in gigabytes.
@@ -189,3 +224,22 @@ def parameter_count(module: nn.Module) -> int:
         Total number of parameter elements.
     """
     return sum(parameter.numel() for parameter in module.parameters())
+
+
+def optimizer_state_bytes(optimizer: torch.optim.Optimizer) -> int:
+    """
+    Count the bytes held by an optimizer's tensor state.
+
+    Parameters
+    ----------
+    optimizer : torch.optim.Optimizer
+        Optimizer after at least one step.
+
+    Returns
+    -------
+    int
+        Total bytes of every tensor in the per-parameter state.
+    """
+    return sum(value.numel() * value.element_size()
+               for state in optimizer.state.values() for value in state.values()
+               if isinstance(value, torch.Tensor))

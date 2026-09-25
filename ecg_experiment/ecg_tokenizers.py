@@ -16,16 +16,17 @@ from scipy.ndimage import maximum_filter1d
 from scipy.signal import butter, lfilter, sosfilt
 from torch import nn
 
-from ecg_experiment.cpc import (
+from .cpc import (
     HALF_SAMPLES,
     LEADS,
     SIGNAL_SAMPLES,
     TOKEN_COUNT,
     WIDTH,
     CPCEncoder,
+    check_signal_batch,
     split_halves,
 )
-from ecg_experiment.files import sha256_file
+from .files import sha256_file
 
 SAMPLE_RATE = 250
 GRID_STEPS = TOKEN_COUNT
@@ -43,8 +44,6 @@ MIN_THRESHOLD = 0.045
 TARGET_CHUNKS = 5
 RATE_PENALTY_WEIGHT = 0.1
 _SOS = butter(2, (5, 18), btype="bandpass", fs=SAMPLE_RATE, output="sos")
-
-# Retained name: scripts.data.prepare_beat_tokens imports it.
 
 
 def detect_confirmed_beats(half: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -248,7 +247,12 @@ def _learned_gate(gate_layer: nn.Module, token: torch.Tensor, elapsed: torch.Ten
 
 
 class CausalChunkEncoder(nn.Module):
-    """Keep CNN target tokens; update context only at emitted variable chunks."""
+    """
+    Keep CNN target tokens; update context only at emitted variable chunks.
+
+    ``forward`` stores the emitted gates that ``pooled`` reads, so pool only the
+    contexts returned by the latest ``forward`` call.
+    """
 
     VARIANTS = ("fixedchunk", "beatchunk", "learnedchunk")
 
@@ -319,8 +323,6 @@ class CausalChunkEncoder(nn.Module):
         elif self.variant == "beatchunk":
             gate = _beat_gate(boundaries[:, step:step + 1], elapsed, forced_end).to(token.dtype)
         else:
-            if self.gate is None:
-                raise RuntimeError("The learned chunk encoder lacks its gate layer")
             gate = _learned_gate(self.gate, token, elapsed, forced_end)
         return gate
 
@@ -422,8 +424,7 @@ class CausalChunkEncoder(nn.Module):
         ValueError
             If the signal shape is wrong.
         """
-        if signal.ndim != 3 or signal.shape[1:] != (LEADS, SIGNAL_SAMPLES):
-            raise ValueError("Expected ECG signal [batch,12,2500]")
+        check_signal_batch(signal)
         batch = len(signal)
         tokens = self.core.convs(split_halves(signal)).transpose(1, 2).reshape(batch, 2, GRID_STEPS, WIDTH)
         return tokens, self.chunk_context(tokens, beat_boundaries)

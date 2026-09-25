@@ -11,6 +11,7 @@ import math
 import time
 from collections import Counter
 from collections.abc import Sequence
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -20,16 +21,10 @@ from torch.utils.data import DataLoader
 
 from ecg_experiment.evaluation import evaluate_predictions
 from ecg_experiment.files import sha256_file, sha256_json, write_json_atomic, write_torch_atomic
-from ecg_experiment.finetuning import (
-    optimizer_state_bytes,
-    peak_cuda_memory,
-    require_cuda,
-    restore_rng_lists,
-    rng_state_lists,
-    verified_completion,
-)
 from ecg_experiment.gpu import gpu_lock
-from ecg_experiment.reproducibility import cpu_state, seed_everything
+from ecg_experiment.receipts import verified_completion
+from ecg_experiment.reproducibility import cpu_state, restore_rng_lists, rng_state_lists, seed_everything
+from ecg_experiment.training import optimizer_state_bytes, peak_gpu_bytes, require_cuda
 from ecg_experiment.xecg import XECGBinaryClassifier, load_xecg
 from ecg_experiment.xecg_adaptation import (
     ARMS,
@@ -232,7 +227,8 @@ def source_identity() -> dict[str, str]:
              "ecg_experiment/xecg.py", "scripts/experiments/run_xecg_finetune.py",
              "scripts/data/prepare_xecg_ssl.py", "ecg_experiment/run.py", "ecg_experiment/evaluation.py",
              "scripts/reports/report_xecg_adaptation.py", "scripts/experiments/run_cpc_experiment.py",
-             "ecg_experiment/reproducibility.py", "ecg_experiment/finetuning.py")
+             "ecg_experiment/reproducibility.py", "ecg_experiment/training.py",
+             "ecg_experiment/receipts.py")
     return {**{name: sha256_file(ROOT / name) for name in files},
             "xlstm_python_tree": ft.source_tree_sha256(ROOT / "third_party/xecg-deps/xlstm")}
 
@@ -258,7 +254,7 @@ def make_fingerprint(args: argparse.Namespace, config: AdaptationConfig, cache_h
     dict[str, Any]
         Fingerprint that profile, resume, and completion receipts must match.
     """
-    protocol = {"config": config.as_dict(),
+    protocol = {"config": asdict(config),
                 "views": "two contiguous masks; eight of forty tokens; clean teachers",
                 "coding_rate_batch": "actual microbatch", "selection": "final student",
                 "arm": arm, "backend": "vanilla", "precision": "float32"}
@@ -564,7 +560,7 @@ def _finish_arm(args: argparse.Namespace, config: AdaptationConfig, directory: P
     write_json_atomic(directory / "history.json", history)
     receipt = {"fingerprint": fingerprint, "updates": config.updates, "trace_sha256": trace,
                "elapsed_seconds": time.monotonic() - started,
-               "peak_cuda_memory_bytes": peak_cuda_memory(args.device),
+               "peak_cuda_memory_bytes": peak_gpu_bytes(args.device),
                "sha256": {name: sha256_file(directory / name) for name in SSL_ARTIFACTS}}
     write_json_atomic(directory / "complete.json", receipt)
     (directory / "resume.pt").unlink(missing_ok=True)
@@ -636,7 +632,7 @@ def _profile_arm(args: argparse.Namespace, config: AdaptationConfig, views: np.n
     path.unlink()
     return {"first_update_seconds": timings[0], "steady_update_seconds": timings[1],
             "projected_ssl_arm_seconds": timings[1] * config.updates,
-            "peak_cuda_memory_bytes": peak_cuda_memory(args.device),
+            "peak_cuda_memory_bytes": peak_gpu_bytes(args.device),
             "optimizer_state_bytes": optimizer_state_bytes(optimizer),
             "final_losses": history[-1]["losses"], "resume_roundtrip": True}
 
@@ -686,7 +682,7 @@ def profile(args: argparse.Namespace, config: AdaptationConfig, views: np.ndarra
     baseline_seconds = _baseline_seconds()
     projected_ssl = sum(r["projected_ssl_arm_seconds"] for r in results.values())
     projected_transfer = len(ARMS) * sum(baseline_seconds) if len(baseline_seconds) == len(BUDGETS) else None
-    result = {"config": config.as_dict(), "cache": cache_hashes, "sources": source_identity(),
+    result = {"config": asdict(config), "cache": cache_hashes, "sources": source_identity(),
               "device": args.device, "gpu": torch.cuda.get_device_name(0) if args.device == "cuda" else None,
               "arm_fingerprints": fingerprints,
               "arms": results, "projected_total_ssl_seconds": projected_ssl,
@@ -932,7 +928,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     manifests = {budget: ft.load_manifests(args.manifest_root, budget) for budget in BUDGETS}
     ssl_views, ssl_rows, ssl_hashes = load_ssl_cache(args.ssl_cache_dir)
     print(json.dumps({"stage": "adaptation_check", "records": len(ssl_rows),
-                      "arms": selected, "protocol": config.as_dict()}), flush=True)
+                      "arms": selected, "protocol": asdict(config)}), flush=True)
     if args.stage == "check":
         return
     with gpu_lock(args.device, blocking=False):

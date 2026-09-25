@@ -8,10 +8,10 @@ from typing import Any
 
 import numpy as np
 
+from . import ROOT
 from .files import sha256_file, sha256_json
 from .waveforms import SAMPLE_RATE
 
-ROOT = Path(__file__).resolve().parents[1]
 SAMPLES_PER_VIEW = 2500
 HF_MODELS = {
     "hubert-small": ("Edoardo-Coppola/hubert-ecg-small", "model.safetensors"),
@@ -84,9 +84,12 @@ def preprocess_ecg_fm(signal: np.ndarray) -> np.ndarray:
     return np.stack((standardized[:, :SAMPLES_PER_VIEW], standardized[:, SAMPLES_PER_VIEW:]))
 
 
-def checkpoint_info(model_name: str) -> tuple[Path | None, dict[str, str]]:
+def checkpoint_info(model_name: str) -> tuple[Path, dict[str, str]]:
     """
-    Download a pinned published checkpoint and describe its provenance.
+    Download a published checkpoint and describe its provenance.
+
+    The Hub revision is not pinned: it is resolved at run time and recorded in
+    the returned metadata.
 
     Parameters
     ----------
@@ -95,7 +98,7 @@ def checkpoint_info(model_name: str) -> tuple[Path | None, dict[str, str]]:
 
     Returns
     -------
-    tuple[Path | None, dict[str, str]]
+    tuple[Path, dict[str, str]]
         Local checkpoint path and its repository, revision, file name and
         SHA-256.
     """
@@ -113,7 +116,7 @@ def checkpoint_info(model_name: str) -> tuple[Path | None, dict[str, str]]:
                               "sha256": sha256_file(Path(checkpoint))}
 
 
-def load_model(model_name: str, checkpoint: Path | None,
+def load_model(model_name: str, checkpoint: Path,
                device: str) -> tuple[Any, Callable[[np.ndarray], np.ndarray]]:
     """
     Load a published backbone in evaluation mode with its preprocessing.
@@ -122,8 +125,8 @@ def load_model(model_name: str, checkpoint: Path | None,
     ----------
     model_name : str
         ``"hubert-small"`` or ``"ecg-fm"``.
-    checkpoint : Path | None
-        Checkpoint returned by ``checkpoint_info``; required.
+    checkpoint : Path
+        Checkpoint returned by ``checkpoint_info``.
     device : str
         Torch device for the model.
 
@@ -131,14 +134,7 @@ def load_model(model_name: str, checkpoint: Path | None,
     -------
     tuple[Any, Callable[[np.ndarray], np.ndarray]]
         The model and the matching record preprocessing function.
-
-    Raises
-    ------
-    ValueError
-        If ``checkpoint`` is missing.
     """
-    if checkpoint is None:
-        raise ValueError(f"{model_name} requires a downloaded checkpoint")
     if model_name == "hubert-small":
         import hubert_ecg  # noqa: F401 - registers the Hugging Face model type
         from transformers import AutoModel

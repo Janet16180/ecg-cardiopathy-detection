@@ -15,7 +15,6 @@ from ecg_experiment.cpc_prediction_mismatch import (
     aligned_representations,
     extract_branches,
     features_for_arm,
-    pool_branch,
     supervised_indices,
     validate_bootstrap,
 )
@@ -41,7 +40,7 @@ def test_horizon_alignment_uses_only_the_past_query_and_retains_error_magnitude(
 
 def test_pooling_and_dimension_matched_controls_use_identical_context_branch():
     values = torch.tensor([[[[1., 2.], [3., 4.]], [[10., 20.], [30., 40.]]]])
-    torch.testing.assert_close(pool_branch(values), torch.tensor([[11., 16.5, 16.5, 22.]]))
+    torch.testing.assert_close(CPCEncoder.pooled(values), torch.tensor([[11., 16.5, 16.5, 22.]]))
     branches = np.random.default_rng(4).normal(size=(3, 3, 512)).astype(np.float32)
     context = features_for_arm(branches, "context")
     ordinary = features_for_arm(branches, "ordinary")

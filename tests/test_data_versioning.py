@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from ecg_experiment.data_validation import DatasetValidator, validate_source, validate_splits
+from ecg_experiment.data_validation import validate_datasets, validate_source, validate_splits
 
 
 def _split(path: Path, rows: list[tuple[str, str, str]]) -> None:
@@ -146,16 +146,15 @@ def test_validator_orchestrates_frozen_hashes_and_source_checks(tmp_path: Path) 
         },
     }
     config.write_text(json.dumps(settings), encoding="utf-8")
-    validator = DatasetValidator(tmp_path, config)
-    report = validator.validate()
+    report = validate_datasets(tmp_path, config)
     assert report["sources"][0]["files"] == 2
     assert report["ptb_split_audit"]["record_counts"]["full_train"] == 2
 
     (tmp_path / splits["test"]).write_text("ecg_id,patient_id,target\n4,p4,0\n")
     with pytest.raises(ValueError, match="Frozen PTB split checksum mismatch: test"):
-        validator.validate()
+        validate_datasets(tmp_path, config)
 
     _split(tmp_path / splits["test"], [("4", "p4", "1")])
     (tmp_path / source["path"] / "g1/Q1.mat").write_bytes(b"tampered")
     with pytest.raises(ValueError, match="checksum mismatch: g1/Q1.mat"):
-        validator.validate()
+        validate_datasets(tmp_path, config)

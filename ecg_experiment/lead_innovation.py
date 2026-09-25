@@ -3,13 +3,13 @@
 This is an experimental architecture, not a published ECG-JEPA reproduction.
 """
 
+from __future__ import annotations
+
 import copy
 
 import torch
 from torch import nn
 from torch.nn import functional as F  # noqa: N812 - conventional PyTorch alias
-
-from ecg_experiment.models import Classifier
 
 LEAD_INDICES = (0, 1, 6, 7, 8, 9, 10, 11)  # I, II, V1–V6
 LEADS = 8
@@ -23,10 +23,6 @@ WIDTH = 96
 HEADS = 4
 VARIANCE_WEIGHT = 0.1
 INNOVATION_WEIGHTS = (0.0, 0.5)
-
-# The lead classifier is the shared head; its modules and state_dict keys are identical.
-LeadClassifier = Classifier
-
 
 def lead_patch_mask(batch: int, device: torch.device | str) -> torch.Tensor:
     """

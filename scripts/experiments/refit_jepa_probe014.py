@@ -12,9 +12,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 from sklearn.preprocessing import StandardScaler
 
-from ecg_experiment.data import read_manifest
 from ecg_experiment.evaluation import partition_validation
-from ecg_experiment.files import sha256_file, write_json_atomic
+from ecg_experiment.files import read_csv, sha256_file, write_json_atomic
 
 ROOT = Path(__file__).resolve().parents[2]
 LIMITED = ROOT / "data/processed/ptbxl/features_jepa_multiblock_union_seeds42_43_44"
@@ -50,8 +49,8 @@ def load_split_features() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarra
     index = {int(identifier): i for i, identifier in enumerate(ids)}
     if len(index) != len(ids):
         raise ValueError("Duplicate limited JEPA ECG IDs")
-    train = read_manifest(MANIFEST / "labeled_train.csv")
-    development, _ = partition_validation(read_manifest(MANIFEST / "validation.csv"))
+    train = read_csv(MANIFEST / "labeled_train.csv")
+    development, _ = partition_validation(read_csv(MANIFEST / "validation.csv"))
     if len(train) != TRAIN_RECORDS or len(development) != DEVELOPMENT_RECORDS:
         raise ValueError("Fixed label/development cohorts changed")
     train_ids = [int(row["ecg_id"]) for row in train]

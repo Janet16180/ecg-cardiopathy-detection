@@ -9,42 +9,25 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
-import os
 import re
 import sqlite3
 import time
 from collections import Counter, defaultdict
-from collections.abc import Iterable
+from contextlib import closing
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 import wfdb
 
-from .files import sha256_file, write_json_atomic
+from .files import sha256_file, write_csv_atomic, write_json_atomic
+from .public_sources import signal_sha256
 from .waveforms import read_record
 
 BASE = "https://physionet.org/files/mimic-iv-ecg/1.0"
 FIELDS = ("ecg_id", "patient_id", "raw_dir", "filename_hr", "source")
 SHA_LINE = re.compile(r"([0-9a-fA-F]{64})[ \t]+\*?(?:\./)?(.+)")
 PATH = re.compile(r"files/p(\d{4})/p(\d{8})/s(\d{8})/(\d{8})")
-
-
-def signal_hash(signal: np.ndarray) -> str:
-    """
-    Identify a decoded ECG by its canonical samples.
-
-    Parameters
-    ----------
-    signal : np.ndarray
-        Canonical lead-ordered ``[12, 5000]`` physical-mV signal.
-
-    Returns
-    -------
-    str
-        SHA-256 of the little-endian float32 sample bytes.
-    """
-    return hashlib.sha256(np.ascontiguousarray(signal, dtype="<f4").tobytes()).hexdigest()
 
 
 def safe_record_path(subject: str, study: str, name: str) -> bool:
@@ -234,7 +217,7 @@ def ptbxl_hashes(ptbxl_dir: Path) -> tuple[set[str], int]:
     Returns
     -------
     tuple[set[str], int]
-        Signal identities from ``signal_hash`` and the number of records read.
+        Signal identities from ``signal_sha256`` and the number of records read.
 
     Raises
     ------
@@ -248,7 +231,7 @@ def ptbxl_hashes(ptbxl_dir: Path) -> tuple[set[str], int]:
             raise ValueError("PTB-XL metadata lacks filename_hr")
         count = 0
         for row in reader:
-            hashes.add(signal_hash(read_record(ptbxl_dir, row["filename_hr"])))
+            hashes.add(signal_sha256(read_record(ptbxl_dir, row["filename_hr"])))
             count += 1
             if count % 5000 == 0:
                 print(f"Audited {count:,} PTB-XL ECG identities", flush=True)
@@ -358,7 +341,7 @@ def _new_outcome(raw_dir: Path, name: str, ptb_hashes: set[str],
                  seen: set[str]) -> tuple[str, str | None, str | None, str | None]:
     """Decode and classify one record not yet in the audit database."""
     try:
-        digest = signal_hash(check_waveform(raw_dir, name))
+        digest = signal_sha256(check_waveform(raw_dir, name))
     except (ValueError, OSError, TypeError, IndexError) as error:
         return "excluded", None, "input_contract", str(error)
     status, reason = "accepted", None
@@ -427,25 +410,53 @@ def lock_selection(output_dir: Path, rows: list[tuple[str, str, str]],
         return
     if any(output_dir.iterdir()):
         raise ValueError("Output directory contains files but no selection lock")
-    _write_rows_partial(output_dir / "selected_records.csv", ("subject_id", "study_id", "path"), rows)
+    header = ("subject_id", "study_id", "path")
+    selected = (dict(zip(header, row, strict=True)) for row in rows)
+    write_csv_atomic(output_dir / "selected_records.csv", selected, header)
     write_json_atomic(config_path, config)
 
 
-def _write_rows_partial(path: Path, header: Iterable[str], rows: Iterable[Iterable[Any]]) -> None:
-    """Write CSV rows through a ``.partial`` file and rename it into place."""
-    temporary = path.with_name(path.name + ".partial")
-    with temporary.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.writer(handle)
-        writer.writerow(header)
-        writer.writerows(rows)
-    os.replace(temporary, path)
+@dataclass(frozen=True)
+class SelectionProvenance:
+    """
+    Selection inputs and source counts recorded in ``metadata.json``.
+
+    Attributes
+    ----------
+    seed : int
+        Selection seed.
+    max_records : int
+        Selection record cap.
+    selection_sha256 : str
+        Output of ``selection_hash``.
+    record_list_sha256 : str
+        SHA-256 of ``record_list.csv``.
+    checksums_sha256 : str
+        SHA-256 of ``SHA256SUMS.txt``.
+    license_sha256 : str
+        SHA-256 of ``LICENSE.txt``.
+    source_records : int
+        Records in the official list.
+    source_patients : int
+        Patients in the official list.
+    ptbxl_records_checked : int
+        PTB-XL records checked for exact duplicates.
+    """
+
+    seed: int
+    max_records: int
+    selection_sha256: str
+    record_list_sha256: str
+    checksums_sha256: str
+    license_sha256: str
+    source_records: int
+    source_patients: int
+    ptbxl_records_checked: int
 
 
 def write_outputs(output_dir: Path, raw_dir: Path, rows: list[tuple[str, str, str]],
                   subjects: list[str], accepted: list[dict[str, str]], reasons: Counter,
-                  stats: dict[str, int], seed: int, cap: int, selection_digest: str,
-                  list_hash: str, sums_hash: str, license_hash: str,
-                  source_records: int, source_patients: int, ptb_count: int) -> None:
+                  stats: dict[str, int], provenance: SelectionProvenance) -> None:
     """
     Write the SSL manifest, exclusion list and provenance metadata.
 
@@ -465,48 +476,35 @@ def write_outputs(output_dir: Path, raw_dir: Path, rows: list[tuple[str, str, st
         Exclusion counts from ``audit``.
     stats : dict[str, int]
         Download statistics.
-    seed : int
-        Selection seed.
-    cap : int
-        Selection record cap.
-    selection_digest : str
-        Output of ``selection_hash``.
-    list_hash : str
-        SHA-256 of ``record_list.csv``.
-    sums_hash : str
-        SHA-256 of ``SHA256SUMS.txt``.
-    license_hash : str
-        SHA-256 of ``LICENSE.txt``.
-    source_records : int
-        Records in the official list.
-    source_patients : int
-        Patients in the official list.
-    ptb_count : int
-        PTB-XL records checked for exact duplicates.
+    provenance : SelectionProvenance
+        Selection inputs and source counts.
     """
     destination = output_dir / "ssl_manifest.csv"
-    _write_rows_partial(destination, FIELDS, (tuple(row[field] for field in FIELDS) for row in accepted))
+    write_csv_atomic(destination, accepted, FIELDS)
     exclusion_path = output_dir / "exclusions.csv"
-    with sqlite3.connect(output_dir / "audit.sqlite3") as db:
+    exclusion_fields = ("filename_hr", "reason", "detail")
+    with closing(sqlite3.connect(output_dir / "audit.sqlite3")) as db:
         exclusions = db.execute(
             "SELECT name, reason, detail FROM outcomes WHERE status='excluded' ORDER BY name")
-        _write_rows_partial(exclusion_path, ("filename_hr", "reason", "detail"), exclusions)
+        excluded = (dict(zip(exclusion_fields, row, strict=True)) for row in exclusions)
+        write_csv_atomic(exclusion_path, excluded, exclusion_fields)
     metadata = {
         "source_url": BASE, "license": "PhysioNet MIMIC-IV-ECG 1.0; see official LICENSE.txt",
         "selection": ("Seeded SHA256 rank of subject_id; take complete patients until next would "
                       "exceed max_records"),
-        "seed": seed, "max_records": cap,
-        "source_records": source_records, "source_patients": source_patients,
+        "seed": provenance.seed, "max_records": provenance.max_records,
+        "source_records": provenance.source_records, "source_patients": provenance.source_patients,
         "selected_records": len(rows),
         "selected_patients": len(subjects), "accepted_records": len(accepted),
         "accepted_patients": len({r["patient_id"] for r in accepted}),
         "exclusion_counts": dict(sorted(reasons.items())),
-        "selection_sha256": selection_digest,
-        "record_list_sha256": list_hash, "official_checksums_sha256": sums_hash,
-        "license_sha256": license_hash,
+        "selection_sha256": provenance.selection_sha256,
+        "record_list_sha256": provenance.record_list_sha256,
+        "official_checksums_sha256": provenance.checksums_sha256,
+        "license_sha256": provenance.license_sha256,
         "selected_records_sha256": sha256_file(output_dir / "selected_records.csv"),
         "manifest_sha256": sha256_file(destination), "exclusions_sha256": sha256_file(exclusion_path),
-        "ptbxl_records_checked": ptb_count,
+        "ptbxl_records_checked": provenance.ptbxl_records_checked,
         "patient_identity": ("subject_id from official MIMIC-IV-ECG record_list.csv; all selected "
                              "records of each chosen subject kept before waveform audit"),
         "signal_identity": "SHA256 of canonical lead-ordered float32 physical-mV 12 x 5000 decoded samples",

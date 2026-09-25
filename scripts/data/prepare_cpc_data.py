@@ -25,6 +25,7 @@ from scipy.signal import resample_poly
 
 from ecg_experiment.files import sha256_file, write_text_atomic
 from ecg_experiment.mimic import (
+    SelectionProvenance,
     audit,
     lock_selection,
     ptbxl_hashes,
@@ -468,10 +469,10 @@ def _audit_selection(args: argparse.Namespace, raw_dir: Path, ptb_dir: Path) -> 
     if ptb_count != PTB_RECORD_COUNT:
         raise ValueError(f"Expected all 21,799 PTB-XL raw identities, got {ptb_count}")
     accepted, reasons = audit(rows, raw_dir, args.mimic_output, digest, ptb_hashes)
-    write_outputs(args.mimic_output, raw_dir, rows, subjects, accepted, reasons,
-                  stats, args.seed, args.max_records, digest, list_hash,
-                  sha256_file(sums_path), sha256_file(raw_dir / "LICENSE.txt"),
-                  sum(map(len, patients.values())), len(patients), ptb_count)
+    provenance = SelectionProvenance(args.seed, args.max_records, digest, list_hash,
+                                     sha256_file(sums_path), sha256_file(raw_dir / "LICENSE.txt"),
+                                     sum(map(len, patients.values())), len(patients), ptb_count)
+    write_outputs(args.mimic_output, raw_dir, rows, subjects, accepted, reasons, stats, provenance)
     return accepted
 
 

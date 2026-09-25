@@ -1,12 +1,14 @@
 """Matched within-view and disjoint-lead future forecasting for compact CPC."""
 
+from __future__ import annotations
+
 from collections.abc import Sequence
 
 import torch
 from torch import nn
 from torch.nn import functional as F  # noqa: N812 - conventional PyTorch alias
 
-from ecg_experiment.cpc import LEADS, CPCEncoder, cpc_loss, prediction_heads
+from .cpc import LEADS, CPCEncoder, cpc_loss, prediction_heads
 
 VARIANTS = ("native", "withinlead", "crosslead")
 # Canonical I, II, III, aVR, aVL, aVF, V1..V6. Derived limb leads are

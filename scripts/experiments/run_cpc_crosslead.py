@@ -171,7 +171,7 @@ def ssl_fingerprint(args: argparse.Namespace, pool: cpc_pool.Pool, mean: np.ndar
     tuple[str, dict[str, Any]]
         Digest and fingerprinted inputs.
     """
-    return cpc_pool.fingerprint(pool, hashes, mean, std, ssl_settings(args, variant))
+    return cpc_pool.fingerprint(hashes, mean, std, ssl_settings(args, variant))
 
 
 def profile_path(args: argparse.Namespace, variant: str) -> Path:

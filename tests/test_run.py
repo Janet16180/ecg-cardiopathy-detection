@@ -10,7 +10,9 @@ import pytest
 import torch
 
 from ecg_experiment import run
-from ecg_experiment.data import Waveforms, read_manifest
+from ecg_experiment.data import Waveforms
+from ecg_experiment.files import read_csv
+from ecg_experiment.training import warmup_cosine_lr
 
 RECORDS = 96
 
@@ -46,12 +48,12 @@ def _args(root, **overrides):
 
 def _inputs(root):
     waveforms = Waveforms(root / "cache")
-    train = read_manifest(root / "manifests/all_train_ssl.csv")
+    train = read_csv(root / "manifests/all_train_ssl.csv")
     return waveforms, train, waveforms.training_scale(train)
 
 
 def test_ssl_learning_rate_warms_up_then_decays():
-    rates = [run._ssl_learning_rate(epoch, 10) for epoch in range(10)]
+    rates = [warmup_cosine_lr(run.SSL_LR, epoch, 10) for epoch in range(10)]
     assert rates[0] == pytest.approx(run.SSL_LR / 2)
     assert rates[1] == pytest.approx(run.SSL_LR * (0.1 + 0.9 * (1 + np.cos(np.pi / 10)) / 2))
     assert all(later < earlier for earlier, later in zip(rates[1:], rates[2:], strict=False))
@@ -60,7 +62,7 @@ def test_ssl_learning_rate_warms_up_then_decays():
 
 def test_supervised_run_writes_reproducible_results(experiment, capsys):
     waveforms, _, scale = _inputs(experiment)
-    rows = {name: read_manifest(experiment / f"manifests/{name}.csv")
+    rows = {name: read_csv(experiment / f"manifests/{name}.csv")
             for name in ("labeled_train", "validation", "test")}
     results = []
     for output in ("first", "second"):

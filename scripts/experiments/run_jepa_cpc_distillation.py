@@ -31,8 +31,6 @@ from ecg_experiment.pilot import (
     SAVE_EVERY,
     Partitions,
     Progress,
-    check_completion,
-    check_existing_config,
     check_final_ssl,
     check_roundtrip,
     check_waveform_sample,
@@ -49,11 +47,10 @@ from ecg_experiment.pilot import (
     load_state,
     normalized_batch,
     profile_arms,
-    require_receipt,
     run_pilot,
     save_state,
-    write_completion,
 )
+from ecg_experiment.receipts import check_completion, check_existing_config, require_receipt, write_completion
 from ecg_experiment.reproducibility import cpu_state, seed_everything
 from ecg_experiment.training import checked_step, parameter_count
 
@@ -91,7 +88,8 @@ CODE_PATHS = ("scripts/experiments/run_jepa_cpc_distillation.py", "ecg_experimen
               "ecg_experiment/bounded_waveform_cache.py",
               "scripts/experiments/run_cpc_experiment.py", "ecg_experiment/data.py",
               "ecg_experiment/cpc_pool.py", "ecg_experiment/files.py",
-              "ecg_experiment/reproducibility.py", "ecg_experiment/pilot.py", "ecg_experiment/training.py",
+              "ecg_experiment/reproducibility.py", "ecg_experiment/pilot.py", "ecg_experiment/receipts.py",
+              "ecg_experiment/training.py",
               "ecg_experiment/run.py", "ecg_experiment/evaluation.py",
               "docs/astra-next-model-ideas.md", "docs/experiment-015-distillation.md")
 

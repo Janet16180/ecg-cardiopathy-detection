@@ -3,7 +3,7 @@
 import hashlib
 import json
 import random
-from dataclasses import replace
+from dataclasses import asdict, replace
 from pathlib import Path
 
 import numpy as np
@@ -83,16 +83,12 @@ def test_masks_replace_embedding_and_preserve_real_positions():
             assert torch.equal(positions[1:] - positions[:-1], torch.ones(7, dtype=torch.long))
     seen = []
     hook = encoder.core.register_forward_pre_hook(lambda _, inputs: seen.append(inputs[0].detach().clone()))
-    _, tokens, valid = encode_tokens(encoder, signal, masks[:, 0])
+    _, tokens = encode_tokens(encoder, signal, masks[:, 0])
     hook.remove()
     patches = encoder.patch_embedding(signal)
     torch.testing.assert_close(seen[0][masks[:, 0]], encoder.mask_token.expand(16, -1))
     torch.testing.assert_close(seen[0][~masks[:, 0]], patches[~masks[:, 0]])
-    assert valid.all()
     assert tokens.shape == (2, 40, 6)
-    # Raw physical zeros do not become invented padding in this full-record cache.
-    signal[:, 0] = 0
-    assert encode_tokens(encoder, signal)[2].all()
 
 
 def test_coding_rate_determinant_lemma_and_gradient():
@@ -171,7 +167,7 @@ def test_exact_ssl_resume_including_ema_optimizer_stream_masks_and_rng(tmp_path)
     config = replace(AdaptationConfig(), updates=4, effective_batch_size=4, microbatch_size=2,
                      mask_tokens=2, warmup_updates=1, learning_rate=0.01)
     views = np.random.default_rng(45).normal(size=(7, 250, 12)).astype(np.float32)
-    fingerprint = {"arm": "d", "config": config.as_dict(), "source": "tiny"}
+    fingerprint = {"arm": "d", "config": asdict(config), "source": "tiny"}
     continuous = setup(11, config)
     trace, expected_history = "0" * 64, []
     for step in range(4):
@@ -266,10 +262,9 @@ def test_released_small_forward_equivalence_and_token_alignment():
     signal = torch.randn(1, 150, 12)
     with torch.no_grad():
         expected_pool, expected_tokens = encoder(signal)
-        pooled, tokens, valid = encode_tokens(encoder, signal)
+        pooled, tokens = encode_tokens(encoder, signal)
     torch.testing.assert_close(pooled, expected_pool, rtol=0, atol=0)
     torch.testing.assert_close(tokens, expected_tokens, rtol=0, atol=0)
-    assert valid.all()
     assert torch.isfinite(tokens).all()
     # The actual released wrapper performs eight flips, restoring position order.
     blocks, norm = encoder.core.model.blocks, encoder.core.model.post_blocks_norm

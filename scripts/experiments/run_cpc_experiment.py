@@ -163,7 +163,7 @@ def pretrain(args: argparse.Namespace, pool: Pool, mean: np.ndarray, std: np.nda
     seed_everything(SSL_SEED)
     directory = args.output_dir / f"{variant}_ssl"
     directory.mkdir(parents=True, exist_ok=True)
-    fp, inputs = fingerprint(pool, source_hashes, mean, std, ssl_settings(args, variant))
+    fp, inputs = fingerprint(source_hashes, mean, std, ssl_settings(args, variant))
     config = directory / "config.json"
     if config.exists() and json.loads(config.read_text())["fingerprint"] != fp:
         raise ValueError(f"Existing pretraining config fingerprint mismatch: {directory}")

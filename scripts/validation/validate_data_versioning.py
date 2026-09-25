@@ -6,7 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
-from ecg_experiment.data_validation import DatasetValidator
+from ecg_experiment.data_validation import validate_datasets
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -18,7 +18,7 @@ def main() -> None:
     parser.add_argument("--report", type=Path, default=Path("reports/data-validation.json"))
     args = parser.parse_args()
     # Relative paths are resolved against the repository root, not the working directory.
-    report = DatasetValidator(ROOT, ROOT / args.config).validate()
+    report = validate_datasets(ROOT, ROOT / args.config)
     destination = ROOT / args.report
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 from collections import OrderedDict
 from pathlib import Path
@@ -11,30 +10,14 @@ from typing import Any
 import numpy as np
 
 from .files import read_csv, sha256_file
+from .public_sources import signal_sha256
+from .waveforms import SAMPLE_RATE
 
 SCHEMA_VERSION = 1
 SIGNAL_SHAPE = (12, 5000)
-SAMPLING_RATE_HZ = 500
 PURPOSES = ("ssl", "supervised")
 LABEL_BUDGETS = ("1", "0.1")
 IDENTIFIED_SOURCES = ("ptbxl", "mimic")
-
-
-def signal_hash(signal: np.ndarray) -> str:
-    """
-    Identify a waveform by its little-endian float32 sample bytes.
-
-    Parameters
-    ----------
-    signal : np.ndarray
-        Waveform array.
-
-    Returns
-    -------
-    str
-        Hexadecimal SHA-256 digest.
-    """
-    return hashlib.sha256(np.ascontiguousarray(signal, dtype="<f4").tobytes()).hexdigest()
 
 
 def checked_path(directory: Path, relative: str) -> Path:
@@ -88,7 +71,7 @@ def validate_signal(signal: np.ndarray) -> None:
 def _validate_metadata(metadata: dict[str, Any]) -> None:
     complete = (metadata.get("complete") and metadata.get("schema_version") == SCHEMA_VERSION
                 and metadata.get("shape_per_record") == list(SIGNAL_SHAPE)
-                and metadata.get("sampling_rate_hz") == SAMPLING_RATE_HZ
+                and metadata.get("sampling_rate_hz") == SAMPLE_RATE
                 and metadata.get("units") == "mV")
     if not complete:
         raise ValueError("Invalid or incomplete canonical dataset")
@@ -217,7 +200,7 @@ class TrainingECGDataset:
         row = self.rows[index]
         signal = np.array(self._shard(row["shard"])[int(row["shard_index"])], copy=True)
         validate_signal(signal)
-        if signal_hash(signal) != row["signal_sha256"]:
+        if signal_sha256(signal) != row["signal_sha256"]:
             raise ValueError("Waveform hash mismatch")
         available = row["record_id"] in self.targets
         return {"signal": signal, "target": self.targets.get(row["record_id"], -1),

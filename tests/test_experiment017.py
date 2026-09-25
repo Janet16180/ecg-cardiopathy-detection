@@ -8,7 +8,7 @@ import pytest
 import torch
 from torch.nn import functional as F  # noqa: N812 - conventional alias
 
-from ecg_experiment.cpc import CPCClassifier
+from ecg_experiment.cpc import CPCClassifier, split_halves
 from ecg_experiment.cpc_morphology import (
     LEADS,
     SUPPORT,
@@ -17,7 +17,6 @@ from ecg_experiment.cpc_morphology import (
     WINDOW_ELEMENTS,
     MorphologyCPCClassifier,
     local_response,
-    native_windows,
 )
 from ecg_experiment.files import sha256_file, sha256_json
 from ecg_experiment.pilot import Progress, file_identity, fixed_batches, load_state, save_state
@@ -59,14 +58,14 @@ def test_half_boundary_and_causality():
     torch.manual_seed(3)
     bank = torch.randn(TEMPLATES, LEADS, SUPPORT) * 0.05
     signal = torch.randn(1, LEADS, 2500) * 0.1
-    original = local_response(native_windows(signal), bank, "template")
+    original = local_response(split_halves(signal), bank, "template")
     changed = signal.clone()
     changed[:, :, 1250:] += 100
-    response = local_response(native_windows(changed), bank, "template")
+    response = local_response(split_halves(changed), bank, "template")
     torch.testing.assert_close(original[0], response[0], rtol=0, atol=0)
     changed = signal.clone()
     changed[:, :, 17:1250] += 50
-    response = local_response(native_windows(changed), bank, "template")
+    response = local_response(split_halves(changed), bank, "template")
     torch.testing.assert_close(original[0, :, :2], response[0, :, :2], rtol=0, atol=0)
     assert not torch.equal(original[0, :, 2], response[0, :, 2])
     model = MorphologyCPCClassifier("template", bank).eval()

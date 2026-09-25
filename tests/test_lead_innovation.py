@@ -4,12 +4,12 @@ import pytest
 import torch
 
 from ecg_experiment.lead_innovation import (
-    LeadClassifier,
     LeadMultiscaleEncoder,
     LeadSSL,
     content_targets,
     lead_patch_mask,
 )
+from ecg_experiment.models import Classifier
 
 
 def test_static_lead_time_pattern_has_zero_targets():
@@ -75,6 +75,6 @@ def test_teacher_update_interpolates_toward_student():
 
 
 def test_classifier_returns_one_logit_per_record():
-    classifier = LeadClassifier(LeadMultiscaleEncoder()).eval()
+    classifier = Classifier(LeadMultiscaleEncoder()).eval()
     with torch.no_grad():
         assert classifier(torch.randn(3, 8, 1000)).shape == (3,)

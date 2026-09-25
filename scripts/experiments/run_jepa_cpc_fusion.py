@@ -17,7 +17,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedGroupKFold
 
-from ecg_experiment.data import read_manifest
 from ecg_experiment.evaluation import metrics, partition_validation, patient_bootstrap, select_threshold
 from ecg_experiment.files import read_csv, sha256_file, write_json_atomic
 
@@ -656,8 +655,8 @@ def load_budget(budget: str) -> dict[str, Any]:
     paths = budget_paths(budget)
     manifest = paths["manifest"]
     jepa_meta, _ = verify_feature_hashes(paths["jepa_dir"])
-    train = read_manifest(manifest / "labeled_train.csv")
-    validation = read_manifest(manifest / "validation.csv")
+    train = read_csv(manifest / "labeled_train.csv")
+    validation = read_csv(manifest / "validation.csv")
     development, calibration = partition_validation(validation)
     config = check_budget_provenance(budget, paths, jepa_meta)
     jepa_index, jepa_x, cpc_x, cpc_rows = load_caches(paths["jepa_dir"], jepa_meta)
@@ -720,7 +719,7 @@ def evaluate_if_pass(data: dict[str, Any], chosen: float) -> dict[str, Any]:
     ValueError
         If the Platt calibration slope is not positive.
     """
-    test = read_manifest(data["manifest"] / "test.csv")
+    test = read_csv(data["manifest"] / "test.csv")
     parts = {"train": data["train"], "development": data["development"],
              "calibration": data["calibration"], "test": test}
     cpc_index = check_alignment(parts, data["jepa_index"], data["cpc_rows"], data["budget"])

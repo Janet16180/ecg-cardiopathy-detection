@@ -7,16 +7,14 @@ import pytest
 import torch
 from torch import nn
 
-from ecg_experiment.finetuning import (
+from ecg_experiment.reproducibility import (
+    cpu_state,
     flat_rng_state,
-    optimizer_state_bytes,
-    peak_cuda_memory,
-    require_cuda,
     restore_flat_rng_state,
     restore_rng_lists,
     rng_state_lists,
 )
-from ecg_experiment.reproducibility import cpu_state
+from ecg_experiment.training import optimizer_state_bytes, peak_gpu_bytes, require_cuda
 from scripts.experiments.finetune_pretrained import (
     cache_shape,
     load_resume_checkpoint,
@@ -119,7 +117,7 @@ def test_device_helpers_on_cpu(monkeypatch):
     parameters = sum(param.numel() for param in model.parameters())
     # AdamW keeps float32 exp_avg and exp_avg_sq per parameter plus a scalar step.
     assert optimizer_state_bytes(optimizer) == 8 * parameters + 4 * len(list(model.parameters()))
-    assert peak_cuda_memory("cpu") is None
+    assert peak_gpu_bytes("cpu") is None
     require_cuda("cpu")
     monkeypatch.setattr(torch.cuda, "is_available", lambda: False)
     with pytest.raises(RuntimeError, match="CUDA requested but unavailable"):

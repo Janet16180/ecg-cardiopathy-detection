@@ -15,7 +15,6 @@ import time
 from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
-from types import FrameType
 from typing import Any
 
 import numpy as np
@@ -23,10 +22,10 @@ import torch
 from sklearn.model_selection import StratifiedGroupKFold
 from torch import nn
 
+from .cpc import LEADS, SIGNAL_SAMPLES
 from .cpc_pool import Pool
-from .data import read_manifest
-from .evaluation import partition_validation, select_threshold
-from .files import sha256_file, write_json_atomic, write_torch_atomic
+from .evaluation import TARGET_SENSITIVITY, partition_validation, select_threshold
+from .files import read_csv, write_json_atomic, write_torch_atomic
 from .reproducibility import capture_rng_state, cpu_state, restore_rng_state
 
 FULL_LABELS = 15360
@@ -38,32 +37,14 @@ SAVE_EVERY = 20
 # Exit status the coordinators treat as "interrupted, resume later".
 INTERRUPTED_EXIT = 75
 FOLDS = 5
-TARGET_SENSITIVITY = 0.95
 LOGIT_CLIP = 80
 
 _STOP_REQUESTED = threading.Event()
 
 
-def request_stop(_signum: int, _frame: FrameType | None) -> None:
-    """Signal handler that asks the running arm to checkpoint and exit."""
-    _STOP_REQUESTED.set()
-
-
 def install_stop_handler() -> None:
     """Checkpoint and exit at the next update when SIGTERM arrives."""
-    signal.signal(signal.SIGTERM, request_stop)
-
-
-def stop_requested() -> bool:
-    """
-    Report whether SIGTERM has asked the pilot to stop.
-
-    Returns
-    -------
-    bool
-        True after ``request_stop`` has run.
-    """
-    return _STOP_REQUESTED.is_set()
+    signal.signal(signal.SIGTERM, lambda _signum, _frame: _STOP_REQUESTED.set())
 
 
 def file_identity(path: Path) -> dict[str, int]:
@@ -135,11 +116,11 @@ def load_partitions(pool: Pool, manifest_dir: Path) -> Partitions:
         If counts, the limited subset, budget manifests, cache rows or
         patient partitions differ from the frozen protocol.
     """
-    full = read_manifest(manifest_dir / "seed42_fraction1/labeled_train.csv")
-    limited = read_manifest(manifest_dir / "seed42_fraction0.1/labeled_train.csv")
-    validation = read_manifest(manifest_dir / "seed42_fraction1/validation.csv")
+    full = read_csv(manifest_dir / "seed42_fraction1/labeled_train.csv")
+    limited = read_csv(manifest_dir / "seed42_fraction0.1/labeled_train.csv")
+    validation = read_csv(manifest_dir / "seed42_fraction1/validation.csv")
     development, calibration = partition_validation(validation)
-    test = read_manifest(manifest_dir / "seed42_fraction1/test.csv")
+    test = read_csv(manifest_dir / "seed42_fraction1/test.csv")
     if tuple(map(len, (full, limited, development, calibration, test))) != PARTITION_COUNTS:
         raise ValueError("Frozen partition counts changed")
     by_id = {row["ecg_id"]: row for row in full}
@@ -150,7 +131,7 @@ def load_partitions(pool: Pool, manifest_dir: Path) -> Partitions:
             for row in limited):
         raise ValueError("Limited budget differs from frozen full training set")
     for name, expected in (("validation", validation), ("test", test)):
-        if read_manifest(manifest_dir / f"seed42_fraction0.1/{name}.csv") != expected:
+        if read_csv(manifest_dir / f"seed42_fraction0.1/{name}.csv") != expected:
             raise ValueError(f"Budget-specific {name} manifest changed")
     for rows, split in ((full, "train"), (development, "validation"),
                         (calibration, "validation"), (test, "test")):
@@ -214,7 +195,7 @@ def check_waveform_sample(pool: Pool, row: dict[str, str]) -> None:
         If the waveform has the wrong shape or nonfinite samples.
     """
     sample = np.array(pool.signals[pool.indices([row])[0]], copy=True)
-    if sample.shape != (12, 2500) or not np.isfinite(sample).all():
+    if sample.shape != (LEADS, SIGNAL_SAMPLES) or not np.isfinite(sample).all():
         raise ValueError("Invalid waveform sample")
 
 
@@ -548,81 +529,7 @@ def interrupted(deadline: float | None) -> bool:
     bool
         True when the arm must checkpoint and exit.
     """
-    return stop_requested() or (deadline is not None and time.monotonic() >= deadline)
-
-
-def check_completion(directory: Path, fingerprint: str, artifacts: dict[str, str]) -> list[dict[str, Any]]:
-    """
-    Verify a completed arm and return its history.
-
-    Parameters
-    ----------
-    directory : Path
-        Arm directory holding ``completion.json``.
-    fingerprint : str
-        Identity the completed arm must match.
-    artifacts : dict[str, str]
-        Completion field for each artifact file, such as
-        ``{"history.json": "history_sha256"}``.
-
-    Returns
-    -------
-    list[dict[str, Any]]
-        Saved per-epoch history.
-
-    Raises
-    ------
-    ValueError
-        If the fingerprint or an artifact digest differs.
-    """
-    done = json.loads((directory / "completion.json").read_text())
-    if done["fingerprint"] != fingerprint:
-        raise ValueError("Completed arm fingerprint mismatch")
-    for name, key in artifacts.items():
-        if sha256_file(directory / name) != done[key]:
-            raise ValueError(f"Completed artifact changed: {name}")
-    return json.loads((directory / "history.json").read_text())
-
-
-def write_completion(directory: Path, fingerprint: str, best: dict[str, Any],
-                     artifacts: dict[str, str]) -> None:
-    """
-    Record a completed arm with its best epoch and artifact digests.
-
-    Parameters
-    ----------
-    directory : Path
-        Arm directory.
-    fingerprint : str
-        Arm identity.
-    best : dict[str, Any]
-        Best ``auc`` and ``epoch``.
-    artifacts : dict[str, str]
-        Completion field for each artifact file, in output order.
-    """
-    write_json_atomic(directory / "completion.json", {
-        "fingerprint": fingerprint, "best_epoch": best["epoch"], "best_development_auroc": best["auc"],
-        **{key: sha256_file(directory / name) for name, key in artifacts.items()}})
-
-
-def check_existing_config(path: Path, fingerprint: str) -> None:
-    """
-    Refuse to reuse an arm directory created from other inputs.
-
-    Parameters
-    ----------
-    path : Path
-        The arm's ``config.json``, which may not exist yet.
-    fingerprint : str
-        Identity of this run.
-
-    Raises
-    ------
-    ValueError
-        If the saved configuration has a different fingerprint.
-    """
-    if path.exists() and json.loads(path.read_text())["fingerprint"] != fingerprint:
-        raise ValueError("Existing output uses different inputs or code")
+    return _STOP_REQUESTED.is_set() or (deadline is not None and time.monotonic() >= deadline)
 
 
 def check_roundtrip(original: dict[str, Any], progress: Progress, probe: nn.Module,
@@ -692,35 +599,6 @@ def profile_arms(prefix: str, arms: Sequence[str], profile_arm: Callable[[str, P
             roundtrips[arm] = profile_arm(arm, Path(temporary) / arm)
             durations[arm] = time.monotonic() - started
     return durations, roundtrips
-
-
-def require_receipt(path: Path, fingerprint: str, message: str) -> dict[str, Any]:
-    """
-    Load a receipt that must exist and match the current provenance.
-
-    Parameters
-    ----------
-    path : Path
-        Receipt file.
-    fingerprint : str
-        Required ``fingerprint`` value.
-    message : str
-        Error message when the receipt is missing or differs.
-
-    Returns
-    -------
-    dict[str, Any]
-        The receipt.
-
-    Raises
-    ------
-    ValueError
-        If the receipt is missing or its fingerprint differs.
-    """
-    receipt = json.loads(path.read_text()) if path.exists() else {}
-    if receipt.get("fingerprint") != fingerprint:
-        raise ValueError(message)
-    return receipt
 
 
 def run_pilot(arms: Sequence[str], deadline: float, run_arm: Callable[[str, str], Any]) -> None:

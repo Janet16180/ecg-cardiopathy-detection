@@ -9,9 +9,8 @@ from sklearn.metrics import roc_auc_score
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import StandardScaler
 
-from ecg_experiment.data import read_manifest
 from ecg_experiment.evaluation import evaluate_predictions, partition_validation
-from ecg_experiment.files import write_json_atomic
+from ecg_experiment.files import read_csv, write_json_atomic
 
 ROOT = Path(__file__).resolve().parents[2]
 C_GRID = (0.001, 0.01, 0.1, 1.0, 10.0, 100.0)
@@ -127,9 +126,9 @@ def main() -> None:
     if (directory / "metrics.json").exists():
         raise FileExistsError(f"Completed results already exist: {directory}")
     features, index = load_embeddings(args.embeddings_dir)
-    train = read_manifest(args.manifest_dir / "labeled_train.csv")
-    development, calibration = partition_validation(read_manifest(args.manifest_dir / "validation.csv"))
-    test = read_manifest(args.manifest_dir / "test.csv")
+    train = read_csv(args.manifest_dir / "labeled_train.csv")
+    development, calibration = partition_validation(read_csv(args.manifest_dir / "validation.csv"))
+    test = read_csv(args.manifest_dir / "test.csv")
     train_x, train_y = features_and_targets(features, index, train)
     dev_x, dev_y = features_and_targets(features, index, development)
     best, best_c, best_auc, choices = select_probe(train_x, train_y, dev_x, dev_y, args.seed)

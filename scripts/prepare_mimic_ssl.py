@@ -24,6 +24,7 @@ from ecg_experiment.downloads import fetch_file
 from ecg_experiment.files import sha256_file
 from ecg_experiment.mimic import (
     BASE,
+    SelectionProvenance,
     audit,
     lock_selection,
     ptbxl_hashes,
@@ -427,10 +428,10 @@ def main() -> None:
     stats = download_selected(rows, args.raw_dir, checksums, args.workers, args.timeout, args.retries)
     ptb_hashes, ptb_count = ptbxl_hashes(args.ptbxl_dir)
     accepted, reasons = audit(rows, args.raw_dir, args.output_dir, selected_digest, ptb_hashes)
-    write_outputs(args.output_dir, args.raw_dir, rows, subjects, accepted, reasons,
-                  stats, args.seed, args.max_records, selected_digest, list_digest,
-                  sha256_file(sums_path), metadata_checksums["LICENSE.txt"],
-                  source_records, len(patients), ptb_count)
+    provenance = SelectionProvenance(args.seed, args.max_records, selected_digest, list_digest,
+                                     sha256_file(sums_path), metadata_checksums["LICENSE.txt"],
+                                     source_records, len(patients), ptb_count)
+    write_outputs(args.output_dir, args.raw_dir, rows, subjects, accepted, reasons, stats, provenance)
 
 
 if __name__ == "__main__":

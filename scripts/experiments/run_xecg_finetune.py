@@ -23,21 +23,13 @@ from sklearn.metrics import roc_auc_score
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from ecg_experiment.data import read_manifest
 from ecg_experiment.evaluation import evaluate_predictions, partition_validation
-from ecg_experiment.files import sha256_file, write_json_atomic, write_torch_atomic
-from ecg_experiment.finetuning import (
-    artifact_hashes,
-    flat_rng_state,
-    optimizer_state_bytes,
-    peak_cuda_memory,
-    require_cuda,
-    restore_flat_rng_state,
-    verified_completion,
-)
+from ecg_experiment.files import read_csv, sha256_file, write_json_atomic, write_torch_atomic
 from ecg_experiment.gpu import gpu_lock
 from ecg_experiment.provenance import git_head
-from ecg_experiment.reproducibility import cpu_state, seed_everything
+from ecg_experiment.receipts import artifact_hashes, verified_completion
+from ecg_experiment.reproducibility import cpu_state, flat_rng_state, restore_flat_rng_state, seed_everything
+from ecg_experiment.training import optimizer_state_bytes, peak_gpu_bytes, require_cuda
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_MANIFEST_ROOT = ROOT / "data/processed/ptbxl"
@@ -164,11 +156,11 @@ def load_manifests(root: Path, budget: str) -> Manifests:
         If any budget, split size, overlap, or label check fails.
     """
     full, small = manifest_dir(root, "full"), manifest_dir(root, "ten_percent")
-    rows = {name: read_manifest(manifest_dir(root, budget) / f"{name}.csv") for name in SPLITS}
-    _check_label_budgets(read_manifest(full / "labeled_train.csv"),
-                         read_manifest(small / "labeled_train.csv"))
+    rows = {name: read_csv(manifest_dir(root, budget) / f"{name}.csv") for name in SPLITS}
+    _check_label_budgets(read_csv(full / "labeled_train.csv"),
+                         read_csv(small / "labeled_train.csv"))
     for name in ("validation", "test"):
-        if rows[name] != read_manifest(full / f"{name}.csv"):
+        if rows[name] != read_csv(full / f"{name}.csv"):
             raise ValueError(f"{name} differs across label budgets")
     _check_partitions(rows)
     if len(rows["labeled_train"]) != EXPECTED_COUNTS[budget]:
@@ -903,7 +895,7 @@ def run_profile(args: argparse.Namespace, rows: dict[str, Rows], development: Ro
         "first_optimizer_step_seconds": step_seconds[0],
         "steady_state_optimizer_step_seconds": step_seconds[1],
         "optimizer_state_bytes": optimizer_state_bytes(optimizer),
-        "peak_cuda_memory_bytes": peak_cuda_memory(args.device),
+        "peak_cuda_memory_bytes": peak_gpu_bytes(args.device),
         "logit_shape": list(logits.shape), "loss": float(loss.detach()),
         "checkpoint_sha256": checkpoint_hashes, "cache_sha256": cache_digests(cache_hashes),
     }
@@ -952,7 +944,8 @@ def budget_fingerprint(args: argparse.Namespace, budget: str, hashes: dict[str, 
         "evaluation_source_sha256": sha256_file(ROOT / "ecg_experiment/evaluation.py"),
         "run_source_sha256": sha256_file(ROOT / "ecg_experiment/run.py"),
         "reproducibility_source_sha256": sha256_file(ROOT / "ecg_experiment/reproducibility.py"),
-        "finetuning_source_sha256": sha256_file(ROOT / "ecg_experiment/finetuning.py"),
+        "training_source_sha256": sha256_file(ROOT / "ecg_experiment/training.py"),
+        "receipts_source_sha256": sha256_file(ROOT / "ecg_experiment/receipts.py"),
         "pretrained_checkpoint_source_commit": git_head(ROOT / "third_party/bench-xecg"),
     }
 
@@ -1070,7 +1063,7 @@ def train_budget(args: argparse.Namespace, budget: str, rows: dict[str, Rows], d
     config.update({"best_epoch": result["best_epoch"],
                    "best_development_auroc": result["best_development_auroc"],
                    "elapsed_seconds": result["elapsed_seconds"],
-                   "peak_cuda_memory_bytes": peak_cuda_memory(args.device)})
+                   "peak_cuda_memory_bytes": peak_gpu_bytes(args.device)})
     write_json_atomic(directory / "config.json", config)
     write_json_atomic(directory / "complete.json", {"fingerprint": fingerprint,
                                                     "sha256": completion_hashes(directory)})

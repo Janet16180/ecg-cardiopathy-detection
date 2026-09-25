@@ -9,7 +9,7 @@ from itertools import combinations
 from pathlib import Path
 from typing import Any
 
-from .files import sha256_file
+from .files import SHA256_HEX_LENGTH, sha256_file
 
 CONFIG_SCHEMA_VERSION = 1
 PTB_METADATA_MANIFEST = "data/raw/ptb-xl/1.0.3/SHA256SUMS.txt"
@@ -18,7 +18,7 @@ DISJOINT_SPLITS = ("full_train", "validation", "test")
 HELDOUT_SPLITS = ("development", "calibration", "test")
 
 
-def official_hashes(path: Path, prefix: str) -> dict[str, str]:
+def _official_hashes(path: Path, prefix: str) -> dict[str, str]:
     """
     Read the official checksums of files under one release prefix.
 
@@ -44,7 +44,7 @@ def official_hashes(path: Path, prefix: str) -> dict[str, str]:
     for line in path.read_text(encoding="utf-8").splitlines():
         digest, separator, relative = line.partition(" ")
         relative = relative.lstrip(" *")
-        if not separator or len(digest) != 64 or not relative:
+        if not separator or len(digest) != SHA256_HEX_LENGTH or not relative:
             raise ValueError(f"Invalid official checksum line: {line[:100]}")
         if not relative.startswith(prefix):
             continue
@@ -83,7 +83,7 @@ def _validate_ptb_source(root: Path, source: Path, spec: dict[str, Any]) -> dict
     manifest_digest = sha256_file(manifest)
     if manifest_digest != spec["official_manifest_sha256"]:
         raise ValueError(f"{spec['id']}: PTB official manifest hash differs from frozen reference")
-    expected = official_hashes(manifest, spec["official_prefix"])
+    expected = _official_hashes(manifest, spec["official_prefix"])
     if len(expected) != spec["expected_files"] or _file_inventory(source) != expected.keys():
         raise ValueError(f"{spec['id']}: PTB file inventory differs from official manifest")
     _reject_symlinks(source, spec["id"])
@@ -114,7 +114,7 @@ def _validate_challenge_source(root: Path, source: Path, spec: dict[str, Any]) -
     receipt = json.loads((root / spec["receipt"]).read_text(encoding="utf-8"))
     manifest = root / spec["official_manifest"]
     _check_challenge_receipt(receipt, manifest, spec)
-    expected = official_hashes(manifest, spec["official_prefix"])
+    expected = _official_hashes(manifest, spec["official_prefix"])
     waveform_entries = {path for path in expected if path.endswith((".hea", ".mat"))}
     if len(waveform_entries) != spec["expected_files"]:
         raise ValueError(f"{spec['id']}: official waveform file count differs from config")
@@ -303,7 +303,7 @@ def validate_splits(root: Path, paths: dict[str, str]) -> dict[str, Any]:
 
 def _check_frozen_hashes(root: Path, settings: dict[str, Any]) -> None:
     """Compare PTB metadata and frozen split files with their recorded digests."""
-    ptb_hashes = official_hashes(root / PTB_METADATA_MANIFEST, "")
+    ptb_hashes = _official_hashes(root / PTB_METADATA_MANIFEST, "")
     for relative in settings["ptb_metadata"]:
         path = root / relative
         if path.name not in ptb_hashes or sha256_file(path) != ptb_hashes[path.name]:
@@ -316,11 +316,9 @@ def _check_frozen_hashes(root: Path, settings: dict[str, Any]) -> None:
             raise ValueError(f"Frozen PTB split checksum mismatch: {name}")
 
 
-class DatasetValidator:
+def validate_datasets(root: Path, config: Path) -> dict[str, Any]:
     """
-    Apply the frozen dataset config to its source files and patient splits.
-
-    The config is read once; every ``validate`` call rereads the data files.
+    Verify PTB metadata, frozen splits and every source listed in the dataset config.
 
     Parameters
     ----------
@@ -328,32 +326,22 @@ class DatasetValidator:
         Project root that config paths are relative to.
     config : Path
         Dataset config JSON.
+
+    Returns
+    -------
+    dict[str, Any]
+        Validation report with per-source summaries and the split audit.
+
+    Raises
+    ------
+    ValueError
+        If the schema is unsupported or any check fails.
     """
-
-    def __init__(self, root: Path, config: Path) -> None:
-        self.root = root
-        self.config = config
-        self.settings = json.loads(config.read_text(encoding="utf-8"))
-
-    def validate(self) -> dict[str, Any]:
-        """
-        Verify PTB metadata, frozen splits and every configured source.
-
-        Returns
-        -------
-        dict[str, Any]
-            Validation report with per-source summaries and the split audit.
-
-        Raises
-        ------
-        ValueError
-            If the schema is unsupported or any check fails.
-        """
-        settings = self.settings
-        if settings.get("schema_version") != CONFIG_SCHEMA_VERSION:
-            raise ValueError("Unsupported dataset config schema")
-        _check_frozen_hashes(self.root, settings)
-        return {"schema_version": CONFIG_SCHEMA_VERSION,
-                "sources": [validate_source(self.root, spec) for spec in settings["datasets"]],
-                "ptb_metadata_files": len(settings["ptb_metadata"]),
-                "ptb_split_audit": validate_splits(self.root, settings["ptb_split_audit"])}
+    settings = json.loads(config.read_text(encoding="utf-8"))
+    if settings.get("schema_version") != CONFIG_SCHEMA_VERSION:
+        raise ValueError("Unsupported dataset config schema")
+    _check_frozen_hashes(root, settings)
+    return {"schema_version": CONFIG_SCHEMA_VERSION,
+            "sources": [validate_source(root, spec) for spec in settings["datasets"]],
+            "ptb_metadata_files": len(settings["ptb_metadata"]),
+            "ptb_split_audit": validate_splits(root, settings["ptb_split_audit"])}

@@ -26,8 +26,8 @@ def test_preprocessing_matches_upstream_fft_resampling():
     assert output.dtype == np.float32
     np.testing.assert_allclose(output, resample(signal.T, 1000, axis=0).astype(np.float32), rtol=0, atol=0)
     assert not np.allclose(output[:, 0], output[:, 1])
-    with pytest.raises(ValueError, match="500 Hz"):
-        preprocess_xecg(signal, input_fs=100)
+    with pytest.raises(ValueError, match=r"\[12, 5000\] ECG at 500 Hz"):
+        preprocess_xecg(signal[:, :2500])
     with pytest.raises(ValueError, match="finite"):
         preprocess_xecg(np.full((12, 5000), np.nan))
 

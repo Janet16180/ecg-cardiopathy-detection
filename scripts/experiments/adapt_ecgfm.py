@@ -28,10 +28,10 @@ from torch.nn import functional as F  # noqa: N812 - conventional PyTorch alias
 from torch.utils.data import DataLoader, Dataset
 
 from ecg_experiment.files import sha256_file, write_json_atomic
-from ecg_experiment.finetuning import peak_cuda_memory, require_cuda
 from ecg_experiment.foundation_models import load_model, preprocess_ecg_fm, preprocessing_source_sha256
 from ecg_experiment.provenance import git_head
 from ecg_experiment.reproducibility import cpu_state, seed_everything
+from ecg_experiment.training import peak_gpu_bytes, require_cuda
 from ecg_experiment.waveforms import read_record
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -384,7 +384,7 @@ def adaptation_config(args: argparse.Namespace, ptbxl_rows: Rows, extra_rows: Ro
         "checkpoint_selection": "Final state after fixed epoch budget; no validation/test selection",
         "protocol_note": args.protocol_note,
         "source_sha256": sha256_file(Path(__file__)),
-        "finetuning_source_sha256": sha256_file(ROOT / "ecg_experiment/finetuning.py"),
+        "training_source_sha256": sha256_file(ROOT / "ecg_experiment/training.py"),
         "extractor_source_sha256": preprocessing_source_sha256(),
         "official_source_commit": git_head(ROOT / "third_party" / "fairseq-signals"),
     }
@@ -680,7 +680,7 @@ def save_adapted(args: argparse.Namespace, model: nn.Module, config: dict[str, A
                   "completed_epochs": len(history), "seconds": seconds,
                   "torch_version": str(torch.__version__),
                   "device": torch.cuda.get_device_name() if args.device == "cuda" else "cpu",
-                  "peak_cuda_memory_bytes": peak_cuda_memory(args.device)}
+                  "peak_cuda_memory_bytes": peak_gpu_bytes(args.device)}
     if progress is not None:
         completion.update({**progress, "completed_epochs": sum(item["complete_epoch"] for item in history)})
     write_json_atomic(args.output_dir / "completion.json", completion)

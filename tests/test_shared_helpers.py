@@ -63,6 +63,25 @@ def test_write_torch_atomic_roundtrip(tmp_path):
     assert torch.equal(torch.load(tmp_path / "state.pt")["weight"], torch.arange(3))
 
 
+def test_write_torch_atomic_matches_plain_torch_save_bytes(tmp_path):
+    value = {"model": {"weight": torch.randn(4, 3)}, "epoch": 2, "names": ["a", "b"]}
+    (tmp_path / "plain").mkdir()
+    torch.save(value, tmp_path / "plain" / "model.pt")
+    files.write_torch_atomic(tmp_path / "atomic" / "model.pt", value)
+    assert (tmp_path / "atomic/model.pt").read_bytes() == (tmp_path / "plain/model.pt").read_bytes()
+    assert sorted(path.name for path in (tmp_path / "atomic").iterdir()) == ["model.pt"]
+
+
+def test_write_npz_atomic_matches_plain_savez_bytes(tmp_path, monkeypatch):
+    # Zip entries carry the write time; freeze it so only the file bytes are compared.
+    monkeypatch.setattr("time.time", lambda: 1_700_000_000.0)
+    arrays = {"logits": np.array([0.5, -1.0]), "targets": np.array([1, 0]), "ecg_ids": np.array([7, 9])}
+    np.savez(tmp_path / "plain.npz", **arrays)
+    files.write_npz_atomic(tmp_path / "atomic.npz", **arrays)
+    assert (tmp_path / "atomic.npz").read_bytes() == (tmp_path / "plain.npz").read_bytes()
+    assert not (tmp_path / "atomic.npz.tmp").exists()
+
+
 def test_rng_state_roundtrip_restores_every_generator():
     reproducibility.seed_everything(7)
     generator = torch.Generator().manual_seed(3)

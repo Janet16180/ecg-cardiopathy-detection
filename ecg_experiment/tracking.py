@@ -70,8 +70,6 @@ class HistoricalRun:
         Allowlisted scalar parameters.
     tags : dict[str, str]
         Provenance tags.
-    artifacts : tuple[Path, ...]
-        Source files eligible for artifact upload.
     """
 
     source: Path
@@ -82,7 +80,6 @@ class HistoricalRun:
     metrics: dict[str, float]
     params: dict[str, str]
     tags: dict[str, str]
-    artifacts: tuple[Path, ...]
 
 
 def _json(path: Path) -> dict[str, Any]:
@@ -207,8 +204,7 @@ def _legacy_run(path: Path, root: Path) -> HistoricalRun:
         **config_tags,
     }
     return HistoricalRun(path, source_id, sha256_file(path), path.parent.name,
-                         "held_out_test", metrics, params, tags,
-                         (path, receipt) if receipt else (path,))
+                         "held_out_test", metrics, params, tags)
 
 
 def _pilot_arm_run(arm_receipt: Path, receipt_hashes: Any, root: Path) -> HistoricalRun | None:
@@ -241,7 +237,6 @@ def _pilot_arm_run(arm_receipt: Path, receipt_hashes: Any, root: Path) -> Histor
         {"ecg.evaluation_stage": "development_screen",
          "ecg.result_basis": "historical_completion_json",
          "ecg.calibration_test_opened": "false", **config_tags},
-        (arm_receipt,),
     )
 
 
@@ -285,7 +280,6 @@ def _fusion_runs(root: Path) -> Iterable[HistoricalRun]:
             {"ecg.evaluation_stage": "development_screen",
              "ecg.result_basis": "historical_completed_json",
              "ecg.calibration_test_opened": str(data.get("calibration_test_opened", "unknown")).lower()},
-            (),  # Fusion files contain split metadata; never upload them as artifacts.
         )
 
 
@@ -590,7 +584,6 @@ def record_verified_result(root: Path, receipt: Path, tracking_uri: str, *,
          "ecg.manifest_sha256": manifest_sha256,
          "ecg.code_sha256": code_sha256,
          "ecg.data_sha256": data_sha256},
-        (),
     )
     client = _client(tracking_uri, client)
     return _register_one(record, client, _experiment_id(client, experiment_name),

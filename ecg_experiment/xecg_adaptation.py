@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import copy
 import math
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from typing import Any
 
 import torch
@@ -123,7 +123,7 @@ class ShuffledStream:
 
 
 def encode_tokens(encoder: nn.Module, signal: torch.Tensor,
-                  mask: torch.Tensor | None = None) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+                  mask: torch.Tensor | None = None) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Mask patch embeddings explicitly, preserving the raw padding contract.
 
@@ -138,8 +138,8 @@ def encode_tokens(encoder: nn.Module, signal: torch.Tensor,
 
     Returns
     -------
-    tuple[torch.Tensor, torch.Tensor, torch.Tensor]
-        Pooled features, patch tokens and the all-true valid-patch mask.
+    tuple[torch.Tensor, torch.Tensor]
+        Pooled features and patch tokens.
 
     Raises
     ------
@@ -153,15 +153,14 @@ def encode_tokens(encoder: nn.Module, signal: torch.Tensor,
     patches = encoder.patch_embedding(signal)
     # This cache contains complete, unpadded records. A masked patch remains a
     # real position; a physical zero at its first sample is not padding either.
-    valid = torch.ones(patches.shape[:2], dtype=torch.bool, device=signal.device)
     padding = torch.zeros_like(patches, dtype=torch.bool)
     if mask is not None:
-        if mask.shape != valid.shape or mask.dtype != torch.bool:
+        if mask.shape != patches.shape[:2] or mask.dtype != torch.bool:
             raise ValueError("Patch mask must be boolean [batch,patches]")
         patches = torch.where(mask[..., None], encoder.mask_token[None, None, :], patches)
     tokens = encoder.core(patches)
     pooled, _ = encoder.pooling(tokens, padding)
-    return pooled, tokens, valid
+    return pooled, tokens
 
 
 @torch.no_grad()
@@ -294,17 +293,6 @@ class AdaptationConfig:
             raise ValueError("Update and batch/mask sizes must be positive")
         if self.effective_batch_size % self.microbatch_size:
             raise ValueError("Effective batch size must be divisible by microbatch size")
-
-    def as_dict(self) -> dict[str, Any]:
-        """
-        Return the settings as a plain dictionary.
-
-        Returns
-        -------
-        dict[str, Any]
-            Field names and values in declaration order.
-        """
-        return asdict(self)
 
 
 def learning_rate_at(step: int, config: AdaptationConfig) -> float:
@@ -639,13 +627,13 @@ class AdaptationModel(nn.Module):
         if arm not in ARMS or masks.shape != (signal.shape[0], 2, signal.shape[1] // self.student.patch_size):
             raise ValueError("Unknown adaptation arm or malformed two-view masks")
         with torch.no_grad():
-            ema_pool, ema_tokens, _ = encode_tokens(self.ema, signal)
-            _, anchor_tokens, _ = encode_tokens(self.anchor, signal)
+            ema_pool, ema_tokens = encode_tokens(self.ema, signal)
+            _, anchor_tokens = encode_tokens(self.anchor, signal)
             weights, _ = rarity_weights(anchor_tokens)
         terms = {name: [] for name in TERM_NAMES}
         for view in range(2):
             mask = masks[:, view]
-            pooled, tokens, _ = encode_tokens(self.student, signal, mask)
+            pooled, tokens = encode_tokens(self.student, signal, mask)
             terms["masked"].append(selected_mean(cosine_distance(tokens, ema_tokens), mask))
             terms["pooled"].append(cosine_distance(pooled, ema_pool).mean())
             terms["expansion"].append(coding_rate(pooled, config.expansion_epsilon))
@@ -683,9 +671,9 @@ def representation_diagnostics(model: AdaptationModel, signal: torch.Tensor) -> 
     """
     was_training = model.training
     model.eval()
-    pooled, tokens, _ = encode_tokens(model.student, signal)
-    ema_pool, ema_tokens, _ = encode_tokens(model.ema, signal)
-    anchor_pool, anchor_tokens, _ = encode_tokens(model.anchor, signal)
+    pooled, tokens = encode_tokens(model.student, signal)
+    ema_pool, ema_tokens = encode_tokens(model.ema, signal)
+    anchor_pool, anchor_tokens = encode_tokens(model.anchor, signal)
     normalized = F.normalize(pooled, dim=-1, eps=1e-8)
     rank = _effective_rank(normalized)
     similarities = normalized @ F.normalize(anchor_pool, dim=-1, eps=1e-8).T

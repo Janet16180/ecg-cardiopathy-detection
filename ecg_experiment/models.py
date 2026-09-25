@@ -1,5 +1,7 @@
 """Compact encoders and SSL objectives, not published model reproductions."""
 
+from __future__ import annotations
+
 import copy
 
 import torch

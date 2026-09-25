@@ -4,14 +4,17 @@ Both arms use identical positive and sampled negative cosine scores. SGNS uses
 the conventional sum of sixteen negative softplus terms, with no /17 scaling.
 """
 
+from __future__ import annotations
+
 from collections.abc import Sequence
 
 import torch
 from torch import nn
 from torch.nn import functional as F  # noqa: N812 - conventional PyTorch alias
 
-from ecg_experiment.cpc import (
+from .cpc import (
     HORIZONS,
+    TEMPERATURE,
     WIDTH,
     CPCEncoder,
     mean_pair_cosine,
@@ -21,7 +24,6 @@ from ecg_experiment.cpc import (
 )
 
 NEGATIVES = 16
-TEMPERATURE = 0.1
 OBJECTIVES = ("sampled_info", "sgns")
 
 

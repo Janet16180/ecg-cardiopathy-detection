@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import time
 from pathlib import Path
 from typing import Any
@@ -15,11 +14,12 @@ from sklearn.metrics import roc_auc_score
 from torch import nn
 from torch.utils.data import DataLoader
 
-from .data import ECGDataset, Waveforms, build_cache, read_manifest
+from .data import ECGDataset, Waveforms, build_cache
 from .evaluation import evaluate_predictions, partition_validation
-from .files import sha256_file, write_json_atomic
+from .files import read_csv, sha256_file, write_json_atomic, write_torch_atomic
 from .models import CNN, JEPA, Classifier, MaskedAutoencoder, PatchTransformer
 from .reproducibility import cpu_state, seed_everything
+from .training import checked_step, require_cuda, warmup_cosine_lr
 
 SSL_MODELS = frozenset({"mae", "jepa"})
 RESULT_NAMES = {"cnn": "cnn_supervised", "transformer": "transformer_supervised",
@@ -29,7 +29,6 @@ SSL_LR = 3e-4
 ENCODER_LR = 3e-4
 HEAD_LR = 1e-3
 WEIGHT_DECAY = 0.01
-GRADIENT_CLIP = 1.0
 TEACHER_MOMENTUM_START = 0.99
 TEACHER_MOMENTUM_RANGE = 0.009
 GAIN_RANGE = (0.9, 1.1)
@@ -72,13 +71,6 @@ def _check_ssl_checkpoint(state: dict[str, Any], args: argparse.Namespace,
         raise ValueError("Existing SSL checkpoint differs from this experiment's inputs/settings")
 
 
-def _ssl_learning_rate(epoch: int, epochs: int) -> float:
-    """Linear warmup over two epochs, then cosine decay to 10% of ``SSL_LR``."""
-    warmup = min(1.0, (epoch + 1) / 2)
-    decay = 0.1 + 0.9 * (1 + math.cos(math.pi * epoch / epochs)) / 2
-    return SSL_LR * warmup * decay
-
-
 def _ssl_epoch(model: nn.Module, loader: DataLoader, optimizer: torch.optim.Optimizer,
                args: argparse.Namespace, epoch: int) -> dict[str, float]:
     """Train one SSL epoch and return record-weighted mean losses."""
@@ -86,13 +78,8 @@ def _ssl_epoch(model: nn.Module, loader: DataLoader, optimizer: torch.optim.Opti
     observations = 0
     for signal, _ in loader:
         signal = signal.to(args.device)
-        optimizer.zero_grad(set_to_none=True)
         loss, details = model(signal)
-        if not torch.isfinite(loss):
-            raise RuntimeError(f"Nonfinite SSL loss in {args.model}")
-        loss.backward()
-        nn.utils.clip_grad_norm_(model.parameters(), GRADIENT_CLIP)
-        optimizer.step()
+        checked_step(loss, model, optimizer, f"{args.model} SSL")
         if isinstance(model, JEPA):
             model.update_teacher(TEACHER_MOMENTUM_START
                                  + TEACHER_MOMENTUM_RANGE * epoch / max(1, args.ssl_epochs - 1))
@@ -132,7 +119,7 @@ def pretrain(args: argparse.Namespace, waveforms: Waveforms, train: list[dict[st
     ValueError
         If an existing checkpoint was made with other inputs or settings.
     RuntimeError
-        If the SSL loss becomes nonfinite.
+        If the SSL loss or gradients become nonfinite.
     """
     seed_everything(args.seed)
     directory = args.output_dir / f"{args.model}_ssl"
@@ -151,7 +138,7 @@ def pretrain(args: argparse.Namespace, waveforms: Waveforms, train: list[dict[st
     start = time.monotonic()
     for epoch in range(args.ssl_epochs):
         model.train()
-        lr = _ssl_learning_rate(epoch, args.ssl_epochs)
+        lr = warmup_cosine_lr(SSL_LR, epoch, args.ssl_epochs)
         for group in optimizer.param_groups:
             group["lr"] = lr
         losses = _ssl_epoch(model, loader, optimizer, args, epoch)
@@ -160,9 +147,9 @@ def pretrain(args: argparse.Namespace, waveforms: Waveforms, train: list[dict[st
         print(json.dumps({"stage": args.model + "_ssl", **row}), flush=True)
         write_json_atomic(directory / "history.json", history)
     training_ids = [r["ecg_id"] for r in train]
-    torch.save({"encoder": cpu_state(model.encoder), "scale": scale.tolist(),
-                "model": args.model, "seed": args.seed, "epochs": args.ssl_epochs,
-                "training_records": len(train), "training_ecg_ids": training_ids}, checkpoint)
+    write_torch_atomic(checkpoint, {"encoder": cpu_state(model.encoder), "scale": scale.tolist(),
+                                    "model": args.model, "seed": args.seed, "epochs": args.ssl_epochs,
+                                    "training_records": len(train), "training_ecg_ids": training_ids})
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     write_json_atomic(directory / "config.json", {
         "architecture": repr(model), "ssl_epochs": args.ssl_epochs,
@@ -196,7 +183,7 @@ def predict(model: nn.Module, loader: DataLoader) -> np.ndarray:
 def _load_ssl_encoder(encoder: nn.Module, ssl_checkpoint: Path, args: argparse.Namespace,
                       scale: np.ndarray) -> None:
     state = torch.load(ssl_checkpoint, map_location="cpu", weights_only=True)
-    expected_training = [r["ecg_id"] for r in read_manifest(args.manifest_dir / "all_train_ssl.csv")]
+    expected_training = [r["ecg_id"] for r in read_csv(args.manifest_dir / "all_train_ssl.csv")]
     if state["model"] != args.model or state["training_ecg_ids"] != expected_training:
         raise ValueError("SSL checkpoint has a different model or training patient manifest")
     encoder.load_state_dict(state["encoder"])
@@ -213,14 +200,8 @@ def _supervised_epoch(model: nn.Module, loader: DataLoader, optimizer: torch.opt
         signal, target = signal.to(device), target.to(device)
         gain = torch.empty(len(signal), 1, 1, device=device).uniform_(*GAIN_RANGE)
         signal = signal * gain + torch.randn_like(signal) * NOISE_STD
-        optimizer.zero_grad(set_to_none=True)
-        logits = model(signal)
-        loss = nn.functional.binary_cross_entropy_with_logits(logits, target)
-        if not torch.isfinite(loss):
-            raise RuntimeError(f"Nonfinite supervised loss in {name}")
-        loss.backward()
-        nn.utils.clip_grad_norm_(model.parameters(), GRADIENT_CLIP)
-        optimizer.step()
+        loss = nn.functional.binary_cross_entropy_with_logits(model(signal), target)
+        checked_step(loss, model, optimizer, f"{name} supervised")
         total_loss += float(loss.detach()) * len(signal)
     return total_loss
 
@@ -289,7 +270,7 @@ def supervised(args: argparse.Namespace, waveforms: Waveforms, train: list[dict[
     ValueError
         If the SSL checkpoint does not match the model, manifest or scale.
     RuntimeError
-        If the supervised loss becomes nonfinite.
+        If the supervised loss or gradients become nonfinite.
     """
     seed_everything(args.seed)
     name = RESULT_NAMES[args.model]
@@ -310,8 +291,9 @@ def supervised(args: argparse.Namespace, waveforms: Waveforms, train: list[dict[
     best_state, best_epoch, best_auc = _fit_supervised(args, model, name, directory, train_loader,
                                                        dev_loader, dev_y, len(train))
     model.load_state_dict(best_state)
-    torch.save({"model": best_state, "scale": scale.tolist(), "best_epoch": best_epoch,
-                "label_seed": args.seed, "architecture": name}, directory / "model.pt")
+    write_torch_atomic(directory / "model.pt", {"model": best_state, "scale": scale.tolist(),
+                                                "best_epoch": best_epoch, "label_seed": args.seed,
+                                                "architecture": name})
     # No test labels have been loaded into model fitting or checkpoint selection.
     result = evaluate_predictions(
         name, predict(model, make_loader(waveforms, calibration, scale, args.batch_size)),
@@ -367,26 +349,25 @@ def main() -> None:
         If the SSL stage is requested for a supervised-only model.
     """
     args = _parse_args()
+    if args.stage == "ssl" and args.model not in SSL_MODELS:
+        raise ValueError("SSL requires --model mae or jepa")
     torch.set_num_threads(args.threads)
     torch.set_num_interop_threads(1)
     if args.stage == "cache":
         build_cache(args.raw_dir, args.manifest_dir, args.cache_dir)
         return
-    if args.device == "cuda" and not torch.cuda.is_available():
-        raise RuntimeError("CUDA requested but unavailable. Run with GPU access or explicitly --device cpu.")
+    require_cuda(args.device)
     waveforms = Waveforms(args.cache_dir)
-    all_train = read_manifest(args.manifest_dir / "all_train_ssl.csv")
+    all_train = read_csv(args.manifest_dir / "all_train_ssl.csv")
     scale = waveforms.training_scale(all_train)
     ssl_checkpoint = args.ssl_checkpoint
     if args.model in SSL_MODELS and not ssl_checkpoint:
         ssl_checkpoint = pretrain(args, waveforms, all_train, scale)
     if args.stage == "ssl":
-        if args.model not in SSL_MODELS:
-            raise ValueError("SSL requires --model mae or jepa")
         return
-    supervised(args, waveforms, read_manifest(args.manifest_dir / "labeled_train.csv"),
-               read_manifest(args.manifest_dir / "validation.csv"),
-               read_manifest(args.manifest_dir / "test.csv"), scale, ssl_checkpoint)
+    supervised(args, waveforms, read_csv(args.manifest_dir / "labeled_train.csv"),
+               read_csv(args.manifest_dir / "validation.csv"),
+               read_csv(args.manifest_dir / "test.csv"), scale, ssl_checkpoint)
 
 
 if __name__ == "__main__":

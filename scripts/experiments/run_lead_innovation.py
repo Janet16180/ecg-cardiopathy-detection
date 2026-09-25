@@ -16,11 +16,12 @@ from sklearn.metrics import roc_auc_score
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from ecg_experiment.data import ECGDataset, Waveforms, read_manifest
+from ecg_experiment.data import ECGDataset, Waveforms
 from ecg_experiment.evaluation import evaluate_predictions, partition_validation
-from ecg_experiment.files import sha256_file, write_json_atomic
+from ecg_experiment.files import read_csv, sha256_file, write_json_atomic
 from ecg_experiment.gpu import gpu_lock
-from ecg_experiment.lead_innovation import LEAD_INDICES, LeadClassifier, LeadMultiscaleEncoder, LeadSSL
+from ecg_experiment.lead_innovation import LEAD_INDICES, LeadMultiscaleEncoder, LeadSSL
+from ecg_experiment.models import Classifier
 from ecg_experiment.reproducibility import cpu_state, seed_everything
 from ecg_experiment.training import checked_step, parameter_count, warmup_cosine_lr
 
@@ -275,7 +276,7 @@ def pretrain(args: argparse.Namespace, waveforms: Waveforms, all_train: list[dic
 
 
 def build_classifier(args: argparse.Namespace, all_train: list[dict[str, str]],
-                     scale: np.ndarray) -> tuple[LeadClassifier, Path | None]:
+                     scale: np.ndarray) -> tuple[Classifier, Path | None]:
     """
     Build the classifier from scratch or from the variant's verified SSL encoder.
 
@@ -290,7 +291,7 @@ def build_classifier(args: argparse.Namespace, all_train: list[dict[str, str]],
 
     Returns
     -------
-    tuple[LeadClassifier, Path | None]
+    tuple[Classifier, Path | None]
         Classifier on the device and the SSL checkpoint used, if any.
 
     Raises
@@ -306,17 +307,17 @@ def build_classifier(args: argparse.Namespace, all_train: list[dict[str, str]],
         if not matches_ssl(state, args, [row["ecg_id"] for row in all_train], scale):
             raise ValueError(f"SSL checkpoint does not match this experiment: {checkpoint}")
         encoder.load_state_dict(state["encoder"])
-    return LeadClassifier(encoder).to(args.device), checkpoint
+    return Classifier(encoder).to(args.device), checkpoint
 
 
-def supervised_epoch(model: LeadClassifier, optimizer: torch.optim.Optimizer, loader: DataLoader,
+def supervised_epoch(model: Classifier, optimizer: torch.optim.Optimizer, loader: DataLoader,
                      device: str, name: str) -> float:
     """
     Train one supervised epoch with random gain and additive noise.
 
     Parameters
     ----------
-    model : LeadClassifier
+    model : Classifier
         Classifier in training mode.
     optimizer : torch.optim.Optimizer
         Its optimizer.
@@ -492,14 +493,14 @@ def main(argv: Sequence[str] | None = None) -> None:
     torch.set_num_interop_threads(1)
     with gpu_lock(args.device):
         waveforms = Waveforms(args.cache_dir)
-        all_train = read_manifest(args.manifest_dir / "all_train_ssl.csv")
+        all_train = read_csv(args.manifest_dir / "all_train_ssl.csv")
         scale = waveforms.training_scale(all_train)
         if args.stage == "ssl":
             pretrain(args, waveforms, all_train, scale)
             return
-        supervised(args, waveforms, read_manifest(args.manifest_dir / "labeled_train.csv"),
-                   read_manifest(args.manifest_dir / "validation.csv"),
-                   read_manifest(args.manifest_dir / "test.csv"), all_train, scale)
+        supervised(args, waveforms, read_csv(args.manifest_dir / "labeled_train.csv"),
+                   read_csv(args.manifest_dir / "validation.csv"),
+                   read_csv(args.manifest_dir / "test.csv"), all_train, scale)
 
 
 if __name__ == "__main__":

@@ -4,6 +4,8 @@ This is an experiment-specific CNN/GRU CPC implementation, not a reproduction of
 the published S4 ECG-CPC architecture. Each five-second half is encoded alone.
 """
 
+from __future__ import annotations
+
 from collections.abc import Sequence
 
 import torch
@@ -22,6 +24,24 @@ TEMPERATURE = 0.1
 CMSC_WEIGHT = 0.1
 CONV_WIDTHS = (LEADS, 64, 128, 192, WIDTH)
 CONV_KERNELS = (5, 3, 3, 3)
+
+
+def check_signal_batch(signal: torch.Tensor) -> None:
+    """
+    Require a batch of ten-second, twelve-lead signals at 250 Hz.
+
+    Parameters
+    ----------
+    signal : torch.Tensor
+        Candidate input batch.
+
+    Raises
+    ------
+    ValueError
+        If the signal shape is not [batch, 12, 2500].
+    """
+    if signal.ndim != 3 or tuple(signal.shape[1:]) != (LEADS, SIGNAL_SAMPLES):
+        raise ValueError("Expected [batch, 12, 2500] at 250 Hz")
 
 
 def split_halves(signal: torch.Tensor) -> torch.Tensor:
@@ -111,8 +131,7 @@ class CPCEncoder(nn.Module):
         ValueError
             If the signal shape is not [batch, 12, 2500].
         """
-        if signal.ndim != 3 or signal.shape[1:] != (LEADS, SIGNAL_SAMPLES):
-            raise ValueError("Expected [batch, 12, 2500] at 250 Hz")
+        check_signal_batch(signal)
         batch = len(signal)
         tokens = self.convs(split_halves(signal)).transpose(1, 2)
         contexts, _ = self.context(tokens)

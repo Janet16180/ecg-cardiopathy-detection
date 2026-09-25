@@ -14,30 +14,28 @@ from sklearn.metrics import roc_auc_score
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from .cpc import CPCClassifier
-from .data import read_manifest
+from . import ROOT
+from .cpc import LEADS, SIGNAL_SAMPLES, CPCClassifier
 from .evaluation import evaluate_predictions, partition_validation
-from .files import sha256_file, sha256_json, write_json_atomic, write_torch_atomic
+from .files import read_csv, sha256_file, sha256_json, write_json_atomic, write_torch_atomic
+from .receipts import check_completed_stage
 from .reproducibility import capture_rng_state, cpu_state, restore_rng_state, seed_everything
+from .training import checked_step
 
-ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CACHE = ROOT / "data/processed/cpc_pool_40k"
 DEFAULT_MANIFEST = ROOT / "data/processed/ptbxl"
 SSL_SEED = 42
-SIGNAL_LEADS = 12
-SIGNAL_SAMPLES = 2500
 NORMALIZATION_CHUNK_RECORDS = 128
 MIN_STD = 1e-6
 ENCODER_LR = 3e-4
 HEAD_LR = 1e-3
 WEIGHT_DECAY = 0.01
-GRADIENT_CLIP = 1.0
 LABEL_MANIFESTS = ("all_train_ssl", "labeled_train", "validation", "test")
 COMPLETED_ARTIFACTS = ("config.json", "history.json", "model.pt", "metrics.json",
                        "test_predictions.csv", "calibration_predictions.npz")
 # Every file whose code determines CPC pretraining or fine-tuning results.
 CODE_FILES = ("ecg_experiment/cpc.py", "ecg_experiment/cpc_pool.py", "ecg_experiment/evaluation.py",
-              "ecg_experiment/files.py", "ecg_experiment/reproducibility.py",
+              "ecg_experiment/files.py", "ecg_experiment/reproducibility.py", "ecg_experiment/receipts.py",
               "ecg_experiment/training.py", "scripts/experiments/run_cpc_experiment.py")
 
 
@@ -67,9 +65,9 @@ class Pool:
         self.metadata = json.loads((directory / "complete.json").read_text())
         self.signals = np.load(directory / "signals.npy", mmap_mode="r")
         self.ids = np.load(directory / "ecg_ids.npy", allow_pickle=False)
-        self.rows = read_manifest(directory / "rows.csv")
+        self.rows = read_csv(directory / "rows.csv")
         if (self.signals.dtype != np.float32 or self.signals.ndim != 3
-                or self.signals.shape[1:] != (SIGNAL_LEADS, SIGNAL_SAMPLES)):
+                or self.signals.shape[1:] != (LEADS, SIGNAL_SAMPLES)):
             raise ValueError("Expected float32 cache [N,12,2500]")
         if len(self.ids) != len(self.rows) or len(self.ids) != len(self.signals):
             raise ValueError("Cache ID, row, and signal counts differ")
@@ -136,8 +134,8 @@ class Pool:
             if info["source"] != source:
                 raise ValueError("Existing normalization uses different training data")
             return np.asarray(info["mean"], dtype=np.float32), np.asarray(info["std"], dtype=np.float32)
-        totals = np.zeros(SIGNAL_LEADS, dtype=np.float64)
-        squares = np.zeros(SIGNAL_LEADS, dtype=np.float64)
+        totals = np.zeros(LEADS, dtype=np.float64)
+        squares = np.zeros(LEADS, dtype=np.float64)
         indices = self.indices(self.train_rows)
         # Fixed chunking keeps the float64 accumulation order, and so the statistics, reproducible.
         for start in range(0, len(indices), NORMALIZATION_CHUNK_RECORDS):
@@ -248,7 +246,7 @@ def manifest_rows(pool: Pool, manifest_dir: str | Path,
     """
     directory = Path(manifest_dir) / f"seed42_fraction{budget}"
     files = {name: directory / f"{name}.csv" for name in LABEL_MANIFESTS}
-    rows = {name: read_manifest(path) for name, path in files.items()}
+    rows = {name: read_csv(path) for name, path in files.items()}
     for name, expected_split in (("all_train_ssl", "train"), ("labeled_train", "train"),
                                  ("validation", "validation"), ("test", "test")):
         for row in rows[name]:
@@ -259,15 +257,13 @@ def manifest_rows(pool: Pool, manifest_dir: str | Path,
     return rows, {name: sha256_file(path) for name, path in files.items()}
 
 
-def fingerprint(pool: Pool, source_hashes: dict[str, str], mean: np.ndarray, std: np.ndarray,
+def fingerprint(source_hashes: dict[str, str], mean: np.ndarray, std: np.ndarray,
                 settings: dict[str, Any]) -> tuple[str, dict[str, Any]]:
     """
     Identify a CPC stage by its data, normalization, settings and code.
 
     Parameters
     ----------
-    pool : Pool
-        Source cache; its identity enters through ``source_hashes``.
     source_hashes : dict[str, str]
         Input file digests from ``make_source_hashes``.
     mean : np.ndarray
@@ -431,16 +427,6 @@ def predict(model: nn.Module, data: DataLoader, device: str) -> np.ndarray:
                            for signal, _, _ in data])
 
 
-def _verify_completed(completion: Path, directory: Path, fingerprint_value: str) -> None:
-    """Check a completed stage's fingerprint and recorded artifact digests."""
-    saved = json.loads(completion.read_text())
-    if saved["fingerprint"] != fingerprint_value:
-        raise ValueError(f"Completed training fingerprint mismatch: {directory}")
-    for name, expected_hash in saved["artifacts"].items():
-        if sha256_file(directory / name) != expected_hash:
-            raise ValueError(f"Completed artifact changed: {directory / name}")
-
-
 def _classifier(args: argparse.Namespace, checkpoint: Path | None, variant: str) -> CPCClassifier:
     """Build the classifier, loading the pretrained encoder when a checkpoint is given."""
     model = CPCClassifier().to(args.device)
@@ -461,15 +447,8 @@ def _train_epoch(model: nn.Module, train_data: DataLoader, optimizer: torch.opti
     for signal, target, _ in train_data:
         signal = signal.to(device, non_blocking=True)
         target = target.to(device, dtype=torch.float32, non_blocking=True)
-        optimizer.zero_grad(set_to_none=True)
         loss = nn.functional.binary_cross_entropy_with_logits(model(signal), target)
-        if not torch.isfinite(loss):
-            raise RuntimeError("Nonfinite supervised loss")
-        loss.backward()
-        norm = nn.utils.clip_grad_norm_(model.parameters(), GRADIENT_CLIP)
-        if not torch.isfinite(norm):
-            raise RuntimeError("Nonfinite supervised gradients")
-        optimizer.step()
+        checked_step(loss, model, optimizer, "supervised")
         total += float(loss.detach()) * len(signal)
         updates += 1
         exposures += len(signal)
@@ -522,10 +501,10 @@ def fine_tune(args: argparse.Namespace, pool: Pool, mean: np.ndarray, std: np.nd
                 "encoder_lr": ENCODER_LR, "head_lr": HEAD_LR, "weight_decay": WEIGHT_DECAY,
                 "augmentation": "none", "ssl_checkpoint_sha256": checkpoint_hash,
                 "manifest_sha256": manifest_hashes}
-    fp, inputs = fingerprint(pool, source_hashes, mean, std, settings)
+    fp, inputs = fingerprint(source_hashes, mean, std, settings)
     completion = directory / "completion.json"
     if completion.exists():
-        _verify_completed(completion, directory, fp)
+        check_completed_stage(directory, fp)
         return
     model = _classifier(args, checkpoint, variant)
     optimizer = torch.optim.AdamW([{"params": model.encoder.parameters(), "lr": ENCODER_LR},

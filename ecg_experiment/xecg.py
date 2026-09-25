@@ -18,9 +18,10 @@ from safetensors import safe_open
 from scipy.signal import resample
 from torch import nn
 
-from ecg_experiment.files import sha256_file
+from . import ROOT
+from .files import sha256_file
+from .waveforms import LEADS, SAMPLE_RATE
 
-ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CHECKPOINT_DIR = ROOT / "third_party/checkpoints/xecg"
 DEFAULT_XLSTM_DIR = ROOT / "third_party/xecg-deps"
 RELEASE_SHA256 = {
@@ -28,7 +29,6 @@ RELEASE_SHA256 = {
     "xECG.py": "373fed5a125abea218c74a8dc5b09e6054e85172a91f99e2ed47f8221fbe266f",
     "model.safetensors": "812dec69ac0fbf13f39e50bde4f35f85435a66966d8785baec65c2b5c70e722c",
 }
-LEADS = ("I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6")
 SOURCE_SAMPLES = 5000
 MODEL_SAMPLES = 1000
 MODEL_FS = 100
@@ -39,7 +39,7 @@ BLOCK_CONFIG = ["s", "s", "m", "m", "s", "s", "m", "m", "s"]
 BACKENDS = ("vanilla", "cuda")
 
 
-def preprocess_xecg(signal_12x5000: np.ndarray, input_fs: int = 500) -> np.ndarray:
+def preprocess_xecg(signal_12x5000: np.ndarray) -> np.ndarray:
     """
     Convert canonical 12-lead PTB-XL mV to the official 100 Hz time-major input.
 
@@ -50,9 +50,7 @@ def preprocess_xecg(signal_12x5000: np.ndarray, input_fs: int = 500) -> np.ndarr
     Parameters
     ----------
     signal_12x5000 : np.ndarray
-        Finite numeric signal of shape [12, 5000].
-    input_fs : int
-        Sampling rate of the input; only 500 Hz is accepted.
+        Finite numeric 500 Hz signal of shape [12, 5000].
 
     Returns
     -------
@@ -62,12 +60,11 @@ def preprocess_xecg(signal_12x5000: np.ndarray, input_fs: int = 500) -> np.ndarr
     Raises
     ------
     ValueError
-        If the input shape, rate or values are invalid, or resampling fails.
+        If the input shape or values are invalid, or resampling fails.
     """
     signal = np.asarray(signal_12x5000)
-    if input_fs != 500 or signal.shape != (12, SOURCE_SAMPLES):
-        raise ValueError(
-            f"Expected canonical [12, 5000] ECG at 500 Hz, got {signal.shape} at {input_fs} Hz")
+    if signal.shape != (len(LEADS), SOURCE_SAMPLES):
+        raise ValueError(f"Expected canonical [12, 5000] ECG at {SAMPLE_RATE} Hz, got {signal.shape}")
     if not np.issubdtype(signal.dtype, np.number) or not np.isfinite(signal).all():
         raise ValueError("ECG samples must be finite numbers")
     output = resample(signal.T, MODEL_SAMPLES, axis=0).astype(np.float32)

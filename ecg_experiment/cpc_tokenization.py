@@ -1,5 +1,7 @@
 """Continued CPC with frozen-round cluster targets or causal chunk contexts."""
 
+from __future__ import annotations
+
 import copy
 from collections.abc import Sequence
 from typing import Any
@@ -10,21 +12,19 @@ from sklearn.cluster import MiniBatchKMeans
 from torch import nn
 from torch.nn import functional as F  # noqa: N812 - conventional PyTorch alias
 
-from ecg_experiment.cpc import (
+from .cpc import (
     HORIZONS,
-    LEADS,
-    SIGNAL_SAMPLES,
-    TEMPERATURE,
     TOKEN_COUNT,
     WIDTH,
     CPCEncoder,
+    check_signal_batch,
     cpc_loss,
     mean_pair_cosine,
     prediction_heads,
     split_halves,
     token_variance,
 )
-from ecg_experiment.ecg_tokenizers import CausalChunkEncoder
+from .ecg_tokenizers import CausalChunkEncoder
 
 CLUSTERS = 64
 CLUSTER_WEIGHT = 0.1
@@ -59,8 +59,7 @@ def cnn_tokens(convs: nn.Module, signal: torch.Tensor) -> torch.Tensor:
     ValueError
         If the signal shape is wrong.
     """
-    if signal.ndim != 3 or signal.shape[1:] != (LEADS, SIGNAL_SAMPLES):
-        raise ValueError("Expected [batch,12,2500] input")
+    check_signal_batch(signal)
     return convs(split_halves(signal)).transpose(1, 2).reshape(len(signal), 2, TOKEN_COUNT, WIDTH)
 
 
@@ -83,32 +82,6 @@ def snapshot_teacher_convs(encoder: nn.Module) -> nn.Module:
     for parameter in teacher.parameters():
         parameter.requires_grad_(False)
     return teacher
-
-
-def temporal_cpc_loss(tokens: torch.Tensor, contexts: torch.Tensor, heads: Sequence[nn.Module],
-                      first_query: int = 3, temperature: float = TEMPERATURE) -> torch.Tensor:
-    """
-    Same-half CPC with all negatives except positions within three of the positive.
-
-    Parameters
-    ----------
-    tokens : torch.Tensor
-        Target tokens of shape [batch, 2, time, 256].
-    contexts : torch.Tensor
-        Query contexts with the same shape as ``tokens``.
-    heads : Sequence[nn.Module]
-        One prediction head per horizon.
-    first_query : int
-        Earliest query position shared by all arms.
-    temperature : float
-        Softmax temperature.
-
-    Returns
-    -------
-    torch.Tensor
-        Scalar loss.
-    """
-    return cpc_loss(tokens, contexts, heads, temperature, first_query=first_query)
 
 
 def nearest_cluster(tokens: torch.Tensor, centers: torch.Tensor) -> torch.Tensor:
@@ -300,7 +273,7 @@ class TokenizationPretrainer(nn.Module):
             rate_penalty = tokens.new_zeros(())
         else:
             rate_penalty = self.encoder.rate_penalty
-        ordinary = temporal_cpc_loss(tokens, contexts, self.heads, self.first_query)
+        ordinary = cpc_loss(tokens, contexts, self.heads, first_query=self.first_query)
         auxiliary = ordinary.new_zeros(())
         if self.cluster_heads is not None:
             if centers is None or teacher_convs is None:

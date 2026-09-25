@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import csv
 import json
 from collections.abc import Sequence
 from pathlib import Path
@@ -13,7 +12,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score, roc_auc_score
 from sklearn.model_selection import GroupShuffleSplit
 
-from .files import read_csv, write_json_atomic
+from .files import read_csv, write_csv_atomic, write_json_atomic, write_npz_atomic
 
 TARGET_SENSITIVITY = 0.95
 CALIBRATION_BINS = 10
@@ -40,6 +39,11 @@ def _arrays(y: Sequence[int] | np.ndarray,
 
 def _ratio(numerator: float, denominator: float) -> float | None:
     return float(numerator / denominator) if denominator else None
+
+
+def _patient_groups(patient_ids: np.ndarray) -> list[np.ndarray]:
+    """Record indices of each patient, in sorted patient order."""
+    return [np.flatnonzero(patient_ids == patient) for patient in np.unique(patient_ids)]
 
 
 def _check_probability(name: str, value: float) -> None:
@@ -200,8 +204,7 @@ def patient_bootstrap(y: Sequence[int] | np.ndarray, prob: Sequence[float] | np.
     if not isinstance(repeats, int) or repeats < 1:
         raise ValueError("repeats must be a positive integer")
     _check_probability("threshold", threshold)
-    _, patient_index = np.unique(patient_ids, return_inverse=True)
-    groups = [np.flatnonzero(patient_index == i) for i in range(patient_index.max() + 1)]
+    groups = _patient_groups(patient_ids)
     rng = np.random.default_rng(seed)
     values = {name: [] for name in BOOTSTRAP_METRICS}
     for _ in range(repeats):
@@ -381,15 +384,15 @@ def _write_evaluation(output_dir: Path, result: dict[str, Any],
     output_dir.mkdir(parents=True, exist_ok=True)
     write_json_atomic(output_dir / "metrics.json", result)
     threshold = result["threshold"]
-    with (output_dir / "test_predictions.csv").open("w", newline="") as handle:
-        writer = csv.writer(handle)
-        writer.writerow(["ecg_id", "patient_id", "target", "raw_logit", "probability", "prediction"])
-        for row, logit, probability in zip(test_rows, test_logits, test_p, strict=True):
-            writer.writerow([row["ecg_id"], row["patient_id"], row["target"], float(logit),
-                             float(probability), int(probability >= threshold)])
-    np.savez(output_dir / "calibration_predictions.npz", logits=calibration_logits,
-             targets=calibration_y, probabilities=calibration_p,
-             ecg_ids=np.array([int(r["ecg_id"]) for r in calibration_rows]))
+    predictions = ({"ecg_id": row["ecg_id"], "patient_id": row["patient_id"], "target": row["target"],
+                    "raw_logit": float(logit), "probability": float(probability),
+                    "prediction": int(probability >= threshold)}
+                   for row, logit, probability in zip(test_rows, test_logits, test_p, strict=True))
+    write_csv_atomic(output_dir / "test_predictions.csv", predictions,
+                     ("ecg_id", "patient_id", "target", "raw_logit", "probability", "prediction"))
+    write_npz_atomic(output_dir / "calibration_predictions.npz", logits=calibration_logits,
+                     targets=calibration_y, probabilities=calibration_p,
+                     ecg_ids=np.array([int(r["ecg_id"]) for r in calibration_rows]))
 
 
 def paired_comparison(left: Path, right: Path, repeats: int = 500) -> dict[str, dict[str, Any]]:
@@ -429,7 +432,7 @@ def paired_comparison(left: Path, right: Path, repeats: int = 500) -> dict[str, 
     right_p = np.array([float(r["probability"]) for r in right_rows])
     left_t = json.loads((left / "metrics.json").read_text())["threshold"]
     right_t = json.loads((right / "metrics.json").read_text())["threshold"]
-    groups = [np.flatnonzero(ids == patient) for patient in np.unique(ids)]
+    groups = _patient_groups(ids)
     rng = np.random.default_rng(BOOTSTRAP_SEED)
     point_left, point_right = metrics(y, left_p, left_t), metrics(y, right_p, right_t)
     samples = {name: [] for name in PAIRED_METRICS}

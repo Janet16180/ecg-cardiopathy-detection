@@ -9,11 +9,13 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
-from .files import read_csv
+from .files import read_csv, write_text_atomic
+from .waveforms import LEADS as WAVEFORM_LEADS
 
-LEADS = ["I", "II", "III", "AVR", "AVL", "AVF", "V1", "V2", "V3", "V4", "V5", "V6"]
+# Uppercase names, in canonical order, as recorded in the 100 Hz cache metadata.
+LEADS = [lead.upper() for lead in WAVEFORM_LEADS]
 CACHE_MANIFESTS = ("all_train_ssl.csv", "validation.csv", "test.csv")
-SAMPLING_RATE = 100
+SAMPLE_RATE = 100
 SAMPLES = 1000
 PROGRESS_INTERVAL = 2000
 # Fixed chunking keeps the float64 accumulation order, and so the scale, reproducible.
@@ -22,27 +24,10 @@ MIN_SCALE = 1e-6
 CLIP_LIMIT = 20
 
 
-def read_manifest(path: str | Path) -> list[dict[str, str]]:
-    """
-    Read a patient split manifest.
-
-    Parameters
-    ----------
-    path : str | Path
-        CSV manifest with a header row.
-
-    Returns
-    -------
-    list[dict[str, str]]
-        One dictionary per record, keyed by column name.
-    """
-    return read_csv(path)
-
-
 def _cached_records(manifest_dir: Path) -> dict[int, dict[str, str]]:
     records = {}
     for name in CACHE_MANIFESTS:
-        for row in read_manifest(manifest_dir / name):
+        for row in read_csv(manifest_dir / name):
             records[int(row["ecg_id"])] = row
     return records
 
@@ -53,7 +38,7 @@ def _read_cache_signal(raw_dir: Path, row: dict[str, str], ecg_id: int) -> np.nd
 
     signal, header = wfdb.rdsamp(str(raw_dir / row["filename_lr"]))
     names = [name.upper() for name in header["sig_name"]]
-    if header["fs"] != SAMPLING_RATE or signal.shape != (SAMPLES, len(LEADS)):
+    if header["fs"] != SAMPLE_RATE or signal.shape != (SAMPLES, len(LEADS)):
         raise ValueError(f"Unexpected waveform dimensions for ECG {ecg_id}")
     if any(unit.lower() != "mv" for unit in header["units"]):
         raise ValueError(f"Unexpected waveform units for ECG {ecg_id}")
@@ -102,8 +87,8 @@ def build_cache(raw_dir: str | Path, manifest_dir: str | Path, cache_dir: str | 
             print(f"Cached {index + 1}/{len(ids)} ECGs", flush=True)
     signals.flush()
     np.save(cache_dir / "ecg_ids.npy", ids)
-    (cache_dir / "complete.json").write_text(json.dumps({
-        "records": len(ids), "shape": list(signals.shape), "sampling_rate": SAMPLING_RATE,
+    write_text_atomic(cache_dir / "complete.json", json.dumps({
+        "records": len(ids), "shape": list(signals.shape), "sampling_rate": SAMPLE_RATE,
         "lead_order": LEADS, "units": "mV", "dtype": "float32",
     }, indent=2))
 

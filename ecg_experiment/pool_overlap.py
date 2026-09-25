@@ -9,17 +9,17 @@ from __future__ import annotations
 import json
 import sqlite3
 from collections.abc import Callable
+from contextlib import closing
 from pathlib import Path
 from typing import Any
 
-from .files import read_csv, sha256_file, sha256_json
+from . import ROOT
+from .files import SHA256_HEX_LENGTH, read_csv, sha256_file, sha256_json
 
-ROOT = Path(__file__).resolve().parents[1]
 PTB_REFERENCE = ROOT / "outputs/data_quality/ptbxl_reference_hashes_v2.json"
 PTB_PILOT_METADATA = ROOT / "data/processed/public_ecg_quality/astra_v2_pilot32/metadata.json"
 MIMIC_POOL = ROOT / "data/processed/mimic_ssl_40k_cpc"
 CHALLENGE_VIEWS = ROOT / "data/processed/challenge_ecg_views"
-SHA256_HEX_LENGTH = 64
 VIEW_FIELDS = ("source", "signal_sha256", "shard_index", "window_start", "source_samples",
                "window_samples", "sampling_rate_hz", "units", "lead_order")
 
@@ -155,7 +155,8 @@ def load_mimic_reference(pin: PinInput) -> tuple[set[str], set[str]]:
     database = pin(MIMIC_POOL / "audit.sqlite3")
     if Path(str(database) + "-wal").exists():
         raise ValueError("MIMIC audit is not a closed immutable SQLite snapshot")
-    with sqlite3.connect(database.resolve().as_uri() + "?mode=ro&immutable=1", uri=True) as connection:
+    uri = database.resolve().as_uri() + "?mode=ro&immutable=1"
+    with closing(sqlite3.connect(uri, uri=True)) as connection:
         state = dict(connection.execute("SELECT key,value FROM state"))
         accepted = dict(connection.execute("SELECT name,signal_sha256 FROM outcomes WHERE status='accepted'"))
     if (state.get("selection_sha256") != metadata["selection_sha256"] or

@@ -11,10 +11,9 @@ from pathlib import Path
 import numpy as np
 import wfdb
 
-from .waveforms import LEADS
+from .waveforms import LEADS, SAMPLE_RATE
 
 VIEW_SAMPLES = 5000
-SAMPLING_RATE = 500
 NEAR_FLAT_STD_MV = 0.01
 HIGH_AMPLITUDE_MV = 10
 SOURCE = {
@@ -65,7 +64,7 @@ def load_view(raw_dir: Path, stem: str, policy: str) -> tuple[np.ndarray, int, i
         raise ValueError("unsafe_path")
     record = wfdb.rdrecord(str(path))
     names = [name.upper() for name in record.sig_name]
-    if record.fs != SAMPLING_RATE or len(names) != len(LEADS) or set(names) != {x.upper() for x in LEADS}:
+    if record.fs != SAMPLE_RATE or len(names) != len(LEADS) or set(names) != {x.upper() for x in LEADS}:
         raise ValueError("lead_or_rate_contract")
     if record.units != ["mV"] * len(LEADS):
         raise ValueError("units_contract")

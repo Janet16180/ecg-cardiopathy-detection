@@ -253,7 +253,7 @@
       "primary_comparison": "CKDA minus KDA; same parameters except the specified transition ranges. GRU is a practical reference with reported capacity.",
       "learning": "Train fresh compact ECG encoders with a common causal waveform stem and the same CPC objective. Copy the initial stem and prediction heads across arms.",
       "starting_budget": "Proposed 20 SSL epochs on the fixed 56,875-record pool, then both existing label budgets; freeze exact settings after profiling.",
-      "next_action": "Run the verified complete-pass V100 cost profile, then complete a resumable three-arm runner and source/input fingerprinted executable manifest. Four CPU correctness tests and a synthetic compute probe have passed; no ECG model result exists yet.",
+      "next_action": "Profile a full real-data epoch with the exact-float32 GPU staging path, then decide the matched SSL budget before building a resumable three-arm runner. The mmap full-pass attempt was stopped for random-I/O cost; no ECG model result exists yet.",
       "constraints": [
         "No language-model checkpoint required.",
         "Do not warm-start only the GRU arm from its trained checkpoint.",
@@ -276,7 +276,9 @@
       "implementation": "ecg_experiment/cpc_delta_memory.py",
       "cpu_tests": "tests/test_cpc_delta_memory.py",
       "compute_only_probe": "outputs/experiment011_delta_memory/implementation_compute_probe.json",
-      "real_data_profile_runner": "scripts/experiments/profile_delta_memory011.py"
+      "real_data_profile_runner": "scripts/experiments/profile_delta_memory011.py",
+      "gpu_staging_profile_runner": "scripts/experiments/profile_delta_memory_gpu011.py",
+      "gpu_staging_probe": "outputs/experiment011_delta_memory/gpu_staging_probe.json"
     },
     {
       "id": "012",

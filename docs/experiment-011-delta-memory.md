@@ -52,3 +52,26 @@ with batch 128, AdamW at learning rate 0.001 and weight decay 0.01. It measures
 actual cache loading, forward/backward and optimizer time, memory, and CPU
 checkpoint roundtrip. It produces no encoder for downstream use. The full
 runner, development evaluation, and executable queue manifest remain pending.
+
+The mmap profile's 100-batch run completed all three arms with checkpoint
+roundtrips in `outputs/experiment011_delta_memory/real_data_profile/profile.json`.
+The 100-batch GRU, KDA and CKDA passes took 13.10, 35.29 and 33.44 seconds
+with a warm cache. A subsequent cold full-pass attempt reached at least 225
+of 445 GRU batches before it was stopped for the sustained random-I/O cost;
+`outputs/experiment011_delta_memory/full_pass_profile_v1/interrupted.json`
+records the command, process identity and reason. No complete epoch or model
+result was produced by that attempt.
+
+The alternative `ecg_experiment/cpc_gpu_pool.py` stages only the frozen training
+records in float32 on the V100, in their original row order. It normalizes a
+copy, leaving the source cache untouched. A seeded permutation gives every
+arm the same sample order. This new order differs from the original DataLoader
+sampler and therefore requires a fresh GRU control. The local feasibility
+receipt at `outputs/experiment011_delta_memory/gpu_staging_probe.json` (SHA-256
+`8c50464c43f6a9303445d0ce66af01331d2ca57e098f839759cf0ed38db25b6e`)
+records 254.09 seconds to stage 6.825 GB and successful optimizer steps for
+all arms; KDA and CKDA peaked at 13.70 and 13.71 GB allocated including the
+pool. This leaves little memory margin, so full-pass profiling is still needed.
+`scripts/experiments/profile_delta_memory_gpu011.py` is the new cost-only
+runner; its CPU tests check exact float32 values, source immutability, record
+coverage and deterministic batch order.

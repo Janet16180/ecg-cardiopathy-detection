@@ -18,7 +18,7 @@ The user authorized **all four Astra proposals**, now Experiments **014–017**.
 
 | Priority | Experiment | Status | Expected pilot cost / next work |
 | --- | --- | --- | --- |
-| 1 | [011: KDA / CKDA](experiment-011-delta-memory.md) | Implementing | Reference recurrence, four CPU checks and synthetic V100 probe complete; cost-only real-data profile runner ready for verification |
+| 1 | [011: KDA / CKDA](experiment-011-delta-memory.md) | Implementing | mmap cost probe found sustained random I/O; exact-float32 GPU staging fits, complete-pass staged profile pending |
 | 2 | [012: StripedHyena-inspired](cross-domain-architecture-candidates.md#2-genomics-a-compact-mixture-of-temporal-scales) | Queued for implementation | Runtime unknown; mixed temporal supports versus local control |
 | 3 | [013: Mamba-3](experiment-013-mamba3-plan.md) | Queued for implementation | Runtime and V100 backend unverified |
 

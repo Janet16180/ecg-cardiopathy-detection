@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-25T07:49:05+00:00",
+  "updated_at_utc": "2026-09-25T11:11:09.488102+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
   "status_definitions": {
@@ -535,24 +535,25 @@
     "calibration_test_evaluated": false
   },
   "scheduling": {
-    "state": "016_rescue_v6_complete_no_active_queue",
-    "since_utc": "2026-09-25T10:31:12.345871+00:00",
-    "reason": "The separately frozen seed-43 one-epoch, three-arm 016 v6 study completed development-only training and a versioned audit/report recovery. Residual beat Legacy by 0.03552 AUROC but remained 0.01372 below the frozen probe, so no practical rescue passed. No additional experiment is scheduled.",
+    "state": "016_frozen_readout_v7_complete_no_active_queue",
+    "since_utc": "2026-09-25T11:08:35+00:00",
+    "reason": "The separately frozen inference-only xECG v7 audit completed. Off fixed-probe refit recovered to 0.96293 development AUROC from its 0.94781 saved joint head, meeting the prespecified near-complete recovery rule versus the 0.96194 released probe but not the +0.002 useful-adaptation rule. No further rescue or GPU job is scheduled.",
     "resume_requires_user_request": false,
     "scoped_request_received_2026_09_25": [
       "016",
       "clean_cached_probe_rerun",
       "017_clean_replication",
-      "016_droppath_rescue"
+      "016_droppath_rescue",
+      "016_frozen_readout_v7"
     ],
     "resume_requires_new_source_manifests": true,
     "historical_launch_commands": "Recorded launch commands use the original source layout; see scripts/README.md for current modules",
     "downloads_continue": true,
     "pause_receipt": "outputs/refactor_pause/pause.json",
     "source_snapshot": "outputs/refactor_pause/source_before_refactor.tar.gz",
-    "current_profile_manifest": "outputs/experiment_queue_016_rescue_profile_v5/queue.json",
+    "current_profile_manifest": "outputs/experiment_queue_016_readout_v7_off/queue.json",
     "current_full_manifest": null,
-    "latest_completed_manifest": "outputs/experiment_queue_016_rescue_v6_audit_v2/queue.json"
+    "latest_completed_manifest": "outputs/experiment_queue_016_readout_v7_full/queue.json"
   },
   "clean_data_preparation": {
     "state": "cpu_preflight_and_cached_probe_rerun_complete",
@@ -586,13 +587,14 @@
     "clean_morphology_result": "docs/experiment-017-clean-replication-results.md"
   },
   "latest_completed_scoped_run": {
-    "id": "016_droppath_rescue_v6_seed43",
-    "train_manifest": "outputs/experiment_queue_016_rescue_v6_full/queue.json",
-    "manifest": "outputs/experiment_queue_016_rescue_v6_audit_v2/queue.json",
-    "manifest_sha256": "3df0b26b39e7b1da8b30256456a217f177ed3bfe19beef55c9ab9b796a40cf78",
-    "status": "outputs/experiment_queue_016_rescue_v6_audit_v2/status.json",
-    "report": "outputs/experiment016_droppath_rescue_v6/report.md",
-    "audit": "outputs/experiment016_droppath_rescue_v6/gradient_audit.json",
+    "id": "016_frozen_readout_v7",
+    "protocol": "docs/experiment-016-frozen-readout-audit-v7.md",
+    "off_gate_manifest": "outputs/experiment_queue_016_readout_v7_off/queue.json",
+    "manifest": "outputs/experiment_queue_016_readout_v7_full/queue.json",
+    "manifest_sha256": "e10b5d404c57f791214f36e2bb5533053252fee6413c60d06f3d9bd2bc0c2921",
+    "status": "outputs/experiment_queue_016_readout_v7_full/status.json",
+    "report": "outputs/experiment016_frozen_readout_audit_v7/report.md",
+    "results": "docs/experiment-016-frozen-readout-audit-v7-results.md",
     "calibration_test_evaluated": false
   },
   "experiment_016_droppath_rescue": {
@@ -662,9 +664,63 @@
     "development_records": 1306,
     "development_patients": 1173,
     "primary_residual_minus_legacy_auroc": 0.03551673161520741,
-    "primary_paired_bootstrap_interval_95": [0.0264634520569575, 0.0447021490726567],
+    "primary_paired_bootstrap_interval_95": [
+      0.0264634520569575,
+      0.0447021490726567
+    ],
     "practical_rescue_arms": [],
-    "next_action": "Retain frozen clean probe. Any longer-budget or independent-seed confirmation requires a separately frozen study; do not automatically evaluate calibration/test.",
+    "next_action": "The separately frozen v7 inference-only readout audit completed; retain the released clean probe. Any further experiment requires a new decision/protocol; do not automatically evaluate calibration/test.",
     "calibration_test_evaluated": false
+  },
+  "experiment_016_frozen_readout_v7": {
+    "status": "complete_development_only_near_complete_linear_readout_recovery_no_useful_adaptation",
+    "protocol": "docs/experiment-016-frozen-readout-audit-v7.md",
+    "results": "docs/experiment-016-frozen-readout-audit-v7-results.md",
+    "output_dir": "outputs/experiment016_frozen_readout_audit_v7",
+    "cpu_check": "outputs/experiment016_frozen_readout_audit_v7/check.json",
+    "off_gate_manifest": "outputs/experiment_queue_016_readout_v7_off/queue.json",
+    "off_gate_manifest_sha256": "80c9e89b6fefa3ae55d8ceb0fbedd4203550bf3cfdfcd505e3ed05c3d5b277c0",
+    "off_gate_source_map_sha256": "20672753a851a78334b08f0a321411ff9774da49f7f9154369da50924b3e5851",
+    "off_gate_status": "outputs/experiment_queue_016_readout_v7_off/status.json",
+    "off_gate_receipt": "outputs/experiment016_frozen_readout_audit_v7/cost_gate.json",
+    "off_gate_projection_seconds": 1345.7333464080002,
+    "full_manifest": "outputs/experiment_queue_016_readout_v7_full/queue.json",
+    "full_manifest_sha256": "e10b5d404c57f791214f36e2bb5533053252fee6413c60d06f3d9bd2bc0c2921",
+    "full_source_map_sha256": "fefa248cb82f54fc812814c7f08ea42a9cb24b4cc367eca8f34cc7219e995c66",
+    "full_status": "outputs/experiment_queue_016_readout_v7_full/status.json",
+    "completion_receipt": "outputs/experiment_queue_016_readout_v7_full/job/priority_queue_completion.json",
+    "completion_artifacts_verified": 24,
+    "source_entries_verified": 82,
+    "report": "outputs/experiment016_frozen_readout_audit_v7/report.json",
+    "report_sha256": "32561c514ebd7e5103cd2b91bf22deab4c14c0a69ccb42a1a22da18c221a968c",
+    "runtime_gate": "outputs/experiment016_frozen_readout_audit_v7/runtime_gate.json",
+    "measured_total_seconds": 834.4222794569505,
+    "planning_ceiling_seconds": 7200,
+    "train_records": 15359,
+    "development_records": 1306,
+    "development_patients": 1173,
+    "optimization_seed_of_frozen_backbones": 43,
+    "readout_C": 0.01,
+    "encoder_updates": 0,
+    "released_probe_auroc": 0.9619404113151374,
+    "off_joint_auroc": 0.9478054567022539,
+    "off_refit_auroc": 0.9629344954894712,
+    "primary_off_refit_minus_off_joint_auroc": 0.015129038787217275,
+    "primary_paired_patient_interval_95": [
+      0.009247000940318675,
+      0.02086921856564058
+    ],
+    "off_refit_minus_released_probe_auroc": 0.0009940841743337758,
+    "off_refit_minus_released_probe_interval_95": [
+      -0.0012210980021251816,
+      0.0032610693975844347
+    ],
+    "near_complete_practical_recovery": true,
+    "potential_useful_adaptation": false,
+    "next_action": "Retain released frozen probe. The v7 postmortem audit ends this bounded xECG rescue line; do not automatically start a sweep, replication, calibration or test.",
+    "calibration_test_evaluated": false,
+    "off_gate_launch_command": "UV_CACHE_DIR=/tmp/ecg-uv-cache uv run --no-sync python -u -m scripts.coordination.run_priority_queue --manifest outputs/experiment_queue_016_readout_v7_off/queue.json --manifest-sha256 80c9e89b6fefa3ae55d8ceb0fbedd4203550bf3cfdfcd505e3ed05c3d5b277c0",
+    "full_launch_command": "UV_CACHE_DIR=/tmp/ecg-uv-cache uv run --no-sync python -u -m scripts.coordination.run_priority_queue --manifest outputs/experiment_queue_016_readout_v7_full/queue.json --manifest-sha256 e10b5d404c57f791214f36e2bb5533053252fee6413c60d06f3d9bd2bc0c2921",
+    "cpu_check_command": "UV_CACHE_DIR=/tmp/ecg-uv-cache uv run --no-sync python -u -m scripts.experiments.run_xecg_frozen_readout016_v7 --stage check --device cpu"
   }
 }

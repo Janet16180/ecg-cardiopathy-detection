@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-25T18:42:07+00:00",
+  "updated_at_utc": "2026-09-25T18:54:05+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
   "status_definitions": {
@@ -72,10 +72,10 @@
     {
       "id": "cpc_improvement_investigation",
       "name": "Rank affordable ways to improve compact ECG CPC",
-      "status": "evidence_review_complete_protocol_proposed",
+      "status": "complete_cpu_development_screen_passed",
       "authorized": true,
       "task": "docs/cpc-improvement-investigation.md",
-      "next_action": "Implement and verify the single CPU-only equal-width compact-CPC local-readout proposal before a separate execution decision; bind existing cache identities and clean patient/label splits, measure complete-path cost, and keep calibration/test closed. No new fit, GPU job or restart of 010 is scheduled.",
+      "next_action": "Discuss a separately frozen independent replication if desired; this one-seed development screen does not authorize calibration/test, a GPU study, or a 010 restart.",
       "candidate_directions": [
         "Local morphology and readout",
         "Fine-tuning stability diagnosis",
@@ -83,10 +83,10 @@
         "CPC prediction objective or context",
         "Released S4 ECG-CPC frozen readout"
       ],
-      "output": "Completed ranked research note and one proposed controlled protocol; no new performance result",
-      "executable_manifest": null,
+      "output": "Ranked evidence note, frozen local-readout protocol and completed CPU-only development report",
+      "executable_manifest": "outputs/cpc_local_readout_v1/manifest.json",
       "gpu_profile": null,
-      "results": null,
+      "results": "docs/cpc-local-readout-v1-results.md",
       "constraints": [
         "Preserve fixed patient splits and train-only fitting.",
         "Distinguish compact CPC from released S4 ECG-CPC and frozen from fine-tuned readouts.",
@@ -101,8 +101,29 @@
         60,
         900
       ],
-      "cost_estimate_measured": false,
-      "research_findings": "009 local-feature gain over context also increased width; 017 limited-label morphology gains remain uncertain; released S4 cache contains only averaged features and cannot support a cache-only temporal-pooling change."
+      "cost_estimate_measured": true,
+      "research_findings": "009 local-feature gain over context also increased width; 017 limited-label morphology gains remain uncertain; released S4 cache contains only averaged features and cannot support a cache-only temporal-pooling change.",
+      "immutable_manifest_sha256": "f6a0873e698dd0420144be48b0cf94285e487fd79f25d5978397e2d4b1e7c4a2",
+      "report": "outputs/cpc_local_readout_v1/report.json",
+      "report_sha256": "f3c2bd9d0301f7a7ab69f39cc65515813f5b2b686d6cee9b874a02dc31c32c06",
+      "cost_gate": "outputs/cpc_local_readout_v1/cost_gate.json",
+      "completion": "outputs/cpc_local_readout_v1/completion.json",
+      "projected_total_seconds": 284.9294273852855,
+      "observed_total_seconds": 42.9479094450071,
+      "peak_rss_kib": 422784,
+      "limited_label_delta_auroc_B_minus_A": 0.00911073021631581,
+      "limited_label_paired_patient_interval_95": [
+        0.002779114866880203,
+        0.015399312842952881
+      ],
+      "full_label_delta_auroc_B_minus_A": 0.01249522813975601,
+      "full_label_paired_patient_interval_95": [
+        0.0063875001306311855,
+        0.01899792565739877
+      ],
+      "point_screen_passed": true,
+      "calibration_test_evaluated": false,
+      "launch_command": "OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 OMP_NUM_THREADS=1 UV_CACHE_DIR=/tmp/ecg-uv-cache uv run --no-sync python -u -m scripts.experiments.run_cpc_local_readout --manifest outputs/cpc_local_readout_v1/manifest.json --manifest-sha256 f6a0873e698dd0420144be48b0cf94285e487fd79f25d5978397e2d4b1e7c4a2"
     }
   ],
   "experiments": [

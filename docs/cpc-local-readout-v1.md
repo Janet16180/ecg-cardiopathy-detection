@@ -1,9 +1,10 @@
 # Compact CPC local readout v1: proposed controlled protocol
 
-**Status, 25 September 2026:** proposed design, not runnable; no new experiment
-has been executed. This is the single recommendation from the
-[ranked investigation](cpc-improvement-research-2026-09-25.md). Implementation,
-source/input verification and an execution decision are still required.
+**Status, 25 September 2026:** the user authorized and the CPU-only study
+completed under a new immutable manifest. The prespecified development point
+screen passed. See the [results and limits](cpc-local-readout-v1-results.md).
+This was the single recommendation from the
+[ranked investigation](cpc-improvement-research-2026-09-25.md).
 
 ## Hypothesis and comparison
 

@@ -49,18 +49,79 @@ SIGNAL_SHAPE = (12, 5000)
 DECODE_BATCH = 128
 PROGRESS_INTERVAL = 2048
 MAX_WORKERS = 8
-FIELDS = ("record_id", "source_record_id", "source", "patient_id", "patient_identity_known",
-          "split", "label_scope", "shard", "shard_index", "signal_sha256",
-          "origin_manifest", "origin_path", "origin_index", "view", "window_start",
-          "source_samples", "qc_flags")
+FIELDS = (
+    "record_id",
+    "source_record_id",
+    "source",
+    "patient_id",
+    "patient_identity_known",
+    "split",
+    "label_scope",
+    "shard",
+    "shard_index",
+    "signal_sha256",
+    "origin_manifest",
+    "origin_path",
+    "origin_index",
+    "view",
+    "window_start",
+    "source_samples",
+    "qc_flags",
+)
 EXCLUSION_FIELDS = ("record_id", "source", "reason", "detail", "signal_sha256")
 LABEL_FIELDS = ("record_id", "patient_id", "target")
 REFERENCE_FIELDS = ("record_id", "patient_id", "split", "target", "raw_path")
-SOURCE_FILES = ("ecg_experiment/training_dataset.py", "ecg_experiment/run.py",
-                "scripts/extract_pretrained.py", "scripts/validation/audit_public_pool_overlap.py",
-                "ecg_experiment/pool_overlap.py", "ecg_experiment/staging.py",
-                "ecg_experiment/evaluation.py", "ecg_experiment/waveforms.py",
-                "ecg_experiment/downloads.py", "ecg_experiment/public_sources.py")
+SOURCE_FILES = (
+    "ecg_experiment/training_dataset.py",
+    "ecg_experiment/training_contracts.py",
+    "ecg_experiment/run.py",
+    "scripts/extract_pretrained.py",
+    "scripts/validation/audit_public_pool_overlap.py",
+    "ecg_experiment/pool_overlap.py",
+    "ecg_experiment/staging.py",
+    "ecg_experiment/evaluation.py",
+    "ecg_experiment/waveforms.py",
+    "ecg_experiment/downloads.py",
+    "ecg_experiment/public_sources.py",
+)
+
+
+def _historical_row(
+    original: dict[str, str],
+    source: str,
+    manifest: Path,
+    raw_dir: Path,
+    ptb_checksums: dict[str, str],
+    mimic_expected: dict[str, str],
+) -> dict[str, Any]:
+    """Describe a frozen training record with its identity and decoding provenance."""
+    is_ptb = source == "ptbxl"
+    source_id = original["ecg_id"]
+    filename = original["filename_hr"]
+    official_hashes = {}
+    if is_ptb:
+        official_hashes = {suffix: ptb_checksums[filename + suffix] for suffix in (".hea", ".dat")}
+
+    return {
+        "record_id": f"ptbxl:{source_id}" if is_ptb else source_id,
+        "source_record_id": source_id,
+        "source": source,
+        "patient_id": f"ptbxl:{original['patient_id']}" if is_ptb else original["patient_id"],
+        "patient_identity_known": "true",
+        "split": "train",
+        "label_scope": "ptbxl_proxy_available_separately" if is_ptb else "ssl_only",
+        "origin_manifest": str(manifest.relative_to(ROOT)),
+        "origin_path": str((raw_dir / filename).relative_to(ROOT)),
+        "origin_index": "",
+        "view": "original_10s",
+        "window_start": 0,
+        "source_samples": SIGNAL_SHAPE[1],
+        "qc_flags": "",
+        "raw_dir": raw_dir,
+        "filename_hr": filename,
+        "official_sha256": official_hashes,
+        "expected_hash": mimic_expected[filename] if source == "mimic" else "",
+    }
 
 
 def historical_rows(pin: PinInput, ptb_checksums: dict[str, str]) -> list[dict[str, Any]]:
@@ -84,35 +145,31 @@ def historical_rows(pin: PinInput, ptb_checksums: dict[str, str]) -> list[dict[s
     ValueError
         If a frozen manifest changed or the historical pool counts differ.
     """
-    with sqlite3.connect((MIMIC_POOL / "audit.sqlite3").as_uri() + "?mode=ro&immutable=1", uri=True) as db:
-        mimic_expected = dict(db.execute("SELECT name,signal_sha256 FROM outcomes WHERE status='accepted'"))
+    database_uri = (MIMIC_POOL / "audit.sqlite3").as_uri() + "?mode=ro&immutable=1"
+    with sqlite3.connect(database_uri, uri=True) as db:
+        mimic_expected = dict(
+            db.execute("SELECT name,signal_sha256 FROM outcomes WHERE status='accepted'")
+        )
+
     pool = json.loads(pin(CPC_POOL / "complete.json").read_text())
     for name, digest in pool["ptb_manifest_sha256"].items():
         if sha256_file(pin(PTB_PROCESSED / name)) != digest:
             raise ValueError("Frozen PTB manifest mismatch")
+
     mimic_raw = Path(json.loads((MIMIC_POOL / "metadata.json").read_text())["raw_dir"])
+    source_manifests = (
+        ("ptbxl", PTB_PROCESSED / "all_train_ssl.csv", PTB_RAW),
+        ("mimic", MIMIC_POOL / "ssl_manifest.csv", mimic_raw),
+    )
     rows = []
-    for source, manifest, raw_dir in (("ptbxl", PTB_PROCESSED / "all_train_ssl.csv", PTB_RAW),
-                                      ("mimic", MIMIC_POOL / "ssl_manifest.csv", mimic_raw)):
-        is_ptb = source == "ptbxl"
+    for source, manifest, raw_dir in source_manifests:
         for original in read_csv(pin(manifest)):
-            source_id = original["ecg_id"]
-            filename = original["filename_hr"]
-            rows.append({"record_id": f"ptbxl:{source_id}" if is_ptb else source_id,
-                         "source_record_id": source_id, "source": source,
-                         "patient_id": (f"ptbxl:{original['patient_id']}" if is_ptb
-                                        else original["patient_id"]),
-                         "patient_identity_known": "true", "split": "train",
-                         "label_scope": "ptbxl_proxy_available_separately" if is_ptb else "ssl_only",
-                         "origin_manifest": str(manifest.relative_to(ROOT)),
-                         "origin_path": str((raw_dir / filename).relative_to(ROOT)),
-                         "origin_index": "", "view": "original_10s", "window_start": 0,
-                         "source_samples": SIGNAL_SHAPE[1], "qc_flags": "", "raw_dir": raw_dir,
-                         "filename_hr": filename,
-                         "official_sha256": ({suffix: ptb_checksums[filename + suffix]
-                                              for suffix in (".hea", ".dat")} if is_ptb else {}),
-                         "expected_hash": mimic_expected[filename] if source == "mimic" else ""})
-    if Counter(r["source"] for r in rows) != HISTORICAL_COUNTS:
+            row = _historical_row(
+                original, source, manifest, raw_dir, ptb_checksums, mimic_expected
+            )
+            rows.append(row)
+
+    if Counter(row["source"] for row in rows) != HISTORICAL_COUNTS:
         raise ValueError("Historical training pool changed")
     return rows
 
@@ -139,6 +196,7 @@ def curated_challenge_rows(pin: PinInput) -> list[dict[str, str]]:
     """
     curated, receipt = load_candidates(CANDIDATE_DIR, pin)
     verify_candidate_views(curated, receipt, pin)
+
     audit = json.loads(pin(OVERLAP_AUDIT / "receipt.json").read_text())
     for name, digest in audit["input_sha256"].items():
         if sha256_file(pin(Path(name))) != digest:
@@ -146,14 +204,22 @@ def curated_challenge_rows(pin: PinInput) -> list[dict[str, str]]:
     for name, digest in audit["output_sha256"].items():
         if sha256_file(pin(OVERLAP_AUDIT / name)) != digest:
             raise ValueError("Overlap audit output changed")
+
     novel = read_csv(OVERLAP_AUDIT / "novel_challenge_ssl_manifest.csv")
     overlaps = read_csv(OVERLAP_AUDIT / "overlaps.csv")
-    if (len(novel) != NOVEL_CHALLENGE_RECORDS or len(overlaps) != GEORGIA_OVERLAP_RECORDS or
-            {r["ecg_id"] for r in curated} != {r["ecg_id"] for r in novel + overlaps} or
-            any(r["exact_signal_reference_pools"] != "georgia_frozen_g1" for r in overlaps)):
+    curated_ids = {row["ecg_id"] for row in curated}
+    audited_ids = {row["ecg_id"] for row in novel + overlaps}
+    if (
+        len(novel) != NOVEL_CHALLENGE_RECORDS
+        or len(overlaps) != GEORGIA_OVERLAP_RECORDS
+        or curated_ids != audited_ids
+        or any(row["exact_signal_reference_pools"] != "georgia_frozen_g1" for row in overlaps)
+    ):
         raise ValueError("Unexpected append-overlap gate")
+
     overlay = read_csv(pin(CANDIDATE_DIR / "training_exclusion_overlay.csv"))
-    if {r["ecg_id"] for r in overlay} & {r["ecg_id"] for r in curated}:
+    excluded_ids = {row["ecg_id"] for row in overlay}
+    if excluded_ids & curated_ids:
         raise ValueError("Rail-affected candidate entered train")
     return curated
 
@@ -172,14 +238,23 @@ def challenge_row(original: dict[str, str]) -> dict[str, Any]:
     dict[str, Any]
         Candidate row with its expected signal hash.
     """
-    return {"record_id": original["ecg_id"], "source_record_id": original["ecg_id"],
-            "source": original["source"], "patient_id": "", "patient_identity_known": "false",
-            "split": "train", "label_scope": "ssl_only",
-            "origin_manifest": "outputs/data_quality/processed_eda/challenge_ssl_curated_manifest.csv",
-            "origin_path": original["shard_path"], "origin_index": original["shard_index"],
-            "view": original["view"], "window_start": original["window_start"],
-            "source_samples": original["source_samples"], "qc_flags": original["qc_flags"],
-            "expected_hash": original["signal_sha256"]}
+    return {
+        "record_id": original["ecg_id"],
+        "source_record_id": original["ecg_id"],
+        "source": original["source"],
+        "patient_id": "",
+        "patient_identity_known": "false",
+        "split": "train",
+        "label_scope": "ssl_only",
+        "origin_manifest": "outputs/data_quality/processed_eda/challenge_ssl_curated_manifest.csv",
+        "origin_path": original["shard_path"],
+        "origin_index": original["shard_index"],
+        "view": original["view"],
+        "window_start": original["window_start"],
+        "source_samples": original["source_samples"],
+        "qc_flags": original["qc_flags"],
+        "expected_hash": original["signal_sha256"],
+    }
 
 
 def label_budgets(pin: PinInput) -> dict[str, list[dict[str, str]]]:
@@ -199,8 +274,14 @@ def label_budgets(pin: PinInput) -> dict[str, list[dict[str, str]]]:
     labels = {}
     for budget in ("1", "0.1"):
         path = ROOT / f"data/processed/ptbxl/seed42_fraction{budget}/labeled_train.csv"
-        labels[budget] = [{"record_id": "ptbxl:" + r["ecg_id"], "target": r["target"],
-                           "patient_id": "ptbxl:" + r["patient_id"]} for r in read_csv(pin(path))]
+        labels[budget] = [
+            {
+                "record_id": "ptbxl:" + r["ecg_id"],
+                "target": r["target"],
+                "patient_id": "ptbxl:" + r["patient_id"],
+            }
+            for r in read_csv(pin(path))
+        ]
     return labels
 
 
@@ -226,21 +307,31 @@ def heldout_references(rows: list[dict[str, Any]]) -> list[dict[str, str]]:
     development, calibration = partition_validation(read_csv(PTB_PROCESSED / "validation.csv"))
     seen_patients = {r["patient_id"] for r in rows if r["source"] == "ptbxl"}
     references = []
-    for split, original_rows in (("development", development), ("calibration", calibration),
-                                 ("test", read_csv(PTB_PROCESSED / "test.csv"))):
+    for split, original_rows in (
+        ("development", development),
+        ("calibration", calibration),
+        ("test", read_csv(PTB_PROCESSED / "test.csv")),
+    ):
         patients = {"ptbxl:" + r["patient_id"] for r in original_rows}
         if seen_patients & patients:
             raise ValueError("PTB patient split leakage")
         seen_patients |= patients
-        references.extend({"record_id": "ptbxl:" + r["ecg_id"], "patient_id": "ptbxl:" + r["patient_id"],
-                           "split": split, "target": r["target"],
-                           "raw_path": str((PTB_RAW / r["filename_hr"]).relative_to(ROOT))}
-                          for r in original_rows)
+        references.extend(
+            {
+                "record_id": "ptbxl:" + r["ecg_id"],
+                "patient_id": "ptbxl:" + r["patient_id"],
+                "split": split,
+                "target": r["target"],
+                "raw_path": str((PTB_RAW / r["filename_hr"]).relative_to(ROOT)),
+            }
+            for r in original_rows
+        )
     return references
 
 
-def prepare_inputs(pin: PinInput) -> tuple[list[dict[str, Any]], dict[str, list[dict[str, str]]],
-                                          list[dict[str, str]], set[str]]:
+def prepare_inputs(
+    pin: PinInput,
+) -> tuple[list[dict[str, Any]], dict[str, list[dict[str, str]]], list[dict[str, str]], set[str]]:
     """
     Verify every input and list the train candidates, labels and references.
 
@@ -330,8 +421,9 @@ def decode(row: dict[str, Any]) -> tuple[np.ndarray, str, list[str]]:
     return signal, digest, constant
 
 
-def _write_shard(stage: Path, number: int, arrays: list[np.ndarray],
-                 rows: list[dict[str, Any]]) -> tuple[str, dict[str, Any]]:
+def _write_shard(
+    stage: Path, number: int, arrays: list[np.ndarray], rows: list[dict[str, Any]]
+) -> tuple[str, dict[str, Any]]:
     """Save one shard, number its rows in place, and return its name and receipt."""
     name = f"shard_{number:05d}.npy"
     matrix = np.stack(arrays)
@@ -341,9 +433,14 @@ def _write_shard(stage: Path, number: int, arrays: list[np.ndarray],
     return name, {"sha256": sha256_file(stage / name), "shape": list(matrix.shape)}
 
 
-def write_shards(stage: Path, rows: list[dict[str, Any]], ptb_reference: set[str], workers: int,
-                 shard_size: int, started: float) -> tuple[list[dict[str, Any]], list[dict[str, Any]],
-                                                           dict[str, dict[str, Any]]]:
+def write_shards(
+    stage: Path,
+    rows: list[dict[str, Any]],
+    ptb_reference: set[str],
+    workers: int,
+    shard_size: int,
+    started: float,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, dict[str, Any]]]:
     """
     Decode every candidate and write accepted signals to fixed-size shards.
 
@@ -372,39 +469,63 @@ def write_shards(stage: Path, rows: list[dict[str, Any]], ptb_reference: set[str
     ValueError
         If a PTB-XL signal is unverified or two candidates are identical.
     """
-    accepted, exclusions, arrays, shard_rows, shards, seen = [], [], [], [], {}, set()
+    accepted = []
+    exclusions = []
+    arrays = []
+    shard_rows = []
+    shards = {}
+    seen_hashes = set()
+
     with ThreadPoolExecutor(max_workers=workers) as pool:
         for start in range(0, len(rows), DECODE_BATCH):
-            batch = rows[start:start + DECODE_BATCH]
-            for row, (signal, digest, constants) in zip(batch, pool.map(decode, batch), strict=True):
+            batch = rows[start : start + DECODE_BATCH]
+            decoded = pool.map(decode, batch)
+            for row, (signal, digest, constants) in zip(batch, decoded, strict=True):
                 if row["source"] == "ptbxl" and digest not in ptb_reference:
                     raise ValueError("PTB waveform not in checksum-verified reference")
-                if digest in seen:
+                if digest in seen_hashes:
                     raise ValueError("Unexpected exact duplicate within new train union")
-                seen.add(digest)
+                seen_hashes.add(digest)
+
                 if constants:
-                    exclusions.append({"record_id": row["record_id"], "source": row["source"],
-                                       "reason": "full_constant_lead", "detail": ";".join(constants),
-                                       "signal_sha256": digest})
+                    exclusions.append(
+                        {
+                            "record_id": row["record_id"],
+                            "source": row["source"],
+                            "reason": "full_constant_lead",
+                            "detail": ";".join(constants),
+                            "signal_sha256": digest,
+                        }
+                    )
                     continue
+
                 row["signal_sha256"] = digest
                 arrays.append(signal)
                 shard_rows.append(row)
                 if len(arrays) == shard_size:
-                    name, shards[name] = _write_shard(stage, len(shards), arrays, shard_rows)
+                    name, receipt = _write_shard(stage, len(shards), arrays, shard_rows)
+                    shards[name] = receipt
                     accepted.extend(shard_rows)
-                    arrays, shard_rows = [], []
+                    arrays = []
+                    shard_rows = []
+
             if start % PROGRESS_INTERVAL == 0:
-                print(f"Read {min(start + DECODE_BATCH, len(rows)):,}/{len(rows):,}; "
-                      f"excluded {len(exclusions)}; {time.monotonic() - started:.1f}s", flush=True)
+                print(
+                    f"Read {min(start + DECODE_BATCH, len(rows)):,}/{len(rows):,}; "
+                    f"excluded {len(exclusions)}; {time.monotonic() - started:.1f}s",
+                    flush=True,
+                )
+
     if arrays:
-        name, shards[name] = _write_shard(stage, len(shards), arrays, shard_rows)
+        name, receipt = _write_shard(stage, len(shards), arrays, shard_rows)
+        shards[name] = receipt
         accepted.extend(shard_rows)
     return accepted, exclusions, shards
 
 
-def write_label_tables(stage: Path, accepted: list[dict[str, Any]],
-                       labels: dict[str, list[dict[str, str]]]) -> dict[str, dict[str, int]]:
+def write_label_tables(
+    stage: Path, accepted: list[dict[str, Any]], labels: dict[str, list[dict[str, str]]]
+) -> dict[str, dict[str, int]]:
     """
     Write each label budget restricted to retained records.
 
@@ -427,21 +548,34 @@ def write_label_tables(stage: Path, accepted: list[dict[str, Any]],
     ValueError
         If a label's patient differs from its retained record's patient.
     """
-    kept = {r["record_id"]: r for r in accepted}
+    kept = {row["record_id"]: row for row in accepted}
     label_counts = {}
     for budget, original in labels.items():
-        selected = [r for r in original if r["record_id"] in kept]
-        if any(kept[r["record_id"]]["patient_id"] != r["patient_id"] for r in selected):
+        selected = [row for row in original if row["record_id"] in kept]
+        if any(kept[row["record_id"]]["patient_id"] != row["patient_id"] for row in selected):
             raise ValueError("PTB label patient mismatch")
-        write_csv_atomic(stage / f"labels_fraction{budget}.csv", selected, LABEL_FIELDS, ignore_extra=True)
+        write_csv_atomic(
+            stage / f"labels_fraction{budget}.csv",
+            selected,
+            LABEL_FIELDS,
+            ignore_extra=True,
+        )
         label_counts[budget] = {"input": len(original), "retained": len(selected)}
     return label_counts
 
 
-def build_metadata(output: Path, stage: Path, rows: list[dict[str, Any]], accepted: list[dict[str, Any]],
-                   exclusions: list[dict[str, Any]], references: list[dict[str, str]],
-                   label_counts: dict[str, dict[str, int]], inputs: dict[str, str],
-                   shards: dict[str, dict[str, Any]], started: float) -> dict[str, Any]:
+def build_metadata(
+    output: Path,
+    stage: Path,
+    rows: list[dict[str, Any]],
+    accepted: list[dict[str, Any]],
+    exclusions: list[dict[str, Any]],
+    references: list[dict[str, str]],
+    label_counts: dict[str, dict[str, int]],
+    inputs: dict[str, str],
+    shards: dict[str, dict[str, Any]],
+    started: float,
+) -> dict[str, Any]:
     """
     Describe the staged dataset, its policies, inputs and code provenance.
 
@@ -478,37 +612,67 @@ def build_metadata(output: Path, stage: Path, rows: list[dict[str, Any]], accept
     if revision is None:
         raise RuntimeError("Cannot record the Git revision of this build")
     return {
-        "schema_version": 1, "complete": True, "dataset_id": output.name,
-        "record_count": len(accepted), "candidate_count": len(rows),
+        "schema_version": 1,
+        "complete": True,
+        "dataset_id": output.name,
+        "record_count": len(accepted),
+        "candidate_count": len(rows),
         "source_counts": dict(Counter(r["source"] for r in accepted)),
         "new_exclusions_by_source": dict(Counter(r["source"] for r in exclusions)),
-        "shape_per_record": list(SIGNAL_SHAPE), "dtype": "float32", "units": "mV",
-        "sampling_rate_hz": 500, "lead_order": list(LEADS),
-        "preprocessing": ("Original physical mV; no filtering, clipping, resampling, normalization "
-                          "or fitted parameters"),
+        "shape_per_record": list(SIGNAL_SHAPE),
+        "dtype": "float32",
+        "units": "mV",
+        "sampling_rate_hz": 500,
+        "lead_order": list(LEADS),
+        "preprocessing": (
+            "Original physical mV; no filtering, clipping, resampling, normalization "
+            "or fitted parameters"
+        ),
         "label_counts": label_counts,
         "heldout_reference_counts": dict(Counter(r["split"] for r in references)),
-        "split_policy": ("PTB official frozen train only; existing seed9001 patient development/calibration "
-                         "partition retained as references; no held-out arrays in train shards"),
-        "label_policy": ("PTB diagnostic annotation proxy only, opt-in exact retained frozen label budgets; "
-                         "all other sources SSL-only"),
-        "patient_identity": ("PTB/MIMIC namespaced official patient IDs; Challenge unknown, patient_id "
-                             "deliberately empty; source independence is not proven"),
-        "composition": ("Historical PTB+MIMIC 56875 candidates plus curated Challenge 19789; Challenge "
-                        "includes 945 clean Georgia pilot overlaps and 18844 novel records; 3 historical "
-                        "Georgia constants never candidates"),
-        "limitations": ["No clinical quality or performance validation",
-                        ("Exact hashes do not detect transformed near-duplicates or prove cross-source "
-                         "patient independence"),
-                        "CODE native and incomplete Chapman/MIMIC200k are excluded",
-                        ("New data-scaling cohort; not an equivalent replacement for frozen "
-                         "experiment comparisons")],
-        "input_sha256": inputs, "shards": shards,
-        "table_sha256": {p.name: sha256_file(p) for p in stage.iterdir() if p.suffix in (".csv", ".json")},
+        "split_policy": (
+            "PTB official frozen train only; existing seed9001 patient development/calibration "
+            "partition retained as references; no held-out arrays in train shards"
+        ),
+        "label_policy": (
+            "PTB diagnostic annotation proxy only, opt-in exact retained frozen label budgets; "
+            "all other sources SSL-only"
+        ),
+        "patient_identity": (
+            "PTB/MIMIC namespaced official patient IDs; Challenge unknown, patient_id "
+            "deliberately empty; source independence is not proven"
+        ),
+        "composition": (
+            "Historical PTB+MIMIC 56875 candidates plus curated Challenge 19789; Challenge "
+            "includes 945 clean Georgia pilot overlaps and 18844 novel records; 3 historical "
+            "Georgia constants never candidates"
+        ),
+        "limitations": [
+            "No clinical quality or performance validation",
+            (
+                "Exact hashes do not detect transformed near-duplicates or prove cross-source "
+                "patient independence"
+            ),
+            "CODE native and incomplete Chapman/MIMIC200k are excluded",
+            (
+                "New data-scaling cohort; not an equivalent replacement for frozen "
+                "experiment comparisons"
+            ),
+        ],
+        "input_sha256": inputs,
+        "shards": shards,
+        "table_sha256": {
+            path.name: sha256_file(path)
+            for path in stage.iterdir()
+            if path.suffix in (".csv", ".json")
+        },
         "git_revision": revision,
-        "source_sha256": {str(p.relative_to(ROOT)): sha256_file(p) for p in
-                          (Path(__file__), *(ROOT / name for name in SOURCE_FILES))},
-        "command": [sys.executable, *sys.argv], "build_seconds": time.monotonic() - started,
+        "source_sha256": {
+            str(p.relative_to(ROOT)): sha256_file(p)
+            for p in (Path(__file__), *(ROOT / name for name in SOURCE_FILES))
+        },
+        "command": [sys.executable, *sys.argv],
+        "build_seconds": time.monotonic() - started,
     }
 
 
@@ -520,42 +684,94 @@ def _check_output(output: Path) -> None:
         raise ValueError("Output must be outside raw data")
 
 
+def _write_dataset_tables(
+    stage: Path,
+    accepted: list[dict[str, Any]],
+    exclusions: list[dict[str, Any]],
+    labels: dict[str, list[dict[str, str]]],
+    references: list[dict[str, str]],
+    pin: PinInput,
+) -> dict[str, dict[str, int]]:
+    """Write manifests, exclusions and label budgets in their established file order."""
+    write_csv_atomic(stage / "train_manifest.csv", accepted, FIELDS, ignore_extra=True)
+    write_csv_atomic(stage / "exclusions.csv", exclusions, EXCLUSION_FIELDS, ignore_extra=True)
+
+    # These historical records never enter the candidates, and are tracked separately.
+    quarantine = json.loads(pin(GEORGIA_QUARANTINE).read_text())
+    quarantine_path = stage / "historical_georgia_quarantine.json"
+    quarantine_path.write_text(json.dumps(quarantine, indent=2) + "\n")
+
+    label_counts = write_label_tables(stage, accepted, labels)
+    write_csv_atomic(
+        stage / "heldout_references.csv",
+        references,
+        REFERENCE_FIELDS,
+        ignore_extra=True,
+    )
+    return label_counts
+
+
+def _check_inputs_unchanged(inputs: dict[str, str]) -> None:
+    """Recheck pinned inputs after decoding and before declaring the dataset complete."""
+    for path, expected in inputs.items():
+        if sha256_file(path) != expected:
+            raise ValueError(f"Input changed while building: {path}")
+
+
+def _verify_staged_dataset(stage: Path, metadata: dict[str, Any], started: float) -> dict[str, Any]:
+    """Save metadata and independently verify every staged record before publication."""
+    metadata_path = stage / "metadata.json"
+    metadata_path.write_text(json.dumps(metadata, indent=2) + "\n")
+
+    print("Independently verifying every new shard and both label budgets", flush=True)
+    verification = verify_dataset(stage)
+    verification.update(
+        metadata_sha256=sha256_file(metadata_path), elapsed_seconds=time.monotonic() - started
+    )
+    (stage / "verification.json").write_text(json.dumps(verification, indent=2) + "\n")
+    return verification
+
+
 def _build_locked(output: Path, workers: int = 4, shard_size: int = 128) -> dict[str, Any]:
     """Build and publish the dataset while holding the builder lock."""
     output = output.resolve()
     _check_output(output)
     if not 1 <= workers <= MAX_WORKERS or shard_size < 1:
         raise ValueError("Invalid workers or shard size")
+
     inputs: dict[str, str] = {}
 
     def pin(path: Path) -> Path:
+        """Record the exact bytes used by this build without modifying the input."""
         inputs[str(path.resolve())] = sha256_file(path)
         return path
 
     rows, labels, references, ptb_reference = prepare_inputs(pin)
-    print(f"Inputs verified: {len(rows):,} train candidates; {len(references):,} held-out references",
-          flush=True)
+    print(
+        f"Inputs verified: {len(rows):,} train candidates; {len(references):,} held-out references",
+        flush=True,
+    )
     started = time.monotonic()
     with published_directory(output) as stage:
-        accepted, exclusions, shards = write_shards(stage, rows, ptb_reference, workers, shard_size, started)
-        write_csv_atomic(stage / "train_manifest.csv", accepted, FIELDS, ignore_extra=True)
-        write_csv_atomic(stage / "exclusions.csv", exclusions, EXCLUSION_FIELDS, ignore_extra=True)
-        # These historical records never enter the candidates, and are tracked separately.
-        quarantine = json.loads(pin(GEORGIA_QUARANTINE).read_text())
-        (stage / "historical_georgia_quarantine.json").write_text(json.dumps(quarantine, indent=2) + "\n")
-        label_counts = write_label_tables(stage, accepted, labels)
-        write_csv_atomic(stage / "heldout_references.csv", references, REFERENCE_FIELDS, ignore_extra=True)
-        for path, expected in inputs.items():
-            if sha256_file(path) != expected:
-                raise ValueError(f"Input changed while building: {path}")
-        metadata = build_metadata(output, stage, rows, accepted, exclusions, references,
-                                  label_counts, inputs, shards, started)
-        (stage / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
-        print("Independently verifying every new shard and both label budgets", flush=True)
-        verification = verify_dataset(stage)
-        verification.update(metadata_sha256=sha256_file(stage / "metadata.json"),
-                            elapsed_seconds=time.monotonic() - started)
-        (stage / "verification.json").write_text(json.dumps(verification, indent=2) + "\n")
+        accepted, exclusions, shards = write_shards(
+            stage, rows, ptb_reference, workers, shard_size, started
+        )
+        label_counts = _write_dataset_tables(stage, accepted, exclusions, labels, references, pin)
+
+        _check_inputs_unchanged(inputs)
+        metadata = build_metadata(
+            output,
+            stage,
+            rows,
+            accepted,
+            exclusions,
+            references,
+            label_counts,
+            inputs,
+            shards,
+            started,
+        )
+        verification = _verify_staged_dataset(stage, metadata, started)
     return verification
 
 
@@ -632,7 +848,10 @@ def main(argv: list[str] | None = None) -> None:
         Arguments, or ``None`` for ``sys.argv``.
     """
     args = parse_args(argv)
-    result = verify_dataset(args.output_dir) if args.verify_only else build(args.output_dir, args.workers)
+    if args.verify_only:
+        result = verify_dataset(args.output_dir)
+    else:
+        result = build(args.output_dir, args.workers)
     print(json.dumps(result, indent=2))
 
 

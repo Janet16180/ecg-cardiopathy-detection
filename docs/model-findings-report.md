@@ -1,8 +1,17 @@
 # ECG screening research: complete model findings
 
-**Initial report:** 23 September 2026; **latest update:** 24 September 2026, 17:27 UTC  
-**Study:** Public-data experiments for a master's project on ECG screening with limited local annotations  
+**Initial report:** 23 September 2026; **latest update:** 25 September 2026
+
+**Study:** Public-data experiments for a master's project on ECG screening with limited local annotations
 **Scope:** The original 37-run analysis below, with subsequent study updates and linked reports. The original ranking is historical, not the current complete ranking.
+
+## xECG probe-initialized fine-tuning: Experiment 016 complete
+
+On the fixed 15,360-label task, the released xECG frozen linear probe reached **0.96195 development AUROC**. Under an otherwise matched two-epoch full-label schedule, the random-head fine-tune selected epoch 1 at **0.94513**, while the probe-initialized fine-tune selected epoch 1 at **0.93138**. The probe-head minus random-head difference was **−0.01375** development AUROC (paired patient-bootstrap 95% interval **−0.02041 to −0.00608**). Both fine-tunes declined at epoch 2. The head transfer matched the fitted probe's starting logits to within 2.6×10⁻⁶, and the verified queue completed with no calibration/test evaluation. This is a negative screen for this optimizer recipe, not evidence that xECG features are poor or that probe initialization never helps. [Full report](../outputs/experiment016_xecg_probe_finetune/report.md).
+
+A read-only check on 128 balanced training ECGs found initial probe-head BCE **0.236** in evaluation mode versus **1.345** in training mode with drop path 0.5; median feature cosine across modes was **0.303**. This suggests a large train/evaluation representation shift may contribute to the failure, but the check is not causal and did not change the frozen comparison. [Diagnostic receipt](../outputs/experiment016_xecg_probe_finetune/initial_mode_diagnostic.json).
+
+The cheapest clean-data repeat refitted cached JEPA and ordinary CPC probes after excluding one faulty labeled PTB ECG. Full-label development AUROC changed only from 0.959719 to **0.959686** for JEPA and 0.936230 to **0.936192** for CPC; the limited-label selection was unchanged. The repeated 014 fusion gate remained negative. These results do not measure a benefit from the newly acquired unlabeled MIMIC or Chapman recordings. [Clean rerun report](../outputs/clean_cached_probe_rerun_v1/report.md).
 
 ## Morphology templates: Experiment 017 complete, preliminary positive signal
 

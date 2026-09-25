@@ -1,10 +1,14 @@
 # Experiment queue
 
-**Updated:** 24 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
+**Updated:** 25 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
-**PAUSED BY USER (2026-09-24T19:40:47.068565+00:00):** The user is refactoring the repository in another session. Do not launch or resume experiments until the user requests it. No training was active; the waiting MIMIC scheduler (former PID 3769) was stopped after verifying it had no child. The GPU is idle. Downloads continue, so preserve their current source/data paths while they run.
+**Historical pause (2026-09-24T19:40:47.068565+00:00):** The user paused experiment training for the repository refactor. On 25 September, the user specifically requested the missing cheaper experiment and a rerun of the cheapest study with new data. That request authorizes Experiment 016 and the clean cached-feature rerun only; other queued/deferred experiments and the legacy MIMIC scheduler remain paused. Downloads continue, so preserve their source/data paths.
 
 **Refactor handoff:** Completed results and checkpoints remain in place. `outputs/refactor_pause/source_before_refactor.tar.gz` and `source_hashes.json` preserve and verify the pre-refactor source tree; `pause.json` records the stopped scheduler and archive hash. Preserve experiment output/data identities and archived source evidence. After refactoring, verify equivalent preprocessing, patient splits, model initialization and checkpoint loading, then create new source maps/manifests before resuming. Do not silently rewrite old provenance receipts to match refactored code.
+
+**25 September data preflight:** [Preprocessing audit and cheap rerun plan](clean-data-rerun-review.md) completed with 40 targeted tests. The separate [manifest-only clean cohort](../outputs/data_quality/clean_rerun_preflight_v1/receipt.json) retains 56,809 original-pool PTB/MIMIC records, 15,359 full labels and the unchanged 1,518-label subset; all 3,766 held-out records retain their partitions. The 76,598-record union is a separate scaling cohort. The preflight itself was preparation only and did not schedule training. Its priorities do not change the architecture backlog.
+
+**25 September scoped rerun:** The [clean cached-probe and fusion repeat](../outputs/clean_cached_probe_rerun_v1/report.md) completed on CPU with new clean training labels. Full-label development AUROC moved from 0.959719 to **0.959686** for JEPA and 0.936230 to **0.936192** for ordinary CPC; limited-label results were unchanged. The 014 fusion development gate remained negative at both budgets. No calibration/test outcomes were evaluated. This measures removal of one faulty labeled PTB ECG, not added Challenge/Chapman data or clean encoder pretraining. [Experiment 016](../outputs/experiment016_xecg_probe_finetune/report.md) also completed its scoped development screen; its probe-initialized fine-tune underperformed the random-head control.
 
 **Finding:** The morphology-template arm passed its prespecified development screen at the 1,518-label budget: AUROC **0.9487**, compared with **0.9462** for matched convolution and **0.9431** for no-branch CPC. At full labels, convolution and template tied at about **0.9620**, versus **0.9571** for no branch. These are one-seed development results. A matched second seed and artifact/template dominance checks are required before calibration/test; that follow-up is **not automatically scheduled**. [017 results](../outputs/experiment017_morphology_templates_v2/report.md). Experiments 014 and 015 had negative screens.
 
@@ -14,19 +18,19 @@ The user authorized **all four Astra proposals**, now Experiments **014–017**.
 
 | Priority | Experiment | Status | Expected pilot cost / next work |
 | --- | --- | --- | --- |
-| 1 | 016: xECG probe-initialized fine-tuning | Queued for implementation | Target 30–90 minutes including extraction; frozen probe and matched short fine-tunes |
-| 2 | [011: KDA / CKDA](cross-domain-architecture-candidates.md#1-nlp-memory-kda-versus-complex-kda) | Queued for implementation | Runtime unknown; GRU, KDA and CKDA comparison |
-| 3 | [012: StripedHyena-inspired](cross-domain-architecture-candidates.md#2-genomics-a-compact-mixture-of-temporal-scales) | Queued for implementation | Runtime unknown; mixed temporal supports versus local control |
-| 4 | [013: Mamba-3](experiment-013-mamba3-plan.md) | Queued for implementation | Runtime and V100 backend unverified |
+| 1 | [011: KDA / CKDA](cross-domain-architecture-candidates.md#1-nlp-memory-kda-versus-complex-kda) | Queued for implementation | Runtime unknown; GRU, KDA and CKDA comparison |
+| 2 | [012: StripedHyena-inspired](cross-domain-architecture-candidates.md#2-genomics-a-compact-mixture-of-temporal-scales) | Queued for implementation | Runtime unknown; mixed temporal supports versus local control |
+| 3 | [013: Mamba-3](experiment-013-mamba3-plan.md) | Queued for implementation | Runtime and V100 backend unverified |
 
 The [Astra research note](astra-next-model-ideas.md) supplies the four new designs, controls and primary sources; the JSON catalog links each proposal's exact section. **These ranges are unmeasured planning estimates, not promised completion times**, and exclude implementation work. Only 014 is clearly the cheapest starting point. The remaining ranges overlap; actual complete-pass timing may change their order. A short GPU compute profile alone is insufficient, as Experiment 010 demonstrated. Include cold/warm loading, every comparison arm, evaluation and checkpoint writes in the working two-hour GPU-pilot planning gate.
 
-**Next architecture implementation task: 016.** Experiments 011–017 are accepted tasks; 014, 015 and 017 have finished. A second-seed 017 follow-up is warranted but not scheduled. New runners, fixed protocols and verification receipts must exist before they are marked runnable. Adding entries here does not schedule an automatic process. Use development patients for early screening, then freeze choices before calibration/test. GPU work remains sequential; the initial CPU-only fusion screen can use existing feature caches.
+**Next architecture implementation task: 011.** Experiments 011–017 are accepted tasks; 014–017 have finished. A second-seed 017 follow-up is warranted but not scheduled. New runners, fixed protocols and verification receipts must exist before they are marked runnable. Adding entries here does not schedule an automatic process. Use development patients for early screening, then freeze choices before calibration/test. GPU work remains sequential.
 
 ## Deferred and completed studies
 
 | Experiment | Status | Evidence / recovery |
 | --- | --- | --- |
+| [016: xECG probe-initialized fine-tuning](experiment-016-xecg-lpft.md) | Complete | [Negative development screen](../outputs/experiment016_xecg_probe_finetune/report.md); frozen probe 0.96195 AUROC, random-head fine-tune 0.94513, probe-head fine-tune 0.93138; verified [successor manifest](../outputs/experiment_queue_016/queue.json) |
 | [017: morphology templates](experiment-017-morphology-v2.md) | Complete | [Positive limited-label development screen](../outputs/experiment017_morphology_templates_v2/report.md); requires replication |
 | [015: JEPA-to-CPC distillation](experiment-015-distillation.md) | Complete | [Negative development screen](../outputs/experiment015_jepa_cpc_distillation/report.md); small full-label gain, limited-label loss |
 | [014: JEPA + CPC fusion](experiment-014-fusion.md) | Complete | [Negative development screen](../outputs/experiment014_jepa_cpc_fusion/report.md); JEPA alone selected at both budgets |
@@ -60,17 +64,17 @@ The successor manifest SHA-256 is `fc900ab16934bc6904be68f11b14743baa254987d768a
 
 ## Current corrected queue and recovery
 
-The most recently completed immutable manifest is `outputs/experiment_queue_017_v2/queue.json`, SHA-256 `91c19b6243629b63af8ce901ba5d1c0d4d3b7a3acb063aae0e5c2fc36c87f8eb`. It passed `scripts.run_priority_queue --check`. Its source map SHA-256 is `cf4daac96656191c2af9f177d6306b075c467402c5fd6f004a4e1f962013d8db`. The v2 CPU receipt SHA-256 is `b10749d8612565ee515869b105cb58b527155c8491e51fabf01bb4b589e698bb`.
+The most recently completed immutable manifest is now `outputs/experiment_queue_016/queue.json`, SHA-256 `a6d4d2aa4e1a3fcff0a67b11b4889ce9de4759600ddc92bab2e56f16586c8c32`. Its `--check` passed before launch, and [status](../outputs/experiment_queue_016/status.json) ended `complete` with return code zero at 04:26:41 UTC on 25 September. The source map SHA-256 is `faec5e00f589f2d557365a03e88c3899f596f40f98ab9cf0ee43012c032e5f98`. Its predecessor was the completed 017_v2 manifest, SHA-256 `91c19b6243629b63af8ce901ba5d1c0d4d3b7a3acb063aae0e5c2fc36c87f8eb`; that source map SHA-256 is `cf4daac96656191c2af9f177d6306b075c467402c5fd6f004a4e1f962013d8db`. The v2 CPU receipt SHA-256 is `b10749d8612565ee515869b105cb58b527155c8491e51fabf01bb4b589e698bb`.
 
 `handoff_priority_queue.py` passed six focused tests, verified 015's completion artifacts, and signaled the old coordinator only after it switched to 017. The old 017 child was stopped before its profile produced any output. The original sources and manifests remain unchanged. Handoff helper SHA-256 observed at launch: `b94e64293a6af84627a582696caec214d3e92f8b760332f975f965bfa3b66db4`. The exact launch-time helper is archived as `outputs/experiment_queue_017_v2/handoff_source_at_launch.py`, matching the recorded hash. The current helper received subsequent guard improvements; these did not alter experiment sources. The exact detached commands and PID identities are in `outputs/experiment_queue_017_v2/{handoff_watch.json,launch.json}`; the log confirms successor launch. Do not repeat the watcher or launcher while a coordinator is alive.
 
-Current command:
+Historical 017 recovery command (completed; do not relaunch):
 
 ```bash
 .venv-pretrained/bin/python -u -m scripts.run_priority_queue --manifest outputs/experiment_queue_017_v2/queue.json --manifest-sha256 91c19b6243629b63af8ce901ba5d1c0d4d3b7a3acb063aae0e5c2fc36c87f8eb
 ```
 
-This is a recovery command, not an instruction to start a second process. Check `launch.json`, live PID identity and the shared GPU lock first. The profile and train stages use `scripts.run_cpc_morphology017_v2 --stage profile|train --device cuda --threads 1 --max-wall-seconds 7200`. Each five-epoch comparison is resumable. A failed runtime gate stops full training; it does not change the scientific protocol.
+The 017 profile and train stages used the historical `scripts.run_cpc_morphology017_v2` entry point. Each five-epoch comparison was resumable. The completed 016 successor used the current `scripts.coordination.run_priority_queue` entry point and default `.venv`; its exact command is in the JSON catalog and its completion receipt. Check live status and the shared GPU lock before any future launch.
 
 ## Research branches
 
@@ -78,7 +82,7 @@ The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.m
 
 ## Resume after losing conversation context
 
-1. Read `AGENTS.md`, this file, the JSON catalog and the selected experiment's linked plan. User authorization for 011–017 is already recorded; 016 is the next architecture implementation; no repeated confirmation is needed to implement these tasks.
+1. Read `AGENTS.md`, this file, the JSON catalog and the selected experiment's linked plan. User authorization for 011–017 is already recorded; 011 is the next architecture implementation. The 25 September request authorized only the completed 016 and clean cached-feature reruns after the refactor pause.
 2. Read live coordination files and inspect the actual process identities/GPU in the host namespace. An old PID or Markdown status does not prove that training is active. The launch receipt contains the exact current command.
 3. Preserve the downloader, legacy runner and frozen sources. Start the next unfinished implementation in new modules. The current pool is 56,875 train ECGs; supervised budgets are the fixed 15,360 and 1,518 labels, with separate development/calibration/test patients.
 4. Before making a new job runnable, freeze its protocol and source revisions, test recurrence/gradient correctness and resume behavior, and create a verified successor executable manifest with the correct predecessor. Keep a real GPU profile as a gate before full training. Do not append to or rewrite a live frozen manifest in place.
@@ -89,6 +93,6 @@ The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.m
 - Completed tokenization: `outputs/experiment006_cpc_tokenization/coordination.json` and `runner.log`.
 - Interrupted full 010 queue and epoch-1 checkpoint: `outputs/experiment_queue_full_010/{queue.json,launch.json,status.json,runner.log}` and `outputs/experiment010_cpc_crosslead/native_ssl/`. Completed 010 profile: `outputs/experiment_queue_profile_010_v2/`. First failed 010 profile: `outputs/experiment_queue_profile_010/`. Interrupted 008 recovery: `outputs/experiment_queue_recovery_008/`. Historical failed queue: `outputs/experiment_queue/`.
 - Per-job logs for earlier 009/007/008 stages: `<output_dir>/priority_queue.log`; interrupted full 010 log: `outputs/experiment_queue_full_010/job/priority_queue.log`.
-- Download / older ECG-FM suite: `outputs/experiment003_mimic/{status.json,prepare_mimic_200k.log}`. The downloader remains separate; the legacy runner is resumed after the executable queue and must be coordinated when attaching future jobs.
-- Environment: `.venv-pretrained/bin/python`; one V100 16 GB; shared lock `/tmp/ecg_project_gpu.lock`.
+- Completed MIMIC 200k preparation / older ECG-FM suite: `data/processed/mimic_ssl_200k/metadata.json` and `outputs/experiment003_mimic/{status.json,prepare_mimic_200k.log}`. The legacy experiment runner remains stopped after the refactor pause; do not restart it as a side effect of a new queue.
+- Environment: default `.venv` via direct `uv` commands; one V100 16 GB; shared lock `/tmp/ecg_project_gpu.lock`. Historical launch receipts retain `.venv-pretrained` paths.
 - Existing completed comparisons: `outputs/experiment004_cpc_40k/report.md` and `outputs/experiment005_cpc_word2vec/report.md`. Interpret them as exploratory PTB-XL proxy results, not validation of healthy status or student referral decisions.

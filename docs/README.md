@@ -13,6 +13,7 @@
 - [Sources and acquisition](data-sources.md)
 - [Quality assessment](data-quality-assessment.md)
 - [Data processing review](data-processing-astra-review.md)
+- [Clean-data audit and cheap rerun plan](clean-data-rerun-review.md)
 - [Training dataset v1](training-dataset-v1.md)
 - [Processed ECG exploration](processed-ecg-eda.md)
 - [Challenge postprocessing](challenge-postprocessing.md)
@@ -22,7 +23,8 @@
 
 Start with the [experiment queue](experiment-queue.md) and
 [JSON catalog](experiment-queue.json). They link every active, deferred, completed,
-and proposed experiment to its protocol and evidence. Training remains paused.
+and proposed experiment to its protocol and evidence. The 25 September scoped
+016 and clean cached-feature reruns are complete; other training remains paused.
 
 - [Model findings](model-findings-report.md)
 - [First experiment protocol](experiment-001.md) and [results](experiment001-results.md)

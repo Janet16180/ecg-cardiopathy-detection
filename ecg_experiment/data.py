@@ -25,6 +25,7 @@ CLIP_LIMIT = 20
 
 
 def _cached_records(manifest_dir: Path) -> dict[int, dict[str, str]]:
+    """Collect the requested records, keyed by their numeric ECG identity."""
     records = {}
     for name in CACHE_MANIFESTS:
         for row in read_csv(manifest_dir / name):
@@ -38,11 +39,13 @@ def _read_cache_signal(raw_dir: Path, row: dict[str, str], ecg_id: int) -> np.nd
 
     signal, header = wfdb.rdsamp(str(raw_dir / row["filename_lr"]))
     names = [name.upper() for name in header["sig_name"]]
+
     if header["fs"] != SAMPLE_RATE or signal.shape != (SAMPLES, len(LEADS)):
         raise ValueError(f"Unexpected waveform dimensions for ECG {ecg_id}")
     if any(unit.lower() != "mv" for unit in header["units"]):
         raise ValueError(f"Unexpected waveform units for ECG {ecg_id}")
-    ordered = signal[:, [names.index(lead) for lead in LEADS]].T
+    lead_indices = [names.index(lead) for lead in LEADS]
+    ordered = signal[:, lead_indices].T
     if not np.isfinite(ordered).all():
         raise ValueError(f"Nonfinite waveform for ECG {ecg_id}")
     return ordered
@@ -70,27 +73,39 @@ def build_cache(raw_dir: str | Path, manifest_dir: str | Path, cache_dir: str | 
         If an existing cache holds other records, or a waveform breaks the
         rate, shape, unit or finiteness contract.
     """
-    raw_dir, manifest_dir, cache_dir = map(Path, (raw_dir, manifest_dir, cache_dir))
+    raw_dir = Path(raw_dir)
+    manifest_dir = Path(manifest_dir)
+    cache_dir = Path(cache_dir)
+
     records = _cached_records(manifest_dir)
     ids = np.array(sorted(records), dtype=np.int64)
+
     if (cache_dir / "complete.json").exists():
         existing = np.load(cache_dir / "ecg_ids.npy")
         if not np.array_equal(existing, ids):
             raise ValueError("Cached records differ from the requested manifests")
         return
+
     cache_dir.mkdir(parents=True, exist_ok=True)
-    signals = np.lib.format.open_memmap(cache_dir / "signals.npy", mode="w+", dtype="float32",
-                                       shape=(len(ids), len(LEADS), SAMPLES))
+    signals = np.lib.format.open_memmap(
+        cache_dir / "signals.npy", mode="w+", dtype="float32", shape=(len(ids), len(LEADS), SAMPLES)
+    )
     for index, ecg_id in enumerate(ids):
         signals[index] = _read_cache_signal(raw_dir, records[int(ecg_id)], ecg_id)
         if (index + 1) % PROGRESS_INTERVAL == 0:
             print(f"Cached {index + 1}/{len(ids)} ECGs", flush=True)
     signals.flush()
     np.save(cache_dir / "ecg_ids.npy", ids)
-    write_text_atomic(cache_dir / "complete.json", json.dumps({
-        "records": len(ids), "shape": list(signals.shape), "sampling_rate": SAMPLE_RATE,
-        "lead_order": LEADS, "units": "mV", "dtype": "float32",
-    }, indent=2))
+
+    metadata = {
+        "records": len(ids),
+        "shape": list(signals.shape),
+        "sampling_rate": SAMPLE_RATE,
+        "lead_order": LEADS,
+        "units": "mV",
+        "dtype": "float32",
+    }
+    write_text_atomic(cache_dir / "complete.json", json.dumps(metadata, indent=2))
 
 
 class Waveforms:
@@ -144,9 +159,11 @@ class Waveforms:
         total = np.zeros(len(LEADS), dtype=np.float64)
         indices = self.indices(train_rows)
         for start in range(0, len(indices), SCALE_CHUNK_RECORDS):
-            batch = np.array(self.x[indices[start:start + SCALE_CHUNK_RECORDS]], dtype=np.float64)
+            batch_indices = indices[start : start + SCALE_CHUNK_RECORDS]
+            batch = np.array(self.x[batch_indices], dtype=np.float64)
             batch -= batch.mean(axis=-1, keepdims=True)
             total += np.square(batch).sum(axis=(0, 2))
+
         rms = np.sqrt(total / (len(indices) * self.x.shape[-1]))
         return np.maximum(rms, MIN_SCALE).astype("float32")
 
@@ -166,7 +183,9 @@ class ECGDataset(Dataset):
     """
 
     def __init__(self, waveforms: Waveforms, rows: list[dict[str, str]], scale: np.ndarray) -> None:
-        self.waveforms, self.rows, self.scale = waveforms, rows, scale
+        self.waveforms = waveforms
+        self.rows = rows
+        self.scale = scale
         self.indices = waveforms.indices(rows)
 
     def __len__(self) -> int:
@@ -179,5 +198,6 @@ class ECGDataset(Dataset):
         signal -= signal.mean(axis=-1, keepdims=True)
         signal /= self.scale[:, None]
         signal = np.clip(signal, -CLIP_LIMIT, CLIP_LIMIT)
+
         target = float(self.rows[i].get("target", -1))
         return torch.from_numpy(signal), torch.tensor(target, dtype=torch.float32)

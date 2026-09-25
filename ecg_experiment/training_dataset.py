@@ -11,13 +11,16 @@ import numpy as np
 
 from .files import read_csv, sha256_file
 from .public_sources import signal_sha256
-from .waveforms import SAMPLE_RATE
+from .training_contracts import (
+    identity_semantics_valid,
+    select_labels,
+    validate_metadata,
+    validate_signal,
+    validate_training_rows,
+)
 
-SCHEMA_VERSION = 1
-SIGNAL_SHAPE = (12, 5000)
 PURPOSES = ("ssl", "supervised")
 LABEL_BUDGETS = ("1", "0.1")
-IDENTIFIED_SOURCES = ("ptbxl", "mimic")
 
 
 def checked_path(directory: Path, relative: str) -> Path:
@@ -47,59 +50,12 @@ def checked_path(directory: Path, relative: str) -> Path:
     return path
 
 
-def validate_signal(signal: np.ndarray) -> None:
-    """
-    Check the canonical waveform contract.
-
-    Parameters
-    ----------
-    signal : np.ndarray
-        Waveform to check.
-
-    Raises
-    ------
-    ValueError
-        If the signal is not a finite float32 ``[12, 5000]`` array, or a lead
-        is constant.
-    """
-    if signal.dtype != np.float32 or signal.shape != SIGNAL_SHAPE or not np.isfinite(signal).all():
-        raise ValueError("Expected finite float32 [12,5000] waveform")
-    if np.any(np.ptp(signal, axis=1) == 0):
-        raise ValueError("Full constant lead")
-
-
-def _validate_metadata(metadata: dict[str, Any]) -> None:
-    complete = (metadata.get("complete") and metadata.get("schema_version") == SCHEMA_VERSION
-                and metadata.get("shape_per_record") == list(SIGNAL_SHAPE)
-                and metadata.get("sampling_rate_hz") == SAMPLE_RATE
-                and metadata.get("units") == "mV")
-    if not complete:
-        raise ValueError("Invalid or incomplete canonical dataset")
-
-
-def _validate_training_rows(rows: list[dict[str, str]], record_count: int) -> None:
-    if len(rows) != record_count:
-        raise ValueError("Record count mismatch")
-    if any(row["split"] != "train" for row in rows):
-        raise ValueError("SSL split or label leakage")
-    if len({r["record_id"] for r in rows}) != len(rows):
-        raise ValueError("Duplicate training record identity")
-
-
-def _select_labels(directory: Path, rows: list[dict[str, str]],
-                   label_budget: str) -> tuple[list[dict[str, str]], dict[str, int]]:
-    """Return the labeled PTB training rows of one budget and their targets."""
-    labels = read_csv(directory / f"labels_fraction{label_budget}.csv")
-    targets = {r["record_id"]: int(r["target"]) for r in labels}
-    if len(targets) != len(labels) or not set(targets.values()) <= {0, 1}:
-        raise ValueError("Invalid endpoint labels")
-    selected = [r for r in rows if r["record_id"] in targets]
-    if len(selected) != len(labels) or any(r["source"] != "ptbxl" for r in selected):
-        raise ValueError("Labels must belong to training PTB rows")
-    patients = {r["record_id"]: r["patient_id"] for r in selected}
-    if any(patients[r["record_id"]] != r["patient_id"] for r in labels):
-        raise ValueError("Label patient identity mismatch")
-    return selected, targets
+def _validate_table_hashes(directory: Path, expected_hashes: dict[str, str]) -> None:
+    """Verify every manifest and label table before using its contents."""
+    for name, expected in expected_hashes.items():
+        path = checked_path(directory, name)
+        if sha256_file(path) != expected:
+            raise ValueError(f"Dataset table hash mismatch: {name}")
 
 
 class TrainingECGDataset:
@@ -128,23 +84,31 @@ class TrainingECGDataset:
         If the metadata, tables, rows or labels break the dataset contract.
     """
 
-    def __init__(self, directory: str | Path, purpose: str = "ssl", label_budget: str = "1",
-                 max_open_shards: int = 4) -> None:
+    def __init__(
+        self,
+        directory: str | Path,
+        purpose: str = "ssl",
+        label_budget: str = "1",
+        max_open_shards: int = 4,
+    ) -> None:
         self.directory = Path(directory).resolve()
         self.metadata = json.loads((self.directory / "metadata.json").read_text())
-        _validate_metadata(self.metadata)
+        validate_metadata(self.metadata)
+
         if purpose not in PURPOSES or label_budget not in LABEL_BUDGETS:
             raise ValueError("Unsupported purpose or label budget")
         if max_open_shards < 1:
             raise ValueError("max_open_shards must be positive")
-        for name, expected in self.metadata["table_sha256"].items():
-            if sha256_file(checked_path(self.directory, name)) != expected:
-                raise ValueError(f"Dataset table hash mismatch: {name}")
+
+        _validate_table_hashes(self.directory, self.metadata["table_sha256"])
         self.rows = read_csv(self.directory / "train_manifest.csv")
-        _validate_training_rows(self.rows, self.metadata["record_count"])
+        validate_training_rows(self.rows, self.metadata["record_count"])
+
         self.targets = {}
         if purpose == "supervised":
-            self.rows, self.targets = _select_labels(self.directory, self.rows, label_budget)
+            labels = read_csv(self.directory / f"labels_fraction{label_budget}.csv")
+            self.rows, self.targets = select_labels(self.rows, labels)
+
         self.max_open_shards = max_open_shards
         self._arrays = OrderedDict()
         self._verified_shards = set()
@@ -159,21 +123,27 @@ class TrainingECGDataset:
         state["_arrays"] = OrderedDict()
         return state
 
+    def _open_shard(self, name: str) -> np.ndarray:
+        """Verify a shard on first use and open its array without loading it into RAM."""
+        path = checked_path(self.directory, name)
+        expected = self.metadata["shards"][name]
+        if name not in self._verified_shards:
+            if sha256_file(path) != expected["sha256"]:
+                raise ValueError(f"Shard hash mismatch: {name}")
+            self._verified_shards.add(name)
+
+        array = np.load(path, mmap_mode="r", allow_pickle=False)
+        if list(array.shape) != expected["shape"] or array.dtype != np.float32:
+            raise ValueError("Shard contract mismatch")
+        return array
+
     def _shard(self, name: str) -> np.ndarray:
-        """Open a shard once, verifying its hash on first use, with LRU eviction."""
+        """Reuse open arrays, evicting the least recently used shard when full."""
         if name not in self._arrays:
-            path = checked_path(self.directory, name)
-            expected = self.metadata["shards"][name]
-            if name not in self._verified_shards:
-                if sha256_file(path) != expected["sha256"]:
-                    raise ValueError(f"Shard hash mismatch: {name}")
-                self._verified_shards.add(name)
-            array = np.load(path, mmap_mode="r", allow_pickle=False)
-            if list(array.shape) != expected["shape"] or array.dtype != np.float32:
-                raise ValueError("Shard contract mismatch")
-            self._arrays[name] = array
+            self._arrays[name] = self._open_shard(name)
             while len(self._arrays) > self.max_open_shards:
                 self._arrays.popitem(last=False)
+
         self._arrays.move_to_end(name)
         return self._arrays[name]
 
@@ -198,25 +168,21 @@ class TrainingECGDataset:
             If the shard or waveform fails its hash or contract check.
         """
         row = self.rows[index]
-        signal = np.array(self._shard(row["shard"])[int(row["shard_index"])], copy=True)
+        shard = self._shard(row["shard"])
+        signal = np.array(shard[int(row["shard_index"])], copy=True)
         validate_signal(signal)
         if signal_sha256(signal) != row["signal_sha256"]:
             raise ValueError("Waveform hash mismatch")
+
         available = row["record_id"] in self.targets
-        return {"signal": signal, "target": self.targets.get(row["record_id"], -1),
-                "target_available": available, "record_id": row["record_id"],
-                "source": row["source"], "patient_id": row["patient_id"]}
-
-
-def _identity_semantics_valid(row: dict[str, str]) -> bool:
-    """Only PTB-XL and MIMIC rows carry patient identity; only PTB-XL has proxy labels."""
-    known = row["source"] in IDENTIFIED_SOURCES
-    if row["patient_identity_known"] != str(known).lower():
-        return False
-    if not known and row["patient_id"]:
-        return False
-    expected_scope = "ptbxl_proxy_available_separately" if row["source"] == "ptbxl" else "ssl_only"
-    return row["label_scope"] == expected_scope
+        return {
+            "signal": signal,
+            "target": self.targets.get(row["record_id"], -1),
+            "target_available": available,
+            "record_id": row["record_id"],
+            "source": row["source"],
+            "patient_id": row["patient_id"],
+        }
 
 
 def verify_dataset(directory: str | Path) -> dict[str, Any]:
@@ -240,22 +206,38 @@ def verify_dataset(directory: str | Path) -> dict[str, Any]:
         If any identity, pointer, label mask or shard row is inconsistent.
     """
     dataset = TrainingECGDataset(directory, max_open_shards=1)
-    records, signals, pointers = set(), set(), set()
+    record_ids = set()
+    signal_hashes = set()
+    shard_positions = set()
+
     for index, row in enumerate(dataset.rows):
         item = dataset[index]
         pointer = (row["shard"], row["shard_index"])
-        if row["record_id"] in records or row["signal_sha256"] in signals or pointer in pointers:
+        if (
+            row["record_id"] in record_ids
+            or row["signal_sha256"] in signal_hashes
+            or pointer in shard_positions
+        ):
             raise ValueError("Duplicate training identity or pointer")
         if item["target_available"] or item["target"] != -1 or row["split"] != "train":
             raise ValueError("SSL split or label leakage")
-        if not _identity_semantics_valid(row):
+        if not identity_semantics_valid(row):
             raise ValueError("Unsupported identity or label semantics")
-        records.add(row["record_id"])
-        signals.add(row["signal_sha256"])
-        pointers.add(pointer)
-    expected = sum(info["shape"][0] for info in dataset.metadata["shards"].values())
-    if len(pointers) != expected:
+        record_ids.add(row["record_id"])
+        signal_hashes.add(row["signal_sha256"])
+        shard_positions.add(pointer)
+
+    expected_records = sum(info["shape"][0] for info in dataset.metadata["shards"].values())
+    if len(shard_positions) != expected_records:
         raise ValueError("Unreferenced shard rows")
-    budgets = {budget: len(TrainingECGDataset(directory, "supervised", budget)) for budget in LABEL_BUDGETS}
-    return {"verified_records": len(dataset), "verified_shards": len(dataset.metadata["shards"]),
-            "supervised_records": budgets, "ssl_targets_masked": True}
+
+    budgets = {
+        budget: len(TrainingECGDataset(directory, "supervised", budget))
+        for budget in LABEL_BUDGETS
+    }
+    return {
+        "verified_records": len(dataset),
+        "verified_shards": len(dataset.metadata["shards"]),
+        "supervised_records": budgets,
+        "ssl_targets_masked": True,
+    }

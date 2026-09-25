@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-24T20:34:34.580241+00:00",
+  "updated_at_utc": "2026-09-25T03:30:00+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
   "status_definitions": {
@@ -204,9 +204,9 @@
     {
       "id": "016",
       "name": "xECG linear probe followed by short fine-tuning",
-      "status": "queued_for_implementation",
+      "status": "complete",
       "authorized": true,
-      "protocol": "docs/astra-next-model-ideas.md#3-give-xecg-a-trained-classifier-before-adjusting-its-representation",
+      "protocol": "docs/experiment-016-xecg-lpft.md",
       "output_dir": "outputs/experiment016_xecg_probe_finetune",
       "arms": [
         "Frozen linear probe",
@@ -215,8 +215,8 @@
       ],
       "primary_comparison": "Probe-initialized versus random-head fine-tuning with identical backbone, schedule, sample order and optimizer settings.",
       "cost_estimate": "Target 30–90 minutes for an initial full-label pilot including extraction; inferred and conditional on actual I/O.",
-      "cost_estimate_measured": false,
-      "next_action": "Extract released xECG features once; fit a training-only probe; verify exact scaler-to-affine head transfer; profile a matched short fine-tuning comparison.",
+      "cost_estimate_measured": true,
+      "next_action": "Negative one-seed development screen; keep calibration/test closed. Investigate the train/eval representation shift separately before proposing a revised optimization recipe.",
       "constraints": [
         "Start both fine-tuned arms from the same released encoder.",
         "Fold feature standardization into the classifier and verify starting logits.",
@@ -224,11 +224,20 @@
         "Do not automatically restart deferred Experiment 008."
       ],
       "dependencies": [],
-      "runner": null,
-      "launch_command": null,
-      "gpu_profile": null,
-      "results": null,
-      "priority": 2
+      "runner": "scripts/experiments/run_xecg_probe_finetune016.py",
+      "launch_command": "UV_CACHE_DIR=/tmp/uv-cache uv run --no-sync python -u -m scripts.coordination.run_priority_queue --manifest outputs/experiment_queue_016/queue.json --manifest-sha256 a6d4d2aa4e1a3fcff0a67b11b4889ce9de4759600ddc92bab2e56f16586c8c32",
+      "gpu_profile": "outputs/experiment016_xecg_probe_finetune/profile.json",
+      "results": "outputs/experiment016_xecg_probe_finetune/report.md",
+      "priority": null,
+      "executable_manifest": "outputs/experiment_queue_016/queue.json",
+      "executable_manifest_sha256": "a6d4d2aa4e1a3fcff0a67b11b4889ce9de4759600ddc92bab2e56f16586c8c32",
+      "source_map_sha256": "faec5e00f589f2d557365a03e88c3899f596f40f98ab9cf0ee43012c032e5f98",
+      "profile_complete_pass_seconds": [511.7857016460039, 515.1859045169986],
+      "frozen_probe_development_auroc": 0.9619455,
+      "random_head_development_auroc": 0.9451255287477358,
+      "probe_head_development_auroc": 0.9313800091722201,
+      "queue_completion": "outputs/experiment016_xecg_probe_finetune/priority_queue_completion.json",
+      "outcome": "Probe-initialized fine-tuning underperformed random-head fine-tuning by 0.01375 development AUROC; both underperformed the frozen probe. No calibration/test evaluation."
     },
     {
       "id": "011",
@@ -417,7 +426,7 @@
       "results": "outputs/experiment007_xecg/report.md"
     }
   ],
-  "next_implementation_task": "016",
+  "next_implementation_task": "011",
   "promotion_requirements": [
     "Fixed primary comparison and input/label manifests",
     "Pinned source and documented compact architecture",
@@ -427,7 +436,7 @@
     "For GPU tasks, a real-device correctness profile and representative full-pass I/O timing before full training; CPU-only cached-feature tasks require cache/probe identity and split verification."
   ],
   "other_work": {
-    "mimic_download": "200,000 selected MIMIC recordings; downloader continues. Counts overlap the current subset.",
+    "mimic_download": "Completed: 200,000 selected MIMIC recordings verified, 197,207 accepted; no diagnostic labels used. Counts overlap the current subset.",
     "legacy_runner": "Stopped at user request for refactor; see outputs/refactor_pause/pause.json. Do not restart until user resumes.",
     "unselected_ideas": [
       "docs/vision-to-ecg-architecture-candidates.md",
@@ -445,7 +454,6 @@
     }
   ],
   "pending_priority_order": [
-    "016",
     "011",
     "012",
     "013"
@@ -482,14 +490,54 @@
     "basis": "Prespecified limited-label development screen passed; no new test result."
   },
   "scheduling": {
-    "state": "paused_by_user",
+    "state": "scoped_runs_complete_other_training_paused",
     "since_utc": "2026-09-24T19:40:47.068565+00:00",
-    "reason": "Repository refactor; training remains paused until the user requests resumption",
+    "reason": "User specifically requested Experiment 016 and the cheapest cached-feature rerun on 25 September; both completed. The other queued and deferred studies remain paused",
     "resume_requires_user_request": true,
+    "scoped_request_received_2026_09_25": ["016", "clean_cached_probe_rerun"],
     "resume_requires_new_source_manifests": true,
     "historical_launch_commands": "Recorded launch commands use the original source layout; see scripts/README.md for current modules",
     "downloads_continue": true,
     "pause_receipt": "outputs/refactor_pause/pause.json",
     "source_snapshot": "outputs/refactor_pause/source_before_refactor.tar.gz"
+  },
+  "clean_data_preparation": {
+    "state": "cpu_preflight_and_cached_probe_rerun_complete",
+    "report": "docs/clean-data-rerun-review.md",
+    "receipt": "outputs/data_quality/clean_rerun_preflight_v1/receipt.json",
+    "cpc_input_receipt": "outputs/data_quality/clean_cpc_input_audit_v1/receipt.json",
+    "feature_receipt": "outputs/data_quality/clean_rerun_scientific_review_v1/receipt.json",
+    "matched_training_records": 56809,
+    "full_training_labels": 15359,
+    "limited_training_labels": 1518,
+    "heldout_records": {
+      "development": 1306,
+      "calibration": 564,
+      "test": 1896
+    },
+    "scaling_union_records": 76598,
+    "cached_probe_rerun_protocol": "docs/clean-cached-probe-rerun-v1.md",
+    "cached_probe_rerun_report": "outputs/clean_cached_probe_rerun_v1/report.md",
+    "cached_probe_fusion_protocol": "docs/clean-probe-fusion-v1.md",
+    "cached_probe_fusion_output": "outputs/clean_probe_fusion_v1/summary.json",
+    "cached_probe_fusion_gate": "negative at both label budgets; no calibration or test evaluation",
+    "proposed_rerun_order": [
+      "cached JEPA/CPC probes and optional 014 fusion",
+      "matched 017 clean transfer and second seed",
+      "015 only if justified",
+      "clean SSL and separate scaling after full-epoch profiling"
+    ],
+    "targeted_tests_passed": 40,
+    "executable_manifest": null,
+    "note": "Pointer-only preparation; original frozen inputs unchanged. Preflight shard paths resolve against data/processed/training_union_500hz_v1. The user separately authorized the completed cached-probe rerun; this audit alone did not authorize training."
+  },
+  "latest_completed_scoped_run": {
+    "id": "016",
+    "manifest": "outputs/experiment_queue_016/queue.json",
+    "manifest_sha256": "a6d4d2aa4e1a3fcff0a67b11b4889ce9de4759600ddc92bab2e56f16586c8c32",
+    "status": "outputs/experiment_queue_016/status.json",
+    "completed_at_utc": "2026-09-25T04:26:41.851089+00:00",
+    "report": "outputs/experiment016_xecg_probe_finetune/report.md",
+    "calibration_test_evaluated": false
   }
 }

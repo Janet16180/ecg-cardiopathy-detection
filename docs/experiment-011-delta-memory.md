@@ -1,6 +1,7 @@
 # Experiment 011: compact ECG KDA versus CKDA
 
-**Implementation in progress, 25 September 2026. No GPU profile or model result yet.**
+**Implementation in progress, 25 September 2026. A complete-pass GPU cost
+profile exists; no comparative ECG model result exists yet.**
 
 The primary comparison is CKDA minus KDA on the frozen 56,875-record CPC
 training pool. A freshly initialized two-layer GRU-CPC is the practical
@@ -19,7 +20,7 @@ to tanh channel gates in `(-1, 1)` and doubled-sigmoid write rates in `(0, 2)`.
 This is an ECG adaptation of the core recurrence, not a reproduction of the
 authors' full language-model block or optimized kernels. Both ECG arms have
 identical parameter counts. The plain PyTorch scan is the correctness reference;
-its training speed on the V100 has not been measured.
+its training speed on the V100 is measured below.
 
 The first four CPU tests compare forward values and gradients against the
 paper's explicit transition matrix, check future-token causality, verify
@@ -39,9 +40,9 @@ full-pass effects. They are not a real-data profile or a training result.
 
 Before any full training, finish a resumable three-arm runner, pin exact input
 and code hashes, freeze the optimizer and label budgets, create a verified
-successor executable manifest, and profile all three arms with real cache I/O,
-evaluation, checkpoint writing, and recovery on the V100. A proposed 20 SSL
-epochs remains provisional until the complete-pass cost fits the planning gate.
+successor executable manifest, and profile the complete path with development
+evaluation, checkpoint writing, and recovery on the V100. The proposed 20 SSL
+epochs fail the measured cost gate below.
 Development patients are for model screening; calibration and test remain
 separate.
 
@@ -71,7 +72,27 @@ receipt at `outputs/experiment011_delta_memory/gpu_staging_probe.json` (SHA-256
 `8c50464c43f6a9303445d0ce66af01331d2ca57e098f839759cf0ed38db25b6e`)
 records 254.09 seconds to stage 6.825 GB and successful optimizer steps for
 all arms; KDA and CKDA peaked at 13.70 and 13.71 GB allocated including the
-pool. This leaves little memory margin, so full-pass profiling is still needed.
+pool. This leaves little memory margin; the complete-pass profile below checks
+that all three arms fit.
 `scripts/experiments/profile_delta_memory_gpu011.py` is the new cost-only
 runner; its CPU tests check exact float32 values, source immutability, record
 coverage and deterministic batch order.
+
+The [complete staged profile](../outputs/experiment011_delta_memory/gpu_full_pass_profile_v1/profile.json)
+(SHA-256 `b2fec3d4e0a2a0b874a28de0ae4139dba7d2880e3f34890e681fd4d8d7b55af6`)
+verified the full frozen pool and ran all 445 optimizer updates and 56,875
+record exposures per arm. Loading and normalizing the 6.825 GB float32 pool
+on the GPU took 278.15 seconds. GRU, KDA, and CKDA epochs took 36.26, 205.14,
+and 219.10 seconds respectively, with peak allocated memory including the
+pool of 7.87, 13.70, and 13.70 GB. All checkpoint roundtrips passed. These
+numbers measure one cost-only SSL epoch each; the loss values are not a
+controlled model-performance comparison.
+
+At these measured rates, 20 epochs across all three arms would take about
+154 minutes of optimizer time alone, exceeding the two-hour planning gate
+before pool staging, evaluation, supervised transfer, and checkpoint overhead.
+The 20-epoch proposal must therefore be revised in a separately frozen
+protocol. A shorter matched screen remains plausible, but its length cannot
+be fixed from the SSL-only profile: first implement and profile the entire
+data path, including development evaluation and both label budgets. Do not
+launch comparative training from this cost-only receipt.

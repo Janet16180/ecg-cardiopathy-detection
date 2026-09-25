@@ -252,8 +252,8 @@
       ],
       "primary_comparison": "CKDA minus KDA; same parameters except the specified transition ranges. GRU is a practical reference with reported capacity.",
       "learning": "Train fresh compact ECG encoders with a common causal waveform stem and the same CPC objective. Copy the initial stem and prediction heads across arms.",
-      "starting_budget": "Proposed 20 SSL epochs on the fixed 56,875-record pool, then both existing label budgets; freeze exact settings after profiling.",
-      "next_action": "Profile a full real-data epoch with the exact-float32 GPU staging path, then decide the matched SSL budget before building a resumable three-arm runner. The mmap full-pass attempt was stopped for random-I/O cost; no ECG model result exists yet.",
+      "starting_budget": "Twenty SSL epochs fail the measured two-hour gate; choose a shorter matched budget only after end-to-end profiling of SSL, development evaluation and both label budgets.",
+      "next_action": "Build a resumable three-arm end-to-end runner using the verified exact-float32 GPU staging path, then profile the complete protocol and freeze a shorter matched budget in a successor manifest. The completed profile is cost-only; no comparative ECG model result exists yet.",
       "constraints": [
         "No language-model checkpoint required.",
         "Do not warm-start only the GRU arm from its trained checkpoint.",
@@ -269,7 +269,7 @@
       "authorized": true,
       "runner": null,
       "launch_command": null,
-      "gpu_profile": null,
+      "gpu_profile": "outputs/experiment011_delta_memory/gpu_full_pass_profile_v1/profile.json",
       "results": null,
       "historical_run_after": "010",
       "dependencies": [],
@@ -278,7 +278,14 @@
       "compute_only_probe": "outputs/experiment011_delta_memory/implementation_compute_probe.json",
       "real_data_profile_runner": "scripts/experiments/profile_delta_memory011.py",
       "gpu_staging_profile_runner": "scripts/experiments/profile_delta_memory_gpu011.py",
-      "gpu_staging_probe": "outputs/experiment011_delta_memory/gpu_staging_probe.json"
+      "gpu_staging_probe": "outputs/experiment011_delta_memory/gpu_staging_probe.json",
+      "gpu_profile_sha256": "b2fec3d4e0a2a0b874a28de0ae4139dba7d2880e3f34890e681fd4d8d7b55af6",
+      "gpu_profile_epoch_seconds": {
+        "gru": 36.26249156999984,
+        "kda": 205.13800754101248,
+        "ckda": 219.09907669798122
+      },
+      "gpu_profile_staging_seconds": 278.15093444500235
     },
     {
       "id": "012",

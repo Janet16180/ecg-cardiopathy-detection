@@ -18,7 +18,7 @@ The user authorized **all four Astra proposals**, now Experiments **014–017**.
 
 | Priority | Experiment | Status | Expected pilot cost / next work |
 | --- | --- | --- | --- |
-| 1 | [011: KDA / CKDA](experiment-011-delta-memory.md) | Implementing | mmap cost probe found sustained random I/O; exact-float32 GPU staging fits, complete-pass staged profile pending |
+| 1 | [011: KDA / CKDA](experiment-011-delta-memory.md) | Implementing | Complete staged SSL profile passed: 36.3/205.1/219.1 s per GRU/KDA/CKDA epoch; 20 epochs exceed the two-hour gate before downstream work. Profile a shorter end-to-end protocol. |
 | 2 | [012: StripedHyena-inspired](cross-domain-architecture-candidates.md#2-genomics-a-compact-mixture-of-temporal-scales) | Queued for implementation | Runtime unknown; mixed temporal supports versus local control |
 | 3 | [013: Mamba-3](experiment-013-mamba3-plan.md) | Queued for implementation | Runtime and V100 backend unverified |
 
@@ -82,7 +82,7 @@ The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.m
 
 ## Resume after losing conversation context
 
-1. Read `AGENTS.md`, this file, the JSON catalog and the selected experiment's linked plan. User authorization for 011–017 is already recorded; 011 is the next architecture implementation. The 25 September request authorized only the completed 016 and clean cached-feature reruns after the refactor pause.
+1. Read `AGENTS.md`, this file, the JSON catalog and the selected experiment's linked plan. User authorization for 011–017 is already recorded; 011 is the next architecture implementation. The subsequent 25 September request to continue experiments resumed 011 implementation after the refactor pause; it did not resume deferred 008 or 010.
 2. Read live coordination files and inspect the actual process identities/GPU in the host namespace. An old PID or Markdown status does not prove that training is active. The launch receipt contains the exact current command.
 3. Preserve the downloader, legacy runner and frozen sources. Start the next unfinished implementation in new modules. The current pool is 56,875 train ECGs; supervised budgets are the fixed 15,360 and 1,518 labels, with separate development/calibration/test patients.
 4. Before making a new job runnable, freeze its protocol and source revisions, test recurrence/gradient correctness and resume behavior, and create a verified successor executable manifest with the correct predecessor. Keep a real GPU profile as a gate before full training. Do not append to or rewrite a live frozen manifest in place.

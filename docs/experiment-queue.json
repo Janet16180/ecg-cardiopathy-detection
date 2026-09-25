@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-25T11:11:09.488102+00:00",
+  "updated_at_utc": "2026-09-25T15:12:17.533293+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
   "status_definitions": {
@@ -535,25 +535,26 @@
     "calibration_test_evaluated": false
   },
   "scheduling": {
-    "state": "016_frozen_readout_v7_complete_no_active_queue",
-    "since_utc": "2026-09-25T11:08:35+00:00",
-    "reason": "The separately frozen inference-only xECG v7 audit completed. Off fixed-probe refit recovered to 0.96293 development AUROC from its 0.94781 saved joint head, meeting the prespecified near-complete recovery rule versus the 0.96194 released probe but not the +0.002 useful-adaptation rule. No further rescue or GPU job is scheduled.",
+    "state": "016_head_mechanism_v8_complete_no_active_queue",
+    "since_utc": "2026-09-25T15:08:36.526042+00:00",
+    "reason": "The separately frozen CPU-only v8 matched-objective head study completed. The primary C-minus-B conditioning screen failed at seeds 44/45; the stationary-feature raw AdamW sufficiency screen passed. No further xECG rescue, GPU job, calibration or test is scheduled.",
     "resume_requires_user_request": false,
     "scoped_request_received_2026_09_25": [
       "016",
       "clean_cached_probe_rerun",
       "017_clean_replication",
       "016_droppath_rescue",
-      "016_frozen_readout_v7"
+      "016_frozen_readout_v7",
+      "016_head_mechanism_v8"
     ],
     "resume_requires_new_source_manifests": true,
     "historical_launch_commands": "Recorded launch commands use the original source layout; see scripts/README.md for current modules",
     "downloads_continue": true,
     "pause_receipt": "outputs/refactor_pause/pause.json",
     "source_snapshot": "outputs/refactor_pause/source_before_refactor.tar.gz",
-    "current_profile_manifest": "outputs/experiment_queue_016_readout_v7_off/queue.json",
+    "current_profile_manifest": "outputs/experiment_queue_016_head_mechanism_v8_profile/queue.json",
     "current_full_manifest": null,
-    "latest_completed_manifest": "outputs/experiment_queue_016_readout_v7_full/queue.json"
+    "latest_completed_manifest": "outputs/experiment_queue_016_head_mechanism_v8_full/queue.json"
   },
   "clean_data_preparation": {
     "state": "cpu_preflight_and_cached_probe_rerun_complete",
@@ -587,14 +588,14 @@
     "clean_morphology_result": "docs/experiment-017-clean-replication-results.md"
   },
   "latest_completed_scoped_run": {
-    "id": "016_frozen_readout_v7",
-    "protocol": "docs/experiment-016-frozen-readout-audit-v7.md",
-    "off_gate_manifest": "outputs/experiment_queue_016_readout_v7_off/queue.json",
-    "manifest": "outputs/experiment_queue_016_readout_v7_full/queue.json",
-    "manifest_sha256": "e10b5d404c57f791214f36e2bb5533053252fee6413c60d06f3d9bd2bc0c2921",
-    "status": "outputs/experiment_queue_016_readout_v7_full/status.json",
-    "report": "outputs/experiment016_frozen_readout_audit_v7/report.md",
-    "results": "docs/experiment-016-frozen-readout-audit-v7-results.md",
+    "id": "016_head_mechanism_v8",
+    "protocol": "docs/experiment-016-head-mechanism-v8.md",
+    "profile_manifest": "outputs/experiment_queue_016_head_mechanism_v8_profile/queue.json",
+    "manifest": "outputs/experiment_queue_016_head_mechanism_v8_full/queue.json",
+    "manifest_sha256": "ccc4c3322047695f5582787c7aa51f27e57b9eace82ede01c7cd22a8b3cb07f5",
+    "status": "outputs/experiment_queue_016_head_mechanism_v8_full/status.json",
+    "report": "outputs/experiment016_head_mechanism_v8/report.md",
+    "results": "docs/experiment-016-head-mechanism-v8-results.md",
     "calibration_test_evaluated": false
   },
   "experiment_016_droppath_rescue": {
@@ -717,10 +718,71 @@
     ],
     "near_complete_practical_recovery": true,
     "potential_useful_adaptation": false,
-    "next_action": "Retain released frozen probe. The v7 postmortem audit ends this bounded xECG rescue line; do not automatically start a sweep, replication, calibration or test.",
+    "next_action": "The separately authorized v8 CPU-only matched-objective study completed; retain released frozen probe. Any further experiment requires a new decision/protocol; no automatic calibration/test or sweep.",
     "calibration_test_evaluated": false,
     "off_gate_launch_command": "UV_CACHE_DIR=/tmp/ecg-uv-cache uv run --no-sync python -u -m scripts.coordination.run_priority_queue --manifest outputs/experiment_queue_016_readout_v7_off/queue.json --manifest-sha256 80c9e89b6fefa3ae55d8ceb0fbedd4203550bf3cfdfcd505e3ed05c3d5b277c0",
     "full_launch_command": "UV_CACHE_DIR=/tmp/ecg-uv-cache uv run --no-sync python -u -m scripts.coordination.run_priority_queue --manifest outputs/experiment_queue_016_readout_v7_full/queue.json --manifest-sha256 e10b5d404c57f791214f36e2bb5533053252fee6413c60d06f3d9bd2bc0c2921",
     "cpu_check_command": "UV_CACHE_DIR=/tmp/ecg-uv-cache uv run --no-sync python -u -m scripts.experiments.run_xecg_frozen_readout016_v7 --stage check --device cpu"
+  },
+  "experiment_016_head_mechanism_v8": {
+    "status": "complete_cpu_only_primary_conditioning_screen_failed_stationary_adamw_sufficiency_passed",
+    "protocol": "docs/experiment-016-head-mechanism-v8.md",
+    "results": "docs/experiment-016-head-mechanism-v8-results.md",
+    "output_dir": "outputs/experiment016_head_mechanism_v8",
+    "cpu_check": "outputs/experiment016_head_mechanism_v8/check.json",
+    "cpu_check_sha256": "b100682cff3f7869e3e1fe6cbea44f678efd311cede456106776968e9c7aba1a",
+    "profile_manifest": "outputs/experiment_queue_016_head_mechanism_v8_profile/queue.json",
+    "profile_manifest_sha256": "e55bb4b77117810fbb7277f6f81b91568f9174ca295887a17bbd3af3812b72a4",
+    "profile_source_map_sha256": "fb343c11243323ce17a3d404ed2ace4a4d4847537590376f346e5e756bdd984c",
+    "profile_status": "outputs/experiment_queue_016_head_mechanism_v8_profile/status.json",
+    "profile_receipt": "outputs/experiment016_head_mechanism_v8/profile.json",
+    "cost_gate_receipt": "outputs/experiment016_head_mechanism_v8/cost_gate.json",
+    "slowest_complete_epoch_P_seconds": 0.6633905220078304,
+    "two_start_D_solver_Q_seconds": 12.017449563019909,
+    "profile_gate_projected_seconds": 516.7186036011553,
+    "planning_ceiling_seconds": 7200,
+    "production_manifest": "outputs/experiment_queue_016_head_mechanism_v8_full/queue.json",
+    "production_manifest_sha256": "ccc4c3322047695f5582787c7aa51f27e57b9eace82ede01c7cd22a8b3cb07f5",
+    "production_source_map_sha256": "2619aea36784cb4cd9eb1f2203348a9ce6e36e260712fcb2772b521e2d96417f",
+    "production_status": "outputs/experiment_queue_016_head_mechanism_v8_full/status.json",
+    "completion_receipt": "outputs/experiment_queue_016_head_mechanism_v8_full/job/priority_queue_completion.json",
+    "completion_artifacts_verified": 49,
+    "source_entries_verified": 115,
+    "report": "outputs/experiment016_head_mechanism_v8/report.json",
+    "report_sha256": "06c145cb8acaa37c3a6130e882272cfbba289cb42c6e87cf8f4f58a5175a26d8",
+    "report_bootstrap_seconds": 129.5903491289937,
+    "runtime_gate": "outputs/experiment016_head_mechanism_v8/runtime_gate.json",
+    "train_records": 15359,
+    "development_records": 1306,
+    "development_patients": 1173,
+    "frozen_encoder_optimization_seed": 43,
+    "profile_only_head_seed": 16080,
+    "production_head_seeds": [
+      44,
+      45
+    ],
+    "updates_per_arm_seed": 2400,
+    "record_exposures_per_arm_seed": 153590,
+    "encoder_updates": 0,
+    "gpu_used": false,
+    "primary_C_minus_B_240_auroc_by_seed": {
+      "44": -0.0008403598174777649,
+      "45": -0.0005969629191229231
+    },
+    "primary_C_minus_B_240_mean_auroc": -0.000718661368300344,
+    "primary_mean_paired_patient_interval_95": [
+      -0.0019315326344883186,
+      0.0005149951320540736
+    ],
+    "conditioning_screen_passed": false,
+    "extra_stationary_AdamW_suffices": true,
+    "regularization_package_contributes": false,
+    "B_catches_C_by_2400": false,
+    "D_numerical_reference_verified": true,
+    "next_action": "Retain the released frozen probe. This bounded v8 study ends without an automatic xECG sweep, encoder replication, calibration or test; any next study needs a separate decision/protocol.",
+    "calibration_test_evaluated": false,
+    "cpu_check_command": "UV_CACHE_DIR=/tmp/ecg-uv-cache uv run --no-sync python -u -m scripts.experiments.run_xecg_head_mechanism016_v8 --stage check",
+    "profile_launch_command": "UV_CACHE_DIR=/tmp/ecg-uv-cache uv run --no-sync python -u -m scripts.coordination.run_priority_queue --manifest outputs/experiment_queue_016_head_mechanism_v8_profile/queue.json --manifest-sha256 e55bb4b77117810fbb7277f6f81b91568f9174ca295887a17bbd3af3812b72a4",
+    "production_launch_command": "UV_CACHE_DIR=/tmp/ecg-uv-cache uv run --no-sync python -u -m scripts.coordination.run_priority_queue --manifest outputs/experiment_queue_016_head_mechanism_v8_full/queue.json --manifest-sha256 ccc4c3322047695f5582787c7aa51f27e57b9eace82ede01c7cd22a8b3cb07f5"
   }
 }

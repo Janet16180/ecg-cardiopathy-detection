@@ -24,10 +24,13 @@
 Start with the [experiment queue](experiment-queue.md) and
 [JSON catalog](experiment-queue.json). They link every active, deferred, completed,
 and proposed experiment to its protocol and evidence. The 25 September scoped
-016 and clean cached-feature reruns are complete; other training remains paused.
+016 and clean cached-feature reruns, followed by the development-only 017 clean
+replication, are complete. No experiment queue is active; new studies proceed
+one at a time under the queue's cost and verification gates.
 
 - [Model findings](model-findings-report.md)
 - [Experiment 011 KDA/CKDA implementation](experiment-011-delta-memory.md)
+- [Experiment 017 clean replication results](experiment-017-clean-replication-results.md)
 - [First experiment protocol](experiment-001.md) and [results](experiment001-results.md)
 - [Pretrained encoders](pretrained-notes.md), [JEPA](jepa-notes.md), and [released CPC](released-ecg-cpc.md)
 - [Important papers](important-papers.md)

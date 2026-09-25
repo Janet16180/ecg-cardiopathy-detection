@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-25T03:30:00+00:00",
+  "updated_at_utc": "2026-09-25T07:49:05+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
   "status_definitions": {
@@ -17,22 +17,22 @@
     "implementing": "Authorized implementation and verification in progress; no executable run is implied."
   },
   "runtime": {
-    "executable_manifest": "outputs/experiment_queue_017_v2/queue.json",
-    "launch_receipt": "outputs/experiment_queue_017_v2/launch.json",
-    "live_status": "outputs/experiment_queue_017_v2/status.json",
-    "immutable_manifest_sha256": "91c19b6243629b63af8ce901ba5d1c0d4d3b7a3acb063aae0e5c2fc36c87f8eb",
-    "coordinator_pid_snapshot": 114808,
+    "executable_manifest": "outputs/experiment_queue_017_clean_full_v2/queue.json",
+    "launch_receipt": null,
+    "launch_command": "UV_CACHE_DIR=/tmp/ecg-uv-cache uv run --no-sync python -u -m scripts.coordination.run_priority_queue --manifest outputs/experiment_queue_017_clean_full_v2/queue.json --manifest-sha256 28e87396c833bb27b427ec4c0d297283bd346b372dc637c47322d64fcf580d3c",
+    "live_status": "outputs/experiment_queue_017_clean_full_v2/status.json",
+    "immutable_manifest_sha256": "28e87396c833bb27b427ec4c0d297283bd346b372dc637c47322d64fcf580d3c",
+    "coordinator_pid_snapshot": 235357,
     "gpu": "Tesla V100 16 GB",
     "gpu_lock": "/tmp/ecg_project_gpu.lock",
-    "python": ".venv-pretrained/bin/python",
+    "python": ".venv/bin/python",
     "max_concurrent_gpu_jobs": 1,
     "last_observation": {
-      "at_utc": "2026-09-24T19:40:47.068565+00:00",
-      "state": "paused_by_user",
+      "at_utc": "2026-09-25T07:49:05+00:00",
+      "state": "queue_complete",
       "active_experiment": null,
       "gpu_idle": true,
-      "legacy_runner_stopped": true,
-      "downloader_continues": true
+      "note": "Queue completion and artifact hashes verified; nvidia-smi showed 0 MiB used and 0% utilization."
     },
     "historical_failed_manifest": "outputs/experiment_queue/queue.json",
     "historical_failed_manifest_sha256": "cc34e02020071a983a71e7d5bab9318de9a58fb96e7c004a08e7c6c54da81bf9",
@@ -232,7 +232,10 @@
       "executable_manifest": "outputs/experiment_queue_016/queue.json",
       "executable_manifest_sha256": "a6d4d2aa4e1a3fcff0a67b11b4889ce9de4759600ddc92bab2e56f16586c8c32",
       "source_map_sha256": "faec5e00f589f2d557365a03e88c3899f596f40f98ab9cf0ee43012c032e5f98",
-      "profile_complete_pass_seconds": [511.7857016460039, 515.1859045169986],
+      "profile_complete_pass_seconds": [
+        511.7857016460039,
+        515.1859045169986
+      ],
       "frozen_probe_development_auroc": 0.9619455,
       "random_head_development_auroc": 0.9451255287477358,
       "probe_head_development_auroc": 0.9313800091722201,
@@ -499,20 +502,55 @@
   "follow_up_required": {
     "experiment": "017",
     "task": "Matched second-seed replication and artifact/template dominance audit",
-    "status": "not_scheduled",
-    "basis": "Prespecified limited-label development screen passed; no new test result."
+    "status": "complete_development_only",
+    "basis": "Prespecified limited-label development screen passed; no new test result.",
+    "protocol": "docs/experiment-017-clean-replication.md",
+    "output_dir": "outputs/experiment017_clean_replication_v2",
+    "cpu_check": "outputs/experiment017_clean_replication_v2/provenance/verification.json",
+    "profile_only_manifest": "outputs/experiment_queue_017_clean_profile_v2/queue.json",
+    "profile_only_manifest_sha256": "9e30f28de113044673b10a236e7e4054c2d2f68d5d97ad4999eae96447ee1b80",
+    "next_action": "Review exploratory bootstrap uncertainty and audit before separately freezing any calibration/test recipe; no next GPU job scheduled.",
+    "version2_addendum": "docs/experiment-017-clean-replication-v2.md",
+    "failed_profile_manifest": "outputs/experiment_queue_017_clean_profile_v1/queue.json",
+    "failed_profile_status": "outputs/experiment_queue_017_clean_profile_v1/status.json",
+    "failed_profile_reason": "CPU-vs-CUDA checkpoint equality after a complete no-branch profile epoch; no training launched.",
+    "profile": "outputs/experiment017_clean_replication_v2/profile.json",
+    "profile_gate_passed": true,
+    "conservative_full_suite_seconds": 2081.7711100022643,
+    "planning_gate_seconds": 7200,
+    "full_manifest": "outputs/experiment_queue_017_clean_full_v2/queue.json",
+    "full_manifest_sha256": "28e87396c833bb27b427ec4c0d297283bd346b372dc637c47322d64fcf580d3c",
+    "live_status": "outputs/experiment_queue_017_clean_full_v2/status.json",
+    "live_log": "outputs/experiment_queue_017_clean_full_v2/job/priority_queue.log",
+    "result": "docs/experiment-017-clean-replication-results.md",
+    "report": "outputs/experiment017_clean_replication_v2/report.md",
+    "audit": "outputs/experiment017_clean_replication_v2/audit.json",
+    "completion": "outputs/experiment017_clean_replication_v2/completion.json",
+    "limited_label_template_minus_conv_auroc": {
+      "42": 0.00292588692548712,
+      "43": 0.0035151636267674036
+    },
+    "replication_numeric_gate_passed": true,
+    "bootstrap_intervals_include_zero": true,
+    "calibration_test_evaluated": false
   },
   "scheduling": {
-    "state": "scoped_runs_complete_other_training_paused",
+    "state": "scoped_017_clean_complete_no_active_queue",
     "since_utc": "2026-09-24T19:40:47.068565+00:00",
-    "reason": "User specifically requested Experiment 016 and the cheapest cached-feature rerun on 25 September; both completed. The other queued and deferred studies remain paused",
+    "reason": "The user-requested sole 017 clean replication completed all twelve development arms and artifact audit; no further GPU study scheduled.",
     "resume_requires_user_request": true,
-    "scoped_request_received_2026_09_25": ["016", "clean_cached_probe_rerun"],
+    "scoped_request_received_2026_09_25": [
+      "016",
+      "clean_cached_probe_rerun",
+      "017_clean_replication"
+    ],
     "resume_requires_new_source_manifests": true,
     "historical_launch_commands": "Recorded launch commands use the original source layout; see scripts/README.md for current modules",
     "downloads_continue": true,
     "pause_receipt": "outputs/refactor_pause/pause.json",
-    "source_snapshot": "outputs/refactor_pause/source_before_refactor.tar.gz"
+    "source_snapshot": "outputs/refactor_pause/source_before_refactor.tar.gz",
+    "current_profile_manifest": "outputs/experiment_queue_017_clean_profile_v2/queue.json",
+    "current_full_manifest": "outputs/experiment_queue_017_clean_full_v2/queue.json"
   },
   "clean_data_preparation": {
     "state": "cpu_preflight_and_cached_probe_rerun_complete",
@@ -542,15 +580,16 @@
     ],
     "targeted_tests_passed": 40,
     "executable_manifest": null,
-    "note": "Pointer-only preparation; original frozen inputs unchanged. Preflight shard paths resolve against data/processed/training_union_500hz_v1. The user separately authorized the completed cached-probe rerun; this audit alone did not authorize training."
+    "note": "Pointer-only preparation; original frozen inputs unchanged. Preflight shard paths resolve against data/processed/training_union_500hz_v1. The user separately authorized the completed cached-probe rerun; this audit alone did not authorize training.",
+    "clean_morphology_result": "docs/experiment-017-clean-replication-results.md"
   },
   "latest_completed_scoped_run": {
-    "id": "016",
-    "manifest": "outputs/experiment_queue_016/queue.json",
-    "manifest_sha256": "a6d4d2aa4e1a3fcff0a67b11b4889ce9de4759600ddc92bab2e56f16586c8c32",
-    "status": "outputs/experiment_queue_016/status.json",
-    "completed_at_utc": "2026-09-25T04:26:41.851089+00:00",
-    "report": "outputs/experiment016_xecg_probe_finetune/report.md",
+    "id": "017_clean_replication_v2",
+    "manifest": "outputs/experiment_queue_017_clean_full_v2/queue.json",
+    "manifest_sha256": "28e87396c833bb27b427ec4c0d297283bd346b372dc637c47322d64fcf580d3c",
+    "status": "outputs/experiment_queue_017_clean_full_v2/status.json",
+    "report": "outputs/experiment017_clean_replication_v2/report.md",
+    "audit": "outputs/experiment017_clean_replication_v2/audit.json",
     "calibration_test_evaluated": false
   }
 }

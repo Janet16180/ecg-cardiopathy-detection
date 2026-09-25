@@ -9,7 +9,6 @@ import sys
 import time
 from collections.abc import Sequence
 from dataclasses import dataclass
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -27,7 +26,10 @@ from ecg_experiment.gpu import gpu_lock
 from ecg_experiment.pilot import (
     BATCH,
     BUDGETS,
+    DEFAULT_MAX_CACHE_BYTES,
+    DEFAULT_RESERVE_BYTES,
     INTERRUPTED_EXIT,
+    MIN_CACHE_BYTES,
     SAVE_EVERY,
     Partitions,
     Progress,
@@ -50,6 +52,7 @@ from ecg_experiment.pilot import (
     run_pilot,
     save_state,
 )
+from ecg_experiment.provenance import utc_now
 from ecg_experiment.receipts import check_completion, check_existing_config, require_receipt, write_completion
 from ecg_experiment.reproducibility import cpu_state, seed_everything
 from ecg_experiment.training import checked_step, parameter_count
@@ -76,9 +79,6 @@ INITIAL_BEST = {"auc": -1.0, "epoch": 0, "model": None}
 ARTIFACTS = {"history.json": "history_sha256", "best_student.pt": "best_student_sha256"}
 POOL_FILES = (("signals.npy", "signals_sha256"), ("rows.csv", "rows_sha256"),
               ("ecg_ids.npy", "ecg_ids_sha256"))
-DEFAULT_MAX_CACHE_BYTES = 2_400_000_000
-MIN_CACHE_BYTES = 2_100_000_000
-DEFAULT_RESERVE_BYTES = 1_000_000_000
 PLANNING_GATE_SECONDS = 7200
 REQUIRED_AUROC_GAIN = 0.002
 REQUIRED_SPECIFICITY_GAIN = 0.02
@@ -878,7 +878,7 @@ def write_check(args: argparse.Namespace, data: PilotData, argv: Sequence[str]) 
     """
     check_waveform_sample(data.pool, data.partitions.full[0])
     partitions = data.partitions
-    receipt = {"stage": "check", "checked_at_utc": datetime.now(UTC).isoformat(),
+    receipt = {"stage": "check", "checked_at_utc": utc_now(),
                "command": [sys.executable, "-m", "scripts.experiments.run_jepa_cpc_distillation", *argv],
                "train": len(partitions.full), "limited": len(partitions.limited),
                "development": len(partitions.development),
@@ -911,7 +911,7 @@ def profile(args: argparse.Namespace, data: PilotData, deadline: float) -> None:
 
     durations, roundtrips = profile_arms("experiment015_profile_", ARMS, profile_arm)
     estimate = data.precheck_seconds + data.preload_seconds + 2 * EPOCHS * sum(durations.values())
-    receipt = {"stage": "profile", "full_epoch_seconds": durations,
+    receipt = {"stage": "profile", "device": args.device, "full_epoch_seconds": durations,
                "checkpoint_roundtrips": roundtrips,
                "precheck_seconds": data.precheck_seconds,
                "preload_seconds": data.preload_seconds,
@@ -939,23 +939,24 @@ def require_profile(output_dir: Path, fingerprint: str) -> None:
     Raises
     ------
     ValueError
-        If the profile is missing, from other inputs, or failed its gate.
+        If the profile is missing, from another device or inputs, or failed its gate.
     """
     path = output_dir / "profile.json"
     if not path.exists():
         raise ValueError("A complete real-data GPU profile is required before training")
     receipt = json.loads(path.read_text())
-    if receipt["fingerprint"] != fingerprint or not receipt["gate_passed"]:
+    if (receipt.get("stage") != "profile" or receipt.get("device") != "cuda"
+            or receipt["fingerprint"] != fingerprint or not receipt["gate_passed"]):
         raise ValueError("GPU profile fingerprint or two-hour planning gate failed")
 
 
-def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     Parse and validate the command line.
 
     Parameters
     ----------
-    argv : Sequence[str] | None
+    argv : list[str] | None
         Arguments, or ``None`` for ``sys.argv``.
 
     Returns
@@ -985,13 +986,13 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     return args
 
 
-def main(argv: Sequence[str] | None = None) -> None:
+def main(argv: list[str] | None = None) -> None:
     """
     Run the check, profile or training stage.
 
     Parameters
     ----------
-    argv : Sequence[str] | None
+    argv : list[str] | None
         Arguments, or ``None`` for ``sys.argv``.
     """
     args = parse_args(argv)

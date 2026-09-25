@@ -119,13 +119,37 @@ def audit(prepared_dir: Path, output_dir: Path) -> dict[str, Any]:
     return result
 
 
-def main() -> None:
-    """Run the audit from the command line and print its summary."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--prepared-dir", type=Path,
                         default=ROOT / "data/processed/public_ecg_quality/strict_10s")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "outputs/data_quality")
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Run the audit from the command line and print its summary.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     print(json.dumps(audit(args.prepared_dir.resolve(), args.output_dir.resolve()), indent=2))
 
 

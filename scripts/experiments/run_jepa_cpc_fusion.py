@@ -8,7 +8,6 @@ import json
 import os
 import sys
 import time
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +18,7 @@ from sklearn.model_selection import StratifiedGroupKFold
 
 from ecg_experiment.evaluation import metrics, partition_validation, patient_bootstrap, select_threshold
 from ecg_experiment.files import read_csv, sha256_file, write_json_atomic
+from ecg_experiment.provenance import utc_now
 
 ROOT = Path(__file__).resolve().parents[2]
 PROTOCOL = ROOT / "docs/experiment-014-fusion.md"
@@ -26,6 +26,9 @@ FULL = ROOT / "data/processed/pretrained/ecg-jepa-full-public"
 LIMITED = ROOT / "data/processed/ptbxl/features_jepa_multiblock_union_seeds42_43_44"
 CPC = ROOT / "outputs/experiment009_cpc_prediction_mismatch/features"
 OUTPUT = ROOT / "outputs/experiment014_jepa_cpc_fusion"
+# refit_jepa_probe014 writes the matched ten-percent probe here; it is read from
+# this location even when --output-dir points elsewhere.
+MATCHED_JEPA_DIR = OUTPUT
 LIMITED_UNION_MANIFEST = ROOT / "data/processed/ptbxl/probe_union_seeds42_43_44/labeled_train.csv"
 GRID = (0.0, 0.25, 0.5, 0.75, 1.0)
 FOLDS = 5
@@ -41,17 +44,6 @@ CALIBRATION_C = 1e6
 REQUIRED_SPECIFICITY_GAIN = 0.02
 AUROC_LOSS_LIMIT = 0.002
 
-
-def utc_now() -> str:
-    """
-    Return the current UTC time for coordination records.
-
-    Returns
-    -------
-    str
-        ISO 8601 timestamp.
-    """
-    return datetime.now(UTC).isoformat()
 
 
 def rows_by_id(rows: list[dict[str, str]], name: str) -> dict[int, dict[str, str]]:
@@ -516,8 +508,9 @@ def budget_paths(budget: str) -> dict[str, Path]:
     return {"manifest": ROOT / "data/processed/ptbxl" / manifest,
             "jepa_dir": FULL if full else LIMITED, "jepa_probe": jepa_probe,
             "jepa_model": (jepa_probe / "linear_model.npz" if full
-                           else OUTPUT / "matched_jepa_ten_percent.npz"),
-            "jepa_config": jepa_probe / "config.json" if full else OUTPUT / "matched_jepa_ten_percent.json",
+                           else MATCHED_JEPA_DIR / "matched_jepa_ten_percent.npz"),
+            "jepa_config": (jepa_probe / "config.json" if full
+                            else MATCHED_JEPA_DIR / "matched_jepa_ten_percent.json"),
             "cpc_probe": ROOT / f"outputs/experiment009_cpc_prediction_mismatch/ordinary_{budget}_seed42"}
 
 
@@ -793,19 +786,50 @@ def screen_budget(data: dict[str, Any], fingerprint: dict[str, Any]) -> dict[str
     return result
 
 
-def main() -> None:
-    """Screen both label budgets, reusing verified completed receipts."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=OUTPUT)
-    args = parser.parse_args()
-    start = time.monotonic()
-    coordination = args.output_dir / "coordination.json"
-    write_json_atomic(coordination, {"state": "running", "pid": os.getpid(), "started_at_utc": utc_now(),
-                                     "command": " ".join(sys.argv), "returncode": None}, sort_keys=True)
+    return parser.parse_args(argv)
+
+
+def screen_budgets(output_dir: Path, start: float) -> dict[str, dict[str, str]]:
+    """
+    Screen each label budget unless a verified receipt already exists.
+
+    Parameters
+    ----------
+    output_dir : Path
+        Directory for the budget receipts.
+    start : float
+        Monotonic start time used for progress messages.
+
+    Returns
+    -------
+    dict[str, dict[str, str]]
+        Path and SHA-256 of each budget receipt.
+
+    Raises
+    ------
+    ValueError
+        If an existing receipt was made from other inputs.
+    """
     receipts = {}
     for budget in ("full", "ten_percent"):
         data = load_budget(budget)
-        output = args.output_dir / f"{budget}.json"
+        output = output_dir / f"{budget}.json"
         fingerprint = {"input_sha256": data["hashes"], "budget": budget,
                        "normalization": "labeled-training logits only", "alpha_grid": list(GRID)}
         if output.exists():
@@ -825,11 +849,34 @@ def main() -> None:
                           "selected_alpha": result["development"]["selected_alpha"],
                           "seconds_elapsed": time.monotonic() - start, "sha256": sha256_file(output)}),
               flush=True)
-    write_json_atomic(coordination, {"state": "complete", "pid": os.getpid(), "completed_at_utc": utc_now(),
-                                     "command": " ".join(sys.argv), "returncode": 0,
-                                     "elapsed_seconds": time.monotonic() - start, "receipts": receipts},
-                      sort_keys=True)
+    return receipts
 
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Screen both label budgets, recording the run state in ``run_status.json``.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
+    start = time.monotonic()
+    status_path = args.output_dir / "run_status.json"
+    command = " ".join(sys.argv)
+    write_json_atomic(status_path, {"state": "running", "pid": os.getpid(), "started_at_utc": utc_now(),
+                                    "command": command, "returncode": None}, sort_keys=True)
+    try:
+        receipts = screen_budgets(args.output_dir, start)
+    except Exception as exc:
+        write_json_atomic(status_path, {"state": "failed", "pid": os.getpid(), "failed_at_utc": utc_now(),
+                                        "command": command, "reason": str(exc)}, sort_keys=True)
+        raise
+    write_json_atomic(status_path, {"state": "complete", "pid": os.getpid(), "completed_at_utc": utc_now(),
+                                    "command": command, "returncode": 0,
+                                    "elapsed_seconds": time.monotonic() - start, "receipts": receipts},
+                      sort_keys=True)
 
 if __name__ == "__main__":
     main()

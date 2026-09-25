@@ -11,7 +11,6 @@ from __future__ import annotations
 import argparse
 import json
 from collections import Counter, defaultdict
-from datetime import UTC, datetime
 from pathlib import Path
 from types import ModuleType
 from typing import Any
@@ -20,7 +19,8 @@ import h5py
 import numpy as np
 import wfdb
 
-from ecg_experiment.files import read_csv, sha256_file, write_csv_atomic, write_json_atomic
+from ecg_experiment.files import read_csv, read_json, sha256_file, write_csv_atomic, write_json_atomic
+from ecg_experiment.provenance import utc_now
 from ecg_experiment.public_sources import signal_sha256
 from ecg_experiment.waveforms import LEADS
 
@@ -34,7 +34,6 @@ RAW_CHALLENGE = Path("data/raw/challenge-2020/1.0.2")
 STRICT_VIEW = "strict_10s"
 CROP_VIEW = "cpsc_ssl_center_crop"
 CHALLENGE_SHAPE = (12, 5000)
-CHALLENGE_SAMPLES = 5000
 CHALLENGE_RATE_HZ = 500
 CODE_SHAPE = (4096, 12)
 CODE_HDF5 = "exams_part0_native.hdf5"
@@ -170,10 +169,6 @@ def deterministic_indices(count: int, sample_size: int, seed: int) -> np.ndarray
     return np.sort(rng.choice(count, size=min(count, sample_size), replace=False))
 
 
-def _read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text())
-
-
 def _load_shard(directory: Path, name: str, cache: dict[str, np.ndarray]) -> np.ndarray:
     """Memory-map a published waveform shard once per name."""
     if name not in cache:
@@ -270,7 +265,7 @@ def _source_summary(group: list[dict[str, str]]) -> dict[str, Any]:
     return {
         "accepted": len(group),
         "original_samples": _sorted_counts([r["source_samples"] for r in group]),
-        "longer_than_10s": sum(int(r["source_samples"]) > CHALLENGE_SAMPLES for r in group),
+        "longer_than_10s": sum(int(r["source_samples"]) > CHALLENGE_SHAPE[1] for r in group),
         "qc_flags": flag_counts(group),
         "max_abs_mv": quantiles([float(r["max_abs_mv"]) for r in group]),
         "minimum_lead_std_mv": quantiles([float(r["min_lead_std_mv"]) for r in group]),
@@ -794,7 +789,7 @@ def code_view(directory: Path, sample_size: int, seed: int) -> tuple[dict[str, A
     tuple[dict[str, Any], dict[str, Any]]
         Summary and the ages and edge counts used by the figure.
     """
-    metadata = _read_json(directory / "metadata.json")
+    metadata = read_json(directory / "metadata.json")
     tables = read_code_tables(directory, metadata)
     manifest, exclusions = tables["manifest"], tables["exclusions"]
     demographics, labels = tables["demographics"], tables["labels"]
@@ -1000,7 +995,7 @@ def make_review_figure(path: Path, directory: Path, data: list[dict[str, str]]) 
     selected = review_examples(data)
     plt = load_pyplot()
     fig, axes = plt.subplots(2, 2, figsize=(13, 6), constrained_layout=True)
-    time = np.arange(CHALLENGE_SAMPLES) / CHALLENGE_RATE_HZ
+    time = np.arange(CHALLENGE_SHAPE[1]) / CHALLENGE_RATE_HZ
     shards: dict[str, np.ndarray] = {}
     for ax, (row, kind) in zip(axes.flat, selected, strict=True):
         signal = _load_shard(directory, row["shard"], shards)[int(row["shard_index"])]
@@ -1113,8 +1108,8 @@ def run(strict_dir: Path, crop_dir: Path, code_dir: Path, output_dir: Path,
         raise ValueError("sample_size must be positive")
     if output_dir.resolve().is_relative_to((ROOT / "data/raw").resolve()):
         raise ValueError("EDA output cannot be inside data/raw")
-    strict_metadata = _read_json(strict_dir / "metadata.json")
-    crop_metadata = _read_json(crop_dir / "metadata.json")
+    strict_metadata = read_json(strict_dir / "metadata.json")
+    crop_metadata = read_json(crop_dir / "metadata.json")
     strict, strict_rows = challenge_view(strict_dir, strict_metadata, sample_size, seed)
     crop, crop_rows = challenge_view(crop_dir, crop_metadata, sample_size, seed + 1)
     if strict["policy"] != "strict_10s" or crop["policy"] != "ssl_center_crop":
@@ -1135,7 +1130,7 @@ def run(strict_dir: Path, crop_dir: Path, code_dir: Path, output_dir: Path,
     cross_view = cross_view_overlap(strict, crop, strict_rows, crop_rows)
     code, code_figure = code_view(code_dir, sample_size, seed + 2)
     result = {
-        "generated_at_utc": datetime.now(UTC).isoformat(),
+        "generated_at_utc": utc_now(),
         "eda_source_sha256": sha256_file(Path(__file__)),
         "sampling": {"sample_size_per_view": sample_size, "seed": seed},
         "strict": strict, "center_crop": crop, "code_part0": code,
@@ -1152,8 +1147,20 @@ def run(strict_dir: Path, crop_dir: Path, code_dir: Path, output_dir: Path,
     return result
 
 
-def main() -> None:
-    """Run the EDA from the command line and print where outputs were written."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--strict-dir", type=Path, default=STRICT)
     parser.add_argument("--crop-dir", type=Path, default=CROP)
@@ -1161,7 +1168,19 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, default=OUTPUT)
     parser.add_argument("--sample-size", type=int, default=128)
     parser.add_argument("--seed", type=int, default=42)
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Run the EDA from the command line and print where outputs were written.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     result = run(args.strict_dir, args.crop_dir, args.code_dir, args.output_dir,
                  args.sample_size, args.seed)
     print(json.dumps({"summary": str(args.output_dir / "summary.json"),

@@ -5,15 +5,13 @@ from __future__ import annotations
 
 import argparse
 import ast
-import csv
 import json
 import random
 from collections import Counter
-from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
-from ecg_experiment.files import sha256_file, write_csv_atomic, write_json_atomic
+from ecg_experiment.files import read_csv, sha256_file, write_csv_atomic, write_json_atomic
 
 ROOT = Path(__file__).resolve().parents[2]
 WAVEFORM_FIELDS = ("ecg_id", "patient_id", "filename_lr", "filename_hr")
@@ -44,18 +42,13 @@ def read_diagnostic_codes(path: Path) -> dict[str, str]:
     ValueError
         If required columns are missing.
     """
-    with path.open(newline="", encoding="utf-8") as handle:
-        reader = csv.DictReader(handle)
-        required = {"", "diagnostic", "diagnostic_class"}
-        if not required.issubset(reader.fieldnames or []):
-            raise ValueError(f"Missing SCP columns: {sorted(required - set(reader.fieldnames or []))}")
-        result = {}
-        for row in reader:
-            code = row[""].strip()
-            category = row["diagnostic_class"].strip()
-            if row["diagnostic"].strip() in ("1.0", "1") and code and category:
-                result[code] = category
-        return result
+    result = {}
+    for row in read_csv(path, ("", "diagnostic", "diagnostic_class")):
+        code = row[""].strip()
+        category = row["diagnostic_class"].strip()
+        if row["diagnostic"].strip() in ("1.0", "1") and code and category:
+            result[code] = category
+    return result
 
 
 def classify(codes: set[str], diagnostic_codes: dict[str, str]) -> tuple[str, str]:
@@ -149,43 +142,22 @@ def load_records(path: Path, diagnostic_codes: dict[str, str]) -> list[dict[str,
         If columns or identifiers are missing, an ID repeats, or a patient
         spans folds.
     """
-    with path.open(newline="", encoding="utf-8") as handle:
-        reader = csv.DictReader(handle)
-        required = {*WAVEFORM_FIELDS, "strat_fold", "scp_codes"}
-        if not required.issubset(reader.fieldnames or []):
-            raise ValueError(f"Missing database columns: {sorted(required - set(reader.fieldnames or []))}")
-        records = []
-        ids = set()
-        patient_folds: dict[str, str] = {}
-        for row in reader:
-            record = {field: row[field].strip() for field in WAVEFORM_FIELDS}
-            ecg_id, patient_id = record["ecg_id"], record["patient_id"]
-            if not all(record.values()):
-                raise ValueError(f"Missing waveform identifier or filename for ecg_id {ecg_id}")
-            if ecg_id in ids:
-                raise ValueError(f"Duplicate ecg_id {ecg_id}")
-            ids.add(ecg_id)
-            fold = _checked_fold(row, ecg_id, patient_id, patient_folds)
-            target, reason = classify(parse_codes(row["scp_codes"], ecg_id), diagnostic_codes)
-            records.append({**record, "strat_fold": fold, "target": target,
-                            "reason": reason, "scp_codes": row["scp_codes"]})
+    records = []
+    ids = set()
+    patient_folds: dict[str, str] = {}
+    for row in read_csv(path, (*WAVEFORM_FIELDS, "strat_fold", "scp_codes")):
+        record = {field: row[field].strip() for field in WAVEFORM_FIELDS}
+        ecg_id, patient_id = record["ecg_id"], record["patient_id"]
+        if not all(record.values()):
+            raise ValueError(f"Missing waveform identifier or filename for ecg_id {ecg_id}")
+        if ecg_id in ids:
+            raise ValueError(f"Duplicate ecg_id {ecg_id}")
+        ids.add(ecg_id)
+        fold = _checked_fold(row, ecg_id, patient_id, patient_folds)
+        target, reason = classify(parse_codes(row["scp_codes"], ecg_id), diagnostic_codes)
+        records.append({**record, "strat_fold": fold, "target": target,
+                        "reason": reason, "scp_codes": row["scp_codes"]})
     return records
-
-
-def write_csv(path: Path, fields: tuple[str, ...], rows: Iterable[dict[str, str]]) -> None:
-    """
-    Write only ``fields`` of each row as CSV.
-
-    Parameters
-    ----------
-    path : Path
-        Destination file.
-    fields : tuple[str, ...]
-        Columns to keep, in order.
-    rows : Iterable[dict[str, str]]
-        Rows that may contain extra keys.
-    """
-    write_csv_atomic(path, ({field: row[field] for field in fields} for row in rows), fields)
 
 
 def select_patients(eligible: list[dict[str, str]], label_fraction: float, seed: int) -> tuple[set[str], int]:
@@ -297,12 +269,11 @@ def write_manifests(output_dir: Path, splits: dict[str, list[dict[str, str]]],
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "audit").mkdir(exist_ok=True)
-    write_csv(output_dir / "labeled_train.csv", LABELED_FIELDS, splits["labeled_train"])
-    write_csv(output_dir / "validation.csv", LABELED_FIELDS, splits["validation"])
-    write_csv(output_dir / "test.csv", LABELED_FIELDS, splits["test"])
-    write_csv(output_dir / "unlabeled_train.csv", WAVEFORM_FIELDS, splits["unlabeled_train"])
-    write_csv(output_dir / "all_train_ssl.csv", WAVEFORM_FIELDS, splits["all_train_ssl"])
-    write_csv(output_dir / "audit" / "metadata.csv", AUDIT_FIELDS, records)
+    for name, fields in (("labeled_train", LABELED_FIELDS), ("validation", LABELED_FIELDS),
+                         ("test", LABELED_FIELDS), ("unlabeled_train", WAVEFORM_FIELDS),
+                         ("all_train_ssl", WAVEFORM_FIELDS)):
+        write_csv_atomic(output_dir / f"{name}.csv", splits[name], fields, ignore_extra=True)
+    write_csv_atomic(output_dir / "audit" / "metadata.csv", records, AUDIT_FIELDS, ignore_extra=True)
 
 
 def prepare(metadata_dir: Path, output_dir: Path, label_fraction: float = 0.1,
@@ -359,14 +330,38 @@ def prepare(metadata_dir: Path, output_dir: Path, label_fraction: float = 0.1,
     return summary
 
 
-def main() -> None:
-    """Parse arguments, prepare the manifests and print the summary."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--metadata-dir", type=Path, default=ROOT / "data/raw/ptb-xl/1.0.3")
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--label-fraction", type=float, default=0.1)
     parser.add_argument("--seed", type=int, default=42)
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Parse arguments, prepare the manifests and print the summary.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     default_output = ROOT / "data/processed/ptbxl" / f"seed{args.seed}_fraction{args.label_fraction:g}"
     output_dir = args.output_dir or default_output
     print(json.dumps(prepare(args.metadata_dir, output_dir, args.label_fraction, args.seed), indent=2))

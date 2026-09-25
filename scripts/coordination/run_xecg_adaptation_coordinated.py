@@ -16,9 +16,14 @@ XECG_SSL_READY = Path("data/processed/xecg_ssl_40k/metadata.json")
 XECG_COORDINATION = Path("outputs/experiment007_xecg/coordination.json")
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
 
     Returns
     -------
@@ -30,7 +35,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--preparation-pid", type=int, required=True)
     parser.add_argument("--mimic-runner-pid", type=int, required=True)
     parser.add_argument("--output-dir", type=Path, default=common.ROOT / "outputs/experiment008_vision_ssl")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def check_xecg_complete() -> None:
@@ -48,9 +53,16 @@ def check_xecg_complete() -> None:
                            "resolve its failure before adaptation")
 
 
-def main() -> None:
-    """Wait for preparation, Experiment 007 and the idle MIMIC runner, then adapt."""
-    args = parse_args()
+def main(argv: list[str] | None = None) -> None:
+    """
+    Wait for preparation, Experiment 007 and the idle MIMIC runner, then adapt.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     previous = common.expect_module(args.wait_pid, "scripts.coordination.run_xecg_coordinated")
     preparation = common.expect_module(args.preparation_pid, "scripts.data.prepare_xecg_ssl")

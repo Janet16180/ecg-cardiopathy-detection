@@ -7,12 +7,13 @@ import csv
 import json
 import random
 from collections import Counter
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 import wfdb
+
+from ecg_experiment.provenance import utc_now
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUT = ROOT / "outputs/data_quality/local_audit.json"
@@ -264,7 +265,7 @@ def build_report() -> dict[str, Any]:
     dict[str, Any]
         Report keyed by source.
     """
-    report = {"generated_at_utc": datetime.now(UTC).isoformat(),
+    report = {"generated_at_utc": utc_now(),
               "sample_size_per_source": SAMPLE_SIZE,
               "sampling": "deterministic simple random sample of complete local waveform pairs, seed 42",
               "ptbxl": ptbxl_summary(),

@@ -12,12 +12,12 @@ import sys
 from pathlib import Path
 
 from ecg_experiment.files import write_json_atomic
+from ecg_experiment.receipts import artifacts_exist
+from scripts.experiments.probe_pretrained import ARTIFACTS as PROBE_ARTIFACTS
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUT = ROOT / "outputs/experiment004_cpc_40k"
 PROBES = (("1", "released_full"), ("0.1", "released_10pct"))
-PROBE_ARTIFACTS = ("metrics.json", "test_predictions.csv", "calibration_predictions.npz",
-                   "linear_model.npz", "config.json")
 RELEASED_FIELDS = ("checkpoint_source", "license", "reported_pretraining", "comparison_limit",
                    "cauchy_backend")
 
@@ -61,7 +61,7 @@ def run_probe(fraction: str, name: str, features: Path, state_path: Path, env: d
         The probe directory.
     """
     directory = OUTPUT / name / "ecg-cpc_released_linear_seed42"
-    if directory.exists() and not all((directory / artifact).is_file() for artifact in PROBE_ARTIFACTS):
+    if directory.exists() and not artifacts_exist(directory, PROBE_ARTIFACTS):
         suffix = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
         directory.rename(directory.with_name(directory.name + "_interrupted_" + suffix))
     if not directory.exists():

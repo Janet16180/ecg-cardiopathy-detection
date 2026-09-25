@@ -11,36 +11,6 @@ from ecg_experiment.tracking import EXPERIMENT_NAME, discover_historical_runs, i
 SQLITE_PREFIX = "sqlite:///"
 
 
-def list_runs(root: Path) -> None:
-    """
-    Print the historical runs that would be imported, without using MLflow.
-
-    Parameters
-    ----------
-    root : Path
-        Repository root.
-    """
-    for record in discover_historical_runs(root):
-        print(f"{record.stage:19} {record.source_id} {len(record.metrics)} metrics")
-
-
-def default_tracking_uri(root: Path) -> str:
-    """
-    Return the local SQLite registry URI under ``outputs/mlflow``.
-
-    Parameters
-    ----------
-    root : Path
-        Repository root.
-
-    Returns
-    -------
-    str
-        SQLite tracking URI.
-    """
-    return f"{SQLITE_PREFIX}{root.resolve() / 'outputs' / 'mlflow' / 'mlflow.db'}"
-
-
 def import_runs(root: Path, uri: str, experiment_name: str, log_aggregate_artifacts: bool) -> None:
     """
     Import historical runs into MLflow and print how many were added.
@@ -64,20 +34,45 @@ def import_runs(root: Path, uri: str, experiment_name: str, log_aggregate_artifa
     print(f"Imported {imported}; already present {skipped}. Tracking URI: {uri}")
 
 
-def main() -> None:
-    """List or import historical runs from the command line."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument("--tracking-uri", default=os.environ.get("MLFLOW_TRACKING_URI"))
     parser.add_argument("--experiment-name", default=EXPERIMENT_NAME)
     parser.add_argument("--log-aggregate-artifacts", action="store_true")
     parser.add_argument("--dry-run", action="store_true", help="List historical runs without MLflow")
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    List or import historical runs from the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     if args.dry_run:
-        list_runs(args.root)
-    else:
-        uri = args.tracking_uri or default_tracking_uri(args.root)
-        import_runs(args.root, uri, args.experiment_name, args.log_aggregate_artifacts)
+        for record in discover_historical_runs(args.root):
+            print(f"{record.stage:19} {record.source_id} {len(record.metrics)} metrics")
+        return
+    uri = args.tracking_uri or f"{SQLITE_PREFIX}{args.root.resolve() / 'outputs/mlflow/mlflow.db'}"
+    import_runs(args.root, uri, args.experiment_name, args.log_aggregate_artifacts)
 
 
 if __name__ == "__main__":

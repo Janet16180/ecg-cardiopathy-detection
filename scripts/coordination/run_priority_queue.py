@@ -24,6 +24,7 @@ from ecg_experiment.processes import (
     process_identity,
     wait_while_alive,
 )
+from ecg_experiment.provenance import utc_now
 from scripts.coordination import common
 
 COMPLETION_MARKER = "priority_queue_completion.json"
@@ -219,7 +220,7 @@ class Coordinator:
             If the stage exits with a non-zero code.
         """
         with (output / "priority_queue.log").open("a", buffering=1) as log:
-            log.write(f"\n{common.utc_now()} {stage['name']}\n")
+            log.write(f"\n{utc_now()} {stage['name']}\n")
             self.child = subprocess.Popen(stage["command"], cwd=common.ROOT,
                                           stdout=log, stderr=subprocess.STDOUT)
             self.job_status(job, "profiling" if stage["name"] == "profile" else "running",
@@ -306,13 +307,37 @@ def run_queue(coordinator: Coordinator) -> None:
         coordinator.cleanup()
 
 
-def main() -> None:
-    """Verify the frozen manifest and its sources, then run or only check it."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--manifest-sha256", required=True)
     parser.add_argument("--check", action="store_true")
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Verify the frozen manifest and its sources, then run or only check it.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     if sha256_file(args.manifest) != args.manifest_sha256:
         raise ValueError("Queue manifest changed")
     manifest = json.loads(args.manifest.read_text())

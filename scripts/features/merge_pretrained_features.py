@@ -104,9 +104,36 @@ def write_merged(path: Path, ids: list[str], locations: dict[str, tuple[np.ndarr
     merged.flush()
 
 
-def main() -> None:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--base", type=Path, required=True)
+    parser.add_argument("--extra", type=Path, required=True)
+    parser.add_argument("--union-manifest-dir", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path, required=True)
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
     """
     Merge a base and an extra extraction and record their provenance.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
 
     Raises
     ------
@@ -115,12 +142,7 @@ def main() -> None:
     FileExistsError
         If merged outputs already exist.
     """
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--base", type=Path, required=True)
-    parser.add_argument("--extra", type=Path, required=True)
-    parser.add_argument("--union-manifest-dir", type=Path, required=True)
-    parser.add_argument("--output-dir", type=Path, required=True)
-    args = parser.parse_args()
+    args = parse_args(argv)
 
     base_ids, base_features, base_metadata, base_metadata_path = read_source(args.base)
     extra_ids, extra_features, extra_metadata, extra_metadata_path = read_source(args.extra)

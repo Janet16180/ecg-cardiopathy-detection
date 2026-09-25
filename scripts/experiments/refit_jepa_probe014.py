@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
 from typing import Any
 
@@ -12,17 +11,14 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 from sklearn.preprocessing import StandardScaler
 
-from ecg_experiment.evaluation import partition_validation
-from ecg_experiment.files import read_csv, sha256_file, write_json_atomic
+from ecg_experiment.evaluation import DEVELOPMENT_RECORDS, LIMITED_LABELS, PROBE_C_GRID, partition_validation
+from ecg_experiment.files import read_csv, sha256_file, write_json_atomic, write_npz_atomic
 
 ROOT = Path(__file__).resolve().parents[2]
 LIMITED = ROOT / "data/processed/ptbxl/features_jepa_multiblock_union_seeds42_43_44"
 MANIFEST = ROOT / "data/processed/ptbxl/seed42_fraction0.1"
 OUTPUT = ROOT / "outputs/experiment014_jepa_cpc_fusion"
 LIMITED_SHAPE = (7931, 768)
-TRAIN_RECORDS = 1518
-DEVELOPMENT_RECORDS = 1306
-C_VALUES = (.001, .01, .1, 1., 10., 100.)
 MAX_ITER = 3000
 SEED = 42
 
@@ -51,7 +47,7 @@ def load_split_features() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarra
         raise ValueError("Duplicate limited JEPA ECG IDs")
     train = read_csv(MANIFEST / "labeled_train.csv")
     development, _ = partition_validation(read_csv(MANIFEST / "validation.csv"))
-    if len(train) != TRAIN_RECORDS or len(development) != DEVELOPMENT_RECORDS:
+    if len(train) != LIMITED_LABELS or len(development) != DEVELOPMENT_RECORDS:
         raise ValueError("Fixed label/development cohorts changed")
     train_ids = [int(row["ecg_id"]) for row in train]
     dev_ids = [int(row["ecg_id"]) for row in development]
@@ -84,36 +80,23 @@ def select_probe(train_scaled: np.ndarray, train_y: np.ndarray, dev_scaled: np.n
     -------
     tuple[float, float, LogisticRegression, list[dict[str, float]]]
         Best AUROC, its ``C``, its fitted model, and every candidate's score.
+
+    Raises
+    ------
+    RuntimeError
+        If no candidate produced a comparable AUROC.
     """
-    choices, best = [], None
-    for c in C_VALUES:
+    choices, best_auc, best_c, best_model = [], -1.0, None, None
+    for c in PROBE_C_GRID:
         model = LogisticRegression(C=c, max_iter=MAX_ITER, solver="lbfgs", random_state=SEED)
         model.fit(train_scaled, train_y)
         auc = float(roc_auc_score(dev_y, model.decision_function(dev_scaled)))
         choices.append({"C": c, "development_auroc": auc})
-        if best is None or auc > best[0]:
-            best = (auc, c, model)
-    return (*best, choices)
-
-
-def save_probe(path: Path, scaler: StandardScaler, model: LogisticRegression) -> None:
-    """
-    Save the standardization and probe weights through a per-process temporary file.
-
-    Parameters
-    ----------
-    path : Path
-        Destination ``.npz``.
-    scaler : StandardScaler
-        Training-only standardization.
-    model : LogisticRegression
-        Selected probe.
-    """
-    temporary = path.with_name(path.name + f".tmp.{os.getpid()}")
-    with temporary.open("wb") as handle:
-        np.savez(handle, mean=scaler.mean_, scale=scaler.scale_, coefficient=model.coef_,
-                 intercept=model.intercept_)
-    os.replace(temporary, path)
+        if auc > best_auc:
+            best_auc, best_c, best_model = auc, c, model
+    if best_model is None:
+        raise RuntimeError("No regularization candidate produced a development AUROC")
+    return best_auc, best_c, best_model, choices
 
 
 def input_fingerprints() -> dict[str, str]:
@@ -152,7 +135,8 @@ def main() -> None:
     scaler = StandardScaler().fit(train_x)
     auc, c, model, choices = select_probe(scaler.transform(train_x), train_y, scaler.transform(dev_x), dev_y)
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    save_probe(model_path, scaler, model)
+    write_npz_atomic(model_path, mean=scaler.mean_, scale=scaler.scale_, coefficient=model.coef_,
+                     intercept=model.intercept_)
     labeled_sha256 = sha256_file(MANIFEST / "labeled_train.csv")
     receipt: dict[str, Any] = {
         "inputs_sha256": fingerprints, "model_sha256": sha256_file(model_path),

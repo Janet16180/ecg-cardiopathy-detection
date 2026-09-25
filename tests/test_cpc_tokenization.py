@@ -50,7 +50,6 @@ def test_common_query_coverage_and_future_mask():
 
 
 def test_all_arms_restore_identical_cpc_heads_and_classifier_head():
-    torch.set_num_threads(1)
     seed_everything(42)
     source = CPCPretrainer()
     enc_state, head_state = cpu_state(source.encoder), cpu_state(source.heads)

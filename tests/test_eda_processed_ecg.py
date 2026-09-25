@@ -9,6 +9,7 @@ import h5py
 import numpy as np
 import pytest
 
+from ecg_experiment.files import write_csv_atomic
 from scripts.reports import eda_processed_ecg as eda
 
 LEADS = ("I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6")
@@ -29,14 +30,6 @@ def sha256(path: Path) -> str:
 
 def signal_digest(signal: np.ndarray) -> str:
     return hashlib.sha256(np.ascontiguousarray(signal, dtype="<f4").tobytes()).hexdigest()
-
-
-def write_csv(path: Path, rows: list[dict], fields: tuple[str, ...]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields)
-        writer.writeheader()
-        writer.writerows(rows)
 
 
 def synthetic_signal(rng: np.random.Generator, kind: str) -> np.ndarray:
@@ -84,10 +77,10 @@ def write_challenge_view(directory: Path, prepared: Path, policy: str, specs: li
         })
     for name, stack in shards.items():
         np.save(directory / name, np.stack(stack))
-    write_csv(directory / "manifest.csv", rows, CHALLENGE_FIELDS)
+    write_csv_atomic(directory / "manifest.csv", rows, CHALLENGE_FIELDS)
     prepared.mkdir(parents=True, exist_ok=True)
     (prepared / "metadata.json").write_text(json.dumps({"prepared": True}))
-    write_csv(prepared / "exclusions.csv", exclusions, ("ecg_id", "source", "reason"))
+    write_csv_atomic(prepared / "exclusions.csv", exclusions, ("ecg_id", "source", "reason"))
     provenance: dict[str, dict[str, int]] = {}
     for item in rows + exclusions:
         entry = provenance.setdefault(item["source"], {"candidate_records": 0})
@@ -123,10 +116,10 @@ def write_code_view(directory: Path, rng: np.random.Generator) -> None:
     labels = [{"exam_id": r["exam_id"], **{name: str((i + j) % 3 == 0) for j, name in enumerate(DIAGNOSES)},
                "diagnosis_label_provenance": "released", "normal_ecg_provenance": "released"}
               for i, r in enumerate(manifest)]
-    write_csv(directory / "manifest.csv", manifest, tuple(manifest[0]))
-    write_csv(directory / "exclusions.csv", exclusions, ("exam_id", "reason"))
-    write_csv(directory / "demographics.csv", demographics, ("exam_id", "age", "is_male"))
-    write_csv(directory / "source_labels.csv", labels, tuple(labels[0]))
+    write_csv_atomic(directory / "manifest.csv", manifest, tuple(manifest[0]))
+    write_csv_atomic(directory / "exclusions.csv", exclusions, ("exam_id", "reason"))
+    write_csv_atomic(directory / "demographics.csv", demographics, ("exam_id", "age", "is_male"))
+    write_csv_atomic(directory / "source_labels.csv", labels, tuple(labels[0]))
     with h5py.File(directory / "exams_part0_native.hdf5", "w") as handle:
         handle["tracings"] = traces
         handle["exam_id"] = np.array([int(r["exam_id"]) for r in manifest])

@@ -8,16 +8,9 @@ import numpy as np
 import pytest
 
 import scripts.data.materialize_challenge_ecg as materialization
-from ecg_experiment.files import read_csv, sha256_file
+from ecg_experiment.files import read_csv, sha256_file, write_csv_atomic
 from ecg_experiment.public_sources import signal_sha256
 from scripts.data.materialize_challenge_ecg import materialize, verify_materialized
-
-
-def write_csv(path: Path, rows: list[dict]) -> None:
-    with path.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=rows[0])
-        writer.writeheader()
-        writer.writerows(rows)
 
 
 def use_root(monkeypatch: pytest.MonkeyPatch, root: Path,
@@ -58,7 +51,7 @@ def fixture(tmp_path: Path, *, crop: bool = False, conflict: bool = False):
            "filename_hr": stems[0], "source_samples": str(samples),
            "window_start": "500" if crop else "0", "label_codes": "1",
            "signal_sha256": signal_sha256(signal), "qc_flags": ""}
-    write_csv(prepared / "manifest.csv", [row])
+    write_csv_atomic(prepared / "manifest.csv", [row], row)
     excluded = [{"ecg_id": "georgia:E00002", "source": "georgia",
                  "reason": "exact_pool_duplicate", "detail": "exact_pool_duplicate"}] if conflict else []
     with (prepared / "exclusions.csv").open("w", newline="") as handle:
@@ -78,10 +71,9 @@ def fixture(tmp_path: Path, *, crop: bool = False, conflict: bool = False):
     (prepared / "metadata.json").write_text(json.dumps(meta))
     comparisons = root / "comparisons.csv"
     if conflict:
-        write_csv(comparisons, [{"excluded_ecg_id": "georgia:E00002",
-                                 "retained_ecg_id": "georgia:E00001",
-                                 "excluded_label_codes": "2", "retained_label_codes": "1",
-                                 "same_label_set": "false"}])
+        comparison = {"excluded_ecg_id": "georgia:E00002", "retained_ecg_id": "georgia:E00001",
+                      "excluded_label_codes": "2", "retained_label_codes": "1", "same_label_set": "false"}
+        write_csv_atomic(comparisons, [comparison], comparison)
     return root, raw, prepared, comparisons, signal
 
 
@@ -108,7 +100,8 @@ def test_strict_conflict_retained_copy_is_not_label_eligible(tmp_path: Path, mon
 def test_center_crop_is_machine_readable_ssl_only(tmp_path: Path, monkeypatch) -> None:
     root, _, prepared, _, signal = fixture(tmp_path, crop=True)
     overlap = root / "other.csv"
-    write_csv(overlap, [{"ecg_id": "georgia:E00001", "signal_sha256": signal_sha256(signal)}])
+    write_csv_atomic(overlap, [{"ecg_id": "georgia:E00001", "signal_sha256": signal_sha256(signal)}],
+                     ("ecg_id", "signal_sha256"))
     output = root / "data/processed/views/crop"
     use_root(monkeypatch, root, (signal, 500, 6000, ""))
     materialize(prepared, output, overlap_manifest=overlap)
@@ -186,7 +179,7 @@ def test_verifier_rejects_semantic_corruption_even_when_rehashed(
     materialize(prepared, output)
     records = read_csv(output / "manifest.csv")
     records[0][field] = value
-    write_csv(output / "manifest.csv", records)
+    write_csv_atomic(output / "manifest.csv", records, records[0])
     metadata_file = output / "metadata.json"
     metadata = json.loads(metadata_file.read_text())
     metadata["manifest_sha256"] = sha256_file(output / "manifest.csv")

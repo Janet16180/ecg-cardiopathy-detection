@@ -17,8 +17,9 @@ import time
 from pathlib import Path
 from typing import Any
 
-from ecg_experiment.files import sha256_file, write_json_atomic
+from ecg_experiment.files import read_json, sha256_file, write_json_atomic
 from ecg_experiment.processes import ProcessIdentity, is_stopped, process_identity
+from ecg_experiment.provenance import utc_now
 from scripts.coordination import common
 from scripts.coordination import run_priority_queue as queue
 
@@ -48,23 +49,6 @@ def root_path(value: str | Path) -> Path:
     """
     path = Path(value)
     return path if path.is_absolute() else common.ROOT / path
-
-
-def read_json(path: Path) -> Any:
-    """
-    Read a JSON file.
-
-    Parameters
-    ----------
-    path : Path
-        File to read.
-
-    Returns
-    -------
-    Any
-        Parsed value.
-    """
-    return json.loads(path.read_text())
 
 
 def pinned_json(path: Path, digest: str) -> Any:
@@ -539,7 +523,7 @@ def launch_successor(new_path: Path, new_sha: str, old_sha: str, old_pid: int,
         raise RuntimeError("Successor already has launch state; refusing duplicate launch")
     command = [sys.executable, "-u", "-m", "scripts.coordination.run_priority_queue",
                "--manifest", str(new_path.resolve()), "--manifest-sha256", new_sha]
-    write_json_atomic(intent_path, {"state": "launching", "at_utc": common.utc_now(),
+    write_json_atomic(intent_path, {"state": "launching", "at_utc": utc_now(),
                                     "new_manifest_sha256": new_sha, "old_manifest_sha256": old_sha,
                                     "old_launch_sha256": old_launch_sha, "old_pid": old_pid,
                                     "command": command})
@@ -547,7 +531,7 @@ def launch_successor(new_path: Path, new_sha: str, old_sha: str, old_pid: int,
         child = subprocess.Popen(command, cwd=common.ROOT, stdin=devnull, stdout=log,
                                  stderr=subprocess.STDOUT, start_new_session=True)
     write_json_atomic(receipt_path, {"pid": child.pid, "identity": process_identity(child.pid),
-                                     "command": command, "launched_at": common.utc_now(),
+                                     "command": command, "launched_at": utc_now(),
                                      "queue_manifest_sha256": new_sha,
                                      "predecessor_manifest_sha256": old_sha,
                                      "predecessor_launch_sha256": old_launch_sha,
@@ -586,9 +570,14 @@ def check_still_running_017(old: dict[str, Any], old_path: Path, old_sha: str, o
         raise RuntimeError("Old coordinator is no longer running 017")
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
 
     Returns
     -------
@@ -605,15 +594,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--new-manifest-sha256", required=True)
     parser.add_argument("--poll-seconds", type=float, default=10.0)
     parser.add_argument("--stop-timeout-seconds", type=float, default=90.0)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.poll_seconds <= 0 or args.stop_timeout_seconds <= 0:
         parser.error("poll and stop timeout must be positive")
     return args
 
 
-def main() -> None:
-    """Verify the pinned handoff, wait for 015, stop the old 017 and launch the successor."""
-    args = parse_args()
+def main(argv: list[str] | None = None) -> None:
+    """
+    Verify the pinned handoff, wait for 015, stop the old 017 and launch the successor.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     old_path = root_path(args.old_manifest)
     new_path = root_path(args.new_manifest)
     if old_path.resolve() == new_path.resolve() or old_path.parent.resolve() == new_path.parent.resolve():

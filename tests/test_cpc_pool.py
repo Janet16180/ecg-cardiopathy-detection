@@ -9,6 +9,7 @@ import pytest
 from conftest import write_synthetic_cpc_pool
 
 from ecg_experiment import cpc_pool
+from ecg_experiment.files import sha256_file
 
 
 def _write_budgets(pool, directory):
@@ -34,6 +35,9 @@ def prepared(tmp_path):
     signals = np.load(directory / "signals.npy")
     signals[1::2, :, ::25] += 3
     np.save(directory / "signals.npy", signals)
+    completion = json.loads((directory / "complete.json").read_text())
+    completion["signals_sha256"] = sha256_file(directory / "signals.npy")
+    (directory / "complete.json").write_text(json.dumps(completion))
     pool = cpc_pool.Pool(directory)
     manifests = _write_budgets(pool, tmp_path / "manifests")
     hashes = cpc_pool.make_source_hashes(pool, manifests)

@@ -30,7 +30,6 @@ def test_sampled_negatives_are_distant_same_half_and_reproducible():
 
 
 def test_both_losses_match_reference_on_exact_same_sampled_scores():
-    torch.set_num_threads(1)
     generator = torch.Generator().manual_seed(17)
     tokens = torch.randn(2, 2, 32, 256)
     contexts = torch.randn_like(tokens)
@@ -72,7 +71,6 @@ def test_zero_score_oracle_distinguishes_negative_sum_from_mean():
 
 
 def test_same_initialization_finite_gradients_and_collapse_metrics():
-    torch.set_num_threads(1)
     signal = torch.randn(2, 12, 2500)
     states = []
     for variant in ("sampled_info", "sgns"):

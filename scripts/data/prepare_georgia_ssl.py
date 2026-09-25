@@ -198,14 +198,38 @@ def _metadata(stems: list[str], accepted: list[dict[str, str]], excluded: list[d
     }
 
 
-def main() -> None:
-    """Download, audit and write the Georgia SSL manifest and metadata."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--raw-dir", type=Path, default=ROOT / "data/raw/challenge-2020/1.0.2")
     parser.add_argument("--ptbxl-dir", type=Path, default=ROOT / "data/raw/ptb-xl/1.0.3")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "data/processed/georgia_ssl_g1")
     parser.add_argument("--workers", type=int, default=12)
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Download, audit and write the Georgia SSL manifest and metadata.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     args.raw_dir.mkdir(parents=True, exist_ok=True)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     checksum_path, checksums = fetch_checksums(args.raw_dir)

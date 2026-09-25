@@ -455,9 +455,14 @@ def check_adaptation_budget(metadata: dict[str, Any], history: list[dict[str, An
         raise ValueError("Adaptation did not finish its fixed epoch budget")
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     Parse and validate command-line arguments.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
 
     Returns
     -------
@@ -488,7 +493,7 @@ def parse_args() -> argparse.Namespace:
                         help="Optional training-only ECG-FM continued-SSL checkpoint")
     parser.add_argument("--resume", action="store_true",
                         help="Resume from the last complete fine-tuning epoch")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if min(args.epochs, args.patience, args.batch_size, args.threads) < 1:
         parser.error("epochs, patience, batch-size, and threads must be positive")
     require_cuda(args.device)
@@ -564,7 +569,7 @@ def run_name(args: argparse.Namespace, adaptation_meta: dict[str, Any] | None) -
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed arguments.
+        Parsed command-line arguments.
     adaptation_meta : dict[str, Any] | None
         Adaptation metadata, if an adapted backbone is used.
 
@@ -588,7 +593,7 @@ def prepare_directory(args: argparse.Namespace, directory: Path) -> None:
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed arguments.
+        Parsed command-line arguments.
     directory : Path
         Run directory.
 
@@ -661,7 +666,7 @@ def fit(args: argparse.Namespace, model: nn.Module, optimizer: torch.optim.Optim
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed arguments.
+        Parsed command-line arguments.
     model : nn.Module
         Classifier to train in place.
     optimizer : torch.optim.Optimizer
@@ -721,9 +726,16 @@ def fit(args: argparse.Namespace, model: nn.Module, optimizer: torch.optim.Optim
     return best_state, best_epoch, best_auc, started
 
 
-def main() -> None:
-    """Fine-tune a pretrained backbone, select by development AUROC, and evaluate once."""
-    args = parse_args()
+def main(argv: list[str] | None = None) -> None:
+    """
+    Fine-tune a pretrained backbone, select by development AUROC, and evaluate once.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     torch.set_num_threads(args.threads)
     seed_everything(args.seed)
     rows, manifest_hashes = manifest_data(args.manifest_dir)

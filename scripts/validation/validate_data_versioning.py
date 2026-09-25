@@ -11,12 +11,36 @@ from ecg_experiment.data_validation import validate_datasets
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def main() -> None:
-    """Validate the configured datasets and write the JSON report."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=Path("configs/datasets.json"))
     parser.add_argument("--report", type=Path, default=Path("reports/data-validation.json"))
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Validate the configured datasets and write the JSON report.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     # Relative paths are resolved against the repository root, not the working directory.
     report = validate_datasets(ROOT, ROOT / args.config)
     destination = ROOT / args.report

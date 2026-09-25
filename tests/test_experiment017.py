@@ -32,11 +32,6 @@ from scripts.experiments.run_cpc_morphology017 import (
 )
 
 
-@pytest.fixture(autouse=True)
-def single_thread():
-    torch.set_num_threads(1)
-
-
 def test_hand_distances_and_alignment():
     halves = torch.arange(2 * LEADS * 1250, dtype=torch.float32).reshape(2, LEADS, 1250) / 1000
     bank = torch.arange(TEMPLATES * LEADS * SUPPORT, dtype=torch.float32)

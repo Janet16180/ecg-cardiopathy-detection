@@ -2,12 +2,25 @@
 
 import csv
 import json
+from collections.abc import Iterator
 from pathlib import Path
 
 import numpy as np
 import pytest
+import torch
+
+from ecg_experiment.files import sha256_file
 
 POOL_FIELDS = ("ecg_id", "patient_id", "source", "split", "target")
+
+
+@pytest.fixture(autouse=True, scope="session")
+def single_torch_thread() -> Iterator[None]:
+    """Run every test with one torch thread, restoring the previous count afterwards."""
+    previous = torch.get_num_threads()
+    torch.set_num_threads(1)
+    yield
+    torch.set_num_threads(previous)
 
 
 def write_synthetic_cpc_pool(directory: Path, records: int = 600, seed: int = 0) -> Path:
@@ -41,7 +54,10 @@ def write_synthetic_cpc_pool(directory: Path, records: int = 600, seed: int = 0)
         for index, (ecg_id, split) in enumerate(zip(ecg_ids, splits, strict=True)):
             writer.writerow({"ecg_id": str(ecg_id), "patient_id": f"p{index // 2}",
                              "source": "ptbxl", "split": split, "target": index % 2})
-    (directory / "complete.json").write_text(json.dumps({"records": records}))
+    completion = {"records": records, "signals_sha256": sha256_file(directory / "signals.npy"),
+                  "rows_sha256": sha256_file(directory / "rows.csv"),
+                  "ecg_ids_sha256": sha256_file(directory / "ecg_ids.npy"), "ptb_manifest_sha256": {}}
+    (directory / "complete.json").write_text(json.dumps(completion))
     return directory
 
 

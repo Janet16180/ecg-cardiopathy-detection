@@ -70,11 +70,35 @@ def save_table(destination: Path, name: str, required: set[str]) -> None:
     print(f"{destination}: {len(payload):,} bytes; sha256={digest}")
 
 
-def main() -> None:
-    """Download and check both annotation tables."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=ROOT / "data/raw/ptb-xl/1.0.3")
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Download and check both annotation tables.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     for name, required in FILES.items():
         save_table(args.output_dir / name, name, required)

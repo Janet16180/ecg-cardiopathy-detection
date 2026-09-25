@@ -9,19 +9,18 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
+from ecg_experiment.receipts import artifact_hashes, verified_completion
 from ecg_experiment.reproducibility import cpu_state
 from scripts.experiments.run_xecg_finetune import (
     COMPLETION_FILES,
     budgets,
     check_cache_coverage,
-    completion_hashes,
     layerwise_parameter_groups,
     load_resume,
     make_scheduler,
     resume_for_budget,
     save_resume,
     train_epoch,
-    valid_completion,
 )
 
 
@@ -164,17 +163,17 @@ def test_train_epoch_counts_one_update_per_effective_batch():
 
 def test_completion_is_verified_against_fingerprint_and_artifacts(tmp_path):
     fingerprint = {"budget": "full"}
-    assert valid_completion(tmp_path, fingerprint) is None
+    assert verified_completion(tmp_path, fingerprint, COMPLETION_FILES) is None
     for name in COMPLETION_FILES:
         (tmp_path / name).write_text(name)
-    receipt = {"fingerprint": fingerprint, "sha256": completion_hashes(tmp_path)}
+    receipt = {"fingerprint": fingerprint, "sha256": artifact_hashes(tmp_path, COMPLETION_FILES)}
     (tmp_path / "complete.json").write_text(json.dumps(receipt))
-    assert valid_completion(tmp_path, fingerprint) == receipt
+    assert verified_completion(tmp_path, fingerprint, COMPLETION_FILES) == receipt
     with pytest.raises(ValueError, match="differs from requested inputs"):
-        valid_completion(tmp_path, {"budget": "ten_percent"})
+        verified_completion(tmp_path, {"budget": "ten_percent"}, COMPLETION_FILES)
     (tmp_path / "metrics.json").write_text("changed")
     with pytest.raises(ValueError, match="checksum mismatch"):
-        valid_completion(tmp_path, fingerprint)
+        verified_completion(tmp_path, fingerprint, COMPLETION_FILES)
 
 
 def test_cache_coverage_requires_every_selected_record():

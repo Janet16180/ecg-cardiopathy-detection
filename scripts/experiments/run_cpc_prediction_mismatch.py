@@ -38,20 +38,26 @@ from ecg_experiment.cpc_prediction_mismatch import (
     load_bootstrap,
     supervised_indices,
 )
-from ecg_experiment.evaluation import evaluate_predictions, paired_comparison, partition_validation
-from ecg_experiment.files import sha256_file, sha256_json, write_json_atomic
+from ecg_experiment.evaluation import (
+    CALIBRATION_RECORDS,
+    DEVELOPMENT_RECORDS,
+    FULL_LABELS,
+    LIMITED_LABELS,
+    PROBE_C_GRID,
+    TEST_RECORDS,
+    VALIDATION_RECORDS,
+    evaluate_predictions,
+    paired_comparison,
+    partition_validation,
+)
+from ecg_experiment.files import sha256_file, sha256_json, write_json_atomic, write_npz_atomic
 from ecg_experiment.gpu import gpu_lock
 from ecg_experiment.training import parameter_count
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT = ROOT / "outputs/experiment009_cpc_prediction_mismatch"
 DEFAULT_BOOTSTRAP = ROOT / "outputs/experiment004_cpc_40k/cpc_ssl"
-C_VALUES = (0.001, 0.01, 0.1, 1.0, 10.0, 100.0)
-BUDGETS = {"full": ("1", 15360), "ten_percent": ("0.1", 1518)}
-VALIDATION_RECORDS = 1870
-TEST_RECORDS = 1896
-DEVELOPMENT_RECORDS = 1306
-CALIBRATION_RECORDS = 564
+BUDGETS = {"full": ("1", FULL_LABELS), "ten_percent": ("0.1", LIMITED_LABELS)}
 EXTRACTION_RECORDS = 19126
 SIGNAL_SAMPLES = 2500
 HALF_TOKENS = 79
@@ -708,23 +714,6 @@ def load_features(args: argparse.Namespace, identity: dict[str, Any],
     return features, metadata
 
 
-def atomic_npz(path: Path, **arrays: np.ndarray) -> None:
-    """
-    Save arrays to an ``.npz`` file through a temporary file.
-
-    Parameters
-    ----------
-    path : Path
-        Destination file.
-    **arrays : np.ndarray
-        Arrays keyed by name.
-    """
-    temporary = path.with_name(path.name + ".tmp")
-    with temporary.open("wb") as handle:
-        np.savez(handle, **arrays)
-    os.replace(temporary, path)
-
-
 def linear_logits(features: np.ndarray, saved: Any) -> np.ndarray:
     """
     Apply a saved standardized linear probe.
@@ -782,10 +771,11 @@ def load_candidate(candidate_path: Path, marker_path: Path, fingerprint: dict[st
     if (choice["fingerprint"] != fingerprint or choice["C"] != c
             or choice["sha256"] != sha256_file(candidate_path)):
         raise ValueError("Classifier candidate identity/checksum mismatch")
-    saved = np.load(candidate_path)
-    if not np.array_equal(saved["mean"], scaler.mean_) or not np.array_equal(saved["scale"], scaler.scale_):
-        raise ValueError("Candidate standardization differs from training-only statistics")
-    auc = float(roc_auc_score(dev_y, linear_logits(dev_features, saved)))
+    with np.load(candidate_path) as saved:
+        if (not np.array_equal(saved["mean"], scaler.mean_)
+                or not np.array_equal(saved["scale"], scaler.scale_)):
+            raise ValueError("Candidate standardization differs from training-only statistics")
+        auc = float(roc_auc_score(dev_y, linear_logits(dev_features, saved)))
     if auc != choice["development_auroc"]:
         raise ValueError("Candidate development score changed")
     return choice, auc
@@ -829,7 +819,7 @@ def fit_candidate(candidate_path: Path, marker_path: Path, fingerprint: dict[str
     parameters = {"mean": scaler.mean_, "scale": scaler.scale_, "coefficient": estimator.coef_,
                   "intercept": estimator.intercept_}
     auc = float(roc_auc_score(dev_y, linear_logits(dev_features, parameters)))
-    atomic_npz(candidate_path, **parameters)
+    write_npz_atomic(candidate_path, **parameters)
     choice = {"fingerprint": fingerprint, "C": c, "development_auroc": auc,
               "iterations": estimator.n_iter_.tolist(), "seconds": time.monotonic() - started,
               "convergence_warnings": [str(message.message) for message in messages],
@@ -840,7 +830,7 @@ def fit_candidate(candidate_path: Path, marker_path: Path, fingerprint: dict[str
 
 def fit_probe(features: np.ndarray, feature_rows: list[dict[str, str]], rows: dict[str, Any], directory: Path,
               fingerprint: dict[str, Any], resume: bool = False,
-              c_values: Sequence[float] = C_VALUES) -> tuple[dict[str, np.ndarray], dict[str, Any]]:
+              c_values: Sequence[float] = PROBE_C_GRID) -> tuple[dict[str, np.ndarray], dict[str, Any]]:
     """
     Select a regularization value on development patients; candidates are resumable.
 
@@ -905,7 +895,7 @@ def fit_probe(features: np.ndarray, feature_rows: list[dict[str, str]], rows: di
             best_auc, best_path, best_c = auc, candidate_path, c
     with np.load(best_path) as selected:
         arrays = {key: selected[key].copy() for key in selected.files}
-    atomic_npz(directory / "linear_model.npz", **arrays)
+    write_npz_atomic(directory / "linear_model.npz", **arrays)
     selection = {"C": best_c, "best_development_auroc": best_auc, "candidates": choices,
                  "tie_rule": "First C in ascending grid wins ties", "selection_split": "development only"}
     write_json_atomic(directory / "selection.json", selection)
@@ -946,7 +936,7 @@ def train_probe(args: argparse.Namespace, branches: np.ndarray, feature_rows: li
     """
     directory = args.output_dir / f"{arm}_{budget}_seed42"
     fingerprint = {"inputs": identity, "features_sha256": feature_metadata["sha256"],
-                   "arm": arm, "budget": budget, "seed": SEED, "C_values": list(C_VALUES),
+                   "arm": arm, "budget": budget, "seed": SEED, "C_values": list(PROBE_C_GRID),
                    "solver": "lbfgs", "max_iter": MAX_ITER,
                    "scaler": "StandardScaler fit on labeled training rows only",
                    "bootstrap": args.bootstrap, "sklearn_version": sklearn.__version__,
@@ -1047,13 +1037,13 @@ def report(args: argparse.Namespace) -> None:
                               for arm in ARMS for budget in BUDGETS}})
 
 
-def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     Parse and validate the command line.
 
     Parameters
     ----------
-    argv : Sequence[str] | None
+    argv : list[str] | None
         Arguments, or ``None`` for ``sys.argv``.
 
     Returns
@@ -1121,13 +1111,13 @@ def run_extraction(args: argparse.Namespace, pool: cpc_pool.Pool, model: CPCPret
         torch.cuda.empty_cache()
 
 
-def main(argv: Sequence[str] | None = None) -> None:
+def main(argv: list[str] | None = None) -> None:
     """
     Run the requested Experiment 009 stages under a per-output runner lock.
 
     Parameters
     ----------
-    argv : Sequence[str] | None
+    argv : list[str] | None
         Arguments, or ``None`` for ``sys.argv``.
     """
     args = parse_args(argv)

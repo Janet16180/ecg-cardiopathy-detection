@@ -291,17 +291,42 @@ def code15(limit: int | None) -> None:
     save_json(receipt_path, receipt)
 
 
-def main() -> None:
-    """Parse arguments and download the requested dataset."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("dataset", choices=(*COHORTS, "code_15pct"))
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--limit", type=int,
                         help="First N records/archives for a pilot; CODE permits zero for metadata only")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     minimum_limit = int(args.dataset != "code_15pct")
     if not 1 <= args.workers <= MAX_WORKERS or (args.limit is not None and args.limit < minimum_limit):
         parser.error("workers must be 1–16; limit must be nonnegative for CODE or positive otherwise")
+    return args
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Parse arguments and download the requested dataset.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     if args.dataset == "code_15pct":
         code15(args.limit)
     else:

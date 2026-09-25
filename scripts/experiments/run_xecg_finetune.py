@@ -13,7 +13,7 @@ import hashlib
 import json
 import math
 import time
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
@@ -23,7 +23,16 @@ from sklearn.metrics import roc_auc_score
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from ecg_experiment.evaluation import evaluate_predictions, partition_validation
+from ecg_experiment.evaluation import (
+    CALIBRATION_RECORDS,
+    DEVELOPMENT_RECORDS,
+    FULL_LABELS,
+    LIMITED_LABELS,
+    TEST_RECORDS,
+    VALIDATION_RECORDS,
+    evaluate_predictions,
+    partition_validation,
+)
 from ecg_experiment.files import read_csv, sha256_file, write_json_atomic, write_torch_atomic
 from ecg_experiment.gpu import gpu_lock
 from ecg_experiment.provenance import git_head
@@ -37,11 +46,7 @@ DEFAULT_RAW_DIR = ROOT / "data/raw/ptb-xl/1.0.3"
 DEFAULT_CHECKPOINT_DIR = ROOT / "third_party/checkpoints/xecg"
 DEFAULT_CACHE_DIR = ROOT / "data/processed/ptbxl/xecg_views"
 DEFAULT_OUTPUT_DIR = ROOT / "outputs/experiment007_xecg"
-EXPECTED_COUNTS = {"full": 15360, "ten_percent": 1518}
-VALIDATION_RECORDS = 1870
-TEST_RECORDS = 1896
-DEVELOPMENT_RECORDS = 1306
-CALIBRATION_RECORDS = 564
+EXPECTED_COUNTS = {"full": FULL_LABELS, "ten_percent": LIMITED_LABELS}
 CACHE_RECORDS = 19126
 SPLITS = ("labeled_train", "validation", "test")
 XECG_VIEW_SHAPE = (1000, 12)
@@ -585,47 +590,6 @@ def fit(model: nn.Module, optimizer: torch.optim.Optimizer, scheduler: torch.opt
             "elapsed_seconds": time.monotonic() - started}
 
 
-def completion_hashes(output_dir: Path) -> dict[str, str]:
-    """
-    Hash the artifacts that a completed fine-tuning run must keep unchanged.
-
-    Parameters
-    ----------
-    output_dir : Path
-        Completed run directory.
-
-    Returns
-    -------
-    dict[str, str]
-        SHA-256 digest keyed by artifact name.
-    """
-    return artifact_hashes(output_dir, COMPLETION_FILES)
-
-
-def valid_completion(output_dir: Path, fingerprint: dict[str, Any]) -> dict[str, Any] | None:
-    """
-    Return the verified completion receipt of a fine-tuning run, if any.
-
-    Parameters
-    ----------
-    output_dir : Path
-        Run directory.
-    fingerprint : dict[str, Any]
-        Inputs the completed run must have used.
-
-    Returns
-    -------
-    dict[str, Any] | None
-        The receipt, or None when the run has not completed.
-
-    Raises
-    ------
-    ValueError
-        If the completed run used other inputs or an artifact changed.
-    """
-    return verified_completion(output_dir, fingerprint, COMPLETION_FILES)
-
-
 def checkpoint_fingerprint(checkpoint_dir: Path) -> dict[str, str]:
     """
     Hash every component of the official xECG release.
@@ -792,7 +756,7 @@ def build_classifier(args: argparse.Namespace, train_records: int) -> tuple[
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed runner arguments.
+        Parsed command-line arguments.
     train_records : int
         Training records, which set optimizer updates per epoch.
 
@@ -849,7 +813,7 @@ def run_profile(args: argparse.Namespace, rows: dict[str, Rows], development: Ro
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed runner arguments.
+        Parsed command-line arguments.
     rows : dict[str, list[dict[str, str]]]
         Split rows of the first selected budget.
     development : list[dict[str, str]]
@@ -911,7 +875,7 @@ def budget_fingerprint(args: argparse.Namespace, budget: str, hashes: dict[str, 
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed runner arguments.
+        Parsed command-line arguments.
     budget : str
         Label budget.
     hashes : dict[str, str]
@@ -1000,7 +964,7 @@ def train_budget(args: argparse.Namespace, budget: str, rows: dict[str, Rows], d
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed runner arguments.
+        Parsed command-line arguments.
     budget : str
         Label budget.
     rows : dict[str, list[dict[str, str]]]
@@ -1027,7 +991,7 @@ def train_budget(args: argparse.Namespace, budget: str, rows: dict[str, Rows], d
     """
     directory = args.output_dir / f"xecg_{budget}_seed{args.seed}"
     fingerprint = budget_fingerprint(args, budget, hashes, checkpoint_hashes, cache_hashes)
-    if valid_completion(directory, fingerprint):
+    if verified_completion(directory, fingerprint, COMPLETION_FILES):
         print(json.dumps({"stage": "xecg_reuse", "budget": budget, "directory": str(directory)}), flush=True)
         return
     resume_this_budget = resume_for_budget(directory, args.resume)
@@ -1066,18 +1030,18 @@ def train_budget(args: argparse.Namespace, budget: str, rows: dict[str, Rows], d
                    "peak_cuda_memory_bytes": peak_gpu_bytes(args.device)})
     write_json_atomic(directory / "config.json", config)
     write_json_atomic(directory / "complete.json", {"fingerprint": fingerprint,
-                                                    "sha256": completion_hashes(directory)})
+                                                    "sha256": artifact_hashes(directory, COMPLETION_FILES)})
     (directory / "resume.pt").unlink(missing_ok=True)
 
 
-def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     Parse and validate runner arguments.
 
     Parameters
     ----------
-    argv : Sequence[str] | None
-        Command-line arguments; None reads ``sys.argv``.
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
 
     Returns
     -------
@@ -1143,7 +1107,7 @@ def run_gpu_stages(args: argparse.Namespace, selected: tuple[str, ...],
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed runner arguments.
+        Parsed command-line arguments.
     selected : tuple[str, ...]
         Label budgets in run order.
     selected_manifests : dict[str, tuple]
@@ -1167,14 +1131,14 @@ def run_gpu_stages(args: argparse.Namespace, selected: tuple[str, ...],
                              checkpoint_hashes, cache_hashes)
 
 
-def main(argv: Sequence[str] | None = None) -> None:
+def main(argv: list[str] | None = None) -> None:
     """
     Check inputs, prepare the cache, and profile or fine-tune the selected budgets.
 
     Parameters
     ----------
-    argv : Sequence[str] | None
-        Command-line arguments; None reads ``sys.argv``.
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
     """
     args = parse_args(argv)
     if args.stage in TRAINING_STAGES:

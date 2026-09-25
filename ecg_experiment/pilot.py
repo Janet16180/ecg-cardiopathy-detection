@@ -24,13 +24,20 @@ from torch import nn
 
 from .cpc import LEADS, SIGNAL_SAMPLES
 from .cpc_pool import Pool
-from .evaluation import TARGET_SENSITIVITY, partition_validation, select_threshold
+from .evaluation import (
+    CALIBRATION_RECORDS,
+    DEVELOPMENT_RECORDS,
+    FULL_LABELS,
+    LIMITED_LABELS,
+    TARGET_SENSITIVITY,
+    TEST_RECORDS,
+    partition_validation,
+    select_threshold,
+)
 from .files import read_csv, write_json_atomic, write_torch_atomic
 from .reproducibility import capture_rng_state, cpu_state, restore_rng_state
 
-FULL_LABELS = 15360
-LIMITED_LABELS = 1518
-PARTITION_COUNTS = (FULL_LABELS, LIMITED_LABELS, 1306, 564, 1896)
+PARTITION_COUNTS = (FULL_LABELS, LIMITED_LABELS, DEVELOPMENT_RECORDS, CALIBRATION_RECORDS, TEST_RECORDS)
 BUDGETS = ("1", "0.1")
 BATCH = 128
 SAVE_EVERY = 20
@@ -38,6 +45,10 @@ SAVE_EVERY = 20
 INTERRUPTED_EXIT = 75
 FOLDS = 5
 LOGIT_CLIP = 80
+# Bounded waveform cache limits of the Experiment 015 and 017 runners.
+DEFAULT_MAX_CACHE_BYTES = 2_400_000_000
+MIN_CACHE_BYTES = 2_100_000_000
+DEFAULT_RESERVE_BYTES = 1_000_000_000
 
 _STOP_REQUESTED = threading.Event()
 

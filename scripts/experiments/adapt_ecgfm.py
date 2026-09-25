@@ -306,28 +306,34 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def validate_args(parser: argparse.ArgumentParser, args: argparse.Namespace) -> None:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
-    Reject invalid sizes and rates, and CUDA requests without CUDA.
+    Parse the command line, rejecting invalid sizes and rates and CUDA requests without CUDA.
 
     Parameters
     ----------
-    parser : argparse.ArgumentParser
-        Parser used to report argument errors.
-    args : argparse.Namespace
-        Parsed arguments.
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Validated arguments.
 
     Raises
     ------
     RuntimeError
         If CUDA is requested but unavailable.
     """
+    parser = build_parser()
+    args = parser.parse_args(argv)
     if min(args.epochs, args.batch_size, args.threads) < 1 or args.batch_size < 2 or args.workers < 0:
         parser.error("Epochs/threads must be positive; batch >=2 and workers >=0")
     rates = (args.learning_rate, args.temperature)
     if not all(np.isfinite(rate) and rate > 0 for rate in rates):
         parser.error("Learning rate and temperature must be finite and positive")
     require_cuda(args.device)
+    return args
 
 
 def adaptation_config(args: argparse.Namespace, ptbxl_rows: Rows, extra_rows: Rows, hashes: dict[str, str],
@@ -338,7 +344,7 @@ def adaptation_config(args: argparse.Namespace, ptbxl_rows: Rows, extra_rows: Ro
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed arguments.
+        Parsed command-line arguments.
     ptbxl_rows : list[dict[str, str]]
         PTB-XL SSL rows.
     extra_rows : list[dict[str, str]]
@@ -403,7 +409,7 @@ def prepare_output(args: argparse.Namespace, config: dict[str, Any]) -> None:
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed arguments.
+        Parsed command-line arguments.
     config : dict[str, Any]
         Configuration of this run.
 
@@ -474,7 +480,7 @@ def load_resume(path: Path, model: nn.Module, optimizer: torch.optim.Optimizer, 
     generator : torch.Generator
         Loader generator to restore in place.
     args : argparse.Namespace
-        Parsed arguments.
+        Parsed command-line arguments.
 
     Returns
     -------
@@ -515,7 +521,7 @@ def train_epoch(model: nn.Module, optimizer: torch.optim.Optimizer, loader: Data
     loader : DataLoader
         Shuffled training loader.
     args : argparse.Namespace
-        Parsed arguments.
+        Parsed command-line arguments.
     epoch : int
         Zero-based epoch.
     progress : dict[str, int] | None
@@ -579,7 +585,7 @@ def adapt(args: argparse.Namespace, model: nn.Module, optimizer: torch.optim.Opt
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed arguments.
+        Parsed command-line arguments.
     model : nn.Module
         Backbone to adapt in place.
     optimizer : torch.optim.Optimizer
@@ -648,7 +654,7 @@ def save_adapted(args: argparse.Namespace, model: nn.Module, config: dict[str, A
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed arguments.
+        Parsed command-line arguments.
     model : nn.Module
         Adapted backbone.
     config : dict[str, Any]
@@ -687,11 +693,16 @@ def save_adapted(args: argparse.Namespace, model: nn.Module, config: dict[str, A
     return path
 
 
-def main() -> None:
-    """Adapt ECG-FM on training-only ECGs and save the final backbone."""
-    parser = build_parser()
-    args = parser.parse_args()
-    validate_args(parser, args)
+def main(argv: list[str] | None = None) -> None:
+    """
+    Adapt ECG-FM on training-only ECGs and save the final backbone.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     torch.set_num_threads(args.threads)
     seed_everything(args.seed)
     ptbxl_rows, hashes = training_rows(args.manifest_dir, args.raw_dir)
@@ -700,7 +711,7 @@ def main() -> None:
     try:
         steps_per_epoch, drop_last = update_budget(len(rows), args.batch_size, args.epochs, args.max_updates)
     except ValueError as exc:
-        parser.error(str(exc))
+        build_parser().error(str(exc))
     original_meta = json.loads(args.checkpoint_metadata.read_text())["checkpoint"]
     if original_meta["sha256"] != sha256_file(args.checkpoint):
         raise ValueError("Official checkpoint differs from recorded extraction metadata")

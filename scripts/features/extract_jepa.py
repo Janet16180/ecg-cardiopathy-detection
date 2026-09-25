@@ -154,7 +154,7 @@ def extract(args: argparse.Namespace) -> dict[str, Any]:
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed arguments.
+        Parsed command-line arguments.
 
     Returns
     -------
@@ -217,8 +217,20 @@ def extract(args: argparse.Namespace) -> dict[str, Any]:
     return metadata
 
 
-def main() -> None:
-    """Parse arguments, extract features, and print their metadata."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest-dir", type=Path, required=True)
     parser.add_argument("--raw-dir", type=Path, required=True)
@@ -228,9 +240,22 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=4)
     parser.add_argument("--threads", type=int, default=1)
     parser.add_argument("--limit", type=int, help="First N records for a smoke test")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.batch_size < 1 or args.threads < 1 or (args.limit is not None and args.limit < 1):
         parser.error("batch-size, threads, and limit must be positive")
+    return args
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Parse arguments, extract features, and print their metadata.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     print(json.dumps(extract(args), indent=2))
 
 

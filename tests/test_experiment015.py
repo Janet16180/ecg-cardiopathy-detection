@@ -8,11 +8,6 @@ from ecg_experiment.pilot import Progress, fixed_batches, load_state, save_state
 from scripts.experiments.run_jepa_cpc_distillation import INITIAL_BEST, SEED, Student, masked_loss
 
 
-@pytest.fixture(autouse=True)
-def single_thread():
-    torch.set_num_threads(1)
-
-
 def test_label_mask_teacher_stop_gradient_and_control_graph():
     logits = torch.tensor([0.2, -0.4, 1.1], requires_grad=True)
     target = torch.tensor([1.0, 1.0, 0.0])

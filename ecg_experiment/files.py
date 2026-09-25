@@ -142,7 +142,24 @@ def write_npz_atomic(path: str | Path, **arrays: Any) -> None:
     os.replace(temporary, path)
 
 
-def read_csv(path: str | Path) -> list[dict[str, str]]:
+def read_json(path: str | Path) -> Any:
+    """
+    Read a UTF-8 JSON file.
+
+    Parameters
+    ----------
+    path : str | Path
+        JSON file.
+
+    Returns
+    -------
+    Any
+        Parsed value.
+    """
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def read_csv(path: str | Path, required: Iterable[str] = ()) -> list[dict[str, str]]:
     """
     Read a CSV file with a header row.
 
@@ -150,18 +167,29 @@ def read_csv(path: str | Path) -> list[dict[str, str]]:
     ----------
     path : str | Path
         CSV file.
+    required : Iterable[str]
+        Columns the header must include.
 
     Returns
     -------
     list[dict[str, str]]
         One dictionary per row, keyed by column name.
+
+    Raises
+    ------
+    ValueError
+        If a required column is missing.
     """
     with Path(path).open(newline="", encoding="utf-8") as handle:
-        return list(csv.DictReader(handle))
+        reader = csv.DictReader(handle)
+        missing = set(required) - set(reader.fieldnames or [])
+        if missing:
+            raise ValueError(f"Missing columns in {path}: {sorted(missing)}")
+        return list(reader)
 
 
 def write_csv_atomic(path: str | Path, rows: Iterable[Mapping[str, Any]],
-                     fieldnames: Iterable[str]) -> None:
+                     fieldnames: Iterable[str], *, ignore_extra: bool = False) -> None:
     """
     Write rows as CSV through a temporary file and rename it into place.
 
@@ -173,11 +201,14 @@ def write_csv_atomic(path: str | Path, rows: Iterable[Mapping[str, Any]],
         Rows to write.
     fieldnames : Iterable[str]
         Column order.
+    ignore_extra : bool
+        Drop row keys outside ``fieldnames``; by default they raise ``ValueError``.
     """
     path = Path(path)
     temporary = _temporary_path(path)
     with temporary.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(fieldnames))
+        writer = csv.DictWriter(handle, fieldnames=list(fieldnames),
+                                extrasaction="ignore" if ignore_extra else "raise")
         writer.writeheader()
         writer.writerows(rows)
     os.replace(temporary, path)

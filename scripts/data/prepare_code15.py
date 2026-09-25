@@ -14,7 +14,6 @@ from collections import Counter
 from collections.abc import Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -31,7 +30,8 @@ from ecg_experiment.code15 import (
     verified_files,
     verify_file,
 )
-from ecg_experiment.files import sha256_file, write_csv_atomic
+from ecg_experiment.files import sha256_file, write_csv_atomic, write_json_atomic
+from ecg_experiment.provenance import utc_now
 from ecg_experiment.public_sources import signal_sha256
 from ecg_experiment.staging import published_directory
 
@@ -153,7 +153,7 @@ def _prepare_into(parts: list[int], output_dir: Path, limit: int | None,
                       verified["exams.csv"]["checksum"], raw_dir)
     result["output_sha256"] = {**{name: sha256_file(output_dir / name) for name in TABLES},
                                **prepared_hashes}
-    (output_dir / "metadata.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
+    write_json_atomic(output_dir / "metadata.json", result, sort_keys=True, allow_nan=True)
     return result
 
 
@@ -267,7 +267,7 @@ def _summary(parts: list[int], limit: int | None, materialize_native: bool, stat
              checked_archives: list[dict[str, Any]], csv_md5: str, raw_dir: Path) -> dict[str, Any]:
     """Describe the preparation, its inputs and its unresolved caveats."""
     return {
-        "generated_at_utc": datetime.now(UTC).isoformat(),
+        "generated_at_utc": utc_now(),
         "source_url": SOURCE_URL, "csv_records": len(state.metadata),
         "csv_official_md5": csv_md5,
         "csv_local_sha256": sha256_file(raw_dir / "exams.csv"),
@@ -290,8 +290,20 @@ def _summary(parts: list[int], limit: int | None, materialize_native: bool, stat
     }
 
 
-def main() -> None:
-    """Prepare the requested CODE-15% archives and print the metadata."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--parts", type=int, nargs="+", default=[0],
                         help="Verified archive numbers 0..17; default: pilot archive 0")
@@ -299,7 +311,19 @@ def main() -> None:
     parser.add_argument("--materialize-native", action="store_true",
                         help="Copy accepted native float32 traces to a separate HDF5 without scaling")
     parser.add_argument("--output-dir", type=Path, required=True)
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Prepare the requested CODE-15% archives and print the metadata.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     print(json.dumps(prepare(args.parts, args.output_dir, args.limit,
                              args.materialize_native), indent=2), flush=True)
 

@@ -21,7 +21,6 @@ from ecg_experiment.reproducibility import seed_everything
 
 
 def test_future_perturbation_preserves_past_tokens_and_contexts():
-    torch.set_num_threads(1)
     seed_everything(42)
     model = CPCEncoder().eval()
     signal = torch.randn(1, 12, 2500)
@@ -38,7 +37,6 @@ def test_future_perturbation_preserves_past_tokens_and_contexts():
 
 
 def test_half_context_reset_and_exact_token_shape():
-    torch.set_num_threads(1)
     model = CPCEncoder().eval()
     original = torch.randn(2, 12, 2500)
     changed = original.clone()
@@ -105,7 +103,6 @@ def test_cmsc_ignores_same_patient_off_diagonal():
 
 
 def test_cpc_and_hybrid_have_finite_nonzero_encoder_and_head_gradients():
-    torch.set_num_threads(1)
     signal = torch.randn(2, 12, 2500)
     for hybrid in (False, True):
         seed_everything(42)

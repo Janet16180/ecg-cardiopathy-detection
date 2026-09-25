@@ -149,12 +149,36 @@ def report(output_dir: Path, bootstrap: int = DEFAULT_BOOTSTRAP,
     return comparisons
 
 
-def main() -> None:
-    """Write the Experiment 008 report from the command line."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=ROOT / "outputs/experiment008_vision_ssl")
     parser.add_argument("--bootstrap", type=int, default=DEFAULT_BOOTSTRAP)
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Write the Experiment 008 report from the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     report(args.output_dir, args.bootstrap)
 
 

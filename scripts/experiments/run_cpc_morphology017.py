@@ -20,14 +20,16 @@ from ecg_experiment.bounded_waveform_cache import BoundedWaveformCache
 from ecg_experiment.cpc import CPCClassifier
 from ecg_experiment.cpc_morphology import SUPPORT, TEMPLATES, MorphologyCPCClassifier
 from ecg_experiment.cpc_pool import Pool
+from ecg_experiment.evaluation import FULL_LABELS, LIMITED_LABELS
 from ecg_experiment.files import sha256_file, sha256_json, write_json_atomic, write_torch_atomic
 from ecg_experiment.gpu import gpu_lock
 from ecg_experiment.pilot import (
     BATCH,
     BUDGETS,
-    FULL_LABELS,
+    DEFAULT_MAX_CACHE_BYTES,
+    DEFAULT_RESERVE_BYTES,
     INTERRUPTED_EXIT,
-    LIMITED_LABELS,
+    MIN_CACHE_BYTES,
     SAVE_EVERY,
     Partitions,
     Progress,
@@ -76,9 +78,6 @@ KINDS = ("none", "conv", "template")
 HALF_SAMPLES = 1250
 INITIAL_BEST = {"auc": -1.0, "epoch": 0}
 ARTIFACTS = {"history.json": "history_sha256", "best_model.pt": "best_model_sha256"}
-DEFAULT_MAX_CACHE_BYTES = 2_400_000_000
-MIN_CACHE_BYTES = 2_100_000_000
-DEFAULT_RESERVE_BYTES = 1_000_000_000
 PLANNING_GATE_SECONDS = 7200
 REQUIRED_GAIN = 0.002
 SENSITIVITY_TOLERANCE = 0.005
@@ -275,7 +274,7 @@ def check_pool_manifests(pool: Pool, manifest_dir: Path) -> None:
     ValueError
         If a manifest differs from the pool's record.
     """
-    for name, expected in pool.metadata.get("ptb_manifest_sha256", {}).items():
+    for name, expected in pool.metadata["ptb_manifest_sha256"].items():
         if sha256_file(manifest_dir / "seed42_fraction1" / name) != expected:
             raise ValueError(f"Frozen pool PTB manifest changed: {name}")
 
@@ -907,13 +906,13 @@ def require_profile(output_dir: Path, fingerprint: str) -> None:
         raise ValueError("GPU profile fingerprint or two-hour planning gate failed")
 
 
-def parse_args(argv: Sequence[str] | None, output: Path) -> argparse.Namespace:
+def parse_args(argv: list[str] | None, output: Path) -> argparse.Namespace:
     """
     Parse and validate the command line.
 
     Parameters
     ----------
-    argv : Sequence[str] | None
+    argv : list[str] | None
         Arguments, or ``None`` for ``sys.argv``.
     output : Path
         Default output directory.
@@ -947,14 +946,14 @@ def parse_args(argv: Sequence[str] | None, output: Path) -> argparse.Namespace:
     return args
 
 
-def main(argv: Sequence[str] | None = None, *, output: Path = OUTPUT, extra_code: Sequence[str] = (),
+def main(argv: list[str] | None = None, *, output: Path = OUTPUT, extra_code: Sequence[str] = (),
          roundtrip_device: str | None = None) -> None:
     """
     Run the check, profile or training stage.
 
     Parameters
     ----------
-    argv : Sequence[str] | None
+    argv : list[str] | None
         Arguments, or ``None`` for ``sys.argv``.
     output : Path
         Default output directory.

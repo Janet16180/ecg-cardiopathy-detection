@@ -21,6 +21,15 @@ SCENARIO_POPULATION = 1000
 SCENARIO_PREVALENCE = 0.01
 BOOTSTRAP_METRICS = ("auroc", "average_precision", "sensitivity", "specificity", "precision", "brier")
 PAIRED_METRICS = ("auroc", "average_precision", "sensitivity", "specificity")
+# Logistic-regression strengths searched by the frozen-feature linear probes.
+PROBE_C_GRID = (0.001, 0.01, 0.1, 1.0, 10.0, 100.0)
+# Record counts of the fixed seed-42 PTB-XL partitions.
+FULL_LABELS = 15360
+LIMITED_LABELS = 1518
+VALIDATION_RECORDS = 1870
+DEVELOPMENT_RECORDS = 1306
+CALIBRATION_RECORDS = 564
+TEST_RECORDS = 1896
 
 
 def _arrays(y: Sequence[int] | np.ndarray,

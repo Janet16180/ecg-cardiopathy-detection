@@ -9,12 +9,15 @@ import sys
 from pathlib import Path
 
 from ecg_experiment.processes import run_logged
+from ecg_experiment.receipts import artifacts_exist
 
 ROOT = Path(__file__).resolve().parents[2]
 MODELS = (("cnn", "cnn_supervised"), ("transformer", "transformer_supervised"),
           ("mae", "mae_finetuned"), ("jepa", "jepa_finetuned"))
 SSL_MODELS = {"mae", "jepa"}
 SHARED_SSL_SEED = 42
+ARTIFACTS = ("model.pt", "metrics.json", "test_predictions.csv", "calibration_predictions.npz",
+             "config.json")
 
 
 def model_command(args: argparse.Namespace, model: str, seed: int, manifest: str) -> list[str]:
@@ -24,7 +27,7 @@ def model_command(args: argparse.Namespace, model: str, seed: int, manifest: str
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed arguments.
+        Parsed command-line arguments.
     model : str
         Model family.
     seed : int
@@ -53,13 +56,37 @@ def model_command(args: argparse.Namespace, model: str, seed: int, manifest: str
     return command
 
 
-def main() -> None:
-    """Prepare missing label samples and train every missing model and seed."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=Path("outputs/experiment001"))
     parser.add_argument("--device", choices=["cuda", "cpu"], default="cuda")
     parser.add_argument("--seeds", nargs="+", type=int, default=[42, 43, 44])
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Prepare missing label samples and train every missing model and seed.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     output = ROOT / args.output_dir
     output.mkdir(parents=True, exist_ok=True)
     for seed in args.seeds:
@@ -68,7 +95,7 @@ def main() -> None:
             subprocess.run([sys.executable, "-m", "scripts.data.prepare_ptbxl", "--seed", str(seed)],
                            check=True, cwd=ROOT)
         for model, name in MODELS:
-            if (output / f"{name}_seed{seed}" / "metrics.json").exists():
+            if artifacts_exist(output / f"{name}_seed{seed}", ARTIFACTS):
                 print(f"Already completed {name}, seed {seed}", flush=True)
                 continue
             command = model_command(args, model, seed, manifest)

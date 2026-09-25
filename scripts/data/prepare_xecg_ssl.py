@@ -221,12 +221,36 @@ def prepare(output: Path, workers: int = 4) -> dict[str, Any]:
     return result
 
 
-def main() -> None:
-    """Build the cache from the command line and print a short completion line."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--workers", type=int, choices=range(1, 9), default=4)
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Build the cache from the command line and print a short completion line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     info = prepare(args.output_dir, args.workers)
     print(json.dumps({"complete": True, "records": info["record_count"],
                       "views_sha256": info["views_sha256"]}), flush=True)

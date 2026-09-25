@@ -9,12 +9,14 @@ from sklearn.metrics import roc_auc_score
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import StandardScaler
 
-from ecg_experiment.evaluation import evaluate_predictions, partition_validation
-from ecg_experiment.files import read_csv, write_json_atomic
+from ecg_experiment.evaluation import PROBE_C_GRID, evaluate_predictions, partition_validation
+from ecg_experiment.files import read_csv, write_json_atomic, write_npz_atomic
+from ecg_experiment.receipts import artifacts_exist
 
 ROOT = Path(__file__).resolve().parents[2]
-C_GRID = (0.001, 0.01, 0.1, 1.0, 10.0, 100.0)
 MAX_ITERATIONS = 3000
+ARTIFACTS = ("metrics.json", "test_predictions.csv", "calibration_predictions.npz",
+             "linear_model.npz", "config.json")
 
 Rows = list[dict[str, str]]
 
@@ -99,7 +101,7 @@ def select_probe(train_x: np.ndarray, train_y: np.ndarray, dev_x: np.ndarray, de
         If no candidate produced a comparable AUROC.
     """
     choices, best_auc, best, best_c = [], -1, None, None
-    for c in C_GRID:
+    for c in PROBE_C_GRID:
         pipeline = make_pipeline(StandardScaler(), LogisticRegression(C=c, max_iter=MAX_ITERATIONS,
                                                                        solver="lbfgs", random_state=seed))
         pipeline.fit(train_x, train_y)
@@ -112,8 +114,20 @@ def select_probe(train_x: np.ndarray, train_y: np.ndarray, dev_x: np.ndarray, de
     return best, best_c, best_auc, choices
 
 
-def main() -> None:
-    """Fit, select, and evaluate the linear probe, then save its weights and configuration."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--embeddings-dir", type=Path, required=True)
     parser.add_argument("--name", required=True)
@@ -121,9 +135,21 @@ def main() -> None:
                         default=ROOT / "data/processed/ptbxl/seed42_fraction0.1")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "outputs/experiment001")
     parser.add_argument("--seed", type=int, default=42)
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Fit, select, and evaluate the linear probe, then save its weights and configuration.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     directory = args.output_dir / f"{args.name}_linear_seed{args.seed}"
-    if (directory / "metrics.json").exists():
+    if artifacts_exist(directory, ARTIFACTS):
         raise FileExistsError(f"Completed results already exist: {directory}")
     features, index = load_embeddings(args.embeddings_dir)
     train = read_csv(args.manifest_dir / "labeled_train.csv")
@@ -137,8 +163,8 @@ def main() -> None:
                          best.decision_function(features_and_targets(features, index, test)[0]),
                          calibration, test, directory, args.seed)
     scaler, classifier = best.steps[0][1], best.steps[1][1]
-    np.savez(directory / "linear_model.npz", mean=scaler.mean_, scale=scaler.scale_,
-             coefficient=classifier.coef_, intercept=classifier.intercept_)
+    write_npz_atomic(directory / "linear_model.npz", mean=scaler.mean_, scale=scaler.scale_,
+                     coefficient=classifier.coef_, intercept=classifier.intercept_)
     write_json_atomic(directory / "config.json", {
         "model": args.name, "seed": args.seed, "C": best_c,
         "best_development_auroc": best_auc, "regularization_search": choices,

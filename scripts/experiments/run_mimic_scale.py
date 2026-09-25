@@ -17,11 +17,12 @@ import subprocess
 import sys
 import time
 from collections.abc import Callable
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from ecg_experiment.files import sha256_file, write_json_atomic
+from ecg_experiment.evaluation import FULL_LABELS, TEST_RECORDS
+from ecg_experiment.files import read_json, sha256_file, write_json_atomic
+from ecg_experiment.provenance import utc_now
 
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "data/processed/ptbxl/seed42_fraction1"
@@ -46,8 +47,6 @@ SEED = 42
 FINETUNE_BATCH = 16
 FINETUNE_EPOCHS = 20
 FINETUNE_PATIENCE = 5
-TRAIN_RECORDS = 15360
-TEST_RECORDS = 1896
 COMPARISON_REPEATS = 500
 WAIT_SECONDS = 30
 PACKAGES = ("torch", "numpy", "scikit-learn", "wfdb", "transformers", "fairseq-signals")
@@ -58,34 +57,6 @@ INCOMPLETE_ERRORS = (FileNotFoundError, ValueError, KeyError, json.JSONDecodeErr
 
 Validator = Callable[[], Any]
 
-
-def now() -> str:
-    """
-    Return the current UTC time.
-
-    Returns
-    -------
-    str
-        ISO 8601 timestamp.
-    """
-    return datetime.now(UTC).isoformat()
-
-
-def read_json(path: Path) -> Any:
-    """
-    Read a UTF-8 JSON file.
-
-    Parameters
-    ----------
-    path : Path
-        JSON file.
-
-    Returns
-    -------
-    Any
-        Parsed value.
-    """
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def csv_rows(path: Path, fields: set[str]) -> list[dict[str, str]]:
@@ -157,7 +128,7 @@ def environment() -> dict[str, Any]:
     return {"python": sys.version, "executable": sys.executable,
             "packages": {name: package_version(name) for name in PACKAGES},
             "torch_cuda_version": torch.version.cuda, "cuda_device": torch.cuda.get_device_name(),
-            "cuda_device_count": torch.cuda.device_count(), "checked_at": now()}
+            "cuda_device_count": torch.cuda.device_count(), "checked_at": utc_now()}
 
 
 def process_cmdline(pid: int) -> str | None:
@@ -356,7 +327,7 @@ def _finetune_config_valid(config: dict[str, Any], adaptation_sha256: str | None
             and config.get("official_checkpoint", {}).get("sha256") == sha256_file(CHECKPOINT)
             and config.get("batch_size") == FINETUNE_BATCH and config.get("epochs_budget") == FINETUNE_EPOCHS
             and config.get("patience") == FINETUNE_PATIENCE
-            and config.get("records", {}).get("train") == TRAIN_RECORDS
+            and config.get("records", {}).get("train") == FULL_LABELS
             and config.get("records", {}).get("test") == TEST_RECORDS
             and bool(observed_adaptation) == bool(adaptation_sha256)
             and (not adaptation_sha256 or observed_adaptation.get("checkpoint_sha256") == adaptation_sha256))
@@ -413,8 +384,8 @@ def record_status(output: Path, stage: str, state: str, **details: Any) -> None:
         Extra fields stored with the state.
     """
     path = output / "status.json"
-    status = read_json(path) if path.is_file() else {"created_at": now(), "stages": {}}
-    status["stages"][stage] = {"state": state, "updated_at": now(), **details}
+    status = read_json(path) if path.is_file() else {"created_at": utc_now(), "stages": {}}
+    status["stages"][stage] = {"state": state, "updated_at": utc_now(), **details}
     write_json_atomic(path, status)
 
 
@@ -459,14 +430,14 @@ def run_stage(output: Path, name: str, command: list[str], validate: Validator, 
     log = output / f"{name}.log"
     record_status(output, name, "running", command=command, log=str(log), resume=resume)
     with log.open("a", encoding="utf-8") as logfile:
-        logfile.write(f"\n[{now()}] {' '.join(command)}\n")
+        logfile.write(f"\n[{utc_now()}] {' '.join(command)}\n")
         logfile.flush()
         process = None
         try:
             process = subprocess.Popen(command, cwd=ROOT, stdout=subprocess.PIPE,
                                        stderr=subprocess.STDOUT, text=True, bufsize=1)
             write_json_atomic(output / "pid.json", {"stage": name, "pid": process.pid,
-                                                    "started_at": now(), "command": command})
+                                                    "started_at": utc_now(), "command": command})
             _stream_output(process, logfile)
             code = process.wait()
             if code:
@@ -692,7 +663,7 @@ def check_environment() -> None:
     """
     status_path = OUTPUT / "status.json"
     checked_environment = environment()
-    status = read_json(status_path) if status_path.is_file() else {"created_at": now(), "stages": {}}
+    status = read_json(status_path) if status_path.is_file() else {"created_at": utc_now(), "stages": {}}
     previous_environment = status.get("environment")
     for key in ENVIRONMENT_KEYS:
         if previous_environment and previous_environment.get(key) != checked_environment[key]:
@@ -772,25 +743,48 @@ def execute(args: argparse.Namespace) -> None:
                       "mimic_pool": pool}), flush=True)
 
 
-def main() -> None:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
-    Parse wait PIDs and run the experiment while holding the runner lock.
+    Parse the command line.
 
-    Raises
-    ------
-    RuntimeError
-        If another Experiment 003 runner holds the lock.
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--wait-baseline-pid", type=int,
                         help="Existing direct baseline process to wait for")
     parser.add_argument("--wait-download-pid", type=int,
                         help="Existing MIMIC preparation process to wait for")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if any(pid is not None and pid < 1 for pid in (args.wait_baseline_pid, args.wait_download_pid)):
         parser.error("Wait PIDs must be positive")
+    return args
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Parse wait PIDs and run the experiment while holding the runner lock.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Raises
+    ------
+    RuntimeError
+        If another Experiment 003 runner holds the lock.
+    """
+    args = parse_args(argv)
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    with (OUTPUT / ".runner.lock").open("w") as handle:
+    with (OUTPUT / ".runner.lock").open("a+") as handle:
         try:
             fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as exc:

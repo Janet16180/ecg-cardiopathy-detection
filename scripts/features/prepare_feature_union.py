@@ -109,21 +109,43 @@ def check_disjoint(partitions: dict[str, Rows]) -> None:
         seen_patients |= patient_ids
 
 
-def main() -> None:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
-    Write the union manifests and their provenance.
+    Parse the command line.
 
-    Raises
-    ------
-    FileExistsError
-        If the output directory is not empty.
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--seeds", nargs="+", type=int, default=[42, 43, 44])
     parser.add_argument("--root", type=Path, default=Path("data/processed/ptbxl"),
                         help="Per-seed manifest directory; relative paths start at the repository root")
     parser.add_argument("--output-dir", type=Path, required=True)
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Write the union manifests and their provenance.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Raises
+    ------
+    FileExistsError
+        If the output directory is not empty.
+    """
+    args = parse_args(argv)
     if args.output_dir.exists() and any(args.output_dir.iterdir()):
         raise FileExistsError("Feature union output must be empty")
     hashes: dict[str, str] = {}

@@ -19,6 +19,7 @@ from ecg_experiment.mimic import (
     selection_hash,
 )
 from ecg_experiment.public_sources import signal_sha256
+from scripts import prepare_mimic_ssl
 from scripts.prepare_mimic_ssl import verify_or_fetch
 
 
@@ -103,13 +104,16 @@ def test_exact_dedup_and_resume(tmp_path):
         audit(rows, tmp_path, output, "other", {signal_sha256(other)})
 
 
-def test_verified_file_is_kept_and_unsafe_path_rejected(tmp_path):
+def test_verified_file_is_kept_and_unsafe_path_rejected(tmp_path, monkeypatch):
     relative = "files/p1000/record.hea"
     (tmp_path / relative).parent.mkdir(parents=True)
     (tmp_path / relative).write_bytes(b"header")
     checksum = hashlib.sha256(b"header").hexdigest()
-    with patch("scripts.prepare_mimic_ssl._session", side_effect=AssertionError("downloaded")):
-        assert verify_or_fetch(relative, tmp_path, checksum, 1, 0) == (False, 6)
+    def download(*args, **kwargs):
+        raise AssertionError("downloaded")
+
+    monkeypatch.setattr(prepare_mimic_ssl, "_session", download)
+    assert verify_or_fetch(relative, tmp_path, checksum, 1, 0) == (False, 6)
     with pytest.raises(ValueError, match="Unsafe download path"):
         verify_or_fetch("files/../escape", tmp_path, checksum, 1, 0)
     with pytest.raises(ValueError, match="Unsafe download path"):

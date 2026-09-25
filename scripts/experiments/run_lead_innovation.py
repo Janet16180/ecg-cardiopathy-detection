@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import json
 import time
-from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
@@ -432,13 +431,13 @@ def supervised(args: argparse.Namespace, waveforms: Waveforms, train: list[dict[
         "seconds": time.monotonic() - started})
 
 
-def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     Parse and validate the command line.
 
     Parameters
     ----------
-    argv : Sequence[str] | None
+    argv : list[str] | None
         Arguments, or ``None`` for ``sys.argv``.
 
     Returns
@@ -479,13 +478,13 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     return args
 
 
-def main(argv: Sequence[str] | None = None) -> None:
+def main(argv: list[str] | None = None) -> None:
     """
     Run the SSL or supervised stage while holding the shared GPU lock.
 
     Parameters
     ----------
-    argv : Sequence[str] | None
+    argv : list[str] | None
         Arguments, or ``None`` for ``sys.argv``.
     """
     args = parse_args(argv)

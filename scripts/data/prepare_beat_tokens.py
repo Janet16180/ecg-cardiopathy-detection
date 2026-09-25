@@ -239,13 +239,37 @@ def prepare(cache_dir: Path, output_dir: Path, workers: int = 2) -> dict[str, An
     return _finalize(output_dir, identity, count)
 
 
-def main() -> None:
-    """Prepare beat metadata from the command line and print the completion record."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cache-dir", type=Path, default=DEFAULT_CACHE)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--workers", type=int, default=2)
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Prepare beat metadata from the command line and print the completion record.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     result = prepare(args.cache_dir, args.output_dir, args.workers)
     print(json.dumps(result, indent=2), flush=True)
 

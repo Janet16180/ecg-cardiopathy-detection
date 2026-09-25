@@ -23,6 +23,7 @@ import numpy as np
 import scipy
 from scipy.signal import resample_poly
 
+from ecg_experiment.evaluation import TEST_RECORDS, VALIDATION_RECORDS
 from ecg_experiment.files import sha256_file, write_text_atomic
 from ecg_experiment.mimic import (
     SelectionProvenance,
@@ -39,7 +40,7 @@ from ecg_experiment.waveforms import read_record
 
 ROOT = Path(__file__).resolve().parents[2]
 PTB_SPLITS = ("all_train_ssl", "validation", "test")
-PTB_SPLIT_COUNTS = {"train": 17418, "validation": 1870, "test": 1896}
+PTB_SPLIT_COUNTS = {"train": 17418, "validation": VALIDATION_RECORDS, "test": TEST_RECORDS}
 PTB_RECORD_COUNT = 21799
 ROW_FIELDS = ("ecg_id", "patient_id", "source", "split")
 CPC_RATES = (100, 250)
@@ -205,7 +206,7 @@ def read_ptb_rows(manifest_dir: Path, ptb_dir: Path) -> tuple[list[dict[str, str
     return rows, hashes
 
 
-def write_csv_atomic(path: Path, fieldnames: Sequence[str], rows: Iterable[Mapping[str, Any]]) -> None:
+def write_partial_csv(path: Path, fieldnames: Sequence[str], rows: Iterable[Mapping[str, Any]]) -> None:
     """
     Write selected columns through ``<name>.partial`` and rename it into place.
 
@@ -284,7 +285,7 @@ def _write_row_identities(output_dir: Path, rows: list[dict[str, str]]) -> tuple
     else:
         if any(path.name != "rows.csv.partial" for path in output_dir.iterdir()):
             raise ValueError("Cache directory contains files without rows.csv")
-        write_csv_atomic(row_path, ROW_FIELDS, rows)
+        write_partial_csv(row_path, ROW_FIELDS, rows)
     ids_path = output_dir / "ecg_ids.npy"
     if ids_path.exists():
         if np.load(ids_path, allow_pickle=False).tolist() != ids:
@@ -341,7 +342,7 @@ def _check_partial(partial: Path, signal_path: Path, shape: tuple[int, int, int]
     """Require a checkpointed partial array that matches the requested shape."""
     if not partial.is_file() or signal_path.exists():
         raise ValueError("CPC cache checkpoint is missing its partial array")
-    matrix = np.lib.format.open_memmap(partial, mode="r+")
+    matrix = np.lib.format.open_memmap(partial, mode="r")
     if matrix.shape != shape or matrix.dtype != np.float32 or not 0 <= done <= shape[0]:
         raise ValueError("Invalid CPC cache checkpoint")
 
@@ -483,7 +484,7 @@ def prepare(args: argparse.Namespace) -> None:
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed command-line arguments from :func:`main`.
+        Parsed command-line arguments.
     """
     raw_dir = args.mimic_raw_dir.resolve()
     ptb_dir = args.ptb_raw_dir.resolve()
@@ -500,8 +501,20 @@ def prepare(args: argparse.Namespace) -> None:
     print(json.dumps(info, indent=2), flush=True)
 
 
-def main() -> None:
-    """Parse arguments and prepare the CPC selection and cache."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mimic-raw-dir", type=Path, default=ROOT / "data/raw/mimic-iv-ecg/1.0")
     parser.add_argument("--ptb-raw-dir", type=Path, default=ROOT / "data/raw/ptb-xl/1.0.3")
@@ -517,13 +530,26 @@ def main() -> None:
     parser.add_argument("--audit-only", action="store_true")
     parser.add_argument("--cache-only", action="store_true",
                         help="Build cache from a completed, checksum-verified audit")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.max_records < 1:
         parser.error("max-records must be positive")
     if args.cache_workers < 1 or args.cache_workers > MAX_WORKERS:
         parser.error("cache-workers must be in [1, 8]")
     if args.audit_only and args.cache_only:
         parser.error("audit-only and cache-only cannot be combined")
+    return args
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Parse arguments and prepare the CPC selection and cache.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     prepare(args)
 
 

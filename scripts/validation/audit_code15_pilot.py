@@ -6,7 +6,6 @@ from __future__ import annotations
 import json
 import random
 from collections import Counter
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -14,6 +13,7 @@ import h5py
 import numpy as np
 
 from ecg_experiment.code15 import TRACE_SHAPE, extracted_hdf5, verified_files, verify_file
+from ecg_experiment.provenance import utc_now
 
 ROOT = Path(__file__).resolve().parents[2]
 ARCHIVE = ROOT / "data/raw/code-15pct/zenodo-4916206/exams_part0.zip"
@@ -84,7 +84,7 @@ def audit() -> dict[str, Any]:
         signal = handle[signal_key]
         selected = random.Random(SEED).sample(range(signal.shape[0]), min(SAMPLE_SIZE, signal.shape[0]))
         counts, pads = sample_counts(signal, selected)
-        return {"generated_at_utc": datetime.now(UTC).isoformat(),
+        return {"generated_at_utc": utc_now(),
                 "source_archive": str(ARCHIVE.relative_to(ROOT)),
                 "hdf5_keys": keys, "signal_key": signal_key,
                 "signal_shape": list(signal.shape), "signal_dtype": str(signal.dtype),

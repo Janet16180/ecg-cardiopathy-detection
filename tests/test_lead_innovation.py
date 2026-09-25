@@ -23,7 +23,6 @@ def test_static_lead_time_pattern_has_zero_targets():
 
 
 def test_mask_visibility_and_gradient_flow():
-    torch.set_num_threads(1)
     torch.manual_seed(7)
     signal = torch.randn(3, 8, 1000)
     mask = lead_patch_mask(3, signal.device)

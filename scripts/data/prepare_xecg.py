@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import csv
 import hashlib
 import json
 import os
@@ -14,7 +13,7 @@ from typing import Any
 
 import numpy as np
 
-from ecg_experiment.files import sha256_file
+from ecg_experiment.files import read_csv, sha256_file, write_json_atomic
 from ecg_experiment.xecg import LEADS, preprocess_xecg
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -68,11 +67,7 @@ def read_record_float64(raw_dir: Path, relative_name: str) -> np.ndarray:
 def _manifest_rows(manifest_dir: Path) -> list[dict[str, str]]:
     rows = []
     for name in MANIFEST_FILES:
-        with (manifest_dir / name).open(newline="", encoding="utf-8") as handle:
-            reader = csv.DictReader(handle)
-            if not {"ecg_id", "filename_hr", "target"}.issubset(reader.fieldnames or []):
-                raise ValueError(f"Missing fields in {name}")
-            rows.extend(reader)
+        rows.extend(read_csv(manifest_dir / name, ("ecg_id", "filename_hr", "target")))
     ids = [row["ecg_id"] for row in rows]
     if len(ids) != len(set(ids)):
         raise ValueError("Duplicate ECG IDs across xECG cache manifests")
@@ -175,18 +170,42 @@ def cache_xecg_views(raw_dir: Path, manifest_dir: Path, cache_dir: Path) -> Path
     start = time.monotonic()
     _fill_views(partial, raw_dir, rows)
     os.replace(partial, array_path)
-    meta_path.write_text(json.dumps({**requested, "views_sha256": sha256_file(array_path),
-                                     "seconds": time.monotonic() - start}, indent=2) + "\n")
+    write_json_atomic(meta_path, {**requested, "views_sha256": sha256_file(array_path),
+                                  "seconds": time.monotonic() - start}, allow_nan=True)
     return array_path
 
 
-def main() -> None:
-    """Build or verify an xECG view cache from the command line."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--raw-dir", type=Path, default=ROOT / "data/raw/ptb-xl/1.0.3")
     parser.add_argument("--manifest-dir", type=Path, required=True)
     parser.add_argument("--cache-dir", type=Path, required=True)
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Build or verify an xECG view cache from the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     print(cache_xecg_views(args.raw_dir, args.manifest_dir, args.cache_dir))
 
 

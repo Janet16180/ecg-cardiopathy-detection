@@ -10,7 +10,6 @@ import json
 import math
 import time
 from collections import Counter
-from collections.abc import Sequence
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -22,7 +21,7 @@ from torch.utils.data import DataLoader
 from ecg_experiment.evaluation import evaluate_predictions
 from ecg_experiment.files import sha256_file, sha256_json, write_json_atomic, write_torch_atomic
 from ecg_experiment.gpu import gpu_lock
-from ecg_experiment.receipts import verified_completion
+from ecg_experiment.receipts import artifact_hashes, verified_completion
 from ecg_experiment.reproducibility import cpu_state, restore_rng_lists, rng_state_lists, seed_everything
 from ecg_experiment.training import optimizer_state_bytes, peak_gpu_bytes, require_cuda
 from ecg_experiment.xecg import XECGBinaryClassifier, load_xecg
@@ -241,7 +240,7 @@ def make_fingerprint(args: argparse.Namespace, config: AdaptationConfig, cache_h
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed runner arguments.
+        Parsed command-line arguments.
     config : AdaptationConfig
         Shared adaptation protocol.
     cache_hashes : dict[str, str]
@@ -272,7 +271,7 @@ def make_ssl_state(args: argparse.Namespace, config: AdaptationConfig, pool_size
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed runner arguments.
+        Parsed command-line arguments.
     config : AdaptationConfig
         Shared adaptation protocol.
     pool_size : int
@@ -491,7 +490,7 @@ def pretrain_arm(args: argparse.Namespace, config: AdaptationConfig, views: np.n
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed runner arguments.
+        Parsed command-line arguments.
     config : AdaptationConfig
         Shared adaptation protocol.
     views : np.ndarray
@@ -576,7 +575,7 @@ def require_all_ssl(args: argparse.Namespace, config: AdaptationConfig,
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed runner arguments.
+        Parsed command-line arguments.
     config : AdaptationConfig
         Shared adaptation protocol.
     cache_hashes : dict[str, str]
@@ -658,7 +657,7 @@ def profile(args: argparse.Namespace, config: AdaptationConfig, views: np.ndarra
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed runner arguments.
+        Parsed command-line arguments.
     config : AdaptationConfig
         Shared adaptation protocol.
     views : np.ndarray
@@ -702,7 +701,7 @@ def require_profile(args: argparse.Namespace, config: AdaptationConfig, cache_ha
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed runner arguments.
+        Parsed command-line arguments.
     config : AdaptationConfig
         Shared adaptation protocol.
     cache_hashes : dict[str, str]
@@ -749,7 +748,7 @@ def transfer(args: argparse.Namespace, config: AdaptationConfig, arm: str, budge
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed runner arguments.
+        Parsed command-line arguments.
     config : AdaptationConfig
         Shared adaptation protocol.
     arm : str
@@ -785,7 +784,7 @@ def transfer(args: argparse.Namespace, config: AdaptationConfig, arm: str, budge
                    "microbatch_size": args.finetune_microbatch_size,
                    "effective_batch_size": EFFECTIVE_BATCH_SIZE,
                    "bootstrap": args.bootstrap, "device": args.device, "sources": source_identity()}
-    if ft.valid_completion(directory, fingerprint):
+    if verified_completion(directory, fingerprint, ft.COMPLETION_FILES):
         print(json.dumps({"stage": "transfer_reuse", "arm": arm, "budget": budget}), flush=True)
         return
     resume = ft.resume_for_budget(directory, args.resume)
@@ -824,19 +823,19 @@ def transfer(args: argparse.Namespace, config: AdaptationConfig, arm: str, budge
                          directory, SEED, args.bootstrap)
     description.update({key: value for key, value in result.items() if key != "history"})
     write_json_atomic(directory / "config.json", description)
-    write_json_atomic(directory / "complete.json", {"fingerprint": fingerprint,
-                                                    "sha256": ft.completion_hashes(directory)})
+    hashes = artifact_hashes(directory, ft.COMPLETION_FILES)
+    write_json_atomic(directory / "complete.json", {"fingerprint": fingerprint, "sha256": hashes})
     (directory / "resume.pt").unlink(missing_ok=True)
 
 
-def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     Parse and validate runner arguments.
 
     Parameters
     ----------
-    argv : Sequence[str] | None
-        Command-line arguments; None reads ``sys.argv``.
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
 
     Returns
     -------
@@ -883,7 +882,7 @@ def run_transfers(args: argparse.Namespace, config: AdaptationConfig, selected: 
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed runner arguments.
+        Parsed command-line arguments.
     config : AdaptationConfig
         Shared adaptation protocol.
     selected : tuple[str, ...]
@@ -910,14 +909,14 @@ def run_transfers(args: argparse.Namespace, config: AdaptationConfig, selected: 
         "paired_comparisons_sha256": sha256_file(args.output_dir / "paired_comparisons.json")})
 
 
-def main(argv: Sequence[str] | None = None) -> None:
+def main(argv: list[str] | None = None) -> None:
     """
     Check inputs, then profile, pretrain, or transfer the selected arms.
 
     Parameters
     ----------
-    argv : Sequence[str] | None
-        Command-line arguments; None reads ``sys.argv``.
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
     """
     args = parse_args(argv)
     if args.stage != "check":

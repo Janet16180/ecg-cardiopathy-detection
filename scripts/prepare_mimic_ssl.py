@@ -381,7 +381,20 @@ def download_selected(rows: Sequence[SelectionRow], raw_dir: Path,
             "selected_file_bytes": total_bytes}
 
 
-def _parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--raw-dir", type=Path, default=ROOT / "data/raw/mimic-iv-ecg/1.0")
     parser.add_argument("--ptbxl-dir", type=Path, default=ROOT / "data/raw/ptb-xl/1.0.3")
@@ -393,7 +406,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--retries", type=int, default=3)
     parser.add_argument("--selection-only", action="store_true",
                         help="Verify metadata and report deterministic sample without downloading waveforms")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if (args.max_records < 1 or args.workers < 1 or args.workers > MAX_WORKERS or args.timeout <= 0
             or args.retries < 0):
         parser.error("max-records/workers/timeout must be positive, workers <=64, retries >=0")
@@ -410,9 +423,16 @@ def _verified_metadata(args: argparse.Namespace) -> tuple[Path, Path, dict[str, 
     return sums_path, list_path, metadata_checksums
 
 
-def main() -> None:
-    """Select whole patients, download their ECGs and audit the waveforms."""
-    args = _parse_args()
+def main(argv: list[str] | None = None) -> None:
+    """
+    Select whole patients, download their ECGs and audit the waveforms.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     sums_path, list_path, metadata_checksums = _verified_metadata(args)
     list_digest = sha256_file(list_path)
     patients = read_patients(list_path)

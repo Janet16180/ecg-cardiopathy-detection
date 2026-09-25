@@ -8,7 +8,6 @@ do not include retraining variation or a multiplicity adjustment.
 from __future__ import annotations
 
 import argparse
-import csv
 import json
 from collections.abc import Sequence
 from pathlib import Path
@@ -17,7 +16,7 @@ from typing import Any
 import numpy as np
 from sklearn.metrics import roc_auc_score
 
-from ecg_experiment.files import write_json_atomic
+from ecg_experiment.files import read_csv, write_json_atomic
 
 PREDICTION_FIELDS = {"ecg_id", "patient_id", "target", "probability"}
 DEFAULT_REPEATS = 500
@@ -43,11 +42,7 @@ def predictions(path: Path) -> list[dict[str, str]]:
     ValueError
         If fields, identifiers, classes or probabilities are missing or invalid.
     """
-    with path.open(newline="") as handle:
-        reader = csv.DictReader(handle)
-        if not PREDICTION_FIELDS.issubset(reader.fieldnames or []):
-            raise ValueError(f"Missing prediction fields: {path}")
-        rows = list(reader)
+    rows = read_csv(path, PREDICTION_FIELDS)
     if not rows or any(not r["ecg_id"] or not r["patient_id"] for r in rows):
         raise ValueError(f"Empty predictions or missing identifiers: {path}")
     if len({r["ecg_id"] for r in rows}) != len(rows):
@@ -195,8 +190,20 @@ def compare(input_dir: Path, reference: str, models: Sequence[str], repeats: int
     }
 
 
-def main() -> None:
-    """Write paired adaptation comparisons as JSON and print them."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input-dir", type=Path, default=Path("outputs/experiment001"))
     parser.add_argument("--reference", default="ecg-fm_finetuned_seed42")
@@ -205,7 +212,19 @@ def main() -> None:
     parser.add_argument("--repeats", type=int, default=DEFAULT_REPEATS)
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
     parser.add_argument("--output-json", type=Path)
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Write paired adaptation comparisons as JSON and print them.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     result = compare(args.input_dir, args.reference, args.models, args.repeats, args.seed)
     destination = args.output_json or args.input_dir / "paired_adaptation_comparisons.json"
     write_json_atomic(destination, result)

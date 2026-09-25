@@ -310,10 +310,9 @@ def make_source_hashes(pool: Pool, manifest_dir: str | Path) -> dict[str, str]:
     hashes = {str(path.resolve()): sha256_file(path) for path in paths}
     for filename, key in (("signals.npy", "signals_sha256"), ("rows.csv", "rows_sha256"),
                           ("ecg_ids.npy", "ecg_ids_sha256")):
-        declared = pool.metadata.get(key)
-        if declared is not None and hashes[str((pool.directory / filename).resolve())] != declared:
+        if hashes[str((pool.directory / filename).resolve())] != pool.metadata[key]:
             raise ValueError(f"CPC cache hash mismatch for {filename}")
-    for filename, expected in pool.metadata.get("ptb_manifest_sha256", {}).items():
+    for filename, expected in pool.metadata["ptb_manifest_sha256"].items():
         path = Path(manifest_dir) / "seed42_fraction1" / filename
         if str(path.resolve()) in hashes and hashes[str(path.resolve())] != expected:
             raise ValueError(f"PTB manifest hash mismatch for {filename}")

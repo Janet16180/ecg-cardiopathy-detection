@@ -22,9 +22,14 @@ CPC_CACHE_READY = Path("data/processed/cpc_pool_40k/complete.json")
 CACHE_TIMEOUT_SECONDS = 6 * 3600
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
 
     Returns
     -------
@@ -40,7 +45,7 @@ def parse_args() -> argparse.Namespace:
                               "before suspending the MIMIC runner"))
     parser.add_argument("--experiment-module", choices=EXPERIMENT_MODULES, default=EXPERIMENT_MODULES[0])
     parser.add_argument("--ssl-epochs", type=int, default=20)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.ssl_epochs < 1:
         parser.error("ssl-epochs must be positive")
     return args
@@ -63,9 +68,16 @@ def wait_for_cache() -> None:
         time.sleep(common.POLL_SECONDS)
 
 
-def main() -> None:
-    """Wait for inputs, pause the idle MIMIC runner, then profile and run the suite."""
-    args = parse_args()
+def main(argv: list[str] | None = None) -> None:
+    """
+    Wait for inputs, pause the idle MIMIC runner, then profile and run the suite.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     if args.wait_pid:
         wait_while_alive(args.wait_pid, process_identity(args.wait_pid),

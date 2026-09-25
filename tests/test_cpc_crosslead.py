@@ -59,7 +59,6 @@ def test_crosslead_swaps_targets_only(monkeypatch):
 
 
 def test_encoder_is_causal_with_independent_halves():
-    torch.set_num_threads(1)
     torch.manual_seed(7)
     encoder = CPCEncoder().eval()
     signal = torch.randn(1, 12, 2500)
@@ -74,7 +73,6 @@ def test_encoder_is_causal_with_independent_halves():
 
 
 def test_strict_epoch20_bootstrap_and_source_hashes(tmp_path, monkeypatch):
-    torch.set_num_threads(1)
     source = CPCPretrainer()
     epoch = tmp_path / "cpc_ssl"
     epoch.mkdir()
@@ -129,7 +127,6 @@ class TinyPretrainer(nn.Module):
 
 
 def test_epoch_resume_reproduces_shuffle_and_dropout(tmp_path):
-    torch.set_num_threads(1)
     dataset = torch.arange(18, dtype=torch.float32).reshape(6, 3) / 10
 
     def setup():
@@ -162,7 +159,6 @@ def test_epoch_resume_reproduces_shuffle_and_dropout(tmp_path):
 
 
 def test_profile_roundtrip_restores_dropout_rng(monkeypatch):
-    torch.set_num_threads(1)
     monkeypatch.setattr(run, "CrossLeadPretrainer", TinyPretrainer)
     seed_everything(123)
     model = TinyPretrainer("native")
@@ -174,7 +170,6 @@ def test_profile_roundtrip_restores_dropout_rng(monkeypatch):
 
 
 def test_all_ssl_precede_all_six_transfers(tmp_path, monkeypatch):
-    torch.set_num_threads(1)
     monkeypatch.setattr(run, "CrossLeadPretrainer", TinyPretrainer)
     monkeypatch.setattr(run.cpc_pool, "Pool", lambda directory: Namespace(train_rows=[{}] * 14))
     monkeypatch.setattr(run, "source_hashes", lambda args, pool: {"synthetic": "fixed"})
@@ -216,7 +211,6 @@ def test_crosslead_step_rejects_nonfinite_parameters():
 
 def test_versioned_profile_uses_tolerant_roundtrip(monkeypatch):
     from scripts.experiments import run_cpc_crosslead_profile_v2 as versioned
-    torch.set_num_threads(1)
     monkeypatch.setattr(run, "CrossLeadPretrainer", TinyPretrainer)
     seed_everything(123)
     model = TinyPretrainer("native")

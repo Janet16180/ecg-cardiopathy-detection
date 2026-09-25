@@ -370,8 +370,20 @@ def download(metadata_dir: Path, sampling_rate: int = 100, workers: int = 16,
                              timeout, retries, base_url)
 
 
-def main() -> None:
-    """Parse arguments, download, and print the counts."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--metadata-dir", type=Path, default=ROOT / "data/raw/ptb-xl/1.0.3")
     parser.add_argument("--sampling-rate", type=int, choices=(100, 500), default=100)
@@ -381,7 +393,19 @@ def main() -> None:
     parser.add_argument("--retries", type=int, default=3)
     parser.add_argument("--archive", action="store_true",
                         help="Use the official 1.7 GB ZIP for faster bulk transfer")
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Parse arguments, download, and print the counts.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     print(download(args.metadata_dir, args.sampling_rate, args.workers,
                    args.limit, args.timeout, args.retries, archive=args.archive))
 

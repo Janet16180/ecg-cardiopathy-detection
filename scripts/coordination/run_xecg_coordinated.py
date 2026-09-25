@@ -14,9 +14,14 @@ from scripts.coordination import common
 XECG_VIEWS_READY = Path("data/processed/ptbxl/xecg_views/metadata.json")
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
 
     Returns
     -------
@@ -30,7 +35,7 @@ def parse_args() -> argparse.Namespace:
                         help="Existing CPU cache preparation to wait for")
     parser.add_argument("--output-dir", type=Path,
                         default=common.ROOT / "outputs/experiment007_xecg")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def xecg_command(stage: str, device: str, output_dir: Path) -> list[str]:
@@ -59,9 +64,16 @@ def xecg_command(stage: str, device: str, output_dir: Path) -> list[str]:
     return command
 
 
-def main() -> None:
-    """Prepare inputs, wait for the predecessor and idle MIMIC runner, then train."""
-    args = parse_args()
+def main(argv: list[str] | None = None) -> None:
+    """
+    Prepare inputs, wait for the predecessor and idle MIMIC runner, then train.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     predecessor = common.expect_module(args.wait_pid, "scripts.coordination.run_cpc_coordinated")
     preparation = common.expect_module(args.preparation_pid, "scripts.data.prepare_xecg")

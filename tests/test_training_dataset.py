@@ -9,10 +9,10 @@ import pytest
 from torch.utils.data import DataLoader
 
 import scripts.data.build_training_dataset as builder
-from ecg_experiment.files import sha256_file
+from ecg_experiment.files import sha256_file, write_csv_atomic
 from ecg_experiment.public_sources import signal_sha256
 from ecg_experiment.training_dataset import TrainingECGDataset, verify_dataset
-from scripts.data.build_training_dataset import FIELDS, build, decode, write_csv
+from scripts.data.build_training_dataset import FIELDS, build, decode
 
 
 @pytest.fixture
@@ -28,10 +28,11 @@ def dataset(tmp_path: Path) -> Path:
                      "label_scope": "ptbxl_proxy_available_separately" if index == 0 else "ssl_only",
                      "shard": "shard_00000.npy", "shard_index": index,
                      "signal_sha256": signal_sha256(signals[index])})
-    write_csv(tmp_path / "train_manifest.csv", FIELDS, rows)
+    write_csv_atomic(tmp_path / "train_manifest.csv", rows, FIELDS)
     for budget in ("1", "0.1"):
-        write_csv(tmp_path / f"labels_fraction{budget}.csv", ("record_id", "patient_id", "target"),
-                  [{"record_id": "ptbxl:1", "patient_id": "ptbxl:99", "target": 1}])
+        write_csv_atomic(tmp_path / f"labels_fraction{budget}.csv",
+                         [{"record_id": "ptbxl:1", "patient_id": "ptbxl:99", "target": 1}],
+                         ("record_id", "patient_id", "target"))
     metadata = {"complete": True, "schema_version": 1, "record_count": 2, "shape_per_record": [12, 5000],
                 "sampling_rate_hz": 500, "units": "mV",
                 "shards": {"shard_00000.npy": {"sha256": sha256_file(tmp_path / "shard_00000.npy"),
@@ -61,7 +62,8 @@ def test_ssl_masks_labels_and_supervised_loader_trains(dataset: Path) -> None:
 
 def test_write_csv_ignores_decoding_keys(tmp_path: Path) -> None:
     path = tmp_path / "rows.csv"
-    write_csv(path, ("record_id", "source"), [{"record_id": "a", "source": "b", "raw_dir": Path("/x")}])
+    rows = [{"record_id": "a", "source": "b", "raw_dir": Path("/x")}]
+    write_csv_atomic(path, rows, ("record_id", "source"), ignore_extra=True)
     assert path.read_bytes() == b"record_id,source\r\na,b\r\n"
 
 
@@ -75,8 +77,8 @@ def test_shard_tampering_fails(dataset: Path) -> None:
 
 def test_unknown_source_cannot_receive_endpoint_label(dataset: Path) -> None:
     path = dataset / "labels_fraction1.csv"
-    write_csv(path, ("record_id", "patient_id", "target"),
-              [{"record_id": "georgia:1", "patient_id": "", "target": 1}])
+    write_csv_atomic(path, [{"record_id": "georgia:1", "patient_id": "", "target": 1}],
+                     ("record_id", "patient_id", "target"))
     _rehash_table(dataset, path)
     with pytest.raises(ValueError, match="training PTB"):
         TrainingECGDataset(dataset, purpose="supervised")
@@ -131,11 +133,11 @@ def test_heldout_references_reject_train_patient_leakage(tmp_path: Path,
     monkeypatch.setattr(builder, "PTB_RAW", tmp_path / "raw")
     monkeypatch.setattr(builder, "PTB_PROCESSED", tmp_path)
     fields = ("ecg_id", "patient_id", "target", "filename_hr")
-    write_csv(tmp_path / "validation.csv", fields,
-              [{"ecg_id": str(i), "patient_id": f"v{i}", "target": str(i % 2), "filename_hr": f"r{i}"}
-               for i in range(20)])
-    write_csv(tmp_path / "test.csv", fields,
-              [{"ecg_id": "9", "patient_id": "t", "target": "1", "filename_hr": "r9"}])
+    write_csv_atomic(tmp_path / "validation.csv",
+                     [{"ecg_id": str(i), "patient_id": f"v{i}", "target": str(i % 2), "filename_hr": f"r{i}"}
+                      for i in range(20)], fields)
+    write_csv_atomic(tmp_path / "test.csv",
+                     [{"ecg_id": "9", "patient_id": "t", "target": "1", "filename_hr": "r9"}], fields)
     train = [{"source": "ptbxl", "patient_id": "ptbxl:p"}]
     references = builder.heldout_references(train)
     assert {r["split"] for r in references} == {"development", "calibration", "test"}

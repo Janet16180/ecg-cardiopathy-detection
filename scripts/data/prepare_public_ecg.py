@@ -24,7 +24,7 @@ import wfdb
 
 from ecg_experiment import public_sources
 from ecg_experiment.downloads import parse_checksums
-from ecg_experiment.files import read_csv, sha256_file, write_csv_atomic
+from ecg_experiment.files import read_csv, sha256_file, write_csv_atomic, write_json_atomic
 from ecg_experiment.public_sources import SOURCE, load_view, signal_sha256
 from ecg_experiment.staging import published_directory
 from ecg_experiment.waveforms import read_record
@@ -311,21 +311,46 @@ def _prepare(sources: list[str], policy: str, output_dir: Path,
               "manifest_sha256": sha256_file(manifest), "exclusions_sha256": sha256_file(exclusions),
               "preparation_source_sha256": sha256_file(Path(__file__)),
               "canonicalization_source_sha256": sha256_file(Path(public_sources.__file__))}
-    (output_dir / "metadata.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
+    write_json_atomic(output_dir / "metadata.json", result, sort_keys=True, allow_nan=True)
     return result
 
 
-def main() -> None:
-    """Parse arguments, run the audit and print its metadata."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", choices=SOURCE, action="append", required=True)
     parser.add_argument("--policy", choices=POLICIES, default="strict_10s")
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--limit", type=int, help="First N records per source for a pilot")
     parser.add_argument("--allow-incomplete", action="store_true", help="Pilot a source still downloading")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.limit is not None and args.limit < 1:
         parser.error("limit must be positive")
+    return args
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Parse arguments, run the audit and print its metadata.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     print(json.dumps(prepare(args.source, args.policy, args.output_dir,
                              args.limit, args.allow_incomplete), indent=2), flush=True)
 

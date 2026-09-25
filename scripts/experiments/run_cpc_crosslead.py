@@ -740,7 +740,6 @@ def run(args: argparse.Namespace, roundtrip: Roundtrip = profile_roundtrip) -> N
         Parsed command-line arguments.
     roundtrip : Roundtrip
         Resume check used by the profile stage.
-
     """
     check_protocol(args)
     torch.set_num_threads(args.threads)
@@ -768,16 +767,19 @@ def run(args: argparse.Namespace, roundtrip: Roundtrip = profile_roundtrip) -> N
             report(args)
 
 
-def main(argv: Sequence[str] | None = None, roundtrip: Roundtrip = profile_roundtrip) -> None:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
-    Parse the command line and run the requested stage.
+    Parse and validate the command line.
 
     Parameters
     ----------
-    argv : Sequence[str] | None
+    argv : list[str] | None
         Arguments, or ``None`` for ``sys.argv``.
-    roundtrip : Roundtrip
-        Resume check used by the profile stage.
+
+    Returns
+    -------
+    argparse.Namespace
+        Validated arguments.
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--stage", choices=("check", "profile", "pretrain", "train", "all"), default="all")
@@ -800,7 +802,21 @@ def main(argv: Sequence[str] | None = None, roundtrip: Roundtrip = profile_round
     if min(args.threads, args.batch_size, args.ssl_batch_size, args.ssl_epochs,
            args.epochs, args.patience, args.bootstrap) < 1 or args.profile_updates < MIN_PROFILE_UPDATES:
         parser.error("Counts must be positive and profile-updates must be at least five")
-    run(args, roundtrip)
+    return args
+
+
+def main(argv: list[str] | None = None, roundtrip: Roundtrip = profile_roundtrip) -> None:
+    """
+    Parse the command line and run the requested stage.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    roundtrip : Roundtrip
+        Resume check used by the profile stage.
+    """
+    run(parse_args(argv), roundtrip)
 
 
 if __name__ == "__main__":

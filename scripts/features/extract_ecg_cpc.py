@@ -307,7 +307,7 @@ def extraction_identity(args: argparse.Namespace, rows: list[dict[str, str]],
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed arguments.
+        Parsed command-line arguments.
     rows : list[dict[str, str]]
         Records in output order.
     manifests : dict[str, str]
@@ -418,7 +418,7 @@ def embed_records(model: ReleasedCPC, features: np.memmap, rows: list[dict[str, 
     done : int
         Records already embedded.
     args : argparse.Namespace
-        Parsed arguments.
+        Parsed command-line arguments.
     identity : dict[str, Any]
         Identity written with each progress update.
     """
@@ -446,7 +446,7 @@ def extract(args: argparse.Namespace) -> dict[str, Any]:
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed arguments.
+        Parsed command-line arguments.
 
     Returns
     -------
@@ -484,8 +484,20 @@ def extract(args: argparse.Namespace) -> dict[str, Any]:
     return metadata
 
 
-def main() -> None:
-    """Parse arguments and extract features while holding the shared GPU lock."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", type=Path, default=CHECKPOINT)
     parser.add_argument("--repository", type=Path, default=REPOSITORY)
@@ -497,9 +509,22 @@ def main() -> None:
     parser.add_argument("--threads", type=int, default=1)
     parser.add_argument("--limit", type=int)
     parser.add_argument("--device", choices=("cuda", "cpu"), default="cuda")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.batch_size < 1 or args.threads < 1 or (args.limit is not None and args.limit < 1):
         parser.error("Batch, threads, and optional record limit must be positive")
+    return args
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Parse arguments and extract features while holding the shared GPU lock.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     with gpu_lock(args.device, blocking=True):
         result = extract(args)
     summary = {key: value for key, value in result.items() if key != "identity"}

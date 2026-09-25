@@ -15,6 +15,12 @@ import numpy as np  # noqa: E402
 from sklearn.calibration import calibration_curve  # noqa: E402
 from sklearn.metrics import roc_curve  # noqa: E402
 
+from ecg_experiment.evaluation import (  # noqa: E402
+    CALIBRATION_RECORDS,
+    FULL_LABELS,
+    LIMITED_LABELS,
+    TEST_RECORDS,
+)
 from ecg_experiment.files import write_json_atomic, write_text_atomic  # noqa: E402
 
 NAMES = {
@@ -37,12 +43,8 @@ CUSTOM_ARMS = ("lead_multiscale_supervised", "lead_multiscale_latent", "lead_mul
 PRIMARY_SEED = 42
 
 # The fixed Experiment 001 cohort quoted in the report; results must match it.
-TEST_RECORDS = 1896
 TEST_ABNORMAL = 1195
 TEST_NORMAL = 701
-CALIBRATION_RECORDS = 564
-TRAINING_LABELS = 1518
-FULL_TRAINING_LABELS = 15360
 
 TOP_CURVES = 4
 REFERENCE_MODEL = "cnn_supervised"
@@ -218,7 +220,7 @@ def introduction_lines() -> list[str]:
         "This is an exploratory study: later experimental arms were designed after inspecting earlier "
         "results, so the overall comparison was not prospectively locked.", "",
         "## Data and evaluation", "",
-        f"The primary run exposes {TRAINING_LABELS:,} training ECG labels from 1,335 patients "
+        f"The primary run exposes {LIMITED_LABELS:,} training ECG labels from 1,335 patients "
         "(approximately 10% of eligible training patients). All 17,418 training ECGs are available "
         f"to our SSL models. The fixed evaluation set contains {TEST_RECORDS:,} ECGs from 1,653 "
         f"patients, with {TEST_ABNORMAL:,} abnormal and {TEST_NORMAL} normal proxy labels "
@@ -231,7 +233,7 @@ def introduction_lines() -> list[str]:
         "and 30% for logistic probability calibration and threshold selection. The operating threshold "
         "is the highest achieving at least 95% sensitivity on calibration cases. Test sensitivity is "
         "measured at that fixed threshold and need not equal 95%. The primary run uses "
-        f"{TRAINING_LABELS:,} training, 1,306 development, {CALIBRATION_RECORDS} calibration, and "
+        f"{LIMITED_LABELS:,} training, 1,306 development, {CALIBRATION_RECORDS} calibration, and "
         f"{TEST_RECORDS:,} test labels: 5,284 total. Eligibility also "
         "consults the full annotation tables. This is retrospective label masking conditional on "
         "eligibility, not a prospective 10% annotation budget. All metrics are ECG-level; confidence "
@@ -381,7 +383,7 @@ def full_label_lines(full_label: list[dict[str, Any]]) -> list[str]:
         return []
     lines = [
         "", "## Using all eligible public training labels", "",
-        f"Following the expanded project brief, these runs expose all {FULL_TRAINING_LABELS:,} "
+        f"Following the expanded project brief, these runs expose all {FULL_LABELS:,} "
         "eligible PTB-XL training ECG labels from 13,352 patients. Development, calibration, test cases, and "
         "evaluation procedures remain the same. This uses public labels fully; it does not "
         "assume that university labels are available. Results are single-seed exploratory comparisons.", "",
@@ -390,7 +392,7 @@ def full_label_lines(full_label: list[dict[str, Any]]) -> list[str]:
     ]
     for record in sorted(full_label, key=lambda r: r["test"]["auroc"], reverse=True):
         m = record["test"]
-        lines.append(f"| {display_name(record['model'])} | {FULL_TRAINING_LABELS:,} | {m['auroc']:.4f} "
+        lines.append(f"| {display_name(record['model'])} | {FULL_LABELS:,} | {m['auroc']:.4f} "
                      f"| {100*m['sensitivity']:.1f}% | {100*m['specificity']:.1f}% |")
     return lines
 
@@ -561,13 +563,37 @@ def plot_results(primary: list[dict[str, Any]], output_dir: Path) -> None:
     fig.savefig(output_dir / "experiment001-results.pdf")
 
 
-def main() -> None:
-    """Write the Experiment 001 report, shareable metric tables and figure."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input-dir", type=Path, default=Path("outputs/experiment001"))
     parser.add_argument("--output-dir", type=Path, default=Path("docs"))
     parser.add_argument("--full-label-dir", type=Path, default=Path("outputs/experiment002_public_labels"))
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Write the Experiment 001 report, shareable metric tables and figure.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     records = load_records(args.input_dir)
     full_label = [json.loads(path.read_text()) for path in args.full_label_dir.glob("*/metrics.json")]
     check_cohort(records + full_label)

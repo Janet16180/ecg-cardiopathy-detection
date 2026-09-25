@@ -36,6 +36,25 @@ def artifact_hashes(directory: Path, names: Iterable[str]) -> dict[str, str]:
     return {name: sha256_file(directory / name) for name in names}
 
 
+def artifacts_exist(directory: Path, names: Iterable[str]) -> bool:
+    """
+    Check that every named artifact of a run directory exists.
+
+    Parameters
+    ----------
+    directory : Path
+        Run directory.
+    names : Iterable[str]
+        Artifact file names inside ``directory``.
+
+    Returns
+    -------
+    bool
+        True when each artifact is a file.
+    """
+    return all((directory / name).is_file() for name in names)
+
+
 def verified_completion(directory: Path, fingerprint: dict[str, Any],
                         names: Iterable[str]) -> dict[str, Any] | None:
     """

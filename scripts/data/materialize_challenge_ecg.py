@@ -529,8 +529,20 @@ def materialize(prepared_dir: Path, output_dir: Path, *, shard_size: int = 128,
     return result
 
 
-def main() -> None:
-    """Parse arguments, materialize the view and print a short summary."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--prepared-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -539,7 +551,19 @@ def main() -> None:
     parser.add_argument("--overlap-manifest", type=Path)
     parser.add_argument("--allow-incomplete", action="store_true",
                         help="Explicitly permit an acquisition pilot")
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Parse arguments, materialize the view and print a short summary.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     result = materialize(args.prepared_dir, args.output_dir, shard_size=args.shard_size,
                          comparisons=args.duplicate_comparisons,
                          overlap_manifest=args.overlap_manifest,

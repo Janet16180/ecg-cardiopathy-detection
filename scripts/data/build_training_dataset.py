@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import csv
 import fcntl
 import json
 import os
@@ -12,7 +11,6 @@ import sqlite3
 import sys
 import time
 from collections import Counter
-from collections.abc import Iterable, Mapping
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
@@ -22,7 +20,7 @@ import wfdb
 
 from ecg_experiment.downloads import parse_checksums
 from ecg_experiment.evaluation import partition_validation
-from ecg_experiment.files import read_csv, sha256_file
+from ecg_experiment.files import read_csv, sha256_file, write_csv_atomic
 from ecg_experiment.pool_overlap import (
     MIMIC_POOL,
     PinInput,
@@ -63,25 +61,6 @@ SOURCE_FILES = ("ecg_experiment/training_dataset.py", "ecg_experiment/run.py",
                 "ecg_experiment/pool_overlap.py", "ecg_experiment/staging.py",
                 "ecg_experiment/evaluation.py", "ecg_experiment/waveforms.py",
                 "ecg_experiment/downloads.py", "ecg_experiment/public_sources.py")
-
-
-def write_csv(path: Path, fields: Iterable[str], rows: Iterable[Mapping[str, Any]]) -> None:
-    """
-    Write the named columns of each row, ignoring any other keys.
-
-    Parameters
-    ----------
-    path : Path
-        Destination CSV file.
-    fields : Iterable[str]
-        Column order.
-    rows : Iterable[Mapping[str, Any]]
-        Rows that may carry extra decoding keys.
-    """
-    with path.open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(fields), extrasaction="ignore")
-        writer.writeheader()
-        writer.writerows(rows)
 
 
 def historical_rows(pin: PinInput, ptb_checksums: dict[str, str]) -> list[dict[str, Any]]:
@@ -454,7 +433,7 @@ def write_label_tables(stage: Path, accepted: list[dict[str, Any]],
         selected = [r for r in original if r["record_id"] in kept]
         if any(kept[r["record_id"]]["patient_id"] != r["patient_id"] for r in selected):
             raise ValueError("PTB label patient mismatch")
-        write_csv(stage / f"labels_fraction{budget}.csv", LABEL_FIELDS, selected)
+        write_csv_atomic(stage / f"labels_fraction{budget}.csv", selected, LABEL_FIELDS, ignore_extra=True)
         label_counts[budget] = {"input": len(original), "retained": len(selected)}
     return label_counts
 
@@ -559,13 +538,13 @@ def _build_locked(output: Path, workers: int = 4, shard_size: int = 128) -> dict
     started = time.monotonic()
     with published_directory(output) as stage:
         accepted, exclusions, shards = write_shards(stage, rows, ptb_reference, workers, shard_size, started)
-        write_csv(stage / "train_manifest.csv", FIELDS, accepted)
-        write_csv(stage / "exclusions.csv", EXCLUSION_FIELDS, exclusions)
+        write_csv_atomic(stage / "train_manifest.csv", accepted, FIELDS, ignore_extra=True)
+        write_csv_atomic(stage / "exclusions.csv", exclusions, EXCLUSION_FIELDS, ignore_extra=True)
         # These historical records never enter the candidates, and are tracked separately.
         quarantine = json.loads(pin(GEORGIA_QUARANTINE).read_text())
         (stage / "historical_georgia_quarantine.json").write_text(json.dumps(quarantine, indent=2) + "\n")
         label_counts = write_label_tables(stage, accepted, labels)
-        write_csv(stage / "heldout_references.csv", REFERENCE_FIELDS, references)
+        write_csv_atomic(stage / "heldout_references.csv", references, REFERENCE_FIELDS, ignore_extra=True)
         for path, expected in inputs.items():
             if sha256_file(path) != expected:
                 raise ValueError(f"Input changed while building: {path}")
@@ -622,13 +601,37 @@ def build(output: Path, workers: int = 4, shard_size: int = 128) -> dict[str, An
         return _build_locked(output, workers, shard_size)
 
 
-def main() -> None:
-    """Build or verify a dataset and print the verification result."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--verify-only", action="store_true")
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Build or verify a dataset and print the verification result.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     result = verify_dataset(args.output_dir) if args.verify_only else build(args.output_dir, args.workers)
     print(json.dumps(result, indent=2))
 

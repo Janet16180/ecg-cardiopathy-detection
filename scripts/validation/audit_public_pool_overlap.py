@@ -252,14 +252,38 @@ def audit(candidate_dir: Path, output_dir: Path) -> dict[str, Any]:
     return publish_audit(output_dir, rows, novel, overlap, pools, inputs)
 
 
-def main() -> None:
-    """Run the overlap audit and print its receipt."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse the command line.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--candidate-dir", type=Path, default=ROOT / "outputs/data_quality/processed_eda",
     )
     parser.add_argument("--output-dir", type=Path, required=True)
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Run the overlap audit and print its receipt.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or ``None`` for ``sys.argv``.
+    """
+    args = parse_args(argv)
     print(json.dumps(audit(args.candidate_dir, args.output_dir), indent=2))
 
 

@@ -7,6 +7,8 @@ import sys
 from pathlib import Path
 
 from ecg_experiment.processes import run_logged
+from ecg_experiment.receipts import artifacts_exist
+from scripts.experiments.probe_pretrained import ARTIFACTS
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUT = "outputs/experiment001"
@@ -33,7 +35,7 @@ def main() -> None:
         if not (ROOT / feature_dir / "metadata.json").exists():
             raise FileNotFoundError(f"Complete feature extraction first: {feature_dir}")
         for seed in LABEL_SEEDS:
-            if (output / f"{model}_linear_seed{seed}" / "metrics.json").exists():
+            if artifacts_exist(output / f"{model}_linear_seed{seed}", ARTIFACTS):
                 continue
             # Relative paths keep the recorded embedding directory identical to earlier runs.
             command = [sys.executable, "-u", "-m", "scripts.experiments.probe_pretrained",

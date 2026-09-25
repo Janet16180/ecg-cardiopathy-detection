@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 import os
 import subprocess
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +17,7 @@ from ecg_experiment.processes import (
     terminate_child,
     termination_deferred,
 )
+from ecg_experiment.provenance import utc_now
 
 ROOT = Path(__file__).resolve().parents[2]
 MIMIC_MODULE = "scripts.experiments.run_mimic_scale"
@@ -25,17 +25,6 @@ MIMIC_STATUS = Path("outputs/experiment003_mimic/status.json")
 MIMIC_READY = Path("data/processed/mimic_ssl_200k/metadata.json")
 POLL_SECONDS = 30.0
 
-
-def utc_now() -> str:
-    """
-    Return the current UTC time for status records.
-
-    Returns
-    -------
-    str
-        ISO 8601 timestamp.
-    """
-    return datetime.now(UTC).isoformat()
 
 
 def write_status(path: Path, state: str, **details: Any) -> dict[str, Any]:

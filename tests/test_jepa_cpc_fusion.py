@@ -1,8 +1,11 @@
 """Patient-aligned JEPA/CPC fusion: joins, train-only normalization, cross-fitting and the gate."""
 
+import json
+
 import numpy as np
 import pytest
 
+from scripts.experiments import run_jepa_cpc_fusion
 from scripts.experiments.run_jepa_cpc_fusion import (
     bootstrap_screen,
     check_alignment,
@@ -78,3 +81,15 @@ def test_crossfit_class_check_matches_dev_score_requirements():
     assert not crossfit_has_both_classes(np.zeros(4, dtype=int), np.array([0, 0, 1, 1]))
     with pytest.raises(ValueError, match="lacks a class"):
         dev_score(y, np.arange(6.), np.array([0, 1, 0, 1, 0, 1]))
+
+
+def test_failed_run_is_recorded_in_run_status(tmp_path, monkeypatch):
+    def fail(output_dir, start):
+        raise ValueError("synthetic failure")
+
+    monkeypatch.setattr(run_jepa_cpc_fusion, "screen_budgets", fail)
+    with pytest.raises(ValueError, match="synthetic failure"):
+        run_jepa_cpc_fusion.main(["--output-dir", str(tmp_path)])
+    status = json.loads((tmp_path / "run_status.json").read_text())
+    assert (status["state"], status["reason"]) == ("failed", "synthetic failure")
+    assert not (tmp_path / "coordination.json").exists()

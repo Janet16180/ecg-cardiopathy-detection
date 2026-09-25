@@ -37,7 +37,6 @@ def test_versioned_output_is_the_default_output_dir():
 
 
 def test_actual_cpu_checkpoint_roundtrip(tmp_path):
-    torch.set_num_threads(1)
     seed_everything(5)
     ssl = tmp_path / "encoder.pt"
     torch.save({"encoder": cpu_state(CPCPretrainer().encoder)}, ssl)

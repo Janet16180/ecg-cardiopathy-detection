@@ -11,6 +11,7 @@ import pytest
 from scipy.signal import resample_poly
 
 from ecg_experiment.mimic import read_patients, select_patients, selection_hash
+from scripts.data import prepare_cpc_data
 from scripts.data.prepare_cpc_data import (
     build_cache,
     read_locked_prefix,
@@ -162,19 +163,22 @@ def test_cache_resumes_at_flushed_checkpoint(tmp_path):
     assert np.load(cache / "signals.npy", mmap_mode="r").shape == (101, 12, 2500)
 
 
-def test_cache_completes_after_rename_before_completion_record(tmp_path):
+def test_cache_completes_after_rename_before_completion_record(tmp_path, monkeypatch):
     rows = [{"ecg_id": "1", "patient_id": "1", "source": "ptbxl", "split": "train",
              "raw_dir": str(tmp_path), "filename_hr": "1"}]
     raw = np.ones((12, 5000), dtype=np.float32)
     cache = tmp_path / "cache"
-    with patch("scripts.data.prepare_cpc_data.read_record", return_value=raw):
-        info = build_cache(rows, [], {}, METADATA, cache, 100)
+    monkeypatch.setattr(prepare_cpc_data, "read_record", lambda *args: raw)
+    info = build_cache(rows, [], {}, METADATA, cache, 100)
     progress = {key: info[key] for key in info if key not in
                 ("record_count", "split_counts", "source_counts", "signals_sha256")}
     (cache / "complete.json").unlink()
     (cache / "progress.json").write_text(json.dumps({"identity": progress, "completed_rows": 1}) + "\n")
-    with patch("scripts.data.prepare_cpc_data.read_record", side_effect=AssertionError("redecoded")):
-        assert build_cache(rows, [], {}, METADATA, cache, 100) == info
+    def redecode(*args):
+        raise AssertionError("redecoded")
+
+    monkeypatch.setattr(prepare_cpc_data, "read_record", redecode)
+    assert build_cache(rows, [], {}, METADATA, cache, 100) == info
     assert not (cache / "progress.json").exists()
 
 

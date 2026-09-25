@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-25T19:35:20+00:00",
+  "updated_at_utc": "2026-09-25T20:04:39+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
   "status_definitions": {
@@ -1053,5 +1053,59 @@
     "development_predictions_generated": false,
     "calibration_test_evaluated": false,
     "next_action": "V12 is closed before executable admission and GPU work. Preserve v9-v12 evidence. No automatic v12 retry, production, calibration/test or v13 reset; any further study requires a separately prospective frozen decision."
+  },
+  "experiment_016_encoder_motion_replication_v13": {
+    "status": "closed_no_go_before_real_data_admission_no_replication_result",
+    "protocol": "docs/experiment-016-encoder-motion-replication-v13.md",
+    "protocol_sha256": "92f4fe37e08491d97d59177eac6f8b5c7ef8f1f4ebc0ed3dd81d8a2f7cce6a47",
+    "results": "docs/experiment-016-encoder-motion-replication-v13-results.md",
+    "stop_receipt": "outputs/experiment016_encoder_motion_replication_v13/stop_receipt.json",
+    "cost_source": "ecg_experiment/xecg_encoder_motion_v13_cost.py",
+    "cost_tests": "tests/test_xecg_encoder_motion_v13_cost.py",
+    "output_dir": "outputs/experiment016_encoder_motion_replication_v13",
+    "scope": "Prospective continuation of user-requested CPC then xECG; unchanged seed-47 M/F science and corrected remaining-work cost accounting; preserve all v9-v12 evidence.",
+    "production_seed": 47,
+    "bootstrap_seed": 16020,
+    "record_exposures_per_arm": 15359,
+    "updates_per_arm": 240,
+    "arms": [
+      "M moving encoder",
+      "F zero encoder LR full backward"
+    ],
+    "primary_F_minus_M_auroc_threshold": 0.005,
+    "secondary_M_minus_F_refit_floor": -0.002,
+    "secondary_gap_difference_threshold": 0.005,
+    "planning_ceiling_seconds": 7200,
+    "historical_profile_charge_H_seconds": 2693.7965717150364,
+    "historical_complete_pipeline_P_seconds": 1098.4113020410005,
+    "cost_rule": "H + E + 1.25*(U*Pstar + (1-f)*Tpace + Qremaining + Rremaining); E counts actual work once; U counts only unstarted arms; active f is frozen full-pipeline milestone progress; Tpace includes historical and observed pace floors.",
+    "active_progress_weights": {
+      "training_with_due_diagnostics_checkpoints": 0.5,
+      "complete_extraction_controls_refits": 0.25,
+      "sequential_replay_and_cleanup": 0.25
+    },
+    "initial_Q_remaining_allowance_seconds": 1025,
+    "report_reserve_seconds": 300,
+    "safe_stop_reserve_seconds_within_Q_minimum": 30,
+    "initial_planning_projection_seconds": 7096.0748268175375,
+    "initial_projection_is_measured_gate": false,
+    "first_40_update_elapsed_limit_at_exact_Q_floor_seconds": 117.50435937177716,
+    "historical_phase_bound_supported": false,
+    "phase_bound_reason": "V9 receipts contain only full-pipeline durations and no 40-update, extraction/refit or replay phase durations; a conservative first-block bound that passes the frozen gate cannot be supported before GPU.",
+    "synthetic_cost_tests": "4 passed; Ruff passed",
+    "historical_v10_v11_spent_approximate_lower_bound_seconds_separate": 1666.762619069993,
+    "maximum_real_data_bridge_admission_invocations": 1,
+    "maximum_production_invocations": 1,
+    "automatic_retry_or_resume_allowed": false,
+    "automatic_version_reset_allowed": false,
+    "runnable": false,
+    "cost_gate_passed": false,
+    "executable_manifest": null,
+    "real_data_admission_invocations": 0,
+    "gpu_bridge_updates_completed": 0,
+    "production_arms_completed": 0,
+    "development_predictions_generated": false,
+    "calibration_test_evaluated": false,
+    "next_action": "V13 is closed before real-data admission, without a seed-47 outcome. Preserve its protocol, phase-bound audit and stop receipt. Any revised budget or cost policy needs a separately prospective decision and identity; do not retry/resume v13 or open calibration/test."
   }
 }

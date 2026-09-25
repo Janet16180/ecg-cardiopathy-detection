@@ -23,10 +23,10 @@
 
 Start with the [experiment queue](experiment-queue.md) and
 [JSON catalog](experiment-queue.json). They link every active, deferred, completed,
-and proposed experiment to its protocol and evidence. The 25 September scoped
-016 and clean cached-feature reruns, followed by the development-only 017 clean
-replication, are complete. The later 016 seed-47 v10 bridge and v11 cost gate
-both stopped before GPU updates. No experiment queue is active; new studies
+and proposed experiment to its protocol and evidence. The 25 September CPC
+local-readout study and 016 seed-47 xECG replication are complete on development
+patients. Earlier 016 v10–v13 attempts stopped before the replication endpoint;
+their evidence remains separate. No experiment queue is active; new studies
 proceed one at a time under the queue's cost and verification gates.
 
 - [Model findings](model-findings-report.md)
@@ -34,6 +34,7 @@ proceed one at a time under the queue's cost and verification gates.
 - [ECG readout-gap paper investigation](experiment-016-paper-investigation.md)
 - [Experiment 016 second-seed v10 stop](experiment-016-encoder-motion-replication-v10-results.md)
   and [v11 cost stop](experiment-016-encoder-motion-replication-v11-results.md)
+- [Experiment 016 seed-47 v14 development replication](experiment-016-encoder-motion-replication-v14-results.md)
 - [Experiment 011 KDA/CKDA implementation](experiment-011-delta-memory.md)
 - [Experiment 017 clean replication results](experiment-017-clean-replication-results.md)
 - [First experiment protocol](experiment-001.md) and [results](experiment001-results.md)

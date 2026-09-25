@@ -27,6 +27,7 @@ and proposed experiment to its protocol and evidence. The 25 September scoped
 016 and clean cached-feature reruns are complete; other training remains paused.
 
 - [Model findings](model-findings-report.md)
+- [Experiment 011 KDA/CKDA implementation](experiment-011-delta-memory.md)
 - [First experiment protocol](experiment-001.md) and [results](experiment001-results.md)
 - [Pretrained encoders](pretrained-notes.md), [JEPA](jepa-notes.md), and [released CPC](released-ecg-cpc.md)
 - [Important papers](important-papers.md)

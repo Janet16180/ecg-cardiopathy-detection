@@ -2,7 +2,7 @@
 
 **Updated:** 25 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
-**Historical pause (2026-09-24T19:40:47.068565+00:00):** The user paused experiment training for the repository refactor. On 25 September, the user specifically requested the missing cheaper experiment and a rerun of the cheapest study with new data. That request authorizes Experiment 016 and the clean cached-feature rerun only; other queued/deferred experiments and the legacy MIMIC scheduler remain paused. Downloads continue, so preserve their source/data paths.
+**Historical pause (2026-09-24T19:40:47.068565+00:00):** The user paused experiment training for the repository refactor. On 25 September, the user requested continuing experiments after the refactor commit. Experiment 011 implementation has resumed; 008 and 010 remain deferred for cost, and the legacy MIMIC scheduler has not been restarted. Downloads continue, so preserve their source/data paths.
 
 **Refactor handoff:** Completed results and checkpoints remain in place. `outputs/refactor_pause/source_before_refactor.tar.gz` and `source_hashes.json` preserve and verify the pre-refactor source tree; `pause.json` records the stopped scheduler and archive hash. Preserve experiment output/data identities and archived source evidence. After refactoring, verify equivalent preprocessing, patient splits, model initialization and checkpoint loading, then create new source maps/manifests before resuming. Do not silently rewrite old provenance receipts to match refactored code.
 
@@ -18,13 +18,13 @@ The user authorized **all four Astra proposals**, now Experiments **014–017**.
 
 | Priority | Experiment | Status | Expected pilot cost / next work |
 | --- | --- | --- | --- |
-| 1 | [011: KDA / CKDA](cross-domain-architecture-candidates.md#1-nlp-memory-kda-versus-complex-kda) | Queued for implementation | Runtime unknown; GRU, KDA and CKDA comparison |
+| 1 | [011: KDA / CKDA](experiment-011-delta-memory.md) | Implementing | Reference recurrence, four CPU checks and synthetic V100 feasibility probe complete; real-data runner/profile pending |
 | 2 | [012: StripedHyena-inspired](cross-domain-architecture-candidates.md#2-genomics-a-compact-mixture-of-temporal-scales) | Queued for implementation | Runtime unknown; mixed temporal supports versus local control |
 | 3 | [013: Mamba-3](experiment-013-mamba3-plan.md) | Queued for implementation | Runtime and V100 backend unverified |
 
 The [Astra research note](astra-next-model-ideas.md) supplies the four new designs, controls and primary sources; the JSON catalog links each proposal's exact section. **These ranges are unmeasured planning estimates, not promised completion times**, and exclude implementation work. Only 014 is clearly the cheapest starting point. The remaining ranges overlap; actual complete-pass timing may change their order. A short GPU compute profile alone is insufficient, as Experiment 010 demonstrated. Include cold/warm loading, every comparison arm, evaluation and checkpoint writes in the working two-hour GPU-pilot planning gate.
 
-**Next architecture implementation task: 011.** Experiments 011–017 are accepted tasks; 014–017 have finished. A second-seed 017 follow-up is warranted but not scheduled. New runners, fixed protocols and verification receipts must exist before they are marked runnable. Adding entries here does not schedule an automatic process. Use development patients for early screening, then freeze choices before calibration/test. GPU work remains sequential.
+**Current architecture task: 011.** Experiments 011–017 are accepted tasks; 014–017 have finished. A second-seed 017 follow-up is warranted but not scheduled. The 011 recurrence is under implementation; new runners, fixed protocols and verification receipts must exist before it is marked runnable. Adding entries here does not schedule an automatic process. Use development patients for early screening, then freeze choices before calibration/test. GPU work remains sequential.
 
 ## Deferred and completed studies
 

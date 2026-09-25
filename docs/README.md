@@ -30,6 +30,7 @@ updates. No experiment queue is active; new studies proceed one at a time under
 the queue's cost and verification gates.
 
 - [Model findings](model-findings-report.md)
+- [CPC improvement investigation backlog](cpc-improvement-investigation.md)
 - [ECG readout-gap paper investigation](experiment-016-paper-investigation.md)
 - [Experiment 016 second-seed stop report](experiment-016-encoder-motion-replication-v10-results.md)
 - [Experiment 011 KDA/CKDA implementation](experiment-011-delta-memory.md)

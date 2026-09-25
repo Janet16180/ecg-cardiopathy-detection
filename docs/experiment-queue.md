@@ -30,6 +30,8 @@
 
 **Historical 017 finding:** The first morphology-template screen at 1,518 labels had AUROC **0.9487**, versus **0.9462** for matched convolution and **0.9431** for no-branch CPC. At full labels, convolution and template tied near **0.9620**, versus **0.9571** for no branch. That one-seed result led to the completed clean two-seed follow-up above; neither study used calibration or test predictions. [Original 017 results](../outputs/experiment017_morphology_templates_v2/report.md). Experiments 014 and 015 had negative screens.
 
+**CPC improvement investigation queued:** Review the completed CPC evidence and failure receipts, then rank affordable hypotheses on readout/local morphology, fine-tuning behavior, data scaling and objective/context. The [investigation task](cpc-improvement-investigation.md) specifies controls and a one-candidate next deliverable. This is research/design work, not an executable Experiment 018 or a restart of deferred 010; no GPU job is scheduled.
+
 ## Pending priority: cheapest likely first
 
 The user authorized **all four Astra proposals**, now Experiments **014–017**. They take priority over the larger architecture implementations. The order below is an implementation priority, not a dependency chain: an unpromising early screen does not block an independent later experiment.

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-25T18:06:18+00:00",
+  "updated_at_utc": "2026-09-25T18:11:29+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
   "status_definitions": {
@@ -68,6 +68,34 @@
     "target": "PTB-XL diagnostic abnormality proxy, not person-level health or referral ground truth"
   },
   "active": null,
+  "research_tasks": [
+    {
+      "id": "cpc_improvement_investigation",
+      "name": "Rank affordable ways to improve compact ECG CPC",
+      "status": "queued_for_evidence_review",
+      "authorized": true,
+      "task": "docs/cpc-improvement-investigation.md",
+      "next_action": "Review CPC result and failure receipts, source/data quality and available caches; rank matched, falsifiable candidates by full-path cost; freeze one affordable successor protocol before any new training.",
+      "candidate_directions": [
+        "Local morphology and readout",
+        "Fine-tuning stability diagnosis",
+        "Pretraining data scale and quality",
+        "CPC prediction objective or context",
+        "Released S4 ECG-CPC frozen readout"
+      ],
+      "output": "Ranked research note and one proposed controlled protocol, not a performance result",
+      "executable_manifest": null,
+      "gpu_profile": null,
+      "results": null,
+      "constraints": [
+        "Preserve fixed patient splits and train-only fitting.",
+        "Distinguish compact CPC from released S4 ECG-CPC and frozen from fine-tuned readouts.",
+        "Do not automatically resume deferred Experiment 010 or displace 011–013.",
+        "One experiment at a time; require complete-path profile and 7200-second gate before GPU training.",
+        "No calibration or test access in the evidence-review stage."
+      ]
+    }
+  ],
   "experiments": [
     {
       "id": "014",

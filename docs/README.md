@@ -17,6 +17,8 @@
 - [Training dataset v1](training-dataset-v1.md)
 - [Seeded 100k-plus-labels training cohort](sampled-100k-plus-labels-v1.md)
 - [Processed ECG exploration](processed-ecg-eda.md)
+- [MIMIC CPC flag audit](mimic-cpc-flag-audit.md)
+- [CODE-15 source-label ID groups](code15-label-groups.md)
 - [Challenge postprocessing](challenge-postprocessing.md)
 - [Public-data strategy](public-data-strategy.md)
 

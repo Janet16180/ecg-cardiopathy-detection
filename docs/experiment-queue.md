@@ -2,6 +2,19 @@
 
 **Updated:** 26 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
+**PTB diagnosis geometry and MIMIC transfer completed:** The
+[exploratory patient-balanced CPU study](ptb-mimic-cpc-diagnosis-geometry.md)
+used 15,023 PTB training patients. Ten-neighbor sharing of MI, CD, STTC and HYP
+annotations was 1.90×, 1.68×, 1.75× and 1.72× their sample prevalences. A
+seeded 4,000-patient HDBSCAN screen found a `NORM`-enriched group and another
+mixed abnormality group, not a pure cardiopathy subtype. Using only PTB-fitted
+PCA, MIMIC machine-abnormal ECGs had 82.0% abnormal ten-nearest neighbors
+versus 25.4% for machine-normal queries. The machine label cannot externally
+validate the four PTB diagnoses. An initial full-cohort density run was stopped
+for CPU cost before results; the protocol records the narrower density subset.
+The completed command, hashes and counts are in the
+[local receipt](../outputs/ptb_mimic_cpc_diagnosis_geometry/report.json).
+
 **MIMIC cluster-label proximity audit completed:** The
 [one-patient-per-ECG follow-up](mimic-cpc-cluster-label-profile.md) finds that
 the largest cluster has 675/1,133 explicit machine summaries marked abnormal,

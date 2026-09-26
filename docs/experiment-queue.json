@@ -1341,6 +1341,19 @@
     "calibration_test_evaluated": false,
     "next_action": "No further 019 experiment is scheduled. The point estimate favors 25k but its paired interval includes zero at both label budgets. Prioritize a separate paper-oriented cross-encoder/task investigation with independent patients; calibration/test stay closed."
   },
+  "ptb_mimic_cpc_diagnosis_geometry": {
+    "status": "complete_exploratory",
+    "protocol_and_result": "docs/ptb-mimic-cpc-diagnosis-geometry.md",
+    "command": "UV_CACHE_DIR=/tmp/ecg_uv_cache uv run --no-sync python -u -m scripts.reports.profile_ptb_mimic_cpc_diagnoses",
+    "ptb_training_patients": 15023,
+    "ptb_diagnosis_neighbor_enrichment_ratios": {"MI": 1.8971832044477506, "CD": 1.6751218657278755, "STTC": 1.752748089471552, "HYP": 1.719674996281422},
+    "ptb_hdbscan_subset_patients": 4000,
+    "mimic_patient_ecgs": 7892,
+    "mimic_abnormal_query_abnormal_neighbor_fraction": 0.8199343724364233,
+    "mimic_normal_query_abnormal_neighbor_fraction": 0.25412735849056606,
+    "result": "outputs/ptb_mimic_cpc_diagnosis_geometry/report.json",
+    "clinical_interpretation": "PTB diagnosis-annotation neighborhoods and broad MIMIC machine-abnormality transfer, not external validation of a disease subtype"
+  },
   "mimic_cpc_cluster_label_profile": {
     "status": "complete_exploratory",
     "protocol_and_result": "docs/mimic-cpc-cluster-label-profile.md",

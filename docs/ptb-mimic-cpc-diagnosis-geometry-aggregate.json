@@ -1,0 +1,174 @@
+{
+  "interpretation": "Exploratory ECG-annotation geometry; no clinical diagnosis or external subtype validation",
+  "ptb_training_patients_and_ecgs": 15023,
+  "ptb_sample_ids_sha256": "b62fabaa21994d4cbabde7508342d5c5548b1084fa216dc9af81fdb517e2ba13",
+  "ptb_label_combinations": {
+    "none": 913,
+    "CD": 1403,
+    "CD;HYP": 189,
+    "CD;HYP;MI": 73,
+    "CD;HYP;MI;STTC": 78,
+    "CD;HYP;STTC": 143,
+    "CD;MI": 653,
+    "CD;MI;STTC": 99,
+    "CD;NORM": 290,
+    "CD;NORM;STTC": 1,
+    "CD;STTC": 334,
+    "HYP": 268,
+    "HYP;MI": 83,
+    "HYP;MI;STTC": 168,
+    "HYP;NORM": 1,
+    "HYP;STTC": 491,
+    "MI": 1236,
+    "MI;STTC": 258,
+    "NORM": 6609,
+    "STTC": 1733
+  },
+  "ptb_diagnosis_neighbor_report": {
+    "MI": {
+      "positive_patients": 2648,
+      "prevalence": 0.1762630633029355,
+      "mean_same_diagnosis_fraction_in_10_neighbors": 0.3344033232628399,
+      "enrichment_vs_prevalence": 1.8971832044477506,
+      "permutation_null_95pct_interval": [
+        0.17073168429003022,
+        0.18278040030211481
+      ],
+      "one_sided_permutation_p_exploratory": 0.000999000999000999
+    },
+    "CD": {
+      "positive_patients": 3263,
+      "prevalence": 0.21720029288424417,
+      "mean_same_diagnosis_fraction_in_10_neighbors": 0.3638369598528961,
+      "enrichment_vs_prevalence": 1.6751218657278755,
+      "permutation_null_95pct_interval": [
+        0.21149172540606803,
+        0.22350674226172235
+      ],
+      "one_sided_permutation_p_exploratory": 0.000999000999000999
+    },
+    "STTC": {
+      "positive_patients": 3305,
+      "prevalence": 0.2199960061239433,
+      "mean_same_diagnosis_fraction_in_10_neighbors": 0.38559757942511347,
+      "enrichment_vs_prevalence": 1.752748089471552,
+      "permutation_null_95pct_interval": [
+        0.2142481089258699,
+        0.22647655068078668
+      ],
+      "one_sided_permutation_p_exploratory": 0.000999000999000999
+    },
+    "HYP": {
+      "positive_patients": 1494,
+      "prevalence": 0.09944751381215469,
+      "mean_same_diagnosis_fraction_in_10_neighbors": 0.17101740294511378,
+      "enrichment_vs_prevalence": 1.719674996281422,
+      "permutation_null_95pct_interval": [
+        0.09317101740294512,
+        0.10535475234270415
+      ],
+      "one_sided_permutation_p_exploratory": 0.000999000999000999
+    }
+  },
+  "ptb_unsupervised_clusters": {
+    "method": "Seeded 4000 PTB patients, PCA16 unit vectors, HDBSCAN size80/min_samples20/eom",
+    "selected_indices_sha256": "8c5619391ce89f9a4fbf7a74873db9efc1469ab2cc9a99f18ee4a48d5f34ca32",
+    "groups": {
+      "-1": {
+        "patients": 2335,
+        "diagnosis_counts": {
+          "NORM": 1073,
+          "MI": 405,
+          "CD": 517,
+          "STTC": 503,
+          "HYP": 229
+        },
+        "norm_only": 1014,
+        "no_qualifying_diagnostic_class": 156
+      },
+      "0": {
+        "patients": 907,
+        "diagnosis_counts": {
+          "NORM": 238,
+          "MI": 221,
+          "CD": 232,
+          "STTC": 328,
+          "HYP": 129
+        },
+        "norm_only": 226,
+        "no_qualifying_diagnostic_class": 65
+      },
+      "1": {
+        "patients": 758,
+        "diagnosis_counts": {
+          "NORM": 528,
+          "MI": 65,
+          "CD": 96,
+          "STTC": 71,
+          "HYP": 41
+        },
+        "norm_only": 508,
+        "no_qualifying_diagnostic_class": 39
+      }
+    }
+  },
+  "mimic_patient_ecgs": 7892,
+  "mimic_ptb_fitted_pca_machine_summary_proximity": {
+    "method": "10 nearest other patients among exact abnormal/normal summaries; Euclidean PCA16 unit vectors",
+    "eligible_ecgs_and_patients": 4134,
+    "machine_abnormal": 2438,
+    "machine_normal": 1696,
+    "distinct_carts": 139,
+    "mean_abnormal_neighbor_fraction_for_abnormal_queries": 0.8199343724364233,
+    "mean_abnormal_neighbor_fraction_for_normal_queries": 0.25412735849056606,
+    "query_groups_with_global_neighbors": {
+      "-1": {
+        "abnormal_queries": 1508,
+        "normal_queries": 1441,
+        "mean_abnormal_neighbor_fraction_for_abnormal_queries": 0.7605437665782494,
+        "mean_abnormal_neighbor_fraction_for_normal_queries": 0.24302567661346292
+      },
+      "0": {
+        "abnormal_queries": 675,
+        "normal_queries": 112,
+        "mean_abnormal_neighbor_fraction_for_abnormal_queries": 0.9361481481481483,
+        "mean_abnormal_neighbor_fraction_for_normal_queries": 0.3919642857142857
+      },
+      "1": {
+        "abnormal_queries": 255,
+        "normal_queries": 143,
+        "mean_abnormal_neighbor_fraction_for_abnormal_queries": 0.8635294117647059,
+        "mean_abnormal_neighbor_fraction_for_normal_queries": 0.25804195804195806
+      }
+    },
+    "same_cart_neighbor_fraction": 0.033889695210449926,
+    "observed_difference": 0.5658070139458573,
+    "permutations": 1000,
+    "within_cart_null_mean": 0.023447023687448734,
+    "within_cart_null_95pct_interval": [
+      0.010077163658736657,
+      0.03767970672682521
+    ],
+    "within_cart_one_sided_p": 0.000999000999000999,
+    "global_null_mean": -0.0003923861771944193,
+    "global_null_95pct_interval": [
+      -0.012955611669401231,
+      0.012050028199343732
+    ],
+    "global_one_sided_p": 0.000999000999000999
+  },
+  "pca_fit": "PTB train only, 16D randomized PCA seed42, unit vectors after transform",
+  "ptb_pca_variance_fraction": 0.8547331094741821,
+  "command": "UV_CACHE_DIR=/tmp/ecg_uv_cache uv run --no-sync python -m scripts.reports.profile_ptb_mimic_cpc_diagnoses",
+  "source_hashes": {
+    "protocol": "af727ad97a2e94e094b3fa1586c6539d5cc8de5ea698c3c8d1d84caa1a4e4521",
+    "analysis": "d3ac3009ed8aa760a61fee48e6c28c533ed0420a0f5d54c58edaa421bbc8e625",
+    "encoder": "c166fa2576a90bf39366eb63fee5fba5c6b0eb72bd9e0ee2d315c7b8ddd550d5",
+    "cache_rows": "b5581d376a18030ec758855a20fb8c65dabd3182aff64c34ae86409b805c32b7",
+    "ptb_manifest": "910f59242066bb55b3e784ff43ea9dff2be74176d3242774c457e2d1887fcad5",
+    "ptb_database": "7600de9c1b27d181d850b3c6038a35d7c3ddb6bb33b702e3a20252a6859d216b",
+    "ptb_statements": "ad05b0b1fcae83bb1230755ad9cfc7c96f303feddc08a4a9ad5bdc9ca63bac8f",
+    "mimic_clusters": "c8c08acba97e80183531701c08eaa797681ba7f8028e18ce73d3a32766695b95",
+    "mimic_machine": "56f6b1413221bce95bd6f48b28ca1acf27ae0b073d6f2c1d12f3af7500eabbb6"
+  }
+}

@@ -1341,6 +1341,23 @@
     "calibration_test_evaluated": false,
     "next_action": "No further 019 experiment is scheduled. The point estimate favors 25k but its paired interval includes zero at both label budgets. Prioritize a separate paper-oriented cross-encoder/task investigation with independent patients; calibration/test stay closed."
   },
+  "mimic_cpc_cluster_label_profile": {
+    "status": "complete_exploratory",
+    "protocol_and_result": "docs/mimic-cpc-cluster-label-profile.md",
+    "command": "UV_CACHE_DIR=/tmp/ecg_uv_cache uv run --no-sync python -m scripts.reports.profile_mimic_cpc_cluster_labels",
+    "selected_patient_ecgs": 7892,
+    "large_cluster_patients": 1497,
+    "large_cluster_machine_abnormal": 675,
+    "large_cluster_machine_explicit_summaries": 1133,
+    "large_cluster_cpc_flagged_machine_abnormal": 674,
+    "large_cluster_cpc_flagged_machine_normal": 85,
+    "proximity_eligible_patients": 4134,
+    "abnormal_query_abnormal_neighbor_fraction": 0.8202214930270713,
+    "normal_query_abnormal_neighbor_fraction": 0.23932783018867923,
+    "within_cart_permutation_p_exploratory": 0.000999000999000999,
+    "result": "outputs/mimic_cpc_cluster_label_profile/report.json",
+    "clinical_interpretation": "Machine-abnormality association only; no adjudicated cardiopathy or validated MIMIC diagnostic accuracy"
+  },
   "mimic_cpc_clustering_audit": {
     "status": "complete_exploratory",
     "protocol_and_result": "docs/mimic-cpc-clustering.md",

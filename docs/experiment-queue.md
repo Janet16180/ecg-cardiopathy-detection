@@ -2,6 +2,17 @@
 
 **Updated:** 26 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
+**MIMIC cluster-label proximity audit completed:** The
+[one-patient-per-ECG follow-up](mimic-cpc-cluster-label-profile.md) finds that
+the largest cluster has 675/1,133 explicit machine summaries marked abnormal,
+and CPC flags 674/675 of those but also 85/112 machine-normal ECGs. Among 4,134
+patients with an exact abnormal/normal cart summary, abnormal queries have
+82.0% abnormal ten-nearest neighbors versus 23.9% for normal queries in frozen
+CPC feature space; the within-cart permutation result is exploratory. This
+supports broad machine-abnormality structure, not verified cardiopathy or
+clinical diagnostic accuracy. The CPU command and source hashes are in its
+[local receipt](../outputs/mimic_cpc_cluster_label_profile/report.json).
+
 **MIMIC missed-pattern audit completed:** The user asked whether clusters
 contain ECGs with abnormalities that CPC fails to flag. The
 [official-machine-report join and negative-only clustering](mimic-cpc-machine-disagreement.md)

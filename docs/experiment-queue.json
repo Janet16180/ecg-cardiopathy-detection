@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-26T05:26:11+00:00",
+  "updated_at_utc": "2026-09-26T06:16:36+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -1340,5 +1340,23 @@
     "training_command": "UV_CACHE_DIR=/tmp/ecg-uv-cache uv run --no-sync python -u -m scripts.experiments.run_cpc_25k --stage train",
     "calibration_test_evaluated": false,
     "next_action": "No further 019 experiment is scheduled. The point estimate favors 25k but its paired interval includes zero at both label budgets. Prioritize a separate paper-oriented cross-encoder/task investigation with independent patients; calibration/test stay closed."
+  },
+  "mimic_cpc_clustering_audit": {
+    "status": "complete_exploratory",
+    "protocol_and_result": "docs/mimic-cpc-clustering.md",
+    "command": "UV_CACHE_DIR=/tmp/ecg_uv_cache uv run --no-sync python -m scripts.reports.cluster_mimic_cpc",
+    "signal_qc_command": "UV_CACHE_DIR=/tmp/ecg_uv_cache uv run --no-sync python -m scripts.reports.audit_mimic_cpc_clusters",
+    "selected_patient_ecgs": 7892,
+    "selected_ids_sha256": "8c2c47ce334cff2f6c4b8ad4dd7b0bd45277b4ea12682c18481970fe1451d95f",
+    "ssl_encoder_sha256": "c166fa2576a90bf39366eb63fee5fba5c6b0eb72bd9e0ee2d315c7b8ddd550d5",
+    "cluster_count": 2,
+    "unassigned_ecgs": 5353,
+    "cluster_sizes": [1497, 1042],
+    "cluster_cpc_flagged_fractions": [0.9579158316633266, 0.6928982725527831],
+    "result": "outputs/mimic_cpc_clustering/report.json",
+    "identified_clusters": "outputs/mimic_cpc_clustering/patient_sample_clusters.csv.gz",
+    "identified_clusters_sha256": "c8c08acba97e80183531701c08eaa797681ba7f8028e18ce73d3a32766695b95",
+    "signal_qc": "outputs/mimic_cpc_clustering/signal_qc.json",
+    "clinical_interpretation": "Exploratory model-score groups only; no independent diagnosis labels or disease subtype claims"
   }
 }

@@ -2,6 +2,13 @@
 
 **Updated:** 26 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
+**Exploratory MIMIC clustering completed:** The user requested HDBSCAN on ECGs
+after the binary CPC flag audit. The [read-only patient-balanced analysis](mimic-cpc-clustering.md)
+found two dense groups among 7,892 seeded one-per-patient MIMIC ECGs: 1,497
+and 1,042 records, with 95.8% and 69.3% CPC flag rates; 5,353 were unassigned.
+This is not a diagnosis discovery or an independent validation of the CPC flags.
+No training, calibration/test evaluation, or scheduler was launched.
+
 **26 September 25k follow-up:** The user requested a smaller training pool after Experiment 018's negative scaling readout. [Experiment 019](experiment-019-cpc-25k.md) freezes 25,000 total source-stratified training ECGs from the verified 115,359-record cache, replayed over the same 902-update budget. Its primary comparison is 25k minus the completed 115k arm under the same frozen PTB development readout. A new full-cache hash and actual V100 cost profile must pass before this single arm trains; calibration/test remain closed.
 
 **019 profile passed:** The 24-update full-path V100 profile measured 44.93 seconds, including the cached data loader. The full-cache preflight took 947.32 seconds; the conservative total projection was **4,230.55 seconds**, below the 7,200-second gate. The seeded 25k subset contains 15,170 MIMIC, 3,746 PTB-XL, 2,072 Chapman, 2,066 Georgia, 1,334 CPSC 2018, and 612 CPSC Extra ECGs. Its selected-index SHA-256 is `43f405bfbddbb415f5072480744cebe6427afbeed2474a7be0e625cf1deac791` under the canonical JSON scheme. The training stage is authorized by this receipt; inspect the live process/checkpoint rather than treating this note as proof it is running.

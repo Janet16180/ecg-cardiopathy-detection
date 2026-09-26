@@ -19,6 +19,7 @@
 - [Processed ECG exploration](processed-ecg-eda.md)
 - [MIMIC CPC flag audit](mimic-cpc-flag-audit.md)
 - [MIMIC CPC clustering](mimic-cpc-clustering.md)
+- [MIMIC machine/CPC disagreement audit](mimic-cpc-machine-disagreement.md)
 - [CODE-15 source-label ID groups](code15-label-groups.md)
 - [Challenge postprocessing](challenge-postprocessing.md)
 - [Public-data strategy](public-data-strategy.md)

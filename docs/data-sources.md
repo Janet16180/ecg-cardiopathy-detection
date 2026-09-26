@@ -6,6 +6,17 @@ See [data-quality-assessment.md](data-quality-assessment.md) for the current loc
 
 **Acquisition status, 25 September 2026:** Chapman/Shaoxing is complete: all **10,247** `.hea`/`.mat` pairs (**20,494 files**) passed the upstream SHA256 checks. CODE-15% is also complete: `exams.csv` and all **18** ZIP parts passed the Zenodo MD5 checks. The selected **200,000 MIMIC-IV-ECG recordings** are now downloaded and verified; the read-only waveform audit retained **197,207** from **40,568 patients**. Completion receipts establish file integrity and the stated signal checks, not label suitability.
 
+**26 September MIMIC metadata addition:** The official 182,674,683-byte
+`machine_measurements.csv` was downloaded from
+[PhysioNet MIMIC-IV-ECG 1.0](https://physionet.org/content/mimic-iv-ecg/1.0/)
+to `data/raw/mimic-iv-ecg/1.0/`. Its SHA-256 matches the upstream
+`SHA256SUMS.txt` entry:
+`56f6b1413221bce95bd6f48b28ca1acf27ae0b073d6f2c1d12f3af7500eabbb6`.
+The machine-generated report lines are independent proxy annotations for
+exploratory disagreement audits, not cardiologist-adjudicated diagnoses. The
+raw metadata stays local and is excluded from Git and DVC with the active
+MIMIC tree; no waveform source was changed.
+
 | Dataset | Upstream source and version | Local raw files | Acquisition and integrity |
 | --- | --- | --- | --- |
 | PTB-XL | [PhysioNet PTB-XL 1.0.3](https://physionet.org/content/ptb-xl/1.0.3/), official public mirror used by the downloader | `data/raw/ptb-xl/1.0.3/` | `scripts/download_ptbxl_waveforms.py`; official `SHA256SUMS.txt` and waveform checks |

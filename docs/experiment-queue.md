@@ -2,6 +2,17 @@
 
 **Updated:** 26 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
+**MIMIC missed-pattern audit completed:** The user asked whether clusters
+contain ECGs with abnormalities that CPC fails to flag. The
+[official-machine-report join and negative-only clustering](mimic-cpc-machine-disagreement.md)
+found 119 CPC-negative/explicit-machine-abnormal ECGs from 100 patients, and a
+modest exploratory concentration in one negative-only cluster (34/958 ECGs;
+27 patients). A machine-text acute-MI alert appeared in 37 candidate ECGs,
+spread across clusters. The patient-level evidence does not establish a
+missed-disease subtype; prioritize independent review of the local candidate
+IDs. The official machine metadata was checksum-verified and kept local. No
+training, calibration/test evaluation, or scheduler was launched.
+
 **Exploratory MIMIC clustering completed:** The user requested HDBSCAN on ECGs
 after the binary CPC flag audit. The [read-only patient-balanced analysis](mimic-cpc-clustering.md)
 found two dense groups among 7,892 seeded one-per-patient MIMIC ECGs: 1,497

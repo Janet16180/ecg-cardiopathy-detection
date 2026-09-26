@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-26T06:16:36+00:00",
+  "updated_at_utc": "2026-09-26T06:46:04+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -1358,5 +1358,24 @@
     "identified_clusters_sha256": "c8c08acba97e80183531701c08eaa797681ba7f8028e18ce73d3a32766695b95",
     "signal_qc": "outputs/mimic_cpc_clustering/signal_qc.json",
     "clinical_interpretation": "Exploratory model-score groups only; no independent diagnosis labels or disease subtype claims"
+  },
+  "mimic_cpc_machine_disagreement_audit": {
+    "status": "complete_exploratory",
+    "protocol_and_result": "docs/mimic-cpc-machine-disagreement.md",
+    "official_metadata_sha256": "56f6b1413221bce95bd6f48b28ca1acf27ae0b073d6f2c1d12f3af7500eabbb6",
+    "matched_mimic_ecgs": 39457,
+    "machine_abnormal_ecgs": 17631,
+    "cpc_negative_machine_abnormal_ecgs": 119,
+    "cpc_negative_machine_abnormal_patients": 100,
+    "negative_only_cluster_sizes": [919, 958],
+    "negative_only_cluster_machine_abnormal_counts": [24, 34],
+    "negative_only_noise_machine_abnormal_count": 61,
+    "machine_acute_mi_text_cpc_negative_ecgs": 37,
+    "machine_acute_mi_text_cpc_negative_patients": 31,
+    "result": "outputs/mimic_cpc_machine_disagreement/report.json",
+    "negative_only_clustering": "outputs/mimic_cpc_negative_clustering/report.json",
+    "priority_review": "outputs/mimic_cpc_machine_disagreement/priority_review.json",
+    "candidate_ids": "outputs/mimic_cpc_machine_disagreement/candidate_disagreements.csv.gz",
+    "clinical_interpretation": "Machine/model disagreements and machine text alerts, not confirmed cardiopathy or validated false negatives; independent review required"
   }
 }

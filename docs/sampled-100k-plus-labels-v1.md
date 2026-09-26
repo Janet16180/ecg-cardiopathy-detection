@@ -45,6 +45,14 @@ the accepted MIMIC audit and this selection did not create new clinical labels.
 The [aggregate EDA receipt](../outputs/data_quality/sampled_100k_plus_labels_v1/eda.json)
 records these counts and the storage-backend mix without publishing patient rows.
 
+A later complete waveform pass for the local CPC cache found **114 MIMIC ECGs
+with a fully constant lead** among the selected records. They are finite and
+hash-valid, and the original MIMIC acceptance audit did not exclude constant
+leads. They remain in this immutable sampled cohort and are flagged as an SSL
+quality limitation; they carry no mapped binary target. The sampled loader
+now follows the MIMIC source policy while retaining its stronger constant-lead
+check for the other sources. No raw waveform or selection row was changed.
+
 The PTB labels are the existing resolved diagnostic-annotation proxy. The
 other 2,058 original PTB training records lacked a resolved target under that
 definition; 1,925 were sampled for SSL only. The unlabeled loader masks targets

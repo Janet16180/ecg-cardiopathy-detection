@@ -127,7 +127,9 @@ class SampledTrainingECGDataset:
             root = self._safe_path("data/raw/mimic-iv-ecg/1.0")
             path = self._safe_path(row["path"])
             signal = read_record(root, str(path.relative_to(root)))
-        validate_signal(signal)
+        # The accepted MIMIC audit requires finite 12-lead signals but does
+        # not exclude a constant lead. Preserve that published source policy.
+        validate_signal(signal, require_variable_leads=row["source"] != "mimic")
         if signal_sha256(signal) != row["signal_sha256"]:
             raise ValueError(f"Waveform changed: {row['record_id']}")
 

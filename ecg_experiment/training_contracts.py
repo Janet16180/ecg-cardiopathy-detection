@@ -13,11 +13,11 @@ SIGNAL_SHAPE = (12, 5000)
 IDENTIFIED_SOURCES = ("ptbxl", "mimic")
 
 
-def validate_signal(signal: np.ndarray) -> None:
-    """Require a finite float32 ``[12, 5000]`` waveform without constant leads."""
+def validate_signal(signal: np.ndarray, *, require_variable_leads: bool = True) -> None:
+    """Require the canonical waveform; optionally apply the variable-lead gate."""
     if signal.dtype != np.float32 or signal.shape != SIGNAL_SHAPE or not np.isfinite(signal).all():
         raise ValueError("Expected finite float32 [12,5000] waveform")
-    if np.any(np.ptp(signal, axis=1) == 0):
+    if require_variable_leads and np.any(np.ptp(signal, axis=1) == 0):
         raise ValueError("Full constant lead")
 
 

@@ -10,6 +10,7 @@ from ecg_experiment.files import sha256_file
 from ecg_experiment.public_sources import signal_sha256
 from ecg_experiment.sampled_cohort import sample_sources, source_quotas
 from ecg_experiment.sampled_training_dataset import SampledTrainingECGDataset
+from ecg_experiment.training_contracts import validate_signal
 
 
 def test_source_quotas_are_exact_and_capacity_bounded() -> None:
@@ -82,3 +83,38 @@ def test_loader_masks_ssl_labels_and_exposes_only_supervised_target(tmp_path) ->
     assert ssl[0]["target_available"] is False
     assert supervised[0]["target"] == 1
     assert supervised[0]["target_available"] is True
+
+
+def test_mimic_constant_lead_follows_accepted_source_policy(tmp_path, monkeypatch) -> None:
+    """The MIMIC audit accepts finite signals even if one lead is constant."""
+    signal = np.tile(np.linspace(-1, 1, 5000, dtype=np.float32), (12, 1))
+    signal[0] = 0
+    with pytest.raises(ValueError, match="Full constant lead"):
+        validate_signal(signal)
+
+    cohort = tmp_path / "cohort"
+    cohort.mkdir()
+    row = {
+        "record_id": "mimic:1", "patient_id": "mimic:patient1", "source": "mimic",
+        "split": "train", "label_scope": "ssl_only", "backend": "mimic_wfdb",
+        "path": "data/raw/mimic-iv-ecg/1.0/example", "index": "",
+        "signal_sha256": signal_sha256(signal),
+    }
+    pd.DataFrame([row]).to_csv(cohort / "train_manifest.csv", index=False)
+    for budget in ("1", "0.1"):
+        pd.DataFrame(columns=["record_id", "patient_id", "target"]).to_csv(
+            cohort / f"labels_fraction{budget}.csv", index=False,
+        )
+    metadata = {
+        "complete": True, "schema_version": 1, "shape_per_record": [12, 5000],
+        "record_count": 1, "source_shards": {},
+        "table_sha256": {
+            name: sha256_file(cohort / name)
+            for name in ("train_manifest.csv", "labels_fraction1.csv", "labels_fraction0.1.csv")
+        },
+    }
+    (cohort / "metadata.json").write_text(json.dumps(metadata))
+    monkeypatch.setattr("ecg_experiment.sampled_training_dataset.read_record", lambda *_: signal)
+    dataset = SampledTrainingECGDataset(cohort)
+    dataset.root = tmp_path
+    assert np.array_equal(dataset[0]["signal"], signal)

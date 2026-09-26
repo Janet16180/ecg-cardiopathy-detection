@@ -9,12 +9,12 @@ training and scheduling remain paused.
 
 | Folder | Purpose | Example module |
 | --- | --- | --- |
-| `data/` | Download metadata, prepare sources, build datasets | `scripts.data.prepare_ptbxl` |
+| `data/` | Download metadata, prepare sources, build datasets | `scripts.data.prepare_ptbxl`, `scripts.data.build_sampled_training_dataset` |
 | `features/` | Extract and combine cached features | `scripts.features.extract_jepa` |
 | `experiments/` | Train, probe, and evaluate models | `scripts.experiments.run_cpc_experiment` |
 | `coordination/` | Queue and handoff commands | `scripts.coordination.run_priority_queue` |
 | `reports/` | Analysis and report generation | `scripts.reports.eda_processed_ecg` |
-| `validation/` | Audits and source checks | `scripts.validation.validate_data_versioning` |
+| `validation/` | Audits and source checks | `scripts.validation.validate_data_versioning`, `scripts.validation.verify_sampled_training_dataset` |
 | `tracking/` | MLflow indexing | `scripts.tracking.import_mlflow_history` |
 
 Active download entrypoints remain at the root: `scripts.prepare_mimic_ssl`,

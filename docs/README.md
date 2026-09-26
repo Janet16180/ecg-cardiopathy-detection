@@ -15,6 +15,7 @@
 - [Data processing review](data-processing-astra-review.md)
 - [Clean-data audit and cheap rerun plan](clean-data-rerun-review.md)
 - [Training dataset v1](training-dataset-v1.md)
+- [Seeded 100k-plus-labels training cohort](sampled-100k-plus-labels-v1.md)
 - [Processed ECG exploration](processed-ecg-eda.md)
 - [Challenge postprocessing](challenge-postprocessing.md)
 - [Public-data strategy](public-data-strategy.md)

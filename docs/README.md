@@ -16,6 +16,8 @@
 - [Clean-data audit and cheap rerun plan](clean-data-rerun-review.md)
 - [Training dataset v1](training-dataset-v1.md)
 - [Seeded 100k-plus-labels training cohort](sampled-100k-plus-labels-v1.md)
+- [Quality-filtered 25k, 50k and 100k cohorts](clean-cohorts-v1.md)
+- [Dataset EDA notebooks](../notebooks/README.md) and [pipeline review](eda-pipeline-review.md)
 - [Processed ECG exploration](processed-ecg-eda.md)
 - [MIMIC CPC flag audit](mimic-cpc-flag-audit.md)
 - [MIMIC CPC clustering](mimic-cpc-clustering.md)

@@ -4,3 +4,44 @@ Name notebooks with an order, author initials, and purpose, for example
 `01-jr-signal-quality.ipynb`. Move reusable code into `ecg_experiment/` and
 record reproducible commands in a protocol. Clear sensitive or large outputs
 before committing. Notebooks are optional; the experiment pipeline runs in Python.
+
+## Dataset EDA
+
+An exploratory analysis of every ECG source, built from the raw files. The notebooks describe the
+datasets themselves; read them in order. Findings about this project's own pipeline, with
+recommendations, are in [the pipeline review](../docs/eda-pipeline-review.md), and the quality policy
+derived from these notebooks is described in [clean cohorts v1](../docs/clean-cohorts-v1.md).
+
+| Notebook | Source | Main questions |
+| --- | --- | --- |
+| `01-jr-ptbxl.ipynb` | PTB-XL | Missing and implausible values, diagnoses by age and sex, signal integrity, devices |
+| `02-jr-mimic.ipynb` | MIMIC-IV-ECG (800k metadata, 200k signals) | Repeat recordings, machine measurements and their consistency, lead order, devices |
+| `03-jr-challenge.ipynb` | Georgia, CPSC 2018, CPSC-Extra, Chapman | Format, diagnoses by age and sex, duplicates, rail artifacts, filtering |
+| `04-jr-code15.ipynb` | CODE-15% (all 18 parts) | Labels and mortality by age and sex, padding and duration, amplitude unit, sampling rate |
+| `05-jr-cross-dataset.ipynb` | All | Populations, the same findings across sources, source fingerprints |
+| `06-jr-clean-cohorts.ipynb` | Training candidates | What the quality policy removes per source, and the 25k, 50k and 100k cohorts |
+
+The MIMIC notebook shows aggregate statistics only (credentialed data), so its outputs can be kept in
+Git. Plots use seaborn. The analysis code is in `ecg_experiment/eda/`.
+
+Build the feature caches once (about 80 minutes on CPU: MIMIC, then CODE-15 streamed from its export
+archive), then execute a notebook:
+
+```bash
+uv run --no-sync python -m scripts.reports.build_eda_caches
+uv run --no-sync jupyter nbconvert --to notebook --execute --inplace notebooks/01-jr-ptbxl.ipynb
+```
+
+Caches go to `outputs/eda/`, which is ignored by Git. Delete `outputs/eda/features/` to recompute
+from the raw files.
+
+| Module in `ecg_experiment/eda/` | Purpose |
+| --- | --- |
+| `signals.py` | Dataset-independent features: flat leads, amplitude, limb-lead identities, noise bands, heart rate; parallel caching; ECG plots |
+| `ptbxl.py`, `ptbxl_labels.py`, `ptbxl_signals.py` | PTB-XL loading, an independent re-implementation of the project label, label and signal audits |
+| `mimic.py` | MIMIC record list, machine measurements, name-based lead ordering |
+| `challenge.py` | Challenge headers, SNOMED names, signal hashes |
+| `code15.py` | CODE-15 metadata; streams all 18 parts from the export archive one at a time |
+| `processed.py` | Comparisons of the project's processed arrays with the raw files |
+| `cross.py` | All sources in one table; six common findings on one vocabulary; source fingerprinting |
+| `stats.py` | Prevalence with Wilson intervals, chi-square tests, logistic-regression odds ratios, prevalence plots |

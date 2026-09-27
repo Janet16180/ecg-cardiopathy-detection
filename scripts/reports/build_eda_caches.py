@@ -1,17 +1,17 @@
 """Build every feature cache the notebooks read, so they open quickly.
 
-Run from the repository root with ``.venv/bin/python -m eda.compute``. Each step
-is skipped when its cache already exists; delete ``eda/outputs/features`` to
+Run from the repository root with ``uv run --no-sync python -m scripts.reports.build_eda_caches``.
+Each step is skipped when its cache already exists; delete ``outputs/eda/features`` to
 recompute. The notebooks call the same functions, so this step is optional.
 """
 
 import time
 
-from eda.challenge import challenge_summary, load_headers, signal_hashes
-from eda.code15 import build_all_parts
-from eda.mimic import load_machine_measurements, load_records, mimic_summary
-from eda.ptbxl import load_metadata
-from eda.ptbxl_signals import ptbxl_summary
+from ecg_experiment.eda.challenge import challenge_summary, load_headers, signal_hashes
+from ecg_experiment.eda.code15 import build_all_parts
+from ecg_experiment.eda.mimic import load_machine_measurements, load_records, mimic_summary
+from ecg_experiment.eda.ptbxl import load_metadata
+from ecg_experiment.eda.ptbxl_signals import ptbxl_summary
 
 
 def main() -> None:

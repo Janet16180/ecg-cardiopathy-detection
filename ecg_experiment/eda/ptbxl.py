@@ -7,12 +7,12 @@ import numpy as np
 import pandas as pd
 import wfdb
 
-from eda.signals import canonical_order
+from ecg_experiment.eda.signals import canonical_order
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 PTBXL_DIR = ROOT / "data/raw/ptb-xl/1.0.3"
 MANIFEST_DIR = ROOT / "data/processed/ptbxl"
-OUTPUT_DIR = ROOT / "eda/outputs"
+OUTPUT_DIR = ROOT / "outputs/eda"
 
 QUALITY_COLUMNS = ["baseline_drift", "static_noise", "burst_noise", "electrodes_problems",
                    "extra_beats", "pacemaker"]

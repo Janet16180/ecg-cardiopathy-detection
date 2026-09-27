@@ -6,11 +6,11 @@ from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.metrics import balanced_accuracy_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 
-from eda.challenge import challenge_summary, load_headers
-from eda.code15 import code15_summary, load_exams
-from eda.mimic import load_machine_measurements, load_records, mimic_summary
-from eda.ptbxl import load_metadata
-from eda.ptbxl_signals import ptbxl_summary
+from ecg_experiment.eda.challenge import challenge_summary, load_headers
+from ecg_experiment.eda.code15 import code15_summary, load_exams
+from ecg_experiment.eda.mimic import load_machine_measurements, load_records, mimic_summary
+from ecg_experiment.eda.ptbxl import load_metadata
+from ecg_experiment.eda.ptbxl_signals import ptbxl_summary
 
 SIGNAL_COLUMNS = ["duration_s", "std", "peak_abs_mv", "baseline_fraction", "high_frequency_fraction",
                   "powerline_50_fraction", "powerline_60_fraction", "heart_rate", "zero_fraction",

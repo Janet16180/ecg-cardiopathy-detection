@@ -1,11 +1,11 @@
-"""PTB-XL specific signal analyses built on ``eda.signals``."""
+"""PTB-XL specific signal analyses built on ``ecg_experiment.eda.signals``."""
 
 import numpy as np
 import pandas as pd
 from scipy.signal import resample_poly
 
-from eda.ptbxl import OUTPUT_DIR, QUALITY_COLUMNS, read_signal
-from eda.signals import compute_features, record_summary
+from ecg_experiment.eda.ptbxl import OUTPUT_DIR, QUALITY_COLUMNS, read_signal
+from ecg_experiment.eda.signals import compute_features, record_summary
 
 FEATURE_CACHE = OUTPUT_DIR / "features" / "ptbxl_500hz.parquet"
 

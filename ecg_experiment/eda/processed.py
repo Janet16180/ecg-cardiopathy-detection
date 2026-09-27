@@ -5,9 +5,9 @@ import pandas as pd
 import wfdb
 from scipy.signal import resample_poly
 
-from eda.challenge import RAW_ROOTS
-from eda.ptbxl import PTBXL_DIR, ROOT
-from eda.signals import canonical_order
+from ecg_experiment.eda.challenge import RAW_ROOTS
+from ecg_experiment.eda.ptbxl import PTBXL_DIR, ROOT
+from ecg_experiment.eda.signals import canonical_order
 
 PROCESSED_DIR = ROOT / "data/processed"
 UNION_DIR = PROCESSED_DIR / "training_union_500hz_v1"
@@ -251,11 +251,11 @@ def challenge_union_reasons(headers: pd.DataFrame, summary: pd.DataFrame, hashes
     Parameters
     ----------
     headers : pd.DataFrame
-        Output of ``eda.challenge.load_headers``.
+        Output of ``ecg_experiment.eda.challenge.load_headers``.
     summary : pd.DataFrame
-        Output of ``eda.challenge.challenge_summary``.
+        Output of ``ecg_experiment.eda.challenge.challenge_summary``.
     hashes : pd.Series
-        Output of ``eda.challenge.signal_hashes``.
+        Output of ``ecg_experiment.eda.challenge.signal_hashes``.
 
     Returns
     -------

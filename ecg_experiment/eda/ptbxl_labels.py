@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import roc_auc_score
 
-from eda.ptbxl import (
+from ecg_experiment.eda.ptbxl import (
     QUALITY_COLUMNS,
     diagnostic_classes,
     load_manifest,

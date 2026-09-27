@@ -16,8 +16,8 @@ import h5py
 import numpy as np
 import pandas as pd
 
-from eda.ptbxl import OUTPUT_DIR, ROOT
-from eda.signals import compute_features, record_summary
+from ecg_experiment.eda.ptbxl import OUTPUT_DIR, ROOT
+from ecg_experiment.eda.signals import compute_features, record_summary
 
 RAW_DIR = ROOT / "data/raw/code-15pct/zenodo-4916206"
 PREPARED_DIR = ROOT / "data/processed/code15_quality"
@@ -190,7 +190,7 @@ def padding_table() -> pd.DataFrame:
     """
     paths = sorted(CACHE_DIR.glob("part*_padding.parquet"))
     if not paths:
-        raise FileNotFoundError("No CODE-15 caches; run eda.code15.build_all_parts() first")
+        raise FileNotFoundError("No CODE-15 caches; run ecg_experiment.eda.code15.build_all_parts() first")
     return pd.concat([pd.read_parquet(path) for path in paths], ignore_index=True)
 
 

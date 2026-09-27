@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 import wfdb
 
-from eda.ptbxl import OUTPUT_DIR, ROOT
-from eda.signals import LEADS, canonical_order, compute_features, record_summary
+from ecg_experiment.eda.ptbxl import OUTPUT_DIR, ROOT
+from ecg_experiment.eda.signals import LEADS, canonical_order, compute_features, record_summary
 
 MIMIC_DIR = ROOT / "data/raw/mimic-iv-ecg/1.0"
 SELECTION_DIR = ROOT / "data/processed/mimic_ssl_200k"

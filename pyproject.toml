@@ -26,6 +26,8 @@ dev = [
     "pre-commit>=4,<5",
     "pytest==8.4.2",
     "ruff>=0.13,<1",
+    "seaborn>=0.13.2",
+    "statsmodels>=0.15.0",
 ]
 tracking = ["mlflow>=3,<4"]
 data = ["dvc>=3,<4"]

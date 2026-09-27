@@ -181,3 +181,61 @@ def read_signal(filename: str) -> tuple[np.ndarray, int]:
     """
     signal, fields = wfdb.rdsamp(str(PTBXL_DIR / filename))
     return canonical_order(signal, fields["sig_name"]), int(fields["fs"])
+
+
+SUPERCLASSES = ["NORM", "MI", "STTC", "CD", "HYP"]
+
+
+def superclass_flags(meta: pd.DataFrame, classes: dict[str, str]) -> pd.DataFrame:
+    """
+    One boolean column per diagnostic superclass, plus ``abnormal``.
+
+    A superclass is present when any of its diagnostic codes is listed,
+    whatever the likelihood, following the PTB-XL benchmark convention.
+
+    Parameters
+    ----------
+    meta : pd.DataFrame
+        Output of ``load_metadata``.
+    classes : dict[str, str]
+        Output of ``diagnostic_classes``.
+
+    Returns
+    -------
+    pd.DataFrame
+        Boolean columns ``NORM``, ``MI``, ``STTC``, ``CD``, ``HYP`` and
+        ``abnormal`` (any superclass other than NORM), indexed like ``meta``.
+    """
+    present = meta["scp_codes"].apply(lambda codes: {classes[code] for code in codes if code in classes})
+    flags = pd.DataFrame({name: present.apply(lambda found, name=name: name in found)
+                          for name in SUPERCLASSES}, index=meta.index)
+    flags["abnormal"] = flags[SUPERCLASSES[1:]].any(axis=1)
+    return flags
+
+
+def implausible_rows(meta: pd.DataFrame) -> pd.DataFrame:
+    """
+    Flag metadata values that are placeholders or physically implausible.
+
+    Children legitimately have small heights and weights, so the height and
+    weight rules only apply to adults (18 or older).
+
+    Parameters
+    ----------
+    meta : pd.DataFrame
+        Output of ``load_metadata``.
+
+    Returns
+    -------
+    pd.DataFrame
+        Boolean column per rule, indexed like ``meta``.
+    """
+    adult = meta["age_capped"].ge(18) | meta["age"].eq(300)
+    bmi = meta["weight"] / (meta["height"] / 100) ** 2
+    return pd.DataFrame({
+        "age 300 (placeholder for > 89)": meta["age"].eq(300),
+        "adult height < 120 cm": adult & meta["height"].lt(120),
+        "adult weight < 30 kg": adult & meta["weight"].lt(30),
+        "weight > 180 kg": meta["weight"].gt(180),
+        "BMI < 12 or > 70": bmi.lt(12) | bmi.gt(70),
+    }, index=meta.index)

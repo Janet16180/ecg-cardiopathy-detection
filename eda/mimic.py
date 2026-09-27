@@ -190,7 +190,10 @@ def measured_intervals(measurements: pd.DataFrame) -> pd.DataFrame:
     Returns
     -------
     pd.DataFrame
-        ``INTERVAL_COLUMNS`` as floats, plus ``heart_rate`` from the RR interval.
+        ``INTERVAL_COLUMNS`` as floats, plus derived ``heart_rate`` (bpm),
+        ``qrs_duration``, ``pr_interval``, ``qt_interval`` and ``qtc`` (Bazett),
+        all in ms. Derived values are not otherwise cleaned, so impossible
+        durations remain visible.
     """
     timing_columns, axis_columns = INTERVAL_COLUMNS[:6], INTERVAL_COLUMNS[6:]
     timing = measurements[timing_columns].astype(float)
@@ -199,6 +202,10 @@ def measured_intervals(measurements: pd.DataFrame) -> pd.DataFrame:
     axes = measurements[axis_columns].astype(float)
     intervals = timing.join(axes.mask(axes.abs() > 360))
     intervals["heart_rate"] = 60000 / intervals["rr_interval"]
+    intervals["qrs_duration"] = intervals["qrs_end"] - intervals["qrs_onset"]
+    intervals["pr_interval"] = intervals["qrs_onset"] - intervals["p_onset"]
+    intervals["qt_interval"] = intervals["t_end"] - intervals["qrs_onset"]
+    intervals["qtc"] = intervals["qt_interval"] / np.sqrt(intervals["rr_interval"] / 1000)
     return intervals
 
 

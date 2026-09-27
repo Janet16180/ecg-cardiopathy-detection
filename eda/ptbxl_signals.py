@@ -37,17 +37,17 @@ def lead_features(meta: pd.DataFrame) -> pd.DataFrame:
     Parameters
     ----------
     meta : pd.DataFrame
-        PTB-XL metadata indexed by ``ecg_id``, with ``project`` and ``device``.
+        PTB-XL metadata indexed by ``ecg_id``, with ``device``.
 
     Returns
     -------
     pd.DataFrame
-        One row per record and lead.
+        One row per record and lead, with the record's device.
     """
     items = [(str(ecg_id), path) for ecg_id, path in meta["filename_hr"].items()]
     features = compute_features(items, read_signal, FEATURE_CACHE)
     features["ecg_id"] = features["record_id"].astype(int)
-    return features.merge(meta[["project", "device", "split"]], left_on="ecg_id", right_index=True)
+    return features.merge(meta[["device"]], left_on="ecg_id", right_index=True)
 
 
 def annotation_agreement(summary: pd.DataFrame) -> pd.DataFrame:

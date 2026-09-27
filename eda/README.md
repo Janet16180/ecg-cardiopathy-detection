@@ -6,18 +6,19 @@ from `ecg_experiment/` and `scripts/`, and nothing here writes to `data/` or `ou
 
 ## Notebooks
 
-Read them in order; each builds on what the previous one established.
+The notebooks describe the datasets themselves; read them in order. Findings about this project's own
+pipeline, with recommendations, are in [project-review.md](project-review.md).
 
 | Notebook | Source | Main questions |
 | --- | --- | --- |
-| `notebooks/01-ptbxl.ipynb` | PTB-XL | Labels, splits, shortcuts, signal integrity, processed arrays |
-| `notebooks/02-mimic.ipynb` | MIMIC-IV-ECG (200k local) | Selection, lead order, machine measurements, devices |
-| `notebooks/03-challenge.ipynb` | Georgia, CPSC 2018, CPSC-Extra, Chapman | Format, duplicates, clipping, union curation |
-| `notebooks/04-code15.ipynb` | CODE-15% (all 18 parts) | Export archive, duration, amplitude unit, sampling rate |
-| `notebooks/05-cross-dataset.ipynb` | All | Source fingerprints, pooling, scorecard and next steps |
+| `notebooks/01-ptbxl.ipynb` | PTB-XL | Missing and implausible values, diagnoses by age and sex, signal integrity, devices |
+| `notebooks/02-mimic.ipynb` | MIMIC-IV-ECG (800k metadata, 200k signals) | Repeat recordings, machine measurements and their consistency, lead order, devices |
+| `notebooks/03-challenge.ipynb` | Georgia, CPSC 2018, CPSC-Extra, Chapman | Format, diagnoses by age and sex, duplicates, rail artifacts, filtering |
+| `notebooks/04-code15.ipynb` | CODE-15% (all 18 parts) | Labels and mortality by age and sex, padding and duration, amplitude unit, sampling rate |
+| `notebooks/05-cross-dataset.ipynb` | All | Populations, the same findings across sources, source fingerprints |
 
 The MIMIC notebook shows aggregate statistics only (credentialed data), so its outputs
-can be kept in Git.
+can be kept in Git. Plots use seaborn.
 
 ## Running
 
@@ -39,5 +40,6 @@ Delete `eda/outputs/features/` to recompute from the raw files.
 | `challenge.py` | Challenge headers, SNOMED names, signal hashes |
 | `code15.py` | CODE-15 metadata; streams all 18 parts from the export archive one at a time |
 | `processed.py` | Comparisons of the project's processed arrays with the raw files |
-| `cross.py` | All sources in one table; source fingerprinting |
+| `cross.py` | All sources in one table; six common findings on one vocabulary; source fingerprinting |
+| `stats.py` | Prevalence with Wilson intervals, chi-square tests, logistic-regression odds ratios, prevalence plots |
 | `compute.py` | Builds every cache |

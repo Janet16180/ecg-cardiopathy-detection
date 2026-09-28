@@ -35,7 +35,8 @@ POOL_DIR = ROOT / "data/processed/cpc_pool_40k"
 BASE = ROOT / "outputs/experiment004_cpc_40k"
 PRIOR = ROOT / "outputs/experiment018_cpc_data_scaling_readout_v1"
 PTB_RAW = ROOT / "data/raw/ptb-xl/1.0.3"
-OUTPUT = ROOT / "outputs/experiment020_full_development_v1"
+OUTPUT = ROOT / "outputs/experiment020_full_development_v2"
+PROBABILITY_TOLERANCE = 1e-5
 PROFILE_RECORDS = 512
 CEILING_SECONDS = 3_600
 PRIOR_AUROC = {"full": 0.9207935251300892, "limited": 0.9129638312209045}
@@ -148,7 +149,7 @@ def integrity(dev: pd.DataFrame, probabilities: dict[str, np.ndarray]) -> dict[s
             mine = probabilities[budget][dev["original"].to_numpy()][order]
             difference = float(np.abs(mine - saved[f"{budget}_initial"]).max())
             auroc = roc_auc_score(saved["targets"], mine)
-            if difference > 1e-6 or abs(auroc - PRIOR_AUROC[budget]) > 1e-6:
+            if difference > PROBABILITY_TOLERANCE or abs(auroc - PRIOR_AUROC[budget]) > 1e-6:
                 raise ValueError(f"Integrity check failed for {budget}: {difference}, {auroc}")
             result[f"{budget}_max_abs_difference"] = difference
     return result

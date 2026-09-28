@@ -82,3 +82,16 @@ under the shared GPU lock. It projects the full run with a 1.5 margin plus 900 s
 fit 3,600 seconds. `run` requires a matching passed profile, extracts features, fits the heads on CPU,
 writes local features and predictions to `outputs/experiment020_full_development_v1/`, and records an
 aggregate `result.json`. The results go to `docs/experiment-020-full-development-readout-results.md`.
+
+## Addendum v2, 28 September 2026, before any new development score
+
+The v1 run (`outputs/experiment020_full_development_v1/`) stopped at the integrity check, as designed.
+Probabilities on the original 1,306 ECGs differed from Experiment 018 by up to 8.9e-4, and AUROC by 7.7e-6.
+The cause was that the v1 head was fitted on float32 features, while Experiment 018 converts them to
+float64 first. Recomputed features match Experiment 018's saved features to 4.5e-7. With the conversion,
+AUROC reproduces exactly at both budgets and probabilities agree to 1.3e-6; the rest comes from GPU
+arithmetic in the recomputed features. v1 computed no other score.
+
+Changes: `fit_logistic` and `predict` convert inputs to float64, as Experiment 018 did, and the probability
+tolerance is 1e-5. The AUROC tolerance stays at 1e-6. Everything else is unchanged. The run writes to
+`outputs/experiment020_full_development_v2/` after a new profile.

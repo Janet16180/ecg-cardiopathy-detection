@@ -130,7 +130,7 @@ def demographics(frame: pd.DataFrame, median_age: float) -> np.ndarray:
 
 def fit_logistic(x: np.ndarray, y: np.ndarray) -> tuple[StandardScaler, LogisticRegression]:
     """
-    Fit Experiment 018's fixed scaler and L2 logistic head on training rows.
+    Fit Experiment 018's fixed scaler and L2 logistic head on training rows, in float64.
 
     Parameters
     ----------
@@ -149,6 +149,7 @@ def fit_logistic(x: np.ndarray, y: np.ndarray) -> tuple[StandardScaler, Logistic
     RuntimeError
         If the solver does not converge.
     """
+    x = np.asarray(x, dtype=np.float64)
     scaler = StandardScaler().fit(x)
     model = LogisticRegression(C=0.01, penalty="l2", fit_intercept=True, solver="lbfgs", max_iter=5000,
                                tol=1e-8, class_weight=None, random_state=42)
@@ -177,7 +178,7 @@ def predict(head: tuple[StandardScaler, LogisticRegression], x: np.ndarray) -> n
         One probability per row.
     """
     scaler, model = head
-    return model.predict_proba(scaler.transform(x))[:, 1]
+    return model.predict_proba(scaler.transform(np.asarray(x, dtype=np.float64)))[:, 1]
 
 
 def patient_bootstrap(patients: np.ndarray, y: np.ndarray, first: np.ndarray, second: np.ndarray,

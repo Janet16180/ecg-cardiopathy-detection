@@ -525,6 +525,68 @@
       ],
       "status": "open",
       "notes": "About 30-60 minutes of a cardiologist's time; record answers next to the sheet."
+    },
+    {
+      "id": "calibrated_threshold_sph",
+      "kind": "experiment",
+      "title": "Calibrated 95%-sensitivity threshold for JEPA/xECG, checked on SPH",
+      "question": "At the project's screening operating point, what specificity and false-referral rate do JEPA and xECG give at a new hospital?",
+      "evidence": "022 reports AUROC only; the project's decision rule is at least 95% sensitivity on the calibration patients, and AUROC hides false referrals.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Fit Platt calibration and the threshold on the PTB-XL calibration split (never test), then apply unchanged to SPH once; cached 022 features."
+    },
+    {
+      "id": "jepa_xecg_concat",
+      "kind": "experiment",
+      "title": "Concatenated ECG-JEPA and xECG features",
+      "question": "Do the two strongest encoders carry complementary information?",
+      "evidence": "025: JEPA and xECG are indistinguishable on average, but come from different objectives and data (JEPA 250 Hz transformer, xECG 100 Hz xLSTM).",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Cached features; development and SPH (022 features) with the fixed readout. Experiment 014's JEPA+CPC fusion was negative, which lowers expectations."
+    },
+    {
+      "id": "hard_case_analysis",
+      "kind": "experiment",
+      "title": "Error analysis of the PTB-XL hard cases",
+      "question": "Which statements make the ECGs the project label dropped hard even for JEPA and xECG (added-development AUROC about 0.73)?",
+      "evidence": "022 v3: added development ECGs AUROC CPC 0.575, JEPA 0.734, xECG 0.726, with 41 positives.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Descriptive: false positives and negatives by SCP code, device and heart rate; training-set analogue to avoid over-reading 41 development positives."
+    },
+    {
+      "id": "label_audit_sensitivity",
+      "kind": "experiment",
+      "title": "Probe sensitivity to the 024 label-audit candidates",
+      "question": "Does removing or down-weighting the 192 suspect training labels change development and SPH AUROC?",
+      "evidence": "024 flagged 192 training ECGs whose labels disagree with at least 80% of neighbours in both CPC and JEPA space.",
+      "value": 2,
+      "clarity": 0.5,
+      "gpu_hours": 0,
+      "cpu_hours": 0.3,
+      "build_hours": 2,
+      "blocked_by": [
+        "clinician_review"
+      ],
+      "status": "open",
+      "notes": "Better after a cardiologist has checked the top 20; otherwise it tests the neighbour rule, not label errors."
     }
   ]
 }

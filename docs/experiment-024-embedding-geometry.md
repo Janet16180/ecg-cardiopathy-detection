@@ -1,6 +1,6 @@
 # Experiment 024: CPC embedding geometry audit and diagnosis prototypes
 
-**Draft, 28 September 2026. Not frozen; nothing has run.** The user asked whether a reference vector per
+**Frozen 28 September 2026, before any development score is computed.** The user asked whether a reference vector per
 cardiopathy can classify ECGs by cosine similarity, and what clustering the CPC embeddings would show. This
 experiment answers the prerequisite question: is the frozen CPC feature space organized by diagnosis, or
 mainly by nuisance factors such as device, heart rate and demographics? No encoder is trained, no GPU is
@@ -15,6 +15,11 @@ used, and calibration and test patients stay closed.
 - [Experiment 020](experiment-020-full-development-readout-results.md): a logistic probe on the same encoder's
   512 features reaches AUROC 0.889 on full development with the standard label. A probe identifies the
   `CS100 3` device with AUROC 0.974.
+
+- [Experiment 025](experiment-025-label-efficiency-results.md): with the same fixed linear readout on the
+  original development ECGs, released ECG-JEPA and xECG features are far stronger than this CPC encoder
+  (AUROC 0.959 and 0.962 versus 0.921 with all labels, and about 0.035-0.040 higher at every label
+  budget). This does not change the analyses: section 5 already compares these encoders.
 
 Neighbor enrichment and a good linear probe can coexist with a geometry dominated by other factors. The
 earlier study did not compare a distance-based classifier with the probe, measure what the neighborhoods
@@ -134,11 +139,72 @@ Set before any score is computed:
 - If another encoder's prototype-to-probe gap is much smaller than CPC's, that encoder is the better base
   for reference vectors and clustering, whatever its probe AUROC.
 
+## Feasibility details fixed at freeze
+
+These settle how the design above is executed. They were fixed from metadata counts only, before any
+feature was loaded or any score computed. They do not change an analysis.
+
+- **Joins.** `heart_rate` comes from `outputs/eda/features/ptbxl_500hz.parquet`, which has one row per lead
+  with the same value on all 12 leads of a record; the first value per `record_id` (the PTB-XL `ecg_id`) is
+  used. It is the EDA's QRS-energy screening estimate (`ecg_experiment.eda.signals.heart_rate`), not a
+  clinical measurement. All 21,799 records have one. `validated_by_human`, `report` and `scp_codes` come
+  from `data/raw/ptb-xl/1.0.3/ptbxl_database.csv`, joined by `ecg_id`.
+- **Subclasses.** From `data/raw/ptb-xl/1.0.3/scp_statements.csv`, rows with `diagnostic == 1`, column
+  `diagnostic_subclass`. A subclass is present when any listed code maps to it, with no likelihood
+  threshold. The NORM subclass is excluded. On the 17,083 labeled training and 1,572 labeled development
+  ECGs, 15 subclasses qualify: IMI, AMI, STTC, LVH, LAFB/LPFB, ISC_, IRBBB, ISCA, _AVB, IVCD, NST_, CRBBB,
+  CLBBB, LAO/LAE and ISCI.
+- **CPC rows.** Analysis 1 uses the 17,083 training ECGs with a standard label (the `cpc_standard` rows) as
+  prototype and neighbor pool, and scores the 1,572 labeled full-development ECGs. The feature space is the
+  scaler of the refitted `cpc_standard` head. Per-superclass and per-subclass tasks keep only rows that are
+  positive for the task or NORM-only, on both sides. Each task computes all four methods; its probe is the
+  same fixed head refitted on the task's training rows. The nuisance probes of analysis 2 use all 17,417
+  training and 1,604 full-development ECGs, as Experiment 020's device probe did; age uses rows with a known
+  age. The same-device fraction and `knn_other_device` use the analysis 1 pool and queries.
+- **Devices.** With at least 50 full-development ECGs: CS-12, CS-12 E, AT-6 C 5.5, AT-6 6, AT-60 3, AT-6 C
+  and AT-6 C 5.8. CS100 3 has 49 and is therefore not probed here; Experiment 020 already reported it
+  (AUROC 0.974). In the encoder comparison (1,306 ECGs) the eligible devices are the first six.
+- **Methods.** k-means is scikit-learn `KMeans` on the unit vectors, `n_init=10`, `random_state=24024`
+  (analyses 1 and 3); centroids and all prototypes are re-normalized. A device-balanced prototype averages
+  the unit-length per-device class means with equal weight. Ridge regression is a training-only
+  `StandardScaler` followed by `Ridge(alpha=1.0)`.
+- **Structure.** Analysis 3 uses all 17,417 training ECGs. PCA-16 is fitted on their unit vectors
+  (randomized solver, `random_state=24024`) and its output re-normalized. The HDBSCAN subset follows the
+  earlier procedure with this experiment's seed: permute the training rows with
+  `numpy.random.default_rng(24024)`, keep the first ECG of each patient, and take the first 4,000. HDBSCAN
+  noise (-1) counts as one label. AMI is scikit-learn's `adjusted_mutual_info_score`. The superclass
+  combination is `ecg_experiment.eda.ptbxl.superclasses` (for example `CD+MI`, or `none`); age decade is
+  floor(age / 10) with missing age as its own category.
+- **Reference ECGs.** Groups are drawn from the 17,083 labeled training ECGs by superclass combination:
+  NORM-only (7,243), MI (2,043), STTC (1,903), CD (1,353) and HYP (415). Candidates are group members.
+  Plotted records are read from the raw 500 Hz files after checking them against the official
+  `SHA256SUMS.txt`; the display subtracts each lead's median and applies no filter.
+- **Encoder comparison.** The training pool is Experiment 025's: 15,359 training ECGs with a standard label
+  present in all three released caches. CPC is repeated on the same rows with its own pool-fitted scaler as
+  the reference for the three released encoders.
+- **Label audit.** The pool is the same 15,359 ECGs. The CPC space is the analysis 1 space; the ECG-JEPA
+  space uses the scaler fitted on the pool. Neighbors come from the pool only.
+- **Bootstrap.** `ecg_experiment.full_development.patient_bootstrap` with seed 24024 and 2,000 draws, for:
+  each CPC method minus `probe`, `knn_other_device` minus `knn`, and `prototype_device_balanced` minus
+  `prototype` on the binary label; `prototype` minus `probe` for each superclass and subclass; and, per
+  encoder, `prototype` minus `probe`, `knn_other_device` minus `knn` and `prototype_device_balanced` minus
+  `prototype`.
+- **Integrity tolerance.** Probabilities to 1e-5 and AUROC within 1e-6 of Experiment 020's 0.8886421.
+- **Reading.** A prototype-to-probe gap between 0.02 and 0.05 has no prescribed reading and is reported as
+  intermediate.
+
 ## Outputs
 
-`scripts/experiments/run_embedding_geometry024.py`, CPU only, writes `result.json` with input hashes,
-`medoids.csv` (record IDs and similarities) and figures to `outputs/experiment024_embedding_geometry_v1/`.
-The results go to `docs/experiment-024-embedding-geometry-results.md`.
+`scripts/experiments/run_embedding_geometry024.py`, CPU only, uses `ecg_experiment/embedding_geometry.py`.
+It hashes every input, source file and this protocol into `result.json`, refuses to overwrite an existing
+run, and writes `result.json`, `medoids.csv` (record IDs and similarities), `label_audit.csv` and figures to
+`outputs/experiment024_embedding_geometry_v1/`. Copies of the figures go to `docs/figures/experiment-024/`.
+The results go to `docs/experiment-024-embedding-geometry-results.md`, and a review sheet for a cardiologist
+to `docs/experiment-024-clinician-review.md`.
+
+```bash
+OMP_NUM_THREADS=4 uv run --no-sync python -m scripts.experiments.run_embedding_geometry024
+```
 
 ## Not in scope
 

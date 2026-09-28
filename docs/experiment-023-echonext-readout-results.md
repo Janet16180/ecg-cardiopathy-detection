@@ -52,7 +52,7 @@ Paired patient bootstrap, 2,000 draws, seed 23023:
 | `cpc_tabular` minus `tabular` (primary) | +0.076 | [+0.065, +0.087] |
 | `cpc` minus `age_sex` | +0.157 | [+0.140, +0.175] |
 | `jepa` minus `cpc` | +0.011 | [+0.005, +0.018] |
-| `xecg` minus `cpc` | +0.027 | [+0.019, +0.033] |
+| `xecg` minus `cpc` | +0.026 | [+0.019, +0.033] |
 | `jepa_tabular` minus `tabular` | +0.087 | [+0.076, +0.099] |
 | `xecg_tabular` minus `tabular` | +0.103 | [+0.090, +0.115] |
 
@@ -112,7 +112,7 @@ What the component table shows:
 
   | Setting | ECG-JEPA | xECG |
   | --- | ---: | ---: |
-  | EchoNext (this experiment) | +0.011 | +0.027 |
+  | EchoNext (this experiment) | +0.011 | +0.026 |
   | SPH ([Experiment 022](experiment-022-sph-external-readout-results.md)) | +0.036 | +0.039 |
   | PTB-XL at 1,000 labels ([Experiment 025](experiment-025-label-efficiency-results.md)) | +0.037 | +0.036 |
 

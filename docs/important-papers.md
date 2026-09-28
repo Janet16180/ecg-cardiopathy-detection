@@ -399,6 +399,50 @@ StripedHyena 2 mixes short, medium and long input-dependent convolution operator
 
 Stacks time-series segments into images and probes intermediate frozen vision features. The current repository lists OpenCLIP, SigLIP 2, DINOv2 and MAE. This supplies an inexpensive cross-domain-weight pilot, subject to a faithful twelve-lead input conversion and pretrained-versus-random feature control. Its reported TiViT-only benchmark average exceeds Mantis on UCR but is lower on UEA, so avoid a universal superiority claim. See the [independent vision-model proposals](vision-to-ecg-architecture-candidates.md).
 
+## L. Added 28 September 2026: evaluation, prototypes and synthetic data
+
+Read in full for the [literature review](literature-review-2026-09-28.md); candidates are scored in
+[experiment-backlog.json](experiment-backlog.json).
+
+### 37. Multi-source cross-validation
+
+*Empirical investigation of multi-source cross-validation in clinical ECG classification.* Leinonen et al.,
+arXiv:2403.15012v2, 2024. [Paper](https://arxiv.org/abs/2403.15012) · [Code](https://github.com/UTU-Health-Research/dl-ecg-classifier).
+
+Harmonizes PhysioNet 2021 and SPH into five sources. Standard K-fold estimates overstated new-source AUROC by
+0.04-0.13, leave-source-out estimates were nearly unbiased, and the source was identifiable from the ECG
+with 96.9% accuracy. **Our interpretation:** our single-source PTB-XL numbers need external confirmation.
+Use leave-source-out designs for multi-source work. Do not reuse its SPH mapping code, which can silently
+overwrite record IDs.
+
+### 38. ProtoECGNet
+
+*ProtoECGNet: Case-Based Interpretable Deep Learning for Multi-Label ECG Classification with Contrastive
+Learning.* Sethi et al., MLHC 2025 (PMLR 298). [Paper](https://arxiv.org/abs/2504.08713).
+
+Learned prototypes, projected onto real training ECG segments, reached 0.913 macro AUROC on 71 PTB-XL labels,
+against 0.925 for a black-box ResNet. Two physicians rated the prototypes representative. **Our
+interpretation:** this is the rigorous form of a "reference ECG per condition". Experiment 024 first tests
+whether simple data-derived prototypes suffice.
+
+### 39. SSSD-ECG
+
+*Diffusion-based Conditional ECG Generation with Structured State Space Models.* Lopez Alcaraz and Strodthoff,
+arXiv:2301.08227, Computers in Biology and Medicine. [Paper](https://arxiv.org/abs/2301.08227).
+
+A classifier trained only on synthetic PTB-XL ECGs scored 0.840 AUROC, against 0.932 when trained on real
+ECGs, even though the generator was trained on PTB-XL. **Our interpretation:** synthetic ECGs are not a
+substitute for real class references.
+
+### 40. DiffuSETS
+
+*DiffuSETS: 12-lead ECG Generation Conditioned on Clinical Text Reports and Patient-Specific Information.*
+Lai et al., arXiv:2501.05932, 2025. [Paper](https://arxiv.org/abs/2501.05932).
+
+Text-conditioned generation trained on MIMIC machine reports. Its augmentation gains are on machine-labeled
+MIMIC tasks and are compared only with no rebalancing and with a weighted loss. **Our interpretation:** weak
+evidence for our setting, and it depends on labels we do not trust.
+
 ## How these papers change our next decisions
 
 The following are project judgments, not results reported by the cited authors:

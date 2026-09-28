@@ -43,7 +43,7 @@ penalty; one that ranks high earns a protocol like any other.
 
 | Rank | ID | Kind | Candidate | Value | Clarity | Hours | Score | Waiting on |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | --- |
-| 1 | challenge_label_mapping | repo | SNOMED-to-endpoint mapping for Challenge sources | 4 | 0.9 | 4.5 | 3.05 | - |
+| 1 | challenge_label_mapping | repo | SNOMED-to-endpoint mapping for Challenge sources | 4 | 0.9 | 4.5 | 3.73 | - |
 | 2 | site_recalibration | experiment | How many local labeled ECGs restore the 95% operating point at a new site | 5 | 0.8 | 3.5 | 2.14 | - |
 | 3 | echo_label_efficiency | experiment | Label efficiency for echo-confirmed structural heart disease | 4 | 0.8 | 3.0 | 1.85 | - |
 | 4 | local_normal_manifold | experiment | Normal manifold fitted on a small set of local normal ECGs | 4 | 0.7 | 3.5 | 1.50 | - |
@@ -70,17 +70,23 @@ penalty; one that ranks high earns a protocol like any other.
 | 25 | vcg_rotation_ssl | wild | Heart-axis rotation augmentation via VCG projection | 3 | 0.3 | 16.0 | 0.22 | - |
 | 26 | core_lead_masking | experiment | CoRe-style lead-drop masking in CPC pretraining | 2 | 0.4 | 14.0 | 0.21 | - |
 | 27 | report_alignment | experiment | ECG-report alignment with PTB-XL cardiologist reports | 2 | 0.3 | 25.0 | 0.12 | - |
-| 28 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
-| 29 | ningbo_eda | experiment | Ningbo EDA and clean manifest | 3 | 0.9 | 6.0 | 2.20 | @ningbo_download |
+| 28 | ningbo_eda | experiment | Ningbo EDA and clean manifest | 3 | 0.9 | 6.0 | 2.65 | @ningbo_download |
+| 29 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
 | 30 | cohorts_v2 | experiment | Quality-first nested cohorts 25k-200k | 3 | 0.9 | 7.0 | 1.63 | ningbo_eda |
-| 31 | multisource_calibration | experiment | Calibration and threshold fitted on several hospitals | 4 | 0.6 | 3.5 | 1.28 | ningbo_eda, challenge_label_mapping |
-| 32 | multisource_normal_manifold | experiment | Normal manifold fitted on normals from several hospitals | 3 | 0.6 | 2.5 | 1.14 | ningbo_eda, challenge_label_mapping |
-| 33 | ningbo_sph_transfer | experiment | Do Ningbo labels improve transfer to SPH? | 4 | 0.6 | 5.5 | 1.02 | ningbo_eda, challenge_label_mapping |
-| 34 | near_duplicates | repo | Near-duplicate pass across Challenge sources | 3 | 0.7 | 6.0 | 0.86 | ningbo_eda |
-| 35 | multisource_lso | experiment | Multi-source probe with leave-source-out evaluation | 5 | 0.6 | 13.0 | 0.83 | cohorts_v2, challenge_label_mapping |
-| 36 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
-| 37 | cpc_pretrain_cohorts_v2 | experiment | CPC continued pretraining on quality-first cohorts v2 | 2 | 0.5 | 11.0 | 0.30 | cohorts_v2 |
-| 38 | clustering_multisource | experiment | Source-controlled clustering of multi-source embeddings | 1 | 0.4 | 7.0 | 0.15 | cohorts_v2 |
+| 31 | multisource_calibration | experiment | Rerun 027 with Ningbo: calibration and threshold fitted on several hospitals | 4 | 0.6 | 3.5 | 1.28 | ningbo_eda, challenge_label_mapping |
+| 32 | multisource_normal_manifold | experiment | Rerun 026 with Ningbo: normal manifold fitted on normals from several hospitals | 3 | 0.6 | 2.5 | 1.14 | ningbo_eda, challenge_label_mapping |
+| 33 | rerun_025_ningbo | experiment | Rerun 025 with Ningbo: label efficiency with PTB-XL + Ningbo labels | 3 | 0.7 | 3.5 | 1.12 | ningbo_eda, challenge_label_mapping |
+| 34 | ningbo_sph_transfer | experiment | Rerun 022 with Ningbo: do Ningbo labels improve transfer to SPH? | 4 | 0.6 | 5.5 | 1.02 | ningbo_eda, challenge_label_mapping |
+| 35 | near_duplicates | repo | Near-duplicate pass across Challenge sources | 3 | 0.7 | 6.0 | 0.86 | ningbo_eda |
+| 36 | multisource_lso | experiment | Multi-source probe with leave-source-out evaluation | 5 | 0.6 | 13.0 | 0.83 | cohorts_v2, challenge_label_mapping |
+| 37 | rerun_024_multisource | experiment | Rerun 024 with Ningbo: embedding geometry across sources | 2 | 0.6 | 3.0 | 0.69 | ningbo_eda, challenge_label_mapping |
+| 38 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
+| 39 | cpc_pretrain_cohorts_v2 | experiment | CPC continued pretraining on quality-first cohorts v2 | 2 | 0.5 | 11.0 | 0.30 | cohorts_v2 |
+| 40 | clustering_multisource | experiment | Source-controlled clustering of multi-source embeddings | 1 | 0.4 | 7.0 | 0.15 | cohorts_v2 |
+
+Reruns after Ningbo (`rerun_of` in the backlog): 022 as `ningbo_sph_transfer`, 024 as `rerun_024_multisource`,
+025 as `rerun_025_ningbo`, 026 as `multisource_normal_manifold` and 027 as `multisource_calibration`. 023 is
+not affected (echo labels). All wait for `ningbo_eda` and `challenge_label_mapping`.
 
 Done on 28 September 2026: `e022_sph` (Experiment 022), `label_efficiency` (Experiment 025),
 `fulldev_encoders` (inside 022), `snomed_equivalence` (PR #5), `e024_geometry` (Experiment 024) `calibrated_threshold_sph` (Experiment 027), `e023_echonext` (Experiment 023) and

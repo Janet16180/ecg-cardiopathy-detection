@@ -666,7 +666,7 @@
     {
       "id": "ningbo_sph_transfer",
       "kind": "experiment",
-      "title": "Do Ningbo labels improve transfer to SPH?",
+      "title": "Rerun 022 with Ningbo: do Ningbo labels improve transfer to SPH?",
       "question": "Adding Ningbo's physician labels to the PTB-XL readout: does SPH AUROC, calibration or 95%-sensitivity transfer improve?",
       "evidence": "022/027: rankings transfer to SPH but the PTB-XL operating point does not (sensitivity about 0.92). Ningbo is a large Chinese hospital like SPH. 025: PTB-XL gains above 4,000 labels are under 0.01, so any gain should show up in transfer, not in PTB-XL development.",
       "value": 4,
@@ -679,12 +679,13 @@
         "challenge_label_mapping"
       ],
       "status": "open",
-      "notes": "Frozen JEPA/xECG/CPC; readouts on PTB-XL versus PTB-XL + Ningbo training; score PTB-XL development and SPH once. Ningbo cannot be a test for JEPA/xECG (in their pretraining)."
+      "notes": "Frozen JEPA/xECG/CPC; readouts on PTB-XL versus PTB-XL + Ningbo training; score PTB-XL development and SPH once. Ningbo cannot be a test for JEPA/xECG (in their pretraining).",
+      "rerun_of": "022"
     },
     {
       "id": "multisource_calibration",
       "kind": "experiment",
-      "title": "Calibration and threshold fitted on several hospitals",
+      "title": "Rerun 027 with Ningbo: calibration and threshold fitted on several hospitals",
       "question": "Does a threshold calibrated on PTB-XL plus Ningbo (and other Challenge sources) hold 95% sensitivity at SPH better than a PTB-XL-only threshold?",
       "evidence": "027: PTB-XL-only calibration missed 95% at SPH and probabilities ran too high (intercept -1.1 to -1.9).",
       "value": 4,
@@ -697,12 +698,13 @@
         "challenge_label_mapping"
       ],
       "status": "open",
-      "notes": "Patient-disjoint calibration pools per source; compare with site_recalibration, which uses local labels."
+      "notes": "Patient-disjoint calibration pools per source; compare with site_recalibration, which uses local labels.",
+      "rerun_of": "027"
     },
     {
       "id": "multisource_normal_manifold",
       "kind": "experiment",
-      "title": "Normal manifold fitted on normals from several hospitals",
+      "title": "Rerun 026 with Ningbo: normal manifold fitted on normals from several hospitals",
       "question": "Does fitting the distance-from-normal score on PTB-XL plus Ningbo normals close its SPH gap?",
       "evidence": "026: xECG distance from normal 0.923 on PTB-XL but 0.858 on SPH.",
       "value": 3,
@@ -715,7 +717,8 @@
         "challenge_label_mapping"
       ],
       "status": "open",
-      "notes": "Needs an explicit 'normal' rule for SNOMED sources (challenge_label_mapping)."
+      "notes": "Needs an explicit 'normal' rule for SNOMED sources (challenge_label_mapping).",
+      "rerun_of": "026"
     },
     {
       "id": "cpc_pretrain_cohorts_v2",
@@ -733,6 +736,44 @@
       ],
       "status": "open",
       "notes": "Lower priority now that the baseline moves to frozen JEPA/xECG."
+    },
+    {
+      "id": "rerun_025_ningbo",
+      "kind": "experiment",
+      "title": "Rerun 025 with Ningbo: label efficiency with PTB-XL + Ningbo labels",
+      "question": "Does pooling Ningbo's labels change the label-efficiency curves or the encoder ranking, and does it help SPH?",
+      "evidence": "025: the curve is nearly flat above 4,000 labels (JEPA 0.955 to 0.959), so little change is expected on PTB-XL; this checks it.",
+      "value": 3,
+      "clarity": 0.7,
+      "gpu_hours": 0.5,
+      "cpu_hours": 1,
+      "build_hours": 2,
+      "blocked_by": [
+        "ningbo_eda",
+        "challenge_label_mapping"
+      ],
+      "status": "open",
+      "notes": "Same draws design; training pools PTB-XL only versus PTB-XL + Ningbo (by source family, Chapman+Ningbo together); score PTB-XL development and SPH.",
+      "rerun_of": "025"
+    },
+    {
+      "id": "rerun_024_multisource",
+      "kind": "experiment",
+      "title": "Rerun 024 with Ningbo: embedding geometry across sources",
+      "question": "With PTB-XL and Ningbo together, do prototypes and clusters follow the source hospital more than the diagnosis?",
+      "evidence": "024: clusters aligned with device (AMI 0.22-0.23) and heart rate more than diagnosis within PTB-XL; Leinonen et al.: the source is identifiable at 96.9%.",
+      "value": 2,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 2,
+      "blocked_by": [
+        "ningbo_eda",
+        "challenge_label_mapping"
+      ],
+      "status": "open",
+      "notes": "Cached encoders; add a source-AMI and other-source kNN; replaces clustering_multisource's first step.",
+      "rerun_of": "024"
     }
   ]
 }

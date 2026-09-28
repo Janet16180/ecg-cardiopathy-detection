@@ -69,8 +69,8 @@
       "cpu_hours": 1,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Draft protocol docs/experiment-024-embedding-geometry.md; CPU only."
+      "status": "done",
+      "notes": "Done 28 September 2026: CPC prototype minus probe -0.077 [-0.095, -0.060]; JEPA -0.031, xECG -0.034; clusters follow device and heart rate more than diagnosis; 192 label-audit candidates; docs/experiment-024-embedding-geometry-results.md. 746 s CPU."
     },
     {
       "id": "multitask_head",
@@ -211,8 +211,8 @@
       "title": "Learned prototype head anchored to real training ECGs",
       "question": "Can case-based prototypes match the probe while giving a reference ECG per condition?",
       "evidence": "ProtoECGNet (MLHC 2025, Tables 1-2): 0.913 versus 0.925 black-box macro AUROC on 71 PTB-XL labels; clinicians rated prototypes representative.",
-      "value": 3,
-      "clarity": 0.5,
+      "value": 4,
+      "clarity": 0.6,
       "gpu_hours": 2,
       "cpu_hours": 0,
       "build_hours": 8,
@@ -220,14 +220,14 @@
         "e024_geometry"
       ],
       "status": "open",
-      "notes": "Only worth building if 024 shows a large prototype-to-probe gap."
+      "notes": "024: raw CPC prototypes trail the probe by 0.077, JEPA/xECG by about 0.03, so a learned projection is needed; build it on frozen JEPA or xECG features, anchored to real training ECGs."
     },
     {
       "id": "clustering_multisource",
       "title": "Source-controlled clustering of multi-source embeddings",
       "question": "Are there diagnosis-enriched clusters that span several hospitals?",
       "evidence": "Earlier HDBSCAN found only normal versus abnormal regions; sources are highly identifiable.",
-      "value": 2,
+      "value": 1,
       "clarity": 0.4,
       "gpu_hours": 1,
       "cpu_hours": 1,
@@ -237,7 +237,7 @@
         "cohorts_v2"
       ],
       "status": "open",
-      "notes": ""
+      "notes": "024: k-means clusters align with device (AMI 0.22-0.23) and heart rate more than diagnosis (0.06-0.09); only worth doing on a supervised projection with device and heart-rate controls."
     },
     {
       "id": "core_lead_masking",
@@ -508,6 +508,115 @@
       "blocked_by": [],
       "status": "open",
       "notes": "PTB-XL (public) only. Never send EchoNext, MIMIC or other credentialed data to an external API."
+    },
+    {
+      "id": "clinician_review",
+      "kind": "repo",
+      "title": "Cardiologist review of the 024 reference ECGs and label-audit list",
+      "question": "Are the reference ECGs typical, and are the 20 suspect PTB-XL labels wrong?",
+      "evidence": "024 produced docs/experiment-024-clinician-review.md (public PTB-XL data).",
+      "value": 3,
+      "clarity": 0.7,
+      "gpu_hours": 0,
+      "cpu_hours": 0,
+      "build_hours": 1,
+      "blocked_by": [
+        "@clinician_available"
+      ],
+      "status": "open",
+      "notes": "About 30-60 minutes of a cardiologist's time; record answers next to the sheet."
+    },
+    {
+      "id": "calibrated_threshold_sph",
+      "kind": "experiment",
+      "title": "Calibrated 95%-sensitivity threshold for JEPA/xECG, checked on SPH",
+      "question": "At the project's screening operating point, what specificity and false-referral rate do JEPA and xECG give at a new hospital?",
+      "evidence": "022 reports AUROC only; the project's decision rule is at least 95% sensitivity on the calibration patients, and AUROC hides false referrals.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Done 28 September 2026 as Experiment 027: the PTB-XL 95% threshold does not transfer; SPH sensitivity CPC 0.971 (specificity 0.303), JEPA 0.916 (0.663), xECG 0.922 (0.646); probabilities too high at SPH; docs/experiment-027-calibrated-threshold-results.md. 692 s."
+    },
+    {
+      "id": "jepa_xecg_concat",
+      "kind": "experiment",
+      "title": "Concatenated ECG-JEPA and xECG features",
+      "question": "Do the two strongest encoders carry complementary information?",
+      "evidence": "025: JEPA and xECG are indistinguishable on average, but come from different objectives and data (JEPA 250 Hz transformer, xECG 100 Hz xLSTM).",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Cached features; development and SPH (022 features) with the fixed readout. Experiment 014's JEPA+CPC fusion was negative, which lowers expectations."
+    },
+    {
+      "id": "hard_case_analysis",
+      "kind": "experiment",
+      "title": "Error analysis of the PTB-XL hard cases",
+      "question": "Which statements make the ECGs the project label dropped hard even for JEPA and xECG (added-development AUROC about 0.73)?",
+      "evidence": "022 v3: added development ECGs AUROC CPC 0.575, JEPA 0.734, xECG 0.726, with 41 positives.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Descriptive: false positives and negatives by SCP code, device and heart rate; training-set analogue to avoid over-reading 41 development positives."
+    },
+    {
+      "id": "label_audit_sensitivity",
+      "kind": "experiment",
+      "title": "Probe sensitivity to the 024 label-audit candidates",
+      "question": "Does removing or down-weighting the 192 suspect training labels change development and SPH AUROC?",
+      "evidence": "024 flagged 192 training ECGs whose labels disagree with at least 80% of neighbours in both CPC and JEPA space.",
+      "value": 2,
+      "clarity": 0.5,
+      "gpu_hours": 0,
+      "cpu_hours": 0.3,
+      "build_hours": 2,
+      "blocked_by": [
+        "clinician_review"
+      ],
+      "status": "open",
+      "notes": "Better after a cardiologist has checked the top 20; otherwise it tests the neighbour rule, not label errors."
+    },
+    {
+      "id": "site_recalibration",
+      "kind": "experiment",
+      "title": "How many local labeled ECGs restore the 95% operating point at a new site",
+      "question": "If a new site (like the university) labels a small local sample, how many ECGs are needed to recalibrate and re-threshold so that sensitivity is at least 95% again?",
+      "evidence": "027: the PTB-XL threshold missed 95% at SPH (JEPA 0.916, xECG 0.922) and probabilities were too high (intercept -1.1 to -1.9).",
+      "value": 5,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Split SPH by patient into a recalibration pool and a fixed evaluation half; draw 50-1,000 local ECGs, refit Platt and the threshold only; cached 022 predictions, CPU."
+    },
+    {
+      "id": "stable_threshold",
+      "kind": "experiment",
+      "title": "Threshold stability with a larger calibration set",
+      "question": "Is the 95% threshold noisy because the PTB-XL calibration set has only 564 ECGs (348 positive)?",
+      "evidence": "027 calibration set: 564 ECGs; development sensitivity was 0.930-0.951 instead of 0.95.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Bootstrap the calibration set for threshold variance; compare with a cross-fitted training-set threshold."
     }
   ]
 }

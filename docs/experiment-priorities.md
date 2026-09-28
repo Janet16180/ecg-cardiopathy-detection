@@ -1,6 +1,6 @@
 # Experiment priorities
 
-Updated 28 September 2026, after Experiments 022 and 025. Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
+Updated 28 September 2026, after Experiments 022, 024 and 025. Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
 explains the scoring, shows the current ranking and records what the papers suggest. The backlog is for
 choosing the next study. It does not authorize or schedule anything: the execution queue remains
 [experiment-queue.json](experiment-queue.json), and every study still needs a frozen protocol first.
@@ -43,37 +43,42 @@ penalty; one that ranks high earns a protocol like any other.
 
 | Rank | ID | Kind | Candidate | Value | Clarity | Hours | Score | Waiting on |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | --- |
-| 1 | challenge_label_mapping | repo | SNOMED-to-endpoint mapping for Challenge sources | 4 | 0.9 | 4.5 | 2.04 | - |
-| 2 | e023_echonext | experiment | EchoNext structural heart disease readout (023) | 5 | 0.8 | 5.5 | 1.71 | - |
-| 3 | e024_geometry | experiment | CPC embedding geometry audit and diagnosis prototypes (024) | 3 | 0.8 | 4.0 | 1.68 | - |
+| 1 | site_recalibration | experiment | How many local labeled ECGs restore the 95% operating point at a new site | 5 | 0.8 | 3.5 | 2.14 | - |
+| 2 | challenge_label_mapping | repo | SNOMED-to-endpoint mapping for Challenge sources | 4 | 0.9 | 4.5 | 2.04 | - |
+| 3 | e023_echonext | experiment | EchoNext structural heart disease readout (023) | 5 | 0.8 | 5.5 | 1.71 | - |
 | 4 | normal_manifold | wild | One-class screening: distance from the normal-ECG manifold | 4 | 0.7 | 4.0 | 1.40 | - |
 | 5 | resample_full | repo | Versioned full-record resampler | 2 | 0.9 | 2.2 | 1.21 | - |
 | 6 | device_control | experiment | Device-controlled probes (drop or balance CS100 3) | 3 | 0.6 | 2.3 | 1.19 | - |
 | 7 | builder_key_checks | repo | Key-checked waveform/metadata joins in every builder | 2 | 0.9 | 2.3 | 1.19 | - |
-| 8 | s4_supervised | experiment | Supervised S4 from scratch at matched labels (100 Hz, 2.5 s crops) | 4 | 0.8 | 9.0 | 1.07 | - |
-| 9 | attention_readout | experiment | Attention-pooling frozen head on encoder tokens (CPC, released ECG-CPC, xECG) | 4 | 0.7 | 8.0 | 0.99 | - |
-| 10 | multitask_head | experiment | Multi-label auxiliary head on frozen features versus the binary head | 3 | 0.6 | 3.5 | 0.96 | - |
-| 11 | quality_policy_v2 | repo | Quality policy v2 review flags (edge zero runs, short dropouts) | 2 | 0.8 | 4.0 | 0.80 | - |
-| 12 | ecg_age_gap | wild | ECG heart age: predicted minus real age as a risk signal | 3 | 0.5 | 4.0 | 0.75 | - |
-| 13 | highpass_ablation | experiment | Zero-phase 0.5 Hz high-pass as a harmonization arm | 3 | 0.6 | 6.5 | 0.71 | - |
-| 14 | vcg_qrst_angle | wild | Vectorcardiogram features: spatial QRS-T angle and loop shape | 3 | 0.6 | 7.0 | 0.68 | - |
-| 15 | domain_adversarial | wild | Device-adversarial readout (gradient reversal against source) | 3 | 0.5 | 6.0 | 0.61 | - |
-| 16 | crop_tta | experiment | 2.5 s crops with test-time averaging for frozen readouts | 2 | 0.6 | 4.0 | 0.60 | - |
-| 17 | e017_second_seed | experiment | 017 morphology-template second-seed replication | 2 | 0.6 | 4.0 | 0.60 | - |
-| 18 | llm_measurement_reader | wild | LLM reading PTB-XL measurements as text | 2 | 0.4 | 6.0 | 0.33 | - |
-| 19 | tsfm_transfer | wild | Frozen general time-series or audio foundation models as ECG encoders | 2 | 0.4 | 8.0 | 0.28 | - |
-| 20 | vcg_rotation_ssl | wild | Heart-axis rotation augmentation via VCG projection | 3 | 0.3 | 16.0 | 0.22 | - |
-| 21 | core_lead_masking | experiment | CoRe-style lead-drop masking in CPC pretraining | 2 | 0.4 | 14.0 | 0.21 | - |
-| 22 | report_alignment | experiment | ECG-report alignment with PTB-XL cardiologist reports | 2 | 0.3 | 25.0 | 0.12 | - |
-| 23 | ningbo_eda | experiment | Ningbo EDA and clean manifest | 3 | 0.9 | 6.0 | 1.54 | @ningbo_download |
-| 24 | cohorts_v2 | experiment | Quality-first nested cohorts 25k-200k | 3 | 0.9 | 7.0 | 1.43 | ningbo_eda |
-| 25 | near_duplicates | repo | Near-duplicate pass across Challenge sources | 3 | 0.7 | 6.0 | 0.86 | ningbo_eda |
-| 26 | multisource_lso | experiment | Multi-source probe with leave-source-out evaluation | 5 | 0.6 | 13.0 | 0.83 | cohorts_v2, challenge_label_mapping |
-| 27 | prototype_head | experiment | Learned prototype head anchored to real training ECGs | 3 | 0.5 | 10.0 | 0.47 | e024_geometry |
-| 28 | clustering_multisource | experiment | Source-controlled clustering of multi-source embeddings | 2 | 0.4 | 7.0 | 0.30 | e024_geometry, cohorts_v2 |
+| 8 | jepa_xecg_concat | experiment | Concatenated ECG-JEPA and xECG features | 3 | 0.6 | 2.5 | 1.14 | - |
+| 9 | hard_case_analysis | experiment | Error analysis of the PTB-XL hard cases | 3 | 0.6 | 2.5 | 1.14 | - |
+| 10 | stable_threshold | experiment | Threshold stability with a larger calibration set | 3 | 0.6 | 2.5 | 1.14 | - |
+| 11 | s4_supervised | experiment | Supervised S4 from scratch at matched labels (100 Hz, 2.5 s crops) | 4 | 0.8 | 9.0 | 1.07 | - |
+| 12 | attention_readout | experiment | Attention-pooling frozen head on encoder tokens (CPC, released ECG-CPC, xECG) | 4 | 0.7 | 8.0 | 0.99 | - |
+| 13 | multitask_head | experiment | Multi-label auxiliary head on frozen features versus the binary head | 3 | 0.6 | 3.5 | 0.96 | - |
+| 14 | quality_policy_v2 | repo | Quality policy v2 review flags (edge zero runs, short dropouts) | 2 | 0.8 | 4.0 | 0.80 | - |
+| 15 | prototype_head | experiment | Learned prototype head anchored to real training ECGs | 4 | 0.6 | 10.0 | 0.76 | - |
+| 16 | ecg_age_gap | wild | ECG heart age: predicted minus real age as a risk signal | 3 | 0.5 | 4.0 | 0.75 | - |
+| 17 | highpass_ablation | experiment | Zero-phase 0.5 Hz high-pass as a harmonization arm | 3 | 0.6 | 6.5 | 0.71 | - |
+| 18 | vcg_qrst_angle | wild | Vectorcardiogram features: spatial QRS-T angle and loop shape | 3 | 0.6 | 7.0 | 0.68 | - |
+| 19 | domain_adversarial | wild | Device-adversarial readout (gradient reversal against source) | 3 | 0.5 | 6.0 | 0.61 | - |
+| 20 | crop_tta | experiment | 2.5 s crops with test-time averaging for frozen readouts | 2 | 0.6 | 4.0 | 0.60 | - |
+| 21 | e017_second_seed | experiment | 017 morphology-template second-seed replication | 2 | 0.6 | 4.0 | 0.60 | - |
+| 22 | llm_measurement_reader | wild | LLM reading PTB-XL measurements as text | 2 | 0.4 | 6.0 | 0.33 | - |
+| 23 | tsfm_transfer | wild | Frozen general time-series or audio foundation models as ECG encoders | 2 | 0.4 | 8.0 | 0.28 | - |
+| 24 | vcg_rotation_ssl | wild | Heart-axis rotation augmentation via VCG projection | 3 | 0.3 | 16.0 | 0.22 | - |
+| 25 | core_lead_masking | experiment | CoRe-style lead-drop masking in CPC pretraining | 2 | 0.4 | 14.0 | 0.21 | - |
+| 26 | report_alignment | experiment | ECG-report alignment with PTB-XL cardiologist reports | 2 | 0.3 | 25.0 | 0.12 | - |
+| 27 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
+| 28 | ningbo_eda | experiment | Ningbo EDA and clean manifest | 3 | 0.9 | 6.0 | 1.54 | @ningbo_download |
+| 29 | cohorts_v2 | experiment | Quality-first nested cohorts 25k-200k | 3 | 0.9 | 7.0 | 1.43 | ningbo_eda |
+| 30 | near_duplicates | repo | Near-duplicate pass across Challenge sources | 3 | 0.7 | 6.0 | 0.86 | ningbo_eda |
+| 31 | multisource_lso | experiment | Multi-source probe with leave-source-out evaluation | 5 | 0.6 | 13.0 | 0.83 | cohorts_v2, challenge_label_mapping |
+| 32 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
+| 33 | clustering_multisource | experiment | Source-controlled clustering of multi-source embeddings | 1 | 0.4 | 7.0 | 0.15 | cohorts_v2 |
 
 Done on 28 September 2026: `e022_sph` (Experiment 022), `label_efficiency` (Experiment 025),
-`fulldev_encoders` (inside 022) and `snomed_equivalence` (PR #5).
+`fulldev_encoders` (inside 022), `snomed_equivalence` (PR #5), `e024_geometry` (Experiment 024) and `calibrated_threshold_sph` (Experiment 027).
 
 Dropped: `beat_tokens` (already tested in Experiment 006; the paper's gain is 0.004) and
 `synthetic_references` (training on synthetic PTB-XL ECGs loses about 0.09 AUROC; see the literature review).

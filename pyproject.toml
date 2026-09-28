@@ -79,6 +79,8 @@ max-complexity = 10
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S101", "D", "ANN"]
 "**/__init__.py" = ["D104"]
+# Its bytes are pinned by source_sha256 in outputs/mimic_cpc_cluster_label_profile/report.json.
+"ecg_experiment/mimic_cpc_cluster_label_profile.py" = ["I001", "E501"]
 
 [[tool.uv.index]]
 name = "pytorch-cu124"

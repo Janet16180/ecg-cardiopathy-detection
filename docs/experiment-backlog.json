@@ -538,8 +538,8 @@
       "cpu_hours": 0.5,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Fit Platt calibration and the threshold on the PTB-XL calibration split (never test), then apply unchanged to SPH once; cached 022 features."
+      "status": "done",
+      "notes": "Done 28 September 2026 as Experiment 027: the PTB-XL 95% threshold does not transfer; SPH sensitivity CPC 0.971 (specificity 0.303), JEPA 0.916 (0.663), xECG 0.922 (0.646); probabilities too high at SPH; docs/experiment-027-calibrated-threshold-results.md. 692 s."
     },
     {
       "id": "jepa_xecg_concat",
@@ -587,6 +587,36 @@
       ],
       "status": "open",
       "notes": "Better after a cardiologist has checked the top 20; otherwise it tests the neighbour rule, not label errors."
+    },
+    {
+      "id": "site_recalibration",
+      "kind": "experiment",
+      "title": "How many local labeled ECGs restore the 95% operating point at a new site",
+      "question": "If a new site (like the university) labels a small local sample, how many ECGs are needed to recalibrate and re-threshold so that sensitivity is at least 95% again?",
+      "evidence": "027: the PTB-XL threshold missed 95% at SPH (JEPA 0.916, xECG 0.922) and probabilities were too high (intercept -1.1 to -1.9).",
+      "value": 5,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Split SPH by patient into a recalibration pool and a fixed evaluation half; draw 50-1,000 local ECGs, refit Platt and the threshold only; cached 022 predictions, CPU."
+    },
+    {
+      "id": "stable_threshold",
+      "kind": "experiment",
+      "title": "Threshold stability with a larger calibration set",
+      "question": "Is the 95% threshold noisy because the PTB-XL calibration set has only 564 ECGs (348 positive)?",
+      "evidence": "027 calibration set: 564 ECGs; development sensitivity was 0.930-0.951 instead of 0.95.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Bootstrap the calibration set for threshold variance; compare with a cross-fitted training-set threshold."
     }
   ]
 }

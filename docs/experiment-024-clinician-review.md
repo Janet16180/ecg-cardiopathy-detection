@@ -80,68 +80,227 @@ two different ECG models (CPC and ECG-JEPA). The binary label is "NORM only" (no
 (any MI, STTC, CD or HYP statement, whatever its likelihood). Such ECGs may be mislabeled, borderline, or
 simply unusual. These are the top 20 of 192 candidates, ordered by the average of the two fractions.
 
-The tracings are not printed here. Each one is on PhysioNet as PTB-XL
-`records500/<first two digits of a five-digit ID>000/<five-digit ID>_hr`; for example ECG 2410 is
-`records500/02000/02410_hr`. We can print any of them on request.
+Each ECG below has its tracing, drawn the same way as in Part 1.
 
-| # | ECG ID | Current label | SCP codes (likelihood) | Human validated | Neighbors disagreeing, CPC | Neighbors disagreeing, ECG-JEPA | Is the current label correct? |
-| ---: | ---: | --- | --- | --- | ---: | ---: | --- |
-| 1 | 2410 | abnormal (CD) | IRBBB 80, SR 0 | yes | 1.00 | 1.00 | yes / no / comment: |
-| 2 | 9669 | NORM only | NORM 100, SR 0 | no | 1.00 | 1.00 | yes / no / comment: |
-| 3 | 12964 | NORM only | NORM 80, SR 0 | yes | 1.00 | 1.00 | yes / no / comment: |
-| 4 | 2415 | abnormal (HYP) | SEHYP 100, ABQRS 0, SR 0 | yes | 0.96 | 1.00 | yes / no / comment: |
-| 5 | 7664 | abnormal (CD) | IRBBB 100, SR 0 | yes | 1.00 | 0.96 | yes / no / comment: |
-| 6 | 14915 | abnormal (CD) | IRBBB 100, SR 0 | yes | 0.96 | 1.00 | yes / no / comment: |
-| 7 | 17394 | abnormal (CD+MI) | LMI 15, ASMI 50, IRBBB 100, ABQRS 0, SR 0 | yes | 1.00 | 0.96 | yes / no / comment: |
-| 8 | 17624 | NORM only | NORM 100, SR 0 | yes | 1.00 | 0.96 | yes / no / comment: |
-| 9 | 17820 | NORM only | NORM 100, SR 0 | yes | 1.00 | 0.96 | yes / no / comment: |
-| 10 | 131 | abnormal (MI) | ASMI 50, ABQRS 0, SR 0 | yes | 0.96 | 0.96 | yes / no / comment: |
-| 11 | 1636 | NORM only | NORM 100, SR 0 | yes | 0.96 | 0.96 | yes / no / comment: |
-| 12 | 4796 | abnormal (MI) | ASMI 50, ABQRS 0, SR 0 | yes | 0.92 | 1.00 | yes / no / comment: |
-| 13 | 10521 | abnormal (MI) | ASMI 100, SR 0 | yes | 0.92 | 1.00 | yes / no / comment: |
-| 14 | 10916 | abnormal (STTC) | NDT 100, SR 0 | no | 0.96 | 0.96 | yes / no / comment: |
-| 15 | 12377 | abnormal (HYP) | LVH 15, VCLVH 0, SR 0 | no | 0.96 | 0.96 | yes / no / comment: |
-| 16 | 17884 | abnormal (MI) | AMI 100, ABQRS 0, SR 0 | yes | 0.96 | 0.96 | yes / no / comment: |
-| 17 | 21366 | NORM only | NORM 80, SR 0 | no | 0.92 | 1.00 | yes / no / comment: |
-| 18 | 2366 | abnormal (CD) | IRBBB 100, ABQRS 0, SR 0 | yes | 0.92 | 0.96 | yes / no / comment: |
-| 19 | 2862 | abnormal (STTC) | NDT 100, SARRH 0 | yes | 1.00 | 0.88 | yes / no / comment: |
-| 20 | 4189 | abnormal (MI) | IMI 15, ABQRS 0, SR 0 | yes | 0.88 | 1.00 | yes / no / comment: |
+### 1. ECG 2410
 
-Original reports, with the recording device:
+- Current label: abnormal (CD); device CS-12 E; human validated: yes
+- SCP codes: IRBBB 80, SR 0
+- Neighbors with the other label: CPC 1.00, ECG-JEPA 1.00
+- Report: "sinusrhythmus lagetyp normal unvollständiger rechtsschenkelblock sonst normales ekg"
 
-1. ECG 2410 (CS-12 E): sinusrhythmus lagetyp normal unvollständiger rechtsschenkelblock sonst normales ekg
-2. ECG 9669 (CS100 3): sinusrhythmus lagetyp normal lagetyp in anbetracht des alters normal normales ekg
-   4.46 unbestätigter bericht
-3. ECG 12964 (AT-6 C 5.5): sinus rhythm. premature ventricular contractions, bigeminy. otherwise no
-   definite pathology. the computer has selected vpb's as typical ventricular complexes because more of
-   them have been recorded. please ignore this. Edit: BIGU
-4. ECG 2415 (CS-12 E): sinusrhythmus qrs(t) abnormal inferiorer myokardschaden nicht auszuschliessen
-5. ECG 7664 (CS-12 E): sinusrhythmus lagetyp normal unvollständiger rechtsschenkelblock sonst normales ekg
-6. ECG 14915 (CS-12 E): sinusrhythmus lagetyp normal unvollständiger rechtsschenkelblock sonst normales
-   ekg
-7. ECG 17394 (CS-12): sinusrhythmus lagetyp normal unvollständiger rechtsschenkelblock qrs(t) abnormal
-   hochlateraler infarkt möglich
-8. ECG 17624 (AT-60 3): sinusrhythmus a-v block i verdacht auf p-sinistrocardiale linkstyp
-   unspezifisches abnormes t qt-verlängerung 4.46 unbestätigter bericht
-9. ECG 17820 (AT-6 C 5.5): sinus rhythm. normal ecg.
-10. ECG 131 (CS-12 E): sinusrhythmus qrs(t) abnormal septaler infarkt nicht auszuschliessen
-11. ECG 1636 (AT-6 C 5.8): sinus rhythm. t waves are rather low. suggest exclude hypokalaemia. no paced
-    beats recorded.
-12. ECG 4796 (CS-12 E): sinusrhythmus periphere niederspannung qrs(t) abnormal anteroseptaler infarkt
-    wahrscheinlich alt
-13. ECG 10521 (AT-6 C 5.3): sinus rhythm. qs complexes in v2, this is probably normal. no definite
-    pathology. Edit: ASMI 100, probably normal (f,30), QSV(1)-2, (ASMI 15)
-14. ECG 10916 (CS100 3): sinusrhythmus lagetyp normal periphere niederspannung 4.46 unbestätigter bericht
-15. ECG 12377 (CS100 3): sinusrhythmus lagetyp normal mässige amplitudenkriterien für linkshypertrophie
-    4.46 unbestätigter bericht
-16. ECG 17884 (CS-12 E): sinusrhythmus lagetyp normal qrs(t) abnorm anteroseptaler myokardschaden nicht
-    auszuschliessen
-17. ECG 21366 (CS100 3): sinusrhythmus linkstyp sonst normales ekg 4.46 unbestätigter bericht
-18. ECG 2366 (CS-12 E): sinusrhythmus lagetyp normal unvollständiger rechtsschenkelblock qrs(t) abnorm
-    hochlateraler myokardschaden nicht auszuschliessen
-19. ECG 2862 (CS-12 E): sinus arrhythmie verdacht auf p-sinistrocardiale lagetyp normal
-20. ECG 4189 (CS-12): sinusrhythmus lagetyp normal periphere niederspannung qrs(t) abnormal inferiorer
-    myokardschaden nicht auszuschliessen
+![Label audit 1, ECG 2410](figures/experiment-024/audit/audit_01_2410.png)
+
+Is the current label correct? yes / no / comment:
+
+### 2. ECG 9669
+
+- Current label: NORM only; device CS100 3; human validated: no
+- SCP codes: NORM 100, SR 0
+- Neighbors with the other label: CPC 1.00, ECG-JEPA 1.00
+- Report: "sinusrhythmus lagetyp normal lagetyp in anbetracht des alters normal normales ekg 4.46 unbestätigter bericht"
+
+![Label audit 2, ECG 9669](figures/experiment-024/audit/audit_02_9669.png)
+
+Is the current label correct? yes / no / comment:
+
+### 3. ECG 12964
+
+- Current label: NORM only; device AT-6 C 5.5; human validated: yes
+- SCP codes: NORM 80, SR 0
+- Neighbors with the other label: CPC 1.00, ECG-JEPA 1.00
+- Report: "sinus rhythm. premature ventricular contractions, bigeminy. otherwise no definite pathology. the computer has selected vpb's as typical ventricular complexes because more of them have been recorded. please ignore this. Edit: BIGU"
+
+![Label audit 3, ECG 12964](figures/experiment-024/audit/audit_03_12964.png)
+
+Is the current label correct? yes / no / comment:
+
+### 4. ECG 2415
+
+- Current label: abnormal (HYP); device CS-12 E; human validated: yes
+- SCP codes: SEHYP 100, ABQRS 0, SR 0
+- Neighbors with the other label: CPC 0.96, ECG-JEPA 1.00
+- Report: "sinusrhythmus qrs(t) abnormal inferiorer myokardschaden nicht auszuschliessen"
+
+![Label audit 4, ECG 2415](figures/experiment-024/audit/audit_04_2415.png)
+
+Is the current label correct? yes / no / comment:
+
+### 5. ECG 7664
+
+- Current label: abnormal (CD); device CS-12 E; human validated: yes
+- SCP codes: IRBBB 100, SR 0
+- Neighbors with the other label: CPC 1.00, ECG-JEPA 0.96
+- Report: "sinusrhythmus lagetyp normal unvollständiger rechtsschenkelblock sonst normales ekg"
+
+![Label audit 5, ECG 7664](figures/experiment-024/audit/audit_05_7664.png)
+
+Is the current label correct? yes / no / comment:
+
+### 6. ECG 14915
+
+- Current label: abnormal (CD); device CS-12 E; human validated: yes
+- SCP codes: IRBBB 100, SR 0
+- Neighbors with the other label: CPC 0.96, ECG-JEPA 1.00
+- Report: "sinusrhythmus lagetyp normal unvollständiger rechtsschenkelblock sonst normales ekg"
+
+![Label audit 6, ECG 14915](figures/experiment-024/audit/audit_06_14915.png)
+
+Is the current label correct? yes / no / comment:
+
+### 7. ECG 17394
+
+- Current label: abnormal (CD+MI); device CS-12; human validated: yes
+- SCP codes: LMI 15, ASMI 50, IRBBB 100, ABQRS 0, SR 0
+- Neighbors with the other label: CPC 1.00, ECG-JEPA 0.96
+- Report: "sinusrhythmus lagetyp normal unvollständiger rechtsschenkelblock qrs(t) abnormal hochlateraler infarkt möglich"
+
+![Label audit 7, ECG 17394](figures/experiment-024/audit/audit_07_17394.png)
+
+Is the current label correct? yes / no / comment:
+
+### 8. ECG 17624
+
+- Current label: NORM only; device AT-60 3; human validated: yes
+- SCP codes: NORM 100, SR 0
+- Neighbors with the other label: CPC 1.00, ECG-JEPA 0.96
+- Report: "sinusrhythmus a-v block i verdacht auf p-sinistrocardiale linkstyp unspezifisches abnormes t qt-verlängerung 4.46 unbestätigter bericht"
+
+![Label audit 8, ECG 17624](figures/experiment-024/audit/audit_08_17624.png)
+
+Is the current label correct? yes / no / comment:
+
+### 9. ECG 17820
+
+- Current label: NORM only; device AT-6 C 5.5; human validated: yes
+- SCP codes: NORM 100, SR 0
+- Neighbors with the other label: CPC 1.00, ECG-JEPA 0.96
+- Report: "sinus rhythm. normal ecg."
+
+![Label audit 9, ECG 17820](figures/experiment-024/audit/audit_09_17820.png)
+
+Is the current label correct? yes / no / comment:
+
+### 10. ECG 131
+
+- Current label: abnormal (MI); device CS-12 E; human validated: yes
+- SCP codes: ASMI 50, ABQRS 0, SR 0
+- Neighbors with the other label: CPC 0.96, ECG-JEPA 0.96
+- Report: "sinusrhythmus qrs(t) abnormal septaler infarkt nicht auszuschliessen"
+
+![Label audit 10, ECG 131](figures/experiment-024/audit/audit_10_131.png)
+
+Is the current label correct? yes / no / comment:
+
+### 11. ECG 1636
+
+- Current label: NORM only; device AT-6 C 5.8; human validated: yes
+- SCP codes: NORM 100, SR 0
+- Neighbors with the other label: CPC 0.96, ECG-JEPA 0.96
+- Report: "sinus rhythm. t waves are rather low. suggest exclude hypokalaemia. no paced beats recorded."
+
+![Label audit 11, ECG 1636](figures/experiment-024/audit/audit_11_1636.png)
+
+Is the current label correct? yes / no / comment:
+
+### 12. ECG 4796
+
+- Current label: abnormal (MI); device CS-12 E; human validated: yes
+- SCP codes: ASMI 50, ABQRS 0, SR 0
+- Neighbors with the other label: CPC 0.92, ECG-JEPA 1.00
+- Report: "sinusrhythmus periphere niederspannung qrs(t) abnormal anteroseptaler infarkt wahrscheinlich alt"
+
+![Label audit 12, ECG 4796](figures/experiment-024/audit/audit_12_4796.png)
+
+Is the current label correct? yes / no / comment:
+
+### 13. ECG 10521
+
+- Current label: abnormal (MI); device AT-6 C 5.3; human validated: yes
+- SCP codes: ASMI 100, SR 0
+- Neighbors with the other label: CPC 0.92, ECG-JEPA 1.00
+- Report: "sinus rhythm. qs complexes in v2, this is probably normal. no definite pathology. Edit: ASMI 100, probably normal (f,30), QSV(1)-2, (ASMI 15)"
+
+![Label audit 13, ECG 10521](figures/experiment-024/audit/audit_13_10521.png)
+
+Is the current label correct? yes / no / comment:
+
+### 14. ECG 10916
+
+- Current label: abnormal (STTC); device CS100 3; human validated: no
+- SCP codes: NDT 100, SR 0
+- Neighbors with the other label: CPC 0.96, ECG-JEPA 0.96
+- Report: "sinusrhythmus lagetyp normal periphere niederspannung 4.46 unbestätigter bericht"
+
+![Label audit 14, ECG 10916](figures/experiment-024/audit/audit_14_10916.png)
+
+Is the current label correct? yes / no / comment:
+
+### 15. ECG 12377
+
+- Current label: abnormal (HYP); device CS100 3; human validated: no
+- SCP codes: LVH 15, VCLVH 0, SR 0
+- Neighbors with the other label: CPC 0.96, ECG-JEPA 0.96
+- Report: "sinusrhythmus lagetyp normal mässige amplitudenkriterien für linkshypertrophie 4.46 unbestätigter bericht"
+
+![Label audit 15, ECG 12377](figures/experiment-024/audit/audit_15_12377.png)
+
+Is the current label correct? yes / no / comment:
+
+### 16. ECG 17884
+
+- Current label: abnormal (MI); device CS-12 E; human validated: yes
+- SCP codes: AMI 100, ABQRS 0, SR 0
+- Neighbors with the other label: CPC 0.96, ECG-JEPA 0.96
+- Report: "sinusrhythmus lagetyp normal qrs(t) abnorm anteroseptaler myokardschaden nicht auszuschliessen"
+
+![Label audit 16, ECG 17884](figures/experiment-024/audit/audit_16_17884.png)
+
+Is the current label correct? yes / no / comment:
+
+### 17. ECG 21366
+
+- Current label: NORM only; device CS100 3; human validated: no
+- SCP codes: NORM 80, SR 0
+- Neighbors with the other label: CPC 0.92, ECG-JEPA 1.00
+- Report: "sinusrhythmus linkstyp sonst normales ekg 4.46 unbestätigter bericht"
+
+![Label audit 17, ECG 21366](figures/experiment-024/audit/audit_17_21366.png)
+
+Is the current label correct? yes / no / comment:
+
+### 18. ECG 2366
+
+- Current label: abnormal (CD); device CS-12 E; human validated: yes
+- SCP codes: IRBBB 100, ABQRS 0, SR 0
+- Neighbors with the other label: CPC 0.92, ECG-JEPA 0.96
+- Report: "sinusrhythmus lagetyp normal unvollständiger rechtsschenkelblock qrs(t) abnorm hochlateraler myokardschaden nicht auszuschliessen"
+
+![Label audit 18, ECG 2366](figures/experiment-024/audit/audit_18_2366.png)
+
+Is the current label correct? yes / no / comment:
+
+### 19. ECG 2862
+
+- Current label: abnormal (STTC); device CS-12 E; human validated: yes
+- SCP codes: NDT 100, SARRH 0
+- Neighbors with the other label: CPC 1.00, ECG-JEPA 0.88
+- Report: "sinus arrhythmie verdacht auf p-sinistrocardiale lagetyp normal"
+
+![Label audit 19, ECG 2862](figures/experiment-024/audit/audit_19_2862.png)
+
+Is the current label correct? yes / no / comment:
+
+### 20. ECG 4189
+
+- Current label: abnormal (MI); device CS-12; human validated: yes
+- SCP codes: IMI 15, ABQRS 0, SR 0
+- Neighbors with the other label: CPC 0.88, ECG-JEPA 1.00
+- Report: "sinusrhythmus lagetyp normal periphere niederspannung qrs(t) abnormal inferiorer myokardschaden nicht auszuschliessen"
+
+![Label audit 20, ECG 4189](figures/experiment-024/audit/audit_20_4189.png)
+
+Is the current label correct? yes / no / comment:
 
 ## General comments
 

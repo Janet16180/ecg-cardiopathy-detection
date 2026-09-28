@@ -13,8 +13,8 @@
       "cpu_hours": 0.5,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Protocol frozen with addendum v2; runner written for v1 and needs the v2 manifest."
+      "status": "done",
+      "notes": "Done 28 September 2026: SPH AUROC CPC 0.876, JEPA 0.911, xECG 0.915; docs/experiment-022-sph-external-readout-results.md. Measured about 3.5 h build (subagent) and 0.3 h GPU."
     },
     {
       "id": "e023_echonext",
@@ -41,8 +41,8 @@
       "cpu_hours": 0.3,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Needs features for the 298 added development ECGs; everything else is cached."
+      "status": "done",
+      "notes": "Done inside Experiment 022 v3: added development ECGs AUROC CPC 0.575, JEPA 0.734, xECG 0.726."
     },
     {
       "id": "label_efficiency",
@@ -55,8 +55,8 @@
       "cpu_hours": 1,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Cached features only; repeated seeded label draws."
+      "status": "done",
+      "notes": "Done 28 September 2026 as Experiment 025: JEPA and xECG beat CPC at every budget and with 100 labels exceed CPC at all labels; docs/experiment-025-label-efficiency-results.md. 1,430 s CPU."
     },
     {
       "id": "e024_geometry",
@@ -112,7 +112,7 @@
       "build_hours": 6,
       "blocked_by": [],
       "status": "open",
-      "notes": "Frozen encoder, trains only a query vector and a linear layer."
+      "notes": "Frozen encoder, trains only a query vector and a linear layer. After 022/025 the CPC gap to JEPA/xECG is about 0.035-0.04 on both PTB-XL and SPH; this tests whether a better readout closes it."
     },
     {
       "id": "s4_supervised",
@@ -307,8 +307,8 @@
       "cpu_hours": 0.2,
       "build_hours": 1,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Derive the four pairs from the official mapping, not a hand list; rerun the cross-source notebook."
+      "status": "done",
+      "notes": "Done 28 September 2026 (PR #5); no cached source used 733534002, so no count changed."
     },
     {
       "id": "challenge_label_mapping",
@@ -462,7 +462,7 @@
         "e022_sph"
       ],
       "status": "open",
-      "notes": "Judge only on external data."
+      "notes": "Judge only on external data. 022 shows rankings survive SPH; value unchanged."
     },
     {
       "id": "vcg_rotation_ssl",

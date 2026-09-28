@@ -6,6 +6,12 @@ See [data-quality-assessment.md](data-quality-assessment.md) for the current loc
 
 **Acquisition status, 25 September 2026:** Chapman/Shaoxing is complete: all **10,247** `.hea`/`.mat` pairs (**20,494 files**) passed the upstream SHA256 checks. CODE-15% is also complete: `exams.csv` and all **18** ZIP parts passed the Zenodo MD5 checks. The selected **200,000 MIMIC-IV-ECG recordings** are now downloaded and verified; the read-only waveform audit retained **197,207** from **40,568 patients**. Completion receipts establish file integrity and the stated signal checks, not label suitability.
 
+**MIMIC labels are not trusted (user decision, 28 September 2026).** MIMIC-IV-ECG report statements and
+measurements are produced by the ECG cart's software, not by a physician. MIMIC is used only as unlabeled
+self-supervised pretraining data; its statements must not be used as training targets, evaluation labels or
+evidence of model accuracy. Labels come from human-read sources (PTB-XL, SPH, Ningbo, Chapman, Georgia, CPSC)
+or from echocardiography (EchoNext).
+
 **26 September MIMIC metadata addition:** The official 182,674,683-byte
 `machine_measurements.csv` was downloaded from
 [PhysioNet MIMIC-IV-ECG 1.0](https://physionet.org/content/mimic-iv-ecg/1.0/)

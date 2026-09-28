@@ -42,6 +42,7 @@ The user authorized Experiments 011–013 (KDA/CKDA, a compact StripedHyena-insp
 
 ## Scientific constraints and preferences
 
+- Do not trust MIMIC-IV-ECG labels. Its report statements and measurements come from the ECG cart's software, not from a physician (user preference, 28 September 2026). Use MIMIC for unlabeled self-supervised pretraining only; never as training targets, evaluation labels or evidence of accuracy. Prefer human-read sources (PTB-XL, SPH, Ningbo, Chapman, Georgia, CPSC) or echo-confirmed EchoNext labels.
 - Raw twelve-lead ECGs; public-data experiments currently use 56,875 training recordings, with 15,360 full training labels or the fixed 1,518-label subset. Preserve patient splits and train-only fitting.
 - The binary endpoint is an ECG diagnostic annotation proxy. It does not establish that a person is healthy or validate university referral decisions. Keep separate development, calibration and test patients.
 - Compare new architectures using explicit controls for data, initialization, objective, model size and training budget. Published results in another domain do not establish ECG superiority.

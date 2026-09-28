@@ -7,6 +7,7 @@ from ecg_experiment.code15_cpc import (
     active_bounds,
     amplitude_factor,
     central_window,
+    lead_std,
     patient_split,
     to_cpc,
     window_quality,
@@ -59,4 +60,4 @@ def test_patient_split_keeps_patients_together():
 def test_amplitude_factor_recovers_a_known_scale():
     rng = np.random.default_rng(0)
     ptb = rng.normal(0, 0.15, (50, 12, 500))
-    assert abs(amplitude_factor(ptb, ptb * 2.2) - 1 / 2.2) < 1e-9
+    assert abs(amplitude_factor(lead_std(ptb, chunk=7), lead_std(ptb * 2.2)) - 1 / 2.2) < 1e-9

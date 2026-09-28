@@ -133,23 +133,41 @@ def patient_split(patients: pd.Series, monitoring_fraction: float, seed: int) ->
     return patients.map(lambda patient: "monitoring" if patient in monitoring else "train")
 
 
-def amplitude_factor(ptb_signals: np.ndarray, code_signals: np.ndarray) -> float:
+def lead_std(signals: np.ndarray, chunk: int = 2000) -> np.ndarray:
+    """
+    Compute the standard deviation of every lead of every record, in chunks.
+
+    Parameters
+    ----------
+    signals : np.ndarray
+        Array (or memory map) of shape ``(records, 12, samples)``.
+    chunk : int
+        Records read at a time.
+
+    Returns
+    -------
+    np.ndarray
+        Array of shape ``(records, 12)``.
+    """
+    return np.concatenate([np.asarray(signals[start:start + chunk], dtype=np.float64).std(axis=2)
+                           for start in range(0, len(signals), chunk)])
+
+
+def amplitude_factor(ptb_std: np.ndarray, code_std: np.ndarray) -> float:
     """
     Scale that matches CODE-15 lead amplitudes to PTB-XL.
 
     Parameters
     ----------
-    ptb_signals, code_signals : np.ndarray
-        Arrays of shape ``(records, 12, samples)``.
+    ptb_std, code_std : np.ndarray
+        Per-record lead standard deviations of shape ``(records, 12)``.
 
     Returns
     -------
     float
         Median over leads of the ratio of median lead standard deviations.
     """
-    ptb = np.median(ptb_signals.std(axis=2), axis=0)
-    code = np.median(code_signals.std(axis=2), axis=0)
-    return float(np.median(ptb / code))
+    return float(np.median(np.median(ptb_std, axis=0) / np.median(code_std, axis=0)))
 
 
 class Code15Dataset(Dataset):

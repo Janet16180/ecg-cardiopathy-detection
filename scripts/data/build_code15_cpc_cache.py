@@ -38,20 +38,33 @@ def verify_sources() -> dict[str, str]:
     return {"archive_sha256": archive, "exams_csv": exams}
 
 
+def full_length(tracings: h5py.Dataset, ids: np.ndarray) -> list[int]:
+    """List the storage indices of real tracings with a full 10 s window."""
+    selected = []
+    for start in range(0, len(ids), CHUNK):
+        for offset, tracing in enumerate(tracings[start:start + CHUNK]):
+            if ids[start + offset] != 0 and central_window(tracing) is not None:
+                selected.append(start + offset)
+    return selected
+
+
 def convert_part(path: Path, part: int, output: Path) -> list[dict[str, object]]:
-    """Write one part's full-length tracings to a shard and describe each row."""
-    rows, signals = [], []
+    """Write one part's full-length tracings straight to a disk-backed shard and describe each row."""
+    rows = []
     with h5py.File(path, "r") as handle:
         ids, tracings = handle["exam_id"][:], handle["tracings"]
-        for start in range(0, len(ids), CHUNK):
-            for offset, tracing in enumerate(tracings[start:start + CHUNK]):
+        selected = full_length(tracings, ids)
+        shard = np.lib.format.open_memmap(output / f"part{part}.npy", mode="w+", dtype=np.float32,
+                                          shape=(len(selected), 12, 2500))
+        for start in range(0, len(selected), CHUNK):
+            indices = selected[start:start + CHUNK]
+            for offset, tracing in enumerate(tracings[indices]):
                 window = central_window(tracing)
-                if ids[start + offset] == 0 or window is None:
-                    continue
-                rows.append({"exam_id": int(ids[start + offset]), "shard": f"part{part}.npy",
-                             "index": len(signals), **window_quality(window)})
-                signals.append(to_cpc(np.nan_to_num(window)))
-    np.save(output / f"part{part}.npy", np.stack(signals))
+                rows.append({"exam_id": int(ids[indices[offset]]), "shard": f"part{part}.npy",
+                             "index": start + offset, **window_quality(window)})
+                shard[start + offset] = to_cpc(np.nan_to_num(window))
+        shard.flush()
+        del shard
     return rows
 
 

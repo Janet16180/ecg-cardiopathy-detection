@@ -1,0 +1,186 @@
+{
+  "updated": "2026-09-28",
+  "rubric": "docs/experiment-priorities.md",
+  "candidates": [
+    {
+      "id": "e022_sph",
+      "title": "SPH external readout of the PTB-XL heads (022)",
+      "question": "How much of the development AUROC survives on an unseen hospital with human labels?",
+      "evidence": "All our numbers are single-source PTB-XL development. Leinonen et al. (arXiv:2403.15012, Tables 4-5): K-fold estimates overstate new-source AUROC by 0.04-0.13; a ResNet identifies the source from ECG, age and sex with 96.9% accuracy.",
+      "value": 5, "clarity": 0.9, "gpu_hours": 0.5, "cpu_hours": 0.5, "build_hours": 2,
+      "blocked_by": [], "status": "open",
+      "notes": "Protocol frozen with addendum v2; runner written for v1 and needs the v2 manifest."
+    },
+    {
+      "id": "e023_echonext",
+      "title": "EchoNext structural heart disease readout (023)",
+      "question": "Do our frozen features detect echo-confirmed structural heart disease, the only label that is a cardiopathy rather than an ECG annotation?",
+      "evidence": "Benchmark (arXiv:2509.25095, Table 3): ECG-CPC ranks first on EchoNext (0.831 fine-tuned); section 4.4: JEPA best below 1,000 labels, CPC higher ceiling. HuBERT-ECG v4: macro AUROC 0.793.",
+      "value": 5, "clarity": 0.8, "gpu_hours": 1, "cpu_hours": 0.5, "build_hours": 4,
+      "blocked_by": [], "status": "open",
+      "notes": "Protocol frozen with addendum v2; cache built (8.7 GB)."
+    },
+    {
+      "id": "fulldev_encoders",
+      "title": "Full-development standard-label rescoring of JEPA, xECG and released ECG-CPC",
+      "question": "Do the hard ECGs that put CPC at chance (020) also defeat the stronger frozen encoders?",
+      "evidence": "Experiment 020: CPC AUROC 0.506 on the 266 ECGs the project label dropped; all earlier encoder rankings used the project label.",
+      "value": 4, "clarity": 0.8, "gpu_hours": 0.3, "cpu_hours": 0.3, "build_hours": 3,
+      "blocked_by": [], "status": "open",
+      "notes": "Needs features for the 298 added development ECGs; everything else is cached."
+    },
+    {
+      "id": "label_efficiency",
+      "title": "Label-efficiency curves of frozen JEPA, xECG and CPC at 100-2,000 labels",
+      "question": "Which frozen encoder should a small university labeled set use?",
+      "evidence": "Benchmark Table 31: label efficiency ratio 0.11-0.42 for ECG-JEPA, 0.21-0.40 for ECG-CPC at 250-1,000 labels. ECG-JEPA Table 3 (1% and 10% probes).",
+      "value": 4, "clarity": 0.8, "gpu_hours": 0, "cpu_hours": 1, "build_hours": 2,
+      "blocked_by": [], "status": "open",
+      "notes": "Cached features only; repeated seeded label draws."
+    },
+    {
+      "id": "e024_geometry",
+      "title": "CPC embedding geometry audit and diagnosis prototypes (024)",
+      "question": "Is the embedding space organized by diagnosis or by device and demographics, and do reference vectors work?",
+      "evidence": "ECG-JEPA appendix A.3 (nearest class mean) and appendix E (outliers as label errors); benchmark section 4.3 (linear versus attention head); 020 device probe AUROC 0.974.",
+      "value": 3, "clarity": 0.8, "gpu_hours": 0, "cpu_hours": 1, "build_hours": 3,
+      "blocked_by": [], "status": "open",
+      "notes": "Draft protocol docs/experiment-024-embedding-geometry.md; CPU only."
+    },
+    {
+      "id": "multitask_head",
+      "title": "Multi-label auxiliary head on frozen features versus the binary head",
+      "question": "Does training the readout on all SCP statements improve the binary endpoint?",
+      "evidence": "HuBERT-ECG v4 (multitask fine-tuning on 164 harmonized labels improved low-prevalence targets without new ECGs). ProtoECGNet trains on all 71 PTB-XL labels.",
+      "value": 3, "clarity": 0.6, "gpu_hours": 0, "cpu_hours": 0.5, "build_hours": 3,
+      "blocked_by": [], "status": "open",
+      "notes": "Cheap on cached features: e.g. a shared low-rank projection fitted on 71 labels, then the binary probe on top."
+    },
+    {
+      "id": "device_control",
+      "title": "Device-controlled probes (drop or balance CS100 3)",
+      "question": "How much of the binary AUROC depends on the recording device?",
+      "evidence": "020: CS100 3 is 35% of training folds, 74% positive, and identifiable at AUROC 0.974.",
+      "value": 3, "clarity": 0.6, "gpu_hours": 0, "cpu_hours": 0.3, "build_hours": 2,
+      "blocked_by": [], "status": "open",
+      "notes": "Cached features; compare per-device development AUROC."
+    },
+    {
+      "id": "attention_readout",
+      "title": "Attention-pooling frozen head on encoder tokens (CPC, released ECG-CPC, xECG)",
+      "question": "Is the CPC gap to JEPA and xECG a readout problem rather than a representation problem?",
+      "evidence": "Benchmark Tables 4-5: ECG-CPC PTB-XL super 0.863 linear versus 0.919 with a query-attention head; section 4.3 attributes it to the token-level objective. Our local readout: +0.0125 AUROC from token maxima.",
+      "value": 4, "clarity": 0.7, "gpu_hours": 2, "cpu_hours": 0, "build_hours": 6,
+      "blocked_by": [], "status": "open",
+      "notes": "Frozen encoder, trains only a query vector and a linear layer."
+    },
+    {
+      "id": "s4_supervised",
+      "title": "Supervised S4 from scratch at matched labels (100 Hz, 2.5 s crops)",
+      "question": "At 15k labels, does any self-supervised encoder beat a strong supervised baseline?",
+      "evidence": "Benchmark section 4.1 and Table 34: supervised S4 reaches 0.941 on PTB-XL all, level with the best foundation models; our supervised CNN reached 0.923.",
+      "value": 4, "clarity": 0.8, "gpu_hours": 3, "cpu_hours": 0, "build_hours": 6,
+      "blocked_by": [], "status": "open",
+      "notes": "Needs an S4 layer; the benchmark repository has one."
+    },
+    {
+      "id": "crop_tta",
+      "title": "2.5 s crops with test-time averaging for frozen readouts",
+      "question": "Does averaging four 2.5 s windows beat one 10 s pass?",
+      "evidence": "Benchmark section 3.3 and discussion: 2.5 s crops with averaging outperform full 10 s inputs.",
+      "value": 2, "clarity": 0.6, "gpu_hours": 1, "cpu_hours": 0, "build_hours": 3,
+      "blocked_by": [], "status": "open",
+      "notes": "Could be an extra arm of attention_readout."
+    },
+    {
+      "id": "e017_second_seed",
+      "title": "017 morphology-template second-seed replication",
+      "question": "Does the limited-label template gain replicate?",
+      "evidence": "017 v2 passed its limited-label screen at +0.0026 AUROC, one seed.",
+      "value": 2, "clarity": 0.6, "gpu_hours": 1, "cpu_hours": 0, "build_hours": 3,
+      "blocked_by": [], "status": "open",
+      "notes": "Existing follow-up in docs/experiment-queue.json."
+    },
+    {
+      "id": "ningbo_eda",
+      "title": "Ningbo EDA and clean manifest",
+      "question": "How many Ningbo ECGs are usable, and do they overlap Chapman?",
+      "evidence": "Smoke test: the first three records each had a constant lead.",
+      "value": 3, "clarity": 0.9, "gpu_hours": 0, "cpu_hours": 2, "build_hours": 4,
+      "blocked_by": ["@ningbo_download"], "status": "open",
+      "notes": "Module ecg_experiment/eda/ningbo.py ready."
+    },
+    {
+      "id": "cohorts_v2",
+      "title": "Quality-first nested cohorts 25k-200k",
+      "question": "Build the pretraining cohorts from human-read sources first.",
+      "evidence": "User decision, 28 September 2026. ECG-JEPA Table 8: adding MIMIC (180k to 960k) slightly lowered linear-probe AUROC.",
+      "value": 3, "clarity": 0.9, "gpu_hours": 0, "cpu_hours": 2, "build_hours": 5,
+      "blocked_by": ["ningbo_eda"], "status": "open",
+      "notes": "Script supports 150k and 200k; build only 25k-100k here."
+    },
+    {
+      "id": "multisource_lso",
+      "title": "Multi-source probe with leave-source-out evaluation",
+      "question": "Does training the readout on PTB-XL, Chapman, Ningbo, Georgia and CPSC generalize better to a new hospital?",
+      "evidence": "Leinonen et al. Table 5: leave-source-out estimates are nearly unbiased (mean error -0.006 to 0.004) where pooled K-fold is optimistic by 0.04-0.11.",
+      "value": 5, "clarity": 0.6, "gpu_hours": 2, "cpu_hours": 1, "build_hours": 10,
+      "blocked_by": ["cohorts_v2", "e022_sph"], "status": "open",
+      "notes": "Needs a harmonized binary label across SNOMED sources."
+    },
+    {
+      "id": "prototype_head",
+      "title": "Learned prototype head anchored to real training ECGs",
+      "question": "Can case-based prototypes match the probe while giving a reference ECG per condition?",
+      "evidence": "ProtoECGNet (MLHC 2025, Tables 1-2): 0.913 versus 0.925 black-box macro AUROC on 71 PTB-XL labels; clinicians rated prototypes representative.",
+      "value": 3, "clarity": 0.5, "gpu_hours": 2, "cpu_hours": 0, "build_hours": 8,
+      "blocked_by": ["e024_geometry"], "status": "open",
+      "notes": "Only worth building if 024 shows a large prototype-to-probe gap."
+    },
+    {
+      "id": "clustering_multisource",
+      "title": "Source-controlled clustering of multi-source embeddings",
+      "question": "Are there diagnosis-enriched clusters that span several hospitals?",
+      "evidence": "Earlier HDBSCAN found only normal versus abnormal regions; sources are highly identifiable.",
+      "value": 2, "clarity": 0.4, "gpu_hours": 1, "cpu_hours": 1, "build_hours": 5,
+      "blocked_by": ["e024_geometry", "cohorts_v2"], "status": "open",
+      "notes": ""
+    },
+    {
+      "id": "core_lead_masking",
+      "title": "CoRe-style lead-drop masking in CPC pretraining",
+      "question": "Does breaking inter-lead linear shortcuts improve CPC features?",
+      "evidence": "CoRe-ECG (arXiv:2604.11359, Table 5): STDM +1.4 AUROC points on PTB-XL under its own random patient split; no code.",
+      "value": 2, "clarity": 0.4, "gpu_hours": 6, "cpu_hours": 0, "build_hours": 8,
+      "blocked_by": [], "status": "open",
+      "notes": ""
+    },
+    {
+      "id": "report_alignment",
+      "title": "ECG-report alignment with PTB-XL cardiologist reports",
+      "question": "Do text-derived prototypes classify without labels?",
+      "evidence": "MERL (ICML 2024) reports large gains, but its own self-supervised baselines are weak (PTB-XL super linear 0.71-0.81); in the independent benchmark MERL is mid-ranked. MERL and DiffuSETS use MIMIC machine reports, which we do not trust.",
+      "value": 2, "clarity": 0.3, "gpu_hours": 8, "cpu_hours": 1, "build_hours": 16,
+      "blocked_by": [], "status": "open",
+      "notes": "Only about 21.8k German reports; check validated_by_human."
+    },
+    {
+      "id": "beat_tokens",
+      "title": "Beat-synchronous tokens",
+      "question": "Do heartbeat-aligned tokens help?",
+      "evidence": "Sameh et al. (arXiv:2608.30367, Table 1): +0.004 macro AUROC over fixed 50-sample patches; our Experiment 006 found no benefit from heartbeat chunks.",
+      "value": 1, "clarity": 0.4, "gpu_hours": 4, "cpu_hours": 0, "build_hours": 8,
+      "blocked_by": [], "status": "dropped",
+      "notes": "Already tested in 006; the paper's effect is within our usual noise."
+    },
+    {
+      "id": "synthetic_references",
+      "title": "Synthetic or textbook ECGs as class reference vectors",
+      "question": "Can generated or digitized ECGs serve as per-condition references?",
+      "evidence": "SSSD-ECG (arXiv:2301.08227, Table I): a classifier trained only on synthetic PTB-XL ECGs scores 0.840 versus 0.932 on real, with the generator trained on PTB-XL itself. Textbook images are further out of distribution.",
+      "value": 1, "clarity": 0.5, "gpu_hours": 4, "cpu_hours": 0, "build_hours": 6,
+      "blocked_by": [], "status": "dropped",
+      "notes": "Data-derived prototypes and medoids (024) answer the same need."
+    }
+  ]
+}

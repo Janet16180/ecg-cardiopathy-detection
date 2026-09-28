@@ -2,7 +2,7 @@
 
 import pytest
 
-from ecg_experiment.backlog import rank, score
+from ecg_experiment.backlog import markdown_table, rank, score
 
 
 def candidate(identifier: str, value: int = 3, clarity: float = 1.0, build_hours: float = 4.0,
@@ -28,6 +28,12 @@ def test_finished_blockers_no_longer_block_and_done_items_are_dropped():
     ranked = rank([candidate("next", blocked_by=("base",)), candidate("base", status="done")])
     assert [item["id"] for item in ranked] == ["next"]
     assert ranked[0]["blocked"] == []
+
+
+def test_table_shows_kind_with_experiment_as_default():
+    table = markdown_table(rank([candidate("a"), {**candidate("b"), "kind": "wild"}]))
+    assert "| a | experiment |" in table
+    assert "| b | wild |" in table
 
 
 def test_external_conditions_block_until_removed():

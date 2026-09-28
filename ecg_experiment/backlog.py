@@ -4,7 +4,8 @@ The backlog is a JSON list of candidates, each with ``value`` (1 to 5: how much 
 what the project does next), ``clarity`` (0 to 1: chance the result is decisive at the planned sample size),
 estimated ``gpu_hours``, ``cpu_hours`` and ``build_hours`` (writing, checking and reviewing code and
 protocol), and ``blocked_by`` (IDs of candidates or external conditions that must finish first). The rubric
-is in ``docs/experiment-priorities.md``.
+is in ``docs/experiment-priorities.md``. An optional ``kind`` separates experiments from repository tasks
+(``repo``); both are ranked together.
 """
 
 import math
@@ -93,13 +94,14 @@ def markdown_table(ranked: list[dict[str, Any]]) -> str:
     Returns
     -------
     str
-        Table with rank, ID, title, value, clarity, hours, score and blockers.
+        Table with rank, ID, kind, title, value, clarity, hours, score and blockers.
     """
-    lines = ["| Rank | ID | Candidate | Value | Clarity | Hours | Score | Waiting on |",
-             "| ---: | --- | --- | ---: | ---: | ---: | ---: | --- |"]
+    lines = ["| Rank | ID | Kind | Candidate | Value | Clarity | Hours | Score | Waiting on |",
+             "| ---: | --- | --- | --- | ---: | ---: | ---: | ---: | --- |"]
     for position, item in enumerate(ranked, start=1):
         waiting = ", ".join(item["blocked"]) or "-"
-        lines.append(f"| {position} | {item['id']} | {item['title']} | {item['value']} "
+        kind = item.get("kind", "experiment")
+        lines.append(f"| {position} | {item['id']} | {kind} | {item['title']} | {item['value']} "
                      f"| {item['clarity']:.1f} | {item['hours']:.1f} | {item['score']:.2f} | {waiting} |")
     return "\n".join(lines)
 

@@ -20,9 +20,13 @@ derived from these notebooks is described in [clean cohorts v1](../docs/clean-co
 | `04-jr-code15.ipynb` | CODE-15% (all 18 parts) | Labels and mortality by age and sex, padding and duration, amplitude unit, sampling rate |
 | `05-jr-cross-dataset.ipynb` | All | Populations, the same findings across sources, source fingerprints |
 | `06-jr-clean-cohorts.ipynb` | Training candidates | What the quality policy removes per source, and the 25k, 50k and 100k cohorts |
+| `07-jr-sph.ipynb` | SPH (Shandong Provincial Hospital) | AHA codes and the standard label, duplicates with conflicting codes, artifacts, filtering |
+| `08-jr-echonext.ipynb` | EchoNext (credentialed) | Splits, echo-based labels and missing values, partially filled leads, filtering |
 
-The MIMIC notebook shows aggregate statistics only (credentialed data), so its outputs can be kept in
-Git. Plots use seaborn. The analysis code is in `ecg_experiment/eda/`.
+The MIMIC and EchoNext notebooks show aggregate statistics only (credentialed data), so their outputs can
+be kept in Git. Findings for the project from notebooks 07 and 08 are in
+[the SPH and EchoNext review](../docs/sph-echonext-eda-review.md). Plots use seaborn. The analysis code is in
+`ecg_experiment/eda/`.
 
 Build the feature caches once (about 80 minutes on CPU: MIMIC, then CODE-15 streamed from its export
 archive), then execute a notebook:
@@ -42,6 +46,8 @@ from the raw files.
 | `mimic.py` | MIMIC record list, machine measurements, name-based lead ordering |
 | `challenge.py` | Challenge headers, SNOMED names, signal hashes |
 | `code15.py` | CODE-15 metadata; streams all 18 parts from the export archive one at a time |
+| `sph.py` | SPH metadata, code dictionary and label mapping, full-record features, quality policy on the first 10 s |
+| `echonext.py` | EchoNext metadata and splits, label consistency, waveform statistics streamed from the ZIP (train and val only) |
 | `processed.py` | Comparisons of the project's processed arrays with the raw files |
 | `cross.py` | All sources in one table; six common findings on one vocabulary; source fingerprinting |
 | `stats.py` | Prevalence with Wilson intervals, chi-square tests, logistic-regression odds ratios, prevalence plots |

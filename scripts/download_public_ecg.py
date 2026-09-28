@@ -23,6 +23,7 @@ COHORTS = {
     "cpsc_2018": ("challenge-2020", "1.0.2", "training/cpsc_2018/"),
     "cpsc_2018_extra": ("challenge-2020", "1.0.2", "training/cpsc_2018_extra/"),
     "chapman_shaoxing": ("challenge-2021", "1.0.3", "training/chapman_shaoxing/"),
+    "ningbo": ("challenge-2021", "1.0.3", "training/ningbo/"),
 }
 CODE15_RECORD_ID = "4916206"
 CODE15_API = f"https://zenodo.org/api/records/{CODE15_RECORD_ID}"
@@ -164,19 +165,21 @@ def _official_manifest(base: str, root: Path) -> Path:
 
 
 def _cohort_files(checksums: dict[str, str], cohort: str, prefix: str,
-                  limit: int | None) -> tuple[list[str], list[str]]:
-    """Select sorted record stems and their header/waveform file names."""
-    stems = sorted({name[:-4] for name in checksums
-                    if name.startswith(prefix) and name.endswith(".hea")})
+                  limit: int | None) -> tuple[list[str], list[str], list[str]]:
+    """Select sorted complete record stems, their header/waveform file names, and unpaired stems."""
+    headers = {name[:-4] for name in checksums if name.startswith(prefix) and name.endswith(".hea")}
+    signals = {name[:-4] for name in checksums if name.startswith(prefix) and name.endswith(".mat")}
+    stems = sorted(headers & signals)
+    unpaired = sorted(headers ^ signals)
     if limit:
         stems = stems[:limit]
     files = [stem + extension for stem in stems for extension in (".hea", ".mat")]
-    if not stems or any(name not in checksums for name in files):
+    if not stems:
         raise ValueError(f"Missing official records or checksums for {cohort}")
     if any(PurePosixPath(name).is_absolute() or ".." in PurePosixPath(name).parts
            for name in files):
         raise ValueError("Unsafe manifest path")
-    return stems, files
+    return stems, files, unpaired
 
 
 def physionet(cohort: str, workers: int, limit: int | None) -> None:
@@ -197,7 +200,7 @@ def physionet(cohort: str, workers: int, limit: int | None) -> None:
     root = ROOT / "data/raw" / project / version
     manifest = _official_manifest(base, root)
     checksums = parse_checksums(manifest.read_text())
-    stems, files = _cohort_files(checksums, cohort, prefix, limit)
+    stems, files, unpaired = _cohort_files(checksums, cohort, prefix, limit)
     receipt_path = ROOT / "data/acquisition" / f"{cohort}.json"
     receipt = {"dataset": cohort, "source": base, "source_version": version,
                "source_manifest": str(manifest.relative_to(ROOT)),
@@ -205,7 +208,8 @@ def physionet(cohort: str, workers: int, limit: int | None) -> None:
                "local_root": str(root.relative_to(ROOT)),
                "expected_records": len(stems), "expected_files": len(files),
                "verified_files": 0, "state": "running",
-               "selection": "all official records" if not limit else f"first {limit} sorted records"}
+               "selection": "all official records" if not limit else f"first {limit} sorted records",
+               "skipped_unpaired_stems": unpaired}
     save_json(receipt_path, receipt)
 
     def fetch_official(name: str) -> bool:

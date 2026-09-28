@@ -1,9 +1,22 @@
 # ECG screening research: complete model findings
 
-**Initial report:** 23 September 2026; **latest update:** 25 September 2026
+**Initial report:** 23 September 2026; **latest update:** 28 September 2026
 
 **Study:** Public-data experiments for a master's project on ECG screening with limited local annotations
 **Scope:** The original 37-run analysis below, with subsequent study updates and linked reports. The original ranking is historical, not the current complete ranking.
+
+## Experiments 022-027: frozen encoders, a new hospital, echo labels and screening, 28 September 2026
+
+- Frozen ECG-JEPA and xECG beat our CPC everywhere:
+  - PTB-XL development: 0.959 and 0.962 against 0.921;
+  - SPH, a new hospital: 0.911 and 0.915 against 0.876;
+  - EchoNext structural heart disease: 0.823 and 0.838 against 0.812.
+- With 100 labels, JEPA and xECG already beat CPC with all labels.
+- A 95%-sensitivity threshold set on PTB-XL gives only about 92% sensitivity at SPH, with 34-35% of normal ECGs
+  flagged.
+- A distance-from-normal score with no abnormal labels matches a 100-label classifier on PTB-XL.
+
+Details and decisions: [findings of 28 September 2026](findings-2026-09-28.md).
 
 ## xECG probe-initialized fine-tuning: Experiment 016 complete
 

@@ -84,3 +84,42 @@ The user asked for an EDA of EchoNext before running (`notebooks/08-jr-echonext.
   that missing values are coded 0.
 
 Nothing else changes.
+
+## Addendum v3, 28 September 2026, before any EchoNext waveform is featurized or scored
+
+Experiments 022 and 025 found the frozen released ECG-JEPA and xECG clearly stronger than CPC:
+- on PTB-XL at every label budget, for example +0.035 AUROC at 1,000 labels;
+- on the independent SPH hospital (+0.036 and +0.039).
+
+The useful question is now which representation carries echo-confirmed structural heart disease. v1 and v2
+never ran. Changes:
+
+- **Added heads**, all using the same fixed readout, the usable training rows and nothing tuned on validation:
+
+  | Head | Inputs |
+  | --- | --- |
+  | `jepa` | 768 pooled ECG-JEPA features |
+  | `xecg` | 1,024 pooled xECG features |
+  | `jepa_tabular`, `xecg_tabular` | encoder features plus the tabular inputs |
+  | `ptb_jepa_standard`, `ptb_xecg_standard` | the Experiment 022 v3 PTB-XL heads, applied unchanged |
+
+- **Encoder input.** EchoNext has no physical units, so each lead is standardized with the usable-train
+  statistics, as for CPC. It is then mapped onto the per-lead mean and standard deviation, in mV, of that
+  encoder's PTB-XL input:
+  - The statistics come from 1,000 evenly spaced Experiment 020 training ECGs: first 10 s, converted from
+    500 Hz to 250 Hz with `resample_poly`, all samples pooled per lead.
+  - Each encoder then applies its own preprocessing from 250 Hz: ECG-JEPA takes the 2,500 samples and its
+    8 leads directly; xECG resamples to its 100 Hz with its own resampler.
+  - A reported diagnostic, not a gate: for 32 evenly spaced PTB-XL training ECGs, compare features computed
+    through this 250 Hz path with the cached 500 Hz-path features (mean and minimum cosine similarity).
+- **Encoder contrasts (prespecified, secondary):**
+  - `jepa` minus `cpc` and `xecg` minus `cpc`;
+  - `jepa_tabular` minus `tabular` and `xecg_tabular` minus `tabular`.
+  Same bootstrap as analysis 2. Analysis 4 is also reported for `jepa` and `xecg`.
+- **Runtime ceiling:** 7,200 s, the project's adopted two-hour planning gate, instead of 3,600 s. Three
+  encoders over about 76,000 ECGs do not fit the one-hour ceiling with the 1.5 margin. The profile times all
+  three encoders on 512 training ECGs.
+- **Outputs** go to `outputs/experiment023_echonext_v3/`. As EchoNext is credentialed, features and
+  predictions stay local; only aggregates appear in documents.
+
+The primary analyses (1 and 2) are unchanged. The test split stays closed.

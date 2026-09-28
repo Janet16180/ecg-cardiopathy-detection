@@ -84,8 +84,9 @@ CONDITIONS = ["atrial fibrillation", "right bundle branch block", "left bundle b
 PTBXL_CODES = {"atrial fibrillation": ["AFIB"], "right bundle branch block": ["CRBBB"],
                "left bundle branch block": ["CLBBB"], "1st degree AV block": ["1AVB"],
                "sinus bradycardia": ["SBRAD"], "sinus tachycardia": ["STACH"]}
+# The Challenge 2021 scores 713427006 as 59118001 and 733534002 as 164909002 (dx_mapping_scored.csv).
 SNOMED_CODES = {"atrial fibrillation": ["164889003"], "right bundle branch block": ["59118001", "713427006"],
-                "left bundle branch block": ["164909002"], "1st degree AV block": ["270492004"],
+                "left bundle branch block": ["164909002", "733534002"], "1st degree AV block": ["270492004"],
                 "sinus bradycardia": ["426177001"], "sinus tachycardia": ["427084000"]}
 CODE15_COLUMNS = {"atrial fibrillation": "AF", "right bundle branch block": "RBBB",
                   "left bundle branch block": "LBBB", "1st degree AV block": "1dAVb",

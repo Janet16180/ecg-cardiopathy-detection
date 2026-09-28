@@ -87,3 +87,34 @@ The user asked for an EDA of SPH before running (`notebooks/07-jr-sph.ipynb`,
   the analyses; the results document must mention it when interpreting the external score.
 
 Nothing else changes. The run writes to `outputs/experiment022_sph_external_v2/`.
+
+## Addendum v3, 28 September 2026, before any SPH waveform is featurized or scored
+
+The user asked to run the most useful experiments after a literature review
+([literature review](literature-review-2026-09-28.md)). On PTB-XL development, the frozen released ECG-JEPA
+(0.960) and xECG (0.962) probes clearly beat the CPC probe. The more useful external question is therefore
+which representation keeps its ranking at an unseen hospital, not only whether CPC does. v1 and v2 never ran.
+Changes:
+
+- **Two added heads.** `jepa_standard` uses the released ECG-JEPA multiblock encoder, and `xecg_standard` uses
+  the released xECG base model. Both are frozen, and each uses the project's existing feature-extraction code
+  and preprocessing for that encoder (the code that produced `data/processed/pretrained/ecg-jepa-full-public`
+  and `outputs/experiment016_xecg_probe_finetune/features`), applied to the first 10 s at 500 Hz. Each head is
+  fitted exactly like `cpc_standard`: the same PTB-XL training rows and standard label, `fit_logistic` with
+  C=0.01, float64. Nothing is tuned on development or SPH.
+- **Feature integrity.** Before any SPH record is featurized, recomputed features for 32 evenly spaced
+  training ECGs in each existing cache must match the cached features (maximum absolute difference at most 1e-4).
+  Training rows missing from a cache are extracted with the same code.
+- **Encoder contrasts (prespecified, secondary).** `jepa_standard` minus `cpc_standard` and `xecg_standard`
+  minus `cpc_standard` AUROC on SPH with the primary label, using the same paired whole-patient bootstrap
+  (2,000 draws, seed 22022). Analyses 4 and 5 are also reported for both new heads.
+- **Full development, standard label (secondary).** All six heads are scored on the 1,572 labeled
+  full-development ECGs of Experiment 020, overall and split into original and added ECGs. This extends
+  Experiment 020's hard-case analysis to JEPA and xECG. Features for the added development ECGs are extracted
+  with the same code.
+- **Historical regularization (secondary).** ECG-JEPA's earlier probe selected C=0.1 on PTB-XL development
+  (project label). A `jepa_standard_c01` head with C=0.1 is also scored. The selection used PTB-XL, not SPH.
+
+The primary analyses (1 and 2) are unchanged. The run writes to `outputs/experiment022_sph_external_v3/` after
+a new profile. The profile times all three encoders on 512 SPH records, under the same 3,600-second
+projected ceiling.

@@ -47,7 +47,7 @@ def prepared(tmp_path):
     return args, pool, mean, std, hashes
 
 
-def test_manifest_rows_reject_split_mismatch(prepared, tmp_path):
+def test_manifest_rows_reject_split_mismatch(prepared):
     args, pool, *_ = prepared
     rows, hashes = cpc_pool.manifest_rows(pool, args.manifest_dir, "0.1")
     assert len(rows["labeled_train"]) == 16

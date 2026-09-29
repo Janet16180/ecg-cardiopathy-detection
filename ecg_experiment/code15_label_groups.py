@@ -23,7 +23,7 @@ def run() -> dict[str, object]:
     expected = next(item["checksum"].removeprefix("md5:") for item in receipt["verified_files"]
                     if item["name"] == "exams.csv")
     with SOURCE.open("rb") as handle:
-        actual = hashlib.file_digest(handle, "md5").hexdigest()  # noqa: S324 - upstream checksum
+        actual = hashlib.file_digest(handle, "md5").hexdigest()  # Zenodo publishes MD5 only
     if actual != expected:
         raise RuntimeError("CODE-15 metadata differs from the verified download")
 

@@ -18,6 +18,7 @@ import numpy as np
 import pandas as pd
 from scipy.signal import butter, filtfilt
 
+from ecg_experiment.eda import challenge, mimic, ningbo, ptbxl
 from ecg_experiment.eda.ptbxl import OUTPUT_DIR, ROOT
 from ecg_experiment.eda.signals import LEADS, compute_features, record_summary
 
@@ -26,6 +27,7 @@ PREPARED_DIR = ROOT / "data/processed/code15_quality"
 EXPORT_ARCHIVE = ROOT / "outputs/data_export/code_15pct_waveforms_2026-09-25.tar.xz"
 PART0_NATIVE = PREPARED_DIR / "part0_native/exams_part0_native.hdf5"
 CACHE_DIR = OUTPUT_DIR / "features" / "code15"
+AMPLITUDE_CACHE = OUTPUT_DIR / "features" / "amplitude_references.parquet"
 EXTRACT_DIR = OUTPUT_DIR / "code15_extract"
 SAMPLING_RATE = 400
 LABELS = ["1dAVb", "RBBB", "LBBB", "SB", "ST", "AF"]
@@ -331,3 +333,48 @@ def part0_ranges(exams: pd.DataFrame, min_active: int = 4000) -> pd.DataFrame:
                 if len(active) >= min_active and int(ids[start + offset]) in exams.index:
                     rows[int(ids[start + offset])] = highpass_range(active[:min_active], SAMPLING_RATE)
     return pd.DataFrame.from_dict(rows, orient="index", columns=LEADS)
+
+
+def amplitude_references(per_source: int = 2000, seed: int = 0) -> pd.DataFrame:
+    """
+    ``highpass_range`` of age-matched samples of the millivolt sources, cached.
+
+    PTB-XL, Chapman, Georgia, CPSC 2018, CPSC-Extra and Ningbo records aged 40-59 are sampled; MIMIC has no
+    age in the local tables, so any downloaded record is sampled.
+
+    Parameters
+    ----------
+    per_source : int
+        Records per source, or all when fewer are available.
+    seed : int
+        Sampling seed.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per record and one column per lead, indexed by ``(source, record)``.
+    """
+    if AMPLITUDE_CACHE.exists():
+        return pd.read_parquet(AMPLITUDE_CACHE)
+    meta = ptbxl.load_metadata()
+    meta = meta[meta["age"].between(40, 59)]
+    meta = meta.sample(min(per_source, len(meta)), random_state=seed)
+    parts = {"ptbxl": reference_ranges([(str(i), p) for i, p in meta["filename_hr"].items()],
+                                       ptbxl.read_signal)}
+    headers = challenge.load_headers()
+    for source in ("chapman_shaoxing", "georgia", "cpsc_2018", "cpsc_2018_extra"):
+        rows = headers[(headers["source"] == source) & headers["age_years"].between(40, 59)]
+        rows = rows.sample(min(per_source, len(rows)), random_state=seed)
+        parts[source] = reference_ranges([(i, f"{r.source}:{r.path}") for i, r in rows.iterrows()],
+                                         challenge.read_signal)
+    local = ningbo.load_headers()
+    rows = local[local["has_signal"] & local["age_years"].between(40, 59)]
+    rows = rows.sample(min(per_source, len(rows)), random_state=seed)
+    parts["ningbo"] = reference_ranges(list(rows["path"].items()), ningbo.read_signal)
+    records = mimic.load_records()
+    rows = records[records["downloaded"]]
+    rows = rows.sample(min(per_source, len(rows)), random_state=seed)
+    parts["mimic"] = reference_ranges(list(rows["path"].astype(str).items()), mimic.read_signal)
+    table = pd.concat(parts, names=["source", "record"])
+    table.to_parquet(AMPLITUDE_CACHE)
+    return table

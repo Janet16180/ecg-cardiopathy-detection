@@ -1,8 +1,9 @@
 """Extract frozen CPC, ECG-JEPA and xECG features of the PhysioNet Challenge 2021 sources.
 
-The encoders and their input paths are those of Experiment 022. Records are read in source order and
-every record that is not a finite ten-second twelve-lead 500 Hz ECG is skipped with its reason. No
-readout is fitted and no label is read.
+The encoders and their input paths are those of Experiment 022. Records are read in source order. A
+longer record gives its centred ten-second window; a record shorter than ten seconds, not at 500 Hz,
+without twelve leads or with a nonfinite window is skipped with its reason. No readout is fitted and no
+label is read.
 """
 
 from __future__ import annotations
@@ -30,6 +31,7 @@ from ecg_experiment.challenge_features import (
     read_verified,
     record_stems,
     skip_reasons,
+    window_start,
 )
 from ecg_experiment.downloads import parse_checksums
 from ecg_experiment.external_encoders import (
@@ -58,6 +60,9 @@ PROFILE_RECORDS = 512
 INTEGRITY_RECORDS = 128
 CEILING_SECONDS = 5_400
 READER_THREADS = 4
+WINDOW_RULE = ("centred 10 s window, start = (samples - 5000) // 2, the ssl_center_crop rule of "
+               "public_sources.load_view; skipped if shorter than 10 s, not 500 Hz, not 12 leads or "
+               "nonfinite in the window")
 XECG_CHECKPOINT_FILES = ("model.safetensors", "config.json", "xECG.py", "download_provenance.json")
 CODE = ("ecg_experiment/challenge_features.py", "ecg_experiment/external_encoders.py",
         "ecg_experiment/external_readout.py", "ecg_experiment/ptb_cpc_features.py", "ecg_experiment/cpc.py",
@@ -188,7 +193,8 @@ def identity(items: dict[str, list[Item]], manifest_hashes: dict[str, str],
                         "record_files_sha256": files_digest([stem for _, stem, _ in rows], checksums[source])}
                for source, rows in items.items()}
     return {"encoders": encoder_hashes(), "ningbo_manifest": manifest_hashes, "sha256sums": releases,
-            "records": records, "code": {name: sha256_file(ROOT / name) for name in CODE}}
+            "records": records, "window_rule": WINDOW_RULE,
+            "code": {name: sha256_file(ROOT / name) for name in CODE}}
 
 
 def load_models() -> dict[str, nn.Module]:
@@ -203,7 +209,8 @@ def load_models() -> dict[str, nn.Module]:
     return {"cpc": load_encoder(), "jepa": load_jepa(), "xecg": load_xecg_backbone()}
 
 
-def prepare(item: Item, source: str, checksums: dict[str, str]) -> tuple[dict[str, np.ndarray] | None, str]:
+def prepare(item: Item, source: str, checksums: dict[str, str],
+            ) -> tuple[dict[str, np.ndarray] | None, str, int]:
     """
     Read one record and build its encoder inputs, or give the reason it is skipped.
 
@@ -218,8 +225,9 @@ def prepare(item: Item, source: str, checksums: dict[str, str]) -> tuple[dict[st
 
     Returns
     -------
-    tuple[dict[str, np.ndarray] | None, str]
-        Inputs per encoder and an empty reason, or ``None`` and the ``;``-joined skip reasons.
+    tuple[dict[str, np.ndarray] | None, str, int]
+        Inputs per encoder, an empty reason and the window start; or ``None``, the ``;``-joined skip
+        reasons and ``-1``.
 
     Raises
     ------
@@ -230,11 +238,12 @@ def prepare(item: Item, source: str, checksums: dict[str, str]) -> tuple[dict[st
     signal, sampling_rate, names = read_verified(RAW_ROOTS[source], stem, checksums)
     reasons = skip_reasons(sampling_rate, signal)
     if reasons:
-        return None, ";".join(reasons)
-    window = canonical_window(signal, names)
+        return None, ";".join(reasons), -1
+    start = window_start(len(signal))
+    window = canonical_window(signal, names, start)
     if window_sha256 and signal_sha256(window.astype(np.float32)) != window_sha256:
         raise ValueError(f"Ningbo window differs from the manifest: {stem}")
-    return encoder_inputs(window), ""
+    return encoder_inputs(window), "", start
 
 
 def run_encoders(models: dict[str, nn.Module], batch: list[dict[str, np.ndarray]],
@@ -281,7 +290,7 @@ def append_features(chunks: dict[str, list[np.ndarray]], features: dict[str, np.
 
 
 def extract(models: dict[str, nn.Module], source: str, items: list[Item], checksums: dict[str, str],
-            ) -> tuple[list[str], dict[str, np.ndarray], dict[str, str], dict[str, float]]:
+            ) -> tuple[list[tuple[str, int]], dict[str, np.ndarray], dict[str, str], dict[str, float]]:
     """
     Extract every featurizable record of a source in item order, in chunks of ``CHUNK`` records.
 
@@ -300,9 +309,9 @@ def extract(models: dict[str, nn.Module], source: str, items: list[Item], checks
 
     Returns
     -------
-    tuple[list[str], dict[str, np.ndarray], dict[str, str], dict[str, float]]
-        Extracted records, their features per encoder, skip reason per skipped record, and seconds spent
-        reading (including input conversion) and per encoder.
+    tuple[list[tuple[str, int]], dict[str, np.ndarray], dict[str, str], dict[str, float]]
+        Extracted records with their window starts, their features per encoder, skip reason per skipped
+        record, and seconds spent reading (including input conversion) and per encoder.
     """
     records, skipped, batch = [], {}, []
     chunks = {name: [] for name in ENCODER_NAMES}
@@ -314,11 +323,11 @@ def extract(models: dict[str, nn.Module], source: str, items: list[Item], checks
             block = items[start:start + CHUNK]
             prepared = list(pool.map(read, block))
             seconds["read"] += time.monotonic() - began
-            for item, (inputs, reason) in zip(block, prepared, strict=True):
+            for item, (inputs, reason, start) in zip(block, prepared, strict=True):
                 if inputs is None:
                     skipped[item[0]] = reason
                     continue
-                records.append(item[0])
+                records.append((item[0], start))
                 batch.append(inputs)
                 if len(batch) == CHUNK:
                     append_features(chunks, run_encoders(models, batch, seconds))
@@ -363,12 +372,14 @@ def integrity(models: dict[str, nn.Module], source: str, items: list[Item], chec
     records, features, _, _ = extract(models, source, subset, checksums)
     differences = {name: float(np.abs(features[name].astype(np.float64) - saved[name][:len(records)]).max())
                    for name in ENCODER_NAMES}
-    if records != list(saved["record"][:INTEGRITY_RECORDS]) or any(differences.values()):
+    expected = list(zip(saved["record"][:INTEGRITY_RECORDS].tolist(),
+                        saved["window_start"][:INTEGRITY_RECORDS].tolist(), strict=True))
+    if records != expected or any(differences.values()):
         raise ValueError(f"Re-extracted {source} features differ: {differences}")
-    return {"records": records, "max_abs_difference": differences}
+    return {"records": [record for record, _ in records], "max_abs_difference": differences}
 
 
-def check_saved(path: Path, records: list[str]) -> dict[str, np.ndarray]:
+def check_saved(path: Path, records: list[tuple[str, int]]) -> dict[str, np.ndarray]:
     """
     Reload a written npz and require unique records in input order and finite float32 features.
 
@@ -376,8 +387,8 @@ def check_saved(path: Path, records: list[str]) -> dict[str, np.ndarray]:
     ----------
     path : Path
         Written npz.
-    records : list[str]
-        Extracted records in input order.
+    records : list[tuple[str, int]]
+        Extracted records and window starts in input order.
 
     Returns
     -------
@@ -391,7 +402,9 @@ def check_saved(path: Path, records: list[str]) -> dict[str, np.ndarray]:
     """
     with np.load(path) as handle:
         saved = {name: handle[name] for name in handle.files}
-    if saved["record"].tolist() != records or len(set(records)) != len(records):
+    names = [record for record, _ in records]
+    order_ok = saved["record"].tolist() == names and saved["window_start"].tolist() == [s for _, s in records]
+    if not order_ok or len(set(names)) != len(names):
         raise ValueError(f"Saved record order differs from the input order: {path}")
     for name in ENCODER_NAMES:
         values = saved[name]
@@ -446,11 +459,15 @@ def extract_source(models: dict[str, nn.Module], source: str, items: list[Item],
     began = time.monotonic()
     records, features, skipped, seconds = extract(models, source, items, checksums)
     path = OUTPUT / f"{source}.npz"
-    write_npz_atomic(path, record=np.array(records), **features)
+    starts = np.array([start for _, start in records], dtype=np.int64)
+    names = np.array([record for record, _ in records])
+    write_npz_atomic(path, record=names, window_start=starts, **features)
     saved = check_saved(path, records)
     checks = integrity(models, source, items, checksums, saved)
     return {"candidates": len(items), "extracted": len(records), "skipped": len(skipped),
             "skip_reason_counts": dict(Counter(skipped.values())), "skipped_records": skipped,
+            "window_rule": WINDOW_RULE, "windowed_records": int((starts > 0).sum()),
+            "nonzero_window_start": {record: start for record, start in records if start > 0},
             "dimensions": {name: int(features[name].shape[1]) for name in ENCODER_NAMES},
             "seconds_by_part": seconds, "seconds": time.monotonic() - began,
             "seconds_per_candidate": sum(seconds.values()) / len(items), "integrity": checks,

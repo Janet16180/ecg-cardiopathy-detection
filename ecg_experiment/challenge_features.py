@@ -3,6 +3,8 @@
 Each record is read from WFDB in float64 mV and canonical lead order. CPC and ECG-JEPA receive the
 float32 window, as ``waveforms.read_record`` gave the PTB-XL caches and SPH gave Experiment 022. xECG
 receives the float64 window, as the PTB-XL xECG cache was resampled from WFDB's float64 samples.
+A record longer than ten seconds gives its centred ten-second window, the ``ssl_center_crop`` rule of
+``public_sources.load_view`` that built the project's CPSC views.
 """
 
 from __future__ import annotations
@@ -74,9 +76,26 @@ def files_digest(stems: list[str], checksums: dict[str, str]) -> str:
     return hashlib.sha256(lines.encode()).hexdigest()
 
 
+def window_start(samples: int) -> int:
+    """
+    First sample of the centred ten-second window, as ``public_sources.load_view`` ``ssl_center_crop``.
+
+    Parameters
+    ----------
+    samples : int
+        Record length, at least ``SAMPLES``.
+
+    Returns
+    -------
+    int
+        ``(samples - 5000) // 2``, so zero for a ten-second record.
+    """
+    return (samples - SAMPLES) // 2
+
+
 def skip_reasons(sampling_rate: int, signal: np.ndarray) -> list[str]:
     """
-    Reasons a record is not a finite ten-second twelve-lead 500 Hz ECG.
+    Reasons a record gives no finite ten-second twelve-lead 500 Hz window.
 
     Parameters
     ----------
@@ -88,7 +107,7 @@ def skip_reasons(sampling_rate: int, signal: np.ndarray) -> list[str]:
     Returns
     -------
     list[str]
-        Empty when the record can be featurized.
+        Empty when the record can be featurized. Only the window is checked for finiteness.
     """
     samples, leads = signal.shape
     reasons = []
@@ -96,9 +115,10 @@ def skip_reasons(sampling_rate: int, signal: np.ndarray) -> list[str]:
         reasons.append(f"sampling_rate_{sampling_rate}_hz")
     if leads != LEAD_COUNT:
         reasons.append(f"leads_{leads}")
-    if samples != SAMPLES:
+    if samples < SAMPLES:
         reasons.append(f"samples_{samples}")
-    if not np.isfinite(signal).all():
+    start = window_start(max(samples, SAMPLES))
+    if not np.isfinite(signal[start:start + SAMPLES]).all():
         reasons.append("nonfinite")
     return reasons
 
@@ -135,23 +155,26 @@ def read_verified(root: Path, stem: str, checksums: dict[str, str]) -> tuple[np.
     return signal, int(fields["fs"]), list(fields["sig_name"])
 
 
-def canonical_window(signal: np.ndarray, names: list[str]) -> np.ndarray:
+def canonical_window(signal: np.ndarray, names: list[str], start: int) -> np.ndarray:
     """
-    Lead-major float64 window in canonical lead order.
+    Lead-major float64 ten-second window in canonical lead order.
 
     Parameters
     ----------
     signal : np.ndarray
-        Time-major ``(5000, 12)`` samples.
+        Time-major ``(samples, 12)`` samples.
     names : list[str]
         Stored lead name of each column.
+    start : int
+        First sample of the window.
 
     Returns
     -------
     np.ndarray
         Float64 ``[12, 5000]`` window.
     """
-    return np.ascontiguousarray(canonical_order(signal, names).T, dtype=np.float64)
+    window = canonical_order(signal[start:start + SAMPLES], names)
+    return np.ascontiguousarray(window.T, dtype=np.float64)
 
 
 def encoder_inputs(window: np.ndarray) -> dict[str, np.ndarray]:

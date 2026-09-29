@@ -600,8 +600,8 @@
       "cpu_hours": 0.5,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Split SPH by patient into a recalibration pool and a fixed evaluation half; draw 50-1,000 local ECGs, refit Platt and the threshold only; cached 022 predictions, CPU. 027b: calibrating on several other hospitals does not restore 95% at SPH, so local labels are the remaining route."
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 029 Part A: with xECG, the pooled readout and a local Platt plus 95% threshold, no n up to 1,000 keeps sensitivity >= 0.95 in 90% of draws (0.79 at 1,000; specificity falls from 0.80 to 0.61). A pre-registered conservative order-statistic threshold does from n = 200 at SPH prevalence (about 50 positives needed) and from n = 1,000 at 5% prevalence, at specificity 0.25-0.51. 100 local ECGs fix calibration (intercept -1.6 to 0). Blending with source data fails. docs/experiment-029-local-adaptation-results.md. 1,420 s CPU for both parts."
     },
     {
       "id": "stable_threshold",
@@ -645,8 +645,8 @@
       "cpu_hours": 0.5,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Simulate on SPH: a patient-disjoint local pool of 50-1,000 normal ECGs, fixed evaluation half. Pairs with site_recalibration. 026b: normals from other hospitals close only about a third of the SPH gap, and the most similar hospitals help most, so local normals remain the route."
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 029 Part B: adding 50 local normals to the pooled reference beats it in 96% of draws, but the xECG gain is negligible (+0.0002 at 50, +0.003 at 1,000; reference 0.877). Recentring on the local normal mean gives +0.005-0.007 from 50-100 normals (JEPA +0.009, CPC +0.017); local-only needs about 1,000 normals to match. Best 0.883 against 0.941 for the supervised readout, so the gap does not close. docs/experiment-029-local-adaptation-results.md."
     },
     {
       "id": "echo_label_efficiency",

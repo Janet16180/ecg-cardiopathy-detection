@@ -74,6 +74,14 @@ CODE-15% now has the separate native preparation path below; conversion to the p
 
 The subsequent derived-waveform workflow and its EDA are documented in [Challenge post-processing](challenge-postprocessing.md) and [processed ECG EDA](processed-ecg-eda.md). The EDA supplies a curated SSL-only manifest with exact cross-view deduplication and a separate ADC-rail exclusion overlay; it does not change the raw files or published shards.
 
+## Resampling for new manifests
+
+The historical CPC transforms resample each 5 s half separately: `historical_resample` in `ecg_experiment/cpc_input_audit.py`, `resample_halves` in `scripts/data/prepare_cpc_data.py` and `to_cpc` in `ecg_experiment/code15_cpc.py`. Each half's filter edge leaves a join at the 5 s mark, up to about 0.3 mV on real records ([cleaning review](data-cleaning-practices-review.md) R4). CPC encodes the halves separately, so this is harmless there, but a model that reads the full 10 s could learn it.
+
+`resample_full(signal, up, down)` in `ecg_experiment/resample.py` runs one `resample_poly` pass over the whole `(leads, samples)` record and returns `float32`. Resample the whole source record first, then crop or split it. Away from the join (more than 16 output samples at 500 to 250 Hz), its output equals `historical_resample` to 1e-6 mV; `tests/test_resample.py` checks this and the absence of a step at 5 s.
+
+Use it for new manifests only, and record `ecg_experiment/resample.py`'s SHA-256 as the preprocessing source. Frozen experiments, caches and receipts keep the historical transforms, whose files they hash; do not switch them.
+
 ## CODE-15% native preparation
 
 `scripts/prepare_code15.py` is a separate, read-only CODE preparation path. It verifies `exams.csv` and each selected ZIP against the official MD5 recorded in `data/acquisition/code_15pct.json`, checks the HDF5 exam IDs against `trace_file` and `patient_id`, audits every selected waveform, and writes a manifest with the true patient ID. Its optional `--materialize-native` output copies accepted `float32 [4096,12]` traces exactly to a new HDF5 outside `data/raw/`; it does not filter, resample, scale, remove zeros, or infer original duration. The release states 400 Hz and lead order `{DI,DII,DIII,AVR,AVL,AVF,V1,V2,V3,V4,V5,V6}`. The author's [model README](https://github.com/antonior92/automatic-ecg-diagnosis) discusses input scale, but that wording and the local edge-zero patterns do not independently establish the amplitude unit or the true 7/10-second boundary in this archive. The prepared metadata therefore explicitly marks canonical 500 Hz/10 s eligibility **false**.

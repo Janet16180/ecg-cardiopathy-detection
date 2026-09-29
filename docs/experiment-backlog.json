@@ -27,8 +27,8 @@
       "cpu_hours": 0.5,
       "build_hours": 4,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Protocol frozen with addendum v2; cache built (8.7 GB)."
+      "status": "done",
+      "notes": "Done 28 September 2026 (v3): composite SHD AUROC cpc 0.812, jepa 0.823, xecg 0.838, cart tabular 0.737; cpc minus tabular +0.075 [+0.063, +0.086]; docs/experiment-023-echonext-readout-results.md."
     },
     {
       "id": "fulldev_encoders",
@@ -169,7 +169,7 @@
       "blocked_by": [
         "@ningbo_download"
       ],
-      "status": "open",
+      "status": "done",
       "notes": "Module ecg_experiment/eda/ningbo.py ready. Include the exact-hash join of Ningbo against Chapman, the union, the clean cohorts and the PTB-XL held-out folds, with a receipt (cleaning review R1)."
     },
     {
@@ -185,7 +185,7 @@
       "blocked_by": [
         "ningbo_eda"
       ],
-      "status": "open",
+      "status": "done",
       "notes": "Script supports 150k and 200k; build only 25k-100k here."
     },
     {
@@ -322,7 +322,7 @@
       "cpu_hours": 0.5,
       "build_hours": 4,
       "blocked_by": [],
-      "status": "open",
+      "status": "done",
       "notes": "Needed before multisource_lso."
     },
     {
@@ -369,8 +369,8 @@
       "cpu_hours": 0.2,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "open",
-      "notes": "New manifests only; frozen experiments keep the historical transform."
+      "status": "done",
+      "notes": "Done 29 September 2026: resample_full(signal, up, down) in ecg_experiment/resample.py, one resample_poly pass per record, float32; tests/test_resample.py; docs/data-quality-assessment.md. New manifests only; frozen experiments keep historical_resample, resample_halves and to_cpc."
     },
     {
       "id": "builder_key_checks",
@@ -384,8 +384,8 @@
       "cpu_hours": 0.3,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "open",
-      "notes": ""
+      "status": "done",
+      "notes": "Done 29 September 2026: audited all 17 scripts/data builders and their loaders. Every waveform/metadata pairing is by ID, by a per-row signal_sha256 re-check, or by an ID array or asserted ID sequence written with the waveforms; no assertion needed adding. EchoNext stays positional by release design (contiguous-split and count checks, row column re-checked by consumers); its builder and eda/echonext.py are hashed in echonext_250hz_v1/metadata.json, so they were left unchanged."
     },
     {
       "id": "highpass_ablation",
@@ -414,8 +414,8 @@
       "cpu_hours": 1,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Mahalanobis or k-NN distance on cached NORM-only training embeddings; compare with the probe on development, then SPH."
+      "status": "done",
+      "notes": "Done 28 September 2026 as Experiment 026: Mahalanobis distance from normal, xECG 0.923 and JEPA 0.910 on development (no abnormal labels), SPH 0.858 and 0.836; matches probes trained without a held-out condition; docs/experiment-026-normal-manifold-results.md."
     },
     {
       "id": "ecg_age_gap",
@@ -617,6 +617,178 @@
       "blocked_by": [],
       "status": "open",
       "notes": "Bootstrap the calibration set for threshold variance; compare with a cross-fitted training-set threshold."
+    },
+    {
+      "id": "hybrid_screening_score",
+      "kind": "experiment",
+      "title": "Hybrid score: supervised probe plus distance from normal",
+      "question": "Does adding the one-class distance to the probe catch unseen conditions without losing overall AUROC?",
+      "evidence": "026: the distance from normal matched probes trained without a held-out condition, but trailed the full probe by 0.04-0.05.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Cached 026 scores and 025 probe predictions; e.g. rank-average or a two-feature logistic fitted on training only."
+    },
+    {
+      "id": "local_normal_manifold",
+      "kind": "experiment",
+      "title": "Normal manifold fitted on a small set of local normal ECGs",
+      "question": "Does refitting the normal manifold on a few hundred local normal ECGs recover the SPH gap?",
+      "evidence": "026: distance from normal fell from 0.923 (PTB-XL) to 0.858 (SPH) for xECG; 027 showed calibration shifts across sites too.",
+      "value": 4,
+      "clarity": 0.7,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Simulate on SPH: a patient-disjoint local pool of 50-1,000 normal ECGs, fixed evaluation half. Pairs with site_recalibration."
+    },
+    {
+      "id": "echo_label_efficiency",
+      "kind": "experiment",
+      "title": "Label efficiency for echo-confirmed structural heart disease",
+      "question": "How many echo-labeled ECGs are needed for a useful SHD readout with frozen xECG or JEPA?",
+      "evidence": "023: frozen xECG reached 0.838 with 71,823 training labels; echo labels are expensive, and PTB-XL abnormality heads reach only about 0.75.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 028: mean AUROC xECG/JEPA/CPC 0.752/0.734/0.728 at 100 echo labels, 0.801/0.791/0.783 at 1,000, 0.838/0.823/0.812 with all; all beat the cart head (0.737) from 250 labels; 95% of the gain over chance needs about 4,000 labels; docs/experiment-028-echo-label-efficiency-results.md. 6,655 s CPU."
+    },
+    {
+      "id": "ningbo_sph_transfer",
+      "kind": "experiment",
+      "title": "Rerun 022 with Ningbo: do Ningbo labels improve transfer to SPH?",
+      "question": "Adding Ningbo's physician labels to the PTB-XL readout: does SPH AUROC, calibration or 95%-sensitivity transfer improve?",
+      "evidence": "022/027: rankings transfer to SPH but the PTB-XL operating point does not (sensitivity about 0.92). Ningbo is a large Chinese hospital like SPH. 025: PTB-XL gains above 4,000 labels are under 0.01, so any gain should show up in transfer, not in PTB-XL development.",
+      "value": 4,
+      "clarity": 0.6,
+      "gpu_hours": 0.5,
+      "cpu_hours": 1,
+      "build_hours": 4,
+      "blocked_by": [
+        "ningbo_eda",
+        "challenge_label_mapping"
+      ],
+      "status": "open",
+      "notes": "Frozen JEPA/xECG/CPC; readouts on PTB-XL versus PTB-XL + Ningbo training; score PTB-XL development and SPH once. Ningbo cannot be a test for JEPA/xECG (in their pretraining).",
+      "rerun_of": "022"
+    },
+    {
+      "id": "multisource_calibration",
+      "kind": "experiment",
+      "title": "Rerun 027 with Ningbo: calibration and threshold fitted on several hospitals",
+      "question": "Does a threshold calibrated on PTB-XL plus Ningbo (and other Challenge sources) hold 95% sensitivity at SPH better than a PTB-XL-only threshold?",
+      "evidence": "027: PTB-XL-only calibration missed 95% at SPH and probabilities ran too high (intercept -1.1 to -1.9).",
+      "value": 4,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [
+        "ningbo_eda",
+        "challenge_label_mapping"
+      ],
+      "status": "open",
+      "notes": "Patient-disjoint calibration pools per source; compare with site_recalibration, which uses local labels.",
+      "rerun_of": "027"
+    },
+    {
+      "id": "multisource_normal_manifold",
+      "kind": "experiment",
+      "title": "Rerun 026 with Ningbo: normal manifold fitted on normals from several hospitals",
+      "question": "Does fitting the distance-from-normal score on PTB-XL plus Ningbo normals close its SPH gap?",
+      "evidence": "026: xECG distance from normal 0.923 on PTB-XL but 0.858 on SPH.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [
+        "ningbo_eda",
+        "challenge_label_mapping"
+      ],
+      "status": "open",
+      "notes": "Needs an explicit 'normal' rule for SNOMED sources (challenge_label_mapping).",
+      "rerun_of": "026"
+    },
+    {
+      "id": "cpc_pretrain_cohorts_v2",
+      "kind": "experiment",
+      "title": "CPC continued pretraining on quality-first cohorts v2",
+      "question": "Does pretraining CPC on the Ningbo-enriched quality-first cohorts narrow its gap to JEPA and xECG?",
+      "evidence": "022-026: CPC trails JEPA/xECG by about 0.035 everywhere; both were pretrained on Chapman and Ningbo, CPC was not. ECG-JEPA Table 8: more MIMIC data did not help.",
+      "value": 2,
+      "clarity": 0.5,
+      "gpu_hours": 4,
+      "cpu_hours": 1,
+      "build_hours": 6,
+      "blocked_by": [
+        "cohorts_v2"
+      ],
+      "status": "open",
+      "notes": "Lower priority now that the baseline moves to frozen JEPA/xECG."
+    },
+    {
+      "id": "rerun_025_ningbo",
+      "kind": "experiment",
+      "title": "Rerun 025 with Ningbo: label efficiency with PTB-XL + Ningbo labels",
+      "question": "Does pooling Ningbo's labels change the label-efficiency curves or the encoder ranking, and does it help SPH?",
+      "evidence": "025: the curve is nearly flat above 4,000 labels (JEPA 0.955 to 0.959), so little change is expected on PTB-XL; this checks it.",
+      "value": 3,
+      "clarity": 0.7,
+      "gpu_hours": 0.5,
+      "cpu_hours": 1,
+      "build_hours": 2,
+      "blocked_by": [
+        "ningbo_eda",
+        "challenge_label_mapping"
+      ],
+      "status": "open",
+      "notes": "Same draws design; training pools PTB-XL only versus PTB-XL + Ningbo (by source family, Chapman+Ningbo together); score PTB-XL development and SPH.",
+      "rerun_of": "025"
+    },
+    {
+      "id": "rerun_024_multisource",
+      "kind": "experiment",
+      "title": "Rerun 024 with Ningbo: embedding geometry across sources",
+      "question": "With PTB-XL and Ningbo together, do prototypes and clusters follow the source hospital more than the diagnosis?",
+      "evidence": "024: clusters aligned with device (AMI 0.22-0.23) and heart rate more than diagnosis within PTB-XL; Leinonen et al.: the source is identifiable at 96.9%.",
+      "value": 2,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 2,
+      "blocked_by": [
+        "ningbo_eda",
+        "challenge_label_mapping"
+      ],
+      "status": "open",
+      "notes": "Cached encoders; add a source-AMI and other-source kNN; replaces clustering_multisource's first step.",
+      "rerun_of": "024"
+    },
+    {
+      "id": "echo_multitask_transfer",
+      "kind": "experiment",
+      "title": "Do ECG-abnormality labels reduce the echo labels needed?",
+      "question": "With few echo labels, does adding PTB-XL abnormality supervision (a shared readout, or the PTB-XL head's score as a feature) improve structural heart disease detection?",
+      "evidence": "028: 100 echo labels leave xECG 0.086 below its all-label AUROC; 023: PTB-XL abnormality heads alone reach about 0.75 on EchoNext.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Cached 022/023 features; the 028 draws at 100-1,000 labels; credentialed data, aggregates only. Not affected by Ningbo labels if restricted to PTB-XL supervision."
     }
   ]
 }

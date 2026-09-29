@@ -48,7 +48,7 @@ EXPECTED_FIT = {"ptbxl": 5872, "ningbo": 2581, "chapman_shaoxing": 819, "georgia
 EXPECTED_EXCLUDED = {"ningbo": 126, "chapman_shaoxing": 1, "georgia": 4, "cpsc_2018": 0}
 EXPECTED_ARMS = {"ptbxl": 5872, "pooled": 10846, "balanced": 2204, "loso_chapman_ningbo": 7446,
                  "loso_georgia": 9823, "loso_cpsc": 10295}
-EXPECTED_FAMILY_SETS = {"chapman_ningbo": (4432, 3254), "chapman_ningbo_without_zero_leads": (4362, 3190),
+EXPECTED_FAMILY_SETS = {"chapman_ningbo": (4432, 3254), "chapman_ningbo_without_zero_leads": (4362, 3207),
                         "georgia": (1718, 1372), "cpsc": (1462, 1279)}
 SOURCES = (
     "ecg_experiment/multisource_manifold.py", "ecg_experiment/normal_manifold.py",

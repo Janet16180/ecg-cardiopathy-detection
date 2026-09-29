@@ -22,10 +22,14 @@ derived from these notebooks is described in [clean cohorts v1](../docs/clean-co
 | `06-jr-clean-cohorts.ipynb` | Training candidates | What the quality policy removes per source, and the 25k, 50k and 100k cohorts |
 | `07-jr-sph.ipynb` | SPH (Shandong Provincial Hospital) | AHA codes and the standard label, duplicates with conflicting codes, artifacts, filtering |
 | `08-jr-echonext.ipynb` | EchoNext (credentialed) | Splits, echo-based labels and missing values, partially filled leads, filtering |
+| `09-jr-ningbo.ipynb` | Ningbo (Challenge 2021) | SNOMED codes and the binary label, age placeholders, zero precordial leads in children, filtering, copies of Chapman records |
+| `10-jr-cohorts-v2.ipynb` | Training candidates | CODE-15 cleaning and amplitude, and the source, age, sex, label and pending composition of the nested 25k-1M cohorts |
 
 The MIMIC and EchoNext notebooks show aggregate statistics only (credentialed data), so their outputs can
 be kept in Git. Findings for the project from notebooks 07 and 08 are in
-[the SPH and EchoNext review](../docs/sph-echonext-eda-review.md). Plots use seaborn. The analysis code is in
+[the SPH and EchoNext review](../docs/sph-echonext-eda-review.md). The clean manifests built from notebooks 09 and 10 are described in
+[clean Ningbo v1](../docs/clean-ningbo-v1.md), [the Challenge label mapping](../docs/challenge-label-mapping.md),
+[clean CODE-15 v1](../docs/clean-code15-v1.md) and [clean cohorts v2](../docs/clean-cohorts-v2.md). Plots use seaborn. The analysis code is in
 `ecg_experiment/eda/`.
 
 Build the feature caches once (about 80 minutes on CPU: MIMIC, then CODE-15 streamed from its export

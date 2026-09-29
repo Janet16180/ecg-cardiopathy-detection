@@ -75,9 +75,10 @@ Evaluable records, positive / negative on the primary label:
 | CPSC-Extra | 1,781 / 0 | 593 / 0 | 595 / 0 |
 
 `metadata.json` also counts undefined labels, all records per label, and duplicate statuses per source.
-CPSC records range from 6 to 144 s; a runner that needs exactly 10 s (such as the frozen-encoder features in
-`outputs/features_challenge_v1/`) uses fewer CPSC records than this table, and the 97 Ningbo records with
-missing samples have no features.
+CPSC records range from 6 to 144 s. The frozen-encoder features in `outputs/features_challenge_v1/` read a
+longer record through its centred 10 s window and skip records shorter than 10 s (52 Georgia, 10 CPSC 2018
+and 12 CPSC-Extra) and records with missing samples (97 Ningbo, 6 Georgia), so a runner on those features
+uses slightly fewer records than this table.
 
 ## Access rule
 

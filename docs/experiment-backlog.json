@@ -810,7 +810,7 @@
       "gpu_hours": 0,
       "cpu_hours": 0.5,
       "blocked_by": [],
-      "status": "open",
+      "status": "done",
       "id": "referral_budget_operating_point",
       "title": "Operating point set by referral budget, fitted on local normals only",
       "question": "If the threshold is set so a fixed share of normal ECGs is referred (2%, 5%, 10%), how many local normal ECGs fix it, and what sensitivity does each readout reach at SPH and in each Challenge family?",
@@ -818,7 +818,7 @@
       "value": 5,
       "clarity": 0.8,
       "build_hours": 2.5,
-      "notes": "Cached 022b and 029 predictions and the 029 SPH split; 200 draws per local-normal count (50-1,000). Report sensitivity with intervals at each budget, and against the 1.3-6.8% abnormal rate of expert readers using the athlete criteria. Pairs with hybrid_screening_score."
+      "notes": "Done 29 September 2026 as Experiment 030: with the pooled xECG readout, a threshold at the 95th percentile of local normals holds a 5% budget within +/-1 pp in 89% of draws at 1,000 normals and 96% at 2,000 (52% at 200), so (A) is not reached by 1,000. Sensitivity at 5% with 200 normals 0.775 [0.762, 0.787] (2%: 0.693, 10%: 0.837), nearly independent of m; MI 0.93, HYP 0.91, STTC 0.83, CD 0.68. About 91 referrals per 1,000 at 5% prevalence, against about 410 for 029's 95% threshold. Source quantiles miss the budget by a factor of 0.2-4 across Challenge families. Pooled beats PTB-XL-only by +0.084 and the distance score by +0.186 at 5%. docs/experiment-030-referral-budget-results.md. 6 s CPU plus about 2.5 build hours."
     },
     {
       "kind": "experiment",
@@ -910,7 +910,7 @@
       "gpu_hours": 0,
       "cpu_hours": 0,
       "blocked_by": [],
-      "status": "open",
+      "status": "done",
       "id": "normal_manifold_novelty_search",
       "title": "Literature search on one-class ECG screening with foundation embeddings",
       "question": "Has distance-from-normal screening on frozen ECG foundation-model embeddings been published, and how do reported numbers compare with 026 and 026b?",
@@ -918,7 +918,7 @@
       "value": 3,
       "clarity": 0.9,
       "build_hours": 2,
-      "notes": "Output: a short doc with the closest prior work and whether the finding is new."
+      "notes": "Output: a short doc with the closest prior work and whether the finding is new. Done 29 September 2026 (PR #34): partly new; the Mahalanobis score and normal-only ECG training exist, but no paper found scores frozen ECG foundation embeddings or tests multi-hospital or local normal references at an unseen hospital. Six follow-up candidates added."
     },
     {
       "kind": "repo",
@@ -934,6 +934,96 @@
       "clarity": 0.8,
       "build_hours": 6,
       "notes": "Check the Challenge forums and later papers first."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "blocked_by": [],
+      "status": "open",
+      "id": "one_class_embedding_baselines",
+      "title": "Other one-class scores on the same frozen embeddings",
+      "question": "Does the Mahalanobis normal reference beat kNN distance (L2-normalized), one-class SVM, isolation forest, GMM, Deep SVDD, an embedding autoencoder and a flow on the same xECG and JEPA features, at PTB-XL development and SPH?",
+      "evidence": "docs/normal-manifold-novelty-search.md: a reviewer would ask for these before accepting 026/026b as a contribution; 030 shows the distance score trails the supervised readout by 0.19 sensitivity at a 5% budget.",
+      "value": 4,
+      "clarity": 0.8,
+      "build_hours": 4,
+      "notes": "Cached 026b features; same fit sets and evaluation rows as 026b."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "manifold_score_ablation",
+      "title": "Ablations of the normal-reference score",
+      "question": "How do PCA size, dropping low-variance components, L2 normalization, and encoder layer or pooling change the 026 score?",
+      "evidence": "docs/normal-manifold-novelty-search.md, section 3.",
+      "value": 3,
+      "clarity": 0.8,
+      "build_hours": 3,
+      "notes": "Layer or pooling changes need a GPU re-extraction; do the cached-feature ablations first."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "normal_score_confounders",
+      "title": "Does the normal-reference score track noise, device, age, sex or heart rate?",
+      "question": "How much of the distance-from-normal score is explained by recording quality, device, age, sex and heart rate among normal ECGs?",
+      "evidence": "docs/normal-manifold-novelty-search.md; 024 found CPC clusters follow device and heart rate.",
+      "value": 3,
+      "clarity": 0.8,
+      "build_hours": 2.5,
+      "notes": "Regress the score on these factors within normal ECGs; report partial AUROC after adjustment."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0.5,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "random_encoder_control",
+      "title": "Normal-reference score on a random and on a supervised encoder",
+      "question": "Does the one-class score need self-supervised pretraining, or does a random-initialized encoder (or a supervised one) do as well?",
+      "evidence": "docs/normal-manifold-novelty-search.md, section 3.",
+      "value": 3,
+      "clarity": 0.7,
+      "build_hours": 3,
+      "notes": "One GPU extraction with random weights of the xECG architecture."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "ecgad_benchmark_readout",
+      "title": "The 026 score on the public PTB-XL anomaly-detection split",
+      "question": "What does the 026 score reach on the ECGAD (MCF) PTB-XL benchmark split, for a head-to-head number with published one-class methods?",
+      "evidence": "docs/normal-manifold-novelty-search.md: published scores on that split are 0.860-0.872 (0.941 in one revised paper); our split differs.",
+      "value": 3,
+      "clarity": 0.6,
+      "build_hours": 3,
+      "notes": "Check the overlap of the benchmark test set with our frozen PTB-XL calibration and test folds first; never read our PTB-XL test ECGs through it."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 3,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "raw_signal_detector_baseline",
+      "title": "A raw-signal one-class detector trained on the same normals",
+      "question": "Does a detector trained from scratch on raw ECGs (MCF or MMAE-ECG) match the frozen-embedding score on development and SPH?",
+      "evidence": "docs/normal-manifold-novelty-search.md.",
+      "value": 2,
+      "clarity": 0.5,
+      "build_hours": 8,
+      "notes": "Needs the authors' code; GPU training."
     }
   ]
 }

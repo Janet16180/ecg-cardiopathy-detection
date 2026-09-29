@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-28",
+  "updated": "2026-09-29",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -601,7 +601,7 @@
       "build_hours": 3,
       "blocked_by": [],
       "status": "open",
-      "notes": "Split SPH by patient into a recalibration pool and a fixed evaluation half; draw 50-1,000 local ECGs, refit Platt and the threshold only; cached 022 predictions, CPU."
+      "notes": "Split SPH by patient into a recalibration pool and a fixed evaluation half; draw 50-1,000 local ECGs, refit Platt and the threshold only; cached 022 predictions, CPU. 027b: calibrating on several other hospitals does not restore 95% at SPH, so local labels are the remaining route."
     },
     {
       "id": "stable_threshold",
@@ -697,8 +697,8 @@
         "ningbo_eda",
         "challenge_label_mapping"
       ],
-      "status": "open",
-      "notes": "Patient-disjoint calibration pools per source; compare with site_recalibration, which uses local labels.",
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 027b (docs/experiment-027b-multisource-calibration-results.md), on the frozen Challenge record split v1 (docs/challenge-splits-v1.md). Pooled PTB-XL plus Challenge calibration is not adopted: SPH sensitivity CPC 0.971 to 0.944 (closer), JEPA 0.916 to 0.912 and xECG 0.922 to 0.920 (slightly further); no arm reaches 95% at SPH, and ECE worsens for JEPA and xECG (0.11 to 0.16-0.17). Leave-one-family-out calibration did not help a held-out hospital. Measured about 3 h build and 85 s CPU.",
       "rerun_of": "027"
     },
     {

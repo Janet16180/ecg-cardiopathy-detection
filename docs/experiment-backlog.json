@@ -630,8 +630,8 @@
       "cpu_hours": 0.5,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Cached 026 scores and 025 probe predictions; e.g. rank-average or a two-feature logistic fitted on training only. Value raised 29 September 2026: 029 shows a fixed sensitivity target is impractical at low prevalence; a hybrid may help most at small referral budgets. Evaluate at the budgets of referral_budget_operating_point."
+      "status": "done",
+      "notes": "Cached 026 scores and 025 probe predictions; e.g. rank-average or a two-feature logistic fitted on training only. Value raised 29 September 2026: 029 shows a fixed sensitivity target is impractical at low prevalence; a hybrid may help most at small referral budgets. Evaluate at the budgets of referral_budget_operating_point. Done 29 September 2026 as Experiment 031 (PR #38): negative at every budget (xECG 5%: -0.028 [-0.035, -0.022]); it helps on conditions held out of the readout (MI +0.090, CD +0.085, STTC +0.068)."
     },
     {
       "id": "local_normal_manifold",
@@ -825,8 +825,8 @@
       "gpu_hours": 0,
       "cpu_hours": 0.5,
       "blocked_by": [
-        "referral_budget_operating_point",
-        "hybrid_screening_score"
+        "screen_with_finding_heads",
+        "@user_freeze_decision"
       ],
       "status": "open",
       "id": "final_frozen_test",
@@ -836,7 +836,7 @@
       "value": 5,
       "clarity": 0.9,
       "build_hours": 2.5,
-      "notes": "Freeze the readout (022b pooled xECG), calibration strategy and operating-point rule first; run once; also refit the readout on 5 bootstrap resamples of the training rows to show fit variability. Report per source. Never repeat."
+      "notes": "Freeze the readout (022b pooled xECG), calibration strategy and operating-point rule first; run once; also refit the readout on 5 bootstrap resamples of the training rows to show fit variability. Report per source. Never repeat. 29 September 2026: held for an explicit user decision to freeze the pipeline, because the untouched data can be read only once and the student label (after the cardiologist meeting) and finding heads may still change the pipeline."
     },
     {
       "kind": "experiment",
@@ -895,7 +895,7 @@
       "gpu_hours": 0,
       "cpu_hours": 0.5,
       "blocked_by": [],
-      "status": "open",
+      "status": "done",
       "id": "rhythm_findings_detector",
       "title": "Detect the rhythm findings the athlete criteria call abnormal",
       "question": "Can the frozen encoders detect two or more PVCs per 10 s, pre-excitation and atrial tachyarrhythmias, which the current binary label never marks positive?",
@@ -903,7 +903,7 @@
       "value": 4,
       "clarity": 0.7,
       "build_hours": 3,
-      "notes": "PTB-XL rhythm and form statements plus Challenge SNOMED rhythm codes; per-finding frozen readouts; external read at SPH."
+      "notes": "PTB-XL rhythm and form statements plus Challenge SNOMED rhythm codes; per-finding frozen readouts; external read at SPH. Done 29 September 2026 as Experiment 032 (PR #39): xECG SPH AUROC PVC 0.990, WPW 0.992, AF/flutter 0.9999, high-grade AV block 0.9999, long QT 0.934; the binary screen at a 5% budget catches only 0.62 of PVC and 0.70 of WPW ECGs."
     },
     {
       "kind": "repo",
@@ -1024,6 +1024,66 @@
       "clarity": 0.5,
       "build_hours": 8,
       "notes": "Needs the authors' code; GPU training."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "screen_with_finding_heads",
+      "title": "Screen that adds the PVC and WPW finding heads to the binary readout under one budget",
+      "question": "At a fixed total referral budget, does referring when either the binary readout or the PVC/WPW finding heads exceed their share catch more of the athlete-criteria abnormal findings without losing binary sensitivity?",
+      "evidence": "032: the binary screen at a 5% budget catches only 0.62 of PVC and 0.70 of WPW ECGs, against 0.98 and 1.00 for the finding heads.",
+      "value": 4,
+      "clarity": 0.7,
+      "build_hours": 3,
+      "notes": "Reuse 030's split and threshold rule and 031's budget-splitting OR rule; SPH simulated site."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "hybrid_rare_conditions",
+      "title": "Distance-from-normal as a safety net only for conditions with few labels",
+      "question": "Does an OR rule that gives the distance score a small share of the budget (for example 1 of 5 points) keep the readout's sensitivity on labeled conditions while recovering some of the held-out-condition gain?",
+      "evidence": "031: the full hybrid loses 0.028 at 5% but recovers 0.07-0.09 on conditions held out of the readout; rare dangerous conditions in young people are thinly labeled.",
+      "value": 3,
+      "clarity": 0.6,
+      "build_hours": 2.5,
+      "notes": "Pre-register the budget shares; 031 held-out design."
+    },
+    {
+      "kind": "repo",
+      "gpu_hours": 0,
+      "cpu_hours": 0,
+      "blocked_by": [],
+      "status": "open",
+      "id": "shared_intervals_module",
+      "title": "One shared patient-bootstrap and interval module for new experiments",
+      "question": "Can new experiments import one tested ecg_experiment/intervals.py (patient_groups, patient_resample, paired_auroc_difference, metric_intervals) instead of copying the bootstrap code again?",
+      "evidence": "docs/code-quality-review-2026-09-29.md: about 20 copies with different conventions; two public patient_bootstrap functions mean different things; O(records x patients) grouping in 6 places.",
+      "value": 3,
+      "clarity": 0.9,
+      "build_hours": 3,
+      "notes": "New unpinned module with tests; frozen runners keep their copies."
+    },
+    {
+      "kind": "repo",
+      "gpu_hours": 0,
+      "cpu_hours": 0,
+      "blocked_by": [],
+      "status": "open",
+      "id": "shared_readout_module",
+      "title": "One shared frozen-readout module for new experiments",
+      "question": "Can open_caches, sph_features, split_table, feature_identity, fit_logistic and predict live in ecg_experiment/readout.py so new runners stop importing from frozen scripts?",
+      "evidence": "docs/code-quality-review-2026-09-29.md: 66 script-to-script and 8 library-to-script imports.",
+      "value": 2,
+      "clarity": 0.8,
+      "build_hours": 3,
+      "notes": "Copy once into a new module with tests; reproduce one earlier experiment's predictions exactly as the check."
     }
   ]
 }

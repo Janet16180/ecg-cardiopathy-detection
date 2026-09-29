@@ -81,14 +81,13 @@ def plot_part_a(result: dict[str, Any]) -> None:
             positions = range(len(sizes))
             axis.plot(positions, means, color=color, marker=marker, markersize=6, linewidth=2, label=label)
             axis.plot(positions, lows, color=color, linewidth=1.2, linestyle="--")
-        axis.axhline(0.95, color=INK, linewidth=1, linestyle=":")
+        axis.axhline(0.95, color=INK, linewidth=1, linestyle=":", label="Target sensitivity 0.95")
         axis.set_xticks(range(len(sizes)), [f"{size:,}" for size in sizes])
         axis.set_xlabel("Local ECGs read by the cardiologist (n)", color=INK)
         axis.set_title(title, color=INK, fontsize=11, loc="left")
         style(axis)
     axes[0].set_ylabel("Sensitivity on the evaluation half", color=INK)
-    axes[0].text(0.05, 0.952, "target 0.95", color=MUTED, fontsize=8)
-    axes[1].text(0.05, 0.10, "solid: mean of 200 draws\ndashed: 5th percentile", transform=axes[1].transAxes,
+    axes[1].text(0.45, 0.40, "solid: mean of 200 draws\ndashed: 5th percentile", transform=axes[1].transAxes,
                  color=MUTED, fontsize=8)
     axes[0].legend(frameon=False, fontsize=8, loc="lower right")
     figure.suptitle("xECG, pooled readout: sensitivity after local recalibration", color=INK, x=0.01,
@@ -120,8 +119,7 @@ def plot_part_b(result: dict[str, Any]) -> None:
     for key, label, style_ in (("nonlocal_pooled", "Non-local normal reference (026b)", "--"),
                                ("supervised_pooled", "Supervised pooled readout (022b)", ":")):
         value = references[key]["auroc"]
-        axis.axhline(value, color=MUTED, linewidth=1.2, linestyle=style_)
-        axis.text(len(rows) - 1, value + 0.002, f"{label} {value:.3f}", color=MUTED, fontsize=8, ha="right")
+        axis.axhline(value, color=MUTED, linewidth=1.2, linestyle=style_, label=f"{label}: {value:.3f}")
     axis.set_xticks(range(len(rows)), [f"{row['m']:,}" for row in rows])
     axis.set_xlabel("Local normal ECGs (m)", color=INK)
     axis.set_ylabel("AUROC on the evaluation half", color=INK)

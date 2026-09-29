@@ -646,7 +646,7 @@
       "build_hours": 3,
       "blocked_by": [],
       "status": "open",
-      "notes": "Simulate on SPH: a patient-disjoint local pool of 50-1,000 normal ECGs, fixed evaluation half. Pairs with site_recalibration."
+      "notes": "Simulate on SPH: a patient-disjoint local pool of 50-1,000 normal ECGs, fixed evaluation half. Pairs with site_recalibration. 026b: normals from other hospitals close only about a third of the SPH gap, and the most similar hospitals help most, so local normals remain the route."
     },
     {
       "id": "echo_label_efficiency",
@@ -716,8 +716,8 @@
         "ningbo_eda",
         "challenge_label_mapping"
       ],
-      "status": "open",
-      "notes": "Needs an explicit 'normal' rule for SNOMED sources (challenge_label_mapping).",
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 026b (docs/experiment-026b-multisource-normal-manifold-results.md), on the frozen Challenge record split v1 with the training quality policy. Fitting the Mahalanobis score on PTB-XL plus 4,974 Challenge training normals (sinus rhythm alone) is adopted: SPH AUROC xECG 0.858 to 0.878 (+0.020 [+0.018, +0.022]), JEPA 0.836 to 0.865, CPC 0.791 to 0.806, about a third of the gap to the 022 probe. Chapman/Ningbo carries most of the gain; PTB-XL development falls 0.004 (xECG). Measured about 2 h build and 10 min CPU.",
       "rerun_of": "026"
     },
     {

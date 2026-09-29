@@ -16,7 +16,21 @@ PRIOR = ROOT / "outputs/experiment018_cpc_data_scaling_readout_v1"
 
 
 def check(condition: bool, message: str) -> None:
-    """Reject inconsistent persisted readout artifacts."""
+    """
+    Reject inconsistent persisted readout artifacts.
+
+    Parameters
+    ----------
+    condition : bool
+        Invariant that must hold.
+    message : str
+        Error message when it does not.
+
+    Raises
+    ------
+    ValueError
+        If ``condition`` is false.
+    """
     if not condition:
         raise ValueError(message)
 

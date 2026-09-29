@@ -1407,5 +1407,49 @@
     "priority_review": "outputs/mimic_cpc_machine_disagreement/priority_review.json",
     "candidate_ids": "outputs/mimic_cpc_machine_disagreement/candidate_disagreements.csv.gz",
     "clinical_interpretation": "Machine/model disagreements and machine text alerts, not confirmed cardiopathy or validated false negatives; independent review required"
+  },
+  "public_readouts_2026_09_28": {
+    "status": "complete",
+    "summary": "docs/findings-2026-09-28.md",
+    "backlog": "docs/experiment-backlog.json",
+    "calibration_test_evaluated": "PTB-XL calibration used only by 027 for Platt and threshold; PTB-XL test and EchoNext test never read",
+    "experiments": {
+      "022": {
+        "protocol": "docs/experiment-022-sph-external-readout.md",
+        "results": "docs/experiment-022-sph-external-readout-results.md",
+        "outputs": "outputs/experiment022_sph_external_v3/"
+      },
+      "023": {
+        "protocol": "docs/experiment-023-echonext-readout.md",
+        "results": "docs/experiment-023-echonext-readout-results.md",
+        "outputs": "outputs/experiment023_echonext_v3/"
+      },
+      "024": {
+        "protocol": "docs/experiment-024-embedding-geometry.md",
+        "results": "docs/experiment-024-embedding-geometry-results.md",
+        "outputs": "outputs/experiment024_embedding_geometry_v1/"
+      },
+      "025": {
+        "protocol": "docs/experiment-025-label-efficiency.md",
+        "results": "docs/experiment-025-label-efficiency-results.md",
+        "outputs": "outputs/experiment025_label_efficiency_v1/"
+      },
+      "026": {
+        "protocol": "docs/experiment-026-normal-manifold.md",
+        "results": "docs/experiment-026-normal-manifold-results.md",
+        "outputs": "outputs/experiment026_normal_manifold_v1/"
+      },
+      "027": {
+        "protocol": "docs/experiment-027-calibrated-threshold.md",
+        "results": "docs/experiment-027-calibrated-threshold-results.md",
+        "outputs": "outputs/experiment027_calibrated_threshold_v1/"
+      },
+      "028": {
+        "protocol": "docs/experiment-028-echo-label-efficiency.md",
+        "results": "docs/experiment-028-echo-label-efficiency-results.md",
+        "outputs": "outputs/experiment028_echo_label_efficiency_v1/"
+      }
+    },
+    "next": "Ningbo EDA/cleaning/labels/cohorts v2 on branch eda/ningbo-v1, then one GPU feature extraction for Ningbo, then reruns of 022, 024-027 (backlog rerun_of) and multisource_lso."
   }
 }

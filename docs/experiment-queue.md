@@ -181,6 +181,33 @@ Historical 017 recovery command (completed; do not relaunch):
 
 The 017 profile and train stages used the historical `scripts.run_cpc_morphology017_v2` entry point. Each five-epoch comparison was resumable. The completed 016 successor used the current `scripts.coordination.run_priority_queue` entry point and default `.venv`; its exact command is in the JSON catalog and its completion receipt. Check live status and the shared GPU lock before any future launch.
 
+## Public readouts and screening studies, 28-29 September 2026
+
+Complete. Each study had a protocol frozen before any score, ran once, used no PTB-XL test ECG and no EchoNext
+test ECG, and has its own results report. Combined summary: [findings of 28 September](findings-2026-09-28.md).
+Candidate ranking and follow-ups: [experiment priorities](experiment-priorities.md) and
+[backlog](experiment-backlog.json).
+
+| Experiment | Protocol | Results | Outputs |
+| --- | --- | --- | --- |
+| 022 SPH external readout (v3) | [protocol](experiment-022-sph-external-readout.md) | [results](experiment-022-sph-external-readout-results.md) | `outputs/experiment022_sph_external_v3/` |
+| 023 EchoNext structural heart disease (v3) | [protocol](experiment-023-echonext-readout.md) | [results](experiment-023-echonext-readout-results.md) | `outputs/experiment023_echonext_v3/` |
+| 024 Embedding geometry and prototypes | [protocol](experiment-024-embedding-geometry.md) | [results](experiment-024-embedding-geometry-results.md) | `outputs/experiment024_embedding_geometry_v1/` |
+| 025 Label efficiency of frozen encoders | [protocol](experiment-025-label-efficiency.md) | [results](experiment-025-label-efficiency-results.md) | `outputs/experiment025_label_efficiency_v1/` |
+| 026 One-class normal-manifold screening | [protocol](experiment-026-normal-manifold.md) | [results](experiment-026-normal-manifold-results.md) | `outputs/experiment026_normal_manifold_v1/` |
+| 027 Calibrated 95%-sensitivity threshold on SPH | [protocol](experiment-027-calibrated-threshold.md) | [results](experiment-027-calibrated-threshold-results.md) | `outputs/experiment027_calibrated_threshold_v1/` |
+| 028 Echo label efficiency | [protocol](experiment-028-echo-label-efficiency.md) | [results](experiment-028-echo-label-efficiency-results.md) | `outputs/experiment028_echo_label_efficiency_v1/` |
+
+Headline: frozen ECG-JEPA and xECG beat our CPC everywhere (PTB-XL 0.959 and 0.962 against 0.921; SPH 0.911
+and 0.915 against 0.876; EchoNext 0.823 and 0.838 against 0.812), but a PTB-XL 95%-sensitivity threshold
+reached only about 92% at SPH.
+
+Next, per the user (29 September 2026): after the Ningbo EDA, cleaning, Challenge label mapping and cohorts v2
+(branch `eda/ningbo-v1`), extract Ningbo features once on the GPU and rerun the experiments Ningbo could
+affect. These are 022, 024, 025, 026 and 027 (`rerun_of` in the backlog), then the multi-source
+leave-source-out study. 023 and 028 use echo labels and are not rerun. New ideas are written into the backlog
+and run early only when they can run in parallel without contention.
+
 ## Research branches
 
 The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.md) supplies the rationale for authorized Experiments 011–013. These are independent model families, not xECG modifications. They have no measured project results yet. The additional [vision architectures](vision-to-ecg-architecture-candidates.md) and [xECG modifications](xecg-next-experiments.md) remain research candidates outside this accepted queue.

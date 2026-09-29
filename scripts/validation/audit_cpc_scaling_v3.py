@@ -19,7 +19,28 @@ RECORDS = 115359
 
 
 def audit_arm(arm: str, identity: dict[str, Any], initial: dict[str, torch.Tensor]) -> dict[str, Any]:
-    """Check one arm's final state, artifact hash, and actual encoder updates."""
+    """
+    Check one arm's final state, artifact hash, and actual encoder updates.
+
+    Parameters
+    ----------
+    arm : str
+        Arm directory name, ``old`` or ``new``.
+    identity : dict[str, Any]
+        Run identity recorded by the passed profile.
+    initial : dict[str, torch.Tensor]
+        Starting encoder state.
+
+    Returns
+    -------
+    dict[str, Any]
+        Checkpoint hash, exposure and update counts, loss and changed tensor count.
+
+    Raises
+    ------
+    ValueError
+        If any identity, count, hash or update check fails.
+    """
     directory = OUTPUT / arm
     completion = json.loads((directory / "complete.json").read_text())
     checkpoint_path = directory / "latest.pt"

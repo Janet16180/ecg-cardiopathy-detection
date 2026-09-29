@@ -15,7 +15,21 @@ OUTPUT = ROOT / "outputs/experiment018_cpc_data_scaling_readout_v1"
 
 
 def check(condition: bool, message: str) -> None:
-    """Reject a failed artifact invariant with a useful message."""
+    """
+    Reject a failed artifact invariant with a useful message.
+
+    Parameters
+    ----------
+    condition : bool
+        Invariant that must hold.
+    message : str
+        Error message when it does not.
+
+    Raises
+    ------
+    ValueError
+        If ``condition`` is false.
+    """
     if not condition:
         raise ValueError(message)
 

@@ -18,7 +18,19 @@ OUTPUT = ROOT / "outputs/code15_label_groups"
 
 
 def run() -> dict[str, object]:
-    """Export source-positive IDs and counts for six released diagnoses."""
+    """
+    Export source-positive IDs and counts for six released diagnoses.
+
+    Returns
+    -------
+    dict[str, object]
+        Aggregate counts and hashes, also written to ``report.json``.
+
+    Raises
+    ------
+    RuntimeError
+        If the metadata checksum differs or IDs or flags are missing.
+    """
     receipt = json.loads(RECEIPT.read_text())
     expected = next(item["checksum"].removeprefix("md5:") for item in receipt["verified_files"]
                     if item["name"] == "exams.csv")

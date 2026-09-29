@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from .challenge_features import SAMPLES, canonical_window
+from .challenge_features import canonical_window
 from .ecg_quality import assess
 
 
@@ -31,7 +31,7 @@ def window_reasons(signal: np.ndarray, names: list[str], start: int) -> list[str
     list[str]
         ``ecg_quality.assess`` exclusion reasons; empty when the window passes.
     """
-    window = canonical_window(signal[start:start + SAMPLES], names)
+    window = canonical_window(signal, names, start)
     reasons, _ = assess(window)
     return reasons
 

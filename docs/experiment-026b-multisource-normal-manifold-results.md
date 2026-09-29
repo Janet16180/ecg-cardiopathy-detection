@@ -157,3 +157,9 @@ PYTHONPATH=. OMP_NUM_THREADS=1 uv run --no-sync python -u -m scripts.experiments
 The runner refuses to overwrite an existing `result.json`. It reads the raw Chapman, Georgia and CPSC 2018
 records (official checksums verified) to apply the quality policy to the training normals, and it needs the
 Experiment 025/026 caches, the Experiment 022 SPH features and `outputs/features_challenge_v1/`.
+
+## Note after merging to main (29 September 2026)
+
+The run used commit f2e36d6, before the centred-window change to `challenge_features.canonical_window`.
+That change added a `start` argument. On main, `window_reasons` now passes `start` instead of slicing the
+record first. Both forms select the same samples, so the fit sets and results above are unchanged.

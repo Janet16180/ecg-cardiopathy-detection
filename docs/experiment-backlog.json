@@ -91,14 +91,14 @@
       "title": "Device-controlled probes (drop or balance CS100 3)",
       "question": "How much of the binary AUROC depends on the recording device?",
       "evidence": "020: CS100 3 is 35% of training folds, 74% positive, and identifiable at AUROC 0.974.",
-      "value": 3,
+      "value": 2,
       "clarity": 0.6,
       "gpu_hours": 0,
       "cpu_hours": 0.3,
       "build_hours": 2,
       "blocked_by": [],
       "status": "open",
-      "notes": "Cached features; compare per-device development AUROC."
+      "notes": "Cached features; compare per-device development AUROC. Value lowered 29 September 2026: 024b found JEPA and xECG clusters follow diagnosis, not device or hospital; the device effect was CPC-specific."
     },
     {
       "id": "attention_readout",
@@ -615,8 +615,8 @@
       "cpu_hours": 0.5,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Bootstrap the calibration set for threshold variance; compare with a cross-fitted training-set threshold."
+      "status": "dropped",
+      "notes": "Bootstrap the calibration set for threshold variance; compare with a cross-fitted training-set threshold. Dropped 29 September 2026: superseded by 029, which measured threshold stability against local sample size."
     },
     {
       "id": "hybrid_screening_score",
@@ -624,14 +624,14 @@
       "title": "Hybrid score: supervised probe plus distance from normal",
       "question": "Does adding the one-class distance to the probe catch unseen conditions without losing overall AUROC?",
       "evidence": "026: the distance from normal matched probes trained without a held-out condition, but trailed the full probe by 0.04-0.05.",
-      "value": 3,
+      "value": 4,
       "clarity": 0.6,
       "gpu_hours": 0,
       "cpu_hours": 0.5,
       "build_hours": 2,
       "blocked_by": [],
       "status": "open",
-      "notes": "Cached 026 scores and 025 probe predictions; e.g. rank-average or a two-feature logistic fitted on training only."
+      "notes": "Cached 026 scores and 025 probe predictions; e.g. rank-average or a two-feature logistic fitted on training only. Value raised 29 September 2026: 029 shows a fixed sensitivity target is impractical at low prevalence; a hybrid may help most at small referral budgets. Evaluate at the budgets of referral_budget_operating_point."
     },
     {
       "id": "local_normal_manifold",
@@ -804,6 +804,136 @@
       "blocked_by": [],
       "status": "open",
       "notes": "Cached 022/023 features; the 028 draws at 100-1,000 labels; credentialed data, aggregates only. Not affected by Ningbo labels if restricted to PTB-XL supervision."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "referral_budget_operating_point",
+      "title": "Operating point set by referral budget, fitted on local normals only",
+      "question": "If the threshold is set so a fixed share of normal ECGs is referred (2%, 5%, 10%), how many local normal ECGs fix it, and what sensitivity does each readout reach at SPH and in each Challenge family?",
+      "evidence": "029: a guaranteed 95% sensitivity needs at least 45 local positives and then refers 49-75% of normals; at 5% prevalence it refers about 800 per 1,000. A referral-rate threshold is a quantile of normal scores, which a mostly healthy student pilot supplies.",
+      "value": 5,
+      "clarity": 0.8,
+      "build_hours": 2.5,
+      "notes": "Cached 022b and 029 predictions and the 029 SPH split; 200 draws per local-normal count (50-1,000). Report sensitivity with intervals at each budget, and against the 1.3-6.8% abnormal rate of expert readers using the athlete criteria. Pairs with hybrid_screening_score."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [
+        "referral_budget_operating_point",
+        "hybrid_screening_score"
+      ],
+      "status": "open",
+      "id": "final_frozen_test",
+      "title": "One-time confirmatory test of the frozen pipeline on untouched data",
+      "question": "Do the headline results of the chosen pipeline hold on data no experiment has read (PTB-XL test, Challenge test groups)?",
+      "evidence": "SPH has been read by 022-029, so it now acts as development data. The PTB-XL test set and the Challenge test groups are still closed.",
+      "value": 5,
+      "clarity": 0.9,
+      "build_hours": 2.5,
+      "notes": "Freeze the readout (022b pooled xECG), calibration strategy and operating-point rule first; run once; also refit the readout on 5 bootstrap resamples of the training rows to show fit variability. Report per source. Never repeat."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [
+        "@cardiologist_meeting"
+      ],
+      "status": "open",
+      "id": "student_criteria_label",
+      "title": "Readout trained on a label mapped to the 2017 international athlete criteria",
+      "question": "With a label closer to student screening (incomplete RBBB, first-degree AV block, isolated voltage as normal; PVCs, pre-excitation, atrial arrhythmias as abnormal), how do discrimination and the referral rate on young normals change?",
+      "evidence": "Meeting guide section 2.4: our label disagrees with the athlete criteria in both directions; 029 shows the broad label forces high referral rates.",
+      "value": 5,
+      "clarity": 0.5,
+      "build_hours": 5,
+      "notes": "Map PTB-XL SCP and Challenge SNOMED codes to normal/borderline/abnormal per the cardiologist's agreed rule; keep the current label as the reference arm."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [
+        "@cardiologist_meeting"
+      ],
+      "status": "open",
+      "id": "young_subgroup_readout",
+      "title": "Performance and false-alarm rate in ages 18-35",
+      "question": "What are AUROC, specificity at the chosen operating point, and referrals per 1,000 for ECGs aged 18-35 (SPH about 5,400, PTB-XL about 2,000)?",
+      "evidence": "Labeled data are mostly over 50; the target population is university students. The user asked to wait for the cardiologist before adding this analysis (29 September 2026).",
+      "value": 4,
+      "clarity": 0.8,
+      "build_hours": 1.5,
+      "notes": "Computable from saved predictions; report as post hoc if run after the headline experiments."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [
+        "@clinic_ecgs",
+        "final_frozen_test"
+      ],
+      "status": "open",
+      "id": "enriched_positive_sensitivity",
+      "title": "Sensitivity on confirmed young patients from the cardiologist's clinic",
+      "question": "What share of ECGs from young patients with confirmed conditions (HCM, WPW, long QT, cardiomyopathy) does the frozen pipeline flag at the chosen operating point?",
+      "evidence": "029: a student pilot cannot contain enough positives to measure sensitivity; 45 or more are needed even for a rough guarantee.",
+      "value": 5,
+      "clarity": 0.6,
+      "build_hours": 3,
+      "notes": "Needs consent and ethics approval; local data stay on the machine."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "rhythm_findings_detector",
+      "title": "Detect the rhythm findings the athlete criteria call abnormal",
+      "question": "Can the frozen encoders detect two or more PVCs per 10 s, pre-excitation and atrial tachyarrhythmias, which the current binary label never marks positive?",
+      "evidence": "Meeting guide section 2.4: rhythm statements are ignored or undefined in our label, but the athlete criteria call them abnormal.",
+      "value": 4,
+      "clarity": 0.7,
+      "build_hours": 3,
+      "notes": "PTB-XL rhythm and form statements plus Challenge SNOMED rhythm codes; per-finding frozen readouts; external read at SPH."
+    },
+    {
+      "kind": "repo",
+      "gpu_hours": 0,
+      "cpu_hours": 0,
+      "blocked_by": [],
+      "status": "open",
+      "id": "normal_manifold_novelty_search",
+      "title": "Literature search on one-class ECG screening with foundation embeddings",
+      "question": "Has distance-from-normal screening on frozen ECG foundation-model embeddings been published, and how do reported numbers compare with 026 and 026b?",
+      "evidence": "026 and 026b are a candidate paper finding; none of the reviewed papers tested it, but anomaly detection on ECG has its own literature.",
+      "value": 3,
+      "clarity": 0.9,
+      "build_hours": 2,
+      "notes": "Output: a short doc with the closest prior work and whether the finding is new."
+    },
+    {
+      "kind": "repo",
+      "gpu_hours": 0,
+      "cpu_hours": 0,
+      "blocked_by": [],
+      "status": "open",
+      "id": "challenge_data_quality_note",
+      "title": "Short write-up of the Challenge 2021 and CODE-15 data problems",
+      "question": "Can the data problems found (4.2% Ningbo zero leads, 71 Chapman-Ningbo duplicates with 9 label conflicts, CODE-15 unit ambiguity) be written as a short technical note after a check for prior reports?",
+      "evidence": "docs/clean-ningbo-v1.md, docs/clean-code15-v1.md, outputs/data_quality/ningbo_v1/exact_overlap_receipt.json.",
+      "value": 3,
+      "clarity": 0.8,
+      "build_hours": 6,
+      "notes": "Check the Challenge forums and later papers first."
     }
   ]
 }

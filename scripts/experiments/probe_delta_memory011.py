@@ -10,6 +10,7 @@ import argparse
 import json
 import time
 from pathlib import Path
+from typing import Any
 
 import torch
 
@@ -22,8 +23,74 @@ DEFAULT_OUTPUT = ROOT / "outputs/experiment011_delta_memory/implementation_compu
 SOURCE = ROOT / "ecg_experiment/cpc_delta_memory.py"
 
 
-def probe(batch_size: int, device: str) -> dict:
-    """Measure one forward/backward pass for each fresh arm under the GPU lock."""
+def measure_arm(model: torch.nn.Module, batch_size: int, device: str) -> dict[str, Any]:
+    """
+    Time one warm-up and two measured forward/backward passes of one arm.
+
+    Parameters
+    ----------
+    model : torch.nn.Module
+        Fresh arm returning ``(loss, outputs)`` for a signal batch.
+    batch_size : int
+        Number of random twelve-lead signals per pass.
+    device : str
+        ``"cpu"`` or ``"cuda"``.
+
+    Returns
+    -------
+    dict[str, Any]
+        Timings, final loss, peak memory, parameter count and whether all gradients are finite.
+    """
+    model = model.to(device).train()
+    signal = torch.randn(batch_size, 12, 2500, device=device)
+    if device == "cuda":
+        torch.cuda.reset_peak_memory_stats()
+
+    timings = []
+    for repeat in range(3):
+        model.zero_grad(set_to_none=True)
+        started = time.monotonic()
+        loss, _ = model(signal)
+        loss.backward()
+        if device == "cuda":
+            torch.cuda.synchronize()
+        if repeat:
+            timings.append(time.monotonic() - started)
+
+    return {
+        "measured_forward_backward_seconds": timings,
+        "warmup_passes": 1,
+        "loss": float(loss.detach()),
+        "peak_gb": torch.cuda.max_memory_allocated() / 1e9 if device == "cuda" else None,
+        "parameters": sum(parameter.numel() for parameter in model.parameters()),
+        "gradients_finite": all(
+            parameter.grad is not None and torch.isfinite(parameter.grad).all()
+            for parameter in model.parameters()
+        ),
+    }
+
+
+def probe(batch_size: int, device: str) -> dict[str, Any]:
+    """
+    Measure one forward/backward pass for each fresh arm under the GPU lock.
+
+    Parameters
+    ----------
+    batch_size : int
+        Number of random signals per pass.
+    device : str
+        ``"cpu"`` or ``"cuda"``.
+
+    Returns
+    -------
+    dict[str, Any]
+        Compute-only receipt with one entry per arm.
+
+    Raises
+    ------
+    RuntimeError
+        If CUDA is requested but unavailable.
+    """
     if device == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA is unavailable in this process")
 
@@ -36,35 +103,8 @@ def probe(batch_size: int, device: str) -> dict:
     }
     with gpu_lock(device, blocking=False):
         for name, model in matched_initial_models(9001).items():
-            model = model.to(device).train()
-            signal = torch.randn(batch_size, 12, 2500, device=device)
-            if device == "cuda":
-                torch.cuda.reset_peak_memory_stats()
-
-            timings = []
-            for repeat in range(3):
-                model.zero_grad(set_to_none=True)
-                started = time.monotonic()
-                loss, _ = model(signal)
-                loss.backward()
-                if device == "cuda":
-                    torch.cuda.synchronize()
-                if repeat:
-                    timings.append(time.monotonic() - started)
-
-            result["arms"][name] = {
-                "measured_forward_backward_seconds": timings,
-                "warmup_passes": 1,
-                "loss": float(loss.detach()),
-                "peak_gb": torch.cuda.max_memory_allocated() / 1e9 if device == "cuda" else None,
-                "parameters": sum(parameter.numel() for parameter in model.parameters()),
-                "gradients_finite": all(
-                    parameter.grad is not None and torch.isfinite(parameter.grad).all()
-                    for parameter in model.parameters()
-                ),
-            }
+            result["arms"][name] = measure_arm(model, batch_size, device)
             print(name, json.dumps(result["arms"][name]), flush=True)
-            del model, signal, loss
             if device == "cuda":
                 torch.cuda.empty_cache()
     return result

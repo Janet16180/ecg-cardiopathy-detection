@@ -18,7 +18,19 @@ OUTPUT = ROOT / "outputs/mimic_cpc_clustering/signal_qc.json"
 
 
 def run() -> dict[str, object]:
-    """Compare simple waveform amplitude and flat-lead markers by cluster."""
+    """
+    Compare simple waveform amplitude and flat-lead markers by cluster.
+
+    Returns
+    -------
+    dict[str, object]
+        Per-cluster amplitude and flat-lead summary, also written to ``signal_qc.json``.
+
+    Raises
+    ------
+    RuntimeError
+        If the cluster table is incomplete or has duplicate ECG IDs.
+    """
     pool = Pool(CACHE)
     with gzip.open(CLUSTERS, "rt", newline="") as handle:
         rows = list(csv.DictReader(handle))

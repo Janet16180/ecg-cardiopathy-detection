@@ -752,9 +752,24 @@
         "ningbo_eda",
         "challenge_label_mapping"
       ],
-      "status": "open",
-      "notes": "Same draws design; training pools PTB-XL only versus PTB-XL + Ningbo (by source family, Chapman+Ningbo together); score PTB-XL development and SPH.",
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 025b (docs/experiment-025b-label-efficiency-multisource-results.md): 025's draws on PTB-XL plus all Challenge training labels (22,494; Ningbo, Chapman/Shaoxing, Georgia, CPSC), drawn uniformly from the pooled pool. Decision mixed: at SPH, xECG pooled minus PTB-XL-only is +0.022 [+0.020, +0.024] at N = 250 and +0.016 [+0.015, +0.018] at N = 1,000, but only 16 and 17 of 20 draws are positive, so PTB-XL-only stays the default by the 90% rule; JEPA and CPC pass it from N = 250. 1,000 pooled labels match all 15,359 PTB-XL labels at SPH (0.915), and 100 PTB-XL labels plus every Challenge label give 0.938. Encoder ranking holds. Pooling costs 0.008 on ordinary PTB-XL development and about 0.05 on the hard added subset (xECG). Measured about 2.5 h build and 35 min CPU.",
       "rerun_of": "025"
+    },
+    {
+      "id": "label_harmonization_hard_subset",
+      "kind": "experiment",
+      "title": "Why pooled readouts lose on the PTB-XL hard added subset",
+      "question": "Why do readouts fitted on PTB-XL plus the Challenge sources lose about 0.07 AUROC on 022's hard added PTB-XL development subset (022b), and which change to the Challenge labels or inputs removes the loss?",
+      "evidence": "022b: pooled minus PTB-XL-only on the added subset (266 ECGs, 41 positive) is -0.072 [-0.113, -0.032] for xECG against -0.005 on ordinary development; 025b: -0.053 at N = all. 025b also shows the subset depends on having its training analogues: without the 1,724 PTB-XL training ECGs the project label dropped, xECG PTB-XL-only falls from 0.726 to 0.615.",
+      "value": 3,
+      "clarity": 0.5,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Candidate causes: label-definition differences between the PTB-XL superclasses and the Challenge SNOMED mapping (IRBBB 713426002 and other CD form codes counted positive, rhythm or form codes, the sinus-rhythm-alone negative); and device or filter shift between PTB-XL and the Challenge sources. Arms: drop or relabel Challenge rows by code group, and a device or high-pass control (see highpass_ablation, device_control). Score the 1,724 dropped PTB-XL training ECGs by cross-fitting as a larger analogue, since the development subset has 41 positives. Overlaps hard_case_analysis."
     },
     {
       "id": "rerun_024_multisource",

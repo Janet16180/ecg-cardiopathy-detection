@@ -55,7 +55,7 @@ proceed one at a time under the queue's cost and verification gates.
 - [Experiment 017 clean replication results](experiment-017-clean-replication-results.md)
 - [First experiment protocol](experiment-001.md) and [results](experiment001-results.md)
 - [Pretrained encoders](pretrained-notes.md), [JEPA](jepa-notes.md), and [released CPC](released-ecg-cpc.md)
-- [Important papers](important-papers.md)
+- [Important papers](important-papers.md) and the [one-class novelty search](normal-manifold-novelty-search.md)
 - [Cross-domain architecture candidates](cross-domain-architecture-candidates.md)
 - [Astra proposals](astra-next-model-ideas.md)
 

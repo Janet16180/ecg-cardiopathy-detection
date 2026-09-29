@@ -1451,5 +1451,22 @@
       }
     },
     "next": "Ningbo EDA/cleaning/labels/cohorts v2 on branch eda/ningbo-v1, then one GPU feature extraction for Ningbo, then reruns of 022, 024-027 (backlog rerun_of) and multisource_lso."
+  },
+  "multisource_reruns_2026_09_29": {
+    "status": "complete",
+    "features": "outputs/features_challenge_v1/",
+    "split": "docs/challenge-splits-v1.md",
+    "backlog": "docs/experiment-backlog.json",
+    "closed_data": "PTB-XL test and Challenge test groups never read; SPH read by 022-029 and now development data",
+    "experiments": {
+      "027b": {"protocol": "docs/experiment-027b-multisource-calibration.md", "results": "docs/experiment-027b-multisource-calibration-results.md", "outputs": "outputs/experiment027b_multisource_calibration_v1/", "decision": "pooled calibration not adopted"},
+      "026b": {"protocol": "docs/experiment-026b-multisource-normal-manifold.md", "results": "docs/experiment-026b-multisource-normal-manifold-results.md", "outputs": "outputs/experiment026b_multisource_manifold_v1/", "decision": "adopt pooled normal reference"},
+      "022b": {"protocol": "docs/experiment-022b-multisource-readout.md", "results": "docs/experiment-022b-multisource-readout-results.md", "outputs": "outputs/experiment022b_multisource_readout_v1/", "decision": "adopt pooled readout; Ningbo helps"},
+      "025b": {"protocol": "docs/experiment-025b-label-efficiency-multisource.md", "results": "docs/experiment-025b-label-efficiency-multisource-results.md", "outputs": "outputs/experiment025b_label_efficiency_multisource_v1/", "decision": "mixed"},
+      "024b": {"protocol": "docs/experiment-024b-multisource-geometry.md", "results": "docs/experiment-024b-multisource-geometry-results.md", "outputs": "outputs/experiment024b_multisource_geometry_v1/", "decision": "clusters follow diagnosis"},
+      "029": {"protocol": "docs/experiment-029-local-adaptation.md", "results": "docs/experiment-029-local-adaptation-results.md", "outputs": "outputs/experiment029_local_adaptation_v1/", "decision": "95% sensitivity not reached by n = 1,000 with the plain rule; conservative rule from n = 200 at high referral cost"}
+    },
+    "next": ["referral_budget_operating_point", "hybrid_screening_score", "rhythm_findings_detector", "normal_manifold_novelty_search", "final_frozen_test"],
+    "waiting": {"@cardiologist_meeting": ["student_criteria_label", "young_subgroup_readout"], "@clinic_ecgs": ["enriched_positive_sensitivity"]}
   }
 }

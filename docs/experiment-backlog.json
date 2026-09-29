@@ -169,7 +169,7 @@
       "blocked_by": [
         "@ningbo_download"
       ],
-      "status": "open",
+      "status": "done",
       "notes": "Module ecg_experiment/eda/ningbo.py ready. Include the exact-hash join of Ningbo against Chapman, the union, the clean cohorts and the PTB-XL held-out folds, with a receipt (cleaning review R1)."
     },
     {
@@ -185,7 +185,7 @@
       "blocked_by": [
         "ningbo_eda"
       ],
-      "status": "open",
+      "status": "done",
       "notes": "Script supports 150k and 200k; build only 25k-100k here."
     },
     {
@@ -322,7 +322,7 @@
       "cpu_hours": 0.5,
       "build_hours": 4,
       "blocked_by": [],
-      "status": "open",
+      "status": "done",
       "notes": "Needed before multisource_lso."
     },
     {

@@ -43,6 +43,14 @@ and test patients separate. Compare models with matched initialization and
 training budgets. Log failed and negative experiments as well as successful ones.
 MLflow records are an index; source receipts and result files remain the evidence.
 
+New experiments import patient-bootstrap and interval code from
+`ecg_experiment/intervals.py` (`patient_groups`, `patient_resample`,
+`two_class_resamples`, `paired_auroc_difference`, `metric_intervals`) and do not
+copy it. Its convention is 2,000 whole-patient draws from
+`numpy.random.default_rng(seed)`, 2.5 and 97.5 percentile intervals, and
+single-class draws skipped and reported as `skipped_draws`. Record the seed and
+draw count in the result. Frozen runners keep their own copies.
+
 Changes to scientific code need new source hashes and a successor executable
 manifest. Preserve previous receipts and results. Profile the actual data path
 on the shared V100 before training, and use the GPU lock. Coordinate with legacy

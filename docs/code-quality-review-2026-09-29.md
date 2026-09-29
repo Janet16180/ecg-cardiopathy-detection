@@ -249,6 +249,9 @@ command entry point.
    Fix one policy for single-class draws (skip and count) and one default draw count (2,000). Check
    bit-for-bit that `full_development.patient_bootstrap` gives the same output for the same seed, so
    that new and old results remain comparable. Do not change the frozen copies.
+
+   Done: `ecg_experiment/intervals.py`, tested in `tests/test_intervals.py` against
+   `full_development`, `evaluation`, `normal_manifold` and `screening_threshold`.
 3. **Choose one resampler.** Use `ecg_experiment/resample.py` (`resample_full`) for new code, and
    `cpc_input_audit.historical_resample` only when a CPC-compatible per-half input is required.
    Today 500 to 250 Hz resampling is written separately in `echonext_readout.py:130`,

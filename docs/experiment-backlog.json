@@ -810,7 +810,7 @@
       "gpu_hours": 0,
       "cpu_hours": 0.5,
       "blocked_by": [],
-      "status": "open",
+      "status": "done",
       "id": "referral_budget_operating_point",
       "title": "Operating point set by referral budget, fitted on local normals only",
       "question": "If the threshold is set so a fixed share of normal ECGs is referred (2%, 5%, 10%), how many local normal ECGs fix it, and what sensitivity does each readout reach at SPH and in each Challenge family?",
@@ -818,7 +818,7 @@
       "value": 5,
       "clarity": 0.8,
       "build_hours": 2.5,
-      "notes": "Cached 022b and 029 predictions and the 029 SPH split; 200 draws per local-normal count (50-1,000). Report sensitivity with intervals at each budget, and against the 1.3-6.8% abnormal rate of expert readers using the athlete criteria. Pairs with hybrid_screening_score."
+      "notes": "Done 29 September 2026 as Experiment 030: with the pooled xECG readout, a threshold at the 95th percentile of local normals holds a 5% budget within +/-1 pp in 89% of draws at 1,000 normals and 96% at 2,000 (52% at 200), so (A) is not reached by 1,000. Sensitivity at 5% with 200 normals 0.775 [0.762, 0.787] (2%: 0.693, 10%: 0.837), nearly independent of m; MI 0.93, HYP 0.91, STTC 0.83, CD 0.68. About 91 referrals per 1,000 at 5% prevalence, against about 410 for 029's 95% threshold. Source quantiles miss the budget by a factor of 0.2-4 across Challenge families. Pooled beats PTB-XL-only by +0.084 and the distance score by +0.186 at 5%. docs/experiment-030-referral-budget-results.md. 6 s CPU plus about 2.5 build hours."
     },
     {
       "kind": "experiment",

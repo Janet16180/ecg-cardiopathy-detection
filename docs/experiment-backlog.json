@@ -752,8 +752,8 @@
         "ningbo_eda",
         "challenge_label_mapping"
       ],
-      "status": "open",
-      "notes": "Same draws design; training pools PTB-XL only versus PTB-XL + Ningbo (by source family, Chapman+Ningbo together); score PTB-XL development and SPH.",
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 025b (docs/experiment-025b-label-efficiency-multisource-results.md): 025's draws on PTB-XL plus all Challenge training labels (22,494; Ningbo, Chapman/Shaoxing, Georgia, CPSC), drawn uniformly from the pooled pool. Decision mixed: at SPH, xECG pooled minus PTB-XL-only is +0.022 [+0.020, +0.024] at N = 250 and +0.016 [+0.015, +0.018] at N = 1,000, but only 16 and 17 of 20 draws are positive, so PTB-XL-only stays the default by the 90% rule; JEPA and CPC pass it from N = 250. 1,000 pooled labels match all 15,359 PTB-XL labels at SPH (0.915), and 100 PTB-XL labels plus every Challenge label give 0.938. Encoder ranking holds. Pooling costs 0.008 on ordinary PTB-XL development and about 0.05 on the hard added subset (xECG). Measured about 2.5 h build and 35 min CPU.",
       "rerun_of": "025"
     },
     {

@@ -13,9 +13,10 @@ import numpy as np
 import pandas as pd
 import wfdb
 
+from ecg_experiment.challenge_labels import label_table, mapping_table
 from ecg_experiment.ecg_quality import EXCLUSION_REASONS, REVIEW_FLAGS, assess
 from ecg_experiment.eda.challenge import load_headers as challenge_headers
-from ecg_experiment.eda.challenge import parse_header
+from ecg_experiment.eda.challenge import parse_header, signal_hashes
 from ecg_experiment.eda.challenge import read_signal as challenge_read_signal
 from ecg_experiment.eda.ptbxl import OUTPUT_DIR, ROOT
 from ecg_experiment.eda.signals import LEADS, canonical_order, compute_features, record_summary
@@ -31,9 +32,14 @@ FINGERPRINT_CACHE = OUTPUT_DIR / "features" / "ningbo_fingerprints.npy"
 CHAPMAN_FINGERPRINT_CACHE = OUTPUT_DIR / "features" / "chapman_fingerprints.npy"
 
 
-def load_headers() -> pd.DataFrame:
+def load_headers(use_cache: bool = True) -> pd.DataFrame:
     """
     Parse every Ningbo header, caching the result.
+
+    Parameters
+    ----------
+    use_cache : bool
+        Read and write the parquet cache; ``False`` always parses the raw headers.
 
     Returns
     -------
@@ -42,7 +48,7 @@ def load_headers() -> pd.DataFrame:
         the release root, ``group`` (``g1`` to ``g35``), ``has_signal`` (the ``.mat`` file exists),
         ``age_years``, ``duration_s`` and ``dx_codes``.
     """
-    if HEADER_CACHE.exists():
+    if use_cache and HEADER_CACHE.exists():
         table = pd.read_parquet(HEADER_CACHE)
         table["dx_codes"] = table["dx_codes"].apply(list)
         return table
@@ -58,8 +64,9 @@ def load_headers() -> pd.DataFrame:
     table["duration_s"] = table["samples"] / table["fs"]
     table["dx_codes"] = table["dx"].str.split(",").apply(
         lambda codes: [code.strip() for code in codes if code])
-    HEADER_CACHE.parent.mkdir(parents=True, exist_ok=True)
-    table.to_parquet(HEADER_CACHE)
+    if use_cache:
+        HEADER_CACHE.parent.mkdir(parents=True, exist_ok=True)
+        table.to_parquet(HEADER_CACHE)
     return table
 
 
@@ -184,7 +191,8 @@ def _scan(item: tuple[str, str]) -> tuple[dict[str, object], list[dict[str, obje
     return row, leads, fingerprint(signal)
 
 
-def record_scan(headers: pd.DataFrame, workers: int = 4) -> tuple[pd.DataFrame, pd.DataFrame, np.ndarray]:
+def record_scan(headers: pd.DataFrame, workers: int = 4,
+                use_cache: bool = True) -> tuple[pd.DataFrame, pd.DataFrame, np.ndarray]:
     """
     Scan every record once: quality policy, hashes, constant runs and fingerprints, or load the caches.
 
@@ -199,6 +207,8 @@ def record_scan(headers: pd.DataFrame, workers: int = 4) -> tuple[pd.DataFrame, 
         Output of ``load_headers``, restricted to records whose signal file exists.
     workers : int
         Number of processes.
+    use_cache : bool
+        Read and write the caches; ``False`` always reads the raw records.
 
     Returns
     -------
@@ -207,7 +217,7 @@ def record_scan(headers: pd.DataFrame, workers: int = 4) -> tuple[pd.DataFrame, 
         both hashes and the edge zero runs) indexed by record; lead table with each lead's longest
         constant run and its exact-zero sample count; and fingerprints in record-table order.
     """
-    if QUALITY_CACHE.exists():
+    if use_cache and QUALITY_CACHE.exists():
         records = pd.read_parquet(QUALITY_CACHE)
         return records, pd.read_parquet(LEAD_CACHE), np.load(FINGERPRINT_CACHE)
     items = [(record, row.path) for record, row in headers.iterrows()]
@@ -217,10 +227,11 @@ def record_scan(headers: pd.DataFrame, workers: int = 4) -> tuple[pd.DataFrame, 
     records["excluded"] = records[[*EXCLUSION_REASONS, "short"]].any(axis=1)
     leads = pd.DataFrame([lead for result in results for lead in result[1]])
     fingerprints = np.stack([result[2] for result in results])
-    QUALITY_CACHE.parent.mkdir(parents=True, exist_ok=True)
-    records.to_parquet(QUALITY_CACHE)
-    leads.to_parquet(LEAD_CACHE)
-    np.save(FINGERPRINT_CACHE, fingerprints)
+    if use_cache:
+        QUALITY_CACHE.parent.mkdir(parents=True, exist_ok=True)
+        records.to_parquet(QUALITY_CACHE)
+        leads.to_parquet(LEAD_CACHE)
+        np.save(FINGERPRINT_CACHE, fingerprints)
     return records, leads, fingerprints
 
 
@@ -284,3 +295,77 @@ def near_duplicates(names: pd.Index, fingerprints: np.ndarray, threshold: float 
         pairs.append(pd.DataFrame({"first": names[rows[keep] + start], "second": names[columns[keep]],
                                    "correlation": block[rows[keep], columns[keep]]}))
     return pd.concat(pairs, ignore_index=True)
+
+
+def code_counts(headers: pd.DataFrame, official: pd.DataFrame) -> pd.DataFrame:
+    """
+    Count the records per SNOMED code in Ningbo and in the other Challenge sources.
+
+    Parameters
+    ----------
+    headers : pd.DataFrame
+        Output of ``load_headers``, restricted to records with a signal.
+    official : pd.DataFrame
+        ``ecg_experiment.challenge_labels.load_official`` output.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per code used anywhere, sorted by Ningbo count, with ``name``, ``group``, ``scored``,
+        ``ningbo``, ``ningbo_share`` and one count column per other source.
+    """
+    others = challenge_headers()
+    listed = pd.concat([others[["source", "dx_codes"]], headers[["dx_codes"]].assign(source="ningbo")])
+    counts = listed.explode("dx_codes").groupby(["dx_codes", "source"]).size().unstack(fill_value=0)
+    table = mapping_table(official).reindex(counts.index)[["name", "group", "scored"]].join(counts)
+    table["ningbo_share"] = table["ningbo"] / len(headers)
+    return table.rename_axis("code").sort_values("ningbo", ascending=False)
+
+
+def chapman_pairs(quality: pd.DataFrame, headers: pd.DataFrame, official: pd.DataFrame) -> pd.DataFrame:
+    """
+    Ningbo records whose samples are identical to a Chapman record, with both sides' metadata.
+
+    Parameters
+    ----------
+    quality : pd.DataFrame
+        Record table of ``record_scan``.
+    headers : pd.DataFrame
+        Output of ``load_headers``.
+    official : pd.DataFrame
+        ``ecg_experiment.challenge_labels.load_official`` output.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per pair with ``ningbo``, ``chapman``, ages, sexes, codes and primary labels of both.
+    """
+    hashes = signal_hashes(challenge_headers())
+    chapman = challenge_headers().loc[hashes.index[hashes.index.str.startswith("chapman_shaoxing:")]]
+    chapman = chapman.assign(hash=hashes)
+    left = quality[["signal_sha256"]].join(headers[["age", "sex", "dx_codes"]]).rename_axis("ningbo")
+    right = chapman[["record", "hash", "age", "sex", "dx_codes"]].rename(columns={"record": "chapman"})
+    pairs = left.reset_index().merge(right, left_on="signal_sha256", right_on="hash",
+                                     suffixes=("_ningbo", "_chapman"))
+    for side in ("ningbo", "chapman"):
+        labels = label_table(pairs[f"dx_codes_{side}"], official)
+        pairs[f"primary_{side}"] = labels["primary"]
+    return pairs.drop(columns=["signal_sha256", "hash"])
+
+
+def zero_lead_table(leads: pd.DataFrame) -> pd.DataFrame:
+    """
+    List the records with at least one lead exactly zero for the whole recording.
+
+    Parameters
+    ----------
+    leads : pd.DataFrame
+        Lead table of ``record_scan``.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per affected record with ``zero_leads`` (``;``-separated) and ``count``, indexed by record.
+    """
+    zero = leads[(leads["run_length"] == 5000) & (leads["run_value"] == 0)]
+    return zero.groupby("record")["lead"].agg(zero_leads=";".join, count="size")

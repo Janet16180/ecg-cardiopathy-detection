@@ -1,6 +1,6 @@
 # Experiment priorities
 
-Updated 28 September 2026, after Experiments 022-027. Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
+Updated 28 September 2026, after Experiments 022-028. Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
 explains the scoring, shows the current ranking and records what the papers suggest. The backlog is for
 choosing the next study. It does not authorize or schedule anything: the execution queue remains
 [experiment-queue.json](experiment-queue.json), and every study still needs a frozen protocol first.
@@ -45,18 +45,18 @@ penalty; one that ranks high earns a protocol like any other.
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | --- |
 | 1 | challenge_label_mapping | repo | SNOMED-to-endpoint mapping for Challenge sources | 4 | 0.9 | 4.5 | 3.73 | - |
 | 2 | site_recalibration | experiment | How many local labeled ECGs restore the 95% operating point at a new site | 5 | 0.8 | 3.5 | 2.14 | - |
-| 3 | echo_label_efficiency | experiment | Label efficiency for echo-confirmed structural heart disease | 4 | 0.8 | 3.0 | 1.85 | - |
-| 4 | local_normal_manifold | experiment | Normal manifold fitted on a small set of local normal ECGs | 4 | 0.7 | 3.5 | 1.50 | - |
-| 5 | resample_full | repo | Versioned full-record resampler | 2 | 0.9 | 2.2 | 1.21 | - |
-| 6 | device_control | experiment | Device-controlled probes (drop or balance CS100 3) | 3 | 0.6 | 2.3 | 1.19 | - |
-| 7 | builder_key_checks | repo | Key-checked waveform/metadata joins in every builder | 2 | 0.9 | 2.3 | 1.19 | - |
-| 8 | jepa_xecg_concat | experiment | Concatenated ECG-JEPA and xECG features | 3 | 0.6 | 2.5 | 1.14 | - |
-| 9 | hard_case_analysis | experiment | Error analysis of the PTB-XL hard cases | 3 | 0.6 | 2.5 | 1.14 | - |
-| 10 | stable_threshold | experiment | Threshold stability with a larger calibration set | 3 | 0.6 | 2.5 | 1.14 | - |
-| 11 | hybrid_screening_score | experiment | Hybrid score: supervised probe plus distance from normal | 3 | 0.6 | 2.5 | 1.14 | - |
-| 12 | s4_supervised | experiment | Supervised S4 from scratch at matched labels (100 Hz, 2.5 s crops) | 4 | 0.8 | 9.0 | 1.07 | - |
-| 13 | attention_readout | experiment | Attention-pooling frozen head on encoder tokens (CPC, released ECG-CPC, xECG) | 4 | 0.7 | 8.0 | 0.99 | - |
-| 14 | multitask_head | experiment | Multi-label auxiliary head on frozen features versus the binary head | 3 | 0.6 | 3.5 | 0.96 | - |
+| 3 | local_normal_manifold | experiment | Normal manifold fitted on a small set of local normal ECGs | 4 | 0.7 | 3.5 | 1.50 | - |
+| 4 | resample_full | repo | Versioned full-record resampler | 2 | 0.9 | 2.2 | 1.21 | - |
+| 5 | device_control | experiment | Device-controlled probes (drop or balance CS100 3) | 3 | 0.6 | 2.3 | 1.19 | - |
+| 6 | builder_key_checks | repo | Key-checked waveform/metadata joins in every builder | 2 | 0.9 | 2.3 | 1.19 | - |
+| 7 | jepa_xecg_concat | experiment | Concatenated ECG-JEPA and xECG features | 3 | 0.6 | 2.5 | 1.14 | - |
+| 8 | hard_case_analysis | experiment | Error analysis of the PTB-XL hard cases | 3 | 0.6 | 2.5 | 1.14 | - |
+| 9 | stable_threshold | experiment | Threshold stability with a larger calibration set | 3 | 0.6 | 2.5 | 1.14 | - |
+| 10 | hybrid_screening_score | experiment | Hybrid score: supervised probe plus distance from normal | 3 | 0.6 | 2.5 | 1.14 | - |
+| 11 | s4_supervised | experiment | Supervised S4 from scratch at matched labels (100 Hz, 2.5 s crops) | 4 | 0.8 | 9.0 | 1.07 | - |
+| 12 | attention_readout | experiment | Attention-pooling frozen head on encoder tokens (CPC, released ECG-CPC, xECG) | 4 | 0.7 | 8.0 | 0.99 | - |
+| 13 | multitask_head | experiment | Multi-label auxiliary head on frozen features versus the binary head | 3 | 0.6 | 3.5 | 0.96 | - |
+| 14 | echo_multitask_transfer | experiment | Do ECG-abnormality labels reduce the echo labels needed? | 3 | 0.6 | 4.0 | 0.90 | - |
 | 15 | quality_policy_v2 | repo | Quality policy v2 review flags (edge zero runs, short dropouts) | 2 | 0.8 | 4.0 | 0.80 | - |
 | 16 | prototype_head | experiment | Learned prototype head anchored to real training ECGs | 4 | 0.6 | 10.0 | 0.76 | - |
 | 17 | ecg_age_gap | wild | ECG heart age: predicted minus real age as a risk signal | 3 | 0.5 | 4.0 | 0.75 | - |
@@ -90,7 +90,7 @@ not affected (echo labels). All wait for `ningbo_eda` and `challenge_label_mappi
 
 Done on 28 September 2026: `e022_sph` (Experiment 022), `label_efficiency` (Experiment 025),
 `fulldev_encoders` (inside 022), `snomed_equivalence` (PR #5), `e024_geometry` (Experiment 024) `calibrated_threshold_sph` (Experiment 027), `e023_echonext` (Experiment 023) and
-`normal_manifold` (Experiment 026). Summary: [findings of 28 September](findings-2026-09-28.md).
+`normal_manifold` (Experiment 026) and `echo_label_efficiency` (Experiment 028). Summary: [findings of 28 September](findings-2026-09-28.md).
 
 Dropped: `beat_tokens` (already tested in Experiment 006; the paper's gain is 0.004) and
 `synthetic_references` (training on synthetic PTB-XL ECGs loses about 0.09 AUROC; see the literature review).

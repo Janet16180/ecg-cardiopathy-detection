@@ -660,8 +660,8 @@
       "cpu_hours": 1,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Cached 023 features (local only, credentialed); the 025 design with 100-4,000 draws on EchoNext train, scored on val."
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 028: mean AUROC xECG/JEPA/CPC 0.752/0.734/0.728 at 100 echo labels, 0.801/0.791/0.783 at 1,000, 0.838/0.823/0.812 with all; all beat the cart head (0.737) from 250 labels; 95% of the gain over chance needs about 4,000 labels; docs/experiment-028-echo-label-efficiency-results.md. 6,655 s CPU."
     },
     {
       "id": "ningbo_sph_transfer",
@@ -774,6 +774,21 @@
       "status": "open",
       "notes": "Cached encoders; add a source-AMI and other-source kNN; replaces clustering_multisource's first step.",
       "rerun_of": "024"
+    },
+    {
+      "id": "echo_multitask_transfer",
+      "kind": "experiment",
+      "title": "Do ECG-abnormality labels reduce the echo labels needed?",
+      "question": "With few echo labels, does adding PTB-XL abnormality supervision (a shared readout, or the PTB-XL head's score as a feature) improve structural heart disease detection?",
+      "evidence": "028: 100 echo labels leave xECG 0.086 below its all-label AUROC; 023: PTB-XL abnormality heads alone reach about 0.75 on EchoNext.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Cached 022/023 features; the 028 draws at 100-1,000 labels; credentialed data, aggregates only. Not affected by Ningbo labels if restricted to PTB-XL supervision."
     }
   ]
 }

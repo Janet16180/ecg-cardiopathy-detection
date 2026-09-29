@@ -9,21 +9,25 @@ its statistics and deleting the extracted file before the next.
 import re
 import subprocess
 import tarfile
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
+from multiprocessing import Pool
 from pathlib import Path
 
 import h5py
 import numpy as np
 import pandas as pd
+from scipy.signal import butter, filtfilt
 
+from ecg_experiment.eda import challenge, mimic, ningbo, ptbxl
 from ecg_experiment.eda.ptbxl import OUTPUT_DIR, ROOT
-from ecg_experiment.eda.signals import compute_features, record_summary
+from ecg_experiment.eda.signals import LEADS, compute_features, record_summary
 
 RAW_DIR = ROOT / "data/raw/code-15pct/zenodo-4916206"
 PREPARED_DIR = ROOT / "data/processed/code15_quality"
 EXPORT_ARCHIVE = ROOT / "outputs/data_export/code_15pct_waveforms_2026-09-25.tar.xz"
 PART0_NATIVE = PREPARED_DIR / "part0_native/exams_part0_native.hdf5"
 CACHE_DIR = OUTPUT_DIR / "features" / "code15"
+AMPLITUDE_CACHE = OUTPUT_DIR / "features" / "amplitude_references.parquet"
 EXTRACT_DIR = OUTPUT_DIR / "code15_extract"
 SAMPLING_RATE = 400
 LABELS = ["1dAVb", "RBBB", "LBBB", "SB", "ST", "AF"]
@@ -245,3 +249,132 @@ def read_native_tracing(exam_id: int) -> np.ndarray:
     with h5py.File(PART0_NATIVE, "r") as handle:
         index = int(np.flatnonzero(handle["exam_id"][:] == exam_id)[0])
         return handle["tracings"][index]
+
+
+def highpass_range(signal: np.ndarray, fs: int, cutoff: float = 0.67) -> np.ndarray:
+    """
+    Per-lead 1st-to-99th percentile range after removing baseline wander.
+
+    A zero-phase second-order Butterworth high-pass removes the low-frequency power that differs between
+    acquisition chains, so the range mostly reflects QRS amplitude.
+
+    Parameters
+    ----------
+    signal : np.ndarray
+        Array of shape ``(samples, 12)``.
+    fs : int
+        Sampling rate in Hz.
+    cutoff : float
+        High-pass corner in Hz.
+
+    Returns
+    -------
+    np.ndarray
+        One range per lead, in the signal's units.
+    """
+    b, a = butter(2, cutoff, btype="high", fs=fs)
+    filtered = filtfilt(b, a, np.nan_to_num(signal), axis=0)
+    return np.percentile(filtered, 99, axis=0) - np.percentile(filtered, 1, axis=0)
+
+
+def _range_item(item: tuple[str, str, Callable[[str], tuple[np.ndarray, int]]]) -> np.ndarray:
+    _, path, reader = item
+    signal, fs = reader(path)
+    return highpass_range(signal[: 10 * fs], fs)
+
+
+def reference_ranges(items: list[tuple[str, str]], reader: Callable[[str], tuple[np.ndarray, int]],
+                     workers: int = 4) -> pd.DataFrame:
+    """
+    ``highpass_range`` of the first 10 s of many records of one source.
+
+    Parameters
+    ----------
+    items : list[tuple[str, str]]
+        Record identifier and the path handed to ``reader``.
+    reader : Callable[[str], tuple[np.ndarray, int]]
+        Top-level function returning ``(signal, fs)`` in canonical lead order and mV.
+    workers : int
+        Number of processes.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per record and one column per lead.
+    """
+    with Pool(workers) as pool:
+        ranges = pool.map(_range_item, [(record, path, reader) for record, path in items], chunksize=32)
+    return pd.DataFrame(ranges, index=[str(record) for record, _ in items], columns=LEADS)
+
+
+def part0_ranges(exams: pd.DataFrame, min_active: int = 4000) -> pd.DataFrame:
+    """
+    ``highpass_range`` of the first 10 s of every part-0 tracing with at least 10 s of signal.
+
+    Parameters
+    ----------
+    exams : pd.DataFrame
+        Output of ``load_exams``.
+    min_active : int
+        Fewest non-padding samples (10 s at 400 Hz).
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per exam (indexed by ``exam_id``) and one column per lead, in stored units.
+    """
+    rows = {}
+    with h5py.File(PART0_NATIVE, "r") as handle:
+        ids = handle["exam_id"][:]
+        for start in range(0, len(ids), 1000):
+            for offset, tracing in enumerate(handle["tracings"][start:start + 1000]):
+                left, right = zero_padding(tracing)
+                active = tracing[left:len(tracing) - right]
+                if len(active) >= min_active and int(ids[start + offset]) in exams.index:
+                    rows[int(ids[start + offset])] = highpass_range(active[:min_active], SAMPLING_RATE)
+    return pd.DataFrame.from_dict(rows, orient="index", columns=LEADS)
+
+
+def amplitude_references(per_source: int = 2000, seed: int = 0) -> pd.DataFrame:
+    """
+    ``highpass_range`` of age-matched samples of the millivolt sources, cached.
+
+    PTB-XL, Chapman, Georgia, CPSC 2018, CPSC-Extra and Ningbo records aged 40-59 are sampled; MIMIC has no
+    age in the local tables, so any downloaded record is sampled.
+
+    Parameters
+    ----------
+    per_source : int
+        Records per source, or all when fewer are available.
+    seed : int
+        Sampling seed.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per record and one column per lead, indexed by ``(source, record)``.
+    """
+    if AMPLITUDE_CACHE.exists():
+        return pd.read_parquet(AMPLITUDE_CACHE)
+    meta = ptbxl.load_metadata()
+    meta = meta[meta["age"].between(40, 59)]
+    meta = meta.sample(min(per_source, len(meta)), random_state=seed)
+    parts = {"ptbxl": reference_ranges([(str(i), p) for i, p in meta["filename_hr"].items()],
+                                       ptbxl.read_signal)}
+    headers = challenge.load_headers()
+    for source in ("chapman_shaoxing", "georgia", "cpsc_2018", "cpsc_2018_extra"):
+        rows = headers[(headers["source"] == source) & headers["age_years"].between(40, 59)]
+        rows = rows.sample(min(per_source, len(rows)), random_state=seed)
+        parts[source] = reference_ranges([(i, f"{r.source}:{r.path}") for i, r in rows.iterrows()],
+                                         challenge.read_signal)
+    local = ningbo.load_headers()
+    rows = local[local["has_signal"] & local["age_years"].between(40, 59)]
+    rows = rows.sample(min(per_source, len(rows)), random_state=seed)
+    parts["ningbo"] = reference_ranges(list(rows["path"].items()), ningbo.read_signal)
+    records = mimic.load_records()
+    rows = records[records["downloaded"]]
+    rows = rows.sample(min(per_source, len(rows)), random_state=seed)
+    parts["mimic"] = reference_ranges(list(rows["path"].astype(str).items()), mimic.read_signal)
+    table = pd.concat(parts, names=["source", "record"])
+    table.to_parquet(AMPLITUDE_CACHE)
+    return table

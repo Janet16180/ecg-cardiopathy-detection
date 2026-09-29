@@ -369,8 +369,8 @@
       "cpu_hours": 0.2,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "open",
-      "notes": "New manifests only; frozen experiments keep the historical transform."
+      "status": "done",
+      "notes": "Done 29 September 2026: resample_full(signal, up, down) in ecg_experiment/resample.py, one resample_poly pass per record, float32; tests/test_resample.py; docs/data-quality-assessment.md. New manifests only; frozen experiments keep historical_resample, resample_halves and to_cpc."
     },
     {
       "id": "builder_key_checks",
@@ -384,8 +384,8 @@
       "cpu_hours": 0.3,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "open",
-      "notes": ""
+      "status": "done",
+      "notes": "Done 29 September 2026: audited all 17 scripts/data builders and their loaders. Every waveform/metadata pairing is by ID, by a per-row signal_sha256 re-check, or by an ID array or asserted ID sequence written with the waveforms; no assertion needed adding. EchoNext stays positional by release design (contiguous-split and count checks, row column re-checked by consumers); its builder and eda/echonext.py are hashed in echonext_250hz_v1/metadata.json, so they were left unchanged."
     },
     {
       "id": "highpass_ablation",

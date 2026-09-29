@@ -21,7 +21,26 @@ RECEIPT = ROOT / "outputs/experiment018_cpc_data_scaling_v2/cache_verification.j
 
 
 def replay_rows(source: SampledTrainingECGDataset, cached: np.ndarray) -> tuple[int, int]:
-    """Replay sampled source rows and compare overlapping PTB cache bytes."""
+    """
+    Replay sampled source rows and compare overlapping PTB cache bytes.
+
+    Parameters
+    ----------
+    source : SampledTrainingECGDataset
+        Source cohort the cache was derived from.
+    cached : np.ndarray
+        Cached 250 Hz signals, one row per source row.
+
+    Returns
+    -------
+    tuple[int, int]
+        Number of replayed rows and number of rows matching the historical PTB cache.
+
+    Raises
+    ------
+    ValueError
+        If a replayed row differs from the cache or no historical PTB row was compared.
+    """
     selected = np.linspace(0, len(source) - 1, 20, dtype=np.int64).tolist()
     selected += [index for index, row in enumerate(source.rows) if row["source"] == "ptbxl"][:5]
     known_constant = {"mimic:46065905", "mimic:43144026"}
@@ -34,19 +53,33 @@ def replay_rows(source: SampledTrainingECGDataset, cached: np.ndarray) -> tuple[
         expected = historical_resample(row["signal"])
         if not np.array_equal(cached[index], expected):
             raise ValueError(f"CPC cache transform mismatch at manifest row {index}")
-        if row["source"] == "ptbxl":
-            ecg_id = row["record_id"].split(":", 1)[1]
-            if ecg_id in old.index:
-                if not np.array_equal(cached[index], old.signals[old.index[ecg_id]]):
-                    raise ValueError(f"Historical PTB transform mismatch at row {index}")
-                old_matches += 1
+        if row["source"] != "ptbxl":
+            continue
+        ecg_id = row["record_id"].split(":", 1)[1]
+        if ecg_id not in old.index:
+            continue
+        if not np.array_equal(cached[index], old.signals[old.index[ecg_id]]):
+            raise ValueError(f"Historical PTB transform mismatch at row {index}")
+        old_matches += 1
     if old_matches < 1:
         raise ValueError("No historical PTB transform overlap checked")
     return len(selected), old_matches
 
 
 def verify() -> dict[str, object]:
-    """Check full cache bytes, sampled source replay, and historical PTB bits."""
+    """
+    Check full cache bytes, sampled source replay, and historical PTB bits.
+
+    Returns
+    -------
+    dict[str, object]
+        Aggregate verification receipt.
+
+    Raises
+    ------
+    ValueError
+        If the cache bytes, shape, source identity or replayed rows differ from the receipt.
+    """
     complete = json.loads((CACHE / "complete.json").read_text())
     source = SampledTrainingECGDataset(COHORT, purpose="ssl")
     signal_path = CACHE / "signals.npy"

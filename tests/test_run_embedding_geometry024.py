@@ -40,7 +40,12 @@ def test_task_membership_and_eligible_subclasses():
     assert runner.eligible_subclasses(table, table) == ["IMI"]
 
 
-def test_evaluate_task_reports_every_method_and_contrast():
+@pytest.fixture
+def few_draws(monkeypatch):
+    monkeypatch.setattr(runner, "BOOTSTRAP_DRAWS", 100)
+
+
+def test_evaluate_task_reports_every_method_and_contrast(few_draws):
     table, x = frame()
     u = normalize(x)
     y = table["standard"].to_numpy(dtype=np.int64)
@@ -52,7 +57,7 @@ def test_evaluate_task_reports_every_method_and_contrast():
     assert result["query_rows"] == len(table)
 
 
-def test_one_vs_norm_keeps_only_task_and_norm_rows():
+def test_one_vs_norm_keeps_only_task_and_norm_rows(few_draws):
     table, x = frame()
     u = normalize(x)
     result = runner.one_vs_norm(table, table, x, x, u, u, ["MI"], "superclass")

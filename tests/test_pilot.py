@@ -186,7 +186,7 @@ def test_check_roundtrip_detects_changed_weights(tmp_path):
         pilot.check_roundtrip(original, pilot.Progress(1, 3, [], {}), probe, probe_optimizer)
 
 
-def test_profile_arms_and_deadline_between_arms(tmp_path):
+def test_profile_arms_and_deadline_between_arms():
     seen = []
     durations, roundtrips = pilot.profile_arms("pilot_test_", ("a", "b"),
                                                lambda arm, directory: seen.append(directory) or {"arm": arm})

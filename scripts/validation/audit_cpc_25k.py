@@ -16,7 +16,21 @@ BASE = ROOT / "outputs/experiment004_cpc_40k"
 
 
 def check(condition: bool, message: str) -> None:
-    """Stop on a failed training artifact contract."""
+    """
+    Stop on a failed training artifact contract.
+
+    Parameters
+    ----------
+    condition : bool
+        Invariant that must hold.
+    message : str
+        Error message when it does not.
+
+    Raises
+    ------
+    ValueError
+        If ``condition`` is false.
+    """
     if not condition:
         raise ValueError(message)
 

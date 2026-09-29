@@ -203,8 +203,8 @@
         "e022_sph",
         "challenge_label_mapping"
       ],
-      "status": "open",
-      "notes": "Needs a harmonized binary label across SNOMED sources."
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 022b (docs/experiment-022b-multisource-readout-results.md), on the frozen Challenge record split v1 with the training quality policy. The readout fitted on PTB-XL plus 22,494 Challenge training ECGs is adopted: SPH AUROC xECG 0.915 to 0.939 (+0.024 [+0.021, +0.026]), JEPA 0.911 to 0.934, CPC 0.876 to 0.897. Leaving one family out still beats PTB-XL alone on that held-out family (+0.008 to +0.026 AUROC, 8 of 9 intervals above 0). No pooled threshold transfers to SPH; PTB-XL development falls 0.013 (xECG), mostly on the hard cases. Challenge test groups still closed. Measured with ningbo_sph_transfer."
     },
     {
       "id": "prototype_head",
@@ -678,8 +678,8 @@
         "ningbo_eda",
         "challenge_label_mapping"
       ],
-      "status": "open",
-      "notes": "Frozen JEPA/xECG/CPC; readouts on PTB-XL versus PTB-XL + Ningbo training; score PTB-XL development and SPH once. Ningbo cannot be a test for JEPA/xECG (in their pretraining).",
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 022b (docs/experiment-022b-multisource-readout-results.md), with multisource_lso. Adding Ningbo's labeled training ECGs to the PTB-XL readout raises SPH AUROC: xECG 0.915 to 0.935 (+0.020 [+0.018, +0.022]), JEPA +0.018, CPC +0.016; Chapman/Ningbo carries half of the full multi-source gain. A threshold calibrated on PTB-XL plus Ningbo does not transfer: SPH sensitivity 0.922 to 0.841 (xECG), specificity 0.646 to 0.881. PTB-XL hard cases rank worse (0.726 to 0.687). Measured about 3 h build and 20 min CPU for both items.",
       "rerun_of": "022"
     },
     {

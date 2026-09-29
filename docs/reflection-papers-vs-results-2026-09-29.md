@@ -31,8 +31,10 @@ about matching values.
     ProtoECGNet does.
 - **Unsupervised structure follows acquisition as much as disease.**
   - Paper: the source hospital is identifiable from the ECG at 96.9% (Leinonen et al.).
-  - Ours: within PTB-XL alone, clusters aligned with device and heart rate more than with diagnosis, and all
+  - Ours: within PTB-XL, CPC's clusters aligned with device and heart rate more than with diagnosis, and all
     five MI reference ECGs came from one device (024).
+  - Correction from 024b: JEPA and xECG clusters follow diagnosis more than device or hospital, even across
+    four hospitals. The hospital is still easy to read out: a linear probe names it at AUROC 0.93-0.95.
 
 ## Partly confirmed or not directly comparable
 

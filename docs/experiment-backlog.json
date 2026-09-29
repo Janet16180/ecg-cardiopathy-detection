@@ -237,7 +237,7 @@
         "cohorts_v2"
       ],
       "status": "open",
-      "notes": "024: k-means clusters align with device (AMI 0.22-0.23) and heart rate more than diagnosis (0.06-0.09); only worth doing on a supervised projection with device and heart-rate controls."
+      "notes": "024: k-means clusters align with device (AMI 0.22-0.23) and heart rate more than diagnosis (0.06-0.09); only worth doing on a supervised projection with device and heart-rate controls. 024b ran the source-AMI step: pooled k-means clusters follow the label more than the hospital, but no cluster is a pure diagnosis."
     },
     {
       "id": "core_lead_masking",
@@ -786,8 +786,8 @@
         "ningbo_eda",
         "challenge_label_mapping"
       ],
-      "status": "open",
-      "notes": "Cached encoders; add a source-AMI and other-source kNN; replaces clustering_multisource's first step.",
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 024b (docs/experiment-024b-multisource-geometry-results.md): k-means on a balanced draw of 4,356 training ECGs per family (PTB-XL, Chapman/Ningbo, Georgia, CPSC). Clusters follow the diagnosis more than the hospital: xECG k = 8 family AMI 0.047 against label AMI 0.125, difference -0.078 [-0.084, -0.072]; all 36 robustness contrasts below 0 (CPC gaps small, at most 0.025). 024's device-over-diagnosis pattern is CPC-only; JEPA and xECG follow the label within PTB-XL too. Hospital is still linearly encoded (source-family probe mean AUROC 0.925-0.949) and enriches neighbors (41-58% own family against 25%); kNN without same-family neighbors loses 0.012-0.099 AUROC. At SPH, pooled-label prototypes trail the probe by 0.044 (xECG), 0.043 (JEPA), 0.099 (CPC); pooling narrows the gap. MI medoids are still all CS100 3 PTB-XL ECGs. 024 and 022b reproduced exactly. Measured about 2 h build and 33 min CPU.",
       "rerun_of": "024"
     },
     {

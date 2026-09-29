@@ -377,9 +377,10 @@ Challenge sources). MIMIC machine labels are not used.
 6. **"Normal" shifts between sites.** The distance-from-normal detector lost more at SPH (0.923 to 0.858)
    than the classifier did. A normal reference fitted on local student ECGs is the obvious fix, and it is
    untested (backlog `local_normal_manifold`).
-7. **Devices leave a fingerprint.** Unsupervised clusters in the encoders followed recording device and heart
-   rate more than diagnosis ([024](experiment-024-embedding-geometry-results.md)). A new cart at the
-   university is a new domain.
+7. **Devices and hospitals leave a fingerprint.** For our CPC encoder, unsupervised clusters followed recording
+   device more than diagnosis ([024](experiment-024-embedding-geometry-results.md)). For xECG and JEPA,
+   clusters follow diagnosis more, but a linear probe still names the source hospital with AUROC 0.93-0.95
+   ([024b](experiment-024b-multisource-geometry-results.md)). A new cart at the university is a new domain.
 8. **One run each.** Each result is one fit and one seed. PTB-XL development patients have been examined
    many times.
 

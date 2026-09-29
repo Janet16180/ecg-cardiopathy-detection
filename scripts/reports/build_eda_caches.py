@@ -7,11 +7,28 @@ recompute. The notebooks call the same functions, so this step is optional.
 
 import time
 
+import pandas as pd
+
 from ecg_experiment.eda.challenge import challenge_summary, load_headers, signal_hashes
 from ecg_experiment.eda.code15 import build_all_parts
 from ecg_experiment.eda.mimic import load_machine_measurements, load_records, mimic_summary
+from ecg_experiment.eda.ningbo import chapman_fingerprints, ningbo_summary, record_scan
+from ecg_experiment.eda.ningbo import load_headers as ningbo_headers
 from ecg_experiment.eda.ptbxl import load_metadata
 from ecg_experiment.eda.ptbxl_signals import ptbxl_summary
+
+
+def ningbo_signal_headers() -> pd.DataFrame:
+    """
+    Select the Ningbo headers of the records whose signal file exists.
+
+    Returns
+    -------
+    pd.DataFrame
+        The filtered ``load_headers`` table.
+    """
+    headers = ningbo_headers()
+    return headers[headers["has_signal"]]
 
 
 def main() -> None:
@@ -21,6 +38,9 @@ def main() -> None:
         ("PTB-XL signal features", lambda: ptbxl_summary(load_metadata())),
         ("Challenge headers and signal features", lambda: challenge_summary(load_headers())),
         ("Challenge signal hashes", lambda: signal_hashes(load_headers())),
+        ("Ningbo quality scan", lambda: record_scan(ningbo_signal_headers())),
+        ("Ningbo signal features", lambda: ningbo_summary(ningbo_signal_headers())),
+        ("Chapman fingerprints", chapman_fingerprints),
         ("CODE-15 padding and signal features, all 18 parts", build_all_parts),
         ("MIMIC machine measurements", load_machine_measurements),
         ("MIMIC signal features", lambda: mimic_summary(load_records())),

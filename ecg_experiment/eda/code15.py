@@ -9,15 +9,17 @@ its statistics and deleting the extracted file before the next.
 import re
 import subprocess
 import tarfile
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
+from multiprocessing import Pool
 from pathlib import Path
 
 import h5py
 import numpy as np
 import pandas as pd
+from scipy.signal import butter, filtfilt
 
 from ecg_experiment.eda.ptbxl import OUTPUT_DIR, ROOT
-from ecg_experiment.eda.signals import compute_features, record_summary
+from ecg_experiment.eda.signals import LEADS, compute_features, record_summary
 
 RAW_DIR = ROOT / "data/raw/code-15pct/zenodo-4916206"
 PREPARED_DIR = ROOT / "data/processed/code15_quality"
@@ -245,3 +247,87 @@ def read_native_tracing(exam_id: int) -> np.ndarray:
     with h5py.File(PART0_NATIVE, "r") as handle:
         index = int(np.flatnonzero(handle["exam_id"][:] == exam_id)[0])
         return handle["tracings"][index]
+
+
+def highpass_range(signal: np.ndarray, fs: int, cutoff: float = 0.67) -> np.ndarray:
+    """
+    Per-lead 1st-to-99th percentile range after removing baseline wander.
+
+    A zero-phase second-order Butterworth high-pass removes the low-frequency power that differs between
+    acquisition chains, so the range mostly reflects QRS amplitude.
+
+    Parameters
+    ----------
+    signal : np.ndarray
+        Array of shape ``(samples, 12)``.
+    fs : int
+        Sampling rate in Hz.
+    cutoff : float
+        High-pass corner in Hz.
+
+    Returns
+    -------
+    np.ndarray
+        One range per lead, in the signal's units.
+    """
+    b, a = butter(2, cutoff, btype="high", fs=fs)
+    filtered = filtfilt(b, a, np.nan_to_num(signal), axis=0)
+    return np.percentile(filtered, 99, axis=0) - np.percentile(filtered, 1, axis=0)
+
+
+def _range_item(item: tuple[str, str, Callable[[str], tuple[np.ndarray, int]]]) -> np.ndarray:
+    _, path, reader = item
+    signal, fs = reader(path)
+    return highpass_range(signal[: 10 * fs], fs)
+
+
+def reference_ranges(items: list[tuple[str, str]], reader: Callable[[str], tuple[np.ndarray, int]],
+                     workers: int = 4) -> pd.DataFrame:
+    """
+    ``highpass_range`` of the first 10 s of many records of one source.
+
+    Parameters
+    ----------
+    items : list[tuple[str, str]]
+        Record identifier and the path handed to ``reader``.
+    reader : Callable[[str], tuple[np.ndarray, int]]
+        Top-level function returning ``(signal, fs)`` in canonical lead order and mV.
+    workers : int
+        Number of processes.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per record and one column per lead.
+    """
+    with Pool(workers) as pool:
+        ranges = pool.map(_range_item, [(record, path, reader) for record, path in items], chunksize=32)
+    return pd.DataFrame(ranges, index=[str(record) for record, _ in items], columns=LEADS)
+
+
+def part0_ranges(exams: pd.DataFrame, min_active: int = 4000) -> pd.DataFrame:
+    """
+    ``highpass_range`` of the first 10 s of every part-0 tracing with at least 10 s of signal.
+
+    Parameters
+    ----------
+    exams : pd.DataFrame
+        Output of ``load_exams``.
+    min_active : int
+        Fewest non-padding samples (10 s at 400 Hz).
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per exam (indexed by ``exam_id``) and one column per lead, in stored units.
+    """
+    rows = {}
+    with h5py.File(PART0_NATIVE, "r") as handle:
+        ids = handle["exam_id"][:]
+        for start in range(0, len(ids), 1000):
+            for offset, tracing in enumerate(handle["tracings"][start:start + 1000]):
+                left, right = zero_padding(tracing)
+                active = tracing[left:len(tracing) - right]
+                if len(active) >= min_active and int(ids[start + offset]) in exams.index:
+                    rows[int(ids[start + offset])] = highpass_range(active[:min_active], SAMPLING_RATE)
+    return pd.DataFrame.from_dict(rows, orient="index", columns=LEADS)

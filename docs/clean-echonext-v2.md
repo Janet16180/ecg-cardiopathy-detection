@@ -97,6 +97,10 @@ them: the noise-dominated ECGs are 95% positive, and the rows line up with the m
    means disease". The rule was built for 500 Hz data; at 250 Hz its 40-150 Hz band is in effect 40-125 Hz.
    It keeps its v1 threshold because it removes under 0.1% of ECGs, and changing it would change the v1
    training set that Experiments 023 and 028 used.
+   The user confirmed this on 30 September 2026: because the cause of the noise is unknown, these ECGs
+   are used for evaluation only. 56 of the 60 are training-split ECGs and are not used at all; they cannot
+   move to val, whose patients are disjoint from train and have one ECG each. The 4 val ECGs stay in
+   evaluation.
 4. **Clipping gets no rule.** The release clips every lead at its 0.1 and 99.9 percentiles. A rule would
    need a threshold nobody has examined, and the checks below measure how many ECGs sit at a bound.
 5. **Experiments 023 and 028 are not rerun.** They used v1 `use` for training (the same as `use_training`)

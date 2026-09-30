@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-27T05:55:00+00:00",
+  "updated_at_utc": "2026-09-30T13:37:11.786318+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -1708,5 +1708,22 @@
     },
     "next": ["referral_budget_operating_point", "hybrid_screening_score", "rhythm_findings_detector", "normal_manifold_novelty_search", "final_frozen_test"],
     "waiting": {"@cardiologist_meeting": ["student_criteria_label", "young_subgroup_readout"], "@clinic_ecgs": ["enriched_positive_sensitivity"]}
+  },
+  "experiment_038_cpc_xlstm": {
+    "status": "ready_for_gpu_profile",
+    "authorized": true,
+    "protocol": "docs/experiment-038-cpc-xlstm.md",
+    "protocol_commit": "b39eb93",
+    "output_dir": "outputs/experiment038_cpc_xlstm",
+    "primary_comparison": "Fresh mLSTM-xLSTM minus fresh GRU, clean_25k_v3, 1518-label development AUROC",
+    "conditional_followup": "Fresh matched clean_50k_v3 comparison if 25k gain is below .005 or paired patient CI includes zero",
+    "next_action": "Finish required CPU suite, commit runner, create manifest and pass real GPU gate before training",
+    "calibration_test_authorized": false,
+    "implementation_commit": "023ce44",
+    "live_cache_launch": "outputs/experiment038_cpc_xlstm/cache25k-launch.json",
+    "targeted_tests": "18 passed (8 model, 3 cache, 7 runner)",
+    "runner": "scripts/experiments/run_cpc_xlstm038.py",
+    "cache_receipt": "data/processed/clean_25k_v3_cpc/complete.json",
+    "cache_elapsed_seconds": 449.74445018800907
   }
 }

@@ -1,6 +1,14 @@
 # Experiment queue
 
-**Updated:** 27 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
+**Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
+
+**30 September xLSTM request:** Experiment [038](experiment-038-cpc-xlstm.md) is authorized in PR #56.
+Its protocol was committed as `b39eb93` before new scores. It compares fresh CPC GRU and mLSTM-xLSTM
+on clean cohorts v3, with 25k first and a conditional matched 50k tier. The model and cache code are committed as `023ce44`; 11 focused CPU tests passed. The verified
+25k cache completed with 25,000 verified ECGs in 449.74 seconds; read the live completion receipts under
+`outputs/experiment038_cpc_xlstm/`. The runner has passed its seven focused tests and repository lint; the required CPU suite is in progress.
+A real RTX 3090 resource gate precedes training. No new training
+or closed-test stage has run.
 
 **27 September resume:** The user reported EDA finished and explicitly resumed
 Experiments 011–013 on the fixed 25k subset. The V100 was idle and no study

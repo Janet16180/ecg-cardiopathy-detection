@@ -1,6 +1,23 @@
 # Experiment queue
 
-**Updated:** 27 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
+**Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
+
+**30 September xLSTM result:** Experiment [038](experiment-038-cpc-xlstm-results.md) completed the
+user-authorized 25k and conditional 50k comparisons in PR #56. All four full CPC arms trained fresh
+for 1,954 updates / 250,000 exposures each; both development audits passed. Primary 1,518-label
+AUROC was CPC+GRU 0.90384 versus CPC+xLSTM 0.89487 at 25k, and 0.90454 versus 0.89718 at 50k.
+The xLSTM 50k-minus-25k gain was +0.00231 [−0.00707, +0.01136]. Neither architecture improvement
+nor scaling met the frozen +0.005 / positive-lower-bound rule. Keep GRU as the baseline for this recipe;
+independent-seed follow-up enters the ranked backlog. No further 038 run or closed-test stage is scheduled.
+
+The original protocol was committed as `b39eb93` before new scores. Its real profile failed exact
+cuDNN GRU dropout recovery, without full training or new scores. The committed native-GRU successor
+(`30da31d`, runner `49400a7`) preserved architecture, dropout and initial weights; synthetic controls
+and both real GPU profiles passed exact replay. The prospective 50k supplement (`85dea69`, runner
+`80f761d`) binds the audited 25k reference. Actual charged work was 1,368.09 seconds at 25k, including
+its cache and failed predecessor, and 1,448.29 seconds at 50k; both stayed below 7,200 seconds.
+Read live receipts under `outputs/experiment038_cpc_xlstm_v2/25k/` and `50k/`, including results, audits,
+checkpoints and stage ledgers. Ruff, 981 CPU tests, package build and implementation PR checks passed.
 
 **27 September resume:** The user reported EDA finished and explicitly resumed
 Experiments 011–013 on the fixed 25k subset. The V100 was idle and no study

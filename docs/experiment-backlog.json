@@ -1273,14 +1273,14 @@
       "authorized": true,
       "experiment": "040",
       "protocol": "docs/experiment-040-cpc-simdino.md",
-      "notes": "Original suite retained and stopped, no automatic restart. Measured040 profile/preparation/source-preflight execution182.395 seconds before final CPU audit/report; final charged accounting is in the results report and ledger. Historical039 closed10685.796 seconds. GPU/CPU/build fields remain planning estimates because no full fit executed. Fresh allocation requires explicit authorization and new prospective resource/source identity. Final040 charged execution 319.745976s; combined039+040 11005.541631s, including audits/reports/validation, disclosed30-second metadata-startup allowance and37-second admission-gap charge. Original study remains incomplete/resource-blocked."
+      "notes": "Original suite retained and stopped, no automatic restart. Measured040 profile/preparation/source-preflight execution182.395 seconds before final CPU audit/report; final charged accounting is in the results report and ledger. Historical039 closed10685.796 seconds. GPU/CPU/build fields remain planning estimates because no full fit executed. Fresh allocation requires explicit authorization and new prospective resource/source identity. Final040 charged execution 319.745976s; combined039+040 11005.541631s, including audits/reports/validation, disclosed30-second metadata-startup allowance and37-second admission-gap charge. Original study remains incomplete/resource-blocked. Runtime diagnosis completed: all six 200-update packages audited; optimizer compute1.743h, remaining complete plan2.639h centrally/3.853h conservatively, plus separate1h correction reserve. No fullfit/score; original resource gate unchanged. See docs/experiment-040-runtime-diagnostic-results.md."
     },
     {
       "id": "cpc_simdino_resource_plan040",
       "kind": "repo",
       "title": "Prospective resource plan for the fixed Transformer objective factorial",
       "question": "Can a separately authorized allocation admit the complete unchanged18-fit family with the measured profile costs and original correction/reporting reserves?",
-      "evidence": "Experiment040 all-six real profiles and exact recovery passed, but conservative shared039+040 projection29295.025 seconds exceeded28800 by495.025 seconds before any full fit/score. This is a resource stop, not evidence of objective failure.",
+      "evidence": "Experiment040 all-six real profiles and exact recovery passed, but conservative shared039+040 projection29295.025 seconds exceeded28800 by495.025 seconds before any full fit/score. This is a resource stop, not evidence of objective failure. Prospective runtime measurement now supplies complete remaining central9500.791296s/conservative13869.372168s; repeated validation adds1081.968802s centrally. Original combined conservative ceiling remains exceeded once new diagnostic costs are charged.",
       "value": 3,
       "clarity": 0.9,
       "gpu_hours": 0.0,
@@ -1291,7 +1291,39 @@
       ],
       "status": "blocked",
       "authorized": false,
-      "notes": "Resource planning only; no score-based arm/seed/coefficient selection, no automatic GPU rerun and no change to retained original receipts. Any successor must freeze a new prospective protocol and source/output identity before scores, preserve the18-fit/three-seed controls, revalidate real profiles and charge all work. Estimates are planning hours."
+      "notes": "Resource planning only; no score-based arm/seed/coefficient selection, no automatic GPU rerun and no change to retained original receipts. Any successor must freeze a new prospective protocol and source/output identity before scores, preserve the18-fit/three-seed controls, revalidate real profiles and charge all work. Estimates are planning hours. Runtime debugging was separately authorized and completed; this entry concerns a fresh full-family allocation only."
+    },
+    {
+      "id": "cpc_runtime_diagnostic040",
+      "kind": "repo",
+      "title": "Measure and diagnose the fixed Experiment040 runtime",
+      "question": "How long would the complete unchanged18-fit family require, accounting for sustained GPU speed and nonoverlapping overhead?",
+      "evidence": "Six200-update probes complete in350.766804s; independent audit passed; original14826.834148s forecast reproduced. New central9500.791296s/conservative13869.372168s, including900s reporting but excluding3600s correction reserve. No fullfit or score.",
+      "value": 3,
+      "clarity": 0.9,
+      "gpu_hours": 0.09743522335303068,
+      "cpu_hours": 0.1,
+      "build_hours": 1.0,
+      "blocked_by": [],
+      "status": "done",
+      "authorized": true,
+      "notes": "User-requested runtime-only debugging completed; measured process wall is0.0974h. CPU/build fields are planning estimates; final diagnostic charged ledger includes tests, startup failure, audit and reporting. Protocolce5a1ca/source019c9d6; docs/experiment-040-runtime-diagnostic-results.md."
+    },
+    {
+      "id": "cpc_validation_accounting040",
+      "kind": "repo",
+      "title": "Avoid repeated full-source validation in future CPC stage gates",
+      "question": "Can a prospective runner preserve source/data/checkpoint integrity while validating immutable parent inputs once per process and accounting for costs without overlap?",
+      "evidence": "Runtime040 measured nested all-package validation40.072919s per stage gate, projecting1081.968802s over27calls. Original fullreadout already includes feature extraction, checkpoint profile includes reload, and training-stage setup was omitted. Latecompleted-cell rehash and perupdate guard costs remain unmeasured.",
+      "value": 3,
+      "clarity": 0.9,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.2,
+      "build_hours": 1.5,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "Forward implementation only; new source identity, protocol and validation receipts required. Never edit pinned039/040/diagnostic sources or weaken integrity checks. Measure cold/warm validation, latecell gate and checkpoint costs; preserve all18fits/three seeds/exposures/coefficient. Full training allocation remains separate. Hours are planning estimates."
     }
   ]
 }

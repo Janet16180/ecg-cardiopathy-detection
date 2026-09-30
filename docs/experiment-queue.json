@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-30T23:05:42.389101+00:00",
+  "updated_at_utc": "2026-09-30T23:33:52Z",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2204,7 +2204,7 @@
     "admission_cpu_gap_charge_seconds": 37.0
   },
   "experiment_040_runtime_diagnostic": {
-    "status": "protocol_committed_implementation_in_progress",
+    "status": "complete_runtime_diagnostic",
     "authorized": true,
     "authorization_scope": "Debug time accounting and measure runtime only; no full 18-fit schedule or new performance scoring",
     "protocol": "docs/experiment-040-runtime-diagnostic.md",
@@ -2225,11 +2225,30 @@
     "full_training_authorized": false,
     "development_scoring_authorized": false,
     "parent_receipts_mutable": false,
-    "next_action": "Commit and verify new probe/analysis sources, measure all six packages under the shared GPU lock, then report component accounting and central/conservative projections.",
+    "next_action": "Diagnostic completed and audited; no process remains active. Retain original resource stop. Prospective validation/accounting repairs and full training allocation are ranked follow-up work with a new executable identity.",
     "objectives": [
       "cpc",
       "simdino",
       "hybrid"
-    ]
+    ],
+    "source_commit": "019c9d6",
+    "pull_request": "https://github.com/Janet16180/ecg-cardiopathy-detection/pull/60",
+    "completed_packages": 6,
+    "whole_probe_process_seconds": 350.76680407091044,
+    "remaining_central_seconds": 9500.791296348914,
+    "remaining_conservative_seconds": 13869.372168458485,
+    "raw_training_projection_seconds": 6275.237874062701,
+    "independent_audit": "outputs/experiment040_runtime_diagnostic/independent_audit.json",
+    "runtime_analysis": "outputs/experiment040_runtime_diagnostic/projected_runtime.json",
+    "exact_recovery_passed": true,
+    "parent_receipts_unchanged": true,
+    "full_training_executed": false,
+    "development_scored": false,
+    "normal_optimizer_updates": 1200,
+    "normal_record_exposures": 153600,
+    "recovery_optimizer_updates": 12,
+    "recovery_record_exposures": 192,
+    "diagnostic_charged_seconds": 598.4269647067433,
+    "execution_closed": "outputs/experiment040_runtime_diagnostic/execution_closed.json"
   }
 }

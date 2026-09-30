@@ -2,12 +2,26 @@
 
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
-**30 September runtime diagnosis authorized:** The user requested debugging Experiment 040's
-time gate and measuring its actual runtime. The committed [runtime protocol](experiment-040-runtime-diagnostic.md)
-fixes six fresh 200-update timing probes, checkpoint/recovery checks and training-only feature
-timing. New evidence belongs in `outputs/experiment040_runtime_diagnostic/`; original 039/040
-sources, receipts and closed ledgers stay unchanged. Full 18-fit training is not part of this
-diagnostic. The report will separate measured throughput, historical proxies and safety margins.
+**30 September runtime diagnosis completed:** The user-requested [runtime diagnosis](experiment-040-runtime-diagnostic-results.md)
+completed six fresh 200-update probes in 350.77 seconds for CPC, SimDINO and their hybrid with
+GRU/mLSTM. The independent audit passed all six packages, twelve checkpoints, exact recovery,
+repeat feature hashes and unchanged parent/source identities. All 18 full fits remain unexecuted;
+no development performance was scored. The new process has stopped.
+
+The fixed full family projects 6,275.24 seconds of optimizer work (1.743 hours), or 9,500.79 seconds
+(2.639 hours) including remaining preparation, profiles, checks, readouts and reporting. The
+conservative scenario is 13,869.37 seconds (3.853 hours), with the correction reserve separate.
+These are extrapolations from 200 updates and historical CPU proxies. Repeated nested source
+validation measured 40.07 seconds per stage gate, projecting another 1,081.97 seconds. The analysis
+also removes overlapping historical/new extraction and checkpoint reload costs while retaining
+missing setup/validation work. It reproduces the original rejected forecast exactly.
+
+Evidence lives in `outputs/experiment040_runtime_diagnostic/`; its ledger is separate from closed
+039/040 accounting. The [runtime protocol](experiment-040-runtime-diagnostic.md), source `019c9d6`
+and original receipts remain frozen. The conservative spent-plus-future scenario still exceeds
+the original eight-hour shared ceiling after diagnostic work; no original admission was overridden.
+Forward accounting/validation work enters the ranked backlog. Draft
+[PR #60](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/60) targets `main` and remains unmerged.
 
 **30 September Transformer/SimDINO resource stop:** [Experiment 040](experiment-040-cpc-simdino-results.md)
 passed all six real GPU profiles and exact normal/final-16-record checkpoint recovery. The all-or-none

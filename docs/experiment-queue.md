@@ -9,7 +9,8 @@ crossed with native GRU/mLSTM, with the three matched 039 seeds. The one-block l
 has 49-sample raw support; existing 039 patch/CPC fits provide the frontend controls. Six primary paired
 comparisons require the hybrid to beat both component objectives before calling the combination promising.
 
-Implementation and CPU verification are ready; the experiment is waiting for 039 completion and has
+Implementation `a675030` and CPU verification are ready. The coordinator is queued for the final
+039 execution-closure receipt and has
 no real 040 profile, training result or development score. All six packages must pass real full-path
 GPU profiles and exact normal/final-batch recovery before any full fit. Admission covers all 18 fits,
 reporting and a 3,600-second diagnostic/correction reserve within the original shared 039+040 eight-hour
@@ -24,10 +25,10 @@ dependencies, the locally pinned xECG loss/trainer/configuration and historical 
 analysis checks manifest identities and source hashes before accepting results. These checks are
 implementation evidence, not measured ECG performance.
 
-When 039 is complete, the coordinator is `scripts.coordination.run_simdino_day040`; local live receipts
-will be under `outputs/experiment040_cpc_simdino/`. Run from its worktree with the pinned default `.venv`,
-`PYTHONPATH` pointing to that worktree and one CPU compute thread. No 040 GPU job was launched by this
-queue update. The executing agent must write the complete or incomplete results report from receipts
+The queued coordinator is `scripts.coordination.run_simdino_day040`; live receipts and `run.log`
+are under `outputs/experiment040_cpc_simdino/`. Draft [PR #59](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/59) targets `main`. Run from its worktree with the pinned default `.venv`,
+`PYTHONPATH` pointing to that worktree and one CPU compute thread. The live queued status records
+no 040 GPU profile, full training or score yet. The executing agent must write the complete or incomplete results report from receipts
 and update both queue documents after actual profiles, admission and outcomes.
 
 **30 September encoder/context study authorized:** The user requested a day of CPC encoder variants

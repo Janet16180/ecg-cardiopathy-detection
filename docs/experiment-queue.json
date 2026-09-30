@@ -1941,7 +1941,7 @@
     "historical_integrity": "passed_exact_019_and_038_25k_50k"
   },
   "experiment_040_cpc_simdino": {
-    "status": "implemented_cpu_verified_waiting_for_039",
+    "status": "queued_waiting_for_experiment039",
     "authorized": true,
     "protocol": "docs/experiment-040-cpc-simdino.md",
     "protocol_commit": "ac18dac",
@@ -1952,7 +1952,7 @@
     "live_status": "outputs/experiment040_cpc_simdino/status.json",
     "admission_receipt": "outputs/experiment040_cpc_simdino/admission.json",
     "day_ledger": "outputs/experiment040_cpc_simdino/day_ledger.json",
-    "run_after": "039_complete_with_aggregate_interactions_and_diagnostic_gate",
+    "run_after": "039_final_scientific_execution_closed_receipt_and_all_audits_analyses",
     "frontend": "one_local_causal_transformer_block_patch33_stride16_receptive_field49",
     "objectives": [
       "cpc",
@@ -2004,6 +2004,10 @@
     "source_pinning": "New manifests bind scientific source/dependencies/protocol, vendored xECG source and historical controls; aggregation validates source hashes and manifest identities.",
     "upstream_commit": "13e57523e418d8cddced73f81b27ba541413f4f3",
     "next_action": "Finish 039; profile all six packages without development scoring; admit all 18 fits only if shared-day projection and correction reserve fit. Preserve any failure and write executed results or an incomplete report.",
-    "results": null
+    "results": null,
+    "implementation_commit": "a675030",
+    "live_log": "outputs/experiment040_cpc_simdino/run.log",
+    "queued_process_id_snapshot": 3703565,
+    "pull_request": "https://github.com/Janet16180/ecg-cardiopathy-detection/pull/59"
   }
 }

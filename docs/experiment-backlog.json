@@ -836,7 +836,7 @@
       "value": 5,
       "clarity": 0.9,
       "build_hours": 2.5,
-      "notes": "Freeze the readout (022b pooled xECG), calibration strategy and operating-point rule first; run once; also refit the readout on 5 bootstrap resamples of the training rows to show fit variability. Report per source. Never repeat. 29 September 2026: held for an explicit user decision to freeze the pipeline, because the untouched data can be read only once and the student label (after the cardiologist meeting) and finding heads may still change the pipeline."
+      "notes": "Freeze the readout (022b pooled xECG), calibration strategy and operating-point rule first; run once; also refit the readout on 5 bootstrap resamples of the training rows to show fit variability. Report per source. Never repeat. 29 September 2026: held for an explicit user decision to freeze the pipeline, because the untouched data can be read only once and the student label (after the cardiologist meeting) and finding heads may still change the pipeline. Audit 30 September 2026: the PTB-XL test set was already evaluated in 001-008, and the Challenge test groups are per record, from sources the released encoders saw in pretraining, so neither is a fully untouched test. The strongest confirmatory data would be the student pilot."
     },
     {
       "kind": "experiment",
@@ -1097,8 +1097,23 @@
       "cpu_hours": 0.5,
       "build_hours": 2,
       "blocked_by": [],
+      "status": "done",
+      "notes": "Reuse 030/033 split, draws and rules exactly; this defines the candidate pipeline for final_frozen_test. Done 30 September 2026 as Experiment 037 (PR #49): adopt_v2 by the pre-registered rule; composite v2-v1 -0.0048 [-0.0072, -0.0025] fails a strict non-inferiority reading. Spec: docs/pipeline-v2.md."
+    },
+    {
+      "id": "cohorts_v3_exclude_challenge_eval",
+      "kind": "repo",
+      "title": "Rebuild the pretraining cohorts without Challenge test and calibration records",
+      "question": "Can cohorts v3 keep the v2 tier sizes and nesting while excluding every Challenge test and calibration record (and their exact duplicates)?",
+      "evidence": "docs/audit-2026-09-30.md: clean_25k_v2 holds 1,512 Challenge test-group records and clean_100k_v2 and larger hold 12,603; v2 predates the Challenge split. No model has trained on v2 yet.",
+      "value": 5,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
       "status": "open",
-      "notes": "Reuse 030/033 split, draws and rules exactly; this defines the candidate pipeline for final_frozen_test."
+      "notes": "Required before any self-supervised pretraining on cohorts; new version, v2 kept for provenance."
     }
   ]
 }

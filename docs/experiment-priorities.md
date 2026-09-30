@@ -43,7 +43,7 @@ penalty; one that ranks high earns a protocol like any other.
 
 | Rank | ID | Kind | Candidate | Value | Clarity | Hours | Score | Waiting on |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | --- |
-| 1 | pipeline_v2_rethreshold | experiment | Adopt the 035 reweighted readout and recompute the 030 and 033 operating points | 4 | 0.9 | 2.5 | 2.73 | - |
+| 1 | cohorts_v3_exclude_challenge_eval | repo | Rebuild the pretraining cohorts without Challenge test and calibration records | 5 | 0.9 | 2.5 | 2.85 | - |
 | 2 | normal_score_confounders | experiment | Does the normal-reference score track noise, device, age, sex or heart rate? | 3 | 0.8 | 3.0 | 1.39 | - |
 | 3 | manifold_score_ablation | experiment | Ablations of the normal-reference score | 3 | 0.8 | 3.5 | 1.28 | - |
 | 4 | jepa_xecg_concat | experiment | Concatenated ECG-JEPA and xECG features | 3 | 0.6 | 2.5 | 1.14 | - |
@@ -75,7 +75,7 @@ penalty; one that ranks high earns a protocol like any other.
 | 30 | core_lead_masking | experiment | CoRe-style lead-drop masking in CPC pretraining | 2 | 0.4 | 14.0 | 0.21 | - |
 | 31 | clustering_multisource | experiment | Source-controlled clustering of multi-source embeddings | 1 | 0.4 | 7.0 | 0.15 | - |
 | 32 | report_alignment | experiment | ECG-report alignment with PTB-XL cardiologist reports | 2 | 0.3 | 25.0 | 0.12 | - |
-| 33 | final_frozen_test | experiment | One-time confirmatory test of the frozen pipeline on untouched data | 5 | 0.9 | 3.0 | 3.12 | pipeline_v2_rethreshold, @user_freeze_decision |
+| 33 | final_frozen_test | experiment | One-time confirmatory test of the frozen pipeline on untouched data | 5 | 0.9 | 3.0 | 3.12 | @user_freeze_decision |
 | 34 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
 | 35 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
 | 36 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |

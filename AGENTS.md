@@ -19,7 +19,7 @@ history belongs in Git and the queue documents, not here.
 ## Git
 
 - Work on a branch; open every PR against `main`, never stacked on another branch. Before handing a PR over,
-  merge `origin/main` into it and check GitHub reports it mergeable.
+  merge `origin/main` into it and check GitHub reports it mergeable. Merge only after `gh pr checks` passes.
 - Stage files by path; never `git add -A`. Commit messages are short and plain, with no Co-Authored-By line.
 - Parallel work uses worktrees (for example `~/ecg-wt-cpu`). Symlink `data`, `outputs`, `.venv` and
   `third_party` from the main checkout, run `git ls-files data outputs | xargs git update-index
@@ -46,9 +46,12 @@ history belongs in Git and the queue documents, not here.
 - Update both queue documents when an experiment changes state. Never present a smoke test or a proposal as a
   result. A real GPU profile gates any full training run.
 - Use the shared GPU lock (`ecg_experiment/gpu.py`). Limit CPU threads when agents run in parallel.
-- Closed data, never read until a user-approved final test: the PTB-XL test set, the Challenge test groups
-  (`docs/challenge-splits-v1.md`) and the EchoNext test set. SPH has been read by Experiments 022-037 and now
-  counts as development data. The one-time `final_frozen_test` waits for the user to freeze the pipeline.
+- Closed data: the Challenge test groups (`docs/challenge-splits-v1.md`) and the EchoNext test set. Never read
+  them before a user-approved final test. The PTB-XL test set is not untouched: Experiments 001-008 evaluated
+  on it. SPH has been read by Experiments 022-037 and counts as development data. The one-time
+  `final_frozen_test` waits for the user to freeze the pipeline; see `docs/audit-2026-09-30.md`.
+- Pretraining cohorts must exclude every evaluation record. Cohorts v2 predate the Challenge split and
+  include its test groups, so rebuild them before any pretraining.
 - Deferred, do not resume without the user: Experiments 008 and 010, and the 017 second seed.
 
 ## Data

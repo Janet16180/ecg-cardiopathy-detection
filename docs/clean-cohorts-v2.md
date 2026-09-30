@@ -41,6 +41,15 @@ copied and no model was trained. [Clean cohorts v1](clean-cohorts-v1.md) stay as
 - **Ages and sexes.** They come from each source's metadata. MIMIC has none locally, which is why the share of
   known ages falls in the large tiers.
 
+## Known issue: Challenge evaluation records inside the cohorts (30 September 2026)
+
+The cohorts were built before the [Challenge record split](challenge-splits-v1.md) existed, so they include
+Challenge records that the split later assigned to its test and calibration groups: 1,512 test-group records in
+`clean_25k_v2` and 12,603 in `clean_100k_v2` and every larger tier. No model has been trained on these cohorts
+yet, so no result is affected. Before any self-supervised pretraining, rebuild the cohorts (v3) without the
+Challenge test and calibration groups; see the backlog item `cohorts_v3_exclude_challenge_eval` and the
+[audit](audit-2026-09-30.md).
+
 ## Build
 
 ```bash

@@ -389,13 +389,16 @@ groups.
 | 033 ([protocol](experiment-033-finding-heads-screen.md), [results](experiment-033-finding-heads-screen-results.md)) | Binary readout plus PVC/WPW heads under one budget | Adopted; composite +0.037 at 5%, binary cost 0.003 | `outputs/experiment033_finding_heads_screen_v1/` |
 | 034 ([protocol](experiment-034-one-class-baselines.md), [results](experiment-034-one-class-baselines-results.md)) | Other one-class scores on the same embeddings | Mahalanobis stays; best alternatives within 0.004 | `outputs/experiment034_one_class_baselines_v1/` |
 | 035 ([protocol](experiment-035-hard-subset.md), [results](experiment-035-hard-subset-results.md)) | Why pooled readouts lose on the PTB-XL hard subset | Normal-label mismatch; reweighting recovers 81% with no SPH cost | `outputs/experiment035_hard_subset_v1/` |
+| 037 ([protocol](experiment-037-pipeline-v2.md), [results](experiment-037-pipeline-v2-results.md)) | Pipeline v2: 035 readout with 030 and 033 operating points | Adopted by rule (-0.0048 composite, fails strict non-inferiority); spec in [pipeline-v2](pipeline-v2.md) | `outputs/experiment037_pipeline_v2_v1/` |
 
 Next, ranked in the [backlog](experiment-backlog.json) and [priorities](experiment-priorities.md):
 `referral_budget_operating_point`, then `hybrid_screening_score` and `rhythm_findings_detector`, with the
 novelty search for the normal-reference finding. `final_frozen_test` runs once, after the operating-point rule is
 chosen. `student_criteria_label` and `young_subgroup_readout` wait for the cardiologist meeting;
 `enriched_positive_sensitivity` waits for clinic ECGs. SPH has now been read by 022-029 and serves as
-development data.
+development data. An [independent audit](audit-2026-09-30.md) on 30 September 2026 found every protocol committed before its run
+and every recomputed headline number correct. It also found that the PTB-XL test set was already read by 001-008,
+and that cohorts v2 contain Challenge test-group records.
 
 ## Research branches
 

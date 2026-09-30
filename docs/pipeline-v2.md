@@ -4,7 +4,9 @@ Adopted by [Experiment 037](experiment-037-pipeline-v2-results.md) on 30 Septemb
 `adopt_v2`). This file lists everything a later one-time final test (`final_frozen_test`) would freeze. It
 describes a candidate, not a validated screen: every number behind it comes from development data (PTB-XL
 development, the Challenge calibration groups and SPH, all read by earlier experiments). No final test has
-been run, and the PTB-XL test set and the Challenge test groups have not been read.
+been run. The Challenge test groups have not been read by any readout. The PTB-XL test set is not untouched:
+Experiments 001-008 evaluated on it, and the encoders were chosen after those readings
+([audit](audit-2026-09-30.md)).
 
 On SPH, v2 caught 0.005 fewer athlete-criteria abnormal ECGs than v1 (the 022b readout) at a 5% budget with
 200 local normals (−0.0048 [−0.0072, −0.0025]). That is within the pre-registered tolerance for adoption but
@@ -151,7 +153,9 @@ PYTHONPATH=. OMP_NUM_THREADS=3 uv run --no-sync python -u -m scripts.experiments
 
 ## 8. What a final test must still decide
 
-- Which held-out set (the PTB-XL test ECGs and the Challenge test groups are unread), which of its normals
+- Which held-out set. The Challenge test groups are unread by readouts, but the split is per record and the
+  released encoders saw Chapman/Ningbo waveforms in pretraining. The PTB-XL test set was already evaluated in
+  001-008. The only fully untouched site would be new data, such as the student pilot. Also: which of its normals
   play the local normals, and which budget is primary. The local-normal draw must come from the test site's
   normals only, and nothing may be refitted on it.
 - Whether to report v1 beside v2. v1 is the same pipeline with the unweighted 022b readout (`v1_*` in the

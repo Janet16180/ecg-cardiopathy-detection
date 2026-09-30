@@ -1,86 +1,88 @@
-# Project continuity
+# Agent guide
 
-## Repository workflow after the refactor
+Master's project (Tecnológico de Monterrey): screening university students with 12-lead ECGs. A nurse
+records the ECGs, a cardiologist reads them, and a model flags who needs follow-up. Keep this file short:
+history belongs in Git and the queue documents, not here.
 
-- Read `CONTRIBUTING.md` and `docs/README.md` for setup and document locations.
-- Use direct `uv` commands with the default `.venv`; see `CONTRIBUTING.md`.
-  Root dependencies live in `pyproject.toml` and `uv.lock`. Preserve installed
-  runtime dependencies while downloaders use them; use `uv sync --inexact`
-  and inspect its dry run before syncing an active environment.
-- Group commands by purpose under `scripts/`; reusable logic belongs in
-  `ecg_experiment/`. Keep active download entry points and dependencies stable.
-- Use Git history for maintenance changes; retain scientific protocols and evidence.
-- DVC covers completed verified sources and fixed patient split manifests only.
-  Never add active MIMIC/CODE download trees. See `docs/data-versioning.md`.
-- The user wants data kept local while evaluating affordable storage. Do not
-  upload training data to GitHub/Git LFS or configure/push a DVC remote without
-  their choice. Git stores small DVC pointers, not the dataset bytes.
-- MLflow is an optional index of aggregate results with explicit provenance;
-  source receipts remain authoritative. See `docs/experiment-tracking.md`.
-- CPU checks and data validation do not authorize training or scheduling.
+## Where things are
 
-## User-requested experiment pause
+- Setup and layout: `CONTRIBUTING.md`, `docs/README.md`.
+- State of the research: `docs/experiment-queue.md` and `.json` (what ran, where the outputs are),
+  `docs/experiment-backlog.json` and `docs/experiment-priorities.md` (ranked next steps, regenerated with
+  `python -m scripts.reports.rank_backlog`), and each experiment's `docs/experiment-NNN-*.md` protocol and
+  `*-results.md` report.
+- Candidate screening pipeline: `docs/pipeline-v2.md`, if present, otherwise Experiments 022b, 030, 033 and 035.
+- Summaries: `docs/findings-2026-09-28.md` and the later results reports; the cardiologist meeting guide is
+  `docs/cardiologist-meeting-prep.md`.
+- Read the live files under `outputs/` before reporting progress. PIDs and Markdown summaries are snapshots.
 
-Experiments and scheduling are **paused for a repository refactor** as of 24 September 2026. Do not launch or resume training until the user requests it. This overrides earlier authorization to proceed automatically. The waiting legacy MIMIC scheduler was stopped with no training child; the GPU was idle. Downloaders remain active: preserve their current source/data paths while running. Refactoring is authorized; preserve historical sources using `outputs/refactor_pause/source_before_refactor.tar.gz` and `source_hashes.json`, retain data/checkpoints/results, and make new verified executable manifests after refactoring. Do not rewrite old hash receipts. See `outputs/refactor_pause/pause.json` and both queue documents for recovery.
+## Git
 
-On 26 September 2026 the user explicitly requested execution of the queued
-NLP-inspired architecture Experiments 011–013 using Experiment 019's verified
-25,000-record training subset. This request resumes those studies under the
-new [common protocol](docs/nlp-inspired-25k-study.md), real V100 cost gates,
-and sequential GPU lock; it does not resume deferred 008 or 010 or authorize
-opening calibration/test before the prescribed development screens. The user
-prefers the existing `.venv` and normal uv cache and permits `uv add` if a
-library is genuinely needed. Check the live queue and process state before
-assuming any stage has started or finished.
+- Work on a branch; open every PR against `main`, never stacked on another branch. Before handing a PR over,
+  merge `origin/main` into it and check GitHub reports it mergeable.
+- Stage files by path; never `git add -A`. Commit messages are short and plain, with no Co-Authored-By line.
+- Parallel work uses worktrees (for example `~/ecg-wt-cpu`). Symlink `data`, `outputs`, `.venv` and
+  `third_party` from the main checkout, run `git ls-files data outputs | xargs git update-index
+  --skip-worktree`, and run code with `PYTHONPATH=<worktree>` because the editable install points at the
+  main checkout.
+- Use the default `.venv` with `uv`; `uv add` is allowed for a genuinely needed library, but check the dry
+  run first (`uv sync --inexact`) and remember `pyproject.toml` and `uv.lock` are pinned.
+- Another agent (Codex) may share the checkout. Never stage, stash or delete its uncommitted files.
 
-Later on 26 September, the user canceled the current NLP-inspired experiment
-work to finish EDA first. The 011 profile-only queue was interrupted during
-cache verification, before its V100 timing; its status is
-`outputs/experiment_queue_nlp25k_011_profile_v1/status.json`. No 25k model
-training or development readout ran. Do not launch 011–013 profiles, training,
-or a successor queue until the user explicitly resumes this work. Preserve the
-prepared code, manifests and receipts. EDA workers were resumed after the
-profile stopped; do not stop or repurpose them for experiment work. The pause
-receipt is `outputs/nlp25k_pause_2026-09-26/pause.json`.
+## Frozen code and new experiments
 
-On 27 September the user reported that EDA was finished and explicitly asked
-to continue the 25k NLP-inspired experiments. This resumes 011–013 under their
-profile and cost gates. The interrupted 011 v1 profile supplied no complete
-cache hash, so `scripts/coordination/create_nlp25k_cache_seal.py` performs a
-new one-time full SHA-256 verification before successor GPU profiles. Check
-its live process and seal receipt before launching any dependent stage.
+- Experiment receipts pin about 330 files by path, SHA-256 or module name, including `pyproject.toml` and
+  `uv.lock`. Never edit a pinned file. New work goes in new files. The method for finding pinned files is in
+  `docs/code-quality-review-2026-09-29.md`.
+- New code imports shared helpers instead of copying them: `ecg_experiment/intervals.py` for patient
+  bootstraps and intervals, `ecg_experiment/paths.py` for paths written into receipts (repository-relative,
+  never `resolve()`). Reusable logic lives in `ecg_experiment/`; scripts should not import other scripts.
+- Every experiment:
+  1. commits its protocol, with the primary comparison and decision rule, before any score;
+  2. reproduces its predecessor's numbers exactly as an integrity check;
+  3. ends with a results report written from the outputs by the agent that ran it;
+  4. writes follow-up ideas into the backlog, where they are ranked. Run one early only if it needs no busy
+     GPU, worktree or downloading data.
+- Update both queue documents when an experiment changes state. Never present a smoke test or a proposal as a
+  result. A real GPU profile gates any full training run.
+- Use the shared GPU lock (`ecg_experiment/gpu.py`). Limit CPU threads when agents run in parallel.
+- Closed data, never read until a user-approved final test: the PTB-XL test set, the Challenge test groups
+  (`docs/challenge-splits-v1.md`) and the EchoNext test set. SPH has been read by Experiments 022-037 and now
+  counts as development data. The one-time `final_frozen_test` waits for the user to freeze the pipeline.
+- Deferred, do not resume without the user: Experiments 008 and 010, and the 017 second seed.
 
-The fresh shared cache seal and all three 25k studies completed on 27
-September. Real V100 cost gates passed before every full stage; the 011–013
-development results and independent artifact audits are summarized in
-`docs/nlp-inspired-25k-study-results.md`. The primary 011 CKDA–KDA and 013
-Mamba-3–Mamba-2 patient intervals crossed zero; 012 mixed support trailed its
-matched local control. No calibration/test data were opened and no NLP 25k GPU
-queue is active. Do not automatically schedule a second seed or longer run;
-use the queue documents for exact manifests, receipts and next decisions.
+## Data
 
-For experiment work, first read:
+- Data stay local: no Git LFS, no DVC remote, no uploads, unless the user chooses otherwise. Git holds only
+  small DVC pointers. MIMIC-IV-ECG and EchoNext are credentialed: only aggregate numbers leave the machine,
+  and never through an external API.
+- MIMIC labels come from the cart's software and are not trusted. MIMIC and CODE-15 are for unlabeled
+  self-supervised pretraining only. Labels come from human-read sources (PTB-XL, SPH, Ningbo, Chapman, Georgia,
+  CPSC) or echo-confirmed EchoNext.
+- SPH is the external test hospital and never enters training. Chapman and Ningbo are one source family, as
+  are CPSC and CPSC-Extra. The Challenge sources have no patient IDs, so their split is per record.
+- Cohorts are quality-first: curated human-read sources, then CODE-15 from 150k, then MIMIC. See
+  `docs/clean-cohorts-v2.md`, `docs/clean-ningbo-v1.md`, `docs/clean-code15-v1.md`.
+- Known problems:
+  - Ningbo JS13118 is corrupted upstream and excluded.
+  - 4.2% of Ningbo ECGs have a lead that is zero for the whole recording.
+  - 71 Chapman-Ningbo exact duplicates.
+  - The CODE-15 amplitude unit is unresolved.
 
-1. `docs/experiment-queue.md` — human-readable queue and recovery instructions.
-2. `docs/experiment-queue.json` — authorized priorities, implementation status, dependencies and next actions.
-3. The selected experiment's linked protocol and verification/results files.
+## Clinical scope
 
-The user authorized Experiments 011–013 (KDA/CKDA, a compact StripedHyena-inspired model, and Mamba-3) and all four Astra proposals, Experiments 014–017. They are authorized; do not ask again whether to add them. Experiments **011–013 are complete** as one-seed development screens. Experiment **014 is complete** (negative development screen at both label budgets). Experiment **015 is complete**, with a negative development screen. Corrected **017 v2 is complete** under `outputs/experiment_queue_017_v2/queue.json`; its limited-label development screen passed. Prepare a separately frozen second-seed replication and artifact checks before any calibration/test. This follow-up is not automatically scheduled. No experiment queue is currently active. Experiments 008 and 010 remain deferred; do not automatically resume them. The editable backlog is not a live scheduler.
+- The binary label (any MI, STTC, CD or HYP code against sinus rhythm alone) is an ECG-annotation proxy, not
+  a diagnosis, and it disagrees with the 2017 international athlete criteria.
+- Wait for the cardiologist before changing label definitions or adding age-subgroup analyses. Left
+  ventricular high voltage alone stays undefined.
+- Operating points come from a referral budget fitted on local normal ECGs (Experiment 030), not from a
+  fixed sensitivity target.
 
-## Running work and evidence
+## Style
 
-- Read live coordination files under `outputs/` before reporting progress or launching jobs. PIDs and Markdown status summaries are snapshots, not proof a process is alive.
-- There is one V100 16 GB GPU. Use the shared GPU lock and coordinate the older MIMIC runner; it predates that lock. Keep the downloader running.
-- `outputs/experiment_queue/queue.json` is the **historical frozen executable manifest** for 009 → 007 → 008 → 010. It stopped at the 008 profile after 009 and 007 completed. Its successor `outputs/experiment_queue_recovery_008/queue.json` passed the 008 profile and began training, then was interrupted when the user deferred the expensive 008 run. The first profile-only 010 manifest in `outputs/experiment_queue_profile_010/` failed a bitwise CUDA roundtrip check on a 1.49e-8 difference. The corrected profile-only manifest in `outputs/experiment_queue_profile_010_v2/` passed all three V100 arms. The full 010 run in `outputs/experiment_queue_full_010/` was then stopped after actual cache I/O made the projected suite exceed the adopted two-hour planning ceiling. It saved a verified native-arm epoch-1 checkpoint. The most recently completed NLP 25k manifest is `outputs/experiment_queue_nlp25k_013_full_v2/queue.json`, following complete 011 and 012 successors; check live status and handoff receipts before launching work. 008 and 010 are deferred for cost. The older MIMIC runner was subsequently stopped for the user-requested refactor pause; the downloader continues. The editable backlog under `docs/` does not automatically schedule a GPU process.
-- Existing experiments verify code and input hashes. Implement new experiments in new files; do not alter frozen sources or a live executable manifest in place. Prepare a verified successor manifest when new runners are ready.
-- Update both queue documents when a task changes state. Record actual commands, source revisions/hashes, verification receipts and result locations. Mark an experiment runnable only after implementation checks; require a real GPU profile before full training. Never present a proposed experiment or a smoke test as a performance result.
-- Authorized jobs can proceed without another routine confirmation. Stop only the specific unsafe/incompatible action if a concrete conflict arises; continue independent work.
-
-## Scientific constraints and preferences
-
-- Do not trust MIMIC-IV-ECG labels. Its report statements and measurements come from the ECG cart's software, not from a physician (user preference, 28 September 2026). Use MIMIC for unlabeled self-supervised pretraining only; never as training targets, evaluation labels or evidence of accuracy. Prefer human-read sources (PTB-XL, SPH, Ningbo, Chapman, Georgia, CPSC) or echo-confirmed EchoNext labels.
-- Raw twelve-lead ECGs; public-data experiments currently use 56,875 training recordings, with 15,360 full training labels or the fixed 1,518-label subset. Preserve patient splits and train-only fitting.
-- The binary endpoint is an ECG diagnostic annotation proxy. It does not establish that a person is healthy or validate university referral decisions. Keep separate development, calibration and test patients.
-- Compare new architectures using explicit controls for data, initialization, objective, model size and training budget. Published results in another domain do not establish ECG superiority.
-- The user permits combining public data and learning from hidden public labels to simulate limited annotation. New experiments should use the frozen current pool for fair initial comparisons, with later data scaling recorded separately.
-- The user authorizes subagents. When delegating, use Sol medium for simple research, Sol high for programming, and Astra for difficult scientific/design work.
+- Follow the user's global CLAUDE.md: simple flat functions, type hints, NumPy docstrings, minimal comments,
+  let errors raise, no emojis, plain English, little bold.
+- EDA: plain Python modules first, notebook last. Results first, then text: every sentence must be backed by
+  an executed output. Notebooks describe the data; project recommendations go in separate docs.
+- Subagents are authorized. Give each one a complete brief, including the results report. For Codex: Sol
+  medium for simple research, Sol high for programming, Astra for hard scientific or design work.

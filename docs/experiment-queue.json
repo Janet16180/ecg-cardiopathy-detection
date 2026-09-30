@@ -1703,6 +1703,7 @@
       "033": {"protocol": "docs/experiment-033-finding-heads-screen.md", "results": "docs/experiment-033-finding-heads-screen-results.md", "outputs": "outputs/experiment033_finding_heads_screen_v1/", "decision": "adopt combined_50"},
       "034": {"protocol": "docs/experiment-034-one-class-baselines.md", "results": "docs/experiment-034-one-class-baselines-results.md", "outputs": "outputs/experiment034_one_class_baselines_v1/", "decision": "Mahalanobis stays"},
       "035": {"protocol": "docs/experiment-035-hard-subset.md", "results": "docs/experiment-035-hard-subset-results.md", "outputs": "outputs/experiment035_hard_subset_v1/", "decision": "adopt dropped_upweighted"},
+      "036": {"protocol": "docs/experiment-036-random-encoder.md", "results": "docs/experiment-036-random-encoder-results.md", "outputs": "outputs/experiment036_random_encoder_v1/", "decision": "pretraining is needed for the normal reference (+0.192 at SPH)"},
       "037": {"protocol": "docs/experiment-037-pipeline-v2.md", "results": "docs/experiment-037-pipeline-v2-results.md", "outputs": "outputs/experiment037_pipeline_v2_v1/", "decision": "adopt_v2 by rule; fails strict non-inferiority"}
     },
     "next": ["referral_budget_operating_point", "hybrid_screening_score", "rhythm_findings_detector", "normal_manifold_novelty_search", "final_frozen_test"],

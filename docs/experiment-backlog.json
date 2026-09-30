@@ -985,7 +985,7 @@
       "gpu_hours": 0.5,
       "cpu_hours": 0.5,
       "blocked_by": [],
-      "status": "open",
+      "status": "done",
       "id": "random_encoder_control",
       "title": "Normal-reference score on a random and on a supervised encoder",
       "question": "Does the one-class score need self-supervised pretraining, or does a random-initialized encoder (or a supervised one) do as well?",
@@ -993,7 +993,7 @@
       "value": 3,
       "clarity": 0.7,
       "build_hours": 3,
-      "notes": "One GPU extraction with random weights of the xECG architecture."
+      "notes": "One GPU extraction with random weights of the xECG architecture. Done 30 September 2026 as Experiment 036 (PR #54): normal-reference SPH AUROC pretrained 0.878 against random 0.685-0.687 (+0.192 [+0.185, +0.200]); the supervised readout gap is +0.046; the label-free score depends on pretraining about four times as much."
     },
     {
       "kind": "experiment",

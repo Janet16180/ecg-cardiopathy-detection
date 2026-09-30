@@ -385,7 +385,7 @@ A generalized delta recurrence with dynamic state evolution offers another route
 
 *Mamba-3: Improved Sequence Modeling using State Space Principles.* ICLR 2026; preprint 16 March 2026. [Paper](https://arxiv.org/abs/2603.15569).
 
-Combines a richer discretized recurrence, complex-valued state evolution and multi-input/multi-output modeling. Oscillatory state dynamics are a plausible signal hypothesis; the paper's language gains and inference efficiency do not establish a benefit for short ECG sequences or our V100. It is authorized as [Experiment 013](experiment-013-mamba3-plan.md), with implementation and device compatibility checks pending.
+Combines a richer discretized recurrence, complex-valued state evolution and multi-input/multi-output modeling. Oscillatory state dynamics are a plausible signal hypothesis; the paper's language gains and inference efficiency do not establish a benefit for short ECG sequences or our V100. It is authorized as [Experiment 013](experiment-013-mamba3-25k.md), with implementation and device compatibility checks pending.
 
 ### 35. Evo 2 and StripedHyena 2
 

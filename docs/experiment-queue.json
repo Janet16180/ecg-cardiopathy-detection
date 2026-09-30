@@ -570,7 +570,7 @@
       "id": "013",
       "priority": 5,
       "name": "Compact Mamba-3 ECG encoder",
-      "protocol": "docs/experiment-013-mamba3-plan.md",
+      "protocol": "docs/experiment-013-mamba3-25k-v2.md",
       "output_dir": "outputs/experiment013_mamba3",
       "arms": [
         "Compact Mamba-3",
@@ -591,14 +591,14 @@
         "https://arxiv.org/abs/2603.15569",
         "https://github.com/state-spaces/mamba"
       ],
-      "status": "prepared_awaiting_serial_gpu_profile",
+      "status": "complete",
       "authorized": true,
       "runner": null,
       "launch_command": null,
       "gpu_profile": null,
       "profile_25k_manifest": "outputs/experiment_queue_nlp25k_013_profile_v1/queue.json",
       "profile_25k_manifest_sha256": "68568909c7e85382ab58b254c309517e1cdb5655c722c1fabea22d4b6b87c89f",
-      "results": null,
+      "results": "outputs/experiment013_mamba3_25k_v2/result.json",
       "historical_run_after": "012",
       "dependencies": [],
       "profile_25k_status": "not launched"

@@ -389,6 +389,7 @@ groups.
 | 033 ([protocol](experiment-033-finding-heads-screen.md), [results](experiment-033-finding-heads-screen-results.md)) | Binary readout plus PVC/WPW heads under one budget | Adopted; composite +0.037 at 5%, binary cost 0.003 | `outputs/experiment033_finding_heads_screen_v1/` |
 | 034 ([protocol](experiment-034-one-class-baselines.md), [results](experiment-034-one-class-baselines-results.md)) | Other one-class scores on the same embeddings | Mahalanobis stays; best alternatives within 0.004 | `outputs/experiment034_one_class_baselines_v1/` |
 | 035 ([protocol](experiment-035-hard-subset.md), [results](experiment-035-hard-subset-results.md)) | Why pooled readouts lose on the PTB-XL hard subset | Normal-label mismatch; reweighting recovers 81% with no SPH cost | `outputs/experiment035_hard_subset_v1/` |
+| 036 ([protocol](experiment-036-random-encoder.md), [results](experiment-036-random-encoder-results.md)) | Does the normal reference need pretraining? | Yes: pretrained 0.878 against random 0.686 at SPH | `outputs/experiment036_random_encoder_v1/` |
 | 037 ([protocol](experiment-037-pipeline-v2.md), [results](experiment-037-pipeline-v2-results.md)) | Pipeline v2: 035 readout with 030 and 033 operating points | Adopted by rule (-0.0048 composite, fails strict non-inferiority); spec in [pipeline-v2](pipeline-v2.md) | `outputs/experiment037_pipeline_v2_v1/` |
 
 Next, ranked in the [backlog](experiment-backlog.json) and [priorities](experiment-priorities.md):

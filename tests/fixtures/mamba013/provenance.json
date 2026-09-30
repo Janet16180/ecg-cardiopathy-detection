@@ -1,0 +1,11 @@
+{
+  "repository": "https://github.com/state-spaces/mamba",
+  "commit": "e9594ce1c732d97440f0332fdc43170a2294dbfa",
+  "files_sha256": {
+    "mamba_ssm/modules/mamba3.py": "930c3dfa04dea8444b1c9ee8b6ac9cbbc7ef492dc5ae1f4c83051ef953eca33c",
+    "mamba_ssm/modules/mamba2_simple.py": "61149f49cf58cfaeeeef6476dfb25468ad0260760c1ab240fdae97ec93c170f5",
+    "mamba_ssm/ops/triton/mamba3/mamba3_siso_combined.py": "410ad57555b5841fba7bd76fdafdc3ddf82741176489c3e3493f5c6f3c0c6012",
+    "tests/ops/triton/test_mamba3_siso.py": "b68ec350f557a4124516f7d1c916ec756a48389fed4387791aadb74492531e85"
+  },
+  "fixture_sha256": "36ac74f09420566bf31e3d5c2e549e1df2d0e55590164d0c2d82e6b613b3d175"
+}

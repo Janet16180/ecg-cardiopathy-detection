@@ -1,6 +1,165 @@
 # Experiment queue
 
-**Updated:** 26 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
+**Updated:** 27 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
+
+**27 September resume:** The user reported EDA finished and explicitly resumed
+Experiments 011–013 on the fixed 25k subset. The V100 was idle and no study
+runner was active at 04:44 UTC. Because the interrupted 011 profile never
+finished its full-cache hash, a new one-time verification ran through
+`scripts.coordination.create_nlp25k_cache_seal`, with the normal uv cache and
+current `.venv`. It produced the shared seal before any
+successor profile. Fresh executable manifests and real V100 cost gates still
+precede training. The 26 September pause below is historical.
+
+**27 September 011 profile:** The fresh full-cache seal completed in 1,175.11 s;
+its [creation receipt](../outputs/cache_sessions/nlp25k_v1/creation.json) pins
+the two historical waveform SHA-256 values and the local seal hash. CPU identity
+checks passed for 011–013. The new [011 v2 profile-only manifest](../outputs/experiment_queue_nlp25k_011_profile_v2/queue.json)
+passed coordinator `--check` and launched at 05:07:29 UTC. Its child was
+observed on the V100 with 3,186 MiB allocated. Check the live
+[status](../outputs/experiment_queue_nlp25k_011_profile_v2/status.json) and
+profile receipt before reporting a cost gate or launching any training stage.
+
+**27 September 011 full stage:** The v2 profile completed with 979.76 s
+selected-row staging, finite 24-update trials for GRU/KDA/CKDA, and peak
+allocation below 10 GB. Its conservative complete-study projection was
+**6,194.37 s**, below the **7,200 s** gate. A separate
+[training/readout manifest](../outputs/experiment_queue_nlp25k_011_full_v2/queue.json)
+passed coordinator `--check` and launched its training stage at 05:26:20 UTC.
+Inspect the live [status](../outputs/experiment_queue_nlp25k_011_full_v2/status.json)
+and arm checkpoints before claiming updates or a development result. The
+manifest contains only 011 train and development readout stages.
+The training log subsequently showed GRU reach 800/902 updates with periodic
+checkpoint writes; this is an observed training state, not a development result.
+
+**27 September 011 completion:** The full queue completed at 05:38:44 UTC with
+all three arms trained for 902 updates. The independent
+[audit](../outputs/experiment011_delta_memory_25k_v2/audit.json) passed the
+three checkpoint/optimizer/encoder movement checks and the fixed development
+readout, including saved prediction hashes and metric replay. The
+[result](../outputs/experiment011_delta_memory_25k_v2/result.json) used no
+calibration or test data. CKDA minus KDA, the prespecified primary contrast,
+was +0.00551 AUROC at 15,359 labels (paired patient 95% CI −0.00225 to
++0.01326) and +0.00479 at 1,518 labels (CI −0.00275 to +0.01304). Both
+intervals cross zero; the single-seed result does not establish CKDA
+superiority. CKDA minus GRU was +0.01046 (CI +0.00125 to +0.01954) at full
+labels, a secondary contrast. Next: freeze and run the 012 v3 profile-only
+successor, then apply its 7,200-second real V100 gate.
+
+**27 September 012 profile:** The new
+[profile-only manifest](../outputs/experiment_queue_nlp25k_012_profile_v3/queue.json)
+passed coordinator `--check` and launched at 05:40:37 UTC under the shared V100
+lock. It has no full-training stage. Check its live
+[status](../outputs/experiment_queue_nlp25k_012_profile_v3/status.json) and
+[profile receipt](../outputs/experiment012_temporal_hybrid_25k_v3/profile.json)
+before deciding whether the 7,200-second complete-path gate passes.
+
+The profile completed at 05:40:58 UTC. It staged the selected 3.0 GB in 3.55 s
+with a warm filesystem cache, completed 24 real updates plus checkpoint replay
+and training-only feature extraction for each arm, and projected **1,555.26 s**
+for the complete study against the **7,200 s** ceiling. Peak allocated memory
+was below 4.34 GB. A separate
+[training manifest](../outputs/experiment_queue_nlp25k_012_train_v3/queue.json)
+passed coordinator `--check` and launched at 05:41:51 UTC. The earlier cold
+staging observed in 011 took 979.76 s; even two such cold staging passes leave
+headroom against this gate. Inspect the live
+[training status](../outputs/experiment_queue_nlp25k_012_train_v3/status.json)
+and completion receipts. The separate development readout still needs its own
+real V100 profile and cost gate.
+
+**27 September 012 completion:** The three 902-update training arms completed
+at 05:44:03 UTC and passed an independent checkpoint audit. The separate
+[readout profile](../outputs/experiment012_temporal_hybrid_25k_v3_readout/profile.json)
+projected **956.16 s** against 7,200 s. The verified
+[development readout queue](../outputs/experiment_queue_nlp25k_012_readout_full_v3/queue.json)
+completed at 05:46:34 UTC, and the independent
+[audit](../outputs/experiment012_temporal_hybrid_25k_v3_readout/audit.json)
+passed all saved features, predictions, identities and replayed scores. In the
+[result](../outputs/experiment012_temporal_hybrid_25k_v3_readout/result.json),
+mixed minus matched local support, the prespecified primary contrast, was
+**−0.00996 AUROC** at 15,359 labels (paired patient 95% CI −0.01865 to
+−0.00210), and **−0.00993** at 1,518 labels (CI −0.01914 to −0.00061).
+This single-seed development screen disfavors the mixed support architecture;
+no calibration or test data were opened. Next is a new 013 v2 profile-only
+manifest and its real V100 complete-path cost gate.
+
+**27 September 013 profile:** The new
+[profile-only manifest](../outputs/experiment_queue_nlp25k_013_profile_v2/queue.json)
+passed coordinator `--check` and launched at 05:48:39 UTC. Check the live
+[status](../outputs/experiment_queue_nlp25k_013_profile_v2/status.json) and
+cost receipt before admitting training. This manifest has no training stage.
+
+The profile completed at 05:48:57 UTC. The selected 3.0 GB staged in 3.55 s
+with a warm filesystem cache; all three 24-update trials, checkpoint replay and
+training-only PTB feature passes completed. Peak allocated memory was below
+5.48 GB. Its [receipt](../outputs/experiment013_mamba3_25k_v2/profile.json)
+projected **1,374.09 s** for the full study, below the **7,200 s** gate. The
+separate [full manifest](../outputs/experiment_queue_nlp25k_013_full_v2/queue.json)
+passed coordinator `--check` and launched train then development readout at
+05:50:10 UTC. Check its live
+[status](../outputs/experiment_queue_nlp25k_013_full_v2/status.json) before
+reporting any updates or score.
+
+**27 September 013 completion:** The full queue completed at 05:54:30 UTC,
+after all three arms reached 902 updates and development readout finished. The
+original auditor omitted root-level dependency files from its path map and
+stopped before writing a receipt. A separate versioned
+[auditor v2](../scripts/validation/audit_nlp25k_successors_v2.py) corrected that
+map without editing frozen experiment sources; its
+[audit](../outputs/experiment013_mamba3_25k_v2/audit_v2.json) passed all
+checkpoint, encoder movement, head, feature, prediction and metric checks.
+The [result](../outputs/experiment013_mamba3_25k_v2/result.json) found the
+prespecified Mamba-3 minus Mamba-2 contrast **−0.00818 AUROC** at 15,359 labels
+(paired patient 95% CI −0.01722 to +0.00083) and **−0.00806** at 1,518 labels
+(CI −0.01745 to +0.00178). These single-seed intervals cross zero, and the
+point estimates do not favor Mamba-3. Mamba-2 minus GRU was +0.01250 at full
+labels (CI +0.00375 to +0.02161), a secondary contrast. No calibration or test
+data were opened. The three requested 25k development screens are complete;
+no successor GPU work is automatically scheduled.
+The cross-study [25k results summary](nlp-inspired-25k-study-results.md)
+links every frozen queue, result and independent audit.
+
+**26 September pause for EDA:** The user canceled the active NLP-inspired
+experiment work to finish EDA first. The 011 profile-only coordinator and its
+child were interrupted at 22:57:10 UTC during the large cache verification,
+before V100 timing. Its [status](../outputs/experiment_queue_nlp25k_011_profile_v1/status.json)
+is `interrupted`; no 25k training or development readout result exists. EDA
+workers were resumed and the GPU was idle at the [pause receipt](../outputs/nlp25k_pause_2026-09-26/pause.json). Do not launch 011–013 profiles or
+training until the user explicitly resumes experiments. Keep all prepared
+versioned runners and historical manifests as drafts/evidence, and require a
+new verified executable manifest and real GPU cost gate on resumption.
+
+**26 September NLP-inspired 25k request:** The user requested execution of the
+remaining NLP-inspired architecture studies on the verified Experiment 019
+25,000-record subset. The [prospective common protocol](nlp-inspired-25k-study.md)
+fixes that selection, a matched 115,359-exposure screening budget, and the
+existing PTB training/development readout contract for 011–013. Implementation
+and verification are in progress; this request authorizes the necessary
+training after each real V100 profile and cost gate passes. It does not turn a
+cost-only profile into a model result. No calibration or test evaluation is
+scheduled by this initial development screen. Check the live lock and process
+state before any launch. Source-hashed profile-only manifests for
+[011](../outputs/experiment_queue_nlp25k_011_profile_v1/queue.json),
+[012 v2](../outputs/experiment_queue_nlp25k_012_profile_v2/queue.json), and
+[013](../outputs/experiment_queue_nlp25k_013_profile_v1/queue.json) passed
+coordinator `--check`; their SHA-256 values are recorded in the JSON catalog.
+They do not contain training stages.
+The first 012 profile manifest is retained but superseded before launch: the
+v2 profile includes the complete training and development-readout cost in its
+admission gate. Those manifests were paused under the 26 September instruction;
+the 27 September resume above requires newly verified successor manifests.
+
+**011 profile launched at 22:23 UTC on 26 September:** The verified
+[profile-only manifest](../outputs/experiment_queue_nlp25k_011_profile_v1/queue.json)
+started its child after both redundant standalone CPU hash checks were stopped.
+The child is first hashing the complete local caches; its CUDA profiling begins
+only after that preflight passes. Its launch PID and this note are snapshots:
+inspect the live [status](../outputs/experiment_queue_nlp25k_011_profile_v1/status.json),
+child process and log before claiming an actual V100 measurement. No training
+stage is present in the manifest.
+It was interrupted at the user's request at 22:57:10 UTC before CUDA profiling
+or a completed cache hash. The prepared shared cache seal cannot be adopted
+from this incomplete receipt.
 
 **PTB diagnosis geometry and MIMIC transfer completed:** The
 [exploratory patient-balanced CPU study](ptb-mimic-cpc-diagnosis-geometry.md)
@@ -116,13 +275,13 @@ The user authorized **all four Astra proposals**, now Experiments **014–017**.
 
 | Priority | Experiment | Status | Expected pilot cost / next work |
 | --- | --- | --- | --- |
-| 1 | [011: KDA / CKDA](experiment-011-delta-memory.md) | Implementing | Complete staged SSL profile passed: 36.3/205.1/219.1 s per GRU/KDA/CKDA epoch; 20 epochs exceed the two-hour gate before downstream work. Profile a shorter end-to-end protocol. |
-| 2 | [012: StripedHyena-inspired](cross-domain-architecture-candidates.md#2-genomics-a-compact-mixture-of-temporal-scales) | Queued for implementation | Runtime unknown; mixed temporal supports versus local control |
-| 3 | [013: Mamba-3](experiment-013-mamba3-plan.md) | Queued for implementation | Runtime and V100 backend unverified |
+| 1 | [011: KDA / CKDA](experiment-011-delta-memory-25k-v2.md) | Complete development screen | Three 902-update arms and independent artifact audit passed; primary CKDA–KDA patient interval crosses zero at both label budgets. No calibration/test. |
+| 2 | [012: StripedHyena-inspired](experiment-012-temporal-hybrid-v3.md) | Complete negative development screen | Mixed support trailed matched local support by about 0.010 AUROC at both label budgets; independent audit passed. No calibration/test. |
+| 3 | [013: Mamba-3](experiment-013-mamba3-25k-v2.md) | Complete development screen | Three 902-update arms and versioned independent artifact audit passed; Mamba-3 point estimate trailed Mamba-2 at both budgets, with patient intervals crossing zero. No calibration/test. |
 
 The [Astra research note](astra-next-model-ideas.md) supplies the four new designs, controls and primary sources; the JSON catalog links each proposal's exact section. **These ranges are unmeasured planning estimates, not promised completion times**, and exclude implementation work. Only 014 is clearly the cheapest starting point. The remaining ranges overlap; actual complete-pass timing may change their order. A short GPU compute profile alone is insufficient, as Experiment 010 demonstrated. Include cold/warm loading, every comparison arm, evaluation and checkpoint writes in the working two-hour GPU-pilot planning gate.
 
-**No training or audit queue is currently active.** The 016 v14 seed-47 development replication completed; no follow-up is scheduled. The 011 recurrence remains under implementation and is not being trained. The editable backlog does not schedule a process. Use development patients for early screening, then freeze choices before calibration/test. GPU work remains sequential.
+**The 011–013 development screens are complete; no NLP 25k GPU queue is active.** Recheck live status before any future GPU stage. The 016 v14 seed-47 development replication completed; no follow-up is scheduled. The editable backlog does not schedule a process. Use development patients for early screening, then freeze choices before calibration/test. GPU work remains sequential.
 
 ## Deferred and completed studies
 

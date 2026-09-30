@@ -2,6 +2,16 @@
 
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
+**30 September encoder/context study authorized:** The user requested a day of CPC encoder variants
+crossed with GRU and xLSTM on the new cohort. [Experiment 039](experiment-039-cpc-encoder-context.md)
+freezes the complete CNN/multiscale/patch × GRU/xLSTM factorial at v4 25k and 50k, with three seeds
+(36 fresh fits), matched 250,000 exposures and unchanged development readouts. The v4 tiers equal v3,
+so verified 038 caches can be reused. One diagnostic and one evidence-supported correction/remeasurement
+per severely failing combination are authorized; all original outcomes remain in the report.
+Implementation is in progress. No new model score or passed GPU profile exists yet. Closed tests stay
+closed. Inspect `outputs/experiment039_encoder_context/` for live evidence; the executable ceiling is
+eight hours, with a reserve for diagnoses/corrections.
+
 **30 September xLSTM result:** Experiment [038](experiment-038-cpc-xlstm-results.md) completed the
 user-authorized 25k and conditional 50k comparisons in PR #56. All four full CPC arms trained fresh
 for 1,954 updates / 250,000 exposures each; both development audits passed. Primary 1,518-label

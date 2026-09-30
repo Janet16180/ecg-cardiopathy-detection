@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-30T13:37:11.786318+00:00",
+  "updated_at_utc": "2026-09-30T17:00:27.086435+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
-  "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
+  "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
   "nlp_25k_study": {
     "requested_at_utc_date": "2026-09-26",
-    "authorization": "User resumed the 25k NLP-inspired architecture studies after EDA on 27 September 2026. Run 011–013 sequentially under fresh GPU profiles and cost gates; no calibration/test.",
+    "authorization": "User resumed the 25k NLP-inspired architecture studies after EDA on 27 September 2026. Run 011\u2013013 sequentially under fresh GPU profiles and cost gates; no calibration/test.",
     "common_protocol": "docs/nlp-inspired-25k-study.md",
     "results_summary": "docs/nlp-inspired-25k-study-results.md",
     "experiments": [
@@ -20,7 +20,7 @@
     "initial_exposures_per_arm": 115359,
     "initial_updates_per_arm": 902,
     "status": "011_012_013_25k_development_screens_complete_audited",
-    "next_action": "Review the completed 011–013 development-only results and decide a separately frozen second-seed replication or new study; no successor GPU queue is scheduled. Calibration/test remain closed.",
+    "next_action": "Review the completed 011\u2013013 development-only results and decide a separately frozen second-seed replication or new study; no successor GPU queue is scheduled. Calibration/test remain closed.",
     "last_profile_attempt": {
       "manifest": "outputs/experiment_queue_nlp25k_011_profile_v1/queue.json",
       "manifest_sha256": "be3bfcc825e6b8ac03a97d1e33a4d9c13f2a55008efc60399a4df93fef94d1f0",
@@ -76,9 +76,15 @@
       "audit": "outputs/experiment011_delta_memory_25k_v2/audit.json",
       "audit_sha256": "31a51f69a577a2f086141da0c92c57ff7709c03bba03c766d58e724f7db273ca",
       "primary_full_ckda_minus_kda_auroc": 0.005513580265891993,
-      "primary_full_ci95": [-0.002253953987376481, 0.013256343008260762],
+      "primary_full_ci95": [
+        -0.002253953987376481,
+        0.013256343008260762
+      ],
       "primary_limited_ckda_minus_kda_auroc": 0.004788513716055709,
-      "primary_limited_ci95": [-0.002749013890161689, 0.013038924720222217],
+      "primary_limited_ci95": [
+        -0.002749013890161689,
+        0.013038924720222217
+      ],
       "calibration_test_evaluated": false
     },
     "historical_012_profile_launch_snapshot": {
@@ -123,9 +129,15 @@
       "audit": "outputs/experiment012_temporal_hybrid_25k_v3_readout/audit.json",
       "audit_sha256": "f4cf66464c5bc028ff266850d027d191beb76ef5d5af714befba2ce162539c81",
       "primary_full_mixed_minus_local_auroc": -0.009958776251636436,
-      "primary_full_ci95": [-0.01865125409961383, -0.0020967701451968888],
+      "primary_full_ci95": [
+        -0.01865125409961383,
+        -0.0020967701451968888
+      ],
       "primary_limited_mixed_minus_local_auroc": -0.009925469307651036,
-      "primary_limited_ci95": [-0.01913631357161138, -0.0006148632951378778],
+      "primary_limited_ci95": [
+        -0.01913631357161138,
+        -0.0006148632951378778
+      ],
       "calibration_test_evaluated": false
     },
     "historical_013_profile_launch_snapshot": {
@@ -165,9 +177,15 @@
       "audit": "outputs/experiment013_mamba3_25k_v2/audit_v2.json",
       "audit_sha256": "5e053cec51ccdb5fbedb5f45c88cc6fd497de48b23dc03fb09baa208e6355d87",
       "primary_full_mamba3_minus_mamba2_auroc": -0.008175573712110307,
-      "primary_full_ci95": [-0.017223658739184085, 0.0008260513860162872],
+      "primary_full_ci95": [
+        -0.017223658739184085,
+        0.0008260513860162872
+      ],
       "primary_limited_mamba3_minus_mamba2_auroc": -0.008057718371853873,
-      "primary_limited_ci95": [-0.017447337627042234, 0.001775997274836527],
+      "primary_limited_ci95": [
+        -0.017447337627042234,
+        0.001775997274836527
+      ],
       "calibration_test_evaluated": false
     }
   },
@@ -258,7 +276,7 @@
       "constraints": [
         "Preserve fixed patient splits and train-only fitting.",
         "Distinguish compact CPC from released S4 ECG-CPC and frozen from fine-tuned readouts.",
-        "Do not automatically resume deferred Experiment 010 or displace 011–013.",
+        "Do not automatically resume deferred Experiment 010 or displace 011\u2013013.",
         "One experiment at a time; require complete-path profile and 7200-second gate before GPU training.",
         "No calibration or test access in the evidence-review stage."
       ],
@@ -309,7 +327,7 @@
         "Development-selected blend"
       ],
       "primary_comparison": "Development-selected blend versus both constituents; fixed equal blend as an untuned control.",
-      "cost_estimate": "Initial cache-only screen approximately 1–15 CPU minutes if saved caches/probes verify; inferred, not measured.",
+      "cost_estimate": "Initial cache-only screen approximately 1\u201315 CPU minutes if saved caches/probes verify; inferred, not measured.",
       "cost_estimate_measured": false,
       "next_action": "Completed negative development screen at both label budgets; continue independent Experiment 015.",
       "constraints": [
@@ -442,7 +460,7 @@
         "Probe-initialized short fine-tune"
       ],
       "primary_comparison": "Probe-initialized versus random-head fine-tuning with identical backbone, schedule, sample order and optimizer settings.",
-      "cost_estimate": "Target 30–90 minutes for an initial full-label pilot including extraction; inferred and conditional on actual I/O.",
+      "cost_estimate": "Target 30\u201390 minutes for an initial full-label pilot including extraction; inferred and conditional on actual I/O.",
       "cost_estimate_measured": true,
       "next_action": "The separately frozen v9 moving/frozen encoder intervention completed; retain released probe. No automatic calibration/test or further xECG training.",
       "constraints": [
@@ -1691,23 +1709,107 @@
     "backlog": "docs/experiment-backlog.json",
     "closed_data": "PTB-XL test and Challenge test groups never read; SPH read by 022-029 and now development data",
     "experiments": {
-      "027b": {"protocol": "docs/experiment-027b-multisource-calibration.md", "results": "docs/experiment-027b-multisource-calibration-results.md", "outputs": "outputs/experiment027b_multisource_calibration_v1/", "decision": "pooled calibration not adopted"},
-      "026b": {"protocol": "docs/experiment-026b-multisource-normal-manifold.md", "results": "docs/experiment-026b-multisource-normal-manifold-results.md", "outputs": "outputs/experiment026b_multisource_manifold_v1/", "decision": "adopt pooled normal reference"},
-      "022b": {"protocol": "docs/experiment-022b-multisource-readout.md", "results": "docs/experiment-022b-multisource-readout-results.md", "outputs": "outputs/experiment022b_multisource_readout_v1/", "decision": "adopt pooled readout; Ningbo helps"},
-      "025b": {"protocol": "docs/experiment-025b-label-efficiency-multisource.md", "results": "docs/experiment-025b-label-efficiency-multisource-results.md", "outputs": "outputs/experiment025b_label_efficiency_multisource_v1/", "decision": "mixed"},
-      "024b": {"protocol": "docs/experiment-024b-multisource-geometry.md", "results": "docs/experiment-024b-multisource-geometry-results.md", "outputs": "outputs/experiment024b_multisource_geometry_v1/", "decision": "clusters follow diagnosis"},
-      "029": {"protocol": "docs/experiment-029-local-adaptation.md", "results": "docs/experiment-029-local-adaptation-results.md", "outputs": "outputs/experiment029_local_adaptation_v1/", "decision": "95% sensitivity not reached by n = 1,000 with the plain rule; conservative rule from n = 200 at high referral cost"},
-      "030": {"protocol": "docs/experiment-030-referral-budget.md", "results": "docs/experiment-030-referral-budget-results.md", "outputs": "outputs/experiment030_referral_budget_v1/", "decision": "referral-budget threshold on local normals; 5% budget with 200 normals catches 0.775"},
-      "031": {"protocol": "docs/experiment-031-hybrid-screening-score.md", "results": "docs/experiment-031-hybrid-screening-score-results.md", "outputs": "outputs/experiment031_hybrid_score_v1/", "decision": "hybrid hurts overall; helps on held-out conditions"},
-      "032": {"protocol": "docs/experiment-032-rhythm-findings.md", "results": "docs/experiment-032-rhythm-findings-results.md", "outputs": "outputs/experiment032_rhythm_findings_v1/", "decision": "rhythm finding heads usable at SPH"},
-      "033": {"protocol": "docs/experiment-033-finding-heads-screen.md", "results": "docs/experiment-033-finding-heads-screen-results.md", "outputs": "outputs/experiment033_finding_heads_screen_v1/", "decision": "adopt combined_50"},
-      "034": {"protocol": "docs/experiment-034-one-class-baselines.md", "results": "docs/experiment-034-one-class-baselines-results.md", "outputs": "outputs/experiment034_one_class_baselines_v1/", "decision": "Mahalanobis stays"},
-      "035": {"protocol": "docs/experiment-035-hard-subset.md", "results": "docs/experiment-035-hard-subset-results.md", "outputs": "outputs/experiment035_hard_subset_v1/", "decision": "adopt dropped_upweighted"},
-      "036": {"protocol": "docs/experiment-036-random-encoder.md", "results": "docs/experiment-036-random-encoder-results.md", "outputs": "outputs/experiment036_random_encoder_v1/", "decision": "pretraining is needed for the normal reference (+0.192 at SPH)"},
-      "037": {"protocol": "docs/experiment-037-pipeline-v2.md", "results": "docs/experiment-037-pipeline-v2-results.md", "outputs": "outputs/experiment037_pipeline_v2_v1/", "decision": "adopt_v2 by rule; fails strict non-inferiority"}
+      "027b": {
+        "protocol": "docs/experiment-027b-multisource-calibration.md",
+        "results": "docs/experiment-027b-multisource-calibration-results.md",
+        "outputs": "outputs/experiment027b_multisource_calibration_v1/",
+        "decision": "pooled calibration not adopted"
+      },
+      "026b": {
+        "protocol": "docs/experiment-026b-multisource-normal-manifold.md",
+        "results": "docs/experiment-026b-multisource-normal-manifold-results.md",
+        "outputs": "outputs/experiment026b_multisource_manifold_v1/",
+        "decision": "adopt pooled normal reference"
+      },
+      "022b": {
+        "protocol": "docs/experiment-022b-multisource-readout.md",
+        "results": "docs/experiment-022b-multisource-readout-results.md",
+        "outputs": "outputs/experiment022b_multisource_readout_v1/",
+        "decision": "adopt pooled readout; Ningbo helps"
+      },
+      "025b": {
+        "protocol": "docs/experiment-025b-label-efficiency-multisource.md",
+        "results": "docs/experiment-025b-label-efficiency-multisource-results.md",
+        "outputs": "outputs/experiment025b_label_efficiency_multisource_v1/",
+        "decision": "mixed"
+      },
+      "024b": {
+        "protocol": "docs/experiment-024b-multisource-geometry.md",
+        "results": "docs/experiment-024b-multisource-geometry-results.md",
+        "outputs": "outputs/experiment024b_multisource_geometry_v1/",
+        "decision": "clusters follow diagnosis"
+      },
+      "029": {
+        "protocol": "docs/experiment-029-local-adaptation.md",
+        "results": "docs/experiment-029-local-adaptation-results.md",
+        "outputs": "outputs/experiment029_local_adaptation_v1/",
+        "decision": "95% sensitivity not reached by n = 1,000 with the plain rule; conservative rule from n = 200 at high referral cost"
+      },
+      "030": {
+        "protocol": "docs/experiment-030-referral-budget.md",
+        "results": "docs/experiment-030-referral-budget-results.md",
+        "outputs": "outputs/experiment030_referral_budget_v1/",
+        "decision": "referral-budget threshold on local normals; 5% budget with 200 normals catches 0.775"
+      },
+      "031": {
+        "protocol": "docs/experiment-031-hybrid-screening-score.md",
+        "results": "docs/experiment-031-hybrid-screening-score-results.md",
+        "outputs": "outputs/experiment031_hybrid_score_v1/",
+        "decision": "hybrid hurts overall; helps on held-out conditions"
+      },
+      "032": {
+        "protocol": "docs/experiment-032-rhythm-findings.md",
+        "results": "docs/experiment-032-rhythm-findings-results.md",
+        "outputs": "outputs/experiment032_rhythm_findings_v1/",
+        "decision": "rhythm finding heads usable at SPH"
+      },
+      "033": {
+        "protocol": "docs/experiment-033-finding-heads-screen.md",
+        "results": "docs/experiment-033-finding-heads-screen-results.md",
+        "outputs": "outputs/experiment033_finding_heads_screen_v1/",
+        "decision": "adopt combined_50"
+      },
+      "034": {
+        "protocol": "docs/experiment-034-one-class-baselines.md",
+        "results": "docs/experiment-034-one-class-baselines-results.md",
+        "outputs": "outputs/experiment034_one_class_baselines_v1/",
+        "decision": "Mahalanobis stays"
+      },
+      "035": {
+        "protocol": "docs/experiment-035-hard-subset.md",
+        "results": "docs/experiment-035-hard-subset-results.md",
+        "outputs": "outputs/experiment035_hard_subset_v1/",
+        "decision": "adopt dropped_upweighted"
+      },
+      "036": {
+        "protocol": "docs/experiment-036-random-encoder.md",
+        "results": "docs/experiment-036-random-encoder-results.md",
+        "outputs": "outputs/experiment036_random_encoder_v1/",
+        "decision": "pretraining is needed for the normal reference (+0.192 at SPH)"
+      },
+      "037": {
+        "protocol": "docs/experiment-037-pipeline-v2.md",
+        "results": "docs/experiment-037-pipeline-v2-results.md",
+        "outputs": "outputs/experiment037_pipeline_v2_v1/",
+        "decision": "adopt_v2 by rule; fails strict non-inferiority"
+      }
     },
-    "next": ["referral_budget_operating_point", "hybrid_screening_score", "rhythm_findings_detector", "normal_manifold_novelty_search", "final_frozen_test"],
-    "waiting": {"@cardiologist_meeting": ["student_criteria_label", "young_subgroup_readout"], "@clinic_ecgs": ["enriched_positive_sensitivity"]}
+    "next": [
+      "referral_budget_operating_point",
+      "hybrid_screening_score",
+      "rhythm_findings_detector",
+      "normal_manifold_novelty_search",
+      "final_frozen_test"
+    ],
+    "waiting": {
+      "@cardiologist_meeting": [
+        "student_criteria_label",
+        "young_subgroup_readout"
+      ],
+      "@clinic_ecgs": [
+        "enriched_positive_sensitivity"
+      ]
+    }
   },
   "experiment_038_cpc_xlstm": {
     "status": "complete_development_only",
@@ -1798,5 +1900,36 @@
     "runner_50k": "scripts/experiments/run_cpc_xlstm038_50k.py",
     "triggered_50k": true,
     "further_run_authorized": false
+  },
+  "experiment_039_encoder_context": {
+    "status": "protocol_frozen_implementation_in_progress",
+    "authorized": true,
+    "protocol": "docs/experiment-039-cpc-encoder-context.md",
+    "output_dir": "outputs/experiment039_encoder_context",
+    "encoders": [
+      "cnn",
+      "multiscale",
+      "patch"
+    ],
+    "contexts": [
+      "gru",
+      "xlstm"
+    ],
+    "tiers": [
+      25,
+      50
+    ],
+    "cohort_version": 4,
+    "seeds": [
+      39042,
+      39043,
+      39044
+    ],
+    "planned_fits": 36,
+    "exposures_per_fit": 250000,
+    "executable_ceiling_seconds": 28800,
+    "one_diagnostic_and_one_correction_authorized": true,
+    "calibration_test_authorized": false,
+    "next_action": "Implement and test new causal front ends and frozen helper wrapper; exact predecessor replay and real GPU profiles before training."
   }
 }

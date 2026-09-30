@@ -473,6 +473,30 @@ def final_partial_microbatch(count: int) -> np.ndarray:
     return np.arange(count - last_chunk % XECG_BATCH, count)
 
 
+def frozen_partial_keys() -> set[str]:
+    """
+    Row keys each frozen pretrained extraction computed in its last, partly filled microbatch of 16.
+
+    Every frozen file was written in extraction order in chunks that are multiples of 16, so those rows are
+    its last ``n % 16``: the 016 PTB-XL cache, 022's added PTB-XL rows, 022's SPH features and each
+    Challenge source.
+
+    Returns
+    -------
+    set[str]
+        Keys in the form of the sets' ``key`` column.
+    """
+    arrays = [np.load(ROOT / "outputs/experiment016_xecg_probe_finetune/features/ecg_ids.npy").astype(str)]
+    with np.load(PRIOR022 / "ptb_features.npz") as saved:
+        arrays.append(saved["xecg_ids"].astype(str))
+    with np.load(PRIOR022 / "features.npz") as saved:
+        arrays.append(saved["ecg_ids"].astype(str))
+    for source in RAW_ROOTS:
+        with np.load(CHALLENGE_FEATURES / f"{source}.npz") as saved:
+            arrays.append(np.char.add(f"{source}:", saved["record"].astype(str)))
+    return {str(key) for keys in arrays for key in keys[len(keys) - len(keys) % XECG_BATCH:]}
+
+
 def stable(run_identity: dict[str, Any]) -> dict[str, Any]:
     """
     Drop this runner's own hash from an identity, so a fix to the runner does not discard hashed features.
@@ -580,8 +604,9 @@ def check_pass(models: dict[str, nn.Module], set_readers: dict[str, Reader], row
     Re-extract both check samples of every set with every arm and apply the protocol's gates.
 
     Gates: the pretrained arm equals the frozen features on both samples, and every other arm equals its
-    saved features on the first rows. On the evenly spaced rows the other arms are reported; a difference is
-    allowed only for rows the full pass computed in its last, partly filled microbatch.
+    saved features on both. The only differences allowed are on rows that the extraction being compared
+    against computed in its last, partly filled microbatch: the frozen extraction's for the pretrained arm
+    and this run's full pass for the others. A partial microbatch changes float32 features by about 1e-5.
 
     Parameters
     ----------
@@ -605,9 +630,11 @@ def check_pass(models: dict[str, nn.Module], set_readers: dict[str, Reader], row
         If a gate fails.
     """
     result = {}
+    frozen_tail = frozen_partial_keys()
     for name in SETS:
         saved = load_features(name)
         tail = final_partial_microbatch(len(rows[name]))
+        keys = rows[name]["key"].to_numpy(dtype=str)
         result[name] = {"final_partial_microbatch": tail.tolist()}
         for sample, positions in check_samples(rows[name]).items():
             features, _ = extract(models, set_readers[name], rows[name].iloc[positions].to_dict("records"))
@@ -621,10 +648,12 @@ def check_pass(models: dict[str, nn.Module], set_readers: dict[str, Reader], row
             result[name][sample] = {"records": len(positions), "max_abs_difference": differences,
                                     "differing_positions": differing}
             print(json.dumps({"stage": f"check:{name}:{sample}", **result[name][sample]}), flush=True)
-            gated = ARMS if sample == "first" else ("pretrained",)
-            unexplained = [position for arm in EXTRACTED_ARMS for position in differing[arm]
-                           if position not in tail]
-            if any(differing[arm] for arm in gated) or (sample == "spaced" and unexplained):
+            unexplained = [position for position in differing["pretrained"]
+                           if keys[position] not in frozen_tail]
+            unexplained += [position for arm in EXTRACTED_ARMS for position in differing[arm]
+                            if sample == "first" or position not in tail]
+            result[name][sample]["unexplained_positions"] = unexplained
+            if unexplained:
                 raise ValueError(f"Re-extracted features differ: {name} {sample} {differing}")
     return result
 

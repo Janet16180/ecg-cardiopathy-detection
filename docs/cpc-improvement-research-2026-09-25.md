@@ -8,8 +8,17 @@ comparison using the existing compact-CPC cache**. Its
 an assigned Experiment 018. Architecture priorities 011–013 and the deferral of
 010 are unchanged.
 
+## Question
+
+Which affordable, controlled change is most likely to improve our compact ECG
+CPC model, especially with 1,518 training labels, without mistaking a change in
+data, readout, or compute budget for an architecture gain?
+
 ## What the evidence supports
 
+- [Current model findings](model-findings-report.md) separate the compact CPC,
+  frozen probes, fine-tuned models, and released S4 ECG-CPC checkpoint. Do not
+  compare their scores as if training and evaluation were matched.
 - [006](../outputs/experiment006_cpc_tokenization/report.md) favors learned over
   fixed chunks, but neither beats the native-grid point estimate. Preserve the
   grid; another tokenization search has weak cost justification.
@@ -38,6 +47,9 @@ an assigned Experiment 018. Architecture priorities 011–013 and the deferral o
   learning; the [ECG benchmark](https://arxiv.org/abs/2509.25095v2) evaluates
   frozen and fine-tuned settings across tasks. Neither establishes that this
   repository's proposed readout change will help its binary annotation proxy.
+- [Experiment 010](experiment-010-crosslead.md) is deferred: observed cache I/O
+  made its full suite exceed the two-hour planning ceiling. Its checkpoint is
+  evidence of one SSL epoch, not a classification outcome.
 
 ## Ranked candidates
 
@@ -92,3 +104,8 @@ new SSL, waveform I/O or encoder updates. Reusing development patients makes
 any positive screen exploratory. A patient bootstrap cannot undo repeated
 development selection or substitute for independent confirmation; no result
 automatically opens calibration/test or promotes a screening application.
+
+Choose one affordable hypothesis per versioned protocol; do not run a sweep.
+A GPU candidate must profile its complete path and pass the 7,200-second
+planning gate before comparative training. Freeze seeds, patient splits,
+selection rules and analyses before results.

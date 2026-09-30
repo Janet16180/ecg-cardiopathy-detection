@@ -812,7 +812,7 @@ Fetched and read for this guide on 29 September 2026, except where marked.
   [Link](https://www.fda.gov/medical-devices/digital-health-center-excellence/software-medical-device-samd).
 
 Project documents: [findings of 28 September](findings-2026-09-28.md),
-[papers versus results](reflection-papers-vs-results-2026-09-29.md),
+[papers versus results](literature-review-2026-09-28.md#what-the-papers-predicted-and-what-we-measured),
 [literature review](literature-review-2026-09-28.md), results of Experiments
 [022](experiment-022-sph-external-readout-results.md), [023](experiment-023-echonext-readout-results.md),
 [024](experiment-024-embedding-geometry-results.md), [025](experiment-025-label-efficiency-results.md),

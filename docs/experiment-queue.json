@@ -242,7 +242,7 @@
       "name": "Rank affordable ways to improve compact ECG CPC",
       "status": "complete_cpu_development_screen_passed",
       "authorized": true,
-      "task": "docs/cpc-improvement-investigation.md",
+      "task": "docs/cpc-improvement-research-2026-09-25.md",
       "next_action": "Discuss a separately frozen independent replication if desired; this one-seed development screen does not authorize calibration/test, a GPU study, or a 010 restart.",
       "candidate_directions": [
         "Local morphology and readout",
@@ -570,7 +570,7 @@
       "id": "013",
       "priority": 5,
       "name": "Compact Mamba-3 ECG encoder",
-      "protocol": "docs/experiment-013-mamba3-plan.md",
+      "protocol": "docs/experiment-013-mamba3-25k-v2.md",
       "output_dir": "outputs/experiment013_mamba3",
       "arms": [
         "Compact Mamba-3",
@@ -580,7 +580,7 @@
       "primary_comparison": "Mamba-3 minus Mamba-2 under a fixed common ECG stem, objective and evaluation; report any parameter/compute difference.",
       "learning": "Train fresh waveform encoders on the fixed unlabeled pool; reuse the common causal CPC objective for architecture attribution.",
       "starting_budget": "Prospective 25k successor fixes 115,359 exposures/902 updates per arm, subject to its real V100 cost gate.",
-      "next_action": "After 011 profile/full run or cost stop, freeze a new versioned profile-only manifest using the shared seal and require the real V100 gate.",
+      "next_action": "Complete as a one-seed 25k development screen (docs/nlp-inspired-25k-study-results.md); no second seed or calibration/test is scheduled.",
       "constraints": [
         "V100 support for the chosen official kernel is unverified.",
         "Do not silently substitute Mamba-2 and label it Mamba-3.",
@@ -591,17 +591,17 @@
         "https://arxiv.org/abs/2603.15569",
         "https://github.com/state-spaces/mamba"
       ],
-      "status": "prepared_awaiting_serial_gpu_profile",
+      "status": "complete",
       "authorized": true,
       "runner": null,
       "launch_command": null,
       "gpu_profile": null,
       "profile_25k_manifest": "outputs/experiment_queue_nlp25k_013_profile_v1/queue.json",
       "profile_25k_manifest_sha256": "68568909c7e85382ab58b254c309517e1cdb5655c722c1fabea22d4b6b87c89f",
-      "results": null,
+      "results": "outputs/experiment013_mamba3_25k_v2/result.json",
       "historical_run_after": "012",
       "dependencies": [],
-      "profile_25k_status": "not launched"
+      "profile_25k_status": "completed; see docs/nlp-inspired-25k-study-results.md"
     },
     {
       "id": "008",
@@ -702,7 +702,7 @@
     "mimic_download": "Completed: 200,000 selected MIMIC recordings verified, 197,207 accepted; no diagnostic labels used. Counts overlap the current subset.",
     "legacy_runner": "Stopped at user request for refactor; see outputs/refactor_pause/pause.json. Do not restart until user resumes.",
     "unselected_ideas": [
-      "docs/vision-to-ecg-architecture-candidates.md",
+      "docs/cross-domain-architecture-candidates.md",
       "docs/xecg-next-experiments.md"
     ]
   },

@@ -1116,6 +1116,21 @@
       "notes": "Required before any self-supervised pretraining on cohorts; new version, v2 kept for provenance. Done 30 September 2026 (docs/clean-cohorts-v3.md): 12,603 test-group and 12,597 calibration-group records removed; the curated pool falls to 55,175, so the 100k tier is now 45% MIMIC; 1M is out of reach and clean_max_v3 holds all 978,965 candidates."
     },
     {
+      "id": "echonext_rows_v2",
+      "kind": "repo",
+      "title": "Check clean EchoNext against its EDA and add one-ECG-per-patient and evaluation-use columns",
+      "question": "Does clean EchoNext v1 apply every EDA finding, and is its quality good enough for the pretraining cohorts?",
+      "evidence": "Review of 30 September 2026: v1 drops most_recent_ecg, which EDA finding 4 needs; the noise-dominated rule was never examined in the EDA and removes 60 ECGs that are 95% positive.",
+      "value": 3,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Decided by the agent at the user's request, 30 September 2026 (docs/clean-echonext-v2.md): use_training equals v1 use; use_evaluation keeps the 60 noise-dominated ECGs (sick patients, likely device interference, unconfirmed) and drops only missing-signal records. The cohort entry gate passed on every criterion. Future EchoNext protocols should name use_evaluation for the primary analysis and use most_recent_ecg for calibration."
+    },
+    {
       "id": "cohorts_v4_echonext",
       "kind": "repo",
       "title": "Add the EchoNext training ECGs to the quality-first cohorts",
@@ -1128,7 +1143,7 @@
       "build_hours": 2,
       "blocked_by": [],
       "status": "done",
-      "notes": "Requested by the user, 30 September 2026. Done the same day (docs/clean-cohorts-v4.md): EchoNext train enters after the curated block, so 25k and 50k are byte-identical to v3, 100k and 200k hold no MIMIC, and 1,050,788 candidates make 1M reachable. Only train rows are candidates; no training patient appears in val, test or no_split."
+      "notes": "Requested by the user, 30 September 2026. Done the same day (docs/clean-cohorts-v4.md): EchoNext train enters after the curated block, so 25k and 50k are byte-identical to v3, 100k and 200k hold no MIMIC, and 1,050,788 candidates make 1M reachable. Only train rows are candidates; no training patient appears in val, test or no_split. Rebuilt from EchoNext rows v2 (use_training) behind its cohort entry gate; the order is unchanged."
     },
     {
       "id": "training_io_local_prefetch",

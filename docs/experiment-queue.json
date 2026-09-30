@@ -242,7 +242,7 @@
       "name": "Rank affordable ways to improve compact ECG CPC",
       "status": "complete_cpu_development_screen_passed",
       "authorized": true,
-      "task": "docs/cpc-improvement-investigation.md",
+      "task": "docs/cpc-improvement-research-2026-09-25.md",
       "next_action": "Discuss a separately frozen independent replication if desired; this one-seed development screen does not authorize calibration/test, a GPU study, or a 010 restart.",
       "candidate_directions": [
         "Local morphology and readout",

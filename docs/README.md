@@ -41,7 +41,7 @@ proceed one at a time under the queue's cost and verification gates.
 - [NLP-inspired architecture study on the fixed 25k ECG pool](nlp-inspired-25k-study.md): common data, budget, and evaluation contract for Experiments 011–013; [completed development results](nlp-inspired-25k-study-results.md).
 
 - [Model findings](model-findings-report.md)
-- [CPC improvement investigation](cpc-improvement-investigation.md), [ranked findings](cpc-improvement-research-2026-09-25.md), [local-readout protocol](cpc-local-readout-v1.md), and [development result](cpc-local-readout-v1-results.md)
+- [CPC improvement investigation and ranked findings](cpc-improvement-research-2026-09-25.md), [local-readout protocol](cpc-local-readout-v1.md), and [development result](cpc-local-readout-v1-results.md)
 - [Experiment 018 compact CPC data-scaling pilot](experiment-018-cpc-data-scaling.md), [cached v2 cost stop](experiment-018-cpc-data-scaling-v2.md), and [v3 training successor](experiment-018-cpc-data-scaling-v3.md)
 - [Experiment 018 v3 training results](experiment-018-cpc-data-scaling-v3-results.md)
 - [Experiment 018 frozen development readout](experiment-018-cpc-data-scaling-readout.md) and [results](experiment-018-cpc-data-scaling-readout-results.md)

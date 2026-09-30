@@ -1987,10 +1987,18 @@
     "real_profiles_completed": 0,
     "development_scores_available": false,
     "cpu_verification": {
-      "focused_tests_passed": 98,
+      "focused_tests_passed": 102,
+      "focused_elapsed_seconds": 11.91,
+      "ruff_passed": true,
       "broad_tests_passed": 1168,
       "broad_tests_failed": 1,
       "limitation": "Existing frozen v11 safe-leaf path guard rejects the required shared outputs symlink in this worktree; the full suite is not clean. No v11 source or test changed.",
+      "isolated_legacy_test": {
+        "location": "main checkout",
+        "passed": 1,
+        "elapsed_seconds": 13.14,
+        "frozen_source_or_test_changed": false
+      },
       "scope": "Implementation verification only, not ECG performance evidence"
     },
     "source_pinning": "New manifests bind scientific source/dependencies/protocol, vendored xECG source and historical controls; aggregation validates source hashes and manifest identities.",

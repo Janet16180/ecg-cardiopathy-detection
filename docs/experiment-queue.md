@@ -16,9 +16,10 @@ reporting and a 3,600-second diagnostic/correction reserve within the original s
 ceiling. One diagnostic and at most one evidenced correction cycle are permitted per affected package.
 008 remains deferred; no EchoNext record enters the 25k cohort, and no closed test is authorized.
 
-Verification: 98 focused CPU tests passed. The broad worktree run had 1,168 passes and one existing v11
+Verification: 102 focused CPU tests passed in 11.91 seconds; Ruff passed. The broad worktree run had 1,168 passes and one existing v11
 path-guard failure because the worktree uses the required shared `outputs` symlink; this is not a clean
-full-suite pass. The frozen v11 source/test was not changed. New manifests bind source, protocol,
+full-suite pass. The same isolated v11 test passed in the main checkout (one pass in 13.14 seconds);
+the frozen v11 source/test was not changed. New manifests bind source, protocol,
 dependencies, the locally pinned xECG loss/trainer/configuration and historical control artifacts;
 analysis checks manifest identities and source hashes before accepting results. These checks are
 implementation evidence, not measured ECG performance.

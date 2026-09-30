@@ -702,7 +702,7 @@
     "mimic_download": "Completed: 200,000 selected MIMIC recordings verified, 197,207 accepted; no diagnostic labels used. Counts overlap the current subset.",
     "legacy_runner": "Stopped at user request for refactor; see outputs/refactor_pause/pause.json. Do not restart until user resumes.",
     "unselected_ideas": [
-      "docs/vision-to-ecg-architecture-candidates.md",
+      "docs/cross-domain-architecture-candidates.md",
       "docs/xecg-next-experiments.md"
     ]
   },

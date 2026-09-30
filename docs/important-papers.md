@@ -397,7 +397,7 @@ StripedHyena 2 mixes short, medium and long input-dependent convolution operator
 
 *Unlocking Pretrained Vision Transformers for Time Series Classification.* GCPR 2026 Oral. [Paper](https://arxiv.org/abs/2506.08641) · [Official code](https://github.com/ExplainableML/TiViT).
 
-Stacks time-series segments into images and probes intermediate frozen vision features. The current repository lists OpenCLIP, SigLIP 2, DINOv2 and MAE. This supplies an inexpensive cross-domain-weight pilot, subject to a faithful twelve-lead input conversion and pretrained-versus-random feature control. Its reported TiViT-only benchmark average exceeds Mantis on UCR but is lower on UEA, so avoid a universal superiority claim. See the [independent vision-model proposals](vision-to-ecg-architecture-candidates.md).
+Stacks time-series segments into images and probes intermediate frozen vision features. The current repository lists OpenCLIP, SigLIP 2, DINOv2 and MAE. This supplies an inexpensive cross-domain-weight pilot, subject to a faithful twelve-lead input conversion and pretrained-versus-random feature control. Its reported TiViT-only benchmark average exceeds Mantis on UCR but is lower on UEA, so avoid a universal superiority claim. See the [independent vision-model proposals](cross-domain-architecture-candidates.md).
 
 ## L. Added 28 September 2026: evaluation, prototypes and synthetic data
 
@@ -464,4 +464,3 @@ The following are project judgments, not results reported by the cited authors:
 - [HuBERT and ECG-FM implementation notes](pretrained-notes.md)
 - [Public-data strategy](public-data-strategy.md)
 - [Independent architectures from NLP, genomics and vision](cross-domain-architecture-candidates.md)
-- [Independent vision-model proposals](vision-to-ecg-architecture-candidates.md)

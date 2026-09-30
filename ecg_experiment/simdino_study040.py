@@ -46,6 +46,7 @@ SOURCE_FILES = (
     "scripts/reports/report_cpc_simdino040.py",
     "tests/test_cpc_simdino040.py",
     "tests/test_simdino_study040.py",
+    "tests/test_simdino_study_clock040.py",
     "tests/test_simdino_analysis040.py",
     "third_party/bench-xecg/bench_xecg/utils/loss_utils.py",
     "third_party/bench-xecg/bench_xecg/trainers/ssl_pretrainer.py",
@@ -196,6 +197,20 @@ def require_success(path: Path, stage: str) -> None:
         raise ValueError(f"A successful latest {stage} attempt is required: {path}")
 
 
+def predecessor_closed(root: Path) -> bool:
+    """Require the final scientific ledger closure before successor GPU work."""
+    path = root / "outputs" / predecessor.NAME
+    closed_path = path / "execution_closed.json"
+    if not closed_path.exists():
+        return False
+    closed = json.loads(closed_path.read_text())
+    ledger_path = path / "day_ledger.json"
+    return bool(closed.get("status") == "complete" and closed.get("day_ledger_closed")
+                and closed.get("predecessor_analyses_complete")
+                and closed.get("ledger_sha256") == sha256_file(ledger_path)
+                and closed.get("total_seconds") == json.loads(ledger_path.read_text())["total_seconds"])
+
+
 def prior_integrity(root: Path, replay019: Any) -> dict[str, Any]:
     """Exactly replay all predecessor development probabilities before new scores.
 
@@ -211,6 +226,8 @@ def prior_integrity(root: Path, replay019: Any) -> dict[str, Any]:
     dict[str, Any]
         Historical integrity and exact Experiment 039 score replay.
     """
+    if not predecessor_closed(root):
+        raise ValueError("Finish and close the Experiment 039 scientific ledger first")
     history = predecessor.prior_integrity(root, replay019)
     arrays, hashes = load_cells(root)
     for tier in predecessor.TIERS:
@@ -257,7 +274,9 @@ def source_identity(root: Path, tier: int, receipt: dict[str, Any], original: An
     current = original(root, tier, receipt)
     _, hashes = load_cells(root)
     current["files_sha256"].update(hashes)
-    for path in (root / "data/processed/clean_25k_v4/metadata.json",
+    for path in (root / "outputs" / predecessor.NAME / "execution_closed.json",
+                 root / "outputs" / predecessor.NAME / "day_ledger.json",
+                 root / "data/processed/clean_25k_v4/metadata.json",
                  root / "data/processed/clean_25k_v4/train_manifest.csv",
                  root / "outputs/data_quality/clean_cohorts_v4/receipt.json"):
         current["files_sha256"][to_stored(path)] = sha256_file(path)
@@ -605,6 +624,8 @@ def profile_package(root: Path, tier: int, arm: str, data: Any, current: dict[st
     dict[str, Any]
         Actual profile with partial-batch and active-gradient recovery evidence.
     """
+    write_json_atomic(base.output(root, tier) / "profile_progress.json",
+                      {"context": arm, "status": "active"}, sort_keys=True)
     receipt = original(root, tier, arm, data, current, device)
     model = base.create_model(arm, base.SEED, device)
     opt = base.optimizer(model)
@@ -642,6 +663,8 @@ def profile_package(root: Path, tier: int, arm: str, data: Any, current: dict[st
                     "partial_batch_teacher_schedule": int(model.ema_total_steps),
                     "peak_gpu_memory_bytes": max(receipt["peak_gpu_memory_bytes"],
                                                  torch.cuda.max_memory_allocated())})
+    write_json_atomic(base.output(root, tier) / "profile_progress.json",
+                      {"context": arm, "status": "passed"}, sort_keys=True)
     return receipt
 
 
@@ -712,6 +735,37 @@ def configured(root: Path, objective: str, seed: int) -> Iterator[None]:
             setattr(base, name, value)
 
 
+def first_profile_hashes(root: Path) -> dict[str, str]:
+    """Bind all six real package profiles and manifests before any full fit."""
+    hashes = {}
+    for objective in OBJECTIVES:
+        path = directory(root, objective, SEEDS[0])
+        require_success(path, "profile")
+        receipt = json.loads((path / "profile.json").read_text())
+        if not receipt["gate_passed"]:
+            raise RuntimeError("One of the six packages failed its actual profile gate")
+        if any(not arm.get("partial_batch_replay_equal") or not arm["next_update_replay_equal"]
+               or arm["partial_batch_records"] != 16 for arm in receipt["arms"].values()):
+            raise ValueError("Every package requires actual normal/partial-batch recovery profiles")
+        with configured(root, objective, SEEDS[0]):
+            base.ensure_manifest(root, TIER)
+        hashes[f"{objective}_profile"] = sha256_file(path / "profile.json")
+        hashes[f"{objective}_manifest"] = sha256_file(path / "manifest.json")
+    return hashes
+
+
+def require_admission(root: Path) -> None:
+    """Prevent direct stage execution from bypassing the fixed all-package gate."""
+    path = root / "outputs" / NAME / "admission.json"
+    if not path.exists():
+        raise ValueError("A committed all-package admission receipt is required")
+    gate = json.loads(path.read_text())
+    if (not gate["gate_passed"] or gate["scheduled_original_fits"] != 18
+            or gate["development_scored_before_admission"]
+            or gate["first_seed_profile_hashes"] != first_profile_hashes(root)):
+        raise ValueError("Original all-package admission profile identity changed or failed")
+
+
 def execute(root: Path, objective: str, seed: int, stage: str,
             device: str = "cuda") -> dict[str, Any]:
     """Execute one accounted stage, checking successful prerequisites and budget gates.
@@ -748,9 +802,15 @@ def execute(root: Path, objective: str, seed: int, stage: str,
             path = directory(root, objective, seed)
             if (path / "audit.json").exists():
                 raise ValueError("An audited cell is immutable")
+            if stage in ("profile", "train") and any(
+                (root / "outputs" / NAME / "diagnostics" / f"{objective}_{arm}"
+                 / "diagnostic.json").exists() for arm in base.ARMS
+            ):
+                raise ValueError("Diagnosed package stopped; a new correction identity is required")
             if stage in ("train", "readout", "audit"):
                 require_success(path, "profile" if stage == "train" else
                                 "train" if stage == "readout" else "readout")
+                require_admission(root)
             if stage == "train" and not admission(root)["gate_passed"]:
                 raise RuntimeError("Full fixed schedule failed its combined-day resource gate")
             result = getattr(base, stage)(root, TIER, device) if stage in (
@@ -759,6 +819,40 @@ def execute(root: Path, objective: str, seed: int, stage: str,
             return result
         finally:
             charge(root, objective, seed, stage, time.monotonic() - began, status)
+
+
+def _finite_evidence(value: Any) -> Any:
+    """Represent nonfinite diagnostic symptoms explicitly without invalid JSON numbers."""
+    if isinstance(value, float) and not math.isfinite(value):
+        return str(value)
+    if isinstance(value, dict):
+        return {key: _finite_evidence(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_finite_evidence(item) for item in value]
+    return value
+
+
+def _forward_evidence(model: Any, signal: torch.Tensor) -> dict[str, Any]:
+    """Retain a diagnostic even when the training-only forward or backward fails."""
+    evidence: dict[str, Any] = {}
+    try:
+        loss, parts = model(signal)
+        evidence["training_loss_parts"] = parts
+        evidence["training_forward_finite"] = bool(torch.isfinite(loss))
+        if evidence["training_forward_finite"]:
+            loss.backward()
+            evidence["gradient_groups"] = {
+                group: {"finite": all(torch.isfinite(p.grad).all().item() for p in params
+                                      if p.grad is not None),
+                        "norm": float(sum(float(p.grad.square().sum()) for p in params
+                                          if p.grad is not None) ** 0.5)}
+                for group, params in (("frontend", list(model.encoder.convs.parameters())),
+                                      ("context", list(model.encoder.context.parameters())),
+                                      ("heads", list(model.heads.parameters()))) }
+    except (RuntimeError, ValueError, FloatingPointError) as exc:
+        evidence["training_forward_or_backward_error"] = {
+            "error_type": type(exc).__name__, "error": str(exc)}
+    return _finite_evidence(evidence)
 
 
 def diagnose(root: Path, objective: str, context: str, seed: int,
@@ -792,6 +886,8 @@ def diagnose(root: Path, objective: str, context: str, seed: int,
         with configured(root, objective, seed):
             cell = directory(root, objective, seed)
             checkpoint_path = cell / context / "latest.pt"
+            if not checkpoint_path.exists():
+                checkpoint_path = cell / f"profile_resume_{context}.pt"
             evidence: dict[str, Any] = {"checkpoint_available": checkpoint_path.exists()}
             if (cell / "features.npz").exists():
                 with np.load(cell / "features.npz", allow_pickle=False) as features:
@@ -799,7 +895,8 @@ def diagnose(root: Path, objective: str, context: str, seed: int,
             if checkpoint_path.exists():
                 saved = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
                 evidence.update({"checkpoint_sha256": sha256_file(checkpoint_path),
-                                 "saved_state_finite": base.finite_tree(saved),
+                                 "saved_state_finite": base.finite_tree(saved["model"]),
+                                 "saved_losses_finite": bool(np.isfinite(saved["losses"]).all()),
                                  "saved_updates": saved["updates"], "saved_exposures": saved["exposures"],
                                  "first_losses": saved["losses"][:100],
                                  "last_losses": saved["losses"][-100:]})
@@ -808,23 +905,13 @@ def diagnose(root: Path, objective: str, context: str, seed: int,
                     model.load_state_dict(saved["model"], strict=True)
                     data = base.dataset(root, TIER)
                     signal = base.batch(data, base.order(TIER)[:8], "cpu")
-                    loss, parts = model(signal)
-                    evidence["training_loss_parts"] = parts
-                    if torch.isfinite(loss):
-                        loss.backward()
-                        evidence["gradient_groups"] = {
-                            group: {"finite": all(torch.isfinite(p.grad).all().item() for p in params
-                                                  if p.grad is not None),
-                                    "norm": float(sum(float(p.grad.square().sum()) for p in params
-                                                      if p.grad is not None) ** 0.5)}
-                            for group, params in (("frontend", list(model.encoder.convs.parameters())),
-                                                  ("context", list(model.encoder.context.parameters())),
-                                                  ("heads", list(model.heads.parameters()))) }
+                    evidence.update(_forward_evidence(model, signal))
             receipt = {"status": "one_training_only_diagnosis", "objective": objective,
                        "context": context, "seed": seed, "triggers": triggers, "evidence": evidence,
                        "development_examples_used_for_diagnosis": False,
                        "specific_defect_identified": False,
                        "conclusion": "No mechanistic defect identified; stop this package and report outcome"}
+            receipt = _finite_evidence(receipt)
             write_json_atomic(path, receipt, sort_keys=True)
             status = "complete"
             return receipt

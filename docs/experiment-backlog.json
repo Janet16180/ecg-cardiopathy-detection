@@ -735,7 +735,7 @@
         "cohorts_v2"
       ],
       "status": "open",
-      "notes": "Lower priority now that the baseline moves to frozen JEPA/xECG."
+      "notes": "Lower priority now that the baseline moves to frozen JEPA/xECG. Use cohorts v3, not v2. Overlaps pretraining_scaling_curve_v3: its 50k arm answers this too."
     },
     {
       "id": "rerun_025_ningbo",
@@ -1112,8 +1112,56 @@
       "cpu_hours": 0.5,
       "build_hours": 2,
       "blocked_by": [],
+      "status": "done",
+      "notes": "Required before any self-supervised pretraining on cohorts; new version, v2 kept for provenance. Done 30 September 2026 (docs/clean-cohorts-v3.md): 12,603 test-group and 12,597 calibration-group records removed; the curated pool falls to 55,175, so the 100k tier is now 45% MIMIC; 1M is out of reach and clean_max_v3 holds all 978,965 candidates."
+    },
+    {
+      "id": "training_io_local_prefetch",
+      "kind": "repo",
+      "title": "Serve training caches from local disk with read-ahead",
+      "question": "Does staging the 250 Hz cache on the local NVMe and reading the next batch while the GPU trains remove the data-loading bottleneck?",
+      "evidence": "GPU smoke test, 30 September 2026 (RTX 3090): 200 CPC updates took 63.2 s, of which 57.0 s were reading the 115k cache on the NFS home and 6.2 s GPU steps.",
+      "value": 3,
+      "clarity": 0.9,
+      "gpu_hours": 0.2,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [],
       "status": "open",
-      "notes": "Required before any self-supervised pretraining on cohorts; new version, v2 kept for provenance."
+      "notes": "Library module plus a reproduction check that batches and losses are bit-identical to the direct loader."
+    },
+    {
+      "id": "cohorts_v3_cpc_caches",
+      "kind": "repo",
+      "title": "250 Hz CPC caches of cohorts v3 tiers 25k-200k",
+      "question": "Can each v3 tier be served to CPC with the historical 250 Hz transform, including its Ningbo WFDB rows?",
+      "evidence": "docs/clean-cohorts-v3.md: Ningbo rows need a challenge_wfdb loader backend; CODE-15 (150k and 200k) needs an explicit amplitude scale.",
+      "value": 3,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 3,
+      "build_hours": 4,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Nested tiers share one cache: build the 200k cache once and index its prefixes. 25k-100k need no CODE-15 decision."
+    },
+    {
+      "id": "pretraining_scaling_curve_v3",
+      "kind": "experiment",
+      "title": "CPC pretraining data-scaling curve on cohorts v3",
+      "question": "Does development AUROC rise with pretraining cohort size (25k, 50k, 100k, 200k) at a matched update budget?",
+      "evidence": "Experiments 018-019: 25k against 115k CPC continuation gave +0.0016 [-0.0007, +0.0040] full-label AUROC. ECG-JEPA Table 8: adding MIMIC slightly lowered probe AUROC. The v3 tiers change source mix with size (100k is 45% MIMIC), so size and source are confounded above 50k.",
+      "value": 3,
+      "clarity": 0.5,
+      "gpu_hours": 6,
+      "cpu_hours": 2,
+      "build_hours": 8,
+      "blocked_by": [
+        "cohorts_v3_cpc_caches",
+        "training_io_local_prefetch"
+      ],
+      "status": "open",
+      "notes": "Requested by the user, 30 September 2026. Needs a frozen protocol with the primary comparison and decision rule before any score, and a real GPU profile on the RTX 3090."
     }
   ]
 }

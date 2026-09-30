@@ -460,14 +460,14 @@ def _run_packages(root: Path, data: Any, old_pool: Any, train: list[Any], identi
         for context in base.ARMS:
             _check_deadline(deadline_started)
             package_path = directory(root, objective, context) / "package.json"
-                    entry = {"objective": objective, "context": context,
+            entry = {"objective": objective, "context": context,
                      "path": to_stored(package_path), "status": "failed"}
-                    index["packages"].append(entry)
-                    write_json_atomic(target / "status.json", {
-                        "status": "running", "current_package": {"objective": objective, "context": context},
-                        "completed_packages": sum(p["status"] == "complete" for p in index["packages"]),
-                        "planned_packages": 6,
-                    }, sort_keys=True)
+            index["packages"].append(entry)
+            write_json_atomic(target / "status.json", {
+                "status": "running", "current_package": {"objective": objective, "context": context},
+                "completed_packages": sum(p["status"] == "complete" for p in index["packages"]),
+                "planned_packages": 6,
+            }, sort_keys=True)
             try:
                 with study.configured(root, objective, SEED):
                     result = _probe_package(root, objective, context, data, old_pool, train,

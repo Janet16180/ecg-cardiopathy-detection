@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 import subprocess
 import time
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
@@ -36,11 +36,23 @@ SOURCE_FILES = (PROTOCOL, "ecg_experiment/cpc_encoder_variants039.py",
                 "ecg_experiment/encoder_context_study039.py",
                 "scripts/experiments/run_cpc_encoder_context039.py",
                 "ecg_experiment/encoder_context_analysis039.py",
-                "scripts/reports/report_cpc_encoder_context039.py")
+                "scripts/reports/report_cpc_encoder_context039.py",
+                "scripts/coordination/run_encoder_context_day039.py")
 
 
 def protocol_commit(root: Path) -> str:
-    """Require the committed Experiment 039 protocol before execution."""
+    """Require the committed Experiment 039 protocol before execution.
+
+    Parameters
+    ----------
+    root : Path
+        Repository containing the committed protocol.
+
+    Returns
+    -------
+    str
+        Commit that last changed the unchanged protocol.
+    """
     committed = subprocess.run(["git", "show", f"HEAD:{PROTOCOL}"], cwd=root,
                                check=True, capture_output=True).stdout
     if committed != (root / PROTOCOL).read_bytes():
@@ -50,7 +62,20 @@ def protocol_commit(root: Path) -> str:
 
 
 def verify_v4(root: Path, tier: int) -> dict[str, str]:
-    """Reject cohort drift before opening any cached waveform."""
+    """Reject cohort drift before opening any cached waveform.
+
+    Parameters
+    ----------
+    root : Path
+        Repository containing local cohort manifests.
+    tier : int
+        Cohort size in thousands: 25 or 50.
+
+    Returns
+    -------
+    dict[str, str]
+        Verified manifest, metadata and published receipt hashes.
+    """
     directory = root / f"data/processed/clean_{tier}k_v4"
     manifest = directory / "train_manifest.csv"
     metadata = directory / "metadata.json"
@@ -68,7 +93,18 @@ def verify_v4(root: Path, tier: int) -> dict[str, str]:
 
 
 def audited_result(directory: Path) -> dict[str, Any]:
-    """Check the unchanged saved result and prediction bytes against its audit."""
+    """Check the unchanged saved result and prediction bytes against its audit.
+
+    Parameters
+    ----------
+    directory : Path
+        Cell output directory containing the saved audit.
+
+    Returns
+    -------
+    dict[str, Any]
+        Verified unchanged development result.
+    """
     result_path = directory / "result.json"
     result = json.loads(result_path.read_text())
     audit = json.loads((directory / "audit.json").read_text())
@@ -85,8 +121,21 @@ def audited_result(directory: Path) -> dict[str, Any]:
     return result
 
 
-def prior_integrity(root: Path, replay019: Any) -> dict[str, Any]:
-    """Exactly replay both audited 038 tiers and the historical 019 readout."""
+def prior_integrity(root: Path, replay019: Callable[[Path], dict[str, Any]]) -> dict[str, Any]:
+    """Exactly replay both audited 038 tiers and the historical 019 readout.
+
+    Parameters
+    ----------
+    root : Path
+        Repository containing predecessor outputs.
+    replay019 : Callable
+        Original Experiment 019 integrity replay function.
+
+    Returns
+    -------
+    dict[str, Any]
+        Exactly replayed predecessor metrics and artifact hashes.
+    """
     history = replay019(root)
     old_pool = base.pool(root)
     train, _ = base.training_examples(old_pool)
@@ -119,21 +168,70 @@ def prior_integrity(root: Path, replay019: Any) -> dict[str, Any]:
 
 
 def day_ledger(root: Path) -> dict[str, Any]:
-    """Load all charged successful and failed study attempts without resetting."""
+    """Load all charged successful and failed study attempts without resetting.
+
+    Parameters
+    ----------
+    root : Path
+        Repository containing study outputs.
+
+    Returns
+    -------
+    dict[str, Any]
+        All charged attempts and their cumulative elapsed seconds.
+    """
     path = root / "outputs" / NAME / "day_ledger.json"
     return json.loads(path.read_text()) if path.exists() else {"attempts": [], "total_seconds": 0.0}
 
 
 def used_seconds(root: Path, tier: int) -> float:
-    """Charge only new attempts, excluding historical cache construction."""
+    """Charge only new attempts, excluding historical cache construction.
+
+    Parameters
+    ----------
+    root : Path
+        Repository containing study outputs.
+    tier : int
+        Cohort size in thousands.
+
+    Returns
+    -------
+    float
+        Charged seconds for the configured encoder, seed and tier.
+    """
     path = base.output(root, tier) / "stage_walltime.json"
     return float(sum(item["elapsed_seconds"] for item in json.loads(path.read_text())["attempts"])) \
         if path.exists() else 0.0
 
 
 def record_stage(root: Path, tier: int, encoder: str, seed: int, stage: str,
-                 seconds: float, status: str, original: Any) -> None:
-    """Append the same attempt to the inherited cell ledger and the day ledger."""
+                 seconds: float, status: str, original: Callable[..., None]) -> None:
+    """Append the same attempt to the inherited cell ledger and the day ledger.
+
+    Parameters
+    ----------
+    root : Path
+        Repository containing study outputs.
+    tier : int
+        Cohort size in thousands.
+    encoder : str
+        Waveform encoder identifier.
+    seed : int
+        Initialization seed.
+    stage : str
+        Stage or diagnostic attempt name.
+    seconds : float
+        Measured elapsed wall time.
+    status : str
+        Attempt status: complete or failed.
+    original : Callable
+        Inherited cell-ledger writer.
+
+    Returns
+    -------
+    None
+        Both ledgers are updated atomically per file.
+    """
     original(root, tier, stage, seconds, status)
     ledger = day_ledger(root)
     ledger["attempts"].append({"encoder": encoder, "seed": seed, "tier": tier,
@@ -144,7 +242,20 @@ def record_stage(root: Path, tier: int, encoder: str, seed: int, stage: str,
 
 
 def historical_cpu_seconds(root: Path, tier: int) -> float:
-    """Reserve 1.5 times predecessor readout and audit measurements per cell."""
+    """Reserve 1.5 times predecessor readout and audit measurements per cell.
+
+    Parameters
+    ----------
+    root : Path
+        Repository containing predecessor timing receipts.
+    tier : int
+        Cohort size in thousands.
+
+    Returns
+    -------
+    float
+        Conservative per-cell readout and audit time reserve.
+    """
     path = root / f"outputs/experiment038_cpc_xlstm_v2/{tier}k/stage_walltime.json"
     attempts = json.loads(path.read_text())["attempts"]
     selected = {stage: max(item["elapsed_seconds"] for item in attempts
@@ -154,7 +265,20 @@ def historical_cpu_seconds(root: Path, tier: int) -> float:
 
 
 def remaining_projection(root: Path, fallback: dict[str, Any]) -> float:
-    """Reserve measured conservative work for every unfinished scheduled cell."""
+    """Reserve measured conservative work for every unfinished scheduled cell.
+
+    Parameters
+    ----------
+    root : Path
+        Repository containing study receipts.
+    fallback : dict[str, Any]
+        Measured profile used for cells awaiting a profile.
+
+    Returns
+    -------
+    float
+        Projected seconds for all unfinished scheduled cells.
+    """
     projected = 0.0
     for encoder in ENCODERS:
         for seed in SEEDS:
@@ -179,17 +303,46 @@ def remaining_projection(root: Path, fallback: dict[str, Any]) -> float:
     return projected
 
 
-def admit_schedule(root: Path, profile: dict[str, Any], active_seconds: float = 0.0) -> None:
-    """Gate the complete remaining schedule against the executable day ceiling."""
+def admit_schedule(root: Path, profile: dict[str, Any], active_seconds: float = 0.0,
+                   extra_training_seconds: float = 0.0) -> None:
+    """Gate the complete remaining schedule against the executable day ceiling.
+
+    Parameters
+    ----------
+    root : Path
+        Repository containing study receipts.
+    profile : dict[str, Any]
+        Measured profile for unfinished cells without their own profile.
+    active_seconds : float, optional
+        Elapsed current-stage work not yet recorded in the day ledger.
+    extra_training_seconds : float, optional
+        Additional remaining training cost from observed slower updates.
+
+    Returns
+    -------
+    None
+        Raises RuntimeError when projected work exceeds the ceiling.
+    """
     projection = (day_ledger(root)["total_seconds"] + active_seconds
                   + remaining_projection(root, profile) + CORRECTION_RESERVE_SECONDS
-                  + REPORT_RESERVE_SECONDS)
+                  + REPORT_RESERVE_SECONDS + extra_training_seconds)
     if projection > DAY_CEILING_SECONDS:
         raise RuntimeError(f"Full remaining Experiment 039 schedule projects {projection:.1f}s above 28800s")
 
 
 def predecessor_hashes(root: Path) -> dict[str, str]:
-    """Pin predecessor result, audit, predictions and timing used in admission."""
+    """Pin predecessor result, audit, predictions and timing used in admission.
+
+    Parameters
+    ----------
+    root : Path
+        Repository containing audited predecessor receipts.
+
+    Returns
+    -------
+    dict[str, str]
+        Repository-relative predecessor artifact hashes.
+    """
     hashes = {}
     for tier in TIERS:
         directory = root / f"outputs/experiment038_cpc_xlstm_v2/{tier}k"
@@ -202,7 +355,22 @@ def predecessor_hashes(root: Path) -> dict[str, str]:
 
 @contextmanager
 def configured(root: Path, encoder: str, seed: int) -> Iterator[None]:
-    """Temporarily specialize the frozen shared library, restoring every hook."""
+    """Temporarily specialize the frozen shared library, restoring every hook.
+
+    Parameters
+    ----------
+    root : Path
+        Repository containing study receipts.
+    encoder : str
+        One of cnn, multiscale or patch.
+    seed : int
+        One of the three prespecified initialization seeds.
+
+    Yields
+    ------
+    None
+        Shared library uses this cell configuration until context exit.
+    """
     if encoder not in ENCODERS or seed not in SEEDS:
         raise ValueError("Unknown Experiment 039 encoder or seed")
     from ecg_experiment.cpc_encoder_variants039 import architecture_spec, create_model
@@ -239,10 +407,10 @@ def configured(root: Path, encoder: str, seed: int) -> Iterator[None]:
                    arm: str, update: int, seconds_per_update: float) -> None:
         originals["_pace_guard"](profile, charged, started, arm, update, seconds_per_update)
         elapsed_guard(charged, started)
-        measured_profile = dict(profile)
-        ratio = max(1.0, seconds_per_update / profile["arms"][arm]["seconds_per_update"])
-        measured_profile["projected_training_seconds"] *= ratio
-        admit_schedule(root, measured_profile, time.monotonic() - stage_started)
+        extra_training = (1.5 * (base.UPDATES - update)
+                          * max(0.0, seconds_per_update - profile["arms"][arm]["seconds_per_update"]))
+        admit_schedule(root, profile, time.monotonic() - stage_started,
+                       extra_training_seconds=extra_training)
 
     replacements = {
         "create_model": partial(create_model, encoder), "OUTPUT_NAME": f"{NAME}/{encoder}/seed{seed}",
@@ -290,7 +458,28 @@ def _execute_stage(stage: str, root: Path, tier: int, device: str,
 
 def execute(stage: str, root: Path, tier: int, encoder: str, seed: int,
             device: str = "cuda") -> dict[str, Any]:
-    """Run a measured cell stage, charging failures and preserving completed scores."""
+    """Run a measured cell stage, charging failures and preserving completed scores.
+
+    Parameters
+    ----------
+    stage : str
+        One explicit prepare, profile, train, readout or audit stage.
+    root : Path
+        Repository containing the committed protocol and local data.
+    tier : int
+        Cohort size in thousands: 25 or 50.
+    encoder : str
+        Prespecified waveform encoder.
+    seed : int
+        Prespecified initialization seed.
+    device : str, optional
+        Profiled training device, normally cuda.
+
+    Returns
+    -------
+    dict[str, Any]
+        Validated stage receipt or development result.
+    """
     if stage not in STAGES or tier not in TIERS:
         raise ValueError("Unknown Experiment 039 stage or tier")
     with configured(root, encoder, seed):
@@ -319,7 +508,26 @@ def execute(stage: str, root: Path, tier: int, encoder: str, seed: int,
 
 def run(root: Path, tier: int, encoder: str, seed: int,
         device: str = "cuda") -> dict[str, Any]:
-    """Run one cell; completed audited cells are checked and skipped unchanged."""
+    """Run one cell; completed audited cells are checked and skipped unchanged.
+
+    Parameters
+    ----------
+    root : Path
+        Repository containing the committed protocol and local data.
+    tier : int
+        Cohort size in thousands: 25 or 50.
+    encoder : str
+        Prespecified waveform encoder.
+    seed : int
+        Prespecified initialization seed.
+    device : str, optional
+        Profiled training device, normally cuda.
+
+    Returns
+    -------
+    dict[str, Any]
+        Unchanged audited development result for this cell.
+    """
     directory = root / "outputs" / NAME / encoder / f"seed{seed}/{tier}k"
     if (directory / "result.json").exists():
         if not (directory / "audit.json").exists():

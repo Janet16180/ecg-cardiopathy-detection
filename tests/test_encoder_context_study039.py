@@ -195,3 +195,23 @@ def test_predecessor_exact_replay_and_metric_tampering(
     audited(tmp_path / "outputs/experiment038_cpc_xlstm_v2/50k", predictions, scores)
     with pytest.raises(ValueError, match="exact metric replay"):
         study.prior_integrity(tmp_path, lambda root: {})
+
+
+def test_observed_slow_pace_charged_even_with_existing_profile(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(study, "ENCODERS", ("cnn",))
+    monkeypatch.setattr(study, "SEEDS", (39042,))
+    monkeypatch.setattr(study, "TIERS", (25,))
+    monkeypatch.setattr(study, "historical_cpu_seconds", lambda root, tier: 0.0)
+    monkeypatch.setattr(study.time, "monotonic", lambda: 0.0)
+    monkeypatch.setattr(study.base, "_pace_guard", lambda *args: None)
+    monkeypatch.setattr(study.base, "_elapsed_guard", lambda *args: None)
+    write_json_atomic(tmp_path / "outputs" / study.NAME / "day_ledger.json", {
+        "attempts": [{"elapsed_seconds": 24200.0}], "total_seconds": 24200.0})
+    profile = {"projected_training_seconds": 100.0, "projected_checkpoint_seconds": 0.0,
+               "projected_feature_seconds": 0.0, "profile_wall_seconds": 0.0,
+               "preflight_seconds": 0.0, "arms": {"gru": {"seconds_per_update": 1.0}}}
+    write_json_atomic(tmp_path / "outputs" / study.NAME / "cnn/seed39042/25k/profile.json", profile)
+    study.admit_schedule(tmp_path, profile)
+    with study.configured(tmp_path, "cnn", 39042), pytest.raises(RuntimeError, match="Full remaining"):
+        study.base._pace_guard(profile, 0.0, 0.0, "gru", study.base.UPDATES - 1, 100.0)

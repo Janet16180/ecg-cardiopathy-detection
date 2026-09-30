@@ -10,7 +10,7 @@ from ecg_experiment import encoder_context_analysis039 as paired
 from ecg_experiment import encoder_context_interactions039 as interactions
 from ecg_experiment import paths
 from ecg_experiment import simdino_analysis040 as analysis
-from ecg_experiment.files import sha256_file, write_json_atomic
+from ecg_experiment.files import sha256_file, sha256_json, write_json_atomic
 from ecg_experiment.intervals import patient_groups, two_class_resamples
 
 
@@ -41,13 +41,20 @@ def _write_cell(root, group, seed, arrays):
     np.savez(path / "development_predictions.npz", **probabilities)
     np.savez(path / "features.npz", fixture=np.zeros((8, 512)))
     np.savez(path / "head_parameters.npz", fixture=np.zeros(512))
-    write_json_atomic(path / "training.json", {"status": "complete"})
-    write_json_atomic(path / "profile.json", {"gate_passed": True})
-    write_json_atomic(path / "manifest.json", {"files_sha256": {}, "protocol_commit": "prospective-original"})
+    manifest = {"files_sha256": {}, "protocol_commit": "prospective-original",
+                "architectures": {context: {"student_parameters": 1000,
+                                            "active_student_parameters": 900 if group == "simdino" else 1000,
+                                            "total_parameters": 1000 if group == "patch" else 1800}
+                                  for context in analysis.CONTEXTS}}
+    identity = sha256_json(manifest)
+    write_json_atomic(path / "training.json", {"status": "complete", "identity_sha256": identity})
+    write_json_atomic(path / "profile.json", {"gate_passed": True, "identity_sha256": identity})
+    write_json_atomic(path / "manifest.json", manifest)
     attempts = [{"stage": stage, "status": "complete", "elapsed_seconds": 1}
                 for stage in analysis.study.STAGES]
     write_json_atomic(path / "stage_walltime.json", {"attempts": attempts, "total_seconds": 5})
-    result = {"status": "complete_development_only", "scores": scores, "calibration_or_test_scored": False}
+    result = {"status": "complete_development_only", "scores": scores, "calibration_or_test_scored": False,
+              "identity_sha256": identity}
     for filename, key in (("development_predictions.npz", "predictions_sha256"),
                           ("features.npz", "features_sha256"),
                           ("head_parameters.npz", "head_parameters_sha256"),
@@ -57,6 +64,24 @@ def _write_cell(root, group, seed, arrays):
     write_json_atomic(path / "audit.json", {"status": "passed_development_only",
                                            "result_sha256": sha256_file(path / "result.json")})
     return path
+
+
+def _refresh_hashes(path):
+    result = json.loads((path / "result.json").read_text())
+    result["training_sha256"] = sha256_file(path / "training.json")
+    write_json_atomic(path / "result.json", result)
+    audit = json.loads((path / "audit.json").read_text())
+    audit["result_sha256"] = sha256_file(path / "result.json")
+    write_json_atomic(path / "audit.json", audit)
+
+
+def _refresh_identity(path):
+    identity = sha256_json(json.loads((path / "manifest.json").read_text()))
+    for name in ("result", "profile", "training"):
+        receipt = json.loads((path / f"{name}.json").read_text())
+        receipt["identity_sha256"] = identity
+        write_json_atomic(path / f"{name}.json", receipt)
+    _refresh_hashes(path)
 
 
 @pytest.fixture
@@ -200,22 +225,42 @@ def test_aggregate_is_immutable_and_source_drift_is_rejected(completed, monkeypa
     assert result["completed_fits"] == 18
     assert analysis.aggregate(root) == result
     profile = analysis.cell_path(root, "cpc", 39042) / "profile.json"
-    write_json_atomic(profile, {"gate_passed": True, "changed": True})
+    saved = json.loads(profile.read_text())
+    saved["changed"] = True
+    write_json_atomic(profile, saved)
     with pytest.raises(ValueError, match="aggregate inputs changed"):
         analysis.aggregate(root)
 
 
-def test_changed_pinned_source_is_rejected(completed):
+@pytest.mark.parametrize("directory", ["ecg_experiment", "third_party/upstream", "tests", "scripts"])
+def test_changed_pinned_source_is_rejected(completed, directory):
     root, _ = completed
-    source = root / "ecg_experiment/scientific.py"
-    source.parent.mkdir()
+    source = root / directory / "scientific.py"
+    source.parent.mkdir(parents=True)
     source.write_text("original")
     manifest = analysis.cell_path(root, "cpc", 39042) / "manifest.json"
     saved = json.loads(manifest.read_text())
-    saved["files_sha256"]["ecg_experiment/scientific.py"] = sha256_file(source)
+    saved["files_sha256"][f"{directory}/scientific.py"] = sha256_file(source)
     write_json_atomic(manifest, saved)
+    _refresh_identity(manifest.parent)
     source.write_text("changed")
     with pytest.raises(ValueError, match="pinned scientific source"):
+        analysis.load_cells(root)
+
+
+@pytest.mark.parametrize("receipt_name", ["manifest", "result", "training", "profile"])
+def test_manifest_identity_cannot_drift_even_when_parent_artifact_hashes_match(completed, receipt_name):
+    root, _ = completed
+    path = analysis.cell_path(root, "cpc", 39042)
+    receipt_path = path / f"{receipt_name}.json"
+    receipt = json.loads(receipt_path.read_text())
+    if receipt_name == "manifest":
+        receipt["protocol_commit"] = "different-executable-identity"
+    else:
+        receipt["identity_sha256"] = "0" * 64
+    write_json_atomic(receipt_path, receipt)
+    _refresh_hashes(path)
+    with pytest.raises(ValueError, match="different manifest identity"):
         analysis.load_cells(root)
 
 
@@ -267,3 +312,5 @@ def test_complete_report_separates_architecture_objective_and_combination_decisi
     assert "diagnosis outstanding" in text
     assert "prospective-original" in text
     assert "Aggregate receipt SHA-256" in text
+    assert "| 1000 | 900 |" in text
+    assert "039 patch/gru reference has 1,000 active parameters" in text

@@ -18,6 +18,7 @@ from ecg_experiment.simdino_analysis040 import (
     OUTPUT,
     SEEDS,
     aggregate,
+    cell_path,
 )
 
 
@@ -133,14 +134,16 @@ def _diagnostics(root: Path, result: dict[str, Any]) -> list[str]:
 def _resources(root: Path) -> list[str]:
     """Render measurements without substituting projections for completed training time."""
     lines = ["", "## Measured resources and provenance", "",
-             "| Objective | Seed | Context | Train seconds | Peak GB | Parameters including teacher |",
-             "| --- | ---: | --- | ---: | ---: | ---: |"]
+             "| Objective | Seed | Context | Train s | Peak GB | Total params | Student | Active student |",
+             "| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: |"]
     protocols = set()
     for seed in SEEDS:
         for objective in OBJECTIVES:
             path = study.directory(root, objective, seed)
+            manifest = {}
             if (path / "manifest.json").exists():
-                protocols.add(json.loads((path / "manifest.json").read_text())["protocol_commit"])
+                manifest = json.loads((path / "manifest.json").read_text())
+                protocols.add(manifest["protocol_commit"])
             train_path, profile_path = path / "training.json", path / "profile.json"
             training = json.loads(train_path.read_text()) if train_path.exists() else {}
             profile = json.loads(profile_path.read_text()) if profile_path.exists() else {}
@@ -150,7 +153,18 @@ def _resources(root: Path) -> list[str]:
                 seconds = f"{arm['elapsed_seconds']:.2f}" if arm else "incomplete"
                 peak = f"{measured['peak_gpu_memory_bytes'] / 1e9:.3f}" if measured else "unprofiled"
                 count = str(arm.get("parameter_count", measured.get("parameter_count", "unmeasured")))
-                lines.append(f"| {objective} | {seed} | {context} | {seconds} | {peak} | {count} |")
+                spec = manifest.get("architectures", {}).get(context, {})
+                student = spec.get("student_parameters", "unmeasured")
+                active = spec.get("active_student_parameters", "unmeasured")
+                lines.append(f"| {objective} | {seed} | {context} | {seconds} | {peak} | {count} | "
+                             f"{student} | {active} |")
+    lines += ["", "Total parameters include the EMA teacher, which is inactive for CPC-only. Active student",
+              "counts exclude the unused CPC heads for SimDINOv2-style-only. For comparison, 039 patch/CPC",
+              "has no teacher: its total, student and active counts coincide."]
+    reference_path = cell_path(root, "patch", SEEDS[0]) / "manifest.json"
+    reference = json.loads(reference_path.read_text()) if reference_path.exists() else {}
+    for context, spec in reference.get("architectures", {}).items():
+        lines.append(f"The 039 patch/{context} reference has {spec['total_parameters']:,} active parameters.")
     own_seconds, total_seconds = study.ledger(root)["total_seconds"], study.combined_seconds(root)
     lines += ["", f"Charged 040 execution before this report: {own_seconds:.2f} seconds.",
               f"Combined charged 039+040 execution: {total_seconds:.2f} seconds against 28,800.",

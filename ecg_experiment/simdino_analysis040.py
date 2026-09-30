@@ -13,7 +13,7 @@ from ecg_experiment import encoder_context_analysis039 as paired
 from ecg_experiment import encoder_context_interactions039 as interaction_bootstrap
 from ecg_experiment import encoder_context_study039 as predecessor
 from ecg_experiment import simdino_study040 as study
-from ecg_experiment.files import sha256_file, write_json_atomic
+from ecg_experiment.files import sha256_file, sha256_json, write_json_atomic
 from ecg_experiment.paths import to_stored
 
 OBJECTIVES = study.OBJECTIVES
@@ -61,8 +61,15 @@ def _validated_cell(root: Path, path: Path) -> dict[str, Any]:
         if sha256_file(path / filename) != result[key]:
             raise ValueError(f"Changed audited artifact: {filename}")
     manifest = json.loads((path / "manifest.json").read_text())
+    identity = sha256_json(manifest)
+    receipts = {"result": result,
+                "training": json.loads((path / "training.json").read_text()),
+                "profile": json.loads((path / "profile.json").read_text())}
+    for name, receipt in receipts.items():
+        if receipt["identity_sha256"] != identity:
+            raise ValueError(f"The {name} receipt has a different manifest identity")
     for filename, expected in manifest["files_sha256"].items():
-        scientific = filename.startswith(("ecg_experiment/", "scripts/", "tests/", "docs/"))
+        scientific = filename.startswith(("ecg_experiment/", "scripts/", "tests/", "docs/", "third_party/"))
         if ((scientific or filename in ("pyproject.toml", "uv.lock"))
                 and sha256_file(root / filename) != expected):
             raise ValueError(f"Changed pinned scientific source: {filename}")

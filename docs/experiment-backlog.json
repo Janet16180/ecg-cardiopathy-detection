@@ -1273,7 +1273,7 @@
       "authorized": true,
       "experiment": "040",
       "protocol": "docs/experiment-040-cpc-simdino.md",
-      "notes": "Original suite retained and stopped, no automatic restart. Measured040 profile/preparation/source-preflight execution182.395 seconds before final CPU audit/report; final charged accounting is in the results report and ledger. Historical039 closed10685.796 seconds. GPU/CPU/build fields remain planning estimates because no full fit executed. Fresh allocation requires explicit authorization and new prospective resource/source identity."
+      "notes": "Original suite retained and stopped, no automatic restart. Measured040 profile/preparation/source-preflight execution182.395 seconds before final CPU audit/report; final charged accounting is in the results report and ledger. Historical039 closed10685.796 seconds. GPU/CPU/build fields remain planning estimates because no full fit executed. Fresh allocation requires explicit authorization and new prospective resource/source identity. Final040 charged execution274.192796s; combined039+04010959.988452s, including audit/report/validation and disclosed30-second metadata-startup allowance. Original study remains incomplete/resource-blocked."
     },
     {
       "id": "cpc_simdino_resource_plan040",

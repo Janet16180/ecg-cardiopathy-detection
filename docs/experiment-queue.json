@@ -2197,6 +2197,9 @@
     "admission_passed": false,
     "admission_projected_combined_seconds": 29295.025228581526,
     "admission_shortfall_seconds": 495.0252285815259,
-    "final_independent_audit": "outputs/experiment040_cpc_simdino/final_independent_audit.json"
+    "final_independent_audit": "outputs/experiment040_cpc_simdino/final_independent_audit.json",
+    "final_charged_seconds": 274.192796229152,
+    "final_combined_charged_seconds": 10959.988451759611,
+    "execution_closed": "outputs/experiment040_cpc_simdino/execution_closed.json"
   }
 }

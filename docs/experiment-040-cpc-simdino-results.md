@@ -87,3 +87,24 @@ The 25k v4 manifest is byte-identical to v3 and contains no EchoNext records. No
 calibration/test, EchoNext test or final frozen test was evaluated. Experiment 008 remains deferred.
 The label stays an ECG-annotation proxy; the candidate screening pipeline, referral rule and age
 subgroups are unchanged.
+
+## Git handover
+
+The finalized personal Experiment 039 branch (`28aeceef17b809ff26112427ba60c44cd860c97b`)
+was merged into this branch. Only the four queue/backlog/priority documentation conflicts needed
+resolution; both studies and the predecessor provenance mapping were retained. `origin/main` is
+merged. All frozen 040 scientific source/dependency/protocol bytes remain identical to `a675030`;
+original receipt commit identifiers remain historical identities. PR #59 targets `main` and remains
+unmerged.
+
+## Final accounting
+
+Experiment 040's final charged execution is **274.192796229152 seconds**;
+closed Experiment 039 charged **10685.795655530459 seconds**.
+The combined ledger is **10959.988451759611 seconds**, against 28,800. This includes
+source preflight, every actual preparation/profile stage, the independent audit, report generation
+and its measured startup/wrapper time, post-merge receipt/document validation, plus an explicit
+30-second conservative allowance for the earlier untimed metadata/ranking startup. The allowance
+is not presented as measured GPU or training time. No full-training or bootstrap time was executed.
+Accounting writes use the same outer-stage convention as the frozen study ledger; no further
+scientific execution is scheduled after this closure.

@@ -8,8 +8,8 @@ freezes the complete CNN/multiscale/patch × GRU/xLSTM factorial at v4 25k and 5
 (36 fresh fits), matched 250,000 exposures and unchanged development readouts. The v4 tiers equal v3,
 so verified 038 caches can be reused. One diagnostic and one evidence-supported correction/remeasurement
 per severely failing combination are authorized; all original outcomes remain in the report.
-Implementation is in progress. No new model score or passed GPU profile exists yet. Closed tests stay
-closed. Inspect `outputs/experiment039_encoder_context/` for live evidence; the executable ceiling is
+Protocol and implementation are committed; exact predecessor replay and the first real GPU profile
+passed. The fixed factorial is running under the day ledger. Closed tests stay closed. Inspect `outputs/experiment039_encoder_context/` for live evidence; the executable ceiling is
 eight hours, with a reserve for diagnoses/corrections.
 
 **30 September xLSTM result:** Experiment [038](experiment-038-cpc-xlstm-results.md) completed the

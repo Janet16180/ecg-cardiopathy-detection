@@ -1902,7 +1902,7 @@
     "further_run_authorized": false
   },
   "experiment_039_encoder_context": {
-    "status": "protocol_frozen_implementation_in_progress",
+    "status": "running_profile_gated_factorial",
     "authorized": true,
     "protocol": "docs/experiment-039-cpc-encoder-context.md",
     "output_dir": "outputs/experiment039_encoder_context",
@@ -1930,6 +1930,14 @@
     "executable_ceiling_seconds": 28800,
     "one_diagnostic_and_one_correction_authorized": true,
     "calibration_test_authorized": false,
-    "next_action": "Implement and test new causal front ends and frozen helper wrapper; exact predecessor replay and real GPU profiles before training."
+    "next_action": "Complete fixed factorial sequentially; diagnose any severely failing combination once; write report from audited outputs.",
+    "protocol_commit": "a42fde1",
+    "implementation_commit": "a42fde1",
+    "runner": "scripts/coordination/run_encoder_context_day039.py",
+    "live_status": "outputs/experiment039_encoder_context/status.json",
+    "live_log": "outputs/experiment039_encoder_context/run.log",
+    "day_ledger": "outputs/experiment039_encoder_context/day_ledger.json",
+    "first_profile": "outputs/experiment039_encoder_context/cnn/seed39042/25k/profile.json",
+    "historical_integrity": "passed_exact_019_and_038_25k_50k"
   }
 }

@@ -63,8 +63,11 @@ signal and labels were obtained:
 
 ## Which EchoNext ECGs are candidates
 
-- Only `train` rows with `use = True` in `data/processed/echonext_250hz_v1/rows.csv`: 71,823 ECGs of
-  26,023 patients.
+- Only `train` rows with `use_training = True` in [EchoNext rows v2](clean-echonext-v2.md): 71,823 ECGs of
+  26,023 patients. These are the same ECGs as v1's `use`. The waveforms come from the v1 `train.npy`.
+- The build refuses to run unless rows v2 passed its cohort entry gate. The gate was written before the
+  rows were built: usable share, row alignment, lead order, no duplicates and patient disjointness. It passed
+  on every criterion, so EchoNext's quality was judged good enough for the cohorts.
 - `val` is the evaluation split of Experiments 023 and 028, and `test` is closed data. `no_split` shares its
   patients with both (EDA review, finding 6). None of them is a candidate.
 - The build reads only the `ecg_key`, `patient_key` and `split` columns of the release metadata, never a
@@ -85,21 +88,24 @@ signal and labels were obtained:
   verified SHA-256.
 - Each tier's build re-read 20 random rows per local backend, including `echonext_npy`, and matched their
   waveform hashes.
-- The build took 2 min 13 s with a peak resident size of 8.8 GB, mostly pages of the memory-mapped
-  `train.npy` (8.7 GB).
+- The build took 1 min 7 s (2 min 13 s with a cold file cache), with a peak resident size of 8.8 GB,
+  mostly pages of the memory-mapped `train.npy` (8.7 GB).
 - A second build from the same inputs gave the same bytes for the order and for every tier's manifest and
-  metadata.
+  metadata. The published build reads rows v2 instead of v1 and gave the same order again.
+  Only the tier metadata changed, because it binds the rows v2 files.
 
 ## Build
 
 ```bash
+OMP_NUM_THREADS=4 uv run --locked python -m scripts.data.build_echonext_rows_v2
 OMP_NUM_THREADS=4 uv run --locked python -m scripts.data.build_clean_cohorts_v4 build
 ```
 
 It writes the tier directories `data/processed/clean_<tier>_v4/`, and the candidate order and receipt in
 `outputs/data_quality/clean_cohorts_v4/`. It refuses existing directories. The receipt binds the SHA-256 of
-every v3 input, of the EchoNext `rows.csv`, `metadata.json` and `train.npy`, of the v3 candidate order and
-of every source file.
+every v3 input, of the EchoNext v1 `rows.csv`, `metadata.json` and `train.npy` and rows v2 `rows.csv` and
+`metadata.json`, of the v3 candidate order and of every source file. Build
+[EchoNext rows v2](clean-echonext-v2.md) first.
 
 Pending MIMIC records are resolved as in v3: run v2's `score-pending` with
 `--work-dir outputs/data_quality/clean_cohorts_v4`, then
@@ -113,13 +119,13 @@ The uncompressed order has SHA-256 `3914fc0443dfb4aede6ae968dc5e6094909e96d225ac
 | File | SHA-256 |
 | --- | --- |
 | `outputs/data_quality/clean_cohorts_v4/candidate_order.csv.gz` | `e8814d92a55ce5418001aa1f6521984ed888fb8d63b077fdcafeab3436be0f38` |
-| `data/processed/clean_25k_v4/metadata.json` | `6fc39c42f66c951857c4d7469d352a6f3b485fff1e5be2c360824dc506e6ff9a` |
-| `data/processed/clean_50k_v4/metadata.json` | `aed1bca62621ca2911f53b426febe669c4e08a92a299a1190926d4ce0d842eee` |
-| `data/processed/clean_100k_v4/metadata.json` | `d332363d885e4a62cbae8483d91df91ab8bfd419c762a3f2f19b92e8c25bcc21` |
-| `data/processed/clean_150k_v4/metadata.json` | `f27cf6b89353d64993a29e9f2dba805b157e152faad120a097a47e34069e6014` |
-| `data/processed/clean_200k_v4/metadata.json` | `7b676ab7cd2f1cac8d8574a8859682bf5607e61560e3174ad794df4247a61f08` |
-| `data/processed/clean_500k_v4/metadata.json` | `f5f91be6e9281125afbce14891d63e2baa63ba2d082d27a9eb6a12039a8e0420` |
-| `data/processed/clean_1m_v4/metadata.json` | `fac9a8f232ca9da96729691d937ec9ad9e7f3d431bd75e14e9b622a7e3bb43fb` |
+| `data/processed/clean_25k_v4/metadata.json` | `d21947828b906a378b74dc7ef33cdb4aa0411414fe981054566d188c17106f37` |
+| `data/processed/clean_50k_v4/metadata.json` | `85153aca078c34812f5dd05af7e77c9878f1fbed3c50b30fb22375380a9c5713` |
+| `data/processed/clean_100k_v4/metadata.json` | `94543c195449d4c3ead65189c33411e8e2fb6c31397eaf553324d56d84eaa298` |
+| `data/processed/clean_150k_v4/metadata.json` | `7053334f1d810ff703a37adc3c35fa455a32fc18316db6a12ecaae9df6eed17b` |
+| `data/processed/clean_200k_v4/metadata.json` | `1e4e2b5f11969fd7d76ab2985ccf762a0dd7af97adc888add24569f19c15f187` |
+| `data/processed/clean_500k_v4/metadata.json` | `d66a12e5c317da95b6f5de16c4a134ae0415989605928932bf57b16cff4b7ac6` |
+| `data/processed/clean_1m_v4/metadata.json` | `89be7b04b10642c9aa088f300be96886972ac6a36fe07ab83e6b9a2771f794e4` |
 
 ## Decisions made here, and alternatives
 

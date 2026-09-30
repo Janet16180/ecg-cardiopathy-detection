@@ -49,13 +49,14 @@ def test_only_usable_training_rows_become_candidates(tmp_path, monkeypatch):
     monkeypatch.setattr(v4, "to_stored", lambda path: "cache/train.npy")
     signals = np.random.default_rng(0).normal(size=(3, 12, 2500)).astype(np.float32)
     np.save(tmp_path / "train.npy", signals)
+    (tmp_path / "metadata.json").write_text('{"cohort_entry": true}')
     pd.DataFrame({
         "ecg_key": ["10", "11", "12", "13"], "patient_key": ["p1", "p1", "p2", "p3"],
         "split": ["train", "train", "train", "val"], "row": ["0", "1", "2", "0"],
-        "use": ["True", "False", "True", "True"], "age_at_ecg": ["22", "40", "70", "50"],
+        "use_training": ["True", "False", "True", "True"], "age_at_ecg": ["22", "40", "70", "50"],
         "sex": ["female", "male", "male", "female"],
     }).to_csv(tmp_path / "rows.csv", index=False)
-    found = v4.echonext_rows(tmp_path)
+    found = v4.echonext_rows(tmp_path, tmp_path)
     assert found["record_id"].tolist() == ["echonext:10", "echonext:12"]
     assert found["patient_id"].tolist() == ["echonext:p1", "echonext:p2"]
     assert found["signal_sha256"].tolist() == [signal_sha256(signals[0]), signal_sha256(signals[2])]
@@ -81,3 +82,9 @@ def test_comparison_accepts_v3_plus_echonext_and_refuses_a_change():
     changed.loc[0, "signal_sha256"] = "other"
     with pytest.raises(ValueError, match="curated block"):
         v4.compare_with_v3(changed, previous)
+
+
+def test_rows_that_failed_the_gate_are_refused(tmp_path):
+    (tmp_path / "metadata.json").write_text('{"cohort_entry": false}')
+    with pytest.raises(ValueError, match="entry gate"):
+        v4.echonext_rows(tmp_path, tmp_path)

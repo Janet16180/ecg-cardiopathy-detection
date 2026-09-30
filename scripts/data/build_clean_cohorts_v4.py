@@ -31,23 +31,28 @@ SIZES = {"25k": 25_000, "50k": 50_000, "100k": 100_000, "150k": 150_000, "200k":
 SOURCES = ("ecg_experiment/clean_cohorts_v4.py", "ecg_experiment/clean_cohorts_v3.py",
            "ecg_experiment/cohort_tiers.py", "ecg_experiment/clean_cohorts_v2.py",
            "ecg_experiment/clean_cohorts.py", "ecg_experiment/challenge_labels.py",
-           "ecg_experiment/ecg_quality.py", "ecg_experiment/echonext.py", "ecg_experiment/eda/echonext.py",
+           "ecg_experiment/ecg_quality.py", "ecg_experiment/echonext.py", "ecg_experiment/echonext_v2.py",
+           "ecg_experiment/eda/echonext.py",
            "scripts/data/build_clean_cohorts_v4.py")
 INPUTS = (v3.CHALLENGE_SPLITS, v2.QUALITY_V1, v2.NINGBO, v2.NINGBO_RECEIPT, v2.CODE15, v2.MIMIC_RECORDS,
           v2.PTBXL_REFERENCE, ROOT / UNION / "heldout_references.csv", ROOT / UNION / "labels_fraction1.csv",
           ROOT / UNION / "labels_fraction0.1.csv", v4.ECHONEXT / "rows.csv", v4.ECHONEXT / "metadata.json",
-          v4.ECHONEXT / "train.npy")
+          v4.ECHONEXT / "train.npy", v4.ECHONEXT_ROWS / "rows.csv", v4.ECHONEXT_ROWS / "metadata.json")
 V3_DIR = ROOT / "outputs/data_quality/clean_cohorts_v3"
 EXCLUSION = ("Challenge records of the test and calibration groups of docs/challenge-splits-v1.md, and any "
-             "candidate with one of their waveform hashes, are never candidates; of EchoNext only usable "
-             "train rows are candidates, and no training patient appears in val, test or no_split")
+             "candidate with one of their waveform hashes, are never candidates; of EchoNext only train rows "
+             "with use_training in rows v2 are candidates, and no training patient appears in val, test or "
+             "no_split")
 
 
 def check_echonext_inputs() -> dict[str, object]:
-    """Check the EchoNext cache against the release and the patient split; return what was checked."""
+    """Check the EchoNext cache and rows v2 against the release and the patient split; return the checks."""
     cache = json.loads((v4.ECHONEXT / "metadata.json").read_text())
     if sha256_file(v4.ECHONEXT / "train.npy") != cache["arrays_sha256"]["train.npy"]:
         raise ValueError("EchoNext train.npy differs from its cache metadata")
+    rows = json.loads((v4.ECHONEXT_ROWS / "metadata.json").read_text())
+    if sha256_file(v4.ECHONEXT_ROWS / "rows.csv") != rows["rows_sha256"] or not rows["cohort_entry"]:
+        raise ValueError("EchoNext rows v2 changed or did not pass the cohort entry gate")
     name = "echonext_metadata_100k.csv"
     if member_sha256(name) != cache["release_sha256"][name]:
         raise ValueError("The EchoNext metadata differs from the verified release")
@@ -55,7 +60,7 @@ def check_echonext_inputs() -> dict[str, object]:
     v4.check_patients_disjoint(splits)
     return {"release_split_ecgs": splits["split"].value_counts().to_dict(),
             "train_patients": int(splits.loc[splits["split"] == "train", "patient_key"].nunique()),
-            "train_patients_in_other_splits": 0}
+            "train_patients_in_other_splits": 0, "rows_v2_gate": rows["gate"]}
 
 
 def shared_metadata(seed: int) -> dict[str, object]:

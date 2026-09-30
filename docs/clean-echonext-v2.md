@@ -5,7 +5,74 @@
 not support and one exclusion rule the EDA never examined. Version 2 is a new rows table over the unchanged v1
 arrays; v1 stays as it is, because Experiments 023 and 028 and cohorts v4 pin it.
 
-RESULTS_PLACEHOLDER
+## Results
+
+Every number comes from `data/processed/echonext_250hz_v2/metadata.json`.
+
+| Rows | Train | Val |
+| --- | ---: | ---: |
+| All | 72,475 | 4,626 |
+| `use_training` | 71,823 | 4,575 |
+| `use_evaluation` | 71,879 | 4,579 |
+
+**The cohort entry gate passed on every criterion, so EchoNext enters [cohorts v4](clean-cohorts-v4.md).**
+
+| Criterion | Result |
+| --- | --- |
+| Training ECGs usable for training | 99.1% |
+| Waveform heart rate within 10 bpm of the cart rate | 98.5% train, 98.4% val (correlation 0.990 and 0.985); 28.1% and 29.8% with the rows shuffled |
+| Limb relations, fitted coefficients and R² | II ~ I + III: +1.03, +0.95, R² 0.975. aVR ~ I + II: -0.57, -0.56, R² 0.995. aVL ~ I + III: +0.60, -0.56, R² 0.995. aVF ~ II + III: +0.60, +0.58, R² 0.996 |
+| Identical waveforms among the 77,101 train and val ECGs | 0 |
+| Training patients with an ECG in another split | 0 of 26,218 |
+
+The lead order is standard in two more ways, which the gate does not use:
+
+- QRS polarity: the median skewness is negative in aVR (-3.31) and V1 (-3.39) and positive in V5 (2.97)
+  and V6 (3.66).
+- Chest-lead neighbours: V1's correlation falls from V2 to V6 (0.74, 0.51, 0.00, -0.35, -0.55), and V6's
+  rises from V1 to V5.
+
+The v1 cache called its order canonical without reordering, and the release README does not name the order.
+These checks confirm it.
+
+What each exclusion reason removes, against the usable training ECGs:
+
+| | Noise dominated | Flat segment | Constant lead | Usable train |
+| --- | ---: | ---: | ---: | ---: |
+| ECGs (train / val) | 56 / 4 | 596 / 47 | 4 / 0 | 71,823 / - |
+| Patients | 29 | 570 | 4 | 26,023 |
+| Composite positive | 95.0% | 26.9% | 25.0% | 52.6% |
+| Median QRS (ms) | 158 | 86 | 171 | 90 |
+| QRS 120 ms or more | 85.0% | 2.6% | 100% | 13.0% |
+| PR missing | 66.7% | 2.0% | 100% | 10.5% |
+| Median LVEF (%) | 17.5 | 60.0 | 57.5 | 57.5 |
+| Inpatient | 90.0% | 59.6% | 50.0% | 48.0% |
+| Median year | 2021 | 2009 | 2021 | 2016 |
+
+No ECG has a nonfinite sample.
+
+- The noise-dominated ECGs are recordings of very sick patients, not broken files: wide QRS, often no
+  measurable PR, and a median ejection fraction of 17.5%. That fits interference from a cardiac device, such
+  as pacing or a ventricular assist device, but no individual ECG was looked at, so this is not confirmed.
+  This is why they stay in `use_evaluation` and out of `use_training`.
+- The flat-segment ECGs are the partial recordings of 2008-2012 that the EDA described, and are rarely
+  positive.
+
+Other checks:
+
+- **One ECG per patient.** Using each training patient's most recent ECG usable for evaluation gives 25,983
+  ECGs of 26,024 patients. 43.7% are positive, against 52.6% for all training ECGs and 43.2% for val. This
+  reproduces EDA finding 4 from the clean rows. The 41 patients whose most recent ECG is excluded have no
+  most recent ECG in the usable rows.
+- **Clipping.** In 5,000 usable training ECGs, the median ECG has 0.11% of its samples at a lead's minimum or
+  maximum. 4.0% have more than 1%, and 0.02% more than 5% (val: 3.3% and 0.07%).
+- **Reproducible.** A second build gave a byte-identical `rows.csv` and the same metadata apart from the
+  build time. The build took about 30 s.
+
+| File | SHA-256 |
+| --- | --- |
+| `data/processed/echonext_250hz_v2/rows.csv` | `b29f2b79471a1bb7ec870b01c35d3f2f151a281dd706fe0babeb9e5cf4223832` |
+| `data/processed/echonext_250hz_v2/metadata.json` | `6ec989ba6df31156a73126d7b830fee776922e39ec49140003046bbf74c4777b` |
 
 ## Decisions
 

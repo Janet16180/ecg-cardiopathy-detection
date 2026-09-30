@@ -9,15 +9,15 @@ Sources enter in order of quality (``docs/clean-cohorts-v4.md``):
 3. The MIMIC top-up, only if the two blocks above fall short of 100k.
 4. CODE-15, then the remaining local MIMIC records, then the pending ones, as in v2.
 
-Only EchoNext ``train`` rows that pass the unit-free quality rules are candidates. ``val`` is an evaluation
-split, ``test`` is closed and ``no_split`` shares its patients with both, so none of them is ever read here
-beyond the patient and split columns needed to prove that no training patient appears in them.
+Only EchoNext ``train`` rows with ``use_training`` in EchoNext rows v2 (``docs/clean-echonext-v2.md``) are
+candidates, and only if those rows passed their cohort entry gate. ``val`` is an evaluation split, ``test`` is
+closed and ``no_split`` shares its patients with both, so none of them is ever read here beyond the patient
+and split columns needed to prove that no training patient appears in them.
 """
 
 from __future__ import annotations
 
-import io
-import zipfile
+import json
 from pathlib import Path
 
 import numpy as np
@@ -28,12 +28,13 @@ from . import clean_cohorts_v3 as v3
 from .clean_cohorts import UNION, table
 from .cohort_tiers import SUMMARY_KEYS, TABLES, tier_sizes, tier_summary
 from .cohort_tiers import check_waveforms as check_other_waveforms
-from .eda.echonext import ARCHIVE, member
+from .echonext_v2 import read_release_columns
 from .files import sha256_file, write_json_atomic
 from .paths import to_stored
 from .public_sources import signal_sha256
 
 ECHONEXT = v2.ROOT / "data/processed/echonext_250hz_v1"
+ECHONEXT_ROWS = v2.ROOT / "data/processed/echonext_250hz_v2"
 BACKEND = "echonext_npy"
 CHECKED_PER_BACKEND = 20
 
@@ -57,48 +58,49 @@ def check_patients_disjoint(splits: pd.DataFrame) -> None:
         raise ValueError("An EchoNext training patient appears in another split")
 
 
-def read_release_splits(archive: Path = ARCHIVE) -> pd.DataFrame:
+def read_release_splits() -> pd.DataFrame:
     """
     Read only the ECG, patient and split columns of the EchoNext metadata, so no label is loaded.
-
-    Parameters
-    ----------
-    archive : Path
-        The release ZIP.
 
     Returns
     -------
     pd.DataFrame
-        ``ecg_key``, ``patient_key`` and ``split`` as strings.
+        ``ecg_key``, ``split`` and ``patient_key`` as strings.
     """
-    with zipfile.ZipFile(archive) as release:
-        data = release.read(member("echonext_metadata_100k.csv"))
-    return pd.read_csv(io.BytesIO(data), dtype=str, keep_default_na=False,
-                       usecols=["ecg_key", "patient_key", "split"])
+    return read_release_columns(["patient_key"])
 
 
-def echonext_rows(directory: Path = ECHONEXT) -> pd.DataFrame:
+def echonext_rows(rows_dir: Path = ECHONEXT_ROWS, arrays_dir: Path = ECHONEXT) -> pd.DataFrame:
     """
-    Candidate rows of the usable EchoNext training ECGs, each with the hash of its stored waveform.
+    Candidate rows of the EchoNext training ECGs usable for training, each with its waveform hash.
 
     Parameters
     ----------
-    directory : Path
-        The EchoNext cache (``docs/clean-sph-echonext-v1.md``) with ``rows.csv`` and ``train.npy``.
+    rows_dir : Path
+        EchoNext rows v2 (``docs/clean-echonext-v2.md``) with ``rows.csv`` and ``metadata.json``.
+    arrays_dir : Path
+        The v1 cache (``docs/clean-sph-echonext-v1.md``) holding ``train.npy``.
 
     Returns
     -------
     pd.DataFrame
         ``clean_cohorts_v2.COLUMNS`` rows. ``index`` is the row in ``train.npy``; the waveform is float32
         ``(12, 2500)`` at 250 Hz in the release's standardized values.
+
+    Raises
+    ------
+    ValueError
+        If the rows did not pass their cohort entry gate.
     """
-    rows = pd.read_csv(directory / "rows.csv", dtype=str, keep_default_na=False)
-    rows = rows[(rows["split"] == "train") & (rows["use"] == "True")]
-    signals = np.load(directory / "train.npy", mmap_mode="r")
+    if not json.loads((rows_dir / "metadata.json").read_text())["cohort_entry"]:
+        raise ValueError("EchoNext rows v2 did not pass the cohort entry gate")
+    rows = pd.read_csv(rows_dir / "rows.csv", dtype=str, keep_default_na=False)
+    rows = rows[(rows["split"] == "train") & (rows["use_training"] == "True")]
+    signals = np.load(arrays_dir / "train.npy", mmap_mode="r")
     return pd.DataFrame({
         "record_id": "echonext:" + rows["ecg_key"], "patient_id": "echonext:" + rows["patient_key"],
         "source": "echonext", "split": "train", "label_scope": "ssl_only", "backend": BACKEND,
-        "path": to_stored(directory / "train.npy"), "index": rows["row"], "window_start": "0",
+        "path": to_stored(arrays_dir / "train.npy"), "index": rows["row"], "window_start": "0",
         "signal_sha256": [signal_sha256(signals[int(row)]) for row in rows["row"]],
         "quality_status": "passed", "review_flags": "", "label_available": False,
         "age": pd.to_numeric(rows["age_at_ecg"]), "male": rows["sex"].map({"male": 1.0, "female": 0.0}),

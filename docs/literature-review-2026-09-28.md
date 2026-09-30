@@ -126,7 +126,7 @@ about matching values.
     papers could not separate from architecture either.
 - **ECG-JEPA is label-efficient.**
   - Paper: best below about 1,000 labels (benchmark, Table 31).
-  - Ours: with 100 PTB-XL labels, JEPA and xECG already beat our CPC trained on all labels (025).
+  - Ours: with 100 PTB-XL labels, JEPA and xECG already match our CPC trained on all labels (025).
   - Refinement: xECG was just as label-efficient on PTB-XL and more so on EchoNext (028). "JEPA is the most
     label-efficient" does not hold against xECG in our setting.
 - **Single-hospital estimates are optimistic.**
@@ -167,7 +167,7 @@ about matching values.
 
 - **A detector fitted only on normal ECGs works surprisingly well.** A Mahalanobis distance on frozen xECG
   embeddings reached 0.923 on PTB-XL with no abnormal labels (026). That equals a 100-label classifier, and it
-  caught held-out conditions as well as a classifier trained without them. None of the reviewed papers tests
+  was not shown to be worse on held-out conditions than a classifier trained without them. None of the reviewed papers tests
   one-class screening. It fits a mostly healthy student population.
 - **Age and sex carry far less signal at SPH** (0.658, against 0.756 on PTB-XL).
 - **The project label edges ahead of the standard label at SPH**, the reverse of PTB-XL (022). Both effects

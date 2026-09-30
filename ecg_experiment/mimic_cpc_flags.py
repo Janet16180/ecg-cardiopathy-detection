@@ -8,6 +8,8 @@ import json
 import os
 import time
 from collections import Counter
+from collections.abc import Iterable
+from typing import Any
 
 import numpy as np
 import torch
@@ -29,13 +31,43 @@ SCORE_BANDS = (0.1, 0.25, 0.5, 0.75, 0.9)
 
 
 def probability(logits: np.ndarray, slope: float, intercept: float) -> np.ndarray:
-    """Apply the frozen PTB-XL Platt mapping to classifier logits."""
+    """
+    Apply the frozen PTB-XL Platt mapping to classifier logits.
+
+    Parameters
+    ----------
+    logits : np.ndarray
+        Raw classifier logits.
+    slope, intercept : float
+        Platt scaling coefficients fitted on PTB-XL.
+
+    Returns
+    -------
+    np.ndarray
+        Calibrated probabilities as float32.
+    """
     scaled = logits.astype(np.float64) * slope + intercept
     return (1 / (1 + np.exp(-scaled))).astype(np.float32)
 
 
-def score(model: CPCClassifier, data: object, device: str) -> np.ndarray:
-    """Score a batch iterator without retaining waveforms."""
+def score(model: CPCClassifier, data: Iterable[tuple[torch.Tensor, Any, Any]], device: str) -> np.ndarray:
+    """
+    Score a batch iterator without retaining waveforms.
+
+    Parameters
+    ----------
+    model : CPCClassifier
+        Trained classifier.
+    data : Iterable[tuple[torch.Tensor, Any, Any]]
+        Batches whose first element is the signal tensor.
+    device : str
+        Device the model runs on.
+
+    Returns
+    -------
+    np.ndarray
+        Raw logits of every record in batch order.
+    """
     model.eval()
     parts = []
     with torch.inference_mode():
@@ -47,7 +79,30 @@ def score(model: CPCClassifier, data: object, device: str) -> np.ndarray:
 def replay_saved_test(
     pool: Pool, model: CPCClassifier, mean: np.ndarray, std: np.ndarray, device: str
 ) -> float:
-    """Require current inference to reproduce historical saved test logits."""
+    """
+    Require current inference to reproduce historical saved test logits.
+
+    Parameters
+    ----------
+    pool : Pool
+        CPC waveform cache.
+    model : CPCClassifier
+        Trained classifier.
+    mean, std : np.ndarray
+        Per-lead normalization of the trained model.
+    device : str
+        Device the model runs on.
+
+    Returns
+    -------
+    float
+        Largest absolute logit difference over the first 16 saved test rows.
+
+    Raises
+    ------
+    RuntimeError
+        If the difference exceeds 1e-4.
+    """
     with (MODEL_DIR / "test_predictions.csv").open(newline="") as handle:
         saved = list(csv.DictReader(handle))[:16]
     rows_by_id = {row["ecg_id"]: row for row in pool.rows}
@@ -62,7 +117,24 @@ def replay_saved_test(
 
 
 def run(*, profile: bool = False) -> dict[str, object]:
-    """Profile or count MIMIC flags with one GPU lock and no waveform output."""
+    """
+    Profile or count MIMIC flags with one GPU lock and no waveform output.
+
+    Parameters
+    ----------
+    profile : bool
+        Score only the first 512 records and write the cost-gate profile.
+
+    Returns
+    -------
+    dict[str, object]
+        Aggregate flag counts, calibration and timing.
+
+    Raises
+    ------
+    RuntimeError
+        If the cache or checkpoint identity differs, or the cost gate fails.
+    """
     device = "cuda" if torch.cuda.is_available() else "cpu"
     with gpu_lock(device, blocking=False):
         pool = Pool(CACHE)

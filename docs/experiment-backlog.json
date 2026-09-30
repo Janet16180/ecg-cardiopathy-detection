@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-28",
+  "updated": "2026-09-29",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -27,8 +27,8 @@
       "cpu_hours": 0.5,
       "build_hours": 4,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Protocol frozen with addendum v2; cache built (8.7 GB)."
+      "status": "done",
+      "notes": "Done 28 September 2026 (v3): composite SHD AUROC cpc 0.812, jepa 0.823, xecg 0.838, cart tabular 0.737; cpc minus tabular +0.075 [+0.063, +0.086]; docs/experiment-023-echonext-readout-results.md."
     },
     {
       "id": "fulldev_encoders",
@@ -91,14 +91,14 @@
       "title": "Device-controlled probes (drop or balance CS100 3)",
       "question": "How much of the binary AUROC depends on the recording device?",
       "evidence": "020: CS100 3 is 35% of training folds, 74% positive, and identifiable at AUROC 0.974.",
-      "value": 3,
+      "value": 2,
       "clarity": 0.6,
       "gpu_hours": 0,
       "cpu_hours": 0.3,
       "build_hours": 2,
       "blocked_by": [],
       "status": "open",
-      "notes": "Cached features; compare per-device development AUROC."
+      "notes": "Cached features; compare per-device development AUROC. Value lowered 29 September 2026: 024b found JEPA and xECG clusters follow diagnosis, not device or hospital; the device effect was CPC-specific."
     },
     {
       "id": "attention_readout",
@@ -169,7 +169,7 @@
       "blocked_by": [
         "@ningbo_download"
       ],
-      "status": "open",
+      "status": "done",
       "notes": "Module ecg_experiment/eda/ningbo.py ready. Include the exact-hash join of Ningbo against Chapman, the union, the clean cohorts and the PTB-XL held-out folds, with a receipt (cleaning review R1)."
     },
     {
@@ -185,7 +185,7 @@
       "blocked_by": [
         "ningbo_eda"
       ],
-      "status": "open",
+      "status": "done",
       "notes": "Script supports 150k and 200k; build only 25k-100k here."
     },
     {
@@ -203,8 +203,8 @@
         "e022_sph",
         "challenge_label_mapping"
       ],
-      "status": "open",
-      "notes": "Needs a harmonized binary label across SNOMED sources."
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 022b (docs/experiment-022b-multisource-readout-results.md), on the frozen Challenge record split v1 with the training quality policy. The readout fitted on PTB-XL plus 22,494 Challenge training ECGs is adopted: SPH AUROC xECG 0.915 to 0.939 (+0.024 [+0.021, +0.026]), JEPA 0.911 to 0.934, CPC 0.876 to 0.897. Leaving one family out still beats PTB-XL alone on that held-out family (+0.008 to +0.026 AUROC, 8 of 9 intervals above 0). No pooled threshold transfers to SPH; PTB-XL development falls 0.013 (xECG), mostly on the hard cases. Challenge test groups still closed. Measured with ningbo_sph_transfer."
     },
     {
       "id": "prototype_head",
@@ -237,7 +237,7 @@
         "cohorts_v2"
       ],
       "status": "open",
-      "notes": "024: k-means clusters align with device (AMI 0.22-0.23) and heart rate more than diagnosis (0.06-0.09); only worth doing on a supervised projection with device and heart-rate controls."
+      "notes": "024: k-means clusters align with device (AMI 0.22-0.23) and heart rate more than diagnosis (0.06-0.09); only worth doing on a supervised projection with device and heart-rate controls. 024b ran the source-AMI step: pooled k-means clusters follow the label more than the hospital, but no cluster is a pure diagnosis."
     },
     {
       "id": "core_lead_masking",
@@ -322,7 +322,7 @@
       "cpu_hours": 0.5,
       "build_hours": 4,
       "blocked_by": [],
-      "status": "open",
+      "status": "done",
       "notes": "Needed before multisource_lso."
     },
     {
@@ -369,8 +369,8 @@
       "cpu_hours": 0.2,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "open",
-      "notes": "New manifests only; frozen experiments keep the historical transform."
+      "status": "done",
+      "notes": "Done 29 September 2026: resample_full(signal, up, down) in ecg_experiment/resample.py, one resample_poly pass per record, float32; tests/test_resample.py; docs/data-quality-assessment.md. New manifests only; frozen experiments keep historical_resample, resample_halves and to_cpc."
     },
     {
       "id": "builder_key_checks",
@@ -384,8 +384,8 @@
       "cpu_hours": 0.3,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "open",
-      "notes": ""
+      "status": "done",
+      "notes": "Done 29 September 2026: audited all 17 scripts/data builders and their loaders. Every waveform/metadata pairing is by ID, by a per-row signal_sha256 re-check, or by an ID array or asserted ID sequence written with the waveforms; no assertion needed adding. EchoNext stays positional by release design (contiguous-split and count checks, row column re-checked by consumers); its builder and eda/echonext.py are hashed in echonext_250hz_v1/metadata.json, so they were left unchanged."
     },
     {
       "id": "highpass_ablation",
@@ -414,8 +414,8 @@
       "cpu_hours": 1,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Mahalanobis or k-NN distance on cached NORM-only training embeddings; compare with the probe on development, then SPH."
+      "status": "done",
+      "notes": "Done 28 September 2026 as Experiment 026: Mahalanobis distance from normal, xECG 0.923 and JEPA 0.910 on development (no abnormal labels), SPH 0.858 and 0.836; matches probes trained without a held-out condition; docs/experiment-026-normal-manifold-results.md."
     },
     {
       "id": "ecg_age_gap",
@@ -600,8 +600,8 @@
       "cpu_hours": 0.5,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Split SPH by patient into a recalibration pool and a fixed evaluation half; draw 50-1,000 local ECGs, refit Platt and the threshold only; cached 022 predictions, CPU."
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 029 Part A: with xECG, the pooled readout and a local Platt plus 95% threshold, no n up to 1,000 keeps sensitivity >= 0.95 in 90% of draws (0.79 at 1,000; specificity falls from 0.80 to 0.61). A pre-registered conservative order-statistic threshold does from n = 200 at SPH prevalence (about 50 positives needed) and from n = 1,000 at 5% prevalence, at specificity 0.25-0.51. 100 local ECGs fix calibration (intercept -1.6 to 0). Blending with source data fails. docs/experiment-029-local-adaptation-results.md. 1,420 s CPU for both parts."
     },
     {
       "id": "stable_threshold",
@@ -615,8 +615,490 @@
       "cpu_hours": 0.5,
       "build_hours": 2,
       "blocked_by": [],
+      "status": "dropped",
+      "notes": "Bootstrap the calibration set for threshold variance; compare with a cross-fitted training-set threshold. Dropped 29 September 2026: superseded by 029, which measured threshold stability against local sample size."
+    },
+    {
+      "id": "hybrid_screening_score",
+      "kind": "experiment",
+      "title": "Hybrid score: supervised probe plus distance from normal",
+      "question": "Does adding the one-class distance to the probe catch unseen conditions without losing overall AUROC?",
+      "evidence": "026: the distance from normal matched probes trained without a held-out condition, but trailed the full probe by 0.04-0.05.",
+      "value": 4,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Cached 026 scores and 025 probe predictions; e.g. rank-average or a two-feature logistic fitted on training only. Value raised 29 September 2026: 029 shows a fixed sensitivity target is impractical at low prevalence; a hybrid may help most at small referral budgets. Evaluate at the budgets of referral_budget_operating_point. Done 29 September 2026 as Experiment 031 (PR #38): negative at every budget (xECG 5%: -0.028 [-0.035, -0.022]); it helps on conditions held out of the readout (MI +0.090, CD +0.085, STTC +0.068)."
+    },
+    {
+      "id": "local_normal_manifold",
+      "kind": "experiment",
+      "title": "Normal manifold fitted on a small set of local normal ECGs",
+      "question": "Does refitting the normal manifold on a few hundred local normal ECGs recover the SPH gap?",
+      "evidence": "026: distance from normal fell from 0.923 (PTB-XL) to 0.858 (SPH) for xECG; 027 showed calibration shifts across sites too.",
+      "value": 4,
+      "clarity": 0.7,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 029 Part B: adding 50 local normals to the pooled reference beats it in 96% of draws, but the xECG gain is negligible (+0.0002 at 50, +0.003 at 1,000; reference 0.877). Recentring on the local normal mean gives +0.005-0.007 from 50-100 normals (JEPA +0.009, CPC +0.017); local-only needs about 1,000 normals to match. Best 0.883 against 0.941 for the supervised readout, so the gap does not close. docs/experiment-029-local-adaptation-results.md."
+    },
+    {
+      "id": "echo_label_efficiency",
+      "kind": "experiment",
+      "title": "Label efficiency for echo-confirmed structural heart disease",
+      "question": "How many echo-labeled ECGs are needed for a useful SHD readout with frozen xECG or JEPA?",
+      "evidence": "023: frozen xECG reached 0.838 with 71,823 training labels; echo labels are expensive, and PTB-XL abnormality heads reach only about 0.75.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 028: mean AUROC xECG/JEPA/CPC 0.752/0.734/0.728 at 100 echo labels, 0.801/0.791/0.783 at 1,000, 0.838/0.823/0.812 with all; all beat the cart head (0.737) from 250 labels; 95% of the gain over chance needs about 4,000 labels; docs/experiment-028-echo-label-efficiency-results.md. 6,655 s CPU."
+    },
+    {
+      "id": "ningbo_sph_transfer",
+      "kind": "experiment",
+      "title": "Rerun 022 with Ningbo: do Ningbo labels improve transfer to SPH?",
+      "question": "Adding Ningbo's physician labels to the PTB-XL readout: does SPH AUROC, calibration or 95%-sensitivity transfer improve?",
+      "evidence": "022/027: rankings transfer to SPH but the PTB-XL operating point does not (sensitivity about 0.92). Ningbo is a large Chinese hospital like SPH. 025: PTB-XL gains above 4,000 labels are under 0.01, so any gain should show up in transfer, not in PTB-XL development.",
+      "value": 4,
+      "clarity": 0.6,
+      "gpu_hours": 0.5,
+      "cpu_hours": 1,
+      "build_hours": 4,
+      "blocked_by": [
+        "ningbo_eda",
+        "challenge_label_mapping"
+      ],
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 022b (docs/experiment-022b-multisource-readout-results.md), with multisource_lso. Adding Ningbo's labeled training ECGs to the PTB-XL readout raises SPH AUROC: xECG 0.915 to 0.935 (+0.020 [+0.018, +0.022]), JEPA +0.018, CPC +0.016; Chapman/Ningbo carries half of the full multi-source gain. A threshold calibrated on PTB-XL plus Ningbo does not transfer: SPH sensitivity 0.922 to 0.841 (xECG), specificity 0.646 to 0.881. PTB-XL hard cases rank worse (0.726 to 0.687). Measured about 3 h build and 20 min CPU for both items.",
+      "rerun_of": "022"
+    },
+    {
+      "id": "multisource_calibration",
+      "kind": "experiment",
+      "title": "Rerun 027 with Ningbo: calibration and threshold fitted on several hospitals",
+      "question": "Does a threshold calibrated on PTB-XL plus Ningbo (and other Challenge sources) hold 95% sensitivity at SPH better than a PTB-XL-only threshold?",
+      "evidence": "027: PTB-XL-only calibration missed 95% at SPH and probabilities ran too high (intercept -1.1 to -1.9).",
+      "value": 4,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [
+        "ningbo_eda",
+        "challenge_label_mapping"
+      ],
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 027b (docs/experiment-027b-multisource-calibration-results.md), on the frozen Challenge record split v1 (docs/challenge-splits-v1.md). Pooled PTB-XL plus Challenge calibration is not adopted: SPH sensitivity CPC 0.971 to 0.944 (closer), JEPA 0.916 to 0.912 and xECG 0.922 to 0.920 (slightly further); no arm reaches 95% at SPH, and ECE worsens for JEPA and xECG (0.11 to 0.16-0.17). Leave-one-family-out calibration did not help a held-out hospital. Measured about 3 h build and 85 s CPU.",
+      "rerun_of": "027"
+    },
+    {
+      "id": "multisource_normal_manifold",
+      "kind": "experiment",
+      "title": "Rerun 026 with Ningbo: normal manifold fitted on normals from several hospitals",
+      "question": "Does fitting the distance-from-normal score on PTB-XL plus Ningbo normals close its SPH gap?",
+      "evidence": "026: xECG distance from normal 0.923 on PTB-XL but 0.858 on SPH.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [
+        "ningbo_eda",
+        "challenge_label_mapping"
+      ],
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 026b (docs/experiment-026b-multisource-normal-manifold-results.md), on the frozen Challenge record split v1 with the training quality policy. Fitting the Mahalanobis score on PTB-XL plus 4,974 Challenge training normals (sinus rhythm alone) is adopted: SPH AUROC xECG 0.858 to 0.878 (+0.020 [+0.018, +0.022]), JEPA 0.836 to 0.865, CPC 0.791 to 0.806, about a third of the gap to the 022 probe. Chapman/Ningbo carries most of the gain; PTB-XL development falls 0.004 (xECG). Measured about 2 h build and 10 min CPU.",
+      "rerun_of": "026"
+    },
+    {
+      "id": "cpc_pretrain_cohorts_v2",
+      "kind": "experiment",
+      "title": "CPC continued pretraining on quality-first cohorts v2",
+      "question": "Does pretraining CPC on the Ningbo-enriched quality-first cohorts narrow its gap to JEPA and xECG?",
+      "evidence": "022-026: CPC trails JEPA/xECG by about 0.035 everywhere; both were pretrained on Chapman and Ningbo, CPC was not. ECG-JEPA Table 8: more MIMIC data did not help.",
+      "value": 2,
+      "clarity": 0.5,
+      "gpu_hours": 4,
+      "cpu_hours": 1,
+      "build_hours": 6,
+      "blocked_by": [
+        "cohorts_v2"
+      ],
       "status": "open",
-      "notes": "Bootstrap the calibration set for threshold variance; compare with a cross-fitted training-set threshold."
+      "notes": "Lower priority now that the baseline moves to frozen JEPA/xECG."
+    },
+    {
+      "id": "rerun_025_ningbo",
+      "kind": "experiment",
+      "title": "Rerun 025 with Ningbo: label efficiency with PTB-XL + Ningbo labels",
+      "question": "Does pooling Ningbo's labels change the label-efficiency curves or the encoder ranking, and does it help SPH?",
+      "evidence": "025: the curve is nearly flat above 4,000 labels (JEPA 0.955 to 0.959), so little change is expected on PTB-XL; this checks it.",
+      "value": 3,
+      "clarity": 0.7,
+      "gpu_hours": 0.5,
+      "cpu_hours": 1,
+      "build_hours": 2,
+      "blocked_by": [
+        "ningbo_eda",
+        "challenge_label_mapping"
+      ],
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 025b (docs/experiment-025b-label-efficiency-multisource-results.md): 025's draws on PTB-XL plus all Challenge training labels (22,494; Ningbo, Chapman/Shaoxing, Georgia, CPSC), drawn uniformly from the pooled pool. Decision mixed: at SPH, xECG pooled minus PTB-XL-only is +0.022 [+0.020, +0.024] at N = 250 and +0.016 [+0.015, +0.018] at N = 1,000, but only 16 and 17 of 20 draws are positive, so PTB-XL-only stays the default by the 90% rule; JEPA and CPC pass it from N = 250. 1,000 pooled labels match all 15,359 PTB-XL labels at SPH (0.915), and 100 PTB-XL labels plus every Challenge label give 0.938. Encoder ranking holds. Pooling costs 0.008 on ordinary PTB-XL development and about 0.05 on the hard added subset (xECG). Measured about 2.5 h build and 35 min CPU.",
+      "rerun_of": "025"
+    },
+    {
+      "id": "label_harmonization_hard_subset",
+      "kind": "experiment",
+      "title": "Why pooled readouts lose on the PTB-XL hard added subset",
+      "question": "Why do readouts fitted on PTB-XL plus the Challenge sources lose about 0.07 AUROC on 022's hard added PTB-XL development subset (022b), and which change to the Challenge labels or inputs removes the loss?",
+      "evidence": "022b: pooled minus PTB-XL-only on the added subset (266 ECGs, 41 positive) is -0.072 [-0.113, -0.032] for xECG against -0.005 on ordinary development; 025b: -0.053 at N = all. 025b also shows the subset depends on having its training analogues: without the 1,724 PTB-XL training ECGs the project label dropped, xECG PTB-XL-only falls from 0.726 to 0.615.",
+      "value": 3,
+      "clarity": 0.5,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Candidate causes: label-definition differences between the PTB-XL superclasses and the Challenge SNOMED mapping (IRBBB 713426002 and other CD form codes counted positive, rhythm or form codes, the sinus-rhythm-alone negative); and device or filter shift between PTB-XL and the Challenge sources. Arms: drop or relabel Challenge rows by code group, and a device or high-pass control (see highpass_ablation, device_control). Score the 1,724 dropped PTB-XL training ECGs by cross-fitting as a larger analogue, since the development subset has 41 positives. Overlaps hard_case_analysis. Done 30 September 2026 as Experiment 035 (PR #45): the hard subset is NORM-plus-minor-code ECGs that the Challenge mapping never calls negative; reweighting PTB-XL's 1,724 analogues (dropped_upweighted) recovers 81% of the loss with no SPH cost."
+    },
+    {
+      "id": "rerun_024_multisource",
+      "kind": "experiment",
+      "title": "Rerun 024 with Ningbo: embedding geometry across sources",
+      "question": "With PTB-XL and Ningbo together, do prototypes and clusters follow the source hospital more than the diagnosis?",
+      "evidence": "024: clusters aligned with device (AMI 0.22-0.23) and heart rate more than diagnosis within PTB-XL; Leinonen et al.: the source is identifiable at 96.9%.",
+      "value": 2,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 2,
+      "blocked_by": [
+        "ningbo_eda",
+        "challenge_label_mapping"
+      ],
+      "status": "done",
+      "notes": "Done 29 September 2026 as Experiment 024b (docs/experiment-024b-multisource-geometry-results.md): k-means on a balanced draw of 4,356 training ECGs per family (PTB-XL, Chapman/Ningbo, Georgia, CPSC). Clusters follow the diagnosis more than the hospital: xECG k = 8 family AMI 0.047 against label AMI 0.125, difference -0.078 [-0.084, -0.072]; all 36 robustness contrasts below 0 (CPC gaps small, at most 0.025). 024's device-over-diagnosis pattern is CPC-only; JEPA and xECG follow the label within PTB-XL too. Hospital is still linearly encoded (source-family probe mean AUROC 0.925-0.949) and enriches neighbors (41-58% own family against 25%); kNN without same-family neighbors loses 0.012-0.099 AUROC. At SPH, pooled-label prototypes trail the probe by 0.044 (xECG), 0.043 (JEPA), 0.099 (CPC); pooling narrows the gap. MI medoids are still all CS100 3 PTB-XL ECGs. 024 and 022b reproduced exactly. Measured about 2 h build and 33 min CPU.",
+      "rerun_of": "024"
+    },
+    {
+      "id": "echo_multitask_transfer",
+      "kind": "experiment",
+      "title": "Do ECG-abnormality labels reduce the echo labels needed?",
+      "question": "With few echo labels, does adding PTB-XL abnormality supervision (a shared readout, or the PTB-XL head's score as a feature) improve structural heart disease detection?",
+      "evidence": "028: 100 echo labels leave xECG 0.086 below its all-label AUROC; 023: PTB-XL abnormality heads alone reach about 0.75 on EchoNext.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Cached 022/023 features; the 028 draws at 100-1,000 labels; credentialed data, aggregates only. Not affected by Ningbo labels if restricted to PTB-XL supervision."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "done",
+      "id": "referral_budget_operating_point",
+      "title": "Operating point set by referral budget, fitted on local normals only",
+      "question": "If the threshold is set so a fixed share of normal ECGs is referred (2%, 5%, 10%), how many local normal ECGs fix it, and what sensitivity does each readout reach at SPH and in each Challenge family?",
+      "evidence": "029: a guaranteed 95% sensitivity needs at least 45 local positives and then refers 49-75% of normals; at 5% prevalence it refers about 800 per 1,000. A referral-rate threshold is a quantile of normal scores, which a mostly healthy student pilot supplies.",
+      "value": 5,
+      "clarity": 0.8,
+      "build_hours": 2.5,
+      "notes": "Done 29 September 2026 as Experiment 030: with the pooled xECG readout, a threshold at the 95th percentile of local normals holds a 5% budget within +/-1 pp in 89% of draws at 1,000 normals and 96% at 2,000 (52% at 200), so (A) is not reached by 1,000. Sensitivity at 5% with 200 normals 0.775 [0.762, 0.787] (2%: 0.693, 10%: 0.837), nearly independent of m; MI 0.93, HYP 0.91, STTC 0.83, CD 0.68. About 91 referrals per 1,000 at 5% prevalence, against about 410 for 029's 95% threshold. Source quantiles miss the budget by a factor of 0.2-4 across Challenge families. Pooled beats PTB-XL-only by +0.084 and the distance score by +0.186 at 5%. docs/experiment-030-referral-budget-results.md. 6 s CPU plus about 2.5 build hours."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [
+        "pipeline_v2_rethreshold",
+        "@user_freeze_decision"
+      ],
+      "status": "open",
+      "id": "final_frozen_test",
+      "title": "One-time confirmatory test of the frozen pipeline on untouched data",
+      "question": "Do the headline results of the chosen pipeline hold on data no experiment has read (PTB-XL test, Challenge test groups)?",
+      "evidence": "SPH has been read by 022-029, so it now acts as development data. The PTB-XL test set and the Challenge test groups are still closed.",
+      "value": 5,
+      "clarity": 0.9,
+      "build_hours": 2.5,
+      "notes": "Freeze the readout (022b pooled xECG), calibration strategy and operating-point rule first; run once; also refit the readout on 5 bootstrap resamples of the training rows to show fit variability. Report per source. Never repeat. 29 September 2026: held for an explicit user decision to freeze the pipeline, because the untouched data can be read only once and the student label (after the cardiologist meeting) and finding heads may still change the pipeline."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [
+        "@cardiologist_meeting"
+      ],
+      "status": "open",
+      "id": "student_criteria_label",
+      "title": "Readout trained on a label mapped to the 2017 international athlete criteria",
+      "question": "With a label closer to student screening (incomplete RBBB, first-degree AV block, isolated voltage as normal; PVCs, pre-excitation, atrial arrhythmias as abnormal), how do discrimination and the referral rate on young normals change?",
+      "evidence": "Meeting guide section 2.4: our label disagrees with the athlete criteria in both directions; 029 shows the broad label forces high referral rates.",
+      "value": 5,
+      "clarity": 0.5,
+      "build_hours": 5,
+      "notes": "Map PTB-XL SCP and Challenge SNOMED codes to normal/borderline/abnormal per the cardiologist's agreed rule; keep the current label as the reference arm."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [
+        "@cardiologist_meeting"
+      ],
+      "status": "open",
+      "id": "young_subgroup_readout",
+      "title": "Performance and false-alarm rate in ages 18-35",
+      "question": "What are AUROC, specificity at the chosen operating point, and referrals per 1,000 for ECGs aged 18-35 (SPH about 5,400, PTB-XL about 2,000)?",
+      "evidence": "Labeled data are mostly over 50; the target population is university students. The user asked to wait for the cardiologist before adding this analysis (29 September 2026).",
+      "value": 4,
+      "clarity": 0.8,
+      "build_hours": 1.5,
+      "notes": "Computable from saved predictions; report as post hoc if run after the headline experiments."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [
+        "@clinic_ecgs",
+        "final_frozen_test"
+      ],
+      "status": "open",
+      "id": "enriched_positive_sensitivity",
+      "title": "Sensitivity on confirmed young patients from the cardiologist's clinic",
+      "question": "What share of ECGs from young patients with confirmed conditions (HCM, WPW, long QT, cardiomyopathy) does the frozen pipeline flag at the chosen operating point?",
+      "evidence": "029: a student pilot cannot contain enough positives to measure sensitivity; 45 or more are needed even for a rough guarantee.",
+      "value": 5,
+      "clarity": 0.6,
+      "build_hours": 3,
+      "notes": "Needs consent and ethics approval; local data stay on the machine."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "done",
+      "id": "rhythm_findings_detector",
+      "title": "Detect the rhythm findings the athlete criteria call abnormal",
+      "question": "Can the frozen encoders detect two or more PVCs per 10 s, pre-excitation and atrial tachyarrhythmias, which the current binary label never marks positive?",
+      "evidence": "Meeting guide section 2.4: rhythm statements are ignored or undefined in our label, but the athlete criteria call them abnormal.",
+      "value": 4,
+      "clarity": 0.7,
+      "build_hours": 3,
+      "notes": "PTB-XL rhythm and form statements plus Challenge SNOMED rhythm codes; per-finding frozen readouts; external read at SPH. Done 29 September 2026 as Experiment 032 (PR #39): xECG SPH AUROC PVC 0.990, WPW 0.992, AF/flutter 0.9999, high-grade AV block 0.9999, long QT 0.934; the binary screen at a 5% budget catches only 0.62 of PVC and 0.70 of WPW ECGs."
+    },
+    {
+      "kind": "repo",
+      "gpu_hours": 0,
+      "cpu_hours": 0,
+      "blocked_by": [],
+      "status": "done",
+      "id": "normal_manifold_novelty_search",
+      "title": "Literature search on one-class ECG screening with foundation embeddings",
+      "question": "Has distance-from-normal screening on frozen ECG foundation-model embeddings been published, and how do reported numbers compare with 026 and 026b?",
+      "evidence": "026 and 026b are a candidate paper finding; none of the reviewed papers tested it, but anomaly detection on ECG has its own literature.",
+      "value": 3,
+      "clarity": 0.9,
+      "build_hours": 2,
+      "notes": "Output: a short doc with the closest prior work and whether the finding is new. Done 29 September 2026 (PR #34): partly new; the Mahalanobis score and normal-only ECG training exist, but no paper found scores frozen ECG foundation embeddings or tests multi-hospital or local normal references at an unseen hospital. Six follow-up candidates added."
+    },
+    {
+      "kind": "repo",
+      "gpu_hours": 0,
+      "cpu_hours": 0,
+      "blocked_by": [],
+      "status": "open",
+      "id": "challenge_data_quality_note",
+      "title": "Short write-up of the Challenge 2021 and CODE-15 data problems",
+      "question": "Can the data problems found (4.2% Ningbo zero leads, 71 Chapman-Ningbo duplicates with 9 label conflicts, CODE-15 unit ambiguity) be written as a short technical note after a check for prior reports?",
+      "evidence": "docs/clean-ningbo-v1.md, docs/clean-code15-v1.md, outputs/data_quality/ningbo_v1/exact_overlap_receipt.json.",
+      "value": 3,
+      "clarity": 0.8,
+      "build_hours": 6,
+      "notes": "Check the Challenge forums and later papers first."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "blocked_by": [],
+      "status": "done",
+      "id": "one_class_embedding_baselines",
+      "title": "Other one-class scores on the same frozen embeddings",
+      "question": "Does the Mahalanobis normal reference beat kNN distance (L2-normalized), one-class SVM, isolation forest, GMM, Deep SVDD, an embedding autoencoder and a flow on the same xECG and JEPA features, at PTB-XL development and SPH?",
+      "evidence": "docs/normal-manifold-novelty-search.md: a reviewer would ask for these before accepting 026/026b as a contribution; 030 shows the distance score trails the supervised readout by 0.19 sensitivity at a 5% budget.",
+      "value": 4,
+      "clarity": 0.8,
+      "build_hours": 4,
+      "notes": "Cached 026b features; same fit sets and evaluation rows as 026b. Done 30 September 2026 as Experiment 034 (PR #44): Mahalanobis stays; one-class SVM, GMM and Sun et al. kNN within 0.001-0.004 at SPH; autoencoder and Deep SVDD far behind. The embedding and the reference normals matter, not the density."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "manifold_score_ablation",
+      "title": "Ablations of the normal-reference score",
+      "question": "How do PCA size, dropping low-variance components, L2 normalization, and encoder layer or pooling change the 026 score?",
+      "evidence": "docs/normal-manifold-novelty-search.md, section 3.",
+      "value": 3,
+      "clarity": 0.8,
+      "build_hours": 3,
+      "notes": "Layer or pooling changes need a GPU re-extraction; do the cached-feature ablations first."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "normal_score_confounders",
+      "title": "Does the normal-reference score track noise, device, age, sex or heart rate?",
+      "question": "How much of the distance-from-normal score is explained by recording quality, device, age, sex and heart rate among normal ECGs?",
+      "evidence": "docs/normal-manifold-novelty-search.md; 024 found CPC clusters follow device and heart rate.",
+      "value": 3,
+      "clarity": 0.8,
+      "build_hours": 2.5,
+      "notes": "Regress the score on these factors within normal ECGs; report partial AUROC after adjustment."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0.5,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "random_encoder_control",
+      "title": "Normal-reference score on a random and on a supervised encoder",
+      "question": "Does the one-class score need self-supervised pretraining, or does a random-initialized encoder (or a supervised one) do as well?",
+      "evidence": "docs/normal-manifold-novelty-search.md, section 3.",
+      "value": 3,
+      "clarity": 0.7,
+      "build_hours": 3,
+      "notes": "One GPU extraction with random weights of the xECG architecture."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "ecgad_benchmark_readout",
+      "title": "The 026 score on the public PTB-XL anomaly-detection split",
+      "question": "What does the 026 score reach on the ECGAD (MCF) PTB-XL benchmark split, for a head-to-head number with published one-class methods?",
+      "evidence": "docs/normal-manifold-novelty-search.md: published scores on that split are 0.860-0.872 (0.941 in one revised paper); our split differs.",
+      "value": 3,
+      "clarity": 0.6,
+      "build_hours": 3,
+      "notes": "Check the overlap of the benchmark test set with our frozen PTB-XL calibration and test folds first; never read our PTB-XL test ECGs through it."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 3,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "raw_signal_detector_baseline",
+      "title": "A raw-signal one-class detector trained on the same normals",
+      "question": "Does a detector trained from scratch on raw ECGs (MCF or MMAE-ECG) match the frozen-embedding score on development and SPH?",
+      "evidence": "docs/normal-manifold-novelty-search.md.",
+      "value": 2,
+      "clarity": 0.5,
+      "build_hours": 8,
+      "notes": "Needs the authors' code; GPU training."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "done",
+      "id": "screen_with_finding_heads",
+      "title": "Screen that adds the PVC and WPW finding heads to the binary readout under one budget",
+      "question": "At a fixed total referral budget, does referring when either the binary readout or the PVC/WPW finding heads exceed their share catch more of the athlete-criteria abnormal findings without losing binary sensitivity?",
+      "evidence": "032: the binary screen at a 5% budget catches only 0.62 of PVC and 0.70 of WPW ECGs, against 0.98 and 1.00 for the finding heads.",
+      "value": 4,
+      "clarity": 0.7,
+      "build_hours": 3,
+      "notes": "Reuse 030's split and threshold rule and 031's budget-splitting OR rule; SPH simulated site. Done 29 September 2026 as Experiment 033 (PR #42): adopt combined_50 (binary OR max PVC/WPW z above every local normal); athlete-criteria composite +0.037 [+0.032, +0.043] at 5%, binary cost 0.003."
+    },
+    {
+      "kind": "experiment",
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "blocked_by": [],
+      "status": "open",
+      "id": "hybrid_rare_conditions",
+      "title": "Distance-from-normal as a safety net only for conditions with few labels",
+      "question": "Does an OR rule that gives the distance score a small share of the budget (for example 1 of 5 points) keep the readout's sensitivity on labeled conditions while recovering some of the held-out-condition gain?",
+      "evidence": "031: the full hybrid loses 0.028 at 5% but recovers 0.07-0.09 on conditions held out of the readout; rare dangerous conditions in young people are thinly labeled.",
+      "value": 3,
+      "clarity": 0.6,
+      "build_hours": 2.5,
+      "notes": "Pre-register the budget shares; 031 held-out design."
+    },
+    {
+      "kind": "repo",
+      "gpu_hours": 0,
+      "cpu_hours": 0,
+      "blocked_by": [],
+      "status": "done",
+      "id": "shared_intervals_module",
+      "title": "One shared patient-bootstrap and interval module for new experiments",
+      "question": "Can new experiments import one tested ecg_experiment/intervals.py (patient_groups, patient_resample, paired_auroc_difference, metric_intervals) instead of copying the bootstrap code again?",
+      "evidence": "docs/code-quality-review-2026-09-29.md: about 20 copies with different conventions; two public patient_bootstrap functions mean different things; O(records x patients) grouping in 6 places.",
+      "value": 3,
+      "clarity": 0.9,
+      "build_hours": 3,
+      "notes": "New unpinned module with tests; frozen runners keep their copies. Done 29 September 2026 (PR #41): ecg_experiment/intervals.py, bit-identical to four existing helpers; CONTRIBUTING.md points new experiments to it."
+    },
+    {
+      "kind": "repo",
+      "gpu_hours": 0,
+      "cpu_hours": 0,
+      "blocked_by": [],
+      "status": "open",
+      "id": "shared_readout_module",
+      "title": "One shared frozen-readout module for new experiments",
+      "question": "Can open_caches, sph_features, split_table, feature_identity, fit_logistic and predict live in ecg_experiment/readout.py so new runners stop importing from frozen scripts?",
+      "evidence": "docs/code-quality-review-2026-09-29.md: 66 script-to-script and 8 library-to-script imports.",
+      "value": 2,
+      "clarity": 0.8,
+      "build_hours": 3,
+      "notes": "Copy once into a new module with tests; reproduce one earlier experiment's predictions exactly as the check."
+    },
+    {
+      "id": "pipeline_v2_rethreshold",
+      "kind": "experiment",
+      "title": "Adopt the 035 reweighted readout and recompute the 030 and 033 operating points",
+      "question": "With the dropped_upweighted pooled readout, do the 030 referral-budget and 033 finding-head results hold, and what are the final screen's numbers at 2%, 5% and 10% budgets?",
+      "evidence": "035: dropped_upweighted fixes the hard-subset loss (0.655 to 0.712) with SPH unchanged at 0.939; 030 and 033 thresholds were computed on the 022b readout.",
+      "value": 4,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Reuse 030/033 split, draws and rules exactly; this defines the candidate pipeline for final_frozen_test."
     }
   ]
 }

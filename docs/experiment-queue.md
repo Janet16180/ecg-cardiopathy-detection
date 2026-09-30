@@ -340,6 +340,63 @@ Historical 017 recovery command (completed; do not relaunch):
 
 The 017 profile and train stages used the historical `scripts.run_cpc_morphology017_v2` entry point. Each five-epoch comparison was resumable. The completed 016 successor used the current `scripts.coordination.run_priority_queue` entry point and default `.venv`; its exact command is in the JSON catalog and its completion receipt. Check live status and the shared GPU lock before any future launch.
 
+## Public readouts and screening studies, 28-29 September 2026
+
+Complete. Each study had a protocol frozen before any score, ran once, used no PTB-XL test ECG and no EchoNext
+test ECG, and has its own results report. Combined summary: [findings of 28 September](findings-2026-09-28.md).
+Candidate ranking and follow-ups: [experiment priorities](experiment-priorities.md) and
+[backlog](experiment-backlog.json).
+
+| Experiment | Protocol | Results | Outputs |
+| --- | --- | --- | --- |
+| 022 SPH external readout (v3) | [protocol](experiment-022-sph-external-readout.md) | [results](experiment-022-sph-external-readout-results.md) | `outputs/experiment022_sph_external_v3/` |
+| 023 EchoNext structural heart disease (v3) | [protocol](experiment-023-echonext-readout.md) | [results](experiment-023-echonext-readout-results.md) | `outputs/experiment023_echonext_v3/` |
+| 024 Embedding geometry and prototypes | [protocol](experiment-024-embedding-geometry.md) | [results](experiment-024-embedding-geometry-results.md) | `outputs/experiment024_embedding_geometry_v1/` |
+| 025 Label efficiency of frozen encoders | [protocol](experiment-025-label-efficiency.md) | [results](experiment-025-label-efficiency-results.md) | `outputs/experiment025_label_efficiency_v1/` |
+| 026 One-class normal-manifold screening | [protocol](experiment-026-normal-manifold.md) | [results](experiment-026-normal-manifold-results.md) | `outputs/experiment026_normal_manifold_v1/` |
+| 027 Calibrated 95%-sensitivity threshold on SPH | [protocol](experiment-027-calibrated-threshold.md) | [results](experiment-027-calibrated-threshold-results.md) | `outputs/experiment027_calibrated_threshold_v1/` |
+| 028 Echo label efficiency | [protocol](experiment-028-echo-label-efficiency.md) | [results](experiment-028-echo-label-efficiency-results.md) | `outputs/experiment028_echo_label_efficiency_v1/` |
+
+Headline: frozen ECG-JEPA and xECG beat our CPC everywhere (PTB-XL 0.959 and 0.962 against 0.921; SPH 0.911
+and 0.915 against 0.876; EchoNext 0.823 and 0.838 against 0.812), but a PTB-XL 95%-sensitivity threshold
+reached only about 92% at SPH.
+
+Next, per the user (29 September 2026): after the Ningbo EDA, cleaning, Challenge label mapping and cohorts v2
+(branch `eda/ningbo-v1`), extract Ningbo features once on the GPU and rerun the experiments Ningbo could
+affect. These are 022, 024, 025, 026 and 027 (`rerun_of` in the backlog), then the multi-source
+leave-source-out study. 023 and 028 use echo labels and are not rerun. New ideas are written into the backlog
+and run early only when they can run in parallel without contention.
+
+## Multi-hospital reruns and local adaptation, 29 September 2026
+
+Complete. Ningbo, Chapman, Georgia and CPSC features were extracted once
+(`outputs/features_challenge_v1/`, [extraction code](../scripts/data/extract_challenge_features.py)) and split
+by record with a frozen seed ([Challenge split v1](challenge-splits-v1.md)). Each study froze its protocol
+before any score and reproduced its predecessor exactly. None read the PTB-XL test set or the Challenge test
+groups.
+
+| Experiment | Question | Result | Outputs |
+| --- | --- | --- | --- |
+| 027b ([protocol](experiment-027b-multisource-calibration.md), [results](experiment-027b-multisource-calibration-results.md)) | Does calibrating on several hospitals make the 95% threshold transfer? | No; hospitals miscalibrate in opposite directions | `outputs/experiment027b_multisource_calibration_v1/` |
+| 026b ([protocol](experiment-026b-multisource-normal-manifold.md), [results](experiment-026b-multisource-normal-manifold-results.md)) | Normal reference fitted on several hospitals | Adopted; xECG SPH 0.858 to 0.878 | `outputs/experiment026b_multisource_manifold_v1/` |
+| 022b ([protocol](experiment-022b-multisource-readout.md), [results](experiment-022b-multisource-readout-results.md)) | Readout trained on PTB-XL plus Challenge labels; leave one source out | Adopted; xECG SPH 0.915 to 0.939; Ningbo helps | `outputs/experiment022b_multisource_readout_v1/` |
+| 025b ([protocol](experiment-025b-label-efficiency-multisource.md), [results](experiment-025b-label-efficiency-multisource-results.md)) | Label efficiency with pooled labels | Mixed for xECG; 1,000 pooled labels about equal all PTB-XL labels | `outputs/experiment025b_label_efficiency_multisource_v1/` |
+| 024b ([protocol](experiment-024b-multisource-geometry.md), [results](experiment-024b-multisource-geometry-results.md)) | Do clusters follow hospital or diagnosis? | Diagnosis for JEPA and xECG; hospital still readable (AUROC 0.93-0.95) | `outputs/experiment024b_multisource_geometry_v1/` |
+| 029 ([protocol](experiment-029-local-adaptation.md), [results](experiment-029-local-adaptation-results.md)) | Local ECGs needed at a new site (SPH simulated) | 95% sensitivity needs at least 45 local positives and then refers about half or more of normals; local normals add little | `outputs/experiment029_local_adaptation_v1/` |
+| 030 ([protocol](experiment-030-referral-budget.md), [results](experiment-030-referral-budget-results.md)) | Threshold set by referral budget from local normals | 5% budget with 200 local normals catches 0.775; conduction findings most misses | `outputs/experiment030_referral_budget_v1/` |
+| 031 ([protocol](experiment-031-hybrid-screening-score.md), [results](experiment-031-hybrid-screening-score-results.md)) | Readout plus distance-from-normal hybrid | Negative (-0.028 at 5%); helps on held-out conditions | `outputs/experiment031_hybrid_score_v1/` |
+| 032 ([protocol](experiment-032-rhythm-findings.md), [results](experiment-032-rhythm-findings-results.md)) | Detectors for athlete-criteria rhythm findings | Usable at SPH (PVC 0.990, WPW 0.992, AF 0.9999, AV block 0.9999, long QT 0.934) | `outputs/experiment032_rhythm_findings_v1/` |
+| 033 ([protocol](experiment-033-finding-heads-screen.md), [results](experiment-033-finding-heads-screen-results.md)) | Binary readout plus PVC/WPW heads under one budget | Adopted; composite +0.037 at 5%, binary cost 0.003 | `outputs/experiment033_finding_heads_screen_v1/` |
+| 034 ([protocol](experiment-034-one-class-baselines.md), [results](experiment-034-one-class-baselines-results.md)) | Other one-class scores on the same embeddings | Mahalanobis stays; best alternatives within 0.004 | `outputs/experiment034_one_class_baselines_v1/` |
+| 035 ([protocol](experiment-035-hard-subset.md), [results](experiment-035-hard-subset-results.md)) | Why pooled readouts lose on the PTB-XL hard subset | Normal-label mismatch; reweighting recovers 81% with no SPH cost | `outputs/experiment035_hard_subset_v1/` |
+
+Next, ranked in the [backlog](experiment-backlog.json) and [priorities](experiment-priorities.md):
+`referral_budget_operating_point`, then `hybrid_screening_score` and `rhythm_findings_detector`, with the
+novelty search for the normal-reference finding. `final_frozen_test` runs once, after the operating-point rule is
+chosen. `student_criteria_label` and `young_subgroup_readout` wait for the cardiologist meeting;
+`enriched_positive_sensitivity` waits for clinic ECGs. SPH has now been read by 022-029 and serves as
+development data.
+
 ## Research branches
 
 The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.md) supplies the rationale for authorized Experiments 011–013. These are independent model families, not xECG modifications. They have no measured project results yet. The additional [vision architectures](vision-to-ecg-architecture-candidates.md) and [xECG modifications](xecg-next-experiments.md) remain research candidates outside this accepted queue.

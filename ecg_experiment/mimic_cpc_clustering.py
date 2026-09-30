@@ -34,7 +34,19 @@ BATCH_SIZE = 128
 
 
 def select_one_per_patient(rows: list[dict[str, str]]) -> list[dict[str, str]]:
-    """Choose one MIMIC recording per patient with a fixed seed."""
+    """
+    Choose one MIMIC recording per patient with a fixed seed.
+
+    Parameters
+    ----------
+    rows : list[dict[str, str]]
+        Cache rows of every source.
+
+    Returns
+    -------
+    list[dict[str, str]]
+        One MIMIC row per patient, in patient order.
+    """
     by_patient: dict[str, list[dict[str, str]]] = defaultdict(list)
     for row in rows:
         if row["source"] == "mimic":
@@ -45,14 +57,40 @@ def select_one_per_patient(rows: list[dict[str, str]]) -> list[dict[str, str]]:
 
 
 def read_flags() -> dict[str, tuple[float, bool]]:
-    """Read the prior fixed-threshold CPC audit by ECG ID."""
+    """
+    Read the prior fixed-threshold CPC audit by ECG ID.
+
+    Returns
+    -------
+    dict[str, tuple[float, bool]]
+        Calibrated probability and flag of each ECG.
+    """
     with gzip.open(FLAGS, "rt", newline="") as handle:
         return {row["ecg_id"]: (float(row["cpc_probability_ptb_calibrated"]),
                                 row["flagged"] == "1") for row in csv.DictReader(handle)}
 
 
 def extract(pool: Pool, rows: list[dict[str, str]]) -> np.ndarray:
-    """Extract SSL CPC pooled contexts without saving waveform or feature arrays."""
+    """
+    Extract SSL CPC pooled contexts without saving waveform or feature arrays.
+
+    Parameters
+    ----------
+    pool : Pool
+        CPC waveform cache.
+    rows : list[dict[str, str]]
+        Rows to encode.
+
+    Returns
+    -------
+    np.ndarray
+        Pooled features of shape ``(len(rows), 512)``.
+
+    Raises
+    ------
+    RuntimeError
+        If the cache differs from the SSL model input or the features are invalid.
+    """
     normalization = json.loads(NORMALIZATION.read_text())
     if pool.metadata["signals_sha256"] != normalization["source"]["signals_sha256"]:
         raise RuntimeError("CPC signal cache differs from SSL model input")
@@ -74,7 +112,19 @@ def extract(pool: Pool, rows: list[dict[str, str]]) -> np.ndarray:
 
 
 def run() -> dict[str, object]:
-    """Cluster one ECG per MIMIC patient and summarize post hoc CPC flags."""
+    """
+    Cluster one ECG per MIMIC patient and summarize post hoc CPC flags.
+
+    Returns
+    -------
+    dict[str, object]
+        Aggregate cluster report.
+
+    Raises
+    ------
+    RuntimeError
+        If the patient sample, flags or features are not as expected.
+    """
     start = time.monotonic()
     pool = Pool(CACHE)
     rows = select_one_per_patient(pool.rows)

@@ -43,6 +43,14 @@ and test patients separate. Compare models with matched initialization and
 training budgets. Log failed and negative experiments as well as successful ones.
 MLflow records are an index; source receipts and result files remain the evidence.
 
+New experiments import patient-bootstrap and interval code from
+`ecg_experiment/intervals.py` (`patient_groups`, `patient_resample`,
+`two_class_resamples`, `paired_auroc_difference`, `metric_intervals`) and do not
+copy it. Its convention is 2,000 whole-patient draws from
+`numpy.random.default_rng(seed)`, 2.5 and 97.5 percentile intervals, and
+single-class draws skipped and reported as `skipped_draws`. Record the seed and
+draw count in the result. Frozen runners keep their own copies.
+
 Changes to scientific code need new source hashes and a successor executable
 manifest. Preserve previous receipts and results. Profile the actual data path
 on the shared V100 before training, and use the GPU lock. Coordinate with legacy
@@ -62,6 +70,13 @@ rules, import order, and a complexity limit; run `uv run ruff check ecg_experime
 scripts tests` before pushing. Preserve historical experiment
 receipts; code changes need new manifests before execution. Use Git history for
 maintenance changes instead of separate refactor journals.
+
+Write repository paths into receipts, manifests and metadata with
+`ecg_experiment.paths.to_stored`, which returns a path relative to the repository root, and
+open them with `from_stored`. Do not store `Path.resolve()` or other absolute paths, also not as
+dictionary keys: they tie the file, and every SHA-256 recorded for it, to one machine.
+`from_stored` also reads the absolute paths in receipts written before this rule. Frozen
+runners keep their own path handling.
 
 Use notebooks for exploration with names such as `01-jr-signal-quality.ipynb`.
 Clear outputs containing patient information and move reusable logic into Python.

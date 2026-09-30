@@ -133,6 +133,11 @@ scheduled work against measured profiles and reserve at least 3,600 seconds for 
 correction work before admitting full factorial training. Stop with recoverable checkpoints if observed
 pace cannot fit the budget. Report incomplete cells instead of treating partial execution as a result.
 
+The global day projection uses measured updates/extraction/checkpoints for future cells, 1.5 times
+038's actual readout/audit time per future cell, one shared 900-second reporting reserve, and the
+3,600-second diagnosis/correction reserve. It does not sum each cell's unused 900-second safety reserve;
+those reserves still apply independently to the unchanged 7,200-second cell admission gates.
+
 Update both queue documents on state changes. Write `docs/experiment-039-cpc-encoder-context-results.md`
 from executed local outputs, including every negative/corrected/incomplete arm, uncertainty, compute
 cost and limitations. Add follow-ups to `docs/experiment-backlog.json` and regenerate priorities with

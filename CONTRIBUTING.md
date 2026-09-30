@@ -32,7 +32,7 @@ identity. Git history preserves previous dependency definitions.
 
 ## Experiments
 
-**Training and scheduling remain paused until the user requests a resume.**
+**Experiments proceed only with a frozen protocol; see [AGENTS.md](AGENTS.md).**
 Read [the queue](docs/experiment-queue.md), its JSON catalog, and the selected
 protocol before experiment work. Editing the catalog does not schedule a run.
 

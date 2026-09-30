@@ -4,8 +4,8 @@ Run commands from the repository root with
 `uv run --locked python -m scripts.<folder>.<name>` in the appropriate
 environment. Use `uv run --locked python -m scripts.<name>` for the few
 entrypoints retained at the `scripts/` root. Check the selected protocol and
-the [experiment queue](../docs/experiment-queue.md) before any scientific run;
-training and scheduling remain paused.
+the [experiment queue](../docs/experiment-queue.md) before any scientific run.
+Experiments proceed only with a frozen protocol; see [AGENTS.md](../AGENTS.md).
 
 | Folder | Purpose | Example module |
 | --- | --- | --- |

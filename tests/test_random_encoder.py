@@ -56,3 +56,11 @@ def test_decision_rule() -> None:
     assert decision({"ci_low": 0.01, "ci_high": 0.03}, [above], 0.02) == "inconclusive"
     assert interval_side({"ci_low": -0.02, "ci_high": -0.01}) == "below 0"
     assert interval_side({"ci_low": -0.02, "ci_high": 0.01}) == "includes 0"
+
+
+def test_final_partial_microbatch() -> None:
+    from scripts.experiments.run_random_encoder036 import final_partial_microbatch
+
+    assert final_partial_microbatch(17083).tolist() == list(range(17072, 17083))
+    assert final_partial_microbatch(21008).size == 0
+    assert final_partial_microbatch(1024).size == 0

@@ -25,7 +25,13 @@ from ecg_experiment.challenge_features import (
     skip_reasons,
     window_start,
 )
-from ecg_experiment.external_encoders import load_xecg_backbone, ptb_xecg_input, xecg_features, xecg_input
+from ecg_experiment.external_encoders import (
+    XECG_BATCH,
+    load_xecg_backbone,
+    ptb_xecg_input,
+    xecg_features,
+    xecg_input,
+)
 from ecg_experiment.files import sha256_file, write_json_atomic, write_npz_atomic
 from ecg_experiment.full_development import cohorts, predict, ptb_table
 from ecg_experiment.gpu import gpu_lock
@@ -80,6 +86,7 @@ SEED = 40040
 MARGIN = 0.02
 REPRODUCTION_TOLERANCE = 1e-9
 LOGIT_TOLERANCE = 1e-4
+RUNNER = "scripts/experiments/run_random_encoder036.py"
 SOURCES = (
     "ecg_experiment/random_encoder.py", "ecg_experiment/xecg.py", "ecg_experiment/external_encoders.py",
     "ecg_experiment/challenge_features.py", "ecg_experiment/normal_manifold.py",
@@ -428,9 +435,11 @@ def identity(hashes: dict[str, Any]) -> dict[str, Any]:
             "sources": {name: sha256_file(ROOT / name) for name in SOURCES}}
 
 
-def check_positions(rows: pd.DataFrame) -> np.ndarray:
+def check_samples(rows: pd.DataFrame) -> dict[str, np.ndarray]:
     """
-    Positions of the check sample: the first ``PROFILE_RECORDS`` and ``CHECK_RECORDS`` evenly spaced rows.
+    Give the two check samples: the first ``PROFILE_RECORDS`` rows and ``CHECK_RECORDS`` evenly spaced rows.
+
+    Each sample is extracted in its own pass, so both fill whole microbatches of 16.
 
     Parameters
     ----------
@@ -439,11 +448,47 @@ def check_positions(rows: pd.DataFrame) -> np.ndarray:
 
     Returns
     -------
-    np.ndarray
-        Sorted unique positions.
+    dict[str, np.ndarray]
+        Positions keyed ``first`` and ``spaced``.
     """
-    spaced = np.linspace(0, len(rows) - 1, CHECK_RECORDS, dtype=np.int64)
-    return np.unique(np.concatenate([np.arange(PROFILE_RECORDS), spaced]))
+    return {"first": np.arange(PROFILE_RECORDS),
+            "spaced": np.unique(np.linspace(0, len(rows) - 1, CHECK_RECORDS, dtype=np.int64))}
+
+
+def final_partial_microbatch(count: int) -> np.ndarray:
+    """
+    Positions the full pass computed in its last, partly filled microbatch.
+
+    Parameters
+    ----------
+    count : int
+        Rows in the set.
+
+    Returns
+    -------
+    np.ndarray
+        Positions of that microbatch, empty when every microbatch was full.
+    """
+    last_chunk = count % CHUNK or CHUNK
+    return np.arange(count - last_chunk % XECG_BATCH, count)
+
+
+def stable(run_identity: dict[str, Any]) -> dict[str, Any]:
+    """
+    Drop this runner's own hash from an identity, so a fix to the runner does not discard hashed features.
+
+    Parameters
+    ----------
+    run_identity : dict[str, Any]
+        Output of ``identity``.
+
+    Returns
+    -------
+    dict[str, Any]
+        The identity without ``sources[RUNNER]``.
+    """
+    sources = {name: value for name, value in run_identity["sources"].items() if name != RUNNER}
+    return {**run_identity, "sources": sources}
 
 
 def profile(rows: dict[str, pd.DataFrame], frozen: dict[str, np.ndarray], run_identity: dict[str, Any]
@@ -475,7 +520,7 @@ def profile(rows: dict[str, pd.DataFrame], frozen: dict[str, np.ndarray], run_id
     for name in SETS:
         per = timings[name]
         extracted = sum(per[arm] for arm in EXTRACTED_ARMS)
-        checked = len(check_positions(rows[name]))
+        checked = sum(len(positions) for positions in check_samples(rows[name]).values())
         projected += len(rows[name]) * (per["read"] + extracted)
         projected += checked * (per["read"] + extracted + per["pretrained"])
     passed = projected <= CEILING_SECONDS and not any(differences.values())
@@ -505,7 +550,7 @@ def completed_sets(run_identity: dict[str, Any]) -> dict[str, Any]:
     """
     path = OUTPUT / "extraction.json"
     previous = json.loads(path.read_text()) if path.exists() else {}
-    if previous.get("identity") != run_identity:
+    if "identity" not in previous or stable(previous["identity"]) != stable(run_identity):
         return {}
     return {name: entry for name, entry in previous["sets"].items()
             if sha256_file(OUTPUT / f"features_{name}.npz") == entry["npz_sha256"]}
@@ -532,7 +577,11 @@ def load_features(name: str) -> dict[str, np.ndarray]:
 def check_pass(models: dict[str, nn.Module], set_readers: dict[str, Reader], rows: dict[str, pd.DataFrame],
                frozen: dict[str, np.ndarray]) -> dict[str, Any]:
     """
-    Re-extract the check sample of every set with every arm and require identical features.
+    Re-extract both check samples of every set with every arm and apply the protocol's gates.
+
+    Gates: the pretrained arm equals the frozen features on both samples, and every other arm equals its
+    saved features on the first rows. On the evenly spaced rows the other arms are reported; a difference is
+    allowed only for rows the full pass computed in its last, partly filled microbatch.
 
     Parameters
     ----------
@@ -548,25 +597,35 @@ def check_pass(models: dict[str, nn.Module], set_readers: dict[str, Reader], row
     Returns
     -------
     dict[str, Any]
-        Checked records and the largest absolute difference per set and arm.
+        Per set and sample: records, the largest absolute difference per arm and the differing positions.
 
     Raises
     ------
     ValueError
-        If any feature differs.
+        If a gate fails.
     """
     result = {}
     for name in SETS:
-        positions = check_positions(rows[name])
-        features, _ = extract(models, set_readers[name], rows[name].iloc[positions].to_dict("records"))
         saved = load_features(name)
-        differences = {"pretrained": max_difference(features["pretrained"], frozen[name][positions]),
-                       **{arm: max_difference(features[arm], saved[arm][positions])
-                          for arm in EXTRACTED_ARMS}}
-        result[name] = {"records": len(positions), "max_abs_difference": differences}
-        print(json.dumps({"stage": f"check:{name}", **result[name]}), flush=True)
-        if any(differences.values()):
-            raise ValueError(f"Re-extracted features differ: {name} {differences}")
+        tail = final_partial_microbatch(len(rows[name]))
+        result[name] = {"final_partial_microbatch": tail.tolist()}
+        for sample, positions in check_samples(rows[name]).items():
+            features, _ = extract(models, set_readers[name], rows[name].iloc[positions].to_dict("records"))
+            references = {"pretrained": frozen[name][positions],
+                          **{arm: saved[arm][positions] for arm in EXTRACTED_ARMS}}
+            differences, differing = {}, {}
+            for arm, reference in references.items():
+                per_row = np.abs(features[arm].astype(np.float64) - reference.astype(np.float64)).max(axis=1)
+                differences[arm] = float(per_row.max())
+                differing[arm] = positions[per_row > 0].tolist()
+            result[name][sample] = {"records": len(positions), "max_abs_difference": differences,
+                                    "differing_positions": differing}
+            print(json.dumps({"stage": f"check:{name}:{sample}", **result[name][sample]}), flush=True)
+            gated = ARMS if sample == "first" else ("pretrained",)
+            unexplained = [position for arm in EXTRACTED_ARMS for position in differing[arm]
+                           if position not in tail]
+            if any(differing[arm] for arm in gated) or (sample == "spaced" and unexplained):
+                raise ValueError(f"Re-extracted features differ: {name} {sample} {differing}")
     return result
 
 
@@ -590,11 +649,16 @@ def run_extraction(rows: dict[str, pd.DataFrame], frozen: dict[str, np.ndarray],
         If no matching passed profile exists.
     """
     receipt = json.loads((OUTPUT / "profile.json").read_text())
-    if receipt["identity"] != run_identity or not receipt["gate_passed"]:
+    if stable(receipt["identity"]) != stable(run_identity) or not receipt["gate_passed"]:
         raise ValueError("A matching passed profile is required")
     sets = completed_sets(run_identity)
+    path = OUTPUT / "extraction.json"
+    history = json.loads(path.read_text()).get("runner_sha256_history", []) if sets else []
+    if sets and not history:
+        history = [json.loads(path.read_text())["identity"]["sources"][RUNNER]]
     metadata = {"status": "running", "identity": run_identity,
-                "profile_sha256": sha256_file(OUTPUT / "profile.json"), "sets": sets}
+                "profile_sha256": sha256_file(OUTPUT / "profile.json"), "sets": sets,
+                "runner_sha256_history": [*history, run_identity["sources"][RUNNER]]}
     set_readers = readers(load_checksums())
     began = time.monotonic()
     with gpu_lock("cuda", blocking=False):
@@ -944,7 +1008,7 @@ def analyse(rows: dict[str, pd.DataFrame], frozen: dict[str, np.ndarray], run_id
         raise FileExistsError("Experiment 036 v1 has already been analysed")
     started = time.monotonic()
     extraction = json.loads((OUTPUT / "extraction.json").read_text())
-    if extraction["status"] != "complete" or extraction["identity"] != run_identity:
+    if extraction["status"] != "complete" or stable(extraction["identity"]) != stable(run_identity):
         raise ValueError("A complete extraction with the same identity is required")
     features: dict[str, dict[str, np.ndarray]] = {"pretrained": frozen}
     for name in SETS:

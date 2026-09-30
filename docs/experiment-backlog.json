@@ -1143,7 +1143,7 @@
       "build_hours": 4,
       "blocked_by": [],
       "status": "open",
-      "notes": "Nested tiers share one cache: build the 200k cache once and index its prefixes. 25k-100k need no CODE-15 decision."
+      "notes": "Experiment038 completed verified25k/50k caches, including Ningbo WFDB, in449.74s/745.74s. No100k-200k cache yet; the broader item remains open. CODE15 still needs amplitude decision."
     },
     {
       "id": "pretraining_scaling_curve_v3",
@@ -1168,15 +1168,45 @@
       "kind": "experiment",
       "title": "Replace CPC GRU context with mLSTM-xLSTM on clean cohorts v3",
       "question": "Does matrix memory improve a matched fresh CPC development readout at 25k, and does a conditional 50k tier help?",
-      "evidence": "User requested PR #56 experiment; frozen Experiment038 protocol b39eb93, no new outcome yet.",
+      "evidence": "Audited full CPC comparison: primary xLSTM minus GRU−0.00897[−0.01840,+0.00094] at25k and−0.00737[−0.01652,+0.00117] at50k; xLSTM scaling+0.00231[−0.00707,+0.01136]. Neither frozen improvement rule passed.",
       "value": 3,
       "clarity": 0.6,
       "gpu_hours": 4,
       "cpu_hours": 1,
       "build_hours": 5,
       "blocked_by": [],
-      "status": "in_progress",
-      "notes": "250000 exposures per arm; primary1518 labels; fresh matched GRU control; each tier requires real GPU gate. No closed test."
+      "status": "done",
+      "notes": "docs/experiment-038-cpc-xlstm-results.md. All four arms1954 updates/250000 exposures. Charged executable work25k1368.09s,50k1448.29s; cache builds449.74s and745.74s. Native GRU preserves dropout/exact GPU recovery. One seed/repeated development/source-mix confounding; no closed test. Authoring time unmeasured. Retain GRU baseline for this recipe."
+    },
+    {
+      "id": "cpc_recurrent_checkpoint_contract",
+      "kind": "repo",
+      "title": "Require exact recurrent checkpoint recovery in future CPC runners",
+      "question": "Can every new recurrent CPC experiment restore model, optimizer and dropout randomness exactly on its actual GPU backend?",
+      "evidence": "Experiment038 syntheticCUDA diagnostic: cuDNN GRU dropout0.1 failed exact next-update recovery; dropout0 and native GRU dropout0.1 passed. Both full successor CPC arms passed the real replay gate.",
+      "value": 2,
+      "clarity": 0.9,
+      "gpu_hours": 0.02,
+      "cpu_hours": 0.2,
+      "build_hours": 1,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Forward-only helper/contract for new runners; preserve frozen experiments. Do not broaden the result beyond Torch2.6/cuDNN9.1 without a measured backend check."
+    },
+    {
+      "id": "cpc_xlstm_seed_replication_v3",
+      "kind": "experiment",
+      "title": "Independent seeds for the matched CPC GRU versus xLSTM contrast",
+      "question": "Do the25k/50k context differences and small xLSTM scaling gain repeat across independent fresh initializations?",
+      "evidence": "Experiment038 completed one seed: primary architecture differences−0.00897 at25k/−0.00737 at50k; scaling+0.00231; all paired patient intervals include zero. These intervals exclude training-seed variability.",
+      "value": 2,
+      "clarity": 0.6,
+      "gpu_hours": 1,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "New frozen protocol and identities; reuse verified caches and unchanged scientific recipe. Further source-composition controls are needed for a size-only claim. No immediate run authorized by this backlog entry."
     }
   ]
 }

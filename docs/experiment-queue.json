@@ -1710,14 +1710,14 @@
     "waiting": {"@cardiologist_meeting": ["student_criteria_label", "young_subgroup_readout"], "@clinic_ecgs": ["enriched_positive_sensitivity"]}
   },
   "experiment_038_cpc_xlstm": {
-    "status": "training_25k",
+    "status": "complete_development_only",
     "authorized": true,
     "protocol": "docs/experiment-038-cpc-xlstm.md",
     "protocol_commit": "b39eb93",
-    "output_dir": "outputs/experiment038_cpc_xlstm",
+    "output_dir": "outputs/experiment038_cpc_xlstm_v2",
     "primary_comparison": "Fresh mLSTM-xLSTM minus fresh GRU, clean_25k_v3, 1518-label development AUROC",
     "conditional_followup": "Fresh matched clean_50k_v3 comparison if 25k gain is below .005 or paired patient CI includes zero",
-    "next_action": "Complete both matched25k arms, score development once, audit, then conditionally50k",
+    "next_action": "No further038 execution; retain GRU baseline for this recipe; independent seeds enter ranked backlog",
     "calibration_test_authorized": false,
     "implementation_commit": "023ce44",
     "live_cache_launch": "outputs/experiment038_cpc_xlstm/cache25k-launch.json",
@@ -1726,8 +1726,8 @@
     "cache_receipt": "data/processed/clean_25k_v3_cpc/complete.json",
     "cache_elapsed_seconds": 449.74445018800907,
     "runner_commit": "26ac7fc",
-    "required_checks": "Ruff passed; full CPU suite977 passed in49.55s",
-    "live_outputs": "outputs/experiment038_cpc_xlstm_v2/25k/",
+    "required_checks": "Ruff passed;981 CPU tests in42.69s; package build passed; PR checks passed at80f761d",
+    "live_outputs": "outputs/experiment038_cpc_xlstm_v2/",
     "manifest": "outputs/experiment038_cpc_xlstm_v2/25k/manifest.json",
     "profile_log": "outputs/experiment038_cpc_xlstm_v2/profile25k.log",
     "successor_protocol": "docs/experiment-038-cpc-xlstm-v2.md",
@@ -1740,6 +1740,63 @@
     "profile_receipt": "outputs/experiment038_cpc_xlstm_v2/25k/profile.json",
     "profile_gate_passed": true,
     "profile_projected_seconds": 2664.8780180149624,
-    "train_log": "outputs/experiment038_cpc_xlstm_v2/train25k.log"
+    "train_log": "outputs/experiment038_cpc_xlstm_v2/train25k.log",
+    "training_receipt": "outputs/experiment038_cpc_xlstm_v2/25k/training.json",
+    "training_updates_per_arm": 1954,
+    "training_exposures_per_arm": 250000,
+    "conditional_50k_protocol": "docs/experiment-038-cpc-xlstm-50k.md",
+    "conditional_50k_protocol_commit": "85dea69",
+    "conditional_50k_runner_commit": "80f761d",
+    "result_25k": "outputs/experiment038_cpc_xlstm_v2/25k/result.json",
+    "audit_25k": "outputs/experiment038_cpc_xlstm_v2/25k/audit.json",
+    "primary_25k_auroc": {
+      "gru": 0.9038428527141318,
+      "xlstm": 0.8948704744189859
+    },
+    "primary_25k_difference": -0.008972378295145855,
+    "primary_25k_ci": [
+      -0.018399871737340215,
+      0.0009355516788840238
+    ],
+    "run_50k": false,
+    "prepare_50k_log": "outputs/experiment038_cpc_xlstm_v2/prepare50k.log",
+    "profile_50k": "outputs/experiment038_cpc_xlstm_v2/50k/profile.json",
+    "manifest_50k": "outputs/experiment038_cpc_xlstm_v2/50k/manifest.json",
+    "profile_50k_gate_passed": true,
+    "profile_50k_projected_seconds": 2798.4208236798004,
+    "cache_50k": "data/processed/clean_50k_v3_cpc/complete.json",
+    "cache_50k_elapsed_seconds": 745.7360558159417,
+    "run_50k_log": "outputs/experiment038_cpc_xlstm_v2/run50k.log",
+    "predecessor_failed_output_dir": "outputs/experiment038_cpc_xlstm",
+    "results_report": "docs/experiment-038-cpc-xlstm-results.md",
+    "result_50k": "outputs/experiment038_cpc_xlstm_v2/50k/result.json",
+    "audit_50k": "outputs/experiment038_cpc_xlstm_v2/50k/audit.json",
+    "primary_50k_auroc": {
+      "gru": 0.9045448606104394,
+      "xlstm": 0.897178901844436
+    },
+    "primary_50k_difference": -0.007365958766003322,
+    "primary_50k_ci": [
+      -0.01652108439770959,
+      0.0011684200958324196
+    ],
+    "xlstm_50k_minus_25k": 0.0023084274254501214,
+    "xlstm_scaling_ci": [
+      -0.00706567808039259,
+      0.011359716575710284
+    ],
+    "architecture_promising": {
+      "25k": false,
+      "50k": false
+    },
+    "scaling_helpful": false,
+    "charged_executable_seconds": {
+      "25k": 1368.0939712979598,
+      "50k": 1448.2853353471728
+    },
+    "training": "All four full CPC arms completed1954 updates and250000 exposures each; audits passed",
+    "runner_50k": "scripts/experiments/run_cpc_xlstm038_50k.py",
+    "triggered_50k": true,
+    "further_run_authorized": false
   }
 }

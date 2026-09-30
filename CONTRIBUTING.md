@@ -32,7 +32,7 @@ identity. Git history preserves previous dependency definitions.
 
 ## Experiments
 
-**Training and scheduling remain paused until the user requests a resume.**
+**Experiments proceed only with a frozen protocol; see [AGENTS.md](AGENTS.md).**
 Read [the queue](docs/experiment-queue.md), its JSON catalog, and the selected
 protocol before experiment work. Editing the catalog does not schedule a run.
 
@@ -70,6 +70,13 @@ rules, import order, and a complexity limit; run `uv run ruff check ecg_experime
 scripts tests` before pushing. Preserve historical experiment
 receipts; code changes need new manifests before execution. Use Git history for
 maintenance changes instead of separate refactor journals.
+
+Write repository paths into receipts, manifests and metadata with
+`ecg_experiment.paths.to_stored`, which returns a path relative to the repository root, and
+open them with `from_stored`. Do not store `Path.resolve()` or other absolute paths, also not as
+dictionary keys: they tie the file, and every SHA-256 recorded for it, to one machine.
+`from_stored` also reads the absolute paths in receipts written before this rule. Frozen
+runners keep their own path handling.
 
 Use notebooks for exploration with names such as `01-jr-signal-quality.ipynb`.
 Clear outputs containing patient information and move reusable logic into Python.

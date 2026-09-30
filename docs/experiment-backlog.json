@@ -768,8 +768,8 @@
       "cpu_hours": 0.5,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Candidate causes: label-definition differences between the PTB-XL superclasses and the Challenge SNOMED mapping (IRBBB 713426002 and other CD form codes counted positive, rhythm or form codes, the sinus-rhythm-alone negative); and device or filter shift between PTB-XL and the Challenge sources. Arms: drop or relabel Challenge rows by code group, and a device or high-pass control (see highpass_ablation, device_control). Score the 1,724 dropped PTB-XL training ECGs by cross-fitting as a larger analogue, since the development subset has 41 positives. Overlaps hard_case_analysis."
+      "status": "done",
+      "notes": "Candidate causes: label-definition differences between the PTB-XL superclasses and the Challenge SNOMED mapping (IRBBB 713426002 and other CD form codes counted positive, rhythm or form codes, the sinus-rhythm-alone negative); and device or filter shift between PTB-XL and the Challenge sources. Arms: drop or relabel Challenge rows by code group, and a device or high-pass control (see highpass_ablation, device_control). Score the 1,724 dropped PTB-XL training ECGs by cross-fitting as a larger analogue, since the development subset has 41 positives. Overlaps hard_case_analysis. Done 30 September 2026 as Experiment 035 (PR #45): the hard subset is NORM-plus-minor-code ECGs that the Challenge mapping never calls negative; reweighting PTB-XL's 1,724 analogues (dropped_upweighted) recovers 81% of the loss with no SPH cost."
     },
     {
       "id": "rerun_024_multisource",
@@ -825,7 +825,7 @@
       "gpu_hours": 0,
       "cpu_hours": 0.5,
       "blocked_by": [
-        "screen_with_finding_heads",
+        "pipeline_v2_rethreshold",
         "@user_freeze_decision"
       ],
       "status": "open",
@@ -836,7 +836,7 @@
       "value": 5,
       "clarity": 0.9,
       "build_hours": 2.5,
-      "notes": "Freeze the readout (022b pooled xECG), calibration strategy and operating-point rule first; run once; also refit the readout on 5 bootstrap resamples of the training rows to show fit variability. Report per source. Never repeat. 29 September 2026: held for an explicit user decision to freeze the pipeline, because the untouched data can be read only once and the student label (after the cardiologist meeting) and finding heads may still change the pipeline."
+      "notes": "Freeze the readout (022b pooled xECG), calibration strategy and operating-point rule first; run once; also refit the readout on 5 bootstrap resamples of the training rows to show fit variability. Report per source. Never repeat. 29 September 2026: held for an explicit user decision to freeze the pipeline, because the untouched data can be read only once and the student label (after the cardiologist meeting) and finding heads may still change the pipeline. Audit 30 September 2026: the PTB-XL test set was already evaluated in 001-008, and the Challenge test groups are per record, from sources the released encoders saw in pretraining, so neither is a fully untouched test. The strongest confirmatory data would be the student pilot."
     },
     {
       "kind": "experiment",
@@ -940,7 +940,7 @@
       "gpu_hours": 0,
       "cpu_hours": 1,
       "blocked_by": [],
-      "status": "open",
+      "status": "done",
       "id": "one_class_embedding_baselines",
       "title": "Other one-class scores on the same frozen embeddings",
       "question": "Does the Mahalanobis normal reference beat kNN distance (L2-normalized), one-class SVM, isolation forest, GMM, Deep SVDD, an embedding autoencoder and a flow on the same xECG and JEPA features, at PTB-XL development and SPH?",
@@ -948,7 +948,7 @@
       "value": 4,
       "clarity": 0.8,
       "build_hours": 4,
-      "notes": "Cached 026b features; same fit sets and evaluation rows as 026b."
+      "notes": "Cached 026b features; same fit sets and evaluation rows as 026b. Done 30 September 2026 as Experiment 034 (PR #44): Mahalanobis stays; one-class SVM, GMM and Sun et al. kNN within 0.001-0.004 at SPH; autoencoder and Deep SVDD far behind. The embedding and the reference normals matter, not the density."
     },
     {
       "kind": "experiment",
@@ -1030,7 +1030,7 @@
       "gpu_hours": 0,
       "cpu_hours": 0.5,
       "blocked_by": [],
-      "status": "open",
+      "status": "done",
       "id": "screen_with_finding_heads",
       "title": "Screen that adds the PVC and WPW finding heads to the binary readout under one budget",
       "question": "At a fixed total referral budget, does referring when either the binary readout or the PVC/WPW finding heads exceed their share catch more of the athlete-criteria abnormal findings without losing binary sensitivity?",
@@ -1038,7 +1038,7 @@
       "value": 4,
       "clarity": 0.7,
       "build_hours": 3,
-      "notes": "Reuse 030's split and threshold rule and 031's budget-splitting OR rule; SPH simulated site."
+      "notes": "Reuse 030's split and threshold rule and 031's budget-splitting OR rule; SPH simulated site. Done 29 September 2026 as Experiment 033 (PR #42): adopt combined_50 (binary OR max PVC/WPW z above every local normal); athlete-criteria composite +0.037 [+0.032, +0.043] at 5%, binary cost 0.003."
     },
     {
       "kind": "experiment",
@@ -1060,7 +1060,7 @@
       "gpu_hours": 0,
       "cpu_hours": 0,
       "blocked_by": [],
-      "status": "open",
+      "status": "done",
       "id": "shared_intervals_module",
       "title": "One shared patient-bootstrap and interval module for new experiments",
       "question": "Can new experiments import one tested ecg_experiment/intervals.py (patient_groups, patient_resample, paired_auroc_difference, metric_intervals) instead of copying the bootstrap code again?",
@@ -1068,7 +1068,7 @@
       "value": 3,
       "clarity": 0.9,
       "build_hours": 3,
-      "notes": "New unpinned module with tests; frozen runners keep their copies."
+      "notes": "New unpinned module with tests; frozen runners keep their copies. Done 29 September 2026 (PR #41): ecg_experiment/intervals.py, bit-identical to four existing helpers; CONTRIBUTING.md points new experiments to it."
     },
     {
       "kind": "repo",
@@ -1084,6 +1084,36 @@
       "clarity": 0.8,
       "build_hours": 3,
       "notes": "Copy once into a new module with tests; reproduce one earlier experiment's predictions exactly as the check."
+    },
+    {
+      "id": "pipeline_v2_rethreshold",
+      "kind": "experiment",
+      "title": "Adopt the 035 reweighted readout and recompute the 030 and 033 operating points",
+      "question": "With the dropped_upweighted pooled readout, do the 030 referral-budget and 033 finding-head results hold, and what are the final screen's numbers at 2%, 5% and 10% budgets?",
+      "evidence": "035: dropped_upweighted fixes the hard-subset loss (0.655 to 0.712) with SPH unchanged at 0.939; 030 and 033 thresholds were computed on the 022b readout.",
+      "value": 4,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Reuse 030/033 split, draws and rules exactly; this defines the candidate pipeline for final_frozen_test. Done 30 September 2026 as Experiment 037 (PR #49): adopt_v2 by the pre-registered rule; composite v2-v1 -0.0048 [-0.0072, -0.0025] fails a strict non-inferiority reading. Spec: docs/pipeline-v2.md."
+    },
+    {
+      "id": "cohorts_v3_exclude_challenge_eval",
+      "kind": "repo",
+      "title": "Rebuild the pretraining cohorts without Challenge test and calibration records",
+      "question": "Can cohorts v3 keep the v2 tier sizes and nesting while excluding every Challenge test and calibration record (and their exact duplicates)?",
+      "evidence": "docs/audit-2026-09-30.md: clean_25k_v2 holds 1,512 Challenge test-group records and clean_100k_v2 and larger hold 12,603; v2 predates the Challenge split. No model has trained on v2 yet.",
+      "value": 5,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Required before any self-supervised pretraining on cohorts; new version, v2 kept for provenance."
     }
   ]
 }

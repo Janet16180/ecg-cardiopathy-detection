@@ -422,8 +422,6 @@ Key artifacts:
 - [Public-data pooling strategy](public-data-strategy.md)
 - [Reproduction instructions](../README.md)
 
-The existing `experiment001-results.pdf` is the comparison **figure**, not a PDF of this complete narrative report.
-
 ![Primary 10%-label comparison: ranking, operating points, ROC, and calibration](experiment001-results.png)
 
 ## Appendix A. Complete evaluated-run ledger

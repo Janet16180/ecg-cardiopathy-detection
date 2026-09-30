@@ -1,9 +1,176 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-26T06:46:04+00:00",
+  "updated_at_utc": "2026-09-27T05:55:00+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
+  "nlp_25k_study": {
+    "requested_at_utc_date": "2026-09-26",
+    "authorization": "User resumed the 25k NLP-inspired architecture studies after EDA on 27 September 2026. Run 011–013 sequentially under fresh GPU profiles and cost gates; no calibration/test.",
+    "common_protocol": "docs/nlp-inspired-25k-study.md",
+    "results_summary": "docs/nlp-inspired-25k-study-results.md",
+    "experiments": [
+      "011",
+      "012",
+      "013"
+    ],
+    "training_subset_records": 25000,
+    "selection_seed": 18046,
+    "selected_indices_sha256": "43f405bfbddbb415f5072480744cebe6427afbeed2474a7be0e625cf1deac791",
+    "initial_exposures_per_arm": 115359,
+    "initial_updates_per_arm": 902,
+    "status": "011_012_013_25k_development_screens_complete_audited",
+    "next_action": "Review the completed 011–013 development-only results and decide a separately frozen second-seed replication or new study; no successor GPU queue is scheduled. Calibration/test remain closed.",
+    "last_profile_attempt": {
+      "manifest": "outputs/experiment_queue_nlp25k_011_profile_v1/queue.json",
+      "manifest_sha256": "be3bfcc825e6b8ac03a97d1e33a4d9c13f2a55008efc60399a4df93fef94d1f0",
+      "status": "outputs/experiment_queue_nlp25k_011_profile_v1/status.json",
+      "state": "interrupted",
+      "at_utc": "2026-09-26T22:57:10.496403+00:00",
+      "phase": "full_cache_verification_before_cuda_profile",
+      "training_updates": 0,
+      "gpu_profile_completed": false
+    },
+    "prepared_successors": {
+      "011": "scripts/experiments/run_delta_memory25k011_v2.py",
+      "012": "scripts/experiments/run_cpc_temporal_hybrid012_v3.py",
+      "013": "scripts/experiments/run_mamba25k013_v2.py",
+      "shared_cache_seal": "outputs/cache_sessions/nlp25k_v1/seal.json (fresh full SHA-256 verified)"
+    },
+    "resumed_at_utc": "2026-09-27T04:44:43+00:00",
+    "shared_cache_seal": {
+      "seal": "outputs/cache_sessions/nlp25k_v1/seal.json",
+      "seal_file_sha256": "2d26ae805bfe83e1238ecc0434108ad8ca5f2e951310e957c0b4a14d26ac3a63",
+      "creation_receipt": "outputs/cache_sessions/nlp25k_v1/creation.json",
+      "creation_elapsed_seconds": 1175.106826,
+      "creation_verification": "fresh_full_sha256"
+    },
+    "completed_profile": {
+      "manifest": "outputs/experiment_queue_nlp25k_011_profile_v2/queue.json",
+      "manifest_sha256": "4f35670b9c0090b22a36a82f61e97b326fb2fd4f10be16c2b98a2a477ad891e6",
+      "profile": "outputs/experiment011_delta_memory_25k_v2/profile.json",
+      "profile_sha256": "ea453bd77e2ad2cd9f7581e5bb03b817d7f7eedd35d142e8f1ed9b5f835fe1ad",
+      "staging_seconds": 979.7590221850005,
+      "projected_complete_seconds": 6194.373642209981,
+      "ceiling_seconds": 7200,
+      "gate_passed": true
+    },
+    "historical_011_full_launch_snapshot": {
+      "at_utc": "2026-09-27T05:26:20.621654+00:00",
+      "manifest": "outputs/experiment_queue_nlp25k_011_full_v2/queue.json",
+      "manifest_sha256": "8b50651e70cbf1c932fd68e7545b549b4b27009f2536a0adfd79525ade348906",
+      "status": "outputs/experiment_queue_nlp25k_011_full_v2/status.json",
+      "coordinator_pid_snapshot": 115022,
+      "child_pid_snapshot": 115023,
+      "stage": "train",
+      "observed_arm": "gru",
+      "observed_updates": 800,
+      "evidence": "outputs/experiment_queue_nlp25k_011_full_v2/job/priority_queue.log"
+    },
+    "completed_011": {
+      "manifest": "outputs/experiment_queue_nlp25k_011_full_v2/queue.json",
+      "status": "outputs/experiment_queue_nlp25k_011_full_v2/status.json",
+      "completed_at_utc": "2026-09-27T05:38:44.959751+00:00",
+      "result": "outputs/experiment011_delta_memory_25k_v2/result.json",
+      "result_sha256": "ea106318c52f3ae38f25321f36c5cd1ab45959839a90e44698c42c542c181924",
+      "audit": "outputs/experiment011_delta_memory_25k_v2/audit.json",
+      "audit_sha256": "31a51f69a577a2f086141da0c92c57ff7709c03bba03c766d58e724f7db273ca",
+      "primary_full_ckda_minus_kda_auroc": 0.005513580265891993,
+      "primary_full_ci95": [-0.002253953987376481, 0.013256343008260762],
+      "primary_limited_ckda_minus_kda_auroc": 0.004788513716055709,
+      "primary_limited_ci95": [-0.002749013890161689, 0.013038924720222217],
+      "calibration_test_evaluated": false
+    },
+    "historical_012_profile_launch_snapshot": {
+      "at_utc": "2026-09-27T05:40:37.038045+00:00",
+      "manifest": "outputs/experiment_queue_nlp25k_012_profile_v3/queue.json",
+      "manifest_sha256": "f6e3fb26fe2a8c84bd3055a358f5d3cea915590e8d4c9611276cbf6689f4ba96",
+      "sources_sha256": "aae0622c6375adb56d7f82204be4c1a50a761693606959f538c818dd8ba91654",
+      "status": "outputs/experiment_queue_nlp25k_012_profile_v3/status.json",
+      "coordinator_pid_snapshot": 117527,
+      "child_pid_snapshot": 117528,
+      "training_authorized_by_profile": false
+    },
+    "completed_012_profile": {
+      "manifest": "outputs/experiment_queue_nlp25k_012_profile_v3/queue.json",
+      "profile": "outputs/experiment012_temporal_hybrid_25k_v3/profile.json",
+      "profile_sha256": "ab5ffc5c524778434b3e5b3dc8bf86edcc2605308b06afde7cbf6beeeaff8d1c",
+      "selected_staging_seconds": 3.5517682550016616,
+      "projected_complete_seconds": 1555.261143589947,
+      "ceiling_seconds": 7200,
+      "gate_passed": true
+    },
+    "historical_012_training_launch_snapshot": {
+      "at_utc": "2026-09-27T05:41:51.055601+00:00",
+      "manifest": "outputs/experiment_queue_nlp25k_012_train_v3/queue.json",
+      "manifest_sha256": "39eac7704dfae1ad7acac16593283e7d02f34d6911489c31f0a7186eabeb1835",
+      "sources_sha256": "45e9fbd6a9ecfeaf5a05eca269c7923133bcf71e09f1876e0ede5576e713f7c1",
+      "status": "outputs/experiment_queue_nlp25k_012_train_v3/status.json",
+      "coordinator_pid_snapshot": 117777,
+      "child_pid_snapshot": 117778
+    },
+    "completed_012": {
+      "training_manifest": "outputs/experiment_queue_nlp25k_012_train_v3/queue.json",
+      "readout_profile_manifest": "outputs/experiment_queue_nlp25k_012_readout_profile_v3/queue.json",
+      "readout_profile": "outputs/experiment012_temporal_hybrid_25k_v3_readout/profile.json",
+      "readout_profile_sha256": "fd23bca2d4872cd92fa6ccda506f2f714efd86bc3ac172987e9a6b3e35cb5e09",
+      "readout_projected_seconds": 956.1597461230322,
+      "readout_gate_passed": true,
+      "readout_manifest": "outputs/experiment_queue_nlp25k_012_readout_full_v3/queue.json",
+      "completed_at_utc": "2026-09-27T05:46:34.746330+00:00",
+      "result": "outputs/experiment012_temporal_hybrid_25k_v3_readout/result.json",
+      "result_sha256": "f637c60a1bfe698878d8d8af574d2300c1e949491a860460915d851fd200357e",
+      "audit": "outputs/experiment012_temporal_hybrid_25k_v3_readout/audit.json",
+      "audit_sha256": "f4cf66464c5bc028ff266850d027d191beb76ef5d5af714befba2ce162539c81",
+      "primary_full_mixed_minus_local_auroc": -0.009958776251636436,
+      "primary_full_ci95": [-0.01865125409961383, -0.0020967701451968888],
+      "primary_limited_mixed_minus_local_auroc": -0.009925469307651036,
+      "primary_limited_ci95": [-0.01913631357161138, -0.0006148632951378778],
+      "calibration_test_evaluated": false
+    },
+    "historical_013_profile_launch_snapshot": {
+      "at_utc": "2026-09-27T05:48:39.167123+00:00",
+      "manifest": "outputs/experiment_queue_nlp25k_013_profile_v2/queue.json",
+      "manifest_sha256": "d492124479cb41fab596cac711118e82c32ff465cf89e53ede7ec3a3be4d5675",
+      "sources_sha256": "8693c459609a193faf187cdbf05f985ada85531aca75eacd9969af79505e5dbb",
+      "status": "outputs/experiment_queue_nlp25k_013_profile_v2/status.json",
+      "coordinator_pid_snapshot": 119236,
+      "child_pid_snapshot": 119237,
+      "training_authorized_by_profile": false
+    },
+    "completed_013_profile": {
+      "manifest": "outputs/experiment_queue_nlp25k_013_profile_v2/queue.json",
+      "profile": "outputs/experiment013_mamba3_25k_v2/profile.json",
+      "profile_sha256": "6b6516b714e7f77b2bc834dc8f7619f9b6081e899041a0e09db74e58d96999e8",
+      "projected_complete_seconds": 1374.0911662999865,
+      "ceiling_seconds": 7200,
+      "gate_passed": true
+    },
+    "historical_013_full_launch_snapshot": {
+      "at_utc": "2026-09-27T05:50:10.525294+00:00",
+      "manifest": "outputs/experiment_queue_nlp25k_013_full_v2/queue.json",
+      "manifest_sha256": "8dbb8ffd3d1edeca2ee73a108470747ae330d5c66b3ac2eb95d5b415ef0d3dcb",
+      "sources_sha256": "8516f5a962dcc17fd1b21a8cd4e01480daecb4aa587079ae90685a1e2d20ec7d",
+      "status": "outputs/experiment_queue_nlp25k_013_full_v2/status.json",
+      "coordinator_pid_snapshot": 119485,
+      "child_pid_snapshot": 119486
+    },
+    "completed_013": {
+      "manifest": "outputs/experiment_queue_nlp25k_013_full_v2/queue.json",
+      "completed_at_utc": "2026-09-27T05:54:30.548925+00:00",
+      "result": "outputs/experiment013_mamba3_25k_v2/result.json",
+      "result_sha256": "4d10d22b54fcb66a301179dcd9671c8da402e4d508e477cf0a7f05d7f9a0243e",
+      "audit_source": "scripts/validation/audit_nlp25k_successors_v2.py",
+      "audit_source_sha256": "085b7c6eb6767fc76d4c61e6cbe2495255f72a7d6485da19800d0d56e0d0007e",
+      "audit": "outputs/experiment013_mamba3_25k_v2/audit_v2.json",
+      "audit_sha256": "5e053cec51ccdb5fbedb5f45c88cc6fd497de48b23dc03fb09baa208e6355d87",
+      "primary_full_mamba3_minus_mamba2_auroc": -0.008175573712110307,
+      "primary_full_ci95": [-0.017223658739184085, 0.0008260513860162872],
+      "primary_limited_mamba3_minus_mamba2_auroc": -0.008057718371853873,
+      "primary_limited_ci95": [-0.017447337627042234, 0.001775997274836527],
+      "calibration_test_evaluated": false
+    }
+  },
   "status_definitions": {
     "active_snapshot": "Reported active by the last read of the coordination file; recheck live state.",
     "queued_runnable": "Implemented and attached to the frozen executable queue; GPU profiling still gates training.",
@@ -75,7 +242,7 @@
       "name": "Rank affordable ways to improve compact ECG CPC",
       "status": "complete_cpu_development_screen_passed",
       "authorized": true,
-      "task": "docs/cpc-improvement-investigation.md",
+      "task": "docs/cpc-improvement-research-2026-09-25.md",
       "next_action": "Discuss a separately frozen independent replication if desired; this one-seed development screen does not authorize calibration/test, a GPU study, or a 010 restart.",
       "candidate_directions": [
         "Local morphology and readout",
@@ -316,8 +483,8 @@
       ],
       "primary_comparison": "CKDA minus KDA; same parameters except the specified transition ranges. GRU is a practical reference with reported capacity.",
       "learning": "Train fresh compact ECG encoders with a common causal waveform stem and the same CPC objective. Copy the initial stem and prediction heads across arms.",
-      "starting_budget": "Twenty SSL epochs fail the measured two-hour gate; choose a shorter matched budget only after end-to-end profiling of SSL, development evaluation and both label budgets.",
-      "next_action": "Build a resumable three-arm end-to-end runner using the verified exact-float32 GPU staging path, then profile the complete protocol and freeze a shorter matched budget in a successor manifest. The completed profile is cost-only; no comparative ECG model result exists yet.",
+      "starting_budget": "Prospective 25k successor fixes 115,359 exposures/902 updates per arm; the earlier 20-epoch 56,875-pool proposal failed its measured two-hour gate.",
+      "next_action": "Observe training updates, complete fixed development readout, and pass independent artifact audit before reporting performance.",
       "constraints": [
         "No language-model checkpoint required.",
         "Do not warm-start only the GRU arm from its trained checkpoint.",
@@ -329,11 +496,13 @@
         "https://arxiv.org/abs/2609.24797",
         "https://github.com/OpenEuroLLM/ComplexKDA"
       ],
-      "status": "implementing",
+      "status": "training",
       "authorized": true,
       "runner": null,
       "launch_command": null,
       "gpu_profile": "outputs/experiment011_delta_memory/gpu_full_pass_profile_v1/profile.json",
+      "profile_25k_manifest": "outputs/experiment_queue_nlp25k_011_profile_v1/queue.json",
+      "profile_25k_manifest_sha256": "be3bfcc825e6b8ac03a97d1e33a4d9c13f2a55008efc60399a4df93fef94d1f0",
       "results": null,
       "historical_run_after": "010",
       "dependencies": [],
@@ -349,7 +518,17 @@
         "kda": 205.13800754101248,
         "ckda": 219.09907669798122
       },
-      "gpu_profile_staging_seconds": 278.15093444500235
+      "gpu_profile_staging_seconds": 278.15093444500235,
+      "profile_25k_status": "outputs/experiment_queue_nlp25k_011_profile_v1/status.json (interrupted before CUDA profile)",
+      "profile_25k_successor_manifest": "outputs/experiment_queue_nlp25k_011_profile_v2/queue.json",
+      "profile_25k_successor_manifest_sha256": "4f35670b9c0090b22a36a82f61e97b326fb2fd4f10be16c2b98a2a477ad891e6",
+      "full_25k_manifest": "outputs/experiment_queue_nlp25k_011_full_v2/queue.json",
+      "full_25k_manifest_sha256": "8b50651e70cbf1c932fd68e7545b549b4b27009f2536a0adfd79525ade348906",
+      "observed_updates_snapshot": {
+        "arm": "gru",
+        "updates": 800,
+        "log": "outputs/experiment_queue_nlp25k_011_full_v2/job/priority_queue.log"
+      }
     },
     {
       "id": "012",
@@ -363,8 +542,8 @@
       ],
       "primary_comparison": "Mixed temporal supports minus restricted local supports, with matching stem, depth, gates, readout and attention placement.",
       "learning": "Train a new compact raw-ECG model using the common causal CPC objective; preserve source input-dependent filtering mechanisms.",
-      "starting_budget": "Proposed same fixed pool, 20 SSL epochs and both label budgets as 011; exact architecture and budget remain to be frozen.",
-      "next_action": "Pin source operator definitions; design small explicit/implicit filters and a matched local control; test causal padding, FFT wrap prevention, gradients and resumability.",
+      "starting_budget": "Prospective 25k successor fixes 115,359 exposures/902 updates per arm, with a separate frozen development readout.",
+      "next_action": "After 011 profile/full run or cost stop, freeze a new versioned profile-only manifest using the shared seal and require the real V100 gate.",
       "constraints": [
         "No billion-parameter Evo checkpoint or DNA vocabulary.",
         "Describe as an adaptation, not an exact Evo 2 reproduction.",
@@ -374,20 +553,24 @@
         "https://www.nature.com/articles/s41586-026-10176-5",
         "https://github.com/ArcInstitute/evo2"
       ],
-      "status": "queued_for_implementation",
+      "status": "prepared_awaiting_serial_gpu_profile",
       "authorized": true,
       "runner": null,
       "launch_command": null,
       "gpu_profile": null,
+      "profile_25k_manifest": "outputs/experiment_queue_nlp25k_012_profile_v2/queue.json",
+      "profile_25k_manifest_sha256": "12539af8e84c5e587243f938df50a0c45507192675b9c4f71b7cf53c43995bde",
+      "superseded_profile_25k_manifest": "outputs/experiment_queue_nlp25k_012_profile_v1/queue.json",
       "results": null,
       "historical_run_after": "011",
-      "dependencies": []
+      "dependencies": [],
+      "profile_25k_status": "not launched"
     },
     {
       "id": "013",
       "priority": 5,
       "name": "Compact Mamba-3 ECG encoder",
-      "protocol": "docs/experiment-013-mamba3-plan.md",
+      "protocol": "docs/experiment-013-mamba3-25k-v2.md",
       "output_dir": "outputs/experiment013_mamba3",
       "arms": [
         "Compact Mamba-3",
@@ -396,8 +579,8 @@
       ],
       "primary_comparison": "Mamba-3 minus Mamba-2 under a fixed common ECG stem, objective and evaluation; report any parameter/compute difference.",
       "learning": "Train fresh waveform encoders on the fixed unlabeled pool; reuse the common causal CPC objective for architecture attribution.",
-      "starting_budget": "Candidate 20 SSL epochs and both existing label budgets, subject to actual supported implementation/profile.",
-      "next_action": "Pin official Mamba-3 source; select a documented supported variant, verify recurrence and V100 backend, then freeze a compact paired protocol before implementation/training.",
+      "starting_budget": "Prospective 25k successor fixes 115,359 exposures/902 updates per arm, subject to its real V100 cost gate.",
+      "next_action": "Complete as a one-seed 25k development screen (docs/nlp-inspired-25k-study-results.md); no second seed or calibration/test is scheduled.",
       "constraints": [
         "V100 support for the chosen official kernel is unverified.",
         "Do not silently substitute Mamba-2 and label it Mamba-3.",
@@ -408,14 +591,17 @@
         "https://arxiv.org/abs/2603.15569",
         "https://github.com/state-spaces/mamba"
       ],
-      "status": "queued_for_implementation",
+      "status": "complete",
       "authorized": true,
       "runner": null,
       "launch_command": null,
       "gpu_profile": null,
-      "results": null,
+      "profile_25k_manifest": "outputs/experiment_queue_nlp25k_013_profile_v1/queue.json",
+      "profile_25k_manifest_sha256": "68568909c7e85382ab58b254c309517e1cdb5655c722c1fabea22d4b6b87c89f",
+      "results": "outputs/experiment013_mamba3_25k_v2/result.json",
       "historical_run_after": "012",
-      "dependencies": []
+      "dependencies": [],
+      "profile_25k_status": "completed; see docs/nlp-inspired-25k-study-results.md"
     },
     {
       "id": "008",
@@ -516,7 +702,7 @@
     "mimic_download": "Completed: 200,000 selected MIMIC recordings verified, 197,207 accepted; no diagnostic labels used. Counts overlap the current subset.",
     "legacy_runner": "Stopped at user request for refactor; see outputs/refactor_pause/pause.json. Do not restart until user resumes.",
     "unselected_ideas": [
-      "docs/vision-to-ecg-architecture-candidates.md",
+      "docs/cross-domain-architecture-candidates.md",
       "docs/xecg-next-experiments.md"
     ]
   },
@@ -1173,7 +1359,10 @@
     "final_receipt_sha256": "fbe051fdbc9be80f1294fec137b40e3dfa4f3d30e772a2f1b8c066b73845dca9",
     "reconciled_new_v14_seconds": 4675.5,
     "seed47_f_minus_m_joint_auroc": 0.008252435890537924,
-    "seed47_primary_interval_95": [0.0027446899571583333, 0.014179519009881248],
+    "seed47_primary_interval_95": [
+      0.0027446899571583333,
+      0.014179519009881248
+    ],
     "seed47_m_minus_f_refit_auroc": 0.001022266973090713,
     "seed47_readout_gap_difference_auroc": 0.009274702863628637,
     "two_seed_mean_f_minus_m_joint_auroc": 0.007159711920555201,
@@ -1192,7 +1381,10 @@
     "runner": "scripts/experiments/run_cpc_scaling_pilot.py",
     "sampled_cohort": "data/processed/sampled_100k_plus_labels_v1",
     "output_dir": "outputs/experiment018_cpc_data_scaling",
-    "arms": ["old_pool_continuation", "sampled_100k_plus_labels_continuation"],
+    "arms": [
+      "old_pool_continuation",
+      "sampled_100k_plus_labels_continuation"
+    ],
     "record_exposures_per_arm": 115359,
     "planning_ceiling_seconds": 7200,
     "calibration_test_evaluated": false,
@@ -1259,7 +1451,11 @@
     "protocol": "docs/experiment-018-cpc-data-scaling-readout.md",
     "runner": "scripts/experiments/run_cpc_scaling_readout.py",
     "output_dir": "outputs/experiment018_cpc_data_scaling_readout_v1",
-    "arms": ["unchanged_initial", "old_pool_continuation", "new_cohort_continuation"],
+    "arms": [
+      "unchanged_initial",
+      "old_pool_continuation",
+      "new_cohort_continuation"
+    ],
     "full_training_labels": 15359,
     "limited_training_labels": 1518,
     "development_records": 1306,
@@ -1277,11 +1473,17 @@
     "full_label_new_auroc": 0.9179547486734868,
     "full_label_old_auroc": 0.9180931005946571,
     "full_label_new_minus_old_auroc": -0.00013835192117028772,
-    "full_label_new_minus_old_ci95": [-0.0032433197303146618, 0.0028824072171601185],
+    "full_label_new_minus_old_ci95": [
+      -0.0032433197303146618,
+      0.0028824072171601185
+    ],
     "limited_label_new_auroc": 0.906584270411392,
     "limited_label_old_auroc": 0.9056414276893435,
     "limited_label_new_minus_old_auroc": 0.0009428427220484759,
-    "limited_label_new_minus_old_ci95": [-0.0022043282104139777, 0.004335513999563208],
+    "limited_label_new_minus_old_ci95": [
+      -0.0022043282104139777,
+      0.004335513999563208
+    ],
     "calibration_test_evaluated": false,
     "next_action": "Experiment 019 separately tests a 25k source-proportional subset. Preserve the 018 result; calibration/test stay closed."
   },
@@ -1316,10 +1518,16 @@
     "readout_results": "docs/experiment-019-cpc-25k-readout-results.md",
     "full_label_25k_auroc": 0.9195995992918433,
     "full_label_25k_minus_115k_auroc": 0.0016448506183565081,
-    "full_label_25k_minus_115k_ci95": [-0.0007280028962275032, 0.003964078482006855],
+    "full_label_25k_minus_115k_ci95": [
+      -0.0007280028962275032,
+      0.003964078482006855
+    ],
     "limited_label_25k_auroc": 0.9086595492289442,
     "limited_label_25k_minus_115k_auroc": 0.0020752788175522063,
-    "limited_label_25k_minus_115k_ci95": [-0.00033759570512042477, 0.004430219665134371],
+    "limited_label_25k_minus_115k_ci95": [
+      -0.00033759570512042477,
+      0.004430219665134371
+    ],
     "checkpoint_sha256": "1ac0035fe07aa421853056b99cf13300418546aa787cf8ded749c412cfd4d523",
     "training_completion": "outputs/experiment019_cpc_25k_v1/complete.json",
     "training_completion_sha256": "b446f1487e8c72173293d844e1e06eded3bb777ff0aa9a2f8e689f9947dcd4eb",
@@ -1335,7 +1543,14 @@
     "cost_gate_passed": true,
     "profile_receipt_sha256": "076020c916b2b255a43c2700ab3247cac70b1a3b3e7e6cefbef8aae198d76776",
     "selected_indices_sha256": "43f405bfbddbb415f5072480744cebe6427afbeed2474a7be0e625cf1deac791",
-    "subset_source_counts": {"chapman_shaoxing": 2072, "cpsc_2018": 1334, "cpsc_2018_extra": 612, "georgia": 2066, "mimic": 15170, "ptbxl": 3746},
+    "subset_source_counts": {
+      "chapman_shaoxing": 2072,
+      "cpsc_2018": 1334,
+      "cpsc_2018_extra": 612,
+      "georgia": 2066,
+      "mimic": 15170,
+      "ptbxl": 3746
+    },
     "profile_command": "UV_CACHE_DIR=/tmp/ecg-uv-cache uv run --no-sync python -u -m scripts.experiments.run_cpc_25k --stage profile",
     "training_command": "UV_CACHE_DIR=/tmp/ecg-uv-cache uv run --no-sync python -u -m scripts.experiments.run_cpc_25k --stage train",
     "calibration_test_evaluated": false,
@@ -1346,7 +1561,12 @@
     "protocol_and_result": "docs/ptb-mimic-cpc-diagnosis-geometry.md",
     "command": "UV_CACHE_DIR=/tmp/ecg_uv_cache uv run --no-sync python -u -m scripts.reports.profile_ptb_mimic_cpc_diagnoses",
     "ptb_training_patients": 15023,
-    "ptb_diagnosis_neighbor_enrichment_ratios": {"MI": 1.8971832044477506, "CD": 1.6751218657278755, "STTC": 1.752748089471552, "HYP": 1.719674996281422},
+    "ptb_diagnosis_neighbor_enrichment_ratios": {
+      "MI": 1.8971832044477506,
+      "CD": 1.6751218657278755,
+      "STTC": 1.752748089471552,
+      "HYP": 1.719674996281422
+    },
     "ptb_hdbscan_subset_patients": 4000,
     "mimic_patient_ecgs": 7892,
     "mimic_abnormal_query_abnormal_neighbor_fraction": 0.8199343724364233,
@@ -1381,8 +1601,14 @@
     "ssl_encoder_sha256": "c166fa2576a90bf39366eb63fee5fba5c6b0eb72bd9e0ee2d315c7b8ddd550d5",
     "cluster_count": 2,
     "unassigned_ecgs": 5353,
-    "cluster_sizes": [1497, 1042],
-    "cluster_cpc_flagged_fractions": [0.9579158316633266, 0.6928982725527831],
+    "cluster_sizes": [
+      1497,
+      1042
+    ],
+    "cluster_cpc_flagged_fractions": [
+      0.9579158316633266,
+      0.6928982725527831
+    ],
     "result": "outputs/mimic_cpc_clustering/report.json",
     "identified_clusters": "outputs/mimic_cpc_clustering/patient_sample_clusters.csv.gz",
     "identified_clusters_sha256": "c8c08acba97e80183531701c08eaa797681ba7f8028e18ce73d3a32766695b95",
@@ -1397,8 +1623,14 @@
     "machine_abnormal_ecgs": 17631,
     "cpc_negative_machine_abnormal_ecgs": 119,
     "cpc_negative_machine_abnormal_patients": 100,
-    "negative_only_cluster_sizes": [919, 958],
-    "negative_only_cluster_machine_abnormal_counts": [24, 34],
+    "negative_only_cluster_sizes": [
+      919,
+      958
+    ],
+    "negative_only_cluster_machine_abnormal_counts": [
+      24,
+      34
+    ],
     "negative_only_noise_machine_abnormal_count": 61,
     "machine_acute_mi_text_cpc_negative_ecgs": 37,
     "machine_acute_mi_text_cpc_negative_patients": 31,
@@ -1464,7 +1696,14 @@
       "022b": {"protocol": "docs/experiment-022b-multisource-readout.md", "results": "docs/experiment-022b-multisource-readout-results.md", "outputs": "outputs/experiment022b_multisource_readout_v1/", "decision": "adopt pooled readout; Ningbo helps"},
       "025b": {"protocol": "docs/experiment-025b-label-efficiency-multisource.md", "results": "docs/experiment-025b-label-efficiency-multisource-results.md", "outputs": "outputs/experiment025b_label_efficiency_multisource_v1/", "decision": "mixed"},
       "024b": {"protocol": "docs/experiment-024b-multisource-geometry.md", "results": "docs/experiment-024b-multisource-geometry-results.md", "outputs": "outputs/experiment024b_multisource_geometry_v1/", "decision": "clusters follow diagnosis"},
-      "029": {"protocol": "docs/experiment-029-local-adaptation.md", "results": "docs/experiment-029-local-adaptation-results.md", "outputs": "outputs/experiment029_local_adaptation_v1/", "decision": "95% sensitivity not reached by n = 1,000 with the plain rule; conservative rule from n = 200 at high referral cost"}
+      "029": {"protocol": "docs/experiment-029-local-adaptation.md", "results": "docs/experiment-029-local-adaptation-results.md", "outputs": "outputs/experiment029_local_adaptation_v1/", "decision": "95% sensitivity not reached by n = 1,000 with the plain rule; conservative rule from n = 200 at high referral cost"},
+      "030": {"protocol": "docs/experiment-030-referral-budget.md", "results": "docs/experiment-030-referral-budget-results.md", "outputs": "outputs/experiment030_referral_budget_v1/", "decision": "referral-budget threshold on local normals; 5% budget with 200 normals catches 0.775"},
+      "031": {"protocol": "docs/experiment-031-hybrid-screening-score.md", "results": "docs/experiment-031-hybrid-screening-score-results.md", "outputs": "outputs/experiment031_hybrid_score_v1/", "decision": "hybrid hurts overall; helps on held-out conditions"},
+      "032": {"protocol": "docs/experiment-032-rhythm-findings.md", "results": "docs/experiment-032-rhythm-findings-results.md", "outputs": "outputs/experiment032_rhythm_findings_v1/", "decision": "rhythm finding heads usable at SPH"},
+      "033": {"protocol": "docs/experiment-033-finding-heads-screen.md", "results": "docs/experiment-033-finding-heads-screen-results.md", "outputs": "outputs/experiment033_finding_heads_screen_v1/", "decision": "adopt combined_50"},
+      "034": {"protocol": "docs/experiment-034-one-class-baselines.md", "results": "docs/experiment-034-one-class-baselines-results.md", "outputs": "outputs/experiment034_one_class_baselines_v1/", "decision": "Mahalanobis stays"},
+      "035": {"protocol": "docs/experiment-035-hard-subset.md", "results": "docs/experiment-035-hard-subset-results.md", "outputs": "outputs/experiment035_hard_subset_v1/", "decision": "adopt dropped_upweighted"},
+      "037": {"protocol": "docs/experiment-037-pipeline-v2.md", "results": "docs/experiment-037-pipeline-v2-results.md", "outputs": "outputs/experiment037_pipeline_v2_v1/", "decision": "adopt_v2 by rule; fails strict non-inferiority"}
     },
     "next": ["referral_budget_operating_point", "hybrid_screening_score", "rhythm_findings_detector", "normal_manifold_novelty_search", "final_frozen_test"],
     "waiting": {"@cardiologist_meeting": ["student_criteria_label", "young_subgroup_readout"], "@clinic_ecgs": ["enriched_positive_sensitivity"]}

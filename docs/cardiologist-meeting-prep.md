@@ -372,11 +372,13 @@ Challenge sources). MIMIC machine labels are not used.
    intercept −1.1 to −1.9) (027). Any threshold must be set on local ECGs.
 5. **Its current operating point refers far too many people.** About 34% of normal ECGs are flagged, against
    1.3-6.8% abnormal ECGs for expert readers using the international criteria (section 2.5). This point
-   was chosen for 95% sensitivity on the broad label. The sensitivity at a 2-5% referral rate has not been
-   measured yet. It needs only the saved 022 predictions.
+   was chosen for 95% sensitivity on the broad label. Update (30 September 2026): Experiments 030 and 037
+   measured referral budgets instead. With the cut-off set from 200 local normal ECGs, a 5% budget catches
+   about 77% of abnormal ECGs (about 91 referrals per 1,000 at 5% prevalence); see
+   [037](experiment-037-pipeline-v2-results.md).
 6. **"Normal" shifts between sites.** The distance-from-normal detector lost more at SPH (0.923 to 0.858)
-   than the classifier did. A normal reference fitted on local student ECGs is the obvious fix, and it is
-   untested (backlog `local_normal_manifold`).
+   than the classifier did. Update (30 September 2026): normals from several hospitals raised it to 0.878
+   (026b), but adding local normals barely helped (029), so the classifier remains the main screen.
 7. **Devices and hospitals leave a fingerprint.** For our CPC encoder, unsupervised clusters followed recording
    device more than diagnosis ([024](experiment-024-embedding-geometry-results.md)). For xECG and JEPA,
    clusters follow diagnosis more, but a linear probe still names the source hospital with AUROC 0.93-0.95
@@ -586,6 +588,13 @@ The country is not known, so these are general points, not legal advice.
    cardiologist's clinic, and PTB-XL or SPH ECGs aged 18-35 relabeled with the student criteria.
 
 ### Why about 1,000, and why it is provisional
+
+Update (30 September 2026): [029](experiment-029-local-adaptation-results.md) showed that guaranteeing 95%
+sensitivity locally needs at least 45 local abnormal ECGs and then refers half or more of healthy students, so
+the pilot should set its cut-off by a referral budget instead
+([030](experiment-030-referral-budget-results.md)). That needs about 200 local normal ECGs for the cut-off, and
+1,000-2,000 to hold the referral rate within one point. Sensitivity must still come from confirmed patient ECGs.
+The reasoning below predates these results.
 
 - **Negatives are plentiful and set the false-alarm rate.**
   - If 2-5% of students read abnormal, as in athlete studies, N = 1,000 gives about 950-980 normal ECGs.
@@ -812,7 +821,7 @@ Fetched and read for this guide on 29 September 2026, except where marked.
   [Link](https://www.fda.gov/medical-devices/digital-health-center-excellence/software-medical-device-samd).
 
 Project documents: [findings of 28 September](findings-2026-09-28.md),
-[papers versus results](reflection-papers-vs-results-2026-09-29.md),
+[papers versus results](literature-review-2026-09-28.md#what-the-papers-predicted-and-what-we-measured),
 [literature review](literature-review-2026-09-28.md), results of Experiments
 [022](experiment-022-sph-external-readout-results.md), [023](experiment-023-echonext-readout-results.md),
 [024](experiment-024-embedding-geometry-results.md), [025](experiment-025-label-efficiency-results.md),

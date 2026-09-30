@@ -4,11 +4,14 @@
 
 **30 September xLSTM request:** Experiment [038](experiment-038-cpc-xlstm.md) is authorized in PR #56.
 Its protocol was committed as `b39eb93` before new scores. It compares fresh CPC GRU and mLSTM-xLSTM
-on clean cohorts v3, with 25k first and a conditional matched 50k tier. The model and cache code are committed as `023ce44`; 11 focused CPU tests passed. The verified
-25k cache completed with 25,000 verified ECGs in 449.74 seconds; read the live completion receipts under
-`outputs/experiment038_cpc_xlstm/`. The runner has passed its seven focused tests and repository lint; the required CPU suite is in progress.
-A real RTX 3090 resource gate precedes training. No new training
-or closed-test stage has run.
+on clean cohorts v3, with 25k first and a conditional matched 50k tier. The verified 25k cache completed
+with 25,000 ECGs in 449.74 seconds. The first real GPU profile stopped at exact GRU checkpoint recovery;
+no full training or new development scores followed. The committed v2 protocol (`30da31d`) and runner
+(`49400a7`) use native PyTorch GRU execution with unchanged architecture and dropout. A synthetic CUDA
+control passed exact native recovery at dropout0.1; cuDNN failed at0.1 and passed at0. Both successor arms passed exact GPU recovery; the real profile projected2,664.88 seconds
+within the7,200-second ceiling, and full matched25k training is running. Read live files under `outputs/experiment038_cpc_xlstm_v2/25k/` before reporting
+progress. The original cache and failed work count toward the same 7,200-second 25k ceiling. Ruff and
+24 targeted tests passed; the successor full CPU suite passed977 tests in49.55 seconds. No closed-test stage is authorized.
 
 **27 September resume:** The user reported EDA finished and explicitly resumed
 Experiments 011–013 on the fixed 25k subset. The V100 was idle and no study

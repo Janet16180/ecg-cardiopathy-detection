@@ -9,9 +9,9 @@ crossed with native GRU/mLSTM, with the three matched 039 seeds. The one-block l
 has 49-sample raw support; existing 039 patch/CPC fits provide the frontend controls. Six primary paired
 comparisons require the hybrid to beat both component objectives before calling the combination promising.
 
-Implementation `a675030` and CPU verification are ready. The coordinator is queued for the final
-039 execution-closure receipt and has
-no real 040 profile, training result or development score. All six packages must pass real full-path
+Implementation `a675030` and CPU verification are ready. Experiment 039 closed its scientific
+execution at 10,685.80 charged seconds; the coordinator is now profiling all six 040 packages.
+No 040 full training result or development score exists yet. All six packages must pass real full-path
 GPU profiles and exact normal/final-batch recovery before any full fit. Admission covers all 18 fits,
 reporting and a 3,600-second diagnostic/correction reserve within the original shared 039+040 eight-hour
 ceiling. One diagnostic and at most one evidenced correction cycle are permitted per affected package.
@@ -23,12 +23,13 @@ full-suite pass. The same isolated v11 test passed in the main checkout (one pas
 the frozen v11 source/test was not changed. New manifests bind source, protocol,
 dependencies, the locally pinned xECG loss/trainer/configuration and historical control artifacts;
 analysis checks manifest identities and source hashes before accepting results. These checks are
-implementation evidence, not measured ECG performance.
+implementation evidence, not measured ECG performance. GitHub CI now passes 1,167 tests with six
+skipped in 114.16 seconds, Ruff and both package builds; its CPU workflow fetches the exact pinned
+upstream loss reference.
 
-The queued coordinator is `scripts.coordination.run_simdino_day040`; live receipts and `run.log`
+The active coordinator is `scripts.coordination.run_simdino_day040`; live receipts and `run.log`
 are under `outputs/experiment040_cpc_simdino/`. Draft [PR #59](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/59) targets `main`. Run from its worktree with the pinned default `.venv`,
-`PYTHONPATH` pointing to that worktree and one CPU compute thread. The live queued status records
-no 040 GPU profile, full training or score yet. The executing agent must write the complete or incomplete results report from receipts
+`PYTHONPATH` pointing to that worktree and one CPU compute thread. The live status records the actual profile progress; full training waits for all-six admission. The executing agent must write the complete or incomplete results report from receipts
 and update both queue documents after actual profiles, admission and outcomes.
 
 **30 September encoder/context study authorized:** The user requested a day of CPC encoder variants

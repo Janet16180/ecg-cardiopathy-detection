@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-30T18:42:23.711548+00:00",
+  "updated_at_utc": "2026-09-30T20:17:01.042328+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -1941,7 +1941,7 @@
     "historical_integrity": "passed_exact_019_and_038_25k_50k"
   },
   "experiment_040_cpc_simdino": {
-    "status": "queued_waiting_for_experiment039",
+    "status": "profiling_all_six_packages",
     "authorized": true,
     "protocol": "docs/experiment-040-cpc-simdino.md",
     "protocol_commit": "ac18dac",
@@ -1999,15 +1999,26 @@
         "elapsed_seconds": 13.14,
         "frozen_source_or_test_changed": false
       },
-      "scope": "Implementation verification only, not ECG performance evidence"
+      "scope": "Implementation verification only, not ECG performance evidence",
+      "github_ci": {
+        "passed": 1167,
+        "skipped": 6,
+        "elapsed_seconds": 114.16,
+        "ruff_passed": true,
+        "wheel_and_sdist_built": true,
+        "run": "https://github.com/Janet16180/ecg-cardiopathy-detection/actions/runs/36765220546"
+      }
     },
     "source_pinning": "New manifests bind scientific source/dependencies/protocol, vendored xECG source and historical controls; aggregation validates source hashes and manifest identities.",
     "upstream_commit": "13e57523e418d8cddced73f81b27ba541413f4f3",
-    "next_action": "Finish 039; profile all six packages without development scoring; admit all 18 fits only if shared-day projection and correction reserve fit. Preserve any failure and write executed results or an incomplete report.",
+    "next_action": "Measure all six real GPU packages and exact recovery paths; admit all 18 fits only if the shared-day projection and reserves fit. No full fit or new score before admission. Preserve failures and finish an executed complete or incomplete report.",
     "results": null,
     "implementation_commit": "a675030",
     "live_log": "outputs/experiment040_cpc_simdino/run.log",
     "queued_process_id_snapshot": 3703565,
-    "pull_request": "https://github.com/Janet16180/ecg-cardiopathy-detection/pull/59"
+    "pull_request": "https://github.com/Janet16180/ecg-cardiopathy-detection/pull/59",
+    "predecessor_execution_closed": "outputs/experiment039_encoder_context/execution_closed.json",
+    "predecessor_final_charged_seconds": 10685.795655530459,
+    "predecessor_final_ledger_sha256": "07a6dd586cba46abac3424b2a489d4264e60a70e96eef0af16996bcc105c1472"
   }
 }

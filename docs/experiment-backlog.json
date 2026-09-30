@@ -735,7 +735,7 @@
         "cohorts_v2"
       ],
       "status": "open",
-      "notes": "Lower priority now that the baseline moves to frozen JEPA/xECG. Use cohorts v3, not v2. Overlaps pretraining_scaling_curve_v3: its 50k arm answers this too."
+      "notes": "Lower priority now that the baseline moves to frozen JEPA/xECG. Use cohorts v3 or v4, not v2. Overlaps pretraining_scaling_curve_v3: its 50k arm answers this too."
     },
     {
       "id": "rerun_025_ningbo",
@@ -1116,6 +1116,21 @@
       "notes": "Required before any self-supervised pretraining on cohorts; new version, v2 kept for provenance. Done 30 September 2026 (docs/clean-cohorts-v3.md): 12,603 test-group and 12,597 calibration-group records removed; the curated pool falls to 55,175, so the 100k tier is now 45% MIMIC; 1M is out of reach and clean_max_v3 holds all 978,965 candidates."
     },
     {
+      "id": "cohorts_v4_echonext",
+      "kind": "repo",
+      "title": "Add the EchoNext training ECGs to the quality-first cohorts",
+      "question": "Can the cohorts include the usable EchoNext training ECGs, ranked by quality after the curated human-read sources, without touching any EchoNext evaluation patient or the v3 tiers pinned by Experiment 038?",
+      "evidence": "Cohorts v3 hold no EchoNext record, although its 71,823 usable training ECGs have echo-confirmed labels and known patients (docs/clean-sph-echonext-v1.md). V3's 100k tier is 45% MIMIC, the lowest-quality source.",
+      "value": 3,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.2,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Requested by the user, 30 September 2026. Done the same day (docs/clean-cohorts-v4.md): EchoNext train enters after the curated block, so 25k and 50k are byte-identical to v3, 100k and 200k hold no MIMIC, and 1,050,788 candidates make 1M reachable. Only train rows are candidates; no training patient appears in val, test or no_split."
+    },
+    {
       "id": "training_io_local_prefetch",
       "kind": "repo",
       "title": "Serve training caches from local disk with read-ahead",
@@ -1143,7 +1158,7 @@
       "build_hours": 4,
       "blocked_by": [],
       "status": "open",
-      "notes": "Experiment038 completed verified25k/50k caches, including Ningbo WFDB, in449.74s/745.74s. No100k-200k cache yet; the broader item remains open. CODE15 still needs amplitude decision."
+      "notes": "Experiment038 completed verified25k/50k caches, including Ningbo WFDB, in449.74s/745.74s. No100k-200k cache yet; the broader item remains open. CODE15 still needs amplitude decision. Cohorts v4 (docs/clean-cohorts-v4.md) share the 25k and 50k tiers, so those caches serve v4 too; v4 100k-200k also need an echonext_npy backend, which can reuse echonext.to_cpc_scale at 250 Hz as Experiment 023 did."
     },
     {
       "id": "pretraining_scaling_curve_v3",
@@ -1161,14 +1176,14 @@
         "training_io_local_prefetch"
       ],
       "status": "open",
-      "notes": "Requested by the user, 30 September 2026. Needs a frozen protocol with the primary comparison and decision rule before any score, and a real GPU profile on the RTX 3090."
+      "notes": "Requested by the user, 30 September 2026. Needs a frozen protocol with the primary comparison and decision rule before any score, and a real GPU profile on the RTX 3090. With cohorts v4 the 100k and 200k tiers hold EchoNext instead of MIMIC: size is still confounded with source above 50k, but with a better-labeled, more filtered 250 Hz source. The user should choose v3 or v4 in the protocol."
     },
     {
       "id": "cpc_xlstm_v3",
       "kind": "experiment",
       "title": "Replace CPC GRU context with mLSTM-xLSTM on clean cohorts v3",
       "question": "Does matrix memory improve a matched fresh CPC development readout at 25k, and does a conditional 50k tier help?",
-      "evidence": "Audited full CPC comparison: primary xLSTM minus GRU−0.00897[−0.01840,+0.00094] at25k and−0.00737[−0.01652,+0.00117] at50k; xLSTM scaling+0.00231[−0.00707,+0.01136]. Neither frozen improvement rule passed.",
+      "evidence": "Audited full CPC comparison: primary xLSTM minus GRU\u22120.00897[\u22120.01840,+0.00094] at25k and\u22120.00737[\u22120.01652,+0.00117] at50k; xLSTM scaling+0.00231[\u22120.00707,+0.01136]. Neither frozen improvement rule passed.",
       "value": 3,
       "clarity": 0.6,
       "gpu_hours": 4,
@@ -1198,7 +1213,7 @@
       "kind": "experiment",
       "title": "Independent seeds for the matched CPC GRU versus xLSTM contrast",
       "question": "Do the25k/50k context differences and small xLSTM scaling gain repeat across independent fresh initializations?",
-      "evidence": "Experiment038 completed one seed: primary architecture differences−0.00897 at25k/−0.00737 at50k; scaling+0.00231; all paired patient intervals include zero. These intervals exclude training-seed variability.",
+      "evidence": "Experiment038 completed one seed: primary architecture differences\u22120.00897 at25k/\u22120.00737 at50k; scaling+0.00231; all paired patient intervals include zero. These intervals exclude training-seed variability.",
       "value": 2,
       "clarity": 0.6,
       "gpu_hours": 1,

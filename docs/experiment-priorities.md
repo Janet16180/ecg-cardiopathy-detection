@@ -114,6 +114,9 @@ threshold at a fixed share of local normals catches about 78% of abnormal SPH EC
 referrals per 1,000 at 5% prevalence), and about 1,000 local normals hold the budget within ±1 point in 9 of
 10 pilots; other hospitals' normals miss it by a factor of up to four. `hybrid_screening_score` should be judged
 at these budgets; the distance score alone trails the readout by 0.19 sensitivity at 5%.
+`cohorts_v4_echonext` is done as [cohorts v4](clean-cohorts-v4.md): the 71,823 usable EchoNext training ECGs
+enter after the curated sources, so 25k and 50k equal v3 and the 100k and 200k tiers hold no MIMIC.
+`cohorts_v3_cpc_caches` and `pretraining_scaling_curve_v3` now carry a note on the choice between v3 and v4.
 
 New on 29 September 2026, after 029:
 - `referral_budget_operating_point` (first): set the threshold by a referral budget, fitted on local normals

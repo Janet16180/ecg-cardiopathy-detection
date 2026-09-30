@@ -349,6 +349,8 @@ def _normal_updates(model: Any, opt: Any, current: dict[str, Any], data: Any, in
                     checkpoints.append(boundary)
                 measured["completed_updates"] = index + 1
                 write_json_atomic(target / "progress.json", measured, sort_keys=True)
+                print(json.dumps({"objective": current["objective"], "context": current["context"],
+                                  "completed_updates": index + 1, "probe_updates": UPDATES}), flush=True)
                 block_first = index + 2
                 base.sync(device)
                 block_started = time.monotonic()
@@ -458,9 +460,14 @@ def _run_packages(root: Path, data: Any, old_pool: Any, train: list[Any], identi
         for context in base.ARMS:
             _check_deadline(deadline_started)
             package_path = directory(root, objective, context) / "package.json"
-            entry = {"objective": objective, "context": context,
+                    entry = {"objective": objective, "context": context,
                      "path": to_stored(package_path), "status": "failed"}
-            index["packages"].append(entry)
+                    index["packages"].append(entry)
+                    write_json_atomic(target / "status.json", {
+                        "status": "running", "current_package": {"objective": objective, "context": context},
+                        "completed_packages": sum(p["status"] == "complete" for p in index["packages"]),
+                        "planned_packages": 6,
+                    }, sort_keys=True)
             try:
                 with study.configured(root, objective, SEED):
                     result = _probe_package(root, objective, context, data, old_pool, train,
@@ -561,6 +568,11 @@ def run(root: Path = ROOT) -> dict[str, Any]:
             index["status"] = "failed_parent_drift"
         index["wall_seconds"] = time.monotonic() - started
         write_json_atomic(target / "result.json", index, sort_keys=True)
+        write_json_atomic(target / "status.json", {
+            "status": index["status"], "current_package": None,
+            "completed_packages": sum(p["status"] == "complete" for p in index["packages"]),
+            "planned_packages": 6,
+        }, sort_keys=True)
         charge(root, "probe", time.monotonic() - started, status)
         if drift:
             raise ValueError("Original evidence or pinned sources changed during runtime probing")

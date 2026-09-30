@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-30T17:00:27.086435+00:00",
+  "updated_at_utc": "2026-09-30T18:42:23.711548+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -1939,5 +1939,63 @@
     "day_ledger": "outputs/experiment039_encoder_context/day_ledger.json",
     "first_profile": "outputs/experiment039_encoder_context/cnn/seed39042/25k/profile.json",
     "historical_integrity": "passed_exact_019_and_038_25k_50k"
+  },
+  "experiment_040_cpc_simdino": {
+    "status": "implemented_cpu_verified_waiting_for_039",
+    "authorized": true,
+    "protocol": "docs/experiment-040-cpc-simdino.md",
+    "protocol_commit": "ac18dac",
+    "output_dir": "outputs/experiment040_cpc_simdino",
+    "runner": "scripts/coordination/run_simdino_day040.py",
+    "stage_cli": "scripts/experiments/run_cpc_simdino040.py",
+    "report_runner": "scripts/reports/report_cpc_simdino040.py",
+    "live_status": "outputs/experiment040_cpc_simdino/status.json",
+    "admission_receipt": "outputs/experiment040_cpc_simdino/admission.json",
+    "day_ledger": "outputs/experiment040_cpc_simdino/day_ledger.json",
+    "run_after": "039_complete_with_aggregate_interactions_and_diagnostic_gate",
+    "frontend": "one_local_causal_transformer_block_patch33_stride16_receptive_field49",
+    "objectives": [
+      "cpc",
+      "simdino",
+      "hybrid"
+    ],
+    "contexts": [
+      "gru",
+      "xlstm"
+    ],
+    "tiers": [
+      25
+    ],
+    "cohort_version": 4,
+    "seeds": [
+      39042,
+      39043,
+      39044
+    ],
+    "planned_fits": 18,
+    "exposures_per_fit": 250000,
+    "primary_family_size": 6,
+    "primary_controls": "039 patch/CPC for frontend; 040 CPC and SimDINOv2-style for hybrid",
+    "combined_benefit_requires_both_component_comparisons": true,
+    "shared_039_040_executable_ceiling_seconds": 28800,
+    "diagnostic_correction_reserve_seconds": 3600,
+    "all_six_real_profiles_required_before_any_full_training": true,
+    "full_schedule_admission_required_before_any_new_score": true,
+    "one_diagnostic_and_one_evidenced_correction_authorized": true,
+    "calibration_test_authorized": false,
+    "experiment008_resumed": false,
+    "real_profiles_completed": 0,
+    "development_scores_available": false,
+    "cpu_verification": {
+      "focused_tests_passed": 98,
+      "broad_tests_passed": 1168,
+      "broad_tests_failed": 1,
+      "limitation": "Existing frozen v11 safe-leaf path guard rejects the required shared outputs symlink in this worktree; the full suite is not clean. No v11 source or test changed.",
+      "scope": "Implementation verification only, not ECG performance evidence"
+    },
+    "source_pinning": "New manifests bind scientific source/dependencies/protocol, vendored xECG source and historical controls; aggregation validates source hashes and manifest identities.",
+    "upstream_commit": "13e57523e418d8cddced73f81b27ba541413f4f3",
+    "next_action": "Finish 039; profile all six packages without development scoring; admit all 18 fits only if shared-day projection and correction reserve fit. Preserve any failure and write executed results or an incomplete report.",
+    "results": null
   }
 }

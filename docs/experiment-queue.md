@@ -2,6 +2,33 @@
 
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
+**30 September Transformer/SimDINO follow-up implemented:** The user requested a Transformer frontend
+and SimDINOv2, including its combination with CPC. [Experiment 040](experiment-040-cpc-simdino.md),
+protocol commit `ac18dac`, schedules 18 fresh 25k-v4 fits: CPC, SimDINOv2-style and hybrid objectives
+crossed with native GRU/mLSTM, with the three matched 039 seeds. The one-block local causal Transformer
+has 49-sample raw support; existing 039 patch/CPC fits provide the frontend controls. Six primary paired
+comparisons require the hybrid to beat both component objectives before calling the combination promising.
+
+Implementation and CPU verification are ready; the experiment is waiting for 039 completion and has
+no real 040 profile, training result or development score. All six packages must pass real full-path
+GPU profiles and exact normal/final-batch recovery before any full fit. Admission covers all 18 fits,
+reporting and a 3,600-second diagnostic/correction reserve within the original shared 039+040 eight-hour
+ceiling. One diagnostic and at most one evidenced correction cycle are permitted per affected package.
+008 remains deferred; no EchoNext record enters the 25k cohort, and no closed test is authorized.
+
+Verification: 98 focused CPU tests passed. The broad worktree run had 1,168 passes and one existing v11
+path-guard failure because the worktree uses the required shared `outputs` symlink; this is not a clean
+full-suite pass. The frozen v11 source/test was not changed. New manifests bind source, protocol,
+dependencies, the locally pinned xECG loss/trainer/configuration and historical control artifacts;
+analysis checks manifest identities and source hashes before accepting results. These checks are
+implementation evidence, not measured ECG performance.
+
+When 039 is complete, the coordinator is `scripts.coordination.run_simdino_day040`; local live receipts
+will be under `outputs/experiment040_cpc_simdino/`. Run from its worktree with the pinned default `.venv`,
+`PYTHONPATH` pointing to that worktree and one CPU compute thread. No 040 GPU job was launched by this
+queue update. The executing agent must write the complete or incomplete results report from receipts
+and update both queue documents after actual profiles, admission and outcomes.
+
 **30 September encoder/context study authorized:** The user requested a day of CPC encoder variants
 crossed with GRU and xLSTM on the new cohort. [Experiment 039](experiment-039-cpc-encoder-context.md)
 freezes the complete CNN/multiscale/patch × GRU/xLSTM factorial at v4 25k and 50k, with three seeds

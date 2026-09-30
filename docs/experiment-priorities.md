@@ -1,6 +1,6 @@
 # Experiment priorities
 
-Updated 30 September 2026, after the completed Experiment 038 comparison. Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
+Updated 30 September 2026, including the authorized Experiment 040 follow-up. Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
 explains the scoring, shows the current ranking and records what the papers suggest. The backlog is for
 choosing the next study. It does not authorize or schedule anything: the execution queue remains
 [experiment-queue.json](experiment-queue.json), and every study still needs a frozen protocol first.
@@ -36,6 +36,10 @@ After each result:
 4. Add new candidates the result suggests.
 
 ## Current ranking
+
+Experiment 040 is explicitly authorized and scheduled, with implementation and CPU checks complete.
+Its ranking hours remain estimates; it waits for 039 and actual six-package GPU/day-budget gates.
+No 040 performance result exists yet. See [the protocol](experiment-040-cpc-simdino.md) and queue.
 
 Kinds: `experiment` answers a research question, `repo` improves the pipeline, and `wild` is a creative
 long shot scored by the same rule. Wild ideas usually get low clarity, which is honest rather than a
@@ -82,8 +86,9 @@ penalty; one that ranks high earns a protocol like any other.
 | 37 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
 | 38 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
 | 39 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
-| 40 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
-| 41 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
+| 40 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @experiment039_complete, @six_package_real_gpu_profiles, @shared_039_040_day_budget |
+| 41 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
+| 42 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
 
 Reruns after Ningbo (`rerun_of` in the backlog): 022 as `ningbo_sph_transfer`, 024 as `rerun_024_multisource`,
 025 as `rerun_025_ningbo`, 026 as `multisource_normal_manifold` and 027 as `multisource_calibration`. 023 is

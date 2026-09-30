@@ -227,6 +227,9 @@ groups.
 | 030 ([protocol](experiment-030-referral-budget.md), [results](experiment-030-referral-budget-results.md)) | Threshold set by referral budget from local normals | 5% budget with 200 local normals catches 0.775; conduction findings most misses | `outputs/experiment030_referral_budget_v1/` |
 | 031 ([protocol](experiment-031-hybrid-screening-score.md), [results](experiment-031-hybrid-screening-score-results.md)) | Readout plus distance-from-normal hybrid | Negative (-0.028 at 5%); helps on held-out conditions | `outputs/experiment031_hybrid_score_v1/` |
 | 032 ([protocol](experiment-032-rhythm-findings.md), [results](experiment-032-rhythm-findings-results.md)) | Detectors for athlete-criteria rhythm findings | Usable at SPH (PVC 0.990, WPW 0.992, AF 0.9999, AV block 0.9999, long QT 0.934) | `outputs/experiment032_rhythm_findings_v1/` |
+| 033 ([protocol](experiment-033-finding-heads-screen.md), [results](experiment-033-finding-heads-screen-results.md)) | Binary readout plus PVC/WPW heads under one budget | Adopted; composite +0.037 at 5%, binary cost 0.003 | `outputs/experiment033_finding_heads_screen_v1/` |
+| 034 ([protocol](experiment-034-one-class-baselines.md), [results](experiment-034-one-class-baselines-results.md)) | Other one-class scores on the same embeddings | Mahalanobis stays; best alternatives within 0.004 | `outputs/experiment034_one_class_baselines_v1/` |
+| 035 ([protocol](experiment-035-hard-subset.md), [results](experiment-035-hard-subset-results.md)) | Why pooled readouts lose on the PTB-XL hard subset | Normal-label mismatch; reweighting recovers 81% with no SPH cost | `outputs/experiment035_hard_subset_v1/` |
 
 Next, ranked in the [backlog](experiment-backlog.json) and [priorities](experiment-priorities.md):
 `referral_budget_operating_point`, then `hybrid_screening_score` and `rhythm_findings_detector`, with the

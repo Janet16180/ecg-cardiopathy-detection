@@ -48,7 +48,7 @@ Challenge records that the split later assigned to its test and calibration grou
 `clean_25k_v2` and 12,603 in `clean_100k_v2` and every larger tier. No model has been trained on these cohorts
 yet, so no result is affected. Before any self-supervised pretraining, rebuild the cohorts (v3) without the
 Challenge test and calibration groups; see the backlog item `cohorts_v3_exclude_challenge_eval` and the
-[audit](audit-2026-09-30.md).
+[audit](audit-2026-09-30.md). Fixed by [cohorts v3](clean-cohorts-v3.md); use v3 for pretraining.
 
 ## Build
 

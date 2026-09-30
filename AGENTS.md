@@ -50,8 +50,8 @@ history belongs in Git and the queue documents, not here.
   them before a user-approved final test. The PTB-XL test set is not untouched: Experiments 001-008 evaluated
   on it. SPH has been read by Experiments 022-037 and counts as development data. The one-time
   `final_frozen_test` waits for the user to freeze the pipeline; see `docs/audit-2026-09-30.md`.
-- Pretraining cohorts must exclude every evaluation record. Cohorts v2 predate the Challenge split and
-  include its test groups, so rebuild them before any pretraining.
+- Pretraining cohorts must exclude every evaluation record. Use cohorts v3 (`docs/clean-cohorts-v3.md`);
+  v2 predate the Challenge split and include its test and calibration groups.
 - Deferred, do not resume without the user: Experiments 008 and 010, and the 017 second seed.
 
 ## Data

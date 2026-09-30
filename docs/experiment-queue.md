@@ -2,35 +2,29 @@
 
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
-**30 September Transformer/SimDINO follow-up implemented:** The user requested a Transformer frontend
-and SimDINOv2, including its combination with CPC. [Experiment 040](experiment-040-cpc-simdino.md),
-protocol commit `ac18dac`, schedules 18 fresh 25k-v4 fits: CPC, SimDINOv2-style and hybrid objectives
-crossed with native GRU/mLSTM, with the three matched 039 seeds. The one-block local causal Transformer
-has 49-sample raw support; existing 039 patch/CPC fits provide the frontend controls. Six primary paired
-comparisons require the hybrid to beat both component objectives before calling the combination promising.
+**30 September Transformer/SimDINO resource stop:** [Experiment 040](experiment-040-cpc-simdino-results.md)
+passed all six real GPU profiles and exact normal/final-16-record checkpoint recovery. The all-or-none
+time gate rejected the fixed 18-fit suite: 29,295.03 projected combined seconds versus the shared
+28,800-second ceiling, including diagnostic and reporting reserves. All original outcomes remain
+under `outputs/experiment040_cpc_simdino/`. No full fit, development score or primary-family decision
+was produced; this resource stop supplies no performance evidence about the objectives.
 
-Implementation `a675030` and CPU verification are ready. Experiment 039 closed its scientific
-execution at 10,685.80 charged seconds; the coordinator is now profiling all six 040 packages.
-No 040 full training result or development score exists yet. All six packages must pass real full-path
-GPU profiles and exact normal/final-batch recovery before any full fit. Admission covers all 18 fits,
-reporting and a 3,600-second diagnostic/correction reserve within the original shared 039+040 eight-hour
-ceiling. One diagnostic and at most one evidenced correction cycle are permitted per affected package.
-008 remains deferred; no EchoNext record enters the 25k cohort, and no closed test is authorized.
+Protocol `ac18dac`, frozen implementation `a675030` and the three matched seeds retain the complete
+CPC/SimDINOv2-style/hybrid × GRU/mLSTM schedule. The compact local causal Transformer has 49-sample
+raw support; historical 039 patch/CPC controls remain fixed. Experiment 039 closed at 10,685.80
+charged seconds before the 040 profiles. The final 040 receipt audit verified 134 source/input hashes,
+all profile/admission bindings and stage-ledger consistency. See the results report for measurements
+and final accounting. The coordinator has stopped; no second process or automatic restart is scheduled.
 
-Verification: 102 focused CPU tests passed in 11.91 seconds; Ruff passed. The broad worktree run had 1,168 passes and one existing v11
-path-guard failure because the worktree uses the required shared `outputs` symlink; this is not a clean
-full-suite pass. The same isolated v11 test passed in the main checkout (one pass in 13.14 seconds);
-the frozen v11 source/test was not changed. New manifests bind source, protocol,
-dependencies, the locally pinned xECG loss/trainer/configuration and historical control artifacts;
-analysis checks manifest identities and source hashes before accepting results. These checks are
-implementation evidence, not measured ECG performance. GitHub CI now passes 1,167 tests with six
-skipped in 114.16 seconds, Ruff and both package builds; its CPU workflow fetches the exact pinned
-upstream loss reference.
+Verification: 102 focused CPU tests passed in 11.91 seconds; Ruff passed. GitHub CI passed 1,167 tests
+with six skipped in 114.16 seconds and built wheel/source distributions. Its setup fetches the exact
+pinned upstream loss implementation. The earlier local worktree had one existing frozen v11 path-guard
+failure from the shared outputs symlink; that isolated test passed in the main checkout.
 
-The active coordinator is `scripts.coordination.run_simdino_day040`; live receipts and `run.log`
-are under `outputs/experiment040_cpc_simdino/`. Draft [PR #59](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/59) targets `main`. Run from its worktree with the pinned default `.venv`,
-`PYTHONPATH` pointing to that worktree and one CPU compute thread. The live status records the actual profile progress; full training waits for all-six admission. The executing agent must write the complete or incomplete results report from receipts
-and update both queue documents after actual profiles, admission and outcomes.
+The original backlog entry remains blocked by the resource gate. A separately authorized prospective
+resource plan is ranked as follow-up. No coefficient/exposure/family change or correction cycle was
+made; no closed-test evaluation is authorized, and 008 remains deferred. Draft
+[PR #59](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/59) targets `main` and remains unmerged.
 
 **30 September encoder/context study authorized:** The user requested a day of CPC encoder variants
 crossed with GRU and xLSTM on the new cohort. [Experiment 039](experiment-039-cpc-encoder-context.md)

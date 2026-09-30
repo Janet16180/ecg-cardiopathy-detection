@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-30T20:17:01.042328+00:00",
+  "updated_at_utc": "2026-09-30T20:25:44.999877+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -1941,7 +1941,7 @@
     "historical_integrity": "passed_exact_019_and_038_25k_50k"
   },
   "experiment_040_cpc_simdino": {
-    "status": "profiling_all_six_packages",
+    "status": "resource_gate_failed",
     "authorized": true,
     "protocol": "docs/experiment-040-cpc-simdino.md",
     "protocol_commit": "ac18dac",
@@ -1984,7 +1984,7 @@
     "one_diagnostic_and_one_evidenced_correction_authorized": true,
     "calibration_test_authorized": false,
     "experiment008_resumed": false,
-    "real_profiles_completed": 0,
+    "real_profiles_completed": 6,
     "development_scores_available": false,
     "cpu_verification": {
       "focused_tests_passed": 102,
@@ -2011,14 +2011,21 @@
     },
     "source_pinning": "New manifests bind scientific source/dependencies/protocol, vendored xECG source and historical controls; aggregation validates source hashes and manifest identities.",
     "upstream_commit": "13e57523e418d8cddced73f81b27ba541413f4f3",
-    "next_action": "Measure all six real GPU packages and exact recovery paths; admit all 18 fits only if the shared-day projection and reserves fit. No full fit or new score before admission. Preserve failures and finish an executed complete or incomplete report.",
-    "results": null,
+    "next_action": "Original suite stopped before any full fit or new score. Review the executed resource report; a fresh resource allocation needs separate authorization, prospective protocol and source identity. No original-stage restart or closed evaluation is scheduled.",
+    "results": "docs/experiment-040-cpc-simdino-results.md",
     "implementation_commit": "a675030",
     "live_log": "outputs/experiment040_cpc_simdino/run.log",
     "queued_process_id_snapshot": 3703565,
     "pull_request": "https://github.com/Janet16180/ecg-cardiopathy-detection/pull/59",
     "predecessor_execution_closed": "outputs/experiment039_encoder_context/execution_closed.json",
     "predecessor_final_charged_seconds": 10685.795655530459,
-    "predecessor_final_ledger_sha256": "07a6dd586cba46abac3424b2a489d4264e60a70e96eef0af16996bcc105c1472"
+    "predecessor_final_ledger_sha256": "07a6dd586cba46abac3424b2a489d4264e60a70e96eef0af16996bcc105c1472",
+    "completed_fits": 0,
+    "audited_cells": 0,
+    "primary_family_complete": false,
+    "admission_passed": false,
+    "admission_projected_combined_seconds": 29295.025228581526,
+    "admission_shortfall_seconds": 495.0252285815259,
+    "final_independent_audit": "outputs/experiment040_cpc_simdino/final_independent_audit.json"
   }
 }

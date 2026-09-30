@@ -1243,22 +1243,38 @@
       "kind": "experiment",
       "title": "Causal Transformer CPC, SimDINOv2-style and their fixed hybrid",
       "question": "Does local causal attention improve patch CPC, and does a fixed CPC/SimDINOv2-style combination beat both components under matched GRU and mLSTM contexts?",
-      "evidence": "User-authorized follow-up with prospective protocol ac18dac and verified upstream xECG objective source. Implementation has 102 passing focused CPU tests (11.91 seconds) and clean Ruff; no real 040 profile or development score yet. Historical 039 patch controls are fixed by design.",
+      "evidence": "All six real GPU profiles passed exact normal/final16 recovery; frozen all-or-none admission projected29295.025 seconds versus28800 shared ceiling,495.025 seconds over. Zero full fits or new scores; no objective superiority or negative performance result. See docs/experiment-040-cpc-simdino-results.md.",
       "value": 4,
       "clarity": 0.6,
       "gpu_hours": 3.0,
       "cpu_hours": 0.5,
       "build_hours": 3.0,
       "blocked_by": [
-        "@experiment039_complete",
-        "@six_package_real_gpu_profiles",
-        "@shared_039_040_day_budget"
+        "@prospective_resource_reauthorization"
       ],
-      "status": "scheduled",
+      "status": "blocked",
       "authorized": true,
       "experiment": "040",
       "protocol": "docs/experiment-040-cpc-simdino.md",
-      "notes": "18 fresh 25k-v4 fits, three matched seeds, 250000 exposures each, six primary contrasts with simultaneous patient bands. GPU/CPU/build hours are planning estimates, not measured cost or admission evidence. Run only after 039, all six profiles and all-or-none admission inside the original combined 28800-second day ceiling with 3600-second correction reserve. One diagnosis and at most one evidenced correction per affected package. No 008 restart, no 50k extension, no closed evaluation. Broad CPU suite: 1168 passes and one existing v11 path-guard failure from required shared outputs symlink; the same isolated test passed in the main checkout (1 pass, 13.14 seconds). Preserve frozen v11."
+      "notes": "Original suite retained and stopped, no automatic restart. Measured040 profile/preparation/source-preflight execution182.395 seconds before final CPU audit/report; final charged accounting is in the results report and ledger. Historical039 closed10685.796 seconds. GPU/CPU/build fields remain planning estimates because no full fit executed. Fresh allocation requires explicit authorization and new prospective resource/source identity."
+    },
+    {
+      "id": "cpc_simdino_resource_plan040",
+      "kind": "repo",
+      "title": "Prospective resource plan for the fixed Transformer objective factorial",
+      "question": "Can a separately authorized allocation admit the complete unchanged18-fit family with the measured profile costs and original correction/reporting reserves?",
+      "evidence": "Experiment040 all-six real profiles and exact recovery passed, but conservative shared039+040 projection29295.025 seconds exceeded28800 by495.025 seconds before any full fit/score. This is a resource stop, not evidence of objective failure.",
+      "value": 3,
+      "clarity": 0.9,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.1,
+      "build_hours": 0.5,
+      "blocked_by": [
+        "@fresh_compute_budget_authorization"
+      ],
+      "status": "blocked",
+      "authorized": false,
+      "notes": "Resource planning only; no score-based arm/seed/coefficient selection, no automatic GPU rerun and no change to retained original receipts. Any successor must freeze a new prospective protocol and source/output identity before scores, preserve the18-fit/three-seed controls, revalidate real profiles and charge all work. Estimates are planning hours."
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-29",
+  "updated": "2026-09-30",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -1162,6 +1162,21 @@
       ],
       "status": "open",
       "notes": "Requested by the user, 30 September 2026. Needs a frozen protocol with the primary comparison and decision rule before any score, and a real GPU profile on the RTX 3090."
+    },
+    {
+      "id": "cpc_xlstm_v3",
+      "kind": "experiment",
+      "title": "Replace CPC GRU context with mLSTM-xLSTM on clean cohorts v3",
+      "question": "Does matrix memory improve a matched fresh CPC development readout at 25k, and does a conditional 50k tier help?",
+      "evidence": "User requested PR #56 experiment; frozen Experiment038 protocol b39eb93, no new outcome yet.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 4,
+      "cpu_hours": 1,
+      "build_hours": 5,
+      "blocked_by": [],
+      "status": "in_progress",
+      "notes": "250000 exposures per arm; primary1518 labels; fresh matched GRU control; each tier requires real GPU gate. No closed test."
     }
   ]
 }

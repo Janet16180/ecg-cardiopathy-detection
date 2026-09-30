@@ -1,0 +1,286 @@
+{
+  "status": "published_identity_only_rewrite",
+  "old_heads": {
+    "main": "2213c9641e61686be8c54aedda3dcdf444ff373a",
+    "v4": "715a234899cfb58bcb603dcd45536963369a3068",
+    "cpc039": "9933df44cfe3a77247f92bec35e9e29744fc4bd0"
+  },
+  "new_heads": {
+    "main": "b0b0d087f3edaea2af4407a28eb5aa122bfff0d9",
+    "v4": "a3e3ddcec93b37e3385d8b272d8ad2054ed90c91",
+    "cpc039": "5800ba75f34b76070e6787bbd2dfaf9e1c5b85e4"
+  },
+  "commit_map": [
+    {
+      "old": "544229ef4013f4056e591d7d32e36a42a90dd526",
+      "new": "b45bec57a8de9cd941e539edf89d7f0b645e168b",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "ce8f23dbba94c7362b6e72a60239cb19e33faf69",
+      "new": "386b469e2ae1a19fd2e0f418eba3536c98dd4a83",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "b39eb930645c48f8b1e651144f622a656e366c6a",
+      "new": "2f2e477a3bab0bb7df1eb34beb257bb90d13c31f",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "023ce44f4df88074864ed499db5e596d1b68f082",
+      "new": "215bab2cce1c8e272ea93ce4dadc50f0724a14e1",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "26ac7fc64e6da29b0fa066d62ba19805caf39153",
+      "new": "c7574a6afb17002a42ad2d92c187d281e620beae",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "cf7c2feffd88f72f703769e9315705f62576a47c",
+      "new": "d8df6bea9cc3500725081de07a169688ace8985b",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "30da31d2bf11f6d345a90fcf9abd1f0489615793",
+      "new": "0519db34af8ed94cf61167d4ec7e3923b627b51c",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "49400a7df171399ab63f0a2fa994278c8aae32ec",
+      "new": "6d6613710e89ea165386cd035a54bfbbefd48360",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "85dea691618233c04a30b1ab5761a1648aa5b512",
+      "new": "5766132255c4b6ef518589f8cb414cfef58f6d3a",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "80f761dd7d16723bcfc6d5cdfff0c748b2395d12",
+      "new": "8b3cb129eb5fc36ff582916c1e7ce9ac59ea4c41",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "efcd6198580bfaf6e119a35c959d548a47281468",
+      "new": "cfd99261b9bcd93801ab3bcc044ca571b62de0dc",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "7fdbde30a4f631007bc86d5fc825440daf1160aa",
+      "new": "b86f301d1012a0602b2619f7a9ce7b7730ff6a87",
+      "identity_fields_corrected": [],
+      "tree_unchanged": true,
+      "original_signatures_removed": 1
+    },
+    {
+      "old": "8285eb4ab6f8844f3ab976f1f337aafb91c0487b",
+      "new": "6024232fab7c5b35b37c5879850350dca2c74da5",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "b555569e47129326d6a94b0bbb255cda2a9fe975",
+      "new": "7e39fa4a753dd1a41882cc67cbc8e6b563727a31",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "0e87559e9595957d0fbd701f5fc5f31aa4d3ff76",
+      "new": "1ed09c8d3b5f1bb835202bff60bfbe7900be14b0",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "715a234899cfb58bcb603dcd45536963369a3068",
+      "new": "a3e3ddcec93b37e3385d8b272d8ad2054ed90c91",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "c85295607cfa9e5839b95973762208d8aa86446c",
+      "new": "335f8e3f1f4c626cbd554f4a156bd5594493665e",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "8ddba93637c646dae3ff249cf8165b765b8f8a59",
+      "new": "e759cd13d298bdf2d867c40dc00216f9700f73c1",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "2213c9641e61686be8c54aedda3dcdf444ff373a",
+      "new": "b0b0d087f3edaea2af4407a28eb5aa122bfff0d9",
+      "identity_fields_corrected": [],
+      "tree_unchanged": true,
+      "original_signatures_removed": 1
+    },
+    {
+      "old": "db0c99076de3adf7721baa33714e20cb1b655bbf",
+      "new": "8651406710063e0bfc2eb66ee206f384790fe806",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "282eb18ac6f0b6a5c31a0b5be6ce280ccc57cbfe",
+      "new": "c70993bc77f1bcc694f290d5055af3b49b4b6695",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "6a97f792a7d2c6e9e5f4b04e8ae122b41fefe192",
+      "new": "412c1f70a47909c5faa5535a4d0de0ef81911749",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "a42fde133d0ec8645ff9c6ea05ae7bf59d203243",
+      "new": "4107af60e929e1245f1841fb1434881e87be393b",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "083f02547702c972e8cce5a989e6d1c3ebd4aa3b",
+      "new": "a5a8f2f2162efb3c3f1621b5a88c2cf25c19af1d",
+      "identity_fields_corrected": [
+        "author",
+        "committer"
+      ],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    },
+    {
+      "old": "9933df44cfe3a77247f92bec35e9e29744fc4bd0",
+      "new": "5800ba75f34b76070e6787bbd2dfaf9e1c5b85e4",
+      "identity_fields_corrected": [],
+      "tree_unchanged": true,
+      "original_signatures_removed": 0
+    }
+  ],
+  "examined_commits": 343,
+  "identity_corrected_commits": 22,
+  "rewritten_commits": 25,
+  "all_file_trees_unchanged": true,
+  "author_and_committer_timestamps_preserved": true,
+  "rewritten_original_signatures_removed": 2,
+  "running_checkout_head_unchanged": true,
+  "personal_github_login": "Janet16180",
+  "original_protocol_commit": "a42fde133d0ec8645ff9c6ea05ae7bf59d203243",
+  "rewritten_protocol_commit": "4107af60e929e1245f1841fb1434881e87be393b",
+  "original_history_refs": {
+    "main": "refs/experiment-provenance/identity039-original-main",
+    "v4": "refs/experiment-provenance/identity039-original-v4",
+    "cpc039": "refs/experiment-provenance/identity039-original-cpc039"
+  },
+  "reproduction": "Use refs/experiment-provenance/identity039-original-cpc039 (original executed HEAD9933df44cfe3a77247f92bec35e9e29744fc4bd0), or the original-final local documentation descendant, with matching local data and the pinned environment. Follow AGENTS.md worktree/symlink/PYTHONPATH instructions. Scientific receipt commit IDs remain original. Do not execute the pinned study on metadata-rewritten history because the protocol Git ID changes despite identical scientific bytes.",
+  "backup_scope": "Original history refs are local and are not included in ordinary clones.",
+  "github_snapshot_note": "Closed merged pull requests and old immutable commit URLs can retain their original snapshot; current main and branch history use the corrected commits.",
+  "snapshot_scope": "The commit map and old/new heads above describe the initial source-head rewrite. The final personal results descendant is mapped separately after all receipt-dependent work closes.",
+  "scientific_execution_closed_before_final_identity_rewrite": true,
+  "execution_closed_receipt": "outputs/experiment039_encoder_context/execution_closed.json",
+  "final_charged_seconds": 10685.795655530459,
+  "final_day_ledger_sha256": "07a6dd586cba46abac3424b2a489d4264e60a70e96eef0af16996bcc105c1472",
+  "original_executed_source_commit": "9933df44cfe3a77247f92bec35e9e29744fc4bd0",
+  "scientific_git_blobs_verified": 30,
+  "independent_scientific_audit": "outputs/experiment039_encoder_context/independent_audit.json",
+  "final_original_history_ref": "refs/experiment-provenance/identity039-original-final",
+  "final_mapping_receipt": "outputs/experiment039_encoder_context/git_identity_rewrite/final-prepared.json",
+  "final_tree_and_source_blob_verification": "outputs/experiment039_encoder_context/git_identity_rewrite/final-verification.json",
+  "final_history_publication_rule": "Map the personal documentation descendant from the original main/v4 backup refs. Reproduce the first-published mapping, verify complete old/new trees and every receipt-bound scientific Git blob, then move the local study branch and force-with-lease only its remote branch. Main and v4 are not republished."
+}

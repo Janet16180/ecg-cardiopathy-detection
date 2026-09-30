@@ -26,15 +26,14 @@ resource plan is ranked as follow-up. No coefficient/exposure/family change or c
 made; no closed-test evaluation is authorized, and 008 remains deferred. Draft
 [PR #59](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/59) targets `main` and remains unmerged.
 
-**30 September encoder/context study authorized:** The user requested a day of CPC encoder variants
-crossed with GRU and xLSTM on the new cohort. [Experiment 039](experiment-039-cpc-encoder-context.md)
-freezes the complete CNN/multiscale/patch × GRU/xLSTM factorial at v4 25k and 50k, with three seeds
-(36 fresh fits), matched 250,000 exposures and unchanged development readouts. The v4 tiers equal v3,
-so verified 038 caches can be reused. One diagnostic and one evidence-supported correction/remeasurement
-per severely failing combination are authorized; all original outcomes remain in the report.
-Protocol and implementation are committed; exact predecessor replay and the first real GPU profile
-passed. The fixed factorial is running under the day ledger. Closed tests stay closed. Inspect `outputs/experiment039_encoder_context/` for live evidence; the executable ceiling is
-eight hours, with a reserve for diagnoses/corrections.
+**30 September encoder/context study completed:** [Experiment 039 results](experiment-039-cpc-encoder-context-results.md) report all 36 fresh fits: CNN, multiscale and
+patch encoders crossed with GRU/xLSTM, three seeds and v4 25k/50k cohorts. Every fit completed
+1,954 updates / 250,000 exposures and every cell passed audit. 2 of eight primary encoder comparisons met the frozen promising development rule.
+The primary family uses shared whole-patient draws and a simultaneous band across eight
+encoder-minus-CNN contrasts; context, scaling and interactions are exploratory. Read the
+aggregate, interaction, collapse-gate and accounting receipts under
+`outputs/experiment039_encoder_context/`. No closed test was scored. Separate user-authorized
+Transformer/CPC+SimDINOv2 work belongs to Experiment 040 and has its own protocol and gates.
 
 **30 September xLSTM result:** Experiment [038](experiment-038-cpc-xlstm-results.md) completed the
 user-authorized 25k and conditional 50k comparisons in PR #56. All four full CPC arms trained fresh

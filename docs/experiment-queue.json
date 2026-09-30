@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-30T20:25:44.999877+00:00",
+  "updated_at_utc": "2026-09-30T23:05:42.389101+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2202,5 +2202,34 @@
     "final_combined_charged_seconds": 11005.54163142764,
     "execution_closed": "outputs/experiment040_cpc_simdino/execution_closed.json",
     "admission_cpu_gap_charge_seconds": 37.0
+  },
+  "experiment_040_runtime_diagnostic": {
+    "status": "protocol_committed_implementation_in_progress",
+    "authorized": true,
+    "authorization_scope": "Debug time accounting and measure runtime only; no full 18-fit schedule or new performance scoring",
+    "protocol": "docs/experiment-040-runtime-diagnostic.md",
+    "protocol_commit": "ce5a1ca",
+    "output_dir": "outputs/experiment040_runtime_diagnostic",
+    "live_status": "outputs/experiment040_runtime_diagnostic/status.json",
+    "live_log": "outputs/experiment040_runtime_diagnostic/run.log",
+    "runner": "scripts/coordination/measure_simdino_runtime040.py",
+    "results": "docs/experiment-040-runtime-diagnostic-results.md",
+    "contexts": [
+      "gru",
+      "xlstm"
+    ],
+    "seed": 39042,
+    "probe_updates_per_package": 200,
+    "teacher_schedule_steps": 1954,
+    "runtime_ceiling_seconds": 1200,
+    "full_training_authorized": false,
+    "development_scoring_authorized": false,
+    "parent_receipts_mutable": false,
+    "next_action": "Commit and verify new probe/analysis sources, measure all six packages under the shared GPU lock, then report component accounting and central/conservative projections.",
+    "objectives": [
+      "cpc",
+      "simdino",
+      "hybrid"
+    ]
   }
 }

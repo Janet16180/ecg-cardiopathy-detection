@@ -2,6 +2,13 @@
 
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
+**30 September runtime diagnosis authorized:** The user requested debugging Experiment 040's
+time gate and measuring its actual runtime. The committed [runtime protocol](experiment-040-runtime-diagnostic.md)
+fixes six fresh 200-update timing probes, checkpoint/recovery checks and training-only feature
+timing. New evidence belongs in `outputs/experiment040_runtime_diagnostic/`; original 039/040
+sources, receipts and closed ledgers stay unchanged. Full 18-fit training is not part of this
+diagnostic. The report will separate measured throughput, historical proxies and safety margins.
+
 **30 September Transformer/SimDINO resource stop:** [Experiment 040](experiment-040-cpc-simdino-results.md)
 passed all six real GPU profiles and exact normal/final-16-record checkpoint recovery. The all-or-none
 time gate rejected the fixed 18-fit suite: 29,295.03 projected combined seconds versus the shared

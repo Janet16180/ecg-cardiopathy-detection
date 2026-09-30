@@ -99,12 +99,19 @@ unmerged.
 
 ## Final accounting
 
-Experiment 040's final charged execution is **274.192796229152 seconds**;
+Experiment 040's final charged execution is **319.745975897182 seconds**;
 closed Experiment 039 charged **10685.795655530459 seconds**.
-The combined ledger is **10959.988451759611 seconds**, against 28,800. This includes
-source preflight, every actual preparation/profile stage, the independent audit, report generation
-and its measured startup/wrapper time, post-merge receipt/document validation, plus an explicit
-30-second conservative allowance for the earlier untimed metadata/ranking startup. The allowance
-is not presented as measured GPU or training time. No full-training or bootstrap time was executed.
-Accounting writes use the same outer-stage convention as the frozen study ledger; no further
-scientific execution is scheduled after this closure.
+The combined ledger is **11005.541631427641 seconds**, against 28,800. Charges include source
+preflight, every actual preparation/profile stage, independent audit, report generation and measured
+startup/wrapper time, post-merge checks and final accounting validation. An explicit 30-second
+conservative allowance covers earlier untimed metadata/ranking startup.
+
+Final reconciliation found admission/source-binding CPU work outside the coordinator's stage timers.
+The filesystem interval from the last profile cell-ledger write to the admission receipt is
+36.674611610 seconds; it is conservatively charged as 37 seconds, rounded up. The original
+admission calculation preceded this check and its negative receipt remains unchanged. The
+pre-correction closure/report are retained locally, and the correction receipt documents the
+interval and method. These allowances are not presented as measured GPU or full-training time.
+No full fit, new bootstrap or scoring was executed. Accounting writes follow the frozen outer-stage
+ledger convention. The corrected final closure is incomplete/resource-gated, with no further
+scientific execution scheduled.

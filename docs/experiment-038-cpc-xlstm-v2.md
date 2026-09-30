@@ -24,12 +24,12 @@ relax equality or change training settings to pass the gate.
 
 All scientific choices from 038 stay fixed: fresh matched GRU/xLSTM CNN and heads, seeds 38042/38043,
 clean_25k_v3 followed by conditional clean_50k_v3, exactly 250,000 exposures/1,954 updates per arm,
-batch128, float32, AdamW lr0.0001/decay0.01/clip1, original normalizer, ordinary CPC, independent
-halves and identical 512-feature readout. Primary1,518 and secondary15,359 PTB labels, development
-1,306 ECGs/1,173 patients, fixed logistic C0.01, paired2,000 whole-patient bootstrap draws with seed
-38045, +0.005 point gain and positive lower95% bound remain the rules. Every other finite completed
-25k outcome triggers50k; a failed integrity/numerical/resource check triggers an implementation stop.
-The 50k architecture contrast and xLSTM50k-minus-xLSTM25k scaling rule remain identical.
+batch 128, float32, AdamW lr 0.0001 / decay 0.01 / clip 1, original normalizer, ordinary CPC, independent
+halves and identical 512-feature readout. Primary 1,518 and secondary 15,359 PTB labels, development
+1,306 ECGs/1,173 patients, fixed logistic C=0.01, paired 2,000 whole-patient bootstrap draws with seed
+38045, +0.005 point gain and positive lower 95% bound remain the rules. Every other finite completed
+25k outcome triggers 50k; a failed integrity/numerical/resource check triggers an implementation stop.
+The 50k architecture contrast and xLSTM 50k minus xLSTM 25k scaling rule remain identical.
 
 ## Execution and accounting
 
@@ -40,16 +40,16 @@ row/source hashes, closed-data exclusions and historical score replay remain req
 Use the project `.venv` through `uv` with its default cache. Work in the main checkout, on one GPU,
 under the shared nonblocking lock. No closed evaluation waveforms or labels are authorized.
 
-The combined25k executable-work ceiling stays7,200 seconds, including the initial449.744450188-second
+The combined 25k executable-work ceiling stays 7,200 seconds, including the initial 449.744450188-second
 cache build and predecessor stage attempts (118.027472509 seconds: integrity, preparation and failed
 profile). Carry the original stage ledger with its artifact hashes into the successor ledger; count the
 cache exactly once. Charge the synthetic GPU diagnostic and all successor stages, including failed
-attempts. Do not reset the budget to hide the failed profile. The conditional50k tier has its original
-separate7,200-second ceiling, charging its actual cache construction and all executable stages.
+attempts. Do not reset the budget to hide the failed profile. The conditional 50k tier has its original
+separate 7,200-second ceiling, charging its actual cache construction and all executable stages.
 
-Before training, profile24 real input-plus-GPU updates per arm, exact model/optimizer/RNG next-update
-replay, checkpoint writes, training-only512-record feature extraction and peak memory. The original
+Before training, profile 24 real input-plus-GPU updates per arm, exact model/optimizer/RNG next-update
+replay, checkpoint writes, training-only 512-record feature extraction and peak memory. The original
 conservative cost formula and measured-remaining-pace guards still apply. Preserve final checkpoints,
 local features/heads/predictions, independent score/count/hash/state audits and the score-once rule.
-The running agent writes the combined038 results report from executed outputs, updates both queue
+The running agent writes the combined 038 results report from executed outputs, updates both queue
 documents and ranks follow-ups, including an unsuccessful successor if its gate fails.

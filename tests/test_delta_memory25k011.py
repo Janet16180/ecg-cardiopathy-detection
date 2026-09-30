@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 import torch
 
+from ecg_experiment import ROOT
 from ecg_experiment.delta_memory25k011 import (
     EXPECTED_SELECTION_HASH,
     EXPOSURES,
@@ -14,10 +15,13 @@ from ecg_experiment.delta_memory25k011 import (
 from ecg_experiment.files import read_csv, sha256_json
 from scripts.experiments import run_delta_memory25k011 as runner
 
+MANIFEST = ROOT / "data/processed/sampled_100k_plus_labels_v1/train_manifest.csv"
 
+
+@pytest.mark.skipif(not MANIFEST.exists(), reason="local 100k training manifest unavailable")
 def test_frozen_stream_replays_exact_019_selection_and_full_order() -> None:
     """Require the canonical 25k index identity and fair repeated exposures."""
-    rows = read_csv("data/processed/sampled_100k_plus_labels_v1/train_manifest.csv")
+    rows = read_csv(MANIFEST)
     selected, order, counts = frozen_stream([row["source"] for row in rows])
     assert len(selected) == SUBSET_SIZE
     assert sha256_json(selected.tolist()) == EXPECTED_SELECTION_HASH

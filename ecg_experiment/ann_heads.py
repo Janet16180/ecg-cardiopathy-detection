@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import os
 import time
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -485,3 +487,125 @@ def map_reading(localization_ci_low: float, lead_ci_low: float, benign_ci_high: 
     return {"keeps_premature_localization": bool(keeps),
             "gains": {key: bool(value) for key, value in gains.items()},
             "improves_on_U_B": bool(keeps and any(gains.values()))}
+
+
+@dataclass
+class RowFile:
+    """An open ``.npy`` array read and written by whole rows with positional I/O, without a memory map."""
+
+    path: Path
+    descriptor: int
+    offset: int
+    shape: tuple[int, ...]
+    dtype: np.dtype
+
+    @property
+    def row_bytes(self) -> int:
+        """Bytes of one row."""
+        return int(np.prod(self.shape[1:])) * self.dtype.itemsize
+
+
+def open_row_file(path: Path, writable: bool = False) -> RowFile:
+    """
+    Open an existing ``.npy`` file for row reads (and writes).
+
+    Parameters
+    ----------
+    path : Path
+        C-ordered ``.npy`` file.
+    writable : bool
+        Also allow ``write_rows``.
+
+    Returns
+    -------
+    RowFile
+        The open file.
+    """
+    mapped = np.load(path, mmap_mode="r")
+    if not mapped.flags.c_contiguous:
+        raise ValueError(f"{path} is not C-ordered")
+    found = RowFile(Path(path), os.open(path, os.O_RDWR if writable else os.O_RDONLY), int(mapped.offset),
+                    tuple(mapped.shape), mapped.dtype)
+    del mapped
+    return found
+
+
+def create_row_file(path: Path, shape: tuple[int, ...], dtype: np.dtype | str) -> RowFile:
+    """
+    Create a sparse ``.npy`` file of the given shape and open it for row writes.
+
+    Parameters
+    ----------
+    path : Path
+        New file.
+    shape : tuple[int, ...]
+        Array shape, rows first.
+    dtype : np.dtype | str
+        Element type.
+
+    Returns
+    -------
+    RowFile
+        The open, writable file.
+    """
+    created = np.lib.format.open_memmap(path, mode="w+", dtype=np.dtype(dtype), shape=shape)
+    del created
+    return open_row_file(path, writable=True)
+
+
+def write_rows(store: RowFile, start: int, values: np.ndarray) -> None:
+    """
+    Write consecutive rows starting at ``start``.
+
+    Parameters
+    ----------
+    store : RowFile
+        Writable file.
+    start : int
+        First row.
+    values : np.ndarray
+        ``[rows, *shape[1:]]`` values, cast to the file's dtype.
+    """
+    data = np.ascontiguousarray(values, dtype=store.dtype)
+    if data.shape[1:] != store.shape[1:] or start + len(data) > store.shape[0]:
+        raise ValueError(f"Rows {start}..{start + len(data)} of shape {data.shape} do not fit {store.shape}")
+    written = os.pwrite(store.descriptor, data.tobytes(), store.offset + start * store.row_bytes)
+    if written != data.nbytes:
+        raise OSError(f"Short write to {store.path}")
+
+
+def read_rows(store: RowFile, rows: np.ndarray) -> np.ndarray:
+    """
+    Read rows in the given order, reading in sorted order and merging consecutive rows into one read.
+
+    Parameters
+    ----------
+    store : RowFile
+        Open file.
+    rows : np.ndarray
+        Row positions.
+
+    Returns
+    -------
+    np.ndarray
+        ``[len(rows), *shape[1:]]`` values.
+    """
+    rows = np.asarray(rows, dtype=np.int64)
+    order = np.argsort(rows, kind="stable")
+    ordered = rows[order]
+    if len(rows) and (ordered[0] < 0 or ordered[-1] >= store.shape[0]):
+        raise IndexError(f"Rows outside {store.shape[0]}")
+    values = np.empty((len(rows), *store.shape[1:]), dtype=store.dtype)
+    flat = values.reshape(len(rows), -1)
+    breaks = np.flatnonzero(np.diff(ordered) != 1) + 1
+    for low, high in zip(np.r_[0, breaks], np.r_[breaks, len(ordered)], strict=True):
+        if high == low:
+            continue
+        size = (high - low) * store.row_bytes
+        data = os.pread(store.descriptor, size, store.offset + int(ordered[low]) * store.row_bytes)
+        if len(data) != size:
+            raise OSError(f"Short read from {store.path}")
+        flat[low:high] = np.frombuffer(data, dtype=store.dtype).reshape(high - low, -1)
+    restored = np.empty_like(values)
+    restored[order] = values
+    return restored

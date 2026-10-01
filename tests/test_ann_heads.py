@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 import torch
 
@@ -11,15 +13,19 @@ from ecg_experiment.ann_heads import (
     MLPHead,
     Recipe,
     augment,
+    create_row_file,
     detection_reading,
     gate_beat_units,
     grid_unit_map,
     map_reading,
+    open_row_file,
     predict,
     ragged_unit_maps,
+    read_rows,
     train,
     validation_mask,
     weighted_standardizer,
+    write_rows,
 )
 
 
@@ -121,3 +127,15 @@ def test_map_reading() -> None:
     assert reading["improves_on_U_B"]
     assert not map_reading(-0.2, 0.1, -0.1, 0.1)["improves_on_U_B"]
     assert not map_reading(0.0, -0.1, 0.1, -0.1)["improves_on_U_B"]
+
+
+def test_row_file_round_trip(tmp_path: Path) -> None:
+    values = np.arange(7 * 3 * 2, dtype=np.float32).reshape(7, 3, 2)
+    store = create_row_file(tmp_path / "rows.npy", values.shape, np.float16)
+    write_rows(store, 0, values[:4])
+    write_rows(store, 4, values[4:])
+    rows = np.array([5, 0, 1, 2, 6, 3])
+    np.testing.assert_array_equal(read_rows(store, rows), values[rows].astype(np.float16))
+    np.testing.assert_array_equal(np.load(tmp_path / "rows.npy"), values.astype(np.float16))
+    reopened = open_row_file(tmp_path / "rows.npy")
+    np.testing.assert_array_equal(read_rows(reopened, np.array([4])), values[[4]].astype(np.float16))

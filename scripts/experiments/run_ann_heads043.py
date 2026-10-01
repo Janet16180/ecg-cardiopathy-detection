@@ -11,9 +11,12 @@ in the protocol.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import logging
+import os
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 
@@ -23,22 +26,44 @@ import torch
 from sklearn.metrics import average_precision_score, roc_auc_score
 from threadpoolctl import threadpool_limits
 
+from ecg_experiment import sph
 from ecg_experiment.ann_heads import (
     SEEDS,
     VALIDATION_SHARE,
+    AttentionHead,
     MLPHead,
     Recipe,
+    RowFile,
+    create_row_file,
     detection_reading,
     gate_beat_units,
     map_reading,
+    open_row_file,
     predict,
     ragged_unit_maps,
+    read_rows,
     train,
     validation_mask,
     weighted_standardizer,
+    write_rows,
 )
-from ecg_experiment.files import sha256_file, write_json_atomic, write_npz_atomic
+from ecg_experiment.challenge_features import (
+    RAW_ROOTS,
+    canonical_window,
+    read_verified,
+    skip_reasons,
+    window_start,
+)
+from ecg_experiment.external_encoders import (
+    JEPA_CHECKPOINT,
+    jepa_input,
+    load_jepa,
+    ptb_jepa_input,
+    read_ptb_float64,
+)
+from ecg_experiment.files import sha256_file, sha256_json, write_json_atomic, write_npz_atomic
 from ecg_experiment.fragment_localization import bootstrap_mean
+from ecg_experiment.gpu import gpu_lock
 from ecg_experiment.hard_subset import ARM_SPECS, arm_design
 from ecg_experiment.intervals import paired_auroc_difference
 from ecg_experiment.lead_wave_maps import (
@@ -46,6 +71,8 @@ from ecg_experiment.lead_wave_maps import (
     INFERIOR,
     UnitMap,
     ecg_score,
+    jepa_tokens,
+    jepa_unit_map,
     premature_hit,
     top_lead,
     two_group_difference,
@@ -53,6 +80,8 @@ from ecg_experiment.lead_wave_maps import (
 from ecg_experiment.multisource_readout import fit_readout
 from ecg_experiment.paths import to_stored
 from ecg_experiment.provenance import git_head
+from ecg_experiment.public_sources import signal_sha256
+from scripts.data.extract_challenge_features import load_checksums, ningbo_items
 from scripts.experiments.run_lead_wave_maps042 import blas_architectures, premature_targets, select_rows
 from scripts.experiments.run_pipeline_v2_037 import receipt_checked
 from scripts.experiments.run_pipeline_v2_037 import training_data as training_data037
@@ -78,7 +107,10 @@ SOURCES = (
     "ecg_experiment/multisource_readout.py", "ecg_experiment/hard_subset.py",
     "scripts/experiments/run_ann_heads043.py", "scripts/experiments/run_pipeline_v2_037.py",
     "scripts/experiments/run_rhythm_findings032.py", "scripts/experiments/run_referral_budget030.py",
-    "scripts/experiments/run_lead_wave_maps042.py", "pyproject.toml", "uv.lock", PROTOCOL,
+    "scripts/experiments/run_lead_wave_maps042.py", "ecg_experiment/external_encoders.py",
+    "ecg_experiment/challenge_features.py", "ecg_experiment/sph.py", "ecg_experiment/public_sources.py",
+    "ecg_experiment/gpu.py", "scripts/data/extract_challenge_features.py", "pyproject.toml", "uv.lock",
+    PROTOCOL,
 )
 ENCODERS = ("xecg", "jepa")
 EXPECTED_TRAINING = {"binary": [39577, 27360], "dropped": 1724, "ptbxl_binary": 17083}
@@ -104,6 +136,22 @@ SMOKE_ROWS = 4000
 SMOKE_HELD_OUT = 0.25
 SMOKE_EPOCHS = 2
 SMOKE_DRAWS = 200
+PRIOR_STAGE1 = OUTPUT / "stage1"
+CACHE = Path("/tmp/claude-218201143/-home-janetrivera-ecg-cardiopathy-detection/"
+             "64bd5d6e-e2f5-403b-8837-1c9210d4ec66/scratchpad/exp043_cache")
+ATTENTION_RECIPE = Recipe(learning_rate=3e-4, weight_decay=1e-2, batch_size=64, max_epochs=30, patience=4)
+TOKEN_SHAPE = (400, 768)
+WINDOW_SHAPE = (12, 5000)
+EXTRACT_CHUNK = 256
+READER_THREADS = 16
+WARMUP_STEPS = 3
+PROFILE_RECORDS = 128
+PROFILE_STEPS = 30
+PREDICT_BATCH = 256
+STAGE2_CEILING = 7200.0
+FEATURE_TOLERANCE = 1e-4
+CONTRIBUTION_TOLERANCE = 1e-4
+SMOKE_TOKEN_ROWS = 300
 LOG = logging.getLogger("experiment043")
 
 
@@ -153,7 +201,22 @@ def training_data() -> dict[str, Any]:
     if found != EXPECTED_TRAINING or not design["selected"].all():
         raise ValueError(f"Training counts differ from the protocol: {found}")
     identity = {**ptb_identity, "sph_manifest": sph_hashes}
+    challenge = train_rows[kept]
+    stacked = pd.DataFrame({
+        "kind": np.concatenate([np.full(len(ptb["train"]), "ptbxl"), np.full(len(challenge), "challenge")]),
+        "key": np.concatenate([("ptbxl:" + ptb["train"]["ecg_id"].astype(str)).to_numpy(dtype=str),
+                               (challenge["source"] + ":" + challenge["record"]).to_numpy(dtype=str)]),
+        "filename_hr": np.concatenate([ptb["train"]["filename_hr"].to_numpy(dtype=str),
+                                       np.full(len(challenge), "")]),
+        "source": np.concatenate([np.full(len(ptb["train"]), ""), challenge["source"].to_numpy(dtype=str)]),
+        "path": np.concatenate([np.full(len(ptb["train"]), ""), challenge["path"].to_numpy(dtype=str)]),
+        "window_start": np.concatenate([np.full(len(ptb["train"]), -1),
+                                        challenge["window_start"].to_numpy(dtype=np.int64)]),
+        "window_sha256": np.concatenate([np.full(len(ptb["train"]), ""),
+                                         challenge["window_sha256"].fillna("").to_numpy(dtype=str)]),
+    })
     return {"x": x, "readouts": readouts, "design": design, "groups": groups[binary_rows],
+            "stacked": stacked.iloc[binary_rows].reset_index(drop=True),
             "families": families[binary_rows], "sph": sph, "sph_x": {name: sph_x[name] for name in ENCODERS},
             "development": ptb["development"],
             "development_x": {name: ptb_x[name]["development"] for name in ENCODERS},
@@ -786,6 +849,7 @@ def identity(receipts: dict[str, Any], data_identity: dict[str, Any]) -> dict[st
     return {"inputs": receipts, "data": data_identity,
             "sources": {name: sha256_file(ROOT / name) for name in SOURCES}, "git_head": git_head(ROOT),
             "openblas_architectures": blas_architectures(), "torch": torch.__version__,
+            "jepa_checkpoint_sha256": sha256_file(JEPA_CHECKPOINT),
             "torch_threads": torch.get_num_threads()}
 
 
@@ -930,7 +994,597 @@ def run_stage1(data: dict[str, Any], partial: Path) -> dict[str, Any]:
             "inputs_042": inputs["receipt"]}
 
 
-def run(stage: int, smoke: bool, output: Path) -> None:
+def extraction_table(data: dict[str, Any], sets: dict[str, dict[str, Any]]
+                     ) -> tuple[pd.DataFrame, np.ndarray, dict[str, list[int]]]:
+    """
+    Rows of the Stage 2 caches: the binary training rows, all development rows and the labeled SPH rows.
+
+    Parameters
+    ----------
+    data : dict[str, Any]
+        Output of ``training_data``.
+    sets : dict[str, dict[str, Any]]
+        Output of ``evaluation_sets``.
+
+    Returns
+    -------
+    tuple[pd.DataFrame, np.ndarray, dict[str, list[int]]]
+        Rows (``kind``, ``key`` and the reader fields), their cached JEPA features, and the
+        ``[start, stop)`` rows of each part.
+    """
+    development = data["development"]
+    labeled = data["sph"].iloc[sets["sph"]["positions"]]
+    frames = [data["stacked"],
+              pd.DataFrame({"kind": "ptbxl", "key": development.index.to_numpy(dtype=str),
+                            "filename_hr": development["filename_hr"].to_numpy(dtype=str)}),
+              pd.DataFrame({"kind": "sph", "key": ("sph:" + labeled["ecg_id"]).to_numpy(dtype=str),
+                            "ecg_id": labeled["ecg_id"].to_numpy(dtype=str),
+                            "signal_sha256": labeled["signal_sha256"].to_numpy(dtype=str)})]
+    table = pd.concat(frames, ignore_index=True)
+    reference = np.concatenate([binary_features(data, "jepa", "train"), data["development_x"]["jepa"],
+                                data["sph_x"]["jepa"][sets["sph"]["positions"]]])
+    sizes = np.cumsum([0, *(len(frame) for frame in frames)])
+    parts = {name: [int(sizes[k]), int(sizes[k + 1])]
+             for k, name in enumerate(("train", "development", "sph"))}
+    if table["key"].duplicated().any() or len(reference) != len(table):
+        raise ValueError("Cache rows are not unique or do not match their features")
+    return table, reference, parts
+
+
+def read_inputs(row: dict[str, Any], checksums: dict[str, dict[str, str]], ningbo: dict[str, str]
+                ) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Read one cache row's canonical 500 Hz window and its ECG-JEPA input, as the cached features were made.
+
+    Parameters
+    ----------
+    row : dict[str, Any]
+        Row of ``extraction_table``.
+    checksums : dict[str, dict[str, str]]
+        Official Challenge checksums per source.
+    ningbo : dict[str, str]
+        Ningbo manifest window hash per record.
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray]
+        Float32 ``[12, 5000]`` window and float32 ``[8, 2500]`` input.
+
+    Raises
+    ------
+    ValueError
+        If a window moved or differs from its manifest hash.
+    """
+    if row["kind"] == "ptbxl":
+        return read_ptb_float64(row["filename_hr"]).astype(np.float32), ptb_jepa_input(row["filename_hr"])
+    if row["kind"] == "challenge":
+        source = row["source"]
+        signal, sampling_rate, names = read_verified(RAW_ROOTS[source], row["path"], checksums[source])
+        start = window_start(len(signal))
+        if skip_reasons(sampling_rate, signal) or start != row["window_start"]:
+            raise ValueError(f"Challenge window differs from its feature extraction: {row['key']}")
+        window = canonical_window(signal, names, start).astype(np.float32)
+        if source == "ningbo":
+            expected = ningbo[row["key"].split(":", 1)[1]]
+            if row["window_sha256"] != expected or signal_sha256(window) != expected:
+                raise ValueError(f"Ningbo window differs from the manifest: {row['key']}")
+        return window, jepa_input(window)
+    window = sph.read_window(row["ecg_id"])
+    if hashlib.sha256(window.tobytes()).hexdigest() != row["signal_sha256"]:
+        raise ValueError(f"SPH window differs from the manifest: {row['key']}")
+    return window, jepa_input(window)
+
+
+def read_chunk(rows: list[dict[str, Any]], checksums: dict[str, dict[str, str]], ningbo: dict[str, str]
+               ) -> tuple[np.ndarray, np.ndarray]:
+    """Read the windows and ECG-JEPA inputs of several rows in parallel, in order."""
+    with ThreadPoolExecutor(READER_THREADS) as pool:
+        found = list(pool.map(lambda row: read_inputs(row, checksums, ningbo), rows))
+    return np.stack([window for window, _ in found]), np.stack([inputs for _, inputs in found])
+
+
+def profile_extraction(table: pd.DataFrame, encoder: torch.nn.Module, checksums: dict[str, dict[str, str]],
+                       ningbo: dict[str, str]) -> dict[str, float]:
+    """
+    Time reading and encoding ``PROFILE_RECORDS`` rows spread over the cache rows.
+
+    Parameters
+    ----------
+    table : pd.DataFrame
+        Output of ``extraction_table``.
+    encoder : torch.nn.Module
+        ECG-JEPA encoder on the GPU.
+    checksums : dict[str, dict[str, str]]
+        Official Challenge checksums.
+    ningbo : dict[str, str]
+        Ningbo manifest window hashes.
+
+    Returns
+    -------
+    dict[str, float]
+        Seconds per record for reading and for the model.
+    """
+    picked = np.unique(np.linspace(0, len(table) - 1, min(PROFILE_RECORDS, len(table))).astype(np.int64))
+    began = time.perf_counter()
+    _, inputs = read_chunk(table.iloc[picked].to_dict("records"), checksums, ningbo)
+    read = time.perf_counter() - began
+    began = time.perf_counter()
+    jepa_tokens(encoder, inputs)
+    torch.cuda.synchronize()
+    return {"records": len(picked), "read_per_record": read / len(picked),
+            "model_per_record": (time.perf_counter() - began) / len(picked)}
+
+
+def data_sha256(path: Path) -> str:
+    """Return the SHA-256 of the data bytes of a ``.npy`` file (after its header)."""
+    store = open_row_file(path)
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        handle.seek(store.offset)
+        while block := handle.read(1 << 26):
+            digest.update(block)
+    os.close(store.descriptor)
+    return digest.hexdigest()
+
+
+def cache_receipt(folder: Path, table: pd.DataFrame, verify: bool) -> dict[str, Any] | None:
+    """
+    Return a completed cache's receipt if its rows equal ``table``'s and (optionally) its data hashes hold.
+
+    Parameters
+    ----------
+    folder : Path
+        Cache folder.
+    table : pd.DataFrame
+        Expected rows.
+    verify : bool
+        Rehash both caches.
+
+    Returns
+    -------
+    dict[str, Any] | None
+        The receipt, or ``None`` when there is no completed cache of these rows.
+
+    Raises
+    ------
+    ValueError
+        If a completed cache of these rows fails its hash check.
+    """
+    path = folder / "receipt.json"
+    if not path.exists():
+        return None
+    receipt = json.loads(path.read_text())
+    if not receipt.get("complete") or receipt["keys_sha256"] != sha256_json(table["key"].tolist()):
+        return None
+    if verify:
+        for name in ("tokens", "windows"):
+            if data_sha256(folder / f"{name}.npy") != receipt[name]["data_sha256"]:
+                raise ValueError(f"Cache {name}.npy differs from its receipt")
+    return receipt
+
+
+def extract_cache(folder: Path, table: pd.DataFrame, reference: np.ndarray, parts: dict[str, list[int]],
+                  encoder: torch.nn.Module, checksums: dict[str, dict[str, str]], ningbo: dict[str, str]
+                  ) -> dict[str, Any]:
+    """
+    Write the float16 token cache and the float32 window cache, checking every token mean first.
+
+    Parameters
+    ----------
+    folder : Path
+        Cache folder (local disk).
+    table : pd.DataFrame
+        Output of ``extraction_table``.
+    reference : np.ndarray
+        Cached JEPA features of the rows.
+    parts : dict[str, list[int]]
+        Part boundaries.
+    encoder : torch.nn.Module
+        ECG-JEPA encoder on the GPU.
+    checksums : dict[str, dict[str, str]]
+        Official Challenge checksums.
+    ningbo : dict[str, str]
+        Ningbo manifest window hashes.
+
+    Returns
+    -------
+    dict[str, Any]
+        The cache receipt.
+
+    Raises
+    ------
+    ValueError
+        If a token mean differs from its cached feature by more than ``FEATURE_TOLERANCE``.
+    """
+    folder.mkdir(parents=True, exist_ok=True)
+    (folder / "receipt.json").unlink(missing_ok=True)
+    table[["key"]].to_csv(folder / "rows.csv", index=False)
+    stores = {"tokens": create_row_file(folder / "tokens.npy", (len(table), *TOKEN_SHAPE), np.float16),
+              "windows": create_row_file(folder / "windows.npy", (len(table), *WINDOW_SHAPE), np.float32)}
+    digests = {name: hashlib.sha256() for name in stores}
+    seconds = {"read_wait": 0.0, "model": 0.0, "check_and_write": 0.0}
+    worst = 0.0
+    records = table.to_dict("records")
+    began_all = time.perf_counter()
+    prefetch = ThreadPoolExecutor(1)
+    pending = prefetch.submit(read_chunk, records[:EXTRACT_CHUNK], checksums, ningbo)
+    for start in range(0, len(records), EXTRACT_CHUNK):
+        began = time.perf_counter()
+        windows, inputs = pending.result()
+        if start + EXTRACT_CHUNK < len(records):
+            pending = prefetch.submit(read_chunk, records[start + EXTRACT_CHUNK:start + 2 * EXTRACT_CHUNK],
+                                      checksums, ningbo)
+        seconds["read_wait"] += time.perf_counter() - began
+        began = time.perf_counter()
+        tokens = jepa_tokens(encoder, inputs)
+        seconds["model"] += time.perf_counter() - began
+        began = time.perf_counter()
+        difference = float(np.abs(tokens.mean(axis=1, dtype=np.float64)
+                                  - reference[start:start + len(tokens)]).max())
+        worst = max(worst, difference)
+        if difference > FEATURE_TOLERANCE:
+            raise ValueError(f"Token mean differs from the cached feature by {difference} at row {start}")
+        stored = tokens.astype(np.float16)
+        if not np.isfinite(stored).all():
+            raise ValueError(f"Tokens overflow float16 at row {start}")
+        for name, values in (("tokens", stored), ("windows", windows.astype(np.float32))):
+            write_rows(stores[name], start, values)
+            digests[name].update(np.ascontiguousarray(values).tobytes())
+        seconds["check_and_write"] += time.perf_counter() - began
+        if (start // EXTRACT_CHUNK) % 20 == 0:
+            LOG.info("extracted %d / %d at %.1f s", start + len(tokens), len(records),
+                     time.perf_counter() - began_all)
+    prefetch.shutdown()
+    for store in stores.values():
+        os.fsync(store.descriptor)
+        os.close(store.descriptor)
+    receipt = {"complete": True, "rows": len(table), "keys_sha256": sha256_json(table["key"].tolist()),
+               "parts": parts, "token_check": {"rows_compared": len(table), "max_abs_difference": worst,
+                                               "tolerance": FEATURE_TOLERANCE},
+               "tokens": {"shape": [len(table), *TOKEN_SHAPE], "dtype": "float16",
+                          "data_sha256": digests["tokens"].hexdigest()},
+               "windows": {"shape": [len(table), *WINDOW_SHAPE], "dtype": "float32",
+                           "data_sha256": digests["windows"].hexdigest()},
+               "seconds": seconds, "rows_csv_sha256": sha256_file(folder / "rows.csv")}
+    write_json_atomic(folder / "receipt.json", receipt)
+    return receipt
+
+
+def row_batch(store: RowFile, device: str) -> Any:
+    """Return a batch function reading cache rows as float32 tensors on the device."""
+    return lambda rows: torch.from_numpy(read_rows(store, rows)).to(device).float()
+
+
+def profile_training(store: RowFile, fit_rows: np.ndarray, fit_y: np.ndarray, fit_weights: np.ndarray,
+                     recipe: Recipe, device: str) -> dict[str, float]:
+    """
+    Time ``PROFILE_STEPS`` optimizer steps of a throwaway attention head (after warm-up) and one scoring pass.
+
+    Parameters
+    ----------
+    store : RowFile
+        Token cache.
+    fit_rows : np.ndarray
+        Cache rows of the training part.
+    fit_y : np.ndarray
+        Their targets.
+    fit_weights : np.ndarray
+        Their weights.
+    recipe : Recipe
+        Training recipe.
+    device : str
+        Torch device.
+
+    Returns
+    -------
+    dict[str, float]
+        Seconds per optimizer step and per scored row.
+    """
+    batch = row_batch(store, device)
+    torch.manual_seed(0)
+    model = AttentionHead(TOKEN_SHAPE[1]).to(device)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=recipe.learning_rate,
+                                  weight_decay=recipe.weight_decay)
+    rng = np.random.default_rng(0)
+    for step in range(WARMUP_STEPS + PROFILE_STEPS):
+        if step == WARMUP_STEPS:
+            torch.cuda.synchronize()
+            began = time.perf_counter()
+        chosen = rng.choice(len(fit_rows), recipe.batch_size, replace=False)
+        logit, _ = model(batch(fit_rows[chosen]))
+        target = torch.as_tensor(fit_y[chosen], dtype=torch.float32, device=device)
+        weight = torch.as_tensor(fit_weights[chosen], dtype=torch.float32, device=device)
+        loss = (torch.nn.functional.binary_cross_entropy_with_logits(logit, target, reduction="none")
+                * weight).mean()
+        optimizer.zero_grad(set_to_none=True)
+        loss.backward()
+        optimizer.step()
+    torch.cuda.synchronize()
+    per_step = (time.perf_counter() - began) / PROFILE_STEPS
+    scored = fit_rows[:min(1024, len(fit_rows))]
+    began = time.perf_counter()
+    predict(model, batch, scored, PREDICT_BATCH, keep_contributions=True)
+    return {"step": per_step, "scored_row": (time.perf_counter() - began) / len(scored),
+            "warmup_steps": WARMUP_STEPS, "timed_steps": PROFILE_STEPS}
+
+
+def projected_training(profile: dict[str, float], fits: int, checks: int, scored: int,
+                       recipe: Recipe) -> float:
+    """Return the worst-case training seconds of all seeds: every epoch run, then scoring."""
+    epoch = -(-fits // recipe.batch_size) * profile["step"] + checks * profile["scored_row"]
+    return len(SEEDS) * (recipe.max_epochs * epoch + scored * profile["scored_row"])
+
+
+def train_attention(store: RowFile, fit_rows: np.ndarray, fit_y: np.ndarray, fit_weights: np.ndarray,
+                    check_rows: np.ndarray, check_y: np.ndarray, score_rows: dict[str, np.ndarray],
+                    recipe: Recipe, device: str, maps: tuple[str, ...]) -> dict[str, Any]:
+    """
+    Train the attention head with every seed and score the scored parts.
+
+    Parameters
+    ----------
+    store : RowFile
+        Token cache.
+    fit_rows, check_rows : np.ndarray
+        Cache rows of the training and validation parts.
+    fit_y, fit_weights : np.ndarray
+        Targets and weights of ``fit_rows``.
+    check_y : np.ndarray
+        Targets of ``check_rows``.
+    score_rows : dict[str, np.ndarray]
+        Cache rows per scored part.
+    recipe : Recipe
+        Training recipe.
+    device : str
+        Torch device.
+    maps : tuple[str, ...]
+        Parts whose per-token contributions are kept.
+
+    Returns
+    -------
+    dict[str, Any]
+        ``logits`` (seed mean per part), ``seed_logits``, ``contributions`` (seed mean per kept part),
+        ``seeds`` and the largest contribution-sum check difference.
+    """
+    batch = row_batch(store, device)
+    seed_logits: dict[int, dict[str, np.ndarray]] = {}
+    seed_contributions: dict[int, dict[str, np.ndarray]] = {}
+    seeds, worst = {}, 0.0
+    for seed in SEEDS:
+        began = time.perf_counter()
+        torch.manual_seed(seed)
+        model = AttentionHead(TOKEN_SHAPE[1]).to(device)
+        fit = train(model, batch, fit_rows, fit_y, fit_weights, check_rows, check_y, recipe, seed,
+                    log=lambda line: LOG.info("attention_jepa %s", line))
+        seed_logits[seed], seed_contributions[seed] = {}, {}
+        for part, rows in score_rows.items():
+            logits, units = predict(model, batch, rows, PREDICT_BATCH, keep_contributions=True)
+            worst = max(worst, float(np.abs(units.sum(axis=1, dtype=np.float64) + float(model.bias)
+                                            - logits).max()))
+            seed_logits[seed][part] = logits
+            if part in maps:
+                seed_contributions[seed][part] = units
+        seeds[str(seed)] = {"best_epoch": fit.best_epoch, "validation_auroc": fit.best_auroc,
+                            "epochs_run": len(fit.history), "seconds": time.perf_counter() - began,
+                            "history": fit.history}
+        LOG.info("seed %d best epoch %d validation AUROC %.4f", seed, fit.best_epoch, fit.best_auroc)
+        del model
+    if worst > CONTRIBUTION_TOLERANCE:
+        raise ValueError(f"Token contributions do not sum to the logit: {worst}")
+    return {"logits": {part: np.mean([seed_logits[s][part] for s in SEEDS], axis=0) for part in score_rows},
+            "seed_logits": seed_logits, "seed_contributions": seed_contributions,
+            "contributions": {part: np.mean([seed_contributions[s][part] for s in SEEDS], axis=0)
+                              for part in maps},
+            "seeds": seeds, "contribution_max_abs_difference": worst}
+
+
+def full_length(values: np.ndarray, positions: np.ndarray, length: int) -> np.ndarray:
+    """Return a NaN vector of ``length`` with ``values`` at ``positions``."""
+    found = np.full(length, np.nan)
+    found[positions] = values
+    return found
+
+
+def stage1_predictions(reference: dict[str, np.ndarray], validation: np.ndarray) -> dict[str, Any]:
+    """
+    Stage 1's saved logistic JEPA logits, after checking its receipt, validation split and R.
+
+    Parameters
+    ----------
+    reference : dict[str, np.ndarray]
+        R's refitted logits per part.
+    validation : np.ndarray
+        The shared validation mask.
+
+    Returns
+    -------
+    dict[str, Any]
+        ``logistic_jepa`` logits per part, and the receipt hashes.
+
+    Raises
+    ------
+    ValueError
+        If the split or R differs from Stage 1's.
+    """
+    receipt = receipt_checked(PRIOR_STAGE1, ("predictions.npz",))
+    with np.load(PRIOR_STAGE1 / "predictions.npz") as saved:
+        if not np.array_equal(saved["validation_mask"], validation):
+            raise ValueError("Validation split differs from Stage 1's")
+        difference = max(float(np.abs(saved[f"{part}_R"] - reference[part]).max()) for part in reference)
+        if difference > AUROC_TOLERANCE:
+            raise ValueError(f"R differs from Stage 1's by {difference}")
+        logistic = {part: saved[f"{part}_logistic_jepa"] for part in ("development", "sph")}
+    return {"logistic_jepa": logistic, "receipt": receipt, "R_max_abs_difference_vs_stage1": difference}
+
+
+def run_stage2(data: dict[str, Any], partial: Path, smoke: bool, cache: Path) -> dict[str, Any]:
+    """
+    Run Stage 2: cache ECG-JEPA tokens and windows, train the attention head, and evaluate it and its map.
+
+    In smoke mode only a few hundred training rows are cached and scored, and the map is checked for
+    structure only.
+
+    Parameters
+    ----------
+    data : dict[str, Any]
+        Output of ``training_data``.
+    partial : Path
+        Output folder.
+    smoke : bool
+        Training-only smoke test.
+    cache : Path
+        Cache folder on local disk.
+
+    Returns
+    -------
+    dict[str, Any]
+        Result fields.
+    """
+    began = time.perf_counter()
+    integrity: dict[str, Any] = {}
+    y, weights = data["design"]["y"], data["design"]["weights"]
+    if smoke:
+        rng = np.random.default_rng(SEED)
+        chosen = np.sort(rng.choice(len(data["groups"]), SMOKE_TOKEN_ROWS, replace=False))
+        table = data["stacked"].iloc[chosen].reset_index(drop=True)
+        reference = binary_features(data, "jepa", "train")[chosen]
+        parts = {"train": [0, len(table)]}
+        held = validation_mask(data["groups"][chosen], SMOKE_HELD_OUT, SEED + 1)
+        pool = np.flatnonzero(~held)
+        validation = validation_mask(data["groups"][chosen][pool], VALIDATION_SHARE, VALIDATION_SEED)
+        fit_rows, check_rows, held_rows = pool[~validation], pool[validation], np.flatnonzero(held)
+        fit_y, fit_w, check_y = y[chosen][fit_rows], weights[chosen][fit_rows], y[chosen][check_rows]
+        score_rows = {"held_out": held_rows}
+        recipe = Recipe(ATTENTION_RECIPE.learning_rate, ATTENTION_RECIPE.weight_decay,
+                        ATTENTION_RECIPE.batch_size, SMOKE_EPOCHS, ATTENTION_RECIPE.patience)
+        maps_parts: tuple[str, ...] = ("held_out",)
+    else:
+        integrity["training_rows_vs_037"] = check_against_037(data)
+        reference_r, integrity["comparator"] = comparator(data)
+        sets = evaluation_sets(data)
+        integrity["R_auroc"] = check_comparator_aurocs(sets, reference_r)
+        validation, split_counts = shared_validation(data)
+        prior = stage1_predictions(reference_r, validation)
+        integrity["stage1"] = {"receipt": prior["receipt"],
+                               "R_max_abs_difference": prior["R_max_abs_difference_vs_stage1"]}
+        LOG.info("integrity: %s", integrity)
+        table, reference, parts = extraction_table(data, sets)
+        inputs042 = map_inputs()
+        if not np.array_equal(inputs042["rows"]["scored"]["ecg_id"].to_numpy(np.int64),
+                              data["development"]["ecg_id"].to_numpy(np.int64)):
+            raise ValueError("042's scored rows differ from the development rows")
+        fit_rows, check_rows = np.flatnonzero(~validation), np.flatnonzero(validation)
+        fit_y, fit_w, check_y = y[fit_rows], weights[fit_rows], y[check_rows]
+        score_rows = {part: np.arange(*parts[part]) for part in ("development", "sph")}
+        recipe = ATTENTION_RECIPE
+        maps_parts = ("development",)
+    LOG.info("cache rows %s", parts)
+    checksums = load_checksums()
+    ningbo = {record: window for record, _, window in ningbo_items()[0]}
+    device = "cuda"
+    with gpu_lock(device):
+        receipt = cache_receipt(cache, table, verify=True)
+        profile: dict[str, Any] = {"extraction": None, "cache_reused": receipt is not None}
+        if receipt is None:
+            encoder = load_jepa()
+            profile["extraction"] = profile_extraction(table, encoder, checksums, ningbo)
+            per_record = profile["extraction"]["read_per_record"] + profile["extraction"]["model_per_record"]
+            projected = time.perf_counter() - began + per_record * len(table)
+            LOG.info("extraction profile %s, projected %.0f s", profile["extraction"], projected)
+            if projected > STAGE2_CEILING:
+                raise RuntimeError(f"Projected extraction {projected:.0f} s exceeds the stage ceiling")
+            receipt = extract_cache(cache, table, reference, parts, encoder, checksums, ningbo)
+            del encoder
+            torch.cuda.empty_cache()
+        LOG.info("cache ready at %.1f s: %s", time.perf_counter() - began, receipt["token_check"])
+        store = open_row_file(cache / "tokens.npy")
+        profile["training"] = profile_training(store, fit_rows, fit_y, fit_w, recipe, device)
+        scored = sum(len(rows) for rows in score_rows.values())
+        profile["projected_training_seconds"] = projected_training(profile["training"], len(fit_rows),
+                                                                   len(check_rows), scored, recipe)
+        profile["projected_stage_seconds"] = (time.perf_counter() - began
+                                              + profile["projected_training_seconds"])
+        LOG.info("training profile %s", profile)
+        if profile["projected_stage_seconds"] > STAGE2_CEILING:
+            raise RuntimeError(f"Projected stage time {profile['projected_stage_seconds']:.0f} s "
+                               "exceeds 2 hours")
+        arm = train_attention(store, fit_rows, fit_y, fit_w, check_rows, check_y, score_rows, recipe, device,
+                              maps_parts)
+        torch.cuda.empty_cache()
+    os.close(store.descriptor)
+    integrity["contribution_max_abs_difference"] = arm["contribution_max_abs_difference"]
+    LOG.info("training done at %.1f s", time.perf_counter() - began)
+    cache_fields = {"folder": str(cache), "receipt": receipt, "rows_csv": "cache_rows.csv"}
+    table[["kind", "key"]].to_csv(partial / "cache_rows.csv", index=False)
+    if smoke:
+        held_y = y[chosen][held_rows]
+        sets = {"held_out": {"part": "held_out", "positions": np.arange(len(held_rows)), "y": held_y,
+                             "patients": data["groups"][chosen][held_rows]}}
+        with threadpool_limits(limits=1):
+            head = fit_readout(binary_features(data, "xecg", "train")[chosen][pool], y[chosen][pool],
+                               weights[chosen][pool])
+            held_x = binary_features(data, "xecg", "train")[chosen][held_rows]
+            reference_r = {"held_out": logits_of(head, held_x)}
+        statistics = detection_statistics(sets, {"attention_jepa": arm["logits"]}, reference_r, SMOKE_DRAWS,
+                                          SEED, primary=("held_out",))
+        unit_map = jepa_unit_map(arm["contributions"]["held_out"][0])
+        write_npz_atomic(partial / "predictions.npz", held_out_rows=held_rows,
+                         held_out_attention_jepa=arm["logits"]["held_out"])
+        return {"integrity": integrity, "profile": profile, "cache": cache_fields, "detection": statistics,
+                "seeds": seed_statistics(sets, {"attention_jepa": arm}),
+                "map_structure": {"contributions": list(arm["contributions"]["held_out"].shape),
+                                  "units": len(unit_map.scores),
+                                  "leads": sorted(set(unit_map.leads.tolist()))},
+                "recipe": vars(recipe),
+                "note": "smoke: training rows only; map checked for structure, not scored"}
+
+    sph_positions, sph_length = sets["sph"]["positions"], len(data["sph"])
+    scores = {"development": arm["logits"]["development"],
+              "sph": full_length(arm["logits"]["sph"], sph_positions, sph_length)}
+    arm_for_seeds = {"seeds": arm["seeds"], "seed_logits": {
+        seed: {"development": found["development"],
+               "sph": full_length(found["sph"], sph_positions, sph_length)}
+        for seed, found in arm["seed_logits"].items()}}
+    statistics = detection_statistics(sets, {"attention_jepa": scores}, reference_r, DRAWS, SEED)
+    contrast = paired_contrast(sets, scores, prior["logistic_jepa"], DRAWS, SEED)
+    LOG.info("detection done at %.1f s", time.perf_counter() - began)
+
+    attention_maps = [jepa_unit_map(values) for values in arm["contributions"]["development"]]
+    metrics = map_metrics(inputs042["rows"],
+                          {"U_B": inputs042["maps"]["U_B"], "attention_jepa": attention_maps},
+                          inputs042["windows"], DRAWS, SEED)
+    integrity["U_B_vs_042"] = check_042_points(metrics["maps"]["U_B"], metrics["thresholds"]["U_B"])
+    contrasts = map_contrasts(metrics, "attention_jepa", "U_B", DRAWS, SEED)
+    LOG.info("maps done at %.1f s: %s", time.perf_counter() - began, contrasts["reading"])
+
+    sph_ids = data["sph"]["ecg_id"].to_numpy(dtype=str)[sph_positions]
+    arrays = {"development_record_ids": data["development"].index.to_numpy(dtype=str), "sph_ecg_ids": sph_ids,
+              "development_attention_jepa": arm["logits"]["development"],
+              "sph_attention_jepa": arm["logits"]["sph"]}
+    for seed, found in arm["seed_logits"].items():
+        arrays.update({f"{part}_attention_jepa_seed{seed}": values for part, values in found.items()})
+    write_npz_atomic(partial / "predictions.npz", **arrays)
+    write_npz_atomic(partial / "token_maps.npz", ecg_ids=data["development"]["ecg_id"].to_numpy(np.int64),
+                     attention_jepa=arm["contributions"]["development"].astype(np.float32),
+                     **{f"attention_jepa_seed{seed}": found["development"].astype(np.float32)
+                        for seed, found in arm["seed_contributions"].items()})
+    reading = readings(statistics)
+    return {"integrity": integrity, "validation_split": split_counts, "profile": profile,
+            "cache": cache_fields,
+            "evaluation_sets": {name: {"records": len(spec["y"]), "positives": int(spec["y"].sum()),
+                                       "patients": int(len(np.unique(spec["patients"])))}
+                                for name, spec in sets.items()},
+            "detection": statistics, "seeds": seed_statistics(sets, {"attention_jepa": arm_for_seeds}),
+            "attention_jepa_minus_logistic_jepa": contrast, "readings": reading,
+            "arm": {"seeds": arm["seeds"]}, "recipe": vars(recipe),
+            "maps": {**public_map_metrics(metrics), "pvc_exclusions": inputs042["exclusions"],
+                     "attention_jepa_minus_U_B": contrasts},
+            "map_reading": contrasts["reading"],
+            "notebook": bool(reading["attention_jepa"] == "beats" or contrasts["reading"]["improves_on_U_B"]),
+            "inputs_042": inputs042["receipt"]}
+
+
+def run(stage: int, smoke: bool, output: Path, cache: Path) -> None:
     """
     Run one stage end to end and write its outputs.
 
@@ -942,36 +1596,47 @@ def run(stage: int, smoke: bool, output: Path) -> None:
         Training-only smoke test.
     output : Path
         Final output folder; it must not exist.
+    cache : Path
+        Stage 2 and 3 cache folder on local disk.
     """
-    if stage != 1:
-        raise NotImplementedError(f"Stage {stage} is not implemented yet")
+    if stage == 3:
+        raise NotImplementedError("Stage 3 is not implemented yet")
     started = time.perf_counter()
     partial = output.with_name(output.name + ".partial")
     partial.mkdir(parents=True)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s",
                         handlers=[logging.StreamHandler(), logging.FileHandler(partial / "run.log")])
     torch.set_num_threads(THREADS)
-    if torch.cuda.is_available():
+    if stage == 1 and torch.cuda.is_available():
         raise RuntimeError("Stage 1 is CPU only: set CUDA_VISIBLE_DEVICES=")
+    if stage == 2 and not torch.cuda.is_available():
+        raise RuntimeError("Stage 2 needs a GPU")
     receipts = {to_stored(PRIOR037 / name): digest
                 for name, digest in receipt_checked(PRIOR037, ("predictions.npz",)).items()}
     receipts.update({to_stored(PRIOR035 / name): digest
                      for name, digest in receipt_checked(PRIOR035, ("predictions.npz",)).items()})
     receipts.update({to_stored(PRIOR042 / name): digest
                      for name, digest in receipt_checked(PRIOR042, ("unit_scores.npz",)).items()})
+    if stage == 2 and not smoke:
+        receipts.update({to_stored(PRIOR_STAGE1 / name): digest
+                         for name, digest in receipt_checked(PRIOR_STAGE1, ("predictions.npz",)).items()})
     data = training_data()
     LOG.info("loaded %s at %.1f s", data["training_counts"], time.perf_counter() - started)
     run_identity = identity(receipts, data["identity"])
-    found = run_smoke(data, partial) if smoke else run_stage1(data, partial)
+    if stage == 1:
+        found = run_smoke(data, partial) if smoke else run_stage1(data, partial)
+        found.update({"recipe": vars(MLP_RECIPE), "hidden": MLP_HIDDEN, "dropout": MLP_DROPOUT})
+    else:
+        found = run_stage2(data, partial, smoke, cache)
+    outputs = {path.name: sha256_file(path) for path in sorted(partial.iterdir())
+               if path.is_file() and path.name not in ("result.json", "run.log")}
     write_json_atomic(partial / "result.json", {
         "status": "smoke" if smoke else "completed", "stage": stage, "identity": run_identity,
         "training_counts": data["training_counts"], **found,
-        "recipe": vars(MLP_RECIPE), "hidden": MLP_HIDDEN, "dropout": MLP_DROPOUT,
         "training_seeds": list(SEEDS), "validation_share": VALIDATION_SHARE,
         "validation_seed": VALIDATION_SEED,
         "draws": SMOKE_DRAWS if smoke else DRAWS, "bootstrap_seed": SEED,
-        "outputs_sha256": {"predictions.npz": sha256_file(partial / "predictions.npz")},
-        "total_seconds": time.perf_counter() - started,
+        "outputs_sha256": outputs, "total_seconds": time.perf_counter() - started,
         "calibration_test_evaluated": False, "challenge_test_read": False, "ptbxl_test_read": False,
     })
     partial.rename(output)
@@ -984,11 +1649,12 @@ def main() -> None:
     parser.add_argument("--stage", type=int, choices=(1, 2, 3), required=True)
     parser.add_argument("--smoke", action="store_true", help="training-only smoke test")
     parser.add_argument("--output", type=Path, default=None)
+    parser.add_argument("--cache", type=Path, default=CACHE, help="token and window cache on local disk")
     arguments = parser.parse_args()
     output = arguments.output or OUTPUT / f"stage{arguments.stage}"
     if output.exists():
         raise FileExistsError(f"Refusing to overwrite {output}")
-    run(arguments.stage, arguments.smoke, output)
+    run(arguments.stage, arguments.smoke, output, arguments.cache)
 
 
 if __name__ == "__main__":

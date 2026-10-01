@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
+from typing import Any
 
 import numpy as np
 import torch
@@ -386,3 +387,101 @@ def grid_unit_map(scores: np.ndarray, leads: tuple[int, ...], patches: int = GRI
     lead_index = np.repeat(np.array(leads), patches)
     starts = np.tile(np.arange(patches) * seconds, len(leads))
     return UnitMap(np.asarray(scores, dtype=np.float64), lead_index, starts, starts + seconds)
+
+
+def ragged_unit_maps(arrays: Mapping[str, np.ndarray], name: str) -> list[UnitMap | None]:
+    """
+    Split ragged unit arrays saved with per-ECG offsets (Experiment 042 ``save_maps``) into maps.
+
+    Parameters
+    ----------
+    arrays : Mapping[str, np.ndarray]
+        Arrays with ``{name}_offsets``, ``{name}_scores``, ``{name}_leads``, ``{name}_starts`` and
+        ``{name}_ends``.
+    name : str
+        Map name.
+
+    Returns
+    -------
+    list[UnitMap | None]
+        One map per ECG, ``None`` where the ECG has no unit.
+    """
+    offsets = arrays[f"{name}_offsets"]
+    fields = [np.asarray(arrays[f"{name}_{part}"]) for part in ("scores", "leads", "starts", "ends")]
+    maps: list[UnitMap | None] = []
+    for low, high in zip(offsets[:-1], offsets[1:], strict=True):
+        maps.append(None if high == low else UnitMap(*(values[low:high] for values in fields)))
+    return maps
+
+
+def gate_beat_units(beat_scores: np.ndarray, shares: np.ndarray) -> np.ndarray:
+    """
+    Keep each beat unit's score where its lead-and-wave readout share is above 0, and set it to 0 elsewhere.
+
+    Parameters
+    ----------
+    beat_scores : np.ndarray
+        Flat unit scores of one ECG, unit ``(beat * leads + lead) * waves + wave``.
+    shares : np.ndarray
+        Flat lead-and-wave shares of the same ECG, unit ``lead * waves + wave``.
+
+    Returns
+    -------
+    np.ndarray
+        Gated flat unit scores.
+    """
+    blocks = np.asarray(beat_scores, dtype=np.float64).reshape(-1, shares.size)
+    return np.where(np.asarray(shares)[None, :] > 0, blocks, 0.0).ravel()
+
+
+def detection_reading(sph_ci_low: float, full_difference: float) -> str:
+    """
+    Read a detection arm against the comparator by the Experiment 043 rule.
+
+    Parameters
+    ----------
+    sph_ci_low : float
+        Lower bound of the SPH AUROC difference.
+    full_difference : float
+        AUROC difference on full PTB-XL development.
+
+    Returns
+    -------
+    str
+        ``beats``, ``matches`` or ``below``.
+    """
+    if sph_ci_low > 0 and full_difference >= -0.005:
+        return "beats"
+    if sph_ci_low > -0.01 and full_difference >= -0.01:
+        return "matches"
+    return "below"
+
+
+def map_reading(localization_ci_low: float, lead_ci_low: float, benign_ci_high: float,
+                auroc_ci_low: float, margin: float = -0.10) -> dict[str, Any]:
+    """
+    Read a map against Experiment 042's ``U_B`` by 042's rule.
+
+    Parameters
+    ----------
+    localization_ci_low : float
+        Lower bound of the map's hit - chance minus ``U_B``'s.
+    lead_ci_low : float
+        Lower bound of the map's anterior lead contrast.
+    benign_ci_high : float
+        Upper bound of the map's benign any-red share minus ``U_B``'s.
+    auroc_ci_low : float
+        Lower bound of the map's worst-unit AUROC minus ``U_B``'s.
+    margin : float
+        Localization margin.
+
+    Returns
+    -------
+    dict[str, Any]
+        ``keeps_premature_localization``, ``gains`` and ``improves_on_U_B``.
+    """
+    keeps = localization_ci_low > margin
+    gains = {"lead": lead_ci_low > 0, "benign": benign_ci_high < 0, "detection": auroc_ci_low > 0}
+    return {"keeps_premature_localization": bool(keeps),
+            "gains": {key: bool(value) for key, value in gains.items()},
+            "improves_on_U_B": bool(keeps and any(gains.values()))}

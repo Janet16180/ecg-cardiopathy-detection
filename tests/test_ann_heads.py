@@ -11,8 +11,12 @@ from ecg_experiment.ann_heads import (
     MLPHead,
     Recipe,
     augment,
+    detection_reading,
+    gate_beat_units,
     grid_unit_map,
+    map_reading,
     predict,
+    ragged_unit_maps,
     train,
     validation_mask,
     weighted_standardizer,
@@ -81,3 +85,39 @@ def test_grid_unit_map() -> None:
     top = unit_map.scores.argmax()
     assert unit_map.leads[top] == 7
     np.testing.assert_allclose((unit_map.starts[top], unit_map.ends[top]), (0.6, 0.8))
+
+
+def test_ragged_unit_maps_split_by_offsets() -> None:
+    arrays = {"M_offsets": np.array([0, 2, 2, 5]), "M_scores": np.arange(5.0), "M_leads": np.arange(5),
+              "M_starts": np.zeros(5), "M_ends": np.ones(5)}
+    maps = ragged_unit_maps(arrays, "M")
+    assert maps[1] is None
+    np.testing.assert_array_equal(maps[0].scores, [0.0, 1.0])
+    np.testing.assert_array_equal(maps[2].leads, [2, 3, 4])
+
+
+def test_gate_beat_units_follows_lead_and_wave() -> None:
+    beats, leads, waves = 3, 12, 4
+    scores = np.arange(1.0, beats * leads * waves + 1)
+    shares = np.full(leads * waves, -1.0)
+    shares[5 * waves + 2] = 0.3
+    gated = gate_beat_units(scores, shares).reshape(beats, leads, waves)
+    expected = np.zeros((beats, leads, waves))
+    expected[:, 5, 2] = scores.reshape(beats, leads, waves)[:, 5, 2]
+    np.testing.assert_array_equal(gated, expected)
+
+
+def test_detection_reading() -> None:
+    assert detection_reading(0.001, -0.004) == "beats"
+    assert detection_reading(0.001, -0.006) == "matches"
+    assert detection_reading(-0.005, 0.02) == "matches"
+    assert detection_reading(-0.02, 0.02) == "below"
+    assert detection_reading(0.01, -0.02) == "below"
+
+
+def test_map_reading() -> None:
+    reading = map_reading(-0.05, -0.1, -0.01, -0.2)
+    assert reading["gains"] == {"lead": False, "benign": True, "detection": False}
+    assert reading["improves_on_U_B"]
+    assert not map_reading(-0.2, 0.1, -0.1, 0.1)["improves_on_U_B"]
+    assert not map_reading(0.0, -0.1, 0.1, -0.1)["improves_on_U_B"]

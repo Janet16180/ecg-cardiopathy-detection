@@ -29,11 +29,7 @@ jobs:
           uv python install
           uv sync --locked --only-group dev
       - name: Check Python with Ruff
-        # Keep frozen tests' conftest imports classified consistently with the original layout.
-        run: >-
-          uv run --locked --only-group dev ruff check --output-format=github
-          --config 'lint.isort.known-third-party = ["conftest"]'
-          ecg_experiment scripts tests conftest.py
+        run: uv run --locked --only-group dev ruff check --output-format=github ecg_experiment scripts tests conftest.py
   cpu-checks:
     name: CPU tests and package build
     runs-on: ubuntu-24.04

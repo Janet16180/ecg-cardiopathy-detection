@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-01T02:39:41.545006+00:00",
+  "updated_at_utc": "2026-10-01T03:33:48.010009+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2291,6 +2291,31 @@
       "CUDA_HOME": ".venv/lib/python3.11/site-packages/nvidia/cuda_runtime"
     },
     "calibration_test_evaluated": false,
-    "next_action": "Fallback 041b (ECG-JEPA patch maps) is triggered and authorized by the user's conditional instruction; it needs its own frozen protocol. Follow-ups are in the backlog."
+    "next_action": "Fallback 041b ran as arm J of Experiment 042. Follow-ups are in the backlog."
+  },
+  "experiment_042_lead_wave_maps": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User, 30 September 2026: run both per-lead approaches (ECG-JEPA patches and beat-aligned waves) and write a new notebook only if the result improves",
+    "protocol": "docs/experiment-042-lead-wave-maps.md",
+    "protocol_commit": "175356a",
+    "amendments": {
+      "1": "1f6a3da"
+    },
+    "source_commit": "810a3e7",
+    "output_dir": "outputs/experiment042_lead_wave_maps_v1",
+    "runner": "scripts/experiments/run_lead_wave_maps042.py",
+    "results": "docs/experiment-042-lead-wave-maps-results.md",
+    "notebook": "notebooks/12-jr-beat-wave-maps.ipynb",
+    "reading": {
+      "B_improves_on_041": true,
+      "J_improves_on_041": false,
+      "lead_test_passed": false
+    },
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell"
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "Notebook for arm B. Follow-ups: section_map_with_ecg_score, rate_adaptive_wave_windows, cardiologist_region_marks."
   }
 }

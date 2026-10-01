@@ -1328,7 +1328,7 @@
     {
       "id": "jepa_patch_localization041b",
       "kind": "experiment",
-      "experiment": "041b",
+      "experiment": "042",
       "title": "ECG-JEPA patch-token section maps with per-lead marks (Experiment 041 fallback)",
       "question": "Do ECG-JEPA's 400 lead-by-time patch tokens localize premature beats as well as xECG, keep more detection as a worst patch, and point inferior and anterior infarcts to the expected leads?",
       "evidence": "Experiment 041 triggered its prespecified fallback: xECG worst-section U AUROC 0.777 against 0.923 whole-ECG, while premature-beat hit minus chance was +0.669 [0.582, 0.758]. JEPA averages 8 leads x 50 patches of 200 ms.",
@@ -1338,16 +1338,17 @@
       "cpu_hours": 0.2,
       "build_hours": 3.0,
       "blocked_by": [],
-      "status": "open",
+      "status": "done",
       "authorized": true,
-      "notes": "User, 30 September 2026: 'If xECG doesn't work well lets use JEPA'. Needs its own frozen protocol. The detection loss in 041 comes from taking the worst section, so JEPA may lose detection the same way; the per-lead map is the new part."
+      "notes": "User, 30 September 2026: 'If xECG doesn't work well lets use JEPA'. Needs its own frozen protocol. The detection loss in 041 comes from taking the worst section, so JEPA may lose detection the same way; the per-lead map is the new part. Done as arm J of Experiment 042: does not improve on 041 (premature-beat hit minus chance -0.404 against 041; lead contrast +0.063 [-0.051, 0.182]).",
+      "protocol": "docs/experiment-042-lead-wave-maps.md"
     },
     {
       "id": "section_map_with_ecg_score",
       "kind": "experiment",
       "title": "Screen with the whole-ECG score and use the section map only to explain",
-      "question": "If the referral decision uses the whole-ECG readout and the red sections only explain a referral, how often does a referred abnormal ECG get at least one red section, and how often does a referred normal or benign ECG?",
-      "evidence": "Experiment 041: G worst section 0.926 against its own mean (the readout) 0.962; U localizes premature beats but its worst section detects at 0.777.",
+      "question": "If the referral decision uses the whole-ECG readout and the beat-aligned wave map (042 U_B) only explains a referral, how often does a referred abnormal ECG get a red wave, and how often does a referred normal or benign ECG?",
+      "evidence": "Experiment 041: G worst section 0.926 against its own mean (the readout) 0.962; U localizes premature beats but its worst section detects at 0.777. Experiment 042: beat-aligned U_B top unit on the premature beat 93% (chance 20%) and benign any-red 7.7%, but worst-unit AUROC 0.740.",
       "value": 3,
       "clarity": 0.7,
       "gpu_hours": 0.0,
@@ -1393,6 +1394,40 @@
       "status": "blocked",
       "authorized": false,
       "notes": "New public data source and a download; needs the user's approval and a quality gate."
+    },
+    {
+      "id": "rate_adaptive_wave_windows",
+      "kind": "experiment",
+      "title": "Beat-aligned wave windows that follow QRS width and QT",
+      "question": "Do QRS and T windows set from each ECG's measured QRS width and QT interval keep 042's premature-beat localization and improve detection or the infarct lead test?",
+      "evidence": "Experiment 042: fixed offsets from R; wide QRS spills into the ST window (CLBBB example marked V1 ST); U_B worst-unit AUROC 0.740; lead contrast +0.085 [-0.038, 0.202].",
+      "value": 3,
+      "clarity": 0.5,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.3,
+      "build_hours": 3.0,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "CPU only. Needs a delineation rule (QRS onset/offset, T end) checked on a few hundred training beats first."
+    },
+    {
+      "id": "cardiologist_region_marks",
+      "kind": "repo",
+      "title": "Page for the cardiologist to mark abnormal leads and waves",
+      "question": "Can the cardiologist mark the abnormal leads and waves on 30-50 ECGs, giving region ground truth for the section maps?",
+      "evidence": "Experiments 041-042 could check location only on rule-detected premature beats; the infarct lead test uses whole-ECG statements and was inconclusive.",
+      "value": 4,
+      "clarity": 0.7,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.0,
+      "build_hours": 3.0,
+      "blocked_by": [
+        "@cardiologist_meeting"
+      ],
+      "status": "blocked",
+      "authorized": false,
+      "notes": "PTB-XL is public; marks stay local. Choose ECGs by rule, including healthy, benign and several cardiopathies."
     }
   ]
 }

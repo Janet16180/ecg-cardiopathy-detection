@@ -1,6 +1,6 @@
 # Experiment priorities
 
-Updated 30 September 2026, after Experiment 041 (section maps). Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
+Updated 30 September 2026, after Experiment 042 (per-lead maps). Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
 explains the scoring, shows the current ranking and records what the papers suggest. The backlog is for
 choosing the next study. It does not authorize or schedule anything: the execution queue remains
 [experiment-queue.json](experiment-queue.json), and every study still needs a frozen protocol first.
@@ -37,6 +37,8 @@ After each result:
 
 ## Current ranking
 
+Experiment 042 (per-lead maps) found that beat-aligned wave pieces localize premature beats best (93% against 20% by chance) and mark benign variants least (7.7%), while ECG-JEPA patches did not improve on 041 and no map passed the infarct lead test. See its [results](experiment-042-lead-wave-maps-results.md).
+
 Experiment 041 (section maps) found that the unsupervised per-section distance points at premature beats (+0.669 over chance) but detects poorly as a worst section (0.777 against 0.923); it added four follow-ups, including the triggered ECG-JEPA fallback `jepa_patch_localization041b`. See its [results](experiment-041-fragment-localization-results.md).
 
 Experiment 040 passed all six real profiles but stopped at the shared time gate before any full fit
@@ -67,14 +69,14 @@ penalty; one that ranks high earns a protocol like any other.
 | 9 | cohorts_v3_cpc_caches | repo | 250 Hz CPC caches of cohorts v3 tiers 25k-200k | 3 | 0.8 | 7.0 | 1.09 | - |
 | 10 | s4_supervised | experiment | Supervised S4 from scratch at matched labels (100 Hz, 2.5 s crops) | 4 | 0.8 | 9.0 | 1.07 | - |
 | 11 | hybrid_rare_conditions | experiment | Distance-from-normal as a safety net only for conditions with few labels | 3 | 0.6 | 3.0 | 1.04 | - |
-| 12 | jepa_patch_localization041b | experiment | ECG-JEPA patch-token section maps with per-lead marks (Experiment 041 fallback) | 3 | 0.6 | 3.3 | 0.99 | - |
-| 13 | attention_readout | experiment | Attention-pooling frozen head on encoder tokens (CPC, released ECG-CPC, xECG) | 4 | 0.7 | 8.0 | 0.99 | - |
-| 14 | challenge_data_quality_note | repo | Short write-up of the Challenge 2021 and CODE-15 data problems | 3 | 0.8 | 6.0 | 0.98 | - |
-| 15 | multitask_head | experiment | Multi-label auxiliary head on frozen features versus the binary head | 3 | 0.6 | 3.5 | 0.96 | - |
-| 16 | ecgad_benchmark_readout | experiment | The 026 score on the public PTB-XL anomaly-detection split | 3 | 0.6 | 3.5 | 0.96 | - |
-| 17 | shared_readout_module | repo | One shared frozen-readout module for new experiments | 2 | 0.8 | 3.0 | 0.92 | - |
-| 18 | echo_multitask_transfer | experiment | Do ECG-abnormality labels reduce the echo labels needed? | 3 | 0.6 | 4.0 | 0.90 | - |
-| 19 | near_duplicates | repo | Near-duplicate pass across Challenge sources | 3 | 0.7 | 6.0 | 0.86 | - |
+| 12 | attention_readout | experiment | Attention-pooling frozen head on encoder tokens (CPC, released ECG-CPC, xECG) | 4 | 0.7 | 8.0 | 0.99 | - |
+| 13 | challenge_data_quality_note | repo | Short write-up of the Challenge 2021 and CODE-15 data problems | 3 | 0.8 | 6.0 | 0.98 | - |
+| 14 | multitask_head | experiment | Multi-label auxiliary head on frozen features versus the binary head | 3 | 0.6 | 3.5 | 0.96 | - |
+| 15 | ecgad_benchmark_readout | experiment | The 026 score on the public PTB-XL anomaly-detection split | 3 | 0.6 | 3.5 | 0.96 | - |
+| 16 | shared_readout_module | repo | One shared frozen-readout module for new experiments | 2 | 0.8 | 3.0 | 0.92 | - |
+| 17 | echo_multitask_transfer | experiment | Do ECG-abnormality labels reduce the echo labels needed? | 3 | 0.6 | 4.0 | 0.90 | - |
+| 18 | near_duplicates | repo | Near-duplicate pass across Challenge sources | 3 | 0.7 | 6.0 | 0.86 | - |
+| 19 | rate_adaptive_wave_windows | experiment | Beat-aligned wave windows that follow QRS width and QT | 3 | 0.5 | 3.3 | 0.83 | - |
 | 20 | quality_policy_v2 | repo | Quality policy v2 review flags (edge zero runs, short dropouts) | 2 | 0.8 | 4.0 | 0.80 | - |
 | 21 | device_control | experiment | Device-controlled probes (drop or balance CS100 3) | 2 | 0.6 | 2.3 | 0.79 | - |
 | 22 | prototype_head | experiment | Learned prototype head anchored to real training ECGs | 4 | 0.6 | 10.0 | 0.76 | - |
@@ -96,14 +98,15 @@ penalty; one that ranks high earns a protocol like any other.
 | 38 | final_frozen_test | experiment | One-time confirmatory test of the frozen pipeline on untouched data | 5 | 0.9 | 3.0 | 3.12 | @user_freeze_decision |
 | 39 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
 | 40 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
-| 41 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
-| 42 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
-| 43 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
-| 44 | benign_variant_contrast | experiment | Teach the map that benign rhythm variants are normal | 3 | 0.4 | 2.2 | 0.81 | @cardiologist_meeting |
-| 45 | beat_annotated_localization | experiment | Check section maps against expert beat labels (INCART 12-lead) | 2 | 0.7 | 3.3 | 0.77 | @user_download_approval |
-| 46 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
-| 47 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
-| 48 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
+| 41 | cardiologist_region_marks | repo | Page for the cardiologist to mark abnormal leads and waves | 4 | 0.7 | 3.0 | 1.62 | @cardiologist_meeting |
+| 42 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
+| 43 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
+| 44 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
+| 45 | benign_variant_contrast | experiment | Teach the map that benign rhythm variants are normal | 3 | 0.4 | 2.2 | 0.81 | @cardiologist_meeting |
+| 46 | beat_annotated_localization | experiment | Check section maps against expert beat labels (INCART 12-lead) | 2 | 0.7 | 3.3 | 0.77 | @user_download_approval |
+| 47 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
+| 48 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
+| 49 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
 
 Reruns after Ningbo (`rerun_of` in the backlog): 022 as `ningbo_sph_transfer`, 024 as `rerun_024_multisource`,
 025 as `rerun_025_ningbo`, 026 as `multisource_normal_manifold` and 027 as `multisource_calibration`. 023 is

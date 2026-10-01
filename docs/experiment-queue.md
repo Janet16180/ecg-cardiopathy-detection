@@ -2,6 +2,14 @@
 
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
+**30 September, Experiment 042 completed:** the user asked for both per-lead approaches.
+[Experiment 042](experiment-042-lead-wave-maps-results.md) compared ECG-JEPA patch tokens (the 041b fallback)
+with beat-aligned P, QRS, ST and T pieces per lead. The beat-aligned map improves on 041 by its prespecified
+rule: its top unit was on the premature beat in 93% of PVC ECGs (chance 20%), and it put red on 7.7% of benign
+variants against 27%. ECG-JEPA did not improve on 041, and no map passed the infarct lead test. Notebook
+`notebooks/12-jr-beat-wave-maps.ipynb` shows the beat-aligned map. Outputs:
+`outputs/experiment042_lead_wave_maps_v1/`.
+
 **30 September, Experiment 041 completed:** after the closeout, the user asked for the tutor's localization
 idea and agreed its scope. [Experiment 041](experiment-041-fragment-localization-results.md) scored each
 250 ms xECG section on PTB-XL development data. The unsupervised per-section distance put its top section on
@@ -486,6 +494,7 @@ groups.
 | 036 ([protocol](experiment-036-random-encoder.md), [results](experiment-036-random-encoder-results.md)) | Does the normal reference need pretraining? | Yes: pretrained 0.878 against random 0.686 at SPH | `outputs/experiment036_random_encoder_v1/` |
 | 037 ([protocol](experiment-037-pipeline-v2.md), [results](experiment-037-pipeline-v2-results.md)) | Pipeline v2: 035 readout with 030 and 033 operating points | Adopted by rule (-0.0048 composite, fails strict non-inferiority); spec in [pipeline-v2](pipeline-v2.md) | `outputs/experiment037_pipeline_v2_v1/` |
 | 041 ([protocol](experiment-041-fragment-localization.md), [results](experiment-041-fragment-localization-results.md)) | Where in the ECG is the abnormality? Per-section maps | Unsupervised map finds premature beats (+0.669 over chance) but worst section detects at 0.777; label-guided 0.926; JEPA fallback triggered | `outputs/experiment041_fragment_localization_v1/` |
+| 042 ([protocol](experiment-042-lead-wave-maps.md), [results](experiment-042-lead-wave-maps-results.md)) | Per-lead maps: ECG-JEPA patches and beat-aligned waves | Beat-aligned improves on 041 (premature beats 93% against 20%; benign red 7.7% against 27%); JEPA does not; lead test not passed | `outputs/experiment042_lead_wave_maps_v1/` |
 
 Next, ranked in the [backlog](experiment-backlog.json) and [priorities](experiment-priorities.md):
 `referral_budget_operating_point`, then `hybrid_screening_score` and `rhythm_findings_detector`, with the

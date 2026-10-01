@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-01T02:05:54.148912+00:00",
+  "updated_at_utc": "2026-10-01T02:39:41.545006+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2268,5 +2268,29 @@
     ],
     "merge_status_source": "GitHub pull request records",
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
+  },
+  "experiment_041_fragment_localization": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User agreed scope on 30 September 2026: xECG time-section maps, unsupervised and label-guided, PTB-XL development only, premature-beat check; ECG-JEPA only as prespecified fallback",
+    "protocol": "docs/experiment-041-fragment-localization.md",
+    "protocol_commit": "086cc87",
+    "source_commit": "27c392a",
+    "output_dir": "outputs/experiment041_fragment_localization_v1",
+    "runner": "scripts/experiments/run_fragment_localization041.py",
+    "results": "docs/experiment-041-fragment-localization-results.md",
+    "reading": {
+      "part1_localizes": true,
+      "part1_keeps_detection": false,
+      "part2_improves_detection": true,
+      "part2_fewer_benign_marks": false,
+      "jepa_fallback_triggered": true
+    },
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_HOME": ".venv/lib/python3.11/site-packages/nvidia/cuda_runtime"
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "Fallback 041b (ECG-JEPA patch maps) is triggered and authorized by the user's conditional instruction; it needs its own frozen protocol. Follow-ups are in the backlog."
   }
 }

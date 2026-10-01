@@ -2,6 +2,15 @@
 
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
+**30 September, Experiment 041 completed:** after the closeout, the user asked for the tutor's localization
+idea and agreed its scope. [Experiment 041](experiment-041-fragment-localization-results.md) scored each
+250 ms xECG section on PTB-XL development data. The unsupervised per-section distance put its top section on
+a premature beat 82% of the time against 15% by chance (+0.669 [0.582, 0.758]), but as a worst-section
+screen it reached AUROC 0.777 against 0.923 for the whole-ECG distance. The label-guided map reached 0.926
+and still localized premature beats (77%). Neither map marked benign rhythm variants less (27% each). The
+prespecified ECG-JEPA fallback (041b) is triggered and needs its own protocol; follow-ups are in the
+backlog. Outputs: `outputs/experiment041_fragment_localization_v1/`.
+
 **30 September day closed:** The user chose to close out today's completed work and merge it
 into `main`. Experiment 039 finished all 36 fits and 18 audits; Experiment 040 completed its
 resource profiles and six-package runtime diagnosis. Its 18 full Transformer/SimDINO fits remain
@@ -476,6 +485,7 @@ groups.
 | 035 ([protocol](experiment-035-hard-subset.md), [results](experiment-035-hard-subset-results.md)) | Why pooled readouts lose on the PTB-XL hard subset | Normal-label mismatch; reweighting recovers 81% with no SPH cost | `outputs/experiment035_hard_subset_v1/` |
 | 036 ([protocol](experiment-036-random-encoder.md), [results](experiment-036-random-encoder-results.md)) | Does the normal reference need pretraining? | Yes: pretrained 0.878 against random 0.686 at SPH | `outputs/experiment036_random_encoder_v1/` |
 | 037 ([protocol](experiment-037-pipeline-v2.md), [results](experiment-037-pipeline-v2-results.md)) | Pipeline v2: 035 readout with 030 and 033 operating points | Adopted by rule (-0.0048 composite, fails strict non-inferiority); spec in [pipeline-v2](pipeline-v2.md) | `outputs/experiment037_pipeline_v2_v1/` |
+| 041 ([protocol](experiment-041-fragment-localization.md), [results](experiment-041-fragment-localization-results.md)) | Where in the ECG is the abnormality? Per-section maps | Unsupervised map finds premature beats (+0.669 over chance) but worst section detects at 0.777; label-guided 0.926; JEPA fallback triggered | `outputs/experiment041_fragment_localization_v1/` |
 
 Next, ranked in the [backlog](experiment-backlog.json) and [priorities](experiment-priorities.md):
 `referral_budget_operating_point`, then `hybrid_screening_score` and `rhythm_findings_detector`, with the

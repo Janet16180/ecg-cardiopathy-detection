@@ -1324,6 +1324,75 @@
       "status": "open",
       "authorized": false,
       "notes": "Forward implementation only; new source identity, protocol and validation receipts required. Never edit pinned039/040/diagnostic sources or weaken integrity checks. Measure cold/warm validation, latecell gate and checkpoint costs; preserve all18fits/three seeds/exposures/coefficient. Full training allocation remains separate. Hours are planning estimates. Day closeout: user chose to merge completed work and leave the 18 full fits unrun today; no follow-up is scheduled automatically."
+    },
+    {
+      "id": "jepa_patch_localization041b",
+      "kind": "experiment",
+      "experiment": "041b",
+      "title": "ECG-JEPA patch-token section maps with per-lead marks (Experiment 041 fallback)",
+      "question": "Do ECG-JEPA's 400 lead-by-time patch tokens localize premature beats as well as xECG, keep more detection as a worst patch, and point inferior and anterior infarcts to the expected leads?",
+      "evidence": "Experiment 041 triggered its prespecified fallback: xECG worst-section U AUROC 0.777 against 0.923 whole-ECG, while premature-beat hit minus chance was +0.669 [0.582, 0.758]. JEPA averages 8 leads x 50 patches of 200 ms.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0.1,
+      "cpu_hours": 0.2,
+      "build_hours": 3.0,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": true,
+      "notes": "User, 30 September 2026: 'If xECG doesn't work well lets use JEPA'. Needs its own frozen protocol. The detection loss in 041 comes from taking the worst section, so JEPA may lose detection the same way; the per-lead map is the new part."
+    },
+    {
+      "id": "section_map_with_ecg_score",
+      "kind": "experiment",
+      "title": "Screen with the whole-ECG score and use the section map only to explain",
+      "question": "If the referral decision uses the whole-ECG readout and the red sections only explain a referral, how often does a referred abnormal ECG get at least one red section, and how often does a referred normal or benign ECG?",
+      "evidence": "Experiment 041: G worst section 0.926 against its own mean (the readout) 0.962; U localizes premature beats but its worst section detects at 0.777.",
+      "value": 3,
+      "clarity": 0.7,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.1,
+      "build_hours": 1.5,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "CPU only from the saved 041 section scores; thresholds from local normals as in Experiment 030."
+    },
+    {
+      "id": "benign_variant_contrast",
+      "kind": "experiment",
+      "title": "Teach the map that benign rhythm variants are normal",
+      "question": "Does adding sinus bradycardia and sinus arrhythmia ECGs to the normal reference, or as readout negatives, remove red marks from benign variants without losing premature-beat localization?",
+      "evidence": "Experiment 041: 27% of 52 benign-variant ECGs had a red section with both U and G (normal rate 5.2%); G minus U 0.000 [-0.115, +0.135]. Neither the fit set nor the readout negatives contain benign variants.",
+      "value": 3,
+      "clarity": 0.4,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.2,
+      "build_hours": 2.0,
+      "blocked_by": [
+        "@cardiologist_meeting"
+      ],
+      "status": "blocked",
+      "authorized": false,
+      "notes": "Changes what counts as normal, so it waits for the cardiologist (AGENTS.md clinical scope)."
+    },
+    {
+      "id": "beat_annotated_localization",
+      "kind": "experiment",
+      "title": "Check section maps against expert beat labels (INCART 12-lead)",
+      "question": "On a 12-lead database where experts labeled every beat, how often does the top red section fall on an annotated ectopic beat?",
+      "evidence": "Experiment 041 could check location only with an automatic premature-beat rule on 73 PTB-XL ECGs.",
+      "value": 2,
+      "clarity": 0.7,
+      "gpu_hours": 0.1,
+      "cpu_hours": 0.2,
+      "build_hours": 3.0,
+      "blocked_by": [
+        "@user_download_approval"
+      ],
+      "status": "blocked",
+      "authorized": false,
+      "notes": "New public data source and a download; needs the user's approval and a quality gate."
     }
   ]
 }

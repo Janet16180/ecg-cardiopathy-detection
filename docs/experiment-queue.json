@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-01T03:33:48.010009+00:00",
+  "updated_at_utc": "2026-10-01T18:04:42.725046+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2317,5 +2317,107 @@
     },
     "calibration_test_evaluated": false,
     "next_action": "Notebook for arm B. Follow-ups: section_map_with_ecg_score, rate_adaptive_wave_windows, cardiologist_region_marks."
+  },
+  "experiment_043_ann_heads": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User, 30 September 2026: three arms (an MLP head, an attention head on the map, the tutor's CNN + transformer), extra improvements ordered by probability of success, continue overnight without questions on the PR #61 branch without merging",
+    "protocol": "docs/experiment-043-ann-heads.md",
+    "protocol_commit": "4b81ee4",
+    "source_commits": {
+      "networks": "3bb6e39",
+      "stage1": "6228bff",
+      "stage2": "aad3023",
+      "stage3": "fcf9711"
+    },
+    "output_dir": "outputs/experiment043_ann_heads_v1",
+    "outputs": [
+      "outputs/experiment043_ann_heads_v1/stage1",
+      "outputs/experiment043_ann_heads_v1/stage2",
+      "outputs/experiment043_ann_heads_v1/stage3"
+    ],
+    "runner": "scripts/experiments/run_ann_heads043.py",
+    "results": "docs/experiment-043-ann-heads-results.md",
+    "reading": {
+      "logistic_concat": "beats",
+      "mlp_xecg": "matches",
+      "mlp_concat": "matches",
+      "logistic_jepa": "matches",
+      "attention_jepa": "matches",
+      "cnn_transformer": "below",
+      "U_B_gated_improves_on_U_B": false,
+      "attention_jepa_map_improves_on_U_B": false,
+      "cnn_transformer_map_improves_on_U_B": false
+    },
+    "runtime_seconds": {
+      "stage1": 198,
+      "stage2": 1602,
+      "stage3": 3075
+    },
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_VISIBLE_DEVICES": "stage 1 empty, stages 2-3 0"
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "logistic_concat became pipeline v3's readout (Experiment 044). The protocol's demonstration notebook for logistic_concat is still to be written. Follow-ups: benign_referrals_v3, ecg_level_explanation_rule, weighted_ensemble, cnn_transformer_pretraining, jepa_finetune_attention (deferred)."
+  },
+  "experiment_044_pipeline_v3": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized follow-up experiments when results show improvements (protocol, 1 October 2026)",
+    "protocol": "docs/experiment-044-pipeline-v3.md",
+    "protocol_commit": "755c7b0",
+    "source_commits": {
+      "runner": "5f291cf",
+      "rate_matched_post_hoc": "ebfa146",
+      "report": "1493648"
+    },
+    "output_dir": "outputs/experiment044_pipeline_v3_v1",
+    "outputs": [
+      "outputs/experiment044_pipeline_v3_v1",
+      "outputs/experiment044_rate_matched_v1"
+    ],
+    "runner": "scripts/experiments/run_pipeline_v3_044.py",
+    "results": "docs/experiment-044-pipeline-v3-results.md",
+    "specification": "docs/pipeline-v3.md",
+    "reading": {
+      "decision": "adopt_v3",
+      "primary_v3_minus_v2_composite": 0.008,
+      "primary_ci": [
+        0.004,
+        0.012
+      ],
+      "normals_referred_v3_minus_v2_pp": 0.28
+    },
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell"
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "Pipeline v3 is the candidate pipeline. Follow-up: benign_referrals_v3 (which 'other' ECGs v3 refers). Experiment 046 tests pipeline v4 with the 045 ensemble readout."
+  },
+  "experiment_045_two_layer_map": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized follow-up experiments when results show improvements; saved scores only",
+    "protocol": "docs/experiment-045-two-layer-map.md",
+    "protocol_commit": "cab7341",
+    "source_commits": {
+      "runner": "4334836",
+      "logging_fix": "555761a",
+      "report": "297777c"
+    },
+    "output_dir": "outputs/experiment045_two_layer_map_v1",
+    "runner": "scripts/experiments/run_two_layer_map045.py",
+    "results": "docs/experiment-045-two-layer-map-results.md",
+    "reading": {
+      "two_layer_map_improves_on_U_B": false,
+      "ensemble_vs_v3_readout": "beats",
+      "ensemble_vs_R": "beats"
+    },
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell"
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "Experiment 046 (pipeline v4 with the ensemble readout) is running in a separate worktree. Follow-ups: ecg_level_explanation_rule, weighted_ensemble."
   }
 }

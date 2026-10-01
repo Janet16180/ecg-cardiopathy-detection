@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-30",
+  "updated": "2026-10-01",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -553,8 +553,10 @@
       "cpu_hours": 0.5,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Cached features; development and SPH (022 features) with the fixed readout. Experiment 014's JEPA+CPC fusion was negative, which lowers expectations."
+      "status": "done",
+      "notes": "Cached features; development and SPH (022 features) with the fixed readout. Experiment 014's JEPA+CPC fusion was negative, which lowers expectations. Done as Experiment 043 Stage 1: logistic_concat (1,792 features, R's weights) beats R, SPH +0.0017 [+0.0008, +0.0026], full development +0.0041 [+0.0008, +0.0077]; the fit took 14 s on CPU. Adopted as pipeline v3's readout by Experiment 044.",
+      "experiment": "043",
+      "protocol": "docs/experiment-043-ann-heads.md"
     },
     {
       "id": "hard_case_analysis",
@@ -1428,6 +1430,90 @@
       "status": "blocked",
       "authorized": false,
       "notes": "PTB-XL is public; marks stay local. Choose ECGs by rule, including healthy, benign and several cardiopathies."
+    },
+    {
+      "id": "benign_referrals_v3",
+      "kind": "experiment",
+      "title": "Which 'other' and benign ECGs pipeline v3 refers",
+      "question": "Among the SPH ECGs that pipeline v3 refers but that are neither normal nor athlete-criteria abnormal ('other': sinus bradycardia or tachycardia, atrial premature beats), which codes are they, and which would a cardiologist call normal variants at a student site?",
+      "evidence": "Experiment 044: v3 refers 0.249 of the 1,812 'other' ECGs against v2's 0.223 (+0.026 [+0.018, +0.034]) at 5% with 200 local normals; v3b 0.261. SPH counts them neither as caught nor as false referrals.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.2,
+      "build_hours": 1.5,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "Descriptive, from 044's saved draws and predictions (CPU only). For the cardiologist meeting: a table of referred 'other' ECGs by AHA code and referral share, v2 against v3."
+    },
+    {
+      "id": "ecg_level_explanation_rule",
+      "kind": "experiment",
+      "title": "Decide red at the ECG level, then explain with U_B or attention_jepa",
+      "question": "If an ECG is red only when the binary readout refers it at the budget, and its explanation comes from U_B when U_B passes its own 95th percentile and from attention_jepa otherwise, does the explanation keep premature-beat localization while pointing infarcts to the expected leads?",
+      "evidence": "Experiment 045: one joint 5% budget over both layers lost premature-beat localization (-0.309 [-0.418, -0.202] against U_B). Experiment 043: U_B top unit on the premature beat in 93% (hit - chance +0.734); attention_jepa anterior +0.190 [0.080, 0.299] and inferior +0.205 [0.112, 0.300] contrasts but top token on the premature beat in 2.7%.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.3,
+      "build_hours": 2.0,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "Saved scores only (042 unit scores, 043 Stage 2 token maps, 044 readout). Each layer keeps its own threshold, so U_B's threshold does not rise as it did in 045. Related to section_map_with_ecg_score."
+    },
+    {
+      "id": "weighted_ensemble",
+      "kind": "experiment",
+      "title": "Ensemble weights fitted on the 043 validation split",
+      "question": "Does weighting the logistic_concat and attention_jepa logits (one weight and an intercept, fitted on the 043 validation rows) beat the unweighted mean of Experiment 045?",
+      "evidence": "Experiment 045: the unweighted mean-logit ensemble beats pipeline v3's readout, SPH +0.0038 [0.0028, 0.0049], full development +0.0058 [0.0025, 0.0092]; it was not fitted. Experiment 043 kept a fixed 10% validation split (3,939 rows) shared by every network.",
+      "value": 2,
+      "clarity": 0.4,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.2,
+      "build_hours": 1.5,
+      "blocked_by": [
+        "@experiment_046_result"
+      ],
+      "status": "blocked",
+      "authorized": false,
+      "notes": "logistic_concat was fitted on all training rows, including the validation rows, so its validation logits are in-sample; the weight fit needs out-of-fold logistic logits. Wait for Experiment 046 (pipeline v4 with the unweighted ensemble)."
+    },
+    {
+      "id": "cnn_transformer_pretraining",
+      "kind": "experiment",
+      "title": "Self-supervised pretraining of the tutor's CNN + transformer on cohorts v4",
+      "question": "Does pretraining the tutor's CNN + transformer on unlabeled cohorts v4 ECGs (for example masked-token or contrastive) close its gap to R and to the frozen-encoder heads?",
+      "evidence": "Experiment 043 Stage 3: trained from scratch on 35,638 ECGs it was below R, SPH -0.0097 [-0.0119, -0.0075], full -0.0106 [-0.0179, -0.0033], and below logistic_concat by 0.0114 at SPH. Experiment 036: the normal reference needs a pretrained encoder (0.878 against 0.686 random).",
+      "value": 3,
+      "clarity": 0.4,
+      "gpu_hours": 8.0,
+      "cpu_hours": 1.0,
+      "build_hours": 10.0,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "Needs a new protocol, a GPU profile and the shared GPU lock. 043 measured 50 s per epoch on 35,638 ECGs at 250 Hz (batch 64, 1.9 GiB peak); pretraining on 50k-200k cohorts v4 ECGs scales from there. Stage 2's window cache can be reused for the labeled rows."
+    },
+    {
+      "id": "jepa_finetune_attention",
+      "kind": "experiment",
+      "title": "Fine-tune ECG-JEPA end to end under the attention head",
+      "question": "Does fine-tuning ECG-JEPA with the 043 attention head beat the frozen-token attention head?",
+      "evidence": "Experiment 016: end-to-end fine-tuning of xECG lost to its frozen linear probe (0.945 and 0.931 against 0.962). Experiment 043 Stage 2: the attention head on frozen JEPA tokens matched R (SPH +0.0017 [-0.0003, +0.0039], full +0.0063 [-0.0002, +0.0133]).",
+      "value": 2,
+      "clarity": 0.3,
+      "gpu_hours": 6.0,
+      "cpu_hours": 0.5,
+      "build_hours": 6.0,
+      "blocked_by": [
+        "@user_decision"
+      ],
+      "status": "blocked",
+      "authorized": false,
+      "notes": "Deferred by the Experiment 043 protocol for 016's evidence. Would need GPU memory beyond 043's frozen-token runs and a new protocol."
     }
   ]
 }

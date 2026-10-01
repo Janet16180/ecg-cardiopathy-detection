@@ -1,6 +1,22 @@
 # Experiment queue
 
-**Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
+**Updated:** 1 October 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
+
+**1 October, Experiments 043-045 completed; 046 running:** the user asked whether a neural network at the
+end, an attention head or the tutor's CNN + transformer would do better, and asked for the work to continue
+overnight. [Experiment 043](experiment-043-ann-heads-results.md) ran three stages against pipeline v2's
+readout R. The logistic readout on concatenated xECG + JEPA features beats R (SPH +0.0017 [+0.0008, +0.0026],
+full development +0.0041). MLP heads and the attention head on JEPA tokens match R (attention SPH +0.0017
+[-0.0003, +0.0039]); the tutor's CNN + transformer from scratch is below R (SPH -0.0097 [-0.0119, -0.0075]).
+No map improved on 042's `U_B`. [Experiment 044](experiment-044-pipeline-v3-results.md) adopted the
+concatenated readout as [pipeline v3](pipeline-v3.md): composite sensitivity at 5% with 200 local normals
+0.797 against 0.789 (+0.0080 [+0.0040, +0.0120]), at a higher normal referral rate (5.74% against 5.45%).
+[Experiment 045](experiment-045-two-layer-map-results.md) found that a two-layer map (`U_B`, then
+`attention_jepa`) loses premature-beat localization (-0.309 [-0.418, -0.202]), and that the mean-logit
+ensemble of `logistic_concat` and `attention_jepa` beats pipeline v3's readout (SPH +0.0038 [0.0028, 0.0049],
+full +0.0058). Experiment 046, pipeline v4 with the ensemble readout, is running in a separate worktree.
+Outputs: `outputs/experiment043_ann_heads_v1/`, `outputs/experiment044_pipeline_v3_v1/`,
+`outputs/experiment045_two_layer_map_v1/`.
 
 **30 September, Experiment 042 completed:** the user asked for both per-lead approaches.
 [Experiment 042](experiment-042-lead-wave-maps-results.md) compared ECG-JEPA patch tokens (the 041b fallback)
@@ -495,6 +511,9 @@ groups.
 | 037 ([protocol](experiment-037-pipeline-v2.md), [results](experiment-037-pipeline-v2-results.md)) | Pipeline v2: 035 readout with 030 and 033 operating points | Adopted by rule (-0.0048 composite, fails strict non-inferiority); spec in [pipeline-v2](pipeline-v2.md) | `outputs/experiment037_pipeline_v2_v1/` |
 | 041 ([protocol](experiment-041-fragment-localization.md), [results](experiment-041-fragment-localization-results.md)) | Where in the ECG is the abnormality? Per-section maps | Unsupervised map finds premature beats (+0.669 over chance) but worst section detects at 0.777; label-guided 0.926; JEPA fallback triggered | `outputs/experiment041_fragment_localization_v1/` |
 | 042 ([protocol](experiment-042-lead-wave-maps.md), [results](experiment-042-lead-wave-maps-results.md)) | Per-lead maps: ECG-JEPA patches and beat-aligned waves | Beat-aligned improves on 041 (premature beats 93% against 20%; benign red 7.7% against 27%); JEPA does not; lead test not passed | `outputs/experiment042_lead_wave_maps_v1/` |
+| 043 ([protocol](experiment-043-ann-heads.md), [results](experiment-043-ann-heads-results.md)) | ANN heads, attention head on JEPA tokens, tutor's CNN + transformer | xECG + JEPA logistic beats R (SPH +0.0017); MLPs and attention match; CNN + transformer below (-0.0097); no map improves on `U_B` | `outputs/experiment043_ann_heads_v1/` |
+| 044 ([protocol](experiment-044-pipeline-v3.md), [results](experiment-044-pipeline-v3-results.md)) | Pipeline v3: concatenated-feature readout with 030 and 033 operating points | Adopted; composite +0.0080 [+0.0040, +0.0120] at 5%, normals referred 5.74% against 5.45%; spec in [pipeline-v3](pipeline-v3.md) | `outputs/experiment044_pipeline_v3_v1/` |
+| 045 ([protocol](experiment-045-two-layer-map.md), [results](experiment-045-two-layer-map-results.md)) | Two-layer explanation map and a detection ensemble, from saved scores | Two-layer map loses premature-beat localization; ensemble beats v3's readout (SPH +0.0038, full +0.0058) | `outputs/experiment045_two_layer_map_v1/` |
 
 Next, ranked in the [backlog](experiment-backlog.json) and [priorities](experiment-priorities.md):
 `referral_budget_operating_point`, then `hybrid_screening_score` and `rhythm_findings_detector`, with the

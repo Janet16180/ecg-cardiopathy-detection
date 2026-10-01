@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 import torch
 from sklearn.metrics import average_precision_score, roc_auc_score
-from threadpoolctl import threadpool_limits
+from threadpoolctl import threadpool_info, threadpool_limits
 
 from ecg_experiment.eda.ptbxl import load_metadata, load_statements
 from ecg_experiment.external_encoders import (
@@ -83,6 +83,7 @@ PROFILE_RECORDS = 128
 CHUNK = 256
 READER_THREADS = 4
 PROBE_THREADS = 1
+BLAS_ARCHITECTURE = "Haswell"
 ANALYSIS_RESERVE_SECONDS = 600.0
 CEILING_SECONDS = 1800.0
 FEATURE_TOLERANCE = 1e-4
@@ -90,6 +91,30 @@ REPRODUCTION_TOLERANCE = 1e-8
 LOGIT_TOLERANCE = 1e-3
 DETECTION_MARGIN = 0.05
 LOG = logging.getLogger("experiment041")
+
+
+def blas_architectures() -> list[str]:
+    """
+    Require the OpenBLAS kernels that reproduce Experiment 026 bit for bit.
+
+    The default kernels of this machine's CPU change the logistic fit by about 1e-6;
+    ``OPENBLAS_CORETYPE=Haswell`` reproduces it exactly.
+
+    Returns
+    -------
+    list[str]
+        Architecture of every loaded OpenBLAS library.
+
+    Raises
+    ------
+    RuntimeError
+        If any OpenBLAS library uses other kernels.
+    """
+    found = [str(item.get("architecture")) for item in threadpool_info()
+             if item.get("internal_api") == "openblas"]
+    if not found or set(found) != {BLAS_ARCHITECTURE}:
+        raise RuntimeError(f"Set OPENBLAS_CORETYPE={BLAS_ARCHITECTURE}; OpenBLAS kernels are {found}")
+    return found
 
 
 def identity() -> dict[str, Any]:
@@ -115,7 +140,8 @@ def identity() -> dict[str, Any]:
     inputs[to_stored(PRIOR026 / "development_scores.csv")] = scores
     inputs[to_stored(PRIOR026 / "result.json")] = sha256_file(PRIOR026 / "result.json")
     return {"inputs": inputs, "xecg_cache": cache_hashes,
-            "sources": {name: sha256_file(ROOT / name) for name in SOURCES}, "git_head": git_head(ROOT)}
+            "sources": {name: sha256_file(ROOT / name) for name in SOURCES}, "git_head": git_head(ROOT),
+            "openblas_architectures": blas_architectures()}
 
 
 def statement_table() -> pd.DataFrame:

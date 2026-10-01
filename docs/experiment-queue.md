@@ -2,6 +2,30 @@
 
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
+**30 September Transformer/SimDINO resource stop:** [Experiment 040](experiment-040-cpc-simdino-results.md)
+passed all six real GPU profiles and exact normal/final-16-record checkpoint recovery. The all-or-none
+time gate rejected the fixed 18-fit suite: 29,295.03 projected combined seconds versus the shared
+28,800-second ceiling, including diagnostic and reporting reserves. All original outcomes remain
+under `outputs/experiment040_cpc_simdino/`. No full fit, development score or primary-family decision
+was produced; this resource stop supplies no performance evidence about the objectives.
+
+Protocol `ac18dac`, frozen implementation `a675030` and the three matched seeds retain the complete
+CPC/SimDINOv2-style/hybrid × GRU/mLSTM schedule. The compact local causal Transformer has 49-sample
+raw support; historical 039 patch/CPC controls remain fixed. Experiment 039 closed at 10,685.80
+charged seconds before the 040 profiles. The final 040 receipt audit verified 134 source/input hashes,
+all profile/admission bindings and stage-ledger consistency. See the results report for measurements
+and final accounting. The coordinator has stopped; no second process or automatic restart is scheduled.
+
+Verification: 102 focused CPU tests passed in 11.91 seconds; Ruff passed. GitHub CI passed 1,167 tests
+with six skipped in 114.16 seconds and built wheel/source distributions. Its setup fetches the exact
+pinned upstream loss implementation. The earlier local worktree had one existing frozen v11 path-guard
+failure from the shared outputs symlink; that isolated test passed in the main checkout.
+
+The original backlog entry remains blocked by the resource gate. A separately authorized prospective
+resource plan is ranked as follow-up. No coefficient/exposure/family change or correction cycle was
+made; no closed-test evaluation is authorized, and 008 remains deferred. Draft
+[PR #59](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/59) targets `main` and remains unmerged.
+
 **30 September encoder/context study completed:** [Experiment 039 results](experiment-039-cpc-encoder-context-results.md) report all 36 fresh fits: CNN, multiscale and
 patch encoders crossed with GRU/xLSTM, three seeds and v4 25k/50k cohorts. Every fit completed
 1,954 updates / 250,000 exposures and every cell passed audit. 2 of eight primary encoder comparisons met the frozen promising development rule.

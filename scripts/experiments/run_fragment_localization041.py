@@ -82,6 +82,7 @@ ORDER_RECORDS = 8
 PROFILE_RECORDS = 128
 CHUNK = 256
 READER_THREADS = 4
+PROBE_THREADS = 1
 ANALYSIS_RESERVE_SECONDS = 600.0
 CEILING_SECONDS = 1800.0
 FEATURE_TOLERANCE = 1e-4
@@ -242,7 +243,7 @@ def reproduce026(rows: dict[str, pd.DataFrame]) -> tuple[dict[str, float], Any, 
     evaluation = rows["evaluation"]
     saved = pd.read_csv(PRIOR026 / "development_scores.csv").set_index("ecg_id").loc[evaluation["ecg_id"]]
     x = cached(evaluation["ecg_id"].to_numpy())
-    with threadpool_limits(limits=4):
+    with threadpool_limits(limits=PROBE_THREADS):
         whole = mahalanobis_scores(fit_mahalanobis(cached(rows["fit"]["ecg_id"].to_numpy())), x)
         head = fit_logistic(cached(rows["pool"]["ecg_id"].to_numpy()), rows["pool"]["standard"].to_numpy(int))
     probability = predict(head, x)
@@ -499,7 +500,7 @@ def run(smoke: bool, output: Path) -> None:
     LOG.info("rows: %s", {name: len(frame) for name, frame in rows.items()})
     if smoke:
         pool = rows["pool"]
-        with threadpool_limits(limits=4):
+        with threadpool_limits(limits=PROBE_THREADS):
             head = fit_logistic(cached(pool["ecg_id"].to_numpy()), pool["standard"].to_numpy(int))
         reproduction, whole = {}, np.full(len(rows["evaluation"]), np.nan)
     else:

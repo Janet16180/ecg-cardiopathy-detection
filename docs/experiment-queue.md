@@ -2,6 +2,41 @@
 
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
+**30 September day closed:** The user chose to close out today's completed work and merge it
+into `main`. Experiment 039 finished all 36 fits and 18 audits; Experiment 040 completed its
+resource profiles and six-package runtime diagnosis. Its 18 full Transformer/SimDINO fits remain
+unrun after the original resource stop. No training, localization/clustering study or closed-test
+stage is scheduled, and no process restarts automatically.
+
+The completed code, protocols and reports are delivered through
+[PR #58](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/58),
+[PR #59](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/59) and
+[PR #60](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/60), all targeting `main`.
+GitHub records the final merge state. Original source identities, measurements and closed ledgers
+remain unchanged; merge commits do not replace experimental provenance. Future full training or
+fragment localization needs a prospective protocol and agreed scope.
+
+**30 September runtime diagnosis completed:** The user-requested [runtime diagnosis](experiment-040-runtime-diagnostic-results.md)
+completed six fresh 200-update probes in 350.77 seconds for CPC, SimDINO and their hybrid with
+GRU/mLSTM. The independent audit passed all six packages, twelve checkpoints, exact recovery,
+repeat feature hashes and unchanged parent/source identities. All 18 full fits remain unexecuted;
+no development performance was scored. The new process has stopped.
+
+The fixed full family projects 6,275.24 seconds of optimizer work (1.743 hours), or 9,500.79 seconds
+(2.639 hours) including remaining preparation, profiles, checks, readouts and reporting. The
+conservative scenario is 13,869.37 seconds (3.853 hours), with the correction reserve separate.
+These are extrapolations from 200 updates and historical CPU proxies. Repeated nested source
+validation measured 40.07 seconds per stage gate, projecting another 1,081.97 seconds. The analysis
+also removes overlapping historical/new extraction and checkpoint reload costs while retaining
+missing setup/validation work. It reproduces the original rejected forecast exactly.
+
+Evidence lives in `outputs/experiment040_runtime_diagnostic/`; its ledger is separate from closed
+039/040 accounting. The [runtime protocol](experiment-040-runtime-diagnostic.md), source `019c9d6`
+and original receipts remain frozen. The conservative spent-plus-future scenario still exceeds
+the original eight-hour shared ceiling after diagnostic work; no original admission was overridden.
+Forward accounting/validation work enters the ranked backlog. [PR #60](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/60) targets `main`;
+the user authorized its merge as part of today's closeout.
+
 **30 September Transformer/SimDINO resource stop:** [Experiment 040](experiment-040-cpc-simdino-results.md)
 passed all six real GPU profiles and exact normal/final-16-record checkpoint recovery. The all-or-none
 time gate rejected the fixed 18-fit suite: 29,295.03 projected combined seconds versus the shared
@@ -23,8 +58,8 @@ failure from the shared outputs symlink; that isolated test passed in the main c
 
 The original backlog entry remains blocked by the resource gate. A separately authorized prospective
 resource plan is ranked as follow-up. No coefficient/exposure/family change or correction cycle was
-made; no closed-test evaluation is authorized, and 008 remains deferred. Draft
-[PR #59](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/59) targets `main` and remains unmerged.
+made; no closed-test evaluation is authorized, and 008 remains deferred. [PR #59](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/59) targets `main`;
+the user authorized its merge as part of today's closeout.
 
 **30 September encoder/context study completed:** [Experiment 039 results](experiment-039-cpc-encoder-context-results.md) report all 36 fresh fits: CNN, multiscale and
 patch encoders crossed with GRU/xLSTM, three seeds and v4 25k/50k cohorts. Every fit completed

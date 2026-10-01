@@ -1228,15 +1228,32 @@
       "kind": "experiment",
       "title": "Independent seeds for the matched CPC GRU versus xLSTM contrast",
       "question": "Do the25k/50k context differences and small xLSTM scaling gain repeat across independent fresh initializations?",
-      "evidence": "Experiment038 completed one seed: primary architecture differences\u22120.00897 at25k/\u22120.00737 at50k; scaling+0.00231; all paired patient intervals include zero. These intervals exclude training-seed variability.",
+      "evidence": "Experiment 039 completed fresh CNN context controls at three seeds and both byte-identical v4/v3 tiers. 25k_limited_cnn_xlstm_minus_gru: -0.01113 [-0.01746, -0.00491]; 50k_limited_cnn_xlstm_minus_gru: -0.00937 [-0.01587, -0.00295]",
       "value": 2,
       "clarity": 0.6,
       "gpu_hours": 1,
       "cpu_hours": 0.5,
       "build_hours": 2,
       "blocked_by": [],
+      "status": "done",
+      "notes": "Measured executable work for the six CNN control cells: 3552.41 seconds (0.987 hours), including prepare/profile/train/readout/audit. Completed within docs/experiment-039-cpc-encoder-context-results.md. Patient intervals condition on three trained seeds; contexts/scaling are exploratory. This resolves the requested seed replication under the fixed recipe, not all training randomness or source-composition confounding."
+    },
+    {
+      "id": "cpc_local_transformer_followup",
+      "kind": "experiment",
+      "title": "Bounded local Transformer front end crossed with CPC contexts",
+      "question": "Does causal local attention improve on the measured patch projection under matched CPC exposure and readout budgets?",
+      "evidence": "Experiment 039 completed all 36 encoder/context fits; 2 of eight primary comparisons met the frozen rule. The patch arm has no attention. PatchTST (https://arxiv.org/abs/2211.14730) and MTECG (https://arxiv.org/abs/2309.07136) motivate patch Transformers under different objectives; they do not demonstrate a gain for this CPC recipe.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 2,
+      "cpu_hours": 0.5,
+      "build_hours": 4,
+      "blocked_by": [
+        "@experiment040_outcome"
+      ],
       "status": "open",
-      "notes": "New frozen protocol and identities; reuse verified caches and unchanged scientific recipe. Further source-composition controls are needed for a size-only claim. No immediate run authorized by this backlog entry."
+      "notes": "User asked for a Transformer encoder. Authorized CPC and CPC+SimDINOv2 measurement is separately owned by Experiment 040; do not schedule a duplicate. After 040, consider a context factorial only if its result leaves that question open. For stride16 and shortest horizon4, bound total raw encoder RF at64 samples. One causal attention block with a two-token window after a33-sample patch gives RF49; two such blocks give RF65 and require a shorter patch or changed objective. Freeze analytic and synthetic causal/support tests, independent halves, matched context/head initialization and real GPU profiles before any new score. No automatic closed-test or clinical-pipeline change."
     }
   ]
 }

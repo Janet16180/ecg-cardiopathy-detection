@@ -2,6 +2,15 @@
 
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
+**30 September encoder/context study completed:** [Experiment 039 results](experiment-039-cpc-encoder-context-results.md) report all 36 fresh fits: CNN, multiscale and
+patch encoders crossed with GRU/xLSTM, three seeds and v4 25k/50k cohorts. Every fit completed
+1,954 updates / 250,000 exposures and every cell passed audit. 2 of eight primary encoder comparisons met the frozen promising development rule.
+The primary family uses shared whole-patient draws and a simultaneous band across eight
+encoder-minus-CNN contrasts; context, scaling and interactions are exploratory. Read the
+aggregate, interaction, collapse-gate and accounting receipts under
+`outputs/experiment039_encoder_context/`. No closed test was scored. Separate user-authorized
+Transformer/CPC+SimDINOv2 work belongs to Experiment 040 and has its own protocol and gates.
+
 **30 September xLSTM result:** Experiment [038](experiment-038-cpc-xlstm-results.md) completed the
 user-authorized 25k and conditional 50k comparisons in PR #56. All four full CPC arms trained fresh
 for 1,954 updates / 250,000 exposures each; both development audits passed. Primary 1,518-label

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-01T18:04:42.725046+00:00",
+  "updated_at_utc": "2026-10-01T19:15:59.953767+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2419,5 +2419,208 @@
     },
     "calibration_test_evaluated": false,
     "next_action": "Experiment 046 (pipeline v4 with the ensemble readout) is running in a separate worktree. Follow-ups: ecg_level_explanation_rule, weighted_ensemble."
+  },
+  "experiment_046_pipeline_v4": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized follow-up experiments when results show improvements (1 October 2026)",
+    "protocol": "docs/experiment-046-pipeline-v4.md",
+    "protocol_commit": "5170a37",
+    "source_commits": {
+      "runner": "b0455d9",
+      "report": "682c6dd"
+    },
+    "output_dir": "outputs/experiment046_pipeline_v4_v1",
+    "outputs": [
+      "outputs/experiment046_pipeline_v4_v1",
+      "outputs/experiment046_pipeline_v4_smoke"
+    ],
+    "runner": "scripts/experiments/run_pipeline_v4_046.py",
+    "results": "docs/experiment-046-pipeline-v4-results.md",
+    "specification": "docs/pipeline-v4.md",
+    "reading": {
+      "decision": "adopt_v4",
+      "primary_v4_minus_v3_composite": 0.0121,
+      "primary_ci": [
+        0.0082,
+        0.0161
+      ],
+      "other_referred_v4": 0.275,
+      "other_referred_v3": 0.249,
+      "attention_head_retrain_bit_identical": true
+    },
+    "runtime_seconds": 671,
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_VISIBLE_DEVICES": "0"
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "Pipeline v4 is the candidate pipeline. Follow-ups: other_referrals_cardiologist (the 'other' cost, 27.5% against 24.9%), weighted_ensemble, cpu_timing_clinic_laptop."
+  },
+  "experiment_047_explanation_rule": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized follow-up experiments when results show improvements; saved scores only",
+    "protocol": "docs/experiment-047-explanation-rule.md",
+    "protocol_commit": "12f6c28",
+    "source_commits": {
+      "runner": "54b61be",
+      "report": "8e74e86"
+    },
+    "output_dir": "outputs/experiment047_explanation_rule_v1",
+    "runner": "scripts/experiments/run_explanation_rule047.py",
+    "results": "docs/experiment-047-explanation-rule-results.md",
+    "reading": {
+      "rule_improves_on_U_B": false,
+      "rule_improves_on_attention_jepa": true,
+      "hit_minus_chance_minus_U_B": -0.136,
+      "hit_minus_chance_minus_U_B_ci": [
+        -0.232,
+        -0.057
+      ],
+      "rule_anterior_contrast": 0.215,
+      "rule_anterior_contrast_ci": [
+        0.099,
+        0.336
+      ]
+    },
+    "runtime_seconds": 64,
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "Superseded by Experiment 048: switching on U_B being red sent 7 referred PVC ECGs to the attention layer, all of which U_B had localized."
+  },
+  "experiment_048_pvc_switch": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized follow-up experiments when results show improvements; saved scores only",
+    "protocol": "docs/experiment-048-pvc-switch.md",
+    "protocol_commit": "1e0fec8",
+    "source_commits": {
+      "runner": "3bd6cf9",
+      "report": "bf00219"
+    },
+    "output_dir": "outputs/experiment048_pvc_switch_v1",
+    "runner": "scripts/experiments/run_pvc_switch048.py",
+    "results": "docs/experiment-048-pvc-switch-results.md",
+    "figures": "docs/figures/experiment-048",
+    "reading": {
+      "pvc_switch_improves_on_U_B": true,
+      "pvc_switch_improves_on_attention_jepa": true,
+      "hit_minus_chance": 0.69,
+      "hit_minus_chance_minus_U_B": 0.0,
+      "anterior_contrast": 0.189,
+      "anterior_contrast_ci": [
+        0.067,
+        0.307
+      ],
+      "referred_anterior_infarcts_to_U_B": [
+        68,
+        136
+      ],
+      "referred_inferior_infarcts_to_U_B": [
+        43,
+        112
+      ]
+    },
+    "runtime_seconds": 82,
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "The PVC switch is the recommended explanation rule (docs/pipeline-v4.md, Explanation). Follow-ups: pvc_switch_specificity, other cost in cardiologist review."
+  },
+  "experiment_049_focal_switch": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized follow-up experiments when results show improvements; saved scores only",
+    "protocol": "docs/experiment-049-focal-switch.md",
+    "protocol_commit": "adb5d08",
+    "source_commits": {
+      "runner": "2dc1a53",
+      "report": "40c0d24"
+    },
+    "output_dir": "outputs/experiment049_focal_switch_v1",
+    "runner": "scripts/experiments/run_focal_switch049.py",
+    "results": "docs/experiment-049-focal-switch-results.md",
+    "reading": {
+      "focal_switch_improves_on_pvc_switch": false,
+      "hit_minus_chance_minus_pvc_switch": -0.405,
+      "hit_minus_chance_minus_pvc_switch_ci": [
+        -0.536,
+        -0.275
+      ],
+      "normal_focal_ratio_q975": 22.4,
+      "pvc_focal_ratio_median": 18.8,
+      "combined_50_pvc_switch_hit_rate": 0.932
+    },
+    "runtime_seconds": 90,
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "The PVC switch with combined_50 referral stays the best configuration. Follow-up: norm_reference_ectopy_review (12 NORM-only normals with one extreme beat)."
+  },
+  "experiment_050_attention_findings": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized follow-up experiments when results show improvements (1 October 2026)",
+    "protocol": "docs/experiment-050-attention-finding-heads.md",
+    "protocol_commit": "ae1c879",
+    "source_commits": {
+      "runner": "e65735f",
+      "report": "5a4cd8c"
+    },
+    "output_dir": "outputs/experiment050_attention_findings_v1",
+    "outputs": [
+      "outputs/experiment050_attention_findings_v1",
+      "outputs/experiment050_attention_findings_smoke"
+    ],
+    "runner": "scripts/experiments/run_attention_findings050.py",
+    "results": "docs/experiment-050-attention-finding-heads-results.md",
+    "reading": {
+      "pvc_detection_sph": "below",
+      "attention_minus_xecg_pvc_sph": -0.0068,
+      "attention_minus_xecg_pvc_sph_ci": [
+        -0.0128,
+        -0.0015
+      ],
+      "pvc_map_keeps_localization": false,
+      "pvc_map_hit_minus_chance_minus_U_B": -0.045,
+      "pvc_map_hit_minus_chance_minus_U_B_ci": [
+        -0.148,
+        0.054
+      ]
+    },
+    "runtime_seconds": 1172,
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_VISIBLE_DEVICES": "0"
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "Pipelines v3 and v4 keep the xECG finding heads; 048's rule keeps U_B. Follow-ups: pvc_score_ensemble, token_only_explanation."
+  },
+  "cpu_inference_timing": {
+    "status": "complete",
+    "kind": "measurement, not an experiment (no score computed)",
+    "document": "docs/inference-timing-cpu.md",
+    "script": "scripts/reports/time_inference_cpu.py",
+    "source_commit": "8304ab6",
+    "output_dir": "outputs/inference_timing_cpu_v1",
+    "reading": {
+      "per_ecg_median_ms_4_threads": 328,
+      "per_ecg_median_ms_1_thread": 826,
+      "peak_rss_mib": 2261,
+      "outputs_match_gpu_path": true
+    },
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "next_action": "cpu_timing_clinic_laptop: rerun the script on the clinic laptop."
   }
 }

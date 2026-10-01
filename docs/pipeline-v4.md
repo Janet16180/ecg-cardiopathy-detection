@@ -164,3 +164,16 @@ Everything in `pipeline-v3.md` section 8, and in addition:
 - The "other" ECGs: v4 refers 27.5% of them at 5%, against 24.9% (v3) and 22.3% (v2). At a student site
   many would be normal variants (sinus bradycardia, sinus tachycardia, atrial premature beats). The
   cardiologist should see this trade before a final test fixes v4.
+
+## 10. Explanation (added 1 October 2026; not part of the referral specification above)
+
+The recommended explanation of a referred ECG is Experiment 048's PVC switch
+([results](experiment-048-pvc-switch-results.md)). Mark the top unit of 042's beat-wave map `U_B` when the
+xECG PVC head's z-score is above the 97.5th percentile of the normals' z-scores; otherwise mark the top token
+of the attention head A's per-token contributions (`pvc_switch.switch_explain`,
+`explanation_rule.rule_marks`). On PTB-XL development it kept every `U_B` premature-beat hit (90% of referred
+PVC ECGs) and gained infarct-lead information over `U_B` (anterior contrast +0.189 [0.067, 0.307]). It sends
+about half of the referred anterior infarcts to `U_B`. [Experiment 049](experiment-049-focal-switch-results.md)
+found no better switch. With the `combined_50` referral, the PVC switch put the explanation on the premature
+beat in 93% of the PVC ECGs. The thresholds were fitted on PTB-XL development normals, not local normals.
+The CPU cost is in [inference-timing-cpu.md](inference-timing-cpu.md).

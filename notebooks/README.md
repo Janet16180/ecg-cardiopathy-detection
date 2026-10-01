@@ -32,6 +32,7 @@ Notebooks that show an experiment's method on single ECGs. The numbers that deci
 | Notebook | Experiment | What it shows |
 | --- | --- | --- |
 | `11-jr-section-maps.ipynb` | [041](../docs/experiment-041-fragment-localization-results.md) | Abnormal 0.25 s sections painted red on healthy ECGs, benign variants and twelve kinds of cardiopathy; needs `outputs/experiment041_fragment_localization_v1/` and runs on the CPU |
+| `12-jr-beat-wave-maps.ipynb` | [042](../docs/experiment-042-lead-wave-maps-results.md) | The beat-aligned map: each beat cut into P, QRS, ST and T per lead, compared with healthy beats, with red waves on the same examples as notebook 11; needs `outputs/experiment042_lead_wave_maps_v1/` and refits its references on the CPU in about a minute |
 
 The MIMIC and EchoNext notebooks show aggregate statistics only (credentialed data), so their outputs can
 be kept in Git. Findings for the project from notebooks 07 and 08 are in

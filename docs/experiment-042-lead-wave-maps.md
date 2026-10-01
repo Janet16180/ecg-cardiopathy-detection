@@ -46,6 +46,19 @@ Calibration and test patients stay closed.
 - `G_J` (secondary): the Experiment 026 `jepa` `probe_all` head applied to each token, c = w · (x - m) / s + b.
   The mean of the 400 contributions is the ECG's logit.
 
+### Amendment 1, 30 September 2026, before any development score
+
+The training-only smoke test showed that one covariance pooled over the 8 leads makes lead II dominate. In
+a training check (1,000 fit-set ECGs as reference; 150 normal and 150 abnormal other training ECGs, no
+development row), lead II held the top token for 79 of 150 normal ECGs, and the worst-token AUROC was 0.319.
+Lead II tokens vary more among normal ECGs, so they look far from a covariance shared with the other leads.
+Fitting one reference per lead gave 0.735, with the top lead spread across all eight.
+
+`U_J` and `U_J_kmeans` therefore use **one reference per lead**. For each of the 8 leads,
+position centring, the streaming Mahalanobis and the k-means (32 clusters, `random_state=42042`) are fitted
+on that lead's 293,600 fit tokens (5,872 ECGs by 50 patches) exactly as described above, and the lead's tokens
+are scored against its own reference. Everything else is unchanged.
+
 ## Arm B maps
 
 - Signal: `read_ptb_float64` (500 Hz, mV). R peaks: `fragment_localization.r_peaks` on the raw signal.

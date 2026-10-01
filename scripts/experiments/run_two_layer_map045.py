@@ -604,13 +604,13 @@ def run(output: Path, integrity_only: bool) -> None:
         "total_seconds": time.perf_counter() - started, "calibration_test_evaluated": False,
         "challenge_test_read": False, "ptbxl_test_read": False,
     })
+    LOG.info("done in %.1f s", time.perf_counter() - started)
     logging.shutdown()
     partial.rename(output)
     if examples is not None:
         FIGURES_COPY.mkdir(parents=True, exist_ok=True)
         for path in sorted((output / "figures").glob("*.png")):
             shutil.copy2(path, FIGURES_COPY / path.name)
-    LOG.info("done in %.1f s", time.perf_counter() - started)
 
 
 def main() -> None:

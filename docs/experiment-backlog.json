@@ -1359,7 +1359,7 @@
       "blocked_by": [],
       "status": "open",
       "authorized": false,
-      "notes": "CPU only from the saved 041 section scores; thresholds from local normals as in Experiment 030."
+      "notes": "CPU only from the saved 041 section scores; thresholds from local normals as in Experiment 030. Related results: Experiments 047-049 refer by the readout and explain only referred ECGs; 048's PVC switch is the recommended explanation (docs/pipeline-v4.md)."
     },
     {
       "id": "benign_variant_contrast",
@@ -1432,11 +1432,11 @@
       "notes": "PTB-XL is public; marks stay local. Choose ECGs by rule, including healthy, benign and several cardiopathies."
     },
     {
-      "id": "benign_referrals_v3",
+      "id": "other_referrals_cardiologist",
       "kind": "experiment",
-      "title": "Which 'other' and benign ECGs pipeline v3 refers",
-      "question": "Among the SPH ECGs that pipeline v3 refers but that are neither normal nor athlete-criteria abnormal ('other': sinus bradycardia or tachycardia, atrial premature beats), which codes are they, and which would a cardiologist call normal variants at a student site?",
-      "evidence": "Experiment 044: v3 refers 0.249 of the 1,812 'other' ECGs against v2's 0.223 (+0.026 [+0.018, +0.034]) at 5% with 200 local normals; v3b 0.261. SPH counts them neither as caught nor as false referrals.",
+      "title": "Which 'other' and benign ECGs pipelines v3 and v4 refer, for the cardiologist",
+      "question": "Among the SPH ECGs that pipelines v3 and v4 refer but that are neither normal nor athlete-criteria abnormal ('other': sinus bradycardia or tachycardia, sinus arrhythmia, atrial premature beats), which codes are they, how does the share change from v2 to v3 to v4, and which would a cardiologist call normal variants at a student site?",
+      "evidence": "Experiment 044: v3 refers 0.249 of the 1,812 'other' ECGs against v2's 0.223 (+0.026 [+0.018, +0.034]) at 5% with 200 local normals. Experiment 046: v4 refers 0.275 (+0.026 [+0.017, +0.035] over v3, +0.052 over v2), and the extra referrals are not a rate effect (matched-rate check). SPH counts them neither as caught nor as false referrals.",
       "value": 4,
       "clarity": 0.8,
       "gpu_hours": 0.0,
@@ -1445,7 +1445,7 @@
       "blocked_by": [],
       "status": "open",
       "authorized": false,
-      "notes": "Descriptive, from 044's saved draws and predictions (CPU only). For the cardiologist meeting: a table of referred 'other' ECGs by AHA code and referral share, v2 against v3."
+      "notes": "Formerly benign_referrals_v3 (named in the 043 and 044 reports), merged here when 046 added v4. Descriptive, from 044's and 046's saved draws and predictions (CPU only). For the cardiologist meeting: a table of referred 'other' ECGs by AHA code and referral share, v2, v3 and v4."
     },
     {
       "id": "ecg_level_explanation_rule",
@@ -1459,9 +1459,11 @@
       "cpu_hours": 0.3,
       "build_hours": 2.0,
       "blocked_by": [],
-      "status": "open",
+      "status": "done",
       "authorized": false,
-      "notes": "Saved scores only (042 unit scores, 043 Stage 2 token maps, 044 readout). Each layer keeps its own threshold, so U_B's threshold does not rise as it did in 045. Related to section_map_with_ecg_score."
+      "notes": "Saved scores only (042 unit scores, 043 Stage 2 token maps, 044 readout). Each layer keeps its own threshold, so U_B's threshold does not rise as it did in 045. Related to section_map_with_ecg_score. Done by Experiments 047-049. 047 (this rule, switch on U_B red): negative, hit - chance minus U_B -0.136 [-0.232, -0.057], anterior contrast +0.215 [0.099, 0.336]. 048 (switch on the xECG PVC head, z_PVC above the normals' 97.5th percentile): improves on U_B, keeps every premature-beat hit, anterior +0.189 [0.067, 0.307], but sends 68 of 136 referred anterior infarcts to U_B. 049 (label-free focal switch): negative; the PVC switch with combined_50 referral is the best configuration (hit 0.932 on 73 PVC ECGs). Measured: under 2 CPU minutes per run.",
+      "experiment": "047",
+      "protocol": "docs/experiment-047-explanation-rule.md"
     },
     {
       "id": "weighted_ensemble",
@@ -1474,12 +1476,10 @@
       "gpu_hours": 0.0,
       "cpu_hours": 0.2,
       "build_hours": 1.5,
-      "blocked_by": [
-        "@experiment_046_result"
-      ],
-      "status": "blocked",
+      "blocked_by": [],
+      "status": "open",
       "authorized": false,
-      "notes": "logistic_concat was fitted on all training rows, including the validation rows, so its validation logits are in-sample; the weight fit needs out-of-fold logistic logits. Wait for Experiment 046 (pipeline v4 with the unweighted ensemble)."
+      "notes": "logistic_concat was fitted on all training rows, including the validation rows, so its validation logits are in-sample; the weight fit needs out-of-fold logistic logits. Wait for Experiment 046 (pipeline v4 with the unweighted ensemble). Unblocked: Experiment 046 finished and adopted v4 with the unweighted mean (composite +0.0121 over v3), so a weighted ensemble would be tested against v4."
     },
     {
       "id": "cnn_transformer_pretraining",
@@ -1514,6 +1514,108 @@
       "status": "blocked",
       "authorized": false,
       "notes": "Deferred by the Experiment 043 protocol for 016's evidence. Would need GPU memory beyond 043's frozen-token runs and a new protocol."
+    },
+    {
+      "id": "norm_reference_ectopy_review",
+      "kind": "repo",
+      "title": "Cardiologist review of NORM-only normals with one extreme beat",
+      "question": "Are the 12 PTB-XL development NORM-only normals whose focal ratio exceeds 22.4 unlabelled ectopic beats or artefacts, and should such ECGs leave the normal reference sets that fit every map and referral threshold?",
+      "evidence": "Experiment 049: the normals' 97.5th-percentile focal ratio is 22.4, above the median PVC ECG (18.8). The 12 normals above it have ordinary median beat scores (59.3) but one huge beat (median maximum 7,306, against 3,428 in PVC ECGs).",
+      "value": 3,
+      "clarity": 0.7,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.1,
+      "build_hours": 1.0,
+      "blocked_by": [
+        "@cardiologist_meeting"
+      ],
+      "status": "blocked",
+      "authorized": false,
+      "notes": "PTB-XL is public. Prepare a sheet of the 12 ECGs with the worst beat marked (049's explanations.npz focal ratios, 042's U_B units). If they are ectopy, the same check applies to the 5,872 training normals that fit U_B's references."
+    },
+    {
+      "id": "pvc_score_ensemble",
+      "kind": "experiment",
+      "title": "Unfitted mean of the xECG PVC z-score and the attention PVC logit",
+      "question": "Does the mean of the xECG PVC z-score and the attention PVC head's standardized logit, both standardized on the same normals, detect PVC better than the xECG head and improve the pipeline's PVC referrals?",
+      "evidence": "Experiment 050: attention PVC head SPH AUROC 0.9830 against 0.9898 for the xECG head (-0.0068 [-0.0128, -0.0015]) but higher average precision (0.957 against 0.945), so the two may be complementary, as the binary readouts were in 045.",
+      "value": 2,
+      "clarity": 0.5,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.5,
+      "build_hours": 2.0,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "Saved 050 predictions and 044 z-scores; standardization needs the attention head scored on the 1,707 Challenge calibration clear normals (tokens not cached; a GPU or CPU extraction). Needs a protocol and a pipeline comparison like 046. PVC ECGs are already referred 0.96-0.98 of the time, so the room is small."
+    },
+    {
+      "id": "token_only_explanation",
+      "kind": "experiment",
+      "title": "Two-colour explanation from the tokens alone (attention_pvc for rhythm, attention_jepa for morphology)",
+      "question": "If the rhythm layer of 048's explanation is the attention PVC head's token map instead of U_B, does it keep premature-beat localization within the 0.10 margin, so the site needs no beat-wave pipeline?",
+      "evidence": "Experiment 050: attention_pvc's top token is on the premature beat in 84% of 73 PVC ECGs (hit - chance +0.689), against 93% for U_B; the paired difference -0.045 [-0.148, +0.054] fails the margin. 048's rule uses U_B. CPU timing: U_B costs about 11 ms per ECG and needs 0.8 MiB of references.",
+      "value": 2,
+      "clarity": 0.4,
+      "gpu_hours": 0.2,
+      "cpu_hours": 0.3,
+      "build_hours": 2.0,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "Needs more premature-beat ECGs to narrow the interval, for example SPH PVC ECGs with 041's rule (050 idea 2). U_B is cheap on the CPU, so the gain would be simplicity, not speed."
+    },
+    {
+      "id": "pvc_switch_specificity",
+      "kind": "experiment",
+      "title": "A more specific rhythm switch for 048's explanation",
+      "question": "Does a switch that requires z_PVC above threshold and a QRS narrower than an LBBB cutoff (or the PVC head minus a conduction head) keep every PVC ECG on U_B while sending conduction and infarct ECGs to the attention layer?",
+      "evidence": "Experiment 048: the PVC head is on for 48% of all anterior-only and 34% of inferior-only infarcts; the CLBBB example had z_PVC 6.94. Experiment 049: a label-free focal switch cut the infarct cost (19 against 68 anterior) but reached only 24 of 49 PVC ECGs; the lead contrast barely changed (+0.186 against +0.189).",
+      "value": 2,
+      "clarity": 0.4,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.3,
+      "build_hours": 2.0,
+      "blocked_by": [
+        "other_referrals_cardiologist"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": "Saved scores plus a QRS-width measure from the 042 beats. Worth running only if the cardiologist minds infarcts explained by the rhythm layer; 049 showed the lead contrast is insensitive to this cost."
+    },
+    {
+      "id": "cpu_timing_clinic_laptop",
+      "kind": "repo",
+      "title": "Rerun the CPU timing script on the clinic laptop",
+      "question": "On the clinic's laptop, how long do pipeline v4 and its explanation take per ECG, how much memory do they use, and do the ECG-JEPA tokens match the reference within float16 resolution?",
+      "evidence": "docs/inference-timing-cpu.md: 0.33 s per ECG at 4 threads and 0.83 s at 1 on a Threadripper 7960X, 2.3 GiB peak; CPU outputs equal the GPU path's (xECG 2.7e-5, SPH logits 6e-7).",
+      "value": 3,
+      "clarity": 0.9,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.2,
+      "build_hours": 1.0,
+      "blocked_by": [
+        "@clinic_laptop_available"
+      ],
+      "status": "blocked",
+      "authorized": false,
+      "notes": "scripts/reports/time_inference_cpu.py with --threads set to the laptop's cores. Needs the two encoder checkpoints, the head files and the PTB-XL training records on the laptop; the token-cache and SPH checks need 043's cache or can be skipped there."
+    },
+    {
+      "id": "explanation_thresholds_local_normals",
+      "kind": "repo",
+      "title": "Fit the explanation's switch and red thresholds on the site's local normals",
+      "question": "With 048's PVC switch and combined_50 referral, how stable are the z_PVC switch and the two red thresholds when fitted on 200 or 1,000 local normals instead of the 463 PTB-XL development normals?",
+      "evidence": "Experiments 047-049 fitted every threshold on the same 463 NORM-only normals; pipeline v4 fits its referral thresholds on local normals (030, 033).",
+      "value": 2,
+      "clarity": 0.6,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.3,
+      "build_hours": 1.5,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "Can be simulated on SPH's local pool with saved z-scores; the map thresholds need U_B and attention maps of SPH ECGs (tokens cached; U_B needs the SPH waveforms)."
     }
   ]
 }

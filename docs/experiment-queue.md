@@ -2,6 +2,27 @@
 
 **Updated:** 1 October 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
+**1 October, Experiments 046-050 completed, and a CPU timing measured:**
+[Experiment 046](experiment-046-pipeline-v4-results.md) adopted [pipeline v4](pipeline-v4.md), v3 with the
+unfitted ensemble readout of 045. It catches more athlete-criteria abnormal ECGs at 5% with 200 local
+normals (composite +0.0121 [+0.0082, +0.0161] over v3), but it refers more "other" ECGs, such as sinus
+bradycardia (27.5% against 24.9%). Three explanation experiments, on saved scores, explain a referred ECG with
+042's beat-wave map `U_B` (rhythm) or the attention contributions (morphology).
+[Experiment 047](experiment-047-explanation-rule-results.md) switched on `U_B` being red. It is negative by
+its rule: it lost premature-beat hits (-0.136 [-0.232, -0.057]).
+[Experiment 048](experiment-048-pvc-switch-results.md) switched on the xECG PVC head instead. It keeps every
+`U_B` premature-beat hit and gains infarct-lead information (anterior contrast +0.189 [0.067, 0.307]). It is
+the recommended explanation rule, although it sends half of the referred anterior infarcts to `U_B`.
+[Experiment 049](experiment-049-focal-switch-results.md) is negative: a label-free focal-beat switch reached
+only 24 of 49 referred PVC ECGs, because 12 NORM-only normals have one extreme beat. It confirmed the PVC
+switch with the `combined_50` referral as the best configuration so far (93% of PVC ECGs explained on the
+premature beat). [Experiment 050](experiment-050-attention-finding-heads-results.md) is negative: attention
+finding heads on ECG-JEPA tokens are below the xECG PVC head at SPH (-0.0068 [-0.0128, -0.0015]), and the
+PVC token map does not keep localization by the margin. The [CPU timing](inference-timing-cpu.md) of v4 plus
+the explanation is about 0.33 s per ECG with 4 threads (0.83 s with one), with a 2.3 GiB peak, and the CPU
+outputs equal the GPU path's. Outputs: `outputs/experiment046_pipeline_v4_v1/` to
+`outputs/experiment050_attention_findings_v1/`, `outputs/inference_timing_cpu_v1/`.
+
 **1 October, Experiments 043-045 completed; 046 running:** the user asked whether a neural network at the
 end, an attention head or the tutor's CNN + transformer would do better, and asked for the work to continue
 overnight. [Experiment 043](experiment-043-ann-heads-results.md) ran three stages against pipeline v2's
@@ -514,6 +535,12 @@ groups.
 | 043 ([protocol](experiment-043-ann-heads.md), [results](experiment-043-ann-heads-results.md)) | ANN heads, attention head on JEPA tokens, tutor's CNN + transformer | xECG + JEPA logistic beats R (SPH +0.0017); MLPs and attention match; CNN + transformer below (-0.0097); no map improves on `U_B` | `outputs/experiment043_ann_heads_v1/` |
 | 044 ([protocol](experiment-044-pipeline-v3.md), [results](experiment-044-pipeline-v3-results.md)) | Pipeline v3: concatenated-feature readout with 030 and 033 operating points | Adopted; composite +0.0080 [+0.0040, +0.0120] at 5%, normals referred 5.74% against 5.45%; spec in [pipeline-v3](pipeline-v3.md) | `outputs/experiment044_pipeline_v3_v1/` |
 | 045 ([protocol](experiment-045-two-layer-map.md), [results](experiment-045-two-layer-map-results.md)) | Two-layer explanation map and a detection ensemble, from saved scores | Two-layer map loses premature-beat localization; ensemble beats v3's readout (SPH +0.0038, full +0.0058) | `outputs/experiment045_two_layer_map_v1/` |
+| 046 ([protocol](experiment-046-pipeline-v4.md), [results](experiment-046-pipeline-v4-results.md)) | Pipeline v4: v3 with the 045 ensemble readout | Adopted; composite +0.0121 [+0.0082, +0.0161] at 5%; "other" referred 27.5% against 24.9%; spec in [pipeline-v4](pipeline-v4.md) | `outputs/experiment046_pipeline_v4_v1/` |
+| 047 ([protocol](experiment-047-explanation-rule.md), [results](experiment-047-explanation-rule-results.md)) | Explain referred ECGs with `U_B` when it is red, else attention | Negative: loses premature-beat hits (-0.136 [-0.232, -0.057]); keeps lead information | `outputs/experiment047_explanation_rule_v1/` |
+| 048 ([protocol](experiment-048-pvc-switch.md), [results](experiment-048-pvc-switch-results.md)) | Switch the explanation on the xECG PVC head | Improves on `U_B`: keeps every premature-beat hit, anterior contrast +0.189 [0.067, 0.307]; sends 68 of 136 referred anterior infarcts to `U_B`; recommended rule | `outputs/experiment048_pvc_switch_v1/` |
+| 049 ([protocol](experiment-049-focal-switch.md), [results](experiment-049-focal-switch-results.md)) | Label-free focal-versus-diffuse switch | Negative (-0.405 against the PVC switch); normals' threshold too high; PVC switch with `combined_50` referral best so far | `outputs/experiment049_focal_switch_v1/` |
+| 050 ([protocol](experiment-050-attention-finding-heads.md), [results](experiment-050-attention-finding-heads-results.md)) | Attention PVC and WPW heads on ECG-JEPA tokens | Negative: PVC below the xECG head at SPH (-0.0068); PVC map does not keep localization (-0.045 [-0.148, +0.054]) | `outputs/experiment050_attention_findings_v1/` |
+| CPU timing ([note](inference-timing-cpu.md)) | Pipeline v4 plus the explanation without a GPU | 0.33 s per ECG at 4 threads, 0.83 s at 1; 2.3 GiB peak; outputs equal the GPU path | `outputs/inference_timing_cpu_v1/` |
 
 Next, ranked in the [backlog](experiment-backlog.json) and [priorities](experiment-priorities.md):
 `referral_budget_operating_point`, then `hybrid_screening_score` and `rhythm_findings_detector`, with the

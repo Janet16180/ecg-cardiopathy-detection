@@ -1273,7 +1273,7 @@
       "authorized": true,
       "experiment": "040",
       "protocol": "docs/experiment-040-cpc-simdino.md",
-      "notes": "Original suite retained and stopped, no automatic restart. Measured040 profile/preparation/source-preflight execution182.395 seconds before final CPU audit/report; final charged accounting is in the results report and ledger. Historical039 closed10685.796 seconds. GPU/CPU/build fields remain planning estimates because no full fit executed. Fresh allocation requires explicit authorization and new prospective resource/source identity. Final040 charged execution 319.745976s; combined039+040 11005.541631s, including audits/reports/validation, disclosed30-second metadata-startup allowance and37-second admission-gap charge. Original study remains incomplete/resource-blocked. Runtime diagnosis completed: all six 200-update packages audited; optimizer compute1.743h, remaining complete plan2.639h centrally/3.853h conservatively, plus separate1h correction reserve. No fullfit/score; original resource gate unchanged. See docs/experiment-040-runtime-diagnostic-results.md."
+      "notes": "Original suite retained and stopped, no automatic restart. Measured040 profile/preparation/source-preflight execution182.395 seconds before final CPU audit/report; final charged accounting is in the results report and ledger. Historical039 closed10685.796 seconds. GPU/CPU/build fields remain planning estimates because no full fit executed. Fresh allocation requires explicit authorization and new prospective resource/source identity. Final040 charged execution 319.745976s; combined039+040 11005.541631s, including audits/reports/validation, disclosed30-second metadata-startup allowance and37-second admission-gap charge. Original study remains incomplete/resource-blocked. Runtime diagnosis completed: all six 200-update packages audited; optimizer compute1.743h, remaining complete plan2.639h centrally/3.853h conservatively, plus separate1h correction reserve. No fullfit/score; original resource gate unchanged. See docs/experiment-040-runtime-diagnostic-results.md. Day closeout: user chose to merge completed work and leave the 18 full fits unrun today; no follow-up is scheduled automatically."
     },
     {
       "id": "cpc_simdino_resource_plan040",
@@ -1291,7 +1291,7 @@
       ],
       "status": "blocked",
       "authorized": false,
-      "notes": "Resource planning only; no score-based arm/seed/coefficient selection, no automatic GPU rerun and no change to retained original receipts. Any successor must freeze a new prospective protocol and source/output identity before scores, preserve the18-fit/three-seed controls, revalidate real profiles and charge all work. Estimates are planning hours. Runtime debugging was separately authorized and completed; this entry concerns a fresh full-family allocation only."
+      "notes": "Resource planning only; no score-based arm/seed/coefficient selection, no automatic GPU rerun and no change to retained original receipts. Any successor must freeze a new prospective protocol and source/output identity before scores, preserve the18-fit/three-seed controls, revalidate real profiles and charge all work. Estimates are planning hours. Runtime debugging was separately authorized and completed; this entry concerns a fresh full-family allocation only. Day closeout: user chose to merge completed work and leave the 18 full fits unrun today; no follow-up is scheduled automatically."
     },
     {
       "id": "cpc_runtime_diagnostic040",
@@ -1323,7 +1323,7 @@
       "blocked_by": [],
       "status": "open",
       "authorized": false,
-      "notes": "Forward implementation only; new source identity, protocol and validation receipts required. Never edit pinned039/040/diagnostic sources or weaken integrity checks. Measure cold/warm validation, latecell gate and checkpoint costs; preserve all18fits/three seeds/exposures/coefficient. Full training allocation remains separate. Hours are planning estimates."
+      "notes": "Forward implementation only; new source identity, protocol and validation receipts required. Never edit pinned039/040/diagnostic sources or weaken integrity checks. Measure cold/warm validation, latecell gate and checkpoint costs; preserve all18fits/three seeds/exposures/coefficient. Full training allocation remains separate. Hours are planning estimates. Day closeout: user chose to merge completed work and leave the 18 full fits unrun today; no follow-up is scheduled automatically."
     }
   ]
 }

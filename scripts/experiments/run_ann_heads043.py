@@ -1,8 +1,10 @@
-"""Experiment 043: ANN heads against pipeline v2's readout R, and a label-gated beat-wave map.
+"""Experiment 043: ANN heads, an attention head on ECG-JEPA tokens and the tutor's CNN + transformer.
 
 Stage 1 (CPU) trains MLP heads on xECG and on xECG + JEPA features, fits the logistic heads on the same
-features, and gates Experiment 042's ``U_B`` map by the sign of its ``G_B`` shares. Stages 2 and 3 (GPU) are
-added later and reuse the rows, split, comparator, evaluation sets and statistics defined here.
+features, and gates Experiment 042's ``U_B`` map by the sign of its ``G_B`` shares. Stage 2 (GPU) caches
+ECG-JEPA tokens and the canonical windows and trains an attention head on the tokens. Stage 3 (GPU) trains
+the tutor's CNN + transformer from scratch on the cached windows. Every stage is compared with pipeline v2's
+readout R on the same rows, split, evaluation sets and statistics.
 
 The row logic lives in pinned runners (Experiments 030, 032, 037 and 042), which are imported as documented
 in the protocol.
@@ -16,6 +18,7 @@ import json
 import logging
 import os
 import time
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
@@ -23,6 +26,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import torch
+from scipy.signal import resample_poly
 from sklearn.metrics import average_precision_score, roc_auc_score
 from threadpoolctl import threadpool_limits
 
@@ -31,12 +35,15 @@ from ecg_experiment.ann_heads import (
     SEEDS,
     VALIDATION_SHARE,
     AttentionHead,
+    CNNTransformer,
     MLPHead,
     Recipe,
     RowFile,
+    augment,
     create_row_file,
     detection_reading,
     gate_beat_units,
+    grid_unit_map,
     map_reading,
     open_row_file,
     predict,
@@ -137,6 +144,12 @@ SMOKE_HELD_OUT = 0.25
 SMOKE_EPOCHS = 2
 SMOKE_DRAWS = 200
 PRIOR_STAGE1 = OUTPUT / "stage1"
+PRIOR_STAGE2 = OUTPUT / "stage2"
+CNN_RECIPE = Recipe(learning_rate=5e-4, weight_decay=0.05, batch_size=64, max_epochs=40, patience=5, clip=1.0)
+STAGE3_SAMPLES = 2500
+STAGE3_PREDICT_BATCH = 128
+STAGE3_CEILING = 14400.0
+PREPROCESS_CHUNK = 1024
 CACHE = Path("/tmp/claude-218201143/-home-janetrivera-ecg-cardiopathy-detection/"
              "64bd5d6e-e2f5-403b-8837-1c9210d4ec66/scratchpad/exp043_cache")
 ATTENTION_RECIPE = Recipe(learning_rate=3e-4, weight_decay=1e-2, batch_size=64, max_epochs=30, patience=4)
@@ -1255,17 +1268,26 @@ def row_batch(store: RowFile, device: str) -> Any:
     return lambda rows: torch.from_numpy(read_rows(store, rows)).to(device).float()
 
 
-def profile_training(store: RowFile, fit_rows: np.ndarray, fit_y: np.ndarray, fit_weights: np.ndarray,
-                     recipe: Recipe, device: str) -> dict[str, float]:
+def array_batch(values: np.ndarray, device: str) -> Any:
+    """Return a batch function taking rows of an in-memory array as tensors on the device."""
+    return lambda rows: torch.from_numpy(values[np.asarray(rows)]).to(device)
+
+
+def profile_training(build: Callable[[], torch.nn.Module], batch: Any, fit_rows: np.ndarray,
+                     fit_y: np.ndarray, fit_weights: np.ndarray, recipe: Recipe, device: str,
+                     augmentation: Callable[[torch.Tensor, torch.Generator], torch.Tensor] | None = None,
+                     predict_batch: int = PREDICT_BATCH) -> dict[str, float]:
     """
-    Time ``PROFILE_STEPS`` optimizer steps of a throwaway attention head (after warm-up) and one scoring pass.
+    Time ``PROFILE_STEPS`` optimizer steps of a throwaway network (after warm-up) and one scoring pass.
 
     Parameters
     ----------
-    store : RowFile
-        Token cache.
+    build : Callable[[], torch.nn.Module]
+        Builds the network on the CPU.
+    batch : Any
+        Maps rows to an input tensor on the device.
     fit_rows : np.ndarray
-        Cache rows of the training part.
+        Rows of the training part.
     fit_y : np.ndarray
         Their targets.
     fit_weights : np.ndarray
@@ -1274,38 +1296,51 @@ def profile_training(store: RowFile, fit_rows: np.ndarray, fit_y: np.ndarray, fi
         Training recipe.
     device : str
         Torch device.
+    augmentation : Callable | None
+        Applied to each training batch.
+    predict_batch : int
+        Rows per scoring pass.
 
     Returns
     -------
     dict[str, float]
-        Seconds per optimizer step and per scored row.
+        Seconds per optimizer step and per scored row, and the GPU memory peak in GiB.
     """
-    batch = row_batch(store, device)
     torch.manual_seed(0)
-    model = AttentionHead(TOKEN_SHAPE[1]).to(device)
+    model = build().to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=recipe.learning_rate,
                                   weight_decay=recipe.weight_decay)
+    generator = torch.Generator(device=device).manual_seed(0)
     rng = np.random.default_rng(0)
+    torch.cuda.reset_peak_memory_stats()
     for step in range(WARMUP_STEPS + PROFILE_STEPS):
         if step == WARMUP_STEPS:
             torch.cuda.synchronize()
             began = time.perf_counter()
         chosen = rng.choice(len(fit_rows), recipe.batch_size, replace=False)
-        logit, _ = model(batch(fit_rows[chosen]))
+        inputs = batch(fit_rows[chosen])
+        if augmentation is not None:
+            inputs = augmentation(inputs, generator)
+        logit, _ = model(inputs)
         target = torch.as_tensor(fit_y[chosen], dtype=torch.float32, device=device)
         weight = torch.as_tensor(fit_weights[chosen], dtype=torch.float32, device=device)
         loss = (torch.nn.functional.binary_cross_entropy_with_logits(logit, target, reduction="none")
                 * weight).mean()
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
+        if recipe.clip is not None:
+            torch.nn.utils.clip_grad_norm_(model.parameters(), recipe.clip)
         optimizer.step()
     torch.cuda.synchronize()
     per_step = (time.perf_counter() - began) / PROFILE_STEPS
     scored = fit_rows[:min(1024, len(fit_rows))]
     began = time.perf_counter()
-    predict(model, batch, scored, PREDICT_BATCH, keep_contributions=True)
+    predict(model, batch, scored, predict_batch, keep_contributions=True)
+    torch.cuda.synchronize()
     return {"step": per_step, "scored_row": (time.perf_counter() - began) / len(scored),
-            "warmup_steps": WARMUP_STEPS, "timed_steps": PROFILE_STEPS}
+            "warmup_steps": WARMUP_STEPS, "timed_steps": PROFILE_STEPS,
+            "peak_allocated_gib": torch.cuda.max_memory_allocated() / 2 ** 30,
+            "peak_reserved_gib": torch.cuda.max_memory_reserved() / 2 ** 30}
 
 
 def projected_training(profile: dict[str, float], fits: int, checks: int, scored: int,
@@ -1315,52 +1350,68 @@ def projected_training(profile: dict[str, float], fits: int, checks: int, scored
     return len(SEEDS) * (recipe.max_epochs * epoch + scored * profile["scored_row"])
 
 
-def train_attention(store: RowFile, fit_rows: np.ndarray, fit_y: np.ndarray, fit_weights: np.ndarray,
-                    check_rows: np.ndarray, check_y: np.ndarray, score_rows: dict[str, np.ndarray],
-                    recipe: Recipe, device: str, maps: tuple[str, ...]) -> dict[str, Any]:
+def train_seeds(build: Callable[[], torch.nn.Module], batch: Any, fit_rows: np.ndarray, fit_y: np.ndarray,
+                fit_weights: np.ndarray, check_rows: np.ndarray, check_y: np.ndarray,
+                score_rows: dict[str, np.ndarray], recipe: Recipe, device: str, maps: tuple[str, ...],
+                name: str,
+                augmentation: Callable[[torch.Tensor, torch.Generator], torch.Tensor] | None = None,
+                predict_batch: int = PREDICT_BATCH) -> dict[str, Any]:
     """
-    Train the attention head with every seed and score the scored parts.
+    Train a network with every seed and score the scored parts.
 
     Parameters
     ----------
-    store : RowFile
-        Token cache.
+    build : Callable[[], torch.nn.Module]
+        Builds the network on the CPU (after the seed is set).
+    batch : Any
+        Maps rows to an input tensor on the device.
     fit_rows, check_rows : np.ndarray
-        Cache rows of the training and validation parts.
+        Rows of the training and validation parts.
     fit_y, fit_weights : np.ndarray
         Targets and weights of ``fit_rows``.
     check_y : np.ndarray
         Targets of ``check_rows``.
     score_rows : dict[str, np.ndarray]
-        Cache rows per scored part.
+        Rows per scored part.
     recipe : Recipe
         Training recipe.
     device : str
         Torch device.
     maps : tuple[str, ...]
         Parts whose per-token contributions are kept.
+    name : str
+        Arm name for the log.
+    augmentation : Callable | None
+        Applied to each training batch.
+    predict_batch : int
+        Rows per scoring pass.
 
     Returns
     -------
     dict[str, Any]
         ``logits`` (seed mean per part), ``seed_logits``, ``contributions`` (seed mean per kept part),
-        ``seeds`` and the largest contribution-sum check difference.
+        ``seeds``, the largest contribution-sum check difference and the GPU memory peak.
+
+    Raises
+    ------
+    ValueError
+        If the contributions do not sum to the logit minus the bias.
     """
-    batch = row_batch(store, device)
     seed_logits: dict[int, dict[str, np.ndarray]] = {}
     seed_contributions: dict[int, dict[str, np.ndarray]] = {}
     seeds, worst = {}, 0.0
+    torch.cuda.reset_peak_memory_stats()
     for seed in SEEDS:
         began = time.perf_counter()
         torch.manual_seed(seed)
-        model = AttentionHead(TOKEN_SHAPE[1]).to(device)
+        model = build().to(device)
         fit = train(model, batch, fit_rows, fit_y, fit_weights, check_rows, check_y, recipe, seed,
-                    log=lambda line: LOG.info("attention_jepa %s", line))
+                    augmentation=augmentation, log=lambda line: LOG.info("%s %s", name, line))
+        bias = float(getattr(model, "head", model).bias)
         seed_logits[seed], seed_contributions[seed] = {}, {}
         for part, rows in score_rows.items():
-            logits, units = predict(model, batch, rows, PREDICT_BATCH, keep_contributions=True)
-            worst = max(worst, float(np.abs(units.sum(axis=1, dtype=np.float64) + float(model.bias)
-                                            - logits).max()))
+            logits, units = predict(model, batch, rows, predict_batch, keep_contributions=True)
+            worst = max(worst, float(np.abs(units.sum(axis=1, dtype=np.float64) + bias - logits).max()))
             seed_logits[seed][part] = logits
             if part in maps:
                 seed_contributions[seed][part] = units
@@ -1375,7 +1426,9 @@ def train_attention(store: RowFile, fit_rows: np.ndarray, fit_y: np.ndarray, fit
             "seed_logits": seed_logits, "seed_contributions": seed_contributions,
             "contributions": {part: np.mean([seed_contributions[s][part] for s in SEEDS], axis=0)
                               for part in maps},
-            "seeds": seeds, "contribution_max_abs_difference": worst}
+            "seeds": seeds, "contribution_max_abs_difference": worst,
+            "peak_allocated_gib": torch.cuda.max_memory_allocated() / 2 ** 30,
+            "peak_reserved_gib": torch.cuda.max_memory_reserved() / 2 ** 30}
 
 
 def full_length(values: np.ndarray, positions: np.ndarray, length: int) -> np.ndarray:
@@ -1387,7 +1440,7 @@ def full_length(values: np.ndarray, positions: np.ndarray, length: int) -> np.nd
 
 def stage1_predictions(reference: dict[str, np.ndarray], validation: np.ndarray) -> dict[str, Any]:
     """
-    Stage 1's saved logistic JEPA logits, after checking its receipt, validation split and R.
+    Stage 1's saved logistic logits, after checking its receipt, validation split and R.
 
     Parameters
     ----------
@@ -1399,7 +1452,7 @@ def stage1_predictions(reference: dict[str, np.ndarray], validation: np.ndarray)
     Returns
     -------
     dict[str, Any]
-        ``logistic_jepa`` logits per part, and the receipt hashes.
+        ``logistic_jepa`` and ``logistic_concat`` logits per part, and the receipt hashes.
 
     Raises
     ------
@@ -1413,8 +1466,207 @@ def stage1_predictions(reference: dict[str, np.ndarray], validation: np.ndarray)
         difference = max(float(np.abs(saved[f"{part}_R"] - reference[part]).max()) for part in reference)
         if difference > AUROC_TOLERANCE:
             raise ValueError(f"R differs from Stage 1's by {difference}")
-        logistic = {part: saved[f"{part}_logistic_jepa"] for part in ("development", "sph")}
-    return {"logistic_jepa": logistic, "receipt": receipt, "R_max_abs_difference_vs_stage1": difference}
+        found = {arm: {part: saved[f"{part}_{arm}"] for part in ("development", "sph")}
+                 for arm in ("logistic_jepa", "logistic_concat")}
+    return {**found, "receipt": receipt, "R_max_abs_difference_vs_stage1": difference}
+
+
+def stage2_predictions(data: dict[str, Any], sets: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """
+    Stage 2's saved ``attention_jepa`` logits on 037's parts, after checking its receipt and rows.
+
+    Parameters
+    ----------
+    data : dict[str, Any]
+        Output of ``training_data``.
+    sets : dict[str, dict[str, Any]]
+        Output of ``evaluation_sets``.
+
+    Returns
+    -------
+    dict[str, Any]
+        ``attention_jepa`` logits per part (SPH at full length), the receipt and Stage 2's cache receipt.
+
+    Raises
+    ------
+    ValueError
+        If Stage 2's rows differ.
+    """
+    receipt = receipt_checked(PRIOR_STAGE2, ("predictions.npz",))
+    positions = sets["sph"]["positions"]
+    with np.load(PRIOR_STAGE2 / "predictions.npz") as saved:
+        if not (np.array_equal(saved["sph_ecg_ids"], data["sph"]["ecg_id"].to_numpy(dtype=str)[positions])
+                and np.array_equal(saved["development_record_ids"],
+                                   data["development"].index.to_numpy(dtype=str))):
+            raise ValueError("Stage 2 prediction rows differ")
+        attention = {"development": saved["development_attention_jepa"],
+                     "sph": full_length(saved["sph_attention_jepa"], positions, len(data["sph"]))}
+    cache = json.loads((PRIOR_STAGE2 / "result.json").read_text())["cache"]["receipt"]
+    return {"attention_jepa": attention, "receipt": receipt, "cache_receipt": cache}
+
+
+def token_smoke_split(data: dict[str, Any]) -> dict[str, Any]:
+    """
+    Pick the smoke cache's training rows and split them into fit, validation and held-out rows by group.
+
+    Parameters
+    ----------
+    data : dict[str, Any]
+        Output of ``training_data``.
+
+    Returns
+    -------
+    dict[str, Any]
+        ``chosen`` binary rows, cache ``table`` and features, part bounds, and cache-row positions of the
+        ``fit``, ``check`` and ``held`` rows with targets and weights.
+    """
+    y, weights = data["design"]["y"], data["design"]["weights"]
+    rng = np.random.default_rng(SEED)
+    chosen = np.sort(rng.choice(len(data["groups"]), SMOKE_TOKEN_ROWS, replace=False))
+    held = validation_mask(data["groups"][chosen], SMOKE_HELD_OUT, SEED + 1)
+    pool = np.flatnonzero(~held)
+    validation = validation_mask(data["groups"][chosen][pool], VALIDATION_SHARE, VALIDATION_SEED)
+    fit_rows, check_rows, held_rows = pool[~validation], pool[validation], np.flatnonzero(held)
+    return {"chosen": chosen, "table": data["stacked"].iloc[chosen].reset_index(drop=True),
+            "reference": binary_features(data, "jepa", "train")[chosen], "parts": {"train": [0, len(chosen)]},
+            "pool": pool, "fit_rows": fit_rows, "check_rows": check_rows, "held_rows": held_rows,
+            "fit_y": y[chosen][fit_rows], "fit_w": weights[chosen][fit_rows],
+            "check_y": y[chosen][check_rows]}
+
+
+def smoke_reference(data: dict[str, Any], split: dict[str, Any]) -> tuple[dict, dict[str, np.ndarray]]:
+    """
+    Build the smoke held-out set and fit a smoke R on the other smoke rows.
+
+    Parameters
+    ----------
+    data : dict[str, Any]
+        Output of ``training_data``.
+    split : dict[str, Any]
+        Output of ``token_smoke_split``.
+
+    Returns
+    -------
+    tuple[dict, dict[str, np.ndarray]]
+        The ``held_out`` evaluation set and R's logits on it.
+    """
+    y, weights = data["design"]["y"], data["design"]["weights"]
+    chosen, pool, held_rows = split["chosen"], split["pool"], split["held_rows"]
+    sets = {"held_out": {"part": "held_out", "positions": np.arange(len(held_rows)),
+                         "y": y[chosen][held_rows], "patients": data["groups"][chosen][held_rows]}}
+    x = binary_features(data, "xecg", "train")[chosen]
+    with threadpool_limits(limits=1):
+        head = fit_readout(x[pool], y[chosen][pool], weights[chosen][pool])
+        reference = {"held_out": logits_of(head, x[held_rows])}
+    return sets, reference
+
+
+def full_integrity(data: dict[str, Any]) -> dict[str, Any]:
+    """
+    Check the rows against 037, reproduce R and its AUROCs, draw the shared split and check Stage 1.
+
+    Parameters
+    ----------
+    data : dict[str, Any]
+        Output of ``training_data``.
+
+    Returns
+    -------
+    dict[str, Any]
+        ``integrity`` checks, ``reference`` (R's logits), ``sets``, ``validation``, ``split_counts``,
+        ``stage1`` predictions, and 042's map inputs.
+
+    Raises
+    ------
+    ValueError
+        If 042's scored rows differ from the development rows.
+    """
+    integrity: dict[str, Any] = {"training_rows_vs_037": check_against_037(data)}
+    reference, integrity["comparator"] = comparator(data)
+    sets = evaluation_sets(data)
+    integrity["R_auroc"] = check_comparator_aurocs(sets, reference)
+    validation, split_counts = shared_validation(data)
+    prior = stage1_predictions(reference, validation)
+    integrity["stage1"] = {"receipt": prior["receipt"],
+                           "R_max_abs_difference": prior["R_max_abs_difference_vs_stage1"]}
+    inputs042 = map_inputs()
+    if not np.array_equal(inputs042["rows"]["scored"]["ecg_id"].to_numpy(np.int64),
+                          data["development"]["ecg_id"].to_numpy(np.int64)):
+        raise ValueError("042's scored rows differ from the development rows")
+    LOG.info("integrity: %s", integrity)
+    return {"integrity": integrity, "reference": reference, "sets": sets, "validation": validation,
+            "split_counts": split_counts, "stage1": prior, "inputs042": inputs042}
+
+
+def evaluate_network(name: str, arm: dict[str, Any], data: dict[str, Any], checks: dict[str, Any],
+                     unit_map: Callable[[np.ndarray], UnitMap], secondary: dict[str, dict[str, np.ndarray]],
+                     partial: Path) -> dict[str, Any]:
+    """
+    Compute one network's detection statistics, contrasts, map metrics and map contrasts; save its outputs.
+
+    Parameters
+    ----------
+    name : str
+        Arm name.
+    arm : dict[str, Any]
+        Output of ``train_seeds`` on the ``development`` and ``sph`` cache parts.
+    data : dict[str, Any]
+        Output of ``training_data``.
+    checks : dict[str, Any]
+        Output of ``full_integrity``.
+    unit_map : Callable[[np.ndarray], UnitMap]
+        Maps one ECG's contributions to units.
+    secondary : dict[str, dict[str, np.ndarray]]
+        Arms to contrast with, logits per part.
+    partial : Path
+        Output folder for ``predictions.npz`` and ``token_maps.npz``.
+
+    Returns
+    -------
+    dict[str, Any]
+        Result fields.
+    """
+    began = time.perf_counter()
+    sets, inputs042 = checks["sets"], checks["inputs042"]
+    sph_positions, sph_length = sets["sph"]["positions"], len(data["sph"])
+    scores = {"development": arm["logits"]["development"],
+              "sph": full_length(arm["logits"]["sph"], sph_positions, sph_length)}
+    arm_for_seeds = {"seeds": arm["seeds"], "seed_logits": {
+        seed: {"development": found["development"],
+               "sph": full_length(found["sph"], sph_positions, sph_length)}
+        for seed, found in arm["seed_logits"].items()}}
+    statistics = detection_statistics(sets, {name: scores}, checks["reference"], DRAWS, SEED)
+    contrasts_detection = {f"{name}_minus_{other}": paired_contrast(sets, scores, values, DRAWS, SEED)
+                           for other, values in secondary.items()}
+    LOG.info("detection done in %.1f s", time.perf_counter() - began)
+    maps = [unit_map(values) for values in arm["contributions"]["development"]]
+    metrics = map_metrics(inputs042["rows"], {"U_B": inputs042["maps"]["U_B"], name: maps},
+                          inputs042["windows"], DRAWS, SEED)
+    integrity = {"U_B_vs_042": check_042_points(metrics["maps"]["U_B"], metrics["thresholds"]["U_B"])}
+    contrasts = map_contrasts(metrics, name, "U_B", DRAWS, SEED)
+    LOG.info("maps done in %.1f s: %s", time.perf_counter() - began, contrasts["reading"])
+    sph_ids = data["sph"]["ecg_id"].to_numpy(dtype=str)[sph_positions]
+    arrays = {"development_record_ids": data["development"].index.to_numpy(dtype=str), "sph_ecg_ids": sph_ids,
+              f"development_{name}": arm["logits"]["development"], f"sph_{name}": arm["logits"]["sph"]}
+    for seed, found in arm["seed_logits"].items():
+        arrays.update({f"{part}_{name}_seed{seed}": values for part, values in found.items()})
+    write_npz_atomic(partial / "predictions.npz", **arrays)
+    write_npz_atomic(partial / "token_maps.npz", ecg_ids=data["development"]["ecg_id"].to_numpy(np.int64),
+                     **{name: arm["contributions"]["development"].astype(np.float32)},
+                     **{f"{name}_seed{seed}": found["development"].astype(np.float32)
+                        for seed, found in arm["seed_contributions"].items()})
+    reading = readings(statistics)
+    return {"integrity_maps": integrity, "validation_split": checks["split_counts"],
+            "evaluation_sets": {key: {"records": len(spec["y"]), "positives": int(spec["y"].sum()),
+                                      "patients": int(len(np.unique(spec["patients"])))}
+                                for key, spec in sets.items()},
+            "detection": statistics, "seeds": seed_statistics(sets, {name: arm_for_seeds}),
+            **contrasts_detection, "readings": reading, "arm": {"seeds": arm["seeds"]},
+            "maps": {**public_map_metrics(metrics), "pvc_exclusions": inputs042["exclusions"],
+                     f"{name}_minus_U_B": contrasts},
+            "map_reading": contrasts["reading"],
+            "notebook": bool(reading[name] == "beats" or contrasts["reading"]["improves_on_U_B"]),
+            "inputs_042": inputs042["receipt"]}
 
 
 def run_stage2(data: dict[str, Any], partial: Path, smoke: bool, cache: Path) -> dict[str, Any]:
@@ -1444,35 +1696,19 @@ def run_stage2(data: dict[str, Any], partial: Path, smoke: bool, cache: Path) ->
     integrity: dict[str, Any] = {}
     y, weights = data["design"]["y"], data["design"]["weights"]
     if smoke:
-        rng = np.random.default_rng(SEED)
-        chosen = np.sort(rng.choice(len(data["groups"]), SMOKE_TOKEN_ROWS, replace=False))
-        table = data["stacked"].iloc[chosen].reset_index(drop=True)
-        reference = binary_features(data, "jepa", "train")[chosen]
-        parts = {"train": [0, len(table)]}
-        held = validation_mask(data["groups"][chosen], SMOKE_HELD_OUT, SEED + 1)
-        pool = np.flatnonzero(~held)
-        validation = validation_mask(data["groups"][chosen][pool], VALIDATION_SHARE, VALIDATION_SEED)
-        fit_rows, check_rows, held_rows = pool[~validation], pool[validation], np.flatnonzero(held)
-        fit_y, fit_w, check_y = y[chosen][fit_rows], weights[chosen][fit_rows], y[chosen][check_rows]
-        score_rows = {"held_out": held_rows}
+        split = token_smoke_split(data)
+        table, reference, parts = split["table"], split["reference"], split["parts"]
+        fit_rows, check_rows = split["fit_rows"], split["check_rows"]
+        fit_y, fit_w, check_y = split["fit_y"], split["fit_w"], split["check_y"]
+        score_rows = {"held_out": split["held_rows"]}
         recipe = Recipe(ATTENTION_RECIPE.learning_rate, ATTENTION_RECIPE.weight_decay,
                         ATTENTION_RECIPE.batch_size, SMOKE_EPOCHS, ATTENTION_RECIPE.patience)
         maps_parts: tuple[str, ...] = ("held_out",)
     else:
-        integrity["training_rows_vs_037"] = check_against_037(data)
-        reference_r, integrity["comparator"] = comparator(data)
-        sets = evaluation_sets(data)
-        integrity["R_auroc"] = check_comparator_aurocs(sets, reference_r)
-        validation, split_counts = shared_validation(data)
-        prior = stage1_predictions(reference_r, validation)
-        integrity["stage1"] = {"receipt": prior["receipt"],
-                               "R_max_abs_difference": prior["R_max_abs_difference_vs_stage1"]}
-        LOG.info("integrity: %s", integrity)
-        table, reference, parts = extraction_table(data, sets)
-        inputs042 = map_inputs()
-        if not np.array_equal(inputs042["rows"]["scored"]["ecg_id"].to_numpy(np.int64),
-                              data["development"]["ecg_id"].to_numpy(np.int64)):
-            raise ValueError("042's scored rows differ from the development rows")
+        checks = full_integrity(data)
+        integrity = checks["integrity"]
+        table, reference, parts = extraction_table(data, checks["sets"])
+        validation = checks["validation"]
         fit_rows, check_rows = np.flatnonzero(~validation), np.flatnonzero(validation)
         fit_y, fit_w, check_y = y[fit_rows], weights[fit_rows], y[check_rows]
         score_rows = {part: np.arange(*parts[part]) for part in ("development", "sph")}
@@ -1482,6 +1718,7 @@ def run_stage2(data: dict[str, Any], partial: Path, smoke: bool, cache: Path) ->
     checksums = load_checksums()
     ningbo = {record: window for record, _, window in ningbo_items()[0]}
     device = "cuda"
+    build = partial_build(AttentionHead, TOKEN_SHAPE[1])
     with gpu_lock(device):
         receipt = cache_receipt(cache, table, verify=True)
         profile: dict[str, Any] = {"extraction": None, "cache_reused": receipt is not None}
@@ -1498,7 +1735,8 @@ def run_stage2(data: dict[str, Any], partial: Path, smoke: bool, cache: Path) ->
             torch.cuda.empty_cache()
         LOG.info("cache ready at %.1f s: %s", time.perf_counter() - began, receipt["token_check"])
         store = open_row_file(cache / "tokens.npy")
-        profile["training"] = profile_training(store, fit_rows, fit_y, fit_w, recipe, device)
+        batch = row_batch(store, device)
+        profile["training"] = profile_training(build, batch, fit_rows, fit_y, fit_w, recipe, device)
         scored = sum(len(rows) for rows in score_rows.values())
         profile["projected_training_seconds"] = projected_training(profile["training"], len(fit_rows),
                                                                    len(check_rows), scored, recipe)
@@ -1508,8 +1746,8 @@ def run_stage2(data: dict[str, Any], partial: Path, smoke: bool, cache: Path) ->
         if profile["projected_stage_seconds"] > STAGE2_CEILING:
             raise RuntimeError(f"Projected stage time {profile['projected_stage_seconds']:.0f} s "
                                "exceeds 2 hours")
-        arm = train_attention(store, fit_rows, fit_y, fit_w, check_rows, check_y, score_rows, recipe, device,
-                              maps_parts)
+        arm = train_seeds(build, batch, fit_rows, fit_y, fit_w, check_rows, check_y, score_rows, recipe,
+                          device, maps_parts, "attention_jepa")
         torch.cuda.empty_cache()
     os.close(store.descriptor)
     integrity["contribution_max_abs_difference"] = arm["contribution_max_abs_difference"]
@@ -1517,18 +1755,11 @@ def run_stage2(data: dict[str, Any], partial: Path, smoke: bool, cache: Path) ->
     cache_fields = {"folder": str(cache), "receipt": receipt, "rows_csv": "cache_rows.csv"}
     table[["kind", "key"]].to_csv(partial / "cache_rows.csv", index=False)
     if smoke:
-        held_y = y[chosen][held_rows]
-        sets = {"held_out": {"part": "held_out", "positions": np.arange(len(held_rows)), "y": held_y,
-                             "patients": data["groups"][chosen][held_rows]}}
-        with threadpool_limits(limits=1):
-            head = fit_readout(binary_features(data, "xecg", "train")[chosen][pool], y[chosen][pool],
-                               weights[chosen][pool])
-            held_x = binary_features(data, "xecg", "train")[chosen][held_rows]
-            reference_r = {"held_out": logits_of(head, held_x)}
+        sets, reference_r = smoke_reference(data, split)
         statistics = detection_statistics(sets, {"attention_jepa": arm["logits"]}, reference_r, SMOKE_DRAWS,
                                           SEED, primary=("held_out",))
         unit_map = jepa_unit_map(arm["contributions"]["held_out"][0])
-        write_npz_atomic(partial / "predictions.npz", held_out_rows=held_rows,
+        write_npz_atomic(partial / "predictions.npz", held_out_rows=split["held_rows"],
                          held_out_attention_jepa=arm["logits"]["held_out"])
         return {"integrity": integrity, "profile": profile, "cache": cache_fields, "detection": statistics,
                 "seeds": seed_statistics(sets, {"attention_jepa": arm}),
@@ -1537,51 +1768,170 @@ def run_stage2(data: dict[str, Any], partial: Path, smoke: bool, cache: Path) ->
                                   "leads": sorted(set(unit_map.leads.tolist()))},
                 "recipe": vars(recipe),
                 "note": "smoke: training rows only; map checked for structure, not scored"}
+    found = evaluate_network("attention_jepa", arm, data, checks, jepa_unit_map,
+                             {"logistic_jepa": checks["stage1"]["logistic_jepa"]}, partial)
+    integrity.update(found.pop("integrity_maps"))
+    return {"integrity": integrity, "profile": profile, "cache": cache_fields, "recipe": vars(recipe),
+            **found}
 
-    sph_positions, sph_length = sets["sph"]["positions"], len(data["sph"])
-    scores = {"development": arm["logits"]["development"],
-              "sph": full_length(arm["logits"]["sph"], sph_positions, sph_length)}
-    arm_for_seeds = {"seeds": arm["seeds"], "seed_logits": {
-        seed: {"development": found["development"],
-               "sph": full_length(found["sph"], sph_positions, sph_length)}
-        for seed, found in arm["seed_logits"].items()}}
-    statistics = detection_statistics(sets, {"attention_jepa": scores}, reference_r, DRAWS, SEED)
-    contrast = paired_contrast(sets, scores, prior["logistic_jepa"], DRAWS, SEED)
-    LOG.info("detection done at %.1f s", time.perf_counter() - began)
 
-    attention_maps = [jepa_unit_map(values) for values in arm["contributions"]["development"]]
-    metrics = map_metrics(inputs042["rows"],
-                          {"U_B": inputs042["maps"]["U_B"], "attention_jepa": attention_maps},
-                          inputs042["windows"], DRAWS, SEED)
-    integrity["U_B_vs_042"] = check_042_points(metrics["maps"]["U_B"], metrics["thresholds"]["U_B"])
-    contrasts = map_contrasts(metrics, "attention_jepa", "U_B", DRAWS, SEED)
-    LOG.info("maps done at %.1f s: %s", time.perf_counter() - began, contrasts["reading"])
+def partial_build(network: Callable[..., torch.nn.Module], *arguments: Any) -> Callable[[], torch.nn.Module]:
+    """Return a function building the network with the given arguments."""
+    return lambda: network(*arguments)
 
-    sph_ids = data["sph"]["ecg_id"].to_numpy(dtype=str)[sph_positions]
-    arrays = {"development_record_ids": data["development"].index.to_numpy(dtype=str), "sph_ecg_ids": sph_ids,
-              "development_attention_jepa": arm["logits"]["development"],
-              "sph_attention_jepa": arm["logits"]["sph"]}
-    for seed, found in arm["seed_logits"].items():
-        arrays.update({f"{part}_attention_jepa_seed{seed}": values for part, values in found.items()})
-    write_npz_atomic(partial / "predictions.npz", **arrays)
-    write_npz_atomic(partial / "token_maps.npz", ecg_ids=data["development"]["ecg_id"].to_numpy(np.int64),
-                     attention_jepa=arm["contributions"]["development"].astype(np.float32),
-                     **{f"attention_jepa_seed{seed}": found["development"].astype(np.float32)
-                        for seed, found in arm["seed_contributions"].items()})
-    reading = readings(statistics)
-    return {"integrity": integrity, "validation_split": split_counts, "profile": profile,
-            "cache": cache_fields,
-            "evaluation_sets": {name: {"records": len(spec["y"]), "positives": int(spec["y"].sum()),
-                                       "patients": int(len(np.unique(spec["patients"])))}
-                                for name, spec in sets.items()},
-            "detection": statistics, "seeds": seed_statistics(sets, {"attention_jepa": arm_for_seeds}),
-            "attention_jepa_minus_logistic_jepa": contrast, "readings": reading,
-            "arm": {"seeds": arm["seeds"]}, "recipe": vars(recipe),
-            "maps": {**public_map_metrics(metrics), "pvc_exclusions": inputs042["exclusions"],
-                     "attention_jepa_minus_U_B": contrasts},
-            "map_reading": contrasts["reading"],
-            "notebook": bool(reading["attention_jepa"] == "beats" or contrasts["reading"]["improves_on_U_B"]),
-            "inputs_042": inputs042["receipt"]}
+
+def preprocess_windows(path: Path, rows: np.ndarray, fit_rows: np.ndarray
+                       ) -> tuple[np.ndarray, dict[str, Any]]:
+    """
+    Decimate cached 500 Hz windows to 250 Hz, subtract each lead's median and divide by the training SD.
+
+    The SD of each lead is unweighted, over every sample of the median-subtracted training-part records,
+    around their pooled mean.
+
+    Parameters
+    ----------
+    path : Path
+        Window cache (``[rows, 12, 5000]`` float32).
+    rows : np.ndarray
+        Cache rows to preprocess, in output order.
+    fit_rows : np.ndarray
+        Output positions of the training part.
+
+    Returns
+    -------
+    tuple[np.ndarray, dict[str, Any]]
+        Float32 ``[len(rows), 12, 2500]`` inputs, and the lead SDs and means.
+    """
+    store = open_row_file(path)
+    inputs = np.empty((len(rows), WINDOW_SHAPE[0], STAGE3_SAMPLES), dtype=np.float32)
+    for start in range(0, len(rows), PREPROCESS_CHUNK):
+        windows = read_rows(store, rows[start:start + PREPROCESS_CHUNK]).astype(np.float64)
+        decimated = resample_poly(windows, 1, 2, axis=2)
+        inputs[start:start + len(windows)] = decimated - np.median(decimated, axis=2, keepdims=True)
+    os.close(store.descriptor)
+    if inputs.shape[2] != STAGE3_SAMPLES:
+        raise ValueError(f"Decimated windows have {inputs.shape[2]} samples")
+    total = np.zeros(WINDOW_SHAPE[0])
+    squares = np.zeros(WINDOW_SHAPE[0])
+    for start in range(0, len(fit_rows), PREPROCESS_CHUNK):
+        part = inputs[fit_rows[start:start + PREPROCESS_CHUNK]].astype(np.float64)
+        total += part.sum(axis=(0, 2))
+        squares += np.square(part).sum(axis=(0, 2))
+    count = len(fit_rows) * STAGE3_SAMPLES
+    mean = total / count
+    scale = np.sqrt(squares / count - mean ** 2)
+    for start in range(0, len(rows), PREPROCESS_CHUNK):
+        inputs[start:start + PREPROCESS_CHUNK] /= scale[None, :, None].astype(np.float32)
+    if not np.isfinite(inputs).all():
+        raise ValueError("Nonfinite preprocessed windows")
+    return inputs, {"lead_sd": scale.tolist(), "lead_mean_after_median": mean.tolist(),
+                    "sd_rows": len(fit_rows), "weighted": False}
+
+
+def run_stage3(data: dict[str, Any], partial: Path, smoke: bool, cache: Path) -> dict[str, Any]:
+    """
+    Run Stage 3: train the tutor's CNN + transformer from scratch on Stage 2's window cache and evaluate it.
+
+    Parameters
+    ----------
+    data : dict[str, Any]
+        Output of ``training_data``.
+    partial : Path
+        Output folder.
+    smoke : bool
+        Training-only smoke test (Stage 2 smoke cache rows), map checked for structure only.
+    cache : Path
+        Cache folder from Stage 2.
+
+    Returns
+    -------
+    dict[str, Any]
+        Result fields.
+
+    Raises
+    ------
+    ValueError
+        If the cache is missing or differs from its receipt or Stage 2's.
+    """
+    began = time.perf_counter()
+    integrity: dict[str, Any] = {}
+    y, weights = data["design"]["y"], data["design"]["weights"]
+    if smoke:
+        split = token_smoke_split(data)
+        table, parts = split["table"], split["parts"]
+        fit_rows, check_rows = split["fit_rows"], split["check_rows"]
+        fit_y, fit_w, check_y = split["fit_y"], split["fit_w"], split["check_y"]
+        score_rows = {"held_out": split["held_rows"]}
+        recipe = Recipe(CNN_RECIPE.learning_rate, CNN_RECIPE.weight_decay, CNN_RECIPE.batch_size,
+                        SMOKE_EPOCHS, CNN_RECIPE.patience, CNN_RECIPE.clip)
+        maps_parts: tuple[str, ...] = ("held_out",)
+    else:
+        checks = full_integrity(data)
+        integrity = checks["integrity"]
+        prior2 = stage2_predictions(data, checks["sets"])
+        integrity["stage2"] = prior2["receipt"]
+        table, _, parts = extraction_table(data, checks["sets"])
+        validation = checks["validation"]
+        fit_rows, check_rows = np.flatnonzero(~validation), np.flatnonzero(validation)
+        fit_y, fit_w, check_y = y[fit_rows], weights[fit_rows], y[check_rows]
+        score_rows = {part: np.arange(*parts[part]) for part in ("development", "sph")}
+        recipe = CNN_RECIPE
+        maps_parts = ("development",)
+    receipt = cache_receipt(cache, table, verify=False)
+    if receipt is None:
+        raise ValueError(f"No completed Stage 2 cache of these rows in {cache}")
+    windows_hash = data_sha256(cache / "windows.npy")
+    if windows_hash != receipt["windows"]["data_sha256"] or (
+            not smoke and windows_hash != prior2["cache_receipt"]["windows"]["data_sha256"]):
+        raise ValueError("Window cache differs from its receipt or from Stage 2's")
+    integrity["windows_data_sha256"] = windows_hash
+    inputs, preprocessing = preprocess_windows(cache / "windows.npy", np.arange(len(table)), fit_rows)
+    LOG.info("preprocessed %s at %.1f s: %s", inputs.shape, time.perf_counter() - began, preprocessing)
+    device = "cuda"
+    build = partial_build(CNNTransformer)
+    batch = array_batch(inputs, device)
+    with gpu_lock(device):
+        profile: dict[str, Any] = {"training": profile_training(
+            build, batch, fit_rows, fit_y, fit_w, recipe, device, augment, STAGE3_PREDICT_BATCH)}
+        scored = sum(len(rows) for rows in score_rows.values())
+        profile["projected_training_seconds"] = projected_training(profile["training"], len(fit_rows),
+                                                                   len(check_rows), scored, recipe)
+        profile["projected_stage_seconds"] = (time.perf_counter() - began
+                                              + profile["projected_training_seconds"])
+        LOG.info("training profile %s", profile)
+        if profile["projected_stage_seconds"] > STAGE3_CEILING:
+            raise RuntimeError(f"Projected stage time {profile['projected_stage_seconds']:.0f} s "
+                               "exceeds 4 hours")
+        arm = train_seeds(build, batch, fit_rows, fit_y, fit_w, check_rows, check_y, score_rows, recipe,
+                          device, maps_parts, "cnn_transformer", augment, STAGE3_PREDICT_BATCH)
+        torch.cuda.empty_cache()
+    integrity["contribution_max_abs_difference"] = arm["contribution_max_abs_difference"]
+    epochs = [entry["seconds"] for info in arm["seeds"].values() for entry in info["history"]]
+    timing = {"peak_allocated_gib": arm["peak_allocated_gib"], "peak_reserved_gib": arm["peak_reserved_gib"],
+              "epoch_seconds_mean": float(np.mean(epochs)), "epoch_seconds_max": float(np.max(epochs)),
+              "training_seconds": float(sum(info["seconds"] for info in arm["seeds"].values()))}
+    LOG.info("training done at %.1f s: %s", time.perf_counter() - began, timing)
+    cache_fields = {"folder": str(cache), "receipt": receipt}
+    common = {"integrity": integrity, "profile": profile, "timing": timing, "cache": cache_fields,
+              "preprocessing": preprocessing, "recipe": vars(recipe)}
+    if smoke:
+        sets, reference_r = smoke_reference(data, split)
+        statistics = detection_statistics(sets, {"cnn_transformer": arm["logits"]}, reference_r, SMOKE_DRAWS,
+                                          SEED, primary=("held_out",))
+        unit_map = grid_unit_map(arm["contributions"]["held_out"][0], tuple(range(WINDOW_SHAPE[0])))
+        write_npz_atomic(partial / "predictions.npz", held_out_rows=split["held_rows"],
+                         held_out_cnn_transformer=arm["logits"]["held_out"])
+        return {**common, "detection": statistics, "seeds": seed_statistics(sets, {"cnn_transformer": arm}),
+                "map_structure": {"contributions": list(arm["contributions"]["held_out"].shape),
+                                  "units": len(unit_map.scores),
+                                  "leads": sorted(set(unit_map.leads.tolist()))},
+                "note": "smoke: training rows only; map checked for structure, not scored"}
+    found = evaluate_network("cnn_transformer", arm, data, checks,
+                             lambda values: grid_unit_map(values, tuple(range(WINDOW_SHAPE[0]))),
+                             {"attention_jepa": prior2["attention_jepa"],
+                              "logistic_concat": checks["stage1"]["logistic_concat"]}, partial)
+    integrity.update(found.pop("integrity_maps"))
+    return {**common, **found}
 
 
 def run(stage: int, smoke: bool, output: Path, cache: Path) -> None:
@@ -1599,8 +1949,6 @@ def run(stage: int, smoke: bool, output: Path, cache: Path) -> None:
     cache : Path
         Stage 2 and 3 cache folder on local disk.
     """
-    if stage == 3:
-        raise NotImplementedError("Stage 3 is not implemented yet")
     started = time.perf_counter()
     partial = output.with_name(output.name + ".partial")
     partial.mkdir(parents=True)
@@ -1609,25 +1957,30 @@ def run(stage: int, smoke: bool, output: Path, cache: Path) -> None:
     torch.set_num_threads(THREADS)
     if stage == 1 and torch.cuda.is_available():
         raise RuntimeError("Stage 1 is CPU only: set CUDA_VISIBLE_DEVICES=")
-    if stage == 2 and not torch.cuda.is_available():
-        raise RuntimeError("Stage 2 needs a GPU")
+    if stage in (2, 3) and not torch.cuda.is_available():
+        raise RuntimeError(f"Stage {stage} needs a GPU")
     receipts = {to_stored(PRIOR037 / name): digest
                 for name, digest in receipt_checked(PRIOR037, ("predictions.npz",)).items()}
     receipts.update({to_stored(PRIOR035 / name): digest
                      for name, digest in receipt_checked(PRIOR035, ("predictions.npz",)).items()})
     receipts.update({to_stored(PRIOR042 / name): digest
                      for name, digest in receipt_checked(PRIOR042, ("unit_scores.npz",)).items()})
-    if stage == 2 and not smoke:
+    if stage in (2, 3) and not smoke:
         receipts.update({to_stored(PRIOR_STAGE1 / name): digest
                          for name, digest in receipt_checked(PRIOR_STAGE1, ("predictions.npz",)).items()})
+    if stage == 3 and not smoke:
+        receipts.update({to_stored(PRIOR_STAGE2 / name): digest
+                         for name, digest in receipt_checked(PRIOR_STAGE2, ("predictions.npz",)).items()})
     data = training_data()
     LOG.info("loaded %s at %.1f s", data["training_counts"], time.perf_counter() - started)
     run_identity = identity(receipts, data["identity"])
     if stage == 1:
         found = run_smoke(data, partial) if smoke else run_stage1(data, partial)
         found.update({"recipe": vars(MLP_RECIPE), "hidden": MLP_HIDDEN, "dropout": MLP_DROPOUT})
-    else:
+    elif stage == 2:
         found = run_stage2(data, partial, smoke, cache)
+    else:
+        found = run_stage3(data, partial, smoke, cache)
     outputs = {path.name: sha256_file(path) for path in sorted(partial.iterdir())
                if path.is_file() and path.name not in ("result.json", "run.log")}
     write_json_atomic(partial / "result.json", {

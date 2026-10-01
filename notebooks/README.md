@@ -25,6 +25,14 @@ derived from these notebooks is described in [clean cohorts v1](../docs/clean-co
 | `09-jr-ningbo.ipynb` | Ningbo (Challenge 2021) | SNOMED codes and the binary label, age placeholders, zero precordial leads in children, filtering, copies of Chapman records |
 | `10-jr-cohorts-v2.ipynb` | Training candidates | CODE-15 cleaning and amplitude, and the source, age, sex, label and pending composition of the nested 25k-1M cohorts |
 
+## Experiment demonstrations
+
+Notebooks that show an experiment's method on single ECGs. The numbers that decide whether the method works are in the experiment's results report.
+
+| Notebook | Experiment | What it shows |
+| --- | --- | --- |
+| `11-jr-section-maps.ipynb` | [041](../docs/experiment-041-fragment-localization-results.md) | Abnormal 0.25 s sections painted red on healthy ECGs, benign variants and twelve kinds of cardiopathy; needs `outputs/experiment041_fragment_localization_v1/` and runs on the CPU |
+
 The MIMIC and EchoNext notebooks show aggregate statistics only (credentialed data), so their outputs can
 be kept in Git. Findings for the project from notebooks 07 and 08 are in
 [the SPH and EchoNext review](../docs/sph-echonext-eda-review.md). The clean manifests built from notebooks 09 and 10 are described in

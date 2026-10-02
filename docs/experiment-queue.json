@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-02T20:00:20.943088+00:00",
+  "updated_at_utc": "2026-10-02T20:02:00.509927+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2654,5 +2654,40 @@
     "closed_test_evaluated": false,
     "next_action": "Implement and verify scientific controls, reproduce predecessor, then run frozen CPU experiment.",
     "protocol_commit": "4b5f030"
+  },
+  "experiment_051_beat_sum": {
+    "status": "complete",
+    "authorized": true,
+    "protocol": "docs/experiment-051-beat-sum-map.md",
+    "protocol_commit": "84c89b2",
+    "source_commit": "88e4ffb",
+    "results": "docs/experiment-051-beat-sum-map-results.md",
+    "output_dir": "outputs/experiment051_beat_sum_v1",
+    "runner": "scripts/experiments/run_beat_sum051.py",
+    "reading": {
+      "beat_sum": {
+        "keeps_premature_localization": false,
+        "gains": {
+          "lead": false,
+          "benign": false,
+          "detection": false
+        },
+        "improves_on_U_B": false
+      },
+      "beat_sum_relative": {
+        "keeps_premature_localization": false,
+        "gains": {
+          "lead": false,
+          "benign": false,
+          "detection": false
+        },
+        "improves_on_U_B": false
+      }
+    },
+    "runtime_seconds": 95.54044433310628,
+    "calibration_test_evaluated": false,
+    "challenge_test_read": false,
+    "ptbxl_test_read": false,
+    "next_action": "Completed negative experiment; 052 and 053 investigate raw residuals and unequal wave-score distributions."
   }
 }

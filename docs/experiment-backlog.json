@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-01",
+  "updated": "2026-10-02",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -1616,6 +1616,38 @@
       "status": "open",
       "authorized": false,
       "notes": "Can be simulated on SPH's local pool with saved z-scores; the map thresholds need U_B and attention maps of SPH ECGs (tokens cached; U_B needs the SPH waveforms)."
+    },
+    {
+      "id": "raw_residual_localization",
+      "kind": "experiment",
+      "title": "Raw within-ECG residual localization",
+      "question": "Do equal-duration raw beat-template residual marks identify focal waveform departures better than U_B?",
+      "evidence": "Experiments 042 and 051: unequal wave dimensions and fixed offsets confound maps; 26 of 28 overlap-only PVC hits are preceding-beat T pieces. The user authorized autonomous unsupervised localization research on 2 October 2026.",
+      "value": 4,
+      "clarity": 0.6,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.3,
+      "build_hours": 3.0,
+      "blocked_by": [],
+      "status": "in_progress",
+      "authorized": true,
+      "notes": "Experiment 052; protocol committed before scores. CPU, local training/development ECGs, fixed primary rule and support. Parent owns reporting queue; subagent runs and writes results."
+    },
+    {
+      "id": "normal_calibrated_unit_localization",
+      "kind": "experiment",
+      "title": "Normal-calibrated persistent lead localization",
+      "question": "Do patient-separated normal tail calibrations and beat medians improve paired infarct-lead contrast?",
+      "evidence": "Experiments 042 and 051: unequal wave dimensions and fixed offsets confound maps; 26 of 28 overlap-only PVC hits are preceding-beat T pieces. The user authorized autonomous unsupervised localization research on 2 October 2026.",
+      "value": 4,
+      "clarity": 0.6,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.3,
+      "build_hours": 3.0,
+      "blocked_by": [],
+      "status": "in_progress",
+      "authorized": true,
+      "notes": "Experiment 053; protocol committed before scores. CPU, local training/development ECGs, fixed primary rule and support. Parent owns reporting queue; subagent runs and writes results."
     }
   ]
 }

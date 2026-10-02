@@ -581,6 +581,7 @@ fixed-size marks, and write its results report from live outputs. The closed tes
 
 | Experiment | Question | State |
 | --- | --- | --- |
+| 051 ([protocol](experiment-051-beat-sum-map.md), [results](experiment-051-beat-sum-map-results.md)) | Beat-score sums | Complete; neither map improved on U_B |
 | 052 | Does comparison with the other beats in the same raw ECG improve focal localization? | Implementation; protocol committed |
 | 053 | Do training-normal calibrated lead/wave scores improve persistent lead localization? | Implementation; protocol committed |
 

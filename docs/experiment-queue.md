@@ -1,6 +1,6 @@
 # Experiment queue
 
-**Updated:** 1 October 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
+**Updated:** 2 October 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
 **1 October, Experiments 046-050 completed, and a CPU timing measured:**
 [Experiment 046](experiment-046-pipeline-v4-results.md) adopted [pipeline v4](pipeline-v4.md), v3 with the
@@ -637,3 +637,11 @@ independent scientist reconstructed all primary results. Normalbeat flags fell t
 a limitation. Beat identity is validated; exact abnormal wave/lead remains unverified.
 All056/057 success/failure examples are indexed in the local public gallery. No more studies were
 launched after these review-worthy gains. Final integration passed1349CPUtests, Ruff and packagebuilds.
+
+## Synthetic localization iterations resumed (2 October 2026)
+
+The user authorized continued autonomous iterations with the screening classifier frozen and
+the same PR #61. Experiment058 is preparing controlled generator tests,059 an independent
+wave-boundary comparison, and [060](experiment-060-waveform-st-localization.md) a fixed
+waveform-anchor successor to057. These are prospective studies; no new score is claimed.
+Protocols must be committed before execution; closed tests remain closed.

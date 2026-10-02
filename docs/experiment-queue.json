@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-02T21:28:01.764878+00:00",
+  "updated_at_utc": "2026-10-02T22:11:35.616464+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -3125,5 +3125,18 @@
       "clinical_single_ecg_localization_established": false
     },
     "independent_audit": "All sources/data/outputs hashes, all90 early templates, patient-macro intervals and time/channel targets reproduced by independent scientist."
+  },
+  "experiment_060_waveform_st": {
+    "status": "protocol_prepared",
+    "authorized": true,
+    "authorization_scope": "User authorized autonomous localization iterations with synthetic ECG controls; classifier frozen; samePR61; no closed tests or label changes.",
+    "protocol": "docs/experiment-060-waveform-st-localization.md",
+    "runner": "scripts/experiments/run_waveform_st060.py",
+    "output_dir": "outputs/experiment060_waveform_st_v1",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "next_action": "Commit prospective protocol before scores; exact057 reproduction; unchanged waveform detector; failures remain in original primary population."
   }
 }

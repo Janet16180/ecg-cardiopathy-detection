@@ -45,6 +45,9 @@ the primary rule. A within-record map subtracts persistent disease and is not a 
 
 Pre-score clarification: both maps use only candidate windows fully covered by the same complete-beat
 support mask (midpoint-owned R - 0.25 through R + 0.45 segments). No zero-filled unscored gap is eligible.
+This mask is intersected with actual saved U_B piece coverage, whose original edge rule requires
+R >= 0.30 seconds. Raw extraction stays at R >= 0.25 seconds, but unsupported historical edge windows
+are ineligible for both maps.
 For both maps, tied maxima use `numpy.isclose` with rtol 1e-10 and atol 1e-10. Primary hit, joint hit,
 distance and overlap are expectations over every tied maximum, not earliest-argmax tie breaking.
 Report tie counts. Figures use the median-time tied maximum for a deterministic descriptive mark.
@@ -55,6 +58,10 @@ Select 200 training NORM-only ECGs from unique patients by ascending ECG ID, exc
 patient. These ECGs are held out of any fit in this experiment; there is no population fit. With seed
 52052 choose an interior complete beat and lead(s) before evaluating the map. Keep R peaks fixed to the
 unmodified ECG in every perturbation/control, so rhythm changes cannot create synthetic success.
+Eligibility requires at least five complete beats, ensuring an interior target and another interior
+beat for the time-shift control. Skip counts and ECG IDs are recorded; eligibility never depends on a
+score. The time-shift control moves the ST edit to the first other interior beat. The lead-permutation
+control cyclically permutes all twelve leads and moves the known ST lead identically.
 
 1. ST: add a 0.15 mV raised-cosine bump on one random lead at R + 0.10 through R + 0.20 seconds.
 2. QRS: replace the QRS of three random leads by a 1.6 times temporally stretched median QRS of other

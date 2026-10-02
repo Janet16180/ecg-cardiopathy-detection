@@ -106,8 +106,9 @@ patients using the saved counts. Neither reading affects the frozen promotion ga
 Four deterministic raw waveform comparisons were saved under
 `outputs/experiment056_incart_localization_v1/figures/` and inspected:
 
-In the win/loss figures, green is +/-100 ms around a matched expert reference anchor, for orientation
-only; INCART annotation times were not manually corrected. Red is the 140 ms anomalous window assigned
+In the win/loss figures, green is +/-100 ms around a detected R anchor matched to an expert V
+annotation, for orientation only; INCART annotation times were not manually corrected. Red is the
+140 ms anomalous window assigned
 to its nearest detected beat by midpoint ownership. A hit validates beat identity, not gold-standard
 QRS delineation or pathological lead/wave support. The unmatched-V diagnostic instead uses +/-150 ms
 to show the matching tolerance.

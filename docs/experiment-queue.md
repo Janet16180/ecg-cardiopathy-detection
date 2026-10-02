@@ -614,3 +614,18 @@ The blinded50case packet remains unused; no cardiologist marks have been receive
 Public benchmark protocols are frozen before scores:055 `5069b24`,056 `17b0292`, and057
 `b72539a`. Experiment057 implementation passed ten focused scientific tests and Ruff;270public
 EDB files (487,662,449bytes) match published SHA-256checksums. These are preparation checks.
+
+055 and057 are running CPU-only from frozen sources `7164258` and `f0feff4`;057 includes
+[a prospective annotation-completeness amendment](experiment-057-annotation-audit-amendment.md).
+No results are asserted while receipts remain incomplete.056 implementation is being finalized.
+
+## Independent public localization results (2 October 2026)
+
+[057](experiment-057-st-episode-localization-results.md) is complete: independent expert ST-change
+time/channel hit improved from53.6%to70.4%, paired+16.8points[7.2,27.6],76subjects. All frozen
+gates passed; an independent scientist reproduced references/targets/intervals. This is conditional
+on supplied beat anchors and two-hour/two-channel context; the clinical pipeline is unchanged.
+Original waveform examples and failures: `outputs/localization_public_review_2026_10_02/index.html`.
+[055](experiment-055-ludb-wave-boundaries-results.md) is complete: QRS/T boundary overlap improved
+against cardiologist marks, but the full recipe failed because overall gain was below10points and P
+localization worsened.056 is running after exact predecessor/reference reconstruction.

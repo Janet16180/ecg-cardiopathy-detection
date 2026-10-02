@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-02T20:44:42.391634+00:00",
+  "updated_at_utc": "2026-10-02T21:14:32.041662+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2836,7 +2836,7 @@
     }
   },
   "localization_review_2026_10_02": {
-    "status": "cardiologist_unavailable_public_benchmarks_preparing",
+    "status": "independent_public_st_improvement_review_ready",
     "comparison_gallery": "outputs/localization_review_2026_10_02/index.html",
     "blinded_packet": "outputs/cardiologist_localization_review_2026_10_02/blinded_ecgs.pdf",
     "annotation_template": "outputs/cardiologist_localization_review_2026_10_02/annotations.csv",
@@ -2845,10 +2845,12 @@
     "selection_seed": 20261002,
     "proposed_review_records": 50,
     "proposed_review_unique_patients": 50,
-    "clinical_region_accuracy_established": false
+    "clinical_region_accuracy_established": false,
+    "public_expert_review": "outputs/localization_public_review_2026_10_02/index.html",
+    "next_action": "User review of 057 validated ST-change improvement; original cardiologist packet remains unused."
   },
   "experiment_055_wave_delineation": {
-    "status": "protocol_frozen_implementation",
+    "status": "complete",
     "authorized": true,
     "authorization_scope": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes.",
     "public_dataset": "LUDB 1.0.1",
@@ -2857,12 +2859,109 @@
       "threads": 2
     },
     "closed_test_evaluated": false,
-    "next_action": "Complete source audit, predecessor reproduction and independent benchmark.",
+    "next_action": "Complete recipe failed frozen gain/P guard; preserve genuine QRS/T gains and P failure. No deployment or post-score recipe tuning. Independent hybrid confirmation is a backlog candidate.",
     "protocol_commit": "5069b24",
-    "protocol": "docs/experiment-055-ludb-wave-boundaries.md"
+    "protocol": "docs/experiment-055-ludb-wave-boundaries.md",
+    "source_commit": "7164258",
+    "amendments": [
+      "e0f4c5e"
+    ],
+    "runner": "scripts/experiments/run_ludb_boundaries055.py",
+    "output_dir": "outputs/experiment055_ludb_boundaries_v1",
+    "results": "docs/experiment-055-ludb-wave-boundaries-results.md",
+    "results_commit": "c00d268",
+    "runtime_seconds": 151.92710163700394,
+    "reading": {
+      "records": 200,
+      "subjects": 200,
+      "fixed_primary_iou": 0.5565263444483334,
+      "adaptive_primary_iou": 0.6514050075554896,
+      "primary_gain": {
+        "estimate": 0.0948786631071562,
+        "ci_low": 0.08041680553663626,
+        "ci_high": 0.10901857121219544
+      },
+      "waves": {
+        "P": {
+          "records_with_truth": 176,
+          "eligible_truth_waves": 16785,
+          "fixed": {
+            "iou": 0.5019642422068427,
+            "onset_mae_ms": 51.12449319108196,
+            "offset_mae_ms": 45.02990973775286,
+            "within_30ms": 0.2885936474121301,
+            "missing": 0.0006673416789396171
+          },
+          "adaptive": {
+            "iou": 0.41792093499482763,
+            "onset_mae_ms": 222.82718930054455,
+            "offset_mae_ms": 215.695064811277,
+            "within_30ms": 0.4782661538154978,
+            "missing": 0.41382050010556637
+          },
+          "iou_gain": {
+            "estimate": -0.08404330721201515,
+            "ci_low": -0.11352502285020127,
+            "ci_high": -0.05411494484531412
+          }
+        },
+        "QRS": {
+          "records_with_truth": 200,
+          "eligible_truth_waves": 21843,
+          "fixed": {
+            "iou": 0.6681133514516607,
+            "onset_mae_ms": 15.786578791906585,
+            "offset_mae_ms": 31.849244985938732,
+            "within_30ms": 0.6979549705561239,
+            "missing": 0.0
+          },
+          "adaptive": {
+            "iou": 0.8388815465188548,
+            "onset_mae_ms": 8.049472552386623,
+            "offset_mae_ms": 10.843629842276577,
+            "within_30ms": 0.9644058986348614,
+            "missing": 0.0
+          },
+          "iou_gain": {
+            "estimate": 0.17076819506719423,
+            "ci_low": 0.1595412815684309,
+            "ci_high": 0.18122904475765106
+          }
+        },
+        "T": {
+          "records_with_truth": 200,
+          "eligible_truth_waves": 19650,
+          "fixed": {
+            "iou": 0.4914507208895955,
+            "onset_mae_ms": 48.69376317052702,
+            "offset_mae_ms": 106.58553425850317,
+            "within_30ms": 0.20093734871586577,
+            "missing": 0.005221734892787524
+          },
+          "adaptive": {
+            "iou": 0.6677622766119962,
+            "onset_mae_ms": 67.08567249791025,
+            "offset_mae_ms": 80.17435906672681,
+            "within_30ms": 0.6172082664051775,
+            "missing": 0.08655439140890435
+          },
+          "iou_gain": {
+            "estimate": 0.17631155572240054,
+            "ci_low": 0.1484822539108598,
+            "ci_high": 0.20184020774456987
+          }
+        }
+      },
+      "decision": {
+        "practical_gain": false,
+        "supported_gain": true,
+        "all_wave_gains_nonnegative": false,
+        "worth_reviewing": false
+      }
+    }
   },
   "experiment_056_expert_beat_localization": {
-    "status": "protocol_frozen_implementation",
+    "status": "running",
     "authorized": true,
     "authorization_scope": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes.",
     "public_dataset": "INCART 1.0.0",
@@ -2871,12 +2970,20 @@
       "threads": 2
     },
     "closed_test_evaluated": false,
-    "next_action": "Complete source audit, predecessor reproduction and independent benchmark.",
+    "next_action": "Complete independent expert beat benchmark and executor results report.",
     "protocol_commit": "17b0292",
-    "protocol": "docs/experiment-056-incart-beat-localization.md"
+    "protocol": "docs/experiment-056-incart-beat-localization.md",
+    "source_commit": "da9ef7a",
+    "amendments": [
+      "a2c1642",
+      "42dacd5"
+    ],
+    "runner": "scripts/experiments/run_incart_localization056.py",
+    "output_dir": "outputs/experiment056_incart_localization_v1",
+    "verification": "18 focused tests and Ruff; exact refit reproduced all1604 U_B unitmaps with zero difference."
   },
   "experiment_057_st_episode": {
-    "status": "protocol_frozen_implementation_ready",
+    "status": "complete",
     "authorized": true,
     "authorization_scope": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes.",
     "public_dataset": "European ST-T 1.0.0",
@@ -2885,10 +2992,35 @@
       "threads": 2
     },
     "closed_test_evaluated": false,
-    "next_action": "Scientific code audit and predecessor integrity check before new scores.",
+    "next_action": "Review local original ECG examples and expert ST timelines. Method passed conditional two-hour/two-channel ST-change localization gate; clinical pipeline unchanged. No post-score recipe variants launched.",
     "protocol": "docs/experiment-057-st-episode-localization.md",
     "protocol_commit": "b72539a",
     "runner": "scripts/experiments/run_st_episode057.py",
-    "output_dir": "outputs/experiment057_st_episode_v1"
+    "output_dir": "outputs/experiment057_st_episode_v1",
+    "source_commit": "f0feff4",
+    "amendments": [
+      "docs/experiment-057-annotation-audit-amendment.md"
+    ],
+    "verification": "11 scientific tests and Ruff passed; scientist audited all90 annotation files before score.",
+    "results": "docs/experiment-057-st-episode-localization-results.md",
+    "runtime_seconds": 42.04375616600737,
+    "reading": {
+      "records": 90,
+      "patients": 79,
+      "primary_records": 85,
+      "paired_gain": {
+        "value": 0.16776315789473684,
+        "ci_low": 0.07236842105263158,
+        "ci_high": 0.27631578947368424,
+        "patients": 76,
+        "draws": 2000,
+        "seed": 57057
+      },
+      "passes_primary": true,
+      "passes_counts": true,
+      "passes_axis_stress": true,
+      "clinical_single_ecg_localization_established": false
+    },
+    "independent_audit": "All sources/data/outputs hashes, all90 early templates, patient-macro intervals and time/channel targets reproduced by independent scientist."
   }
 }

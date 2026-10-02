@@ -1691,12 +1691,12 @@
       "value": 5,
       "clarity": 0.8,
       "gpu_hours": 0.0,
-      "cpu_hours": 0.5,
-      "build_hours": 3.0,
+      "cpu_hours": 0.04220197267694554,
+      "build_hours": 0.5,
       "blocked_by": [],
-      "status": "in_progress",
+      "status": "done",
       "authorized": true,
-      "notes": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes."
+      "notes": "Experiment055 completed: full method failed frozen10point/P gates; QRSIoU+.171 and T+.176 against independent marks, P\u2212.084. Runtime151.9s; about30min preparation/execution/report by timestamps. No full-map promotion. Report docs/experiment-055-ludb-wave-boundaries-results.md."
     },
     {
       "id": "expert_st_episode_localization",
@@ -1707,12 +1707,60 @@
       "value": 5,
       "clarity": 0.8,
       "gpu_hours": 0.0,
-      "cpu_hours": 0.5,
+      "cpu_hours": 0.011678821157224269,
+      "build_hours": 0.75,
+      "blocked_by": [],
+      "status": "done",
+      "authorized": true,
+      "notes": "Experiment057 passed frozen review gates: patient-macro top time/channel70.4% vs53.6%, +16.8points[7.2,27.6],76subjects; axis-ST stress passed6subjects.42.04s CPUrun, about45min source/audit/review preparation. Conditional suppliedanchors/2h2channels; no10sec12lead clinical transfer. Report docs/experiment-057-st-episode-localization-results.md."
+    },
+    {
+      "id": "waveform_anchor_st_localization",
+      "kind": "experiment",
+      "title": "Waveform-derived anchors for independent ST-change localization",
+      "question": "Does the successful057 comparison survive replacing supplied beat times with a waveform-only detector?",
+      "evidence": "055 full recipe failed but QRS/T boundaries improved;057 independently annotated ST-change comparison passed its frozen review rule.",
+      "value": 5,
+      "clarity": 0.8,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.2,
+      "build_hours": 1.5,
+      "blocked_by": [],
+      "status": "candidate",
+      "authorized": false,
+      "notes": "Ranked follow-up only. Stop for user review of the successful057 result; requires a new prospective protocol before any execution. Clinical labels and closed tests remain unchanged."
+    },
+    {
+      "id": "short_record_st_reference",
+      "kind": "experiment",
+      "title": "ST-change reference for ten-second twelve-lead ECGs",
+      "question": "Can a train-normal reference preserve ST-specific localization without thirty seconds of context?",
+      "evidence": "055 full recipe failed but QRS/T boundaries improved;057 independently annotated ST-change comparison passed its frozen review rule.",
+      "value": 5,
+      "clarity": 0.5,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.2,
+      "build_hours": 4.0,
+      "blocked_by": [],
+      "status": "candidate",
+      "authorized": false,
+      "notes": "Ranked follow-up only. Stop for user review of the successful057 result; requires a new prospective protocol before any execution. Clinical labels and closed tests remain unchanged."
+    },
+    {
+      "id": "boundary_hybrid_external_validation",
+      "kind": "experiment",
+      "title": "Independent confirmation of QRS/T boundaries with fixed P windows",
+      "question": "Can a frozen hybrid confirm055 QRS/T gains without its P degradation on another annotated source?",
+      "evidence": "055 full recipe failed but QRS/T boundaries improved;057 independently annotated ST-change comparison passed its frozen review rule.",
+      "value": 4,
+      "clarity": 0.7,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.2,
       "build_hours": 3.0,
       "blocked_by": [],
-      "status": "in_progress",
-      "authorized": true,
-      "notes": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes."
+      "status": "candidate",
+      "authorized": false,
+      "notes": "Ranked follow-up only. Stop for user review of the successful057 result; requires a new prospective protocol before any execution. Clinical labels and closed tests remain unchanged."
     }
   ]
 }

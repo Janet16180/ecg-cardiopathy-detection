@@ -607,6 +607,31 @@ def verify_legacy_baseline(rows: dict, baseline: list[UnitMap], prior: dict, win
             raise ValueError("Pre-score baseline lead reproduction failed")
 
 
+def eligible_windows(rows: dict[str, pd.DataFrame]) -> dict[int, list[tuple[float, float]]]:
+    """
+    Reproduce the 73 eligible premature-beat proxy records.
+
+    Parameters
+    ----------
+    rows : dict[str, pd.DataFrame]
+        Frozen development PVC records.
+
+    Returns
+    -------
+    dict[int, list[tuple[float, float]]]
+        Automatic eligible windows by ECG identifier.
+    """
+    windows = {}
+    for ecg_id, stem in zip(rows["pvc"]["ecg_id"], rows["pvc"]["filename_hr"], strict=True):
+        peaks = r_peaks(read_ptb_float64(stem), 500)
+        selected = premature_windows(peaks, 500)
+        if len(peaks) >= 4 and selected:
+            windows[int(ecg_id)] = selected
+    if len(windows) != 73:
+        raise ValueError("Eligible premature-beat proxy count differs from 042")
+    return windows
+
+
 def run() -> None:
     """
     Run the frozen experiment on local raw ECGs and write an auditable receipt.
@@ -641,14 +666,7 @@ def run() -> None:
         raise ValueError("Unexpected unusable ECG differs from predecessor")
     LOG.info("Read %s raw ECGs in %.1fs", len(beats), time.perf_counter() - start)
     prior = json.loads((PRIOR / "result.json").read_text())
-    windows = {}
-    for ecg_id, stem in zip(rows["pvc"]["ecg_id"], rows["pvc"]["filename_hr"], strict=True):
-        peaks = r_peaks(read_ptb_float64(stem), 500)
-        selected = premature_windows(peaks, 500)
-        if len(peaks) >= 4 and selected:
-            windows[int(ecg_id)] = selected
-    if len(windows) != 73:
-        raise ValueError("Eligible premature-beat proxy count differs from 042")
+    windows = eligible_windows(rows)
     with threadpool_limits(limits=2):
         baseline, integrity = reconstruct(beats, rows)
         verify_legacy_baseline(rows, baseline, prior, windows)

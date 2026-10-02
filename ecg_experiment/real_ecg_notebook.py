@@ -420,7 +420,7 @@ local notebook and offline HTML with:
 OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 .venv/bin/python -m scripts.reports.build_real_ecg_notebook
 ```
 
-Use the resulting `outputs/real_ecg_notebook_2026_10_02/real-ecg-localization.ipynb`
+Use the resulting `notebooks/14-jr-real-ecg-localization.executed.ipynb`
 for the portable, runnable version. Raw recordings remain local according to the project's data policy.
 """),
         )
@@ -435,7 +435,7 @@ def build_notebooks(root: Path, destination: Path, template: Path | None = None)
     cases = load_real_ptb_cases(root) + load_real_evidence_cases(root)
     payload = {"cases": cases, "metrics": _metrics(root)}
     destination.mkdir(parents=True, exist_ok=True)
-    path = destination / "real-ecg-localization.ipynb"
+    path = destination / "14-jr-real-ecg-localization.executed.ipynb"
     nbformat.write(make_notebook(payload), path)
     if template is not None:
         template.parent.mkdir(parents=True, exist_ok=True)

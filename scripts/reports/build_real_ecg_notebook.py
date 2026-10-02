@@ -16,7 +16,7 @@ def main() -> None:
     """Build, execute, and export the requested real-recording explanation."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
-    parser.add_argument("--output", type=Path, default=Path("outputs/real_ecg_notebook_2026_10_02"))
+    parser.add_argument("--output", type=Path, default=Path("notebooks"))
     parser.add_argument("--template", type=Path, default=Path("notebooks/14-jr-real-ecg-localization.ipynb"))
     args = parser.parse_args()
     notebook_path = build_notebooks(args.root, args.output, args.template)

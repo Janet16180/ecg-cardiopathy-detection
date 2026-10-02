@@ -6,8 +6,8 @@ performance evaluation. Its Markdown sections explain the method, findings, and 
 
 ## Open the local artifacts
 
-- Notebook: `outputs/real_ecg_notebook_2026_10_02/real-ecg-localization.ipynb`.
-- Offline reading version: `outputs/real_ecg_notebook_2026_10_02/real-ecg-localization.html`.
+- Notebook: `notebooks/14-jr-real-ecg-localization.executed.ipynb`.
+- Offline reading version: `notebooks/14-jr-real-ecg-localization.executed.html`.
 - Executed verification: `outputs/real_ecg_notebook_2026_10_02/validation.json`.
 
 The notebook embeds the selected original waveform samples and saved results. Restarting the kernel

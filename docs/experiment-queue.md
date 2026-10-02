@@ -575,7 +575,7 @@ The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.m
 ## Unsupervised localization follow-ups, 2 October 2026
 
 The user authorized autonomous localization research with subagents on the existing PR #61. Experiments
-052 and 053 committed their prospective protocols before scoring. They run on CPU in isolated worktrees, fit no pathology
+052-054 committed their prospective protocols before scoring. They run on CPU in isolated worktrees, fit no pathology
 labels, and use local training/development ECGs. Each must reproduce the previous `U_B` results, compare
 fixed-size marks, and write its results report from live outputs. The closed test sets stay closed.
 
@@ -584,9 +584,20 @@ fixed-size marks, and write its results report from live outputs. The closed tes
 | 051 ([protocol](experiment-051-beat-sum-map.md), [results](experiment-051-beat-sum-map-results.md)) | Beat-score sums | Complete; neither map improved on U_B |
 | 052 ([protocol](experiment-052-raw-residual.md), [results](experiment-052-raw-residual-results.md)) | Does comparison with the other beats in the same raw ECG improve focal localization? | Complete; gain −0.009 [−0.166, +0.139], ST 20.5%, QRS 77.5%; no promotion |
 | 053 ([protocol](experiment-053-calibrated-units.md), [results](experiment-053-calibrated-units-results.md)) | Do training-normal calibrated lead/wave scores improve persistent lead localization? | Complete; paired lead gain −0.020 [−0.133, +0.091], focal guardrail failed; no promotion |
-| 054 ([protocol](experiment-054-aligned-phase-residual.md)) | Does bounded beat alignment and independent normal residual calibration improve localization? | Implementation; protocol committed before scores |
+| 054 ([protocol](experiment-054-aligned-phase-residual.md), [results](experiment-054-aligned-phase-residual-results.md)) | Does bounded beat alignment and independent normal residual calibration improve localization? | Complete; automatic timing gain +0.142 [+0.001, +0.287], but ST 12.5% and QRS 59.3% failed; no promotion |
 
 The existing PVC overlap target is an automatic proxy. Fixed wave windows can attribute an early beat to
 the preceding beat's T window; prospective common-support metrics and known-location waveform alterations
 will check localization without accepting a gain from wider highlights. Clinical region correctness still
 needs independent cardiologist marks or expert beat annotations.
+
+Integrated verification: 1,318 CPU tests, Ruff, source distribution and wheel passed. Three subagents
+ran or independently audited the experiments. The existing PR #61 holds all changes. The next decision
+is independent cardiologist region annotations; no further recipe search or new data download is scheduled.
+
+Local review artifacts: `outputs/localization_review_2026_10_02/index.html` has 40 comparison figures,
+including failures. `outputs/cardiologist_localization_review_2026_10_02/` contains a proposed blinded
+50-ECG packet and annotation template. Selection uses 50 distinct existing development patients,
+ten per existing normal, benign, PVC, anterior and inferior group, with randomized order and seed
+20261002. Give the reader only `blinded_ecgs.pdf` and `annotations.csv`; retain the selection key and
+model highlights until annotations are frozen. No expert annotations have been received.

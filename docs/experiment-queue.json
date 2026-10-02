@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-02T20:16:31.902489+00:00",
+  "updated_at_utc": "2026-10-02T20:29:14.498626+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2778,7 +2778,7 @@
     "next_action": "Completed negative experiment; 052 and 053 investigate raw residuals and unequal wave-score distributions."
   },
   "experiment_054_aligned_residual": {
-    "status": "implementation",
+    "status": "complete",
     "authorized": true,
     "authorization_scope": "User, 2 October 2026, autonomous unsupervised localization work with subagents on existing PR #61; successor after 052 and 053 failed frozen rules.",
     "protocol": "docs/experiment-054-aligned-phase-residual.md",
@@ -2790,8 +2790,61 @@
       "threads": 2
     },
     "closed_test_evaluated": false,
-    "next_action": "Implement and test frozen bounded alignment/channel-max calibration recipe; reproduce 052 fully before new scores.",
+    "next_action": "No general-localization promotion. User decision: blinded cardiologist lead/time-region annotations; local 50-ECG packet and 40-figure comparison gallery prepared. No further recipe variants or data download scheduled.",
     "protocol_commit": "da21b67",
-    "cohort_manifest": "docs/experiment-054-cohorts.json"
+    "cohort_manifest": "docs/experiment-054-cohorts.json",
+    "source_commit": "2eb46c5",
+    "amendments": {
+      "1": "2eb46c5"
+    },
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "OPENBLAS_NUM_THREADS": "2",
+      "OMP_NUM_THREADS": "2",
+      "MKL_NUM_THREADS": "2",
+      "CUDA_VISIBLE_DEVICES": "",
+      "PYTHONPATH": "/tmp/ecg-localization052"
+    },
+    "command": "CUDA_VISIBLE_DEVICES= MPLCONFIGDIR=/tmp/ecg-mpl054 OPENBLAS_CORETYPE=Haswell OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 PYTHONPATH=/tmp/ecg-localization052 .venv/bin/python -m scripts.experiments.run_raw_residual054",
+    "verification": "13 focused tests before run; integrated repository: 1318 CPU tests, Ruff, source distribution and wheel passed.",
+    "results_commits": [
+      "c0efb7b",
+      "25a0e64"
+    ],
+    "runtime_seconds": 117.180043806904,
+    "reading": {
+      "promote_for_review": false,
+      "passes_real_rule": true,
+      "paired_gain": {
+        "value": 0.14183287195316355,
+        "ci_low": 0.0010385482245950566,
+        "ci_high": 0.287402332197244
+      },
+      "raw_pvc_hit": 0.6297946818327816,
+      "baseline_pvc_hit": 0.4879618098796181,
+      "pvc_tie_records": 69,
+      "synthetic_ST_joint": {
+        "value": 0.125,
+        "ci_low": 0.08,
+        "ci_high": 0.175
+      },
+      "synthetic_QRS_joint": {
+        "value": 0.5925,
+        "ci_low": 0.5275,
+        "ci_high": 0.66
+      }
+    }
+  },
+  "localization_review_2026_10_02": {
+    "status": "awaiting_annotation_decision",
+    "comparison_gallery": "outputs/localization_review_2026_10_02/index.html",
+    "blinded_packet": "outputs/cardiologist_localization_review_2026_10_02/blinded_ecgs.pdf",
+    "annotation_template": "outputs/cardiologist_localization_review_2026_10_02/annotations.csv",
+    "selection_key": "outputs/cardiologist_localization_review_2026_10_02/selection_key_local_only.json",
+    "annotations_received": false,
+    "selection_seed": 20261002,
+    "proposed_review_records": 50,
+    "proposed_review_unique_patients": 50,
+    "clinical_region_accuracy_established": false
   }
 }

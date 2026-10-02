@@ -1395,7 +1395,7 @@
       ],
       "status": "blocked",
       "authorized": false,
-      "notes": "New public data source and a download; needs the user's approval and a quality gate."
+      "notes": "New public data source and a download; needs the user's approval and a quality gate. Official PhysioNet INCART v1.0.0:75recordings/32Holterpatients,563.5MBZIP/794.5MBuncompressed, over175kbeatannotations. Beat types manually corrected; annotation times not manually corrected. Useful beat-identity validation, not ST/lead-region truth. No download performed."
     },
     {
       "id": "rate_adaptive_wave_windows",
@@ -1418,9 +1418,9 @@
       "kind": "repo",
       "title": "Page for the cardiologist to mark abnormal leads and waves",
       "question": "Can the cardiologist mark the abnormal leads and waves on 30-50 ECGs, giving region ground truth for the section maps?",
-      "evidence": "Experiments 041-042 could check location only on rule-detected premature beats; the infarct lead test uses whole-ECG statements and was inconclusive.",
-      "value": 4,
-      "clarity": 0.7,
+      "evidence": "052 and053 failed localization gates; 054 improved an automatic timing proxy but failed ST/QRS known-support checks. Exact clinical region correctness remains unmeasured.",
+      "value": 5,
+      "clarity": 0.8,
       "gpu_hours": 0.0,
       "cpu_hours": 0.0,
       "build_hours": 3.0,
@@ -1429,7 +1429,8 @@
       ],
       "status": "blocked",
       "authorized": false,
-      "notes": "PTB-XL is public; marks stay local. Choose ECGs by rule, including healthy, benign and several cardiopathies."
+      "notes": "Blinded50ECG/50patient packet prepared locally2October2026: outputs/cardiologist_localization_review_2026_10_02/{blinded_ecgs.pdf,annotations.csv}; selection key and model highlights withheld until marks frozen. Ten per existing normal/benign/PVC/anterior/inferior group, seed20261002. No expert marks received; clinical label definitions unchanged.",
+      "repo_preparation_authorized": true
     },
     {
       "id": "other_referrals_cardiologist",
@@ -1661,9 +1662,27 @@
       "cpu_hours": 0.3,
       "build_hours": 3.0,
       "blocked_by": [],
-      "status": "in_progress",
+      "status": "done",
       "authorized": true,
-      "notes": "Experiment054 prospective protocol preparation. New200syntheticpatients disjoint from052and054calibration/control; same real >=.10 CI lower>0 andST/QRS>=80% gates."
+      "notes": "Experiment054 complete: tie-averaged automatic timing gain +0.142 [+0.001,+0.287]; syntheticST12.5%,QRS59.25% failed80% gates. No promotion. docs/experiment-054-aligned-phase-residual-results.md. All052metrics exactly reproduced; new200patient verification,1000calibration,300controls disjoint."
+    },
+    {
+      "id": "aligned_residual_tail_resolution",
+      "kind": "experiment",
+      "title": "Continuous normal residual tails after expert region review",
+      "question": "Can a continuous normal-reference score reduce tied highlights while preserving clinically relevant regions?",
+      "evidence": "054 caps produced tied maxima in69/73PVC ECGs, mean33.9 maxima, and76/1604 saturated records. Automatic metric gain was not enough to pass independent known-support checks.",
+      "value": 3,
+      "clarity": 0.4,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.3,
+      "build_hours": 3.0,
+      "blocked_by": [
+        "cardiologist_region_marks"
+      ],
+      "status": "blocked",
+      "authorized": false,
+      "notes": "Preserve054 sources and require a prospective protocol. Do not tune more variants on the same automatic targets before region annotations clarify the clinical endpoint."
     }
   ]
 }

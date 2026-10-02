@@ -683,3 +683,15 @@ measurements/matches reconstructed. Allgatespassed; this is QRSboundarytiming,
 not disease-region accuracy. Local before/after and regression review:
 `outputs/localization_iteration_review_2026_10_02/index.html`. Final integrated
 checks:1371CPUtests, Ruff and wheel/sdist passed;058 benchmark remains running.
+
+058 completed all7200testtraces/14400methodrows in1099.17seconds. Generator
+qualificationpassed; allfour generator/distribution robustnessdecisions failed,
+with extra-noise flags and persistent-ST misses. Independent reconstruction
+verifiedallcases/intervals/8460outputhashes. No clinicalpromotion. Executor report
+is being written; the local iteration gallery nowcontains66verifiedfigures.
+
+[058 executed report](experiment-058-synthetic-generator-localization-results.md) and
+independent audit are complete. All three058–060 studies have reports and audits.
+The review-worthy result is059QRSboundarytiming;058robustness and060full-rule
+noninferiority failed. No further study was launched. Classifier/clinicalpipeline
+and closedtests remain unchanged. Same PR #61; local66figure review is ready.

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-02T22:27:16.269661+00:00",
+  "updated_at_utc": "2026-10-02T22:59:15.717257+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -3252,7 +3252,7 @@
     "independent_audit": "outputs/experiment059_qtdb_hybrid_audit_v1/audit.json andmatching_audit.json;549hashes/10359rows/allannotations&bootstrap reconstructed."
   },
   "experiment_058_synthetic_generator": {
-    "status": "running",
+    "status": "complete",
     "authorized": true,
     "protocol": "docs/experiment-058-synthetic-generator-localization.md",
     "protocol_commit": "089a7c0",
@@ -3263,10 +3263,28 @@
     },
     "closed_test_evaluated": false,
     "screening_classifier_changed": false,
-    "next_action": "Read live partialoutputs; benchmark frozenmethods andbothsimulatorfamilies; no syntheticclinicalpromotion.",
+    "next_action": "Review independentlyconfirmed059QRSboundaryimprovement alongside058stressfailures. No additionalrecipes or jobs scheduled; classifier/closedtests unchanged.",
     "source_commit": "cf45db4",
     "runner": "scripts/experiments/run_synthetic_generator058.py",
     "amendment_commit": "e7081f0",
-    "verification": "Generator invariant/matching tests and Ruff passed; independent protocol/code review passed; puregeneration forecast0.149sec for12subjects plus108edits."
+    "verification": "Generator invariant/matching tests and Ruff passed; independent protocol/code review passed; puregeneration forecast0.149sec for12subjects plus108edits.",
+    "runtime_seconds": 1099.1719388869824,
+    "reading": {
+      "qualification": {
+        "max_processed_sham_difference": 0.0,
+        "max_limb_error": 1.7763568394002505e-15,
+        "all_masks_match_noiseless_counterfactual": true,
+        "uninformative": {},
+        "elapsed_seconds": 133.83004485897254,
+        "subjects_per_generator": 600
+      },
+      "provisional_synthetic_robustness_pass": false,
+      "clinical_promotion": false,
+      "test_traces": 7200,
+      "method_rows": 14400,
+      "inference_failures": 0
+    },
+    "independent_audit": "outputs/experiment058_synthetic_generator_audit_v1/audit.json; all7200cases/14400rows/8460hashes/bootstrap reconstructed.",
+    "results": "docs/experiment-058-synthetic-generator-localization-results.md"
   }
 }

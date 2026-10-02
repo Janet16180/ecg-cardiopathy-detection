@@ -1803,12 +1803,12 @@
       "value": 4,
       "clarity": 0.8,
       "gpu_hours": 0.0,
-      "cpu_hours": 0.2,
+      "cpu_hours": 0.30532553857971734,
       "build_hours": 3.0,
       "blocked_by": [],
-      "status": "running",
+      "status": "done",
       "authorized": true,
-      "notes": "058 frozenprotocol089a7c0; twofamilies andheldoutmorphology/geometry; fixed056/U_B comparators, realexpertsrequired forfuturecandidate. This differs from dropped synthetic classreferences."
+      "notes": "058 completed qualificationpositive/robustnessnegative;2generatorfamilies\u00d7400heldoutsubjects\u00d79cases=7200traces. Allfour robustnessdecisionsfail; persistentSThit0\u201314%,noiseflagincrease54\u201388points. Allrows/hashes/intervals independentlyaudited. BroadpersistentTmask~86\u201389%prevents preciseT-wave interpretation. Classifierfrozen/no clinicalpromotion."
     },
     {
       "id": "synthetic_anchor_timing_st",
@@ -1843,6 +1843,38 @@
       "status": "candidate",
       "authorized": false,
       "notes": "Follow-up after userreview; freeze anomaly/support comparison before scoring onnewtruth. No 059retuning or clinicalpipeline replacement from boundaryresults alone."
+    },
+    {
+      "id": "population_reference_persistent_changes",
+      "kind": "experiment",
+      "title": "Population normal references for persistent waveform changes",
+      "question": "Can a separate normal reference recover changes shared by every beat without using the paired clean simulator counterpart at inference?",
+      "evidence": "058 persistentST alignedresidualhit0\u201314% vsU_B46\u201358%; within-recordtemplate removes shared waveform shifts.",
+      "value": 5,
+      "clarity": 0.7,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.2,
+      "build_hours": 3.0,
+      "blocked_by": [],
+      "status": "candidate",
+      "authorized": false,
+      "notes": "Nextprospectivecomparison only; simulatorcausaldiff targets notclinicalpathologytruth. Realexpert validation required; freezeclassifier/clinicaldefinitions."
+    },
+    {
+      "id": "localization_noise_guard",
+      "kind": "experiment",
+      "title": "Noise guard for waveform highlights",
+      "question": "Can unlabeled noise measures prevent artifact highlights while preserving true programmed and expert marked changes?",
+      "evidence": "058 alignedresidualextra-noiseflagincrease54\u201388points,95%upper61\u201392.5%; allrobustnessdecisionsfail.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.2,
+      "build_hours": 2.0,
+      "blocked_by": [],
+      "status": "candidate",
+      "authorized": false,
+      "notes": "Futureprotocol must retain noisycases in denominator and report losttruechanges. No new first-stage training or patientexclusions toinflate correctness."
     }
   ]
 }

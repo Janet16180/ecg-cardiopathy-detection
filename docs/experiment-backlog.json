@@ -1385,17 +1385,15 @@
       "title": "Check section maps against expert beat labels (INCART 12-lead)",
       "question": "On a 12-lead database where experts labeled every beat, how often does the top red section fall on an annotated ectopic beat?",
       "evidence": "Experiment 041 could check location only with an automatic premature-beat rule on 73 PTB-XL ECGs.",
-      "value": 2,
-      "clarity": 0.7,
+      "value": 5,
+      "clarity": 0.8,
       "gpu_hours": 0.1,
       "cpu_hours": 0.2,
       "build_hours": 3.0,
-      "blocked_by": [
-        "@user_download_approval"
-      ],
-      "status": "blocked",
-      "authorized": false,
-      "notes": "New public data source and a download; needs the user's approval and a quality gate. Official PhysioNet INCART v1.0.0:75recordings/32Holterpatients,563.5MBZIP/794.5MBuncompressed, over175kbeatannotations. Beat types manually corrected; annotation times not manually corrected. Useful beat-identity validation, not ST/lead-region truth. No download performed."
+      "blocked_by": [],
+      "status": "in_progress",
+      "authorized": true,
+      "notes": "User2October2026 requests overcoming unavailable Italian data/cardiologist; public local acquisition and independent benchmark authorized by task. Experiment056 preparing prospective protocol. Actual closed Challenge split metadata confirms no INCART records in any group; all75records are eligible. Beat types manually corrected, times not manually corrected. No data uploads or new clinical labels."
     },
     {
       "id": "rate_adaptive_wave_windows",
@@ -1429,7 +1427,7 @@
       ],
       "status": "blocked",
       "authorized": false,
-      "notes": "Blinded50ECG/50patient packet prepared locally2October2026: outputs/cardiologist_localization_review_2026_10_02/{blinded_ecgs.pdf,annotations.csv}; selection key and model highlights withheld until marks frozen. Ten per existing normal/benign/PVC/anterior/inferior group, seed20261002. No expert marks received; clinical label definitions unchanged.",
+      "notes": "Blinded50ECG/50patient packet prepared locally2October2026: outputs/cardiologist_localization_review_2026_10_02/{blinded_ecgs.pdf,annotations.csv}; selection key and model highlights withheld until marks frozen. Ten per existing normal/benign/PVC/anterior/inferior group, seed20261002. No expert marks received; clinical label definitions unchanged. User now reports no cardiologist access; preserve unused packet, pursue public expert annotations in055-057. No new marks are assumed.",
       "repo_preparation_authorized": true
     },
     {
@@ -1683,6 +1681,38 @@
       "status": "blocked",
       "authorized": false,
       "notes": "Preserve054 sources and require a prospective protocol. Do not tune more variants on the same automatic targets before region annotations clarify the clinical endpoint."
+    },
+    {
+      "id": "expert_wave_delineation",
+      "kind": "experiment",
+      "title": "Wave boundaries against public cardiologist marks (055)",
+      "question": "Can label-free raw-signal delineation improve wave overlap against200independently marked12lead ECGs?",
+      "evidence": "052-054 did not pass complete localization gates; user cannot obtain promised data or cardiologist. Public expert annotations permit independent validation.",
+      "value": 5,
+      "clarity": 0.8,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.5,
+      "build_hours": 3.0,
+      "blocked_by": [],
+      "status": "in_progress",
+      "authorized": true,
+      "notes": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes."
+    },
+    {
+      "id": "expert_st_episode_localization",
+      "kind": "experiment",
+      "title": "Transient ST time and channel localization (057)",
+      "question": "Can unsupervised ST-specific deviations improve independent expert-episode localization over wholebeat residuals?",
+      "evidence": "052-054 did not pass complete localization gates; user cannot obtain promised data or cardiologist. Public expert annotations permit independent validation.",
+      "value": 5,
+      "clarity": 0.8,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.5,
+      "build_hours": 3.0,
+      "blocked_by": [],
+      "status": "in_progress",
+      "authorized": true,
+      "notes": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes."
     }
   ]
 }

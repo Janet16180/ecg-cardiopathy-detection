@@ -601,3 +601,12 @@ including failures. `outputs/cardiologist_localization_review_2026_10_02/` conta
 ten per existing normal, benign, PVC, anterior and inferior group, with randomized order and seed
 20261002. Give the reader only `blinded_ecgs.pdf` and `annotations.csv`; retain the selection key and
 model highlights until annotations are frozen. No expert annotations have been received.
+
+## Public expert annotations after cardiologist access fell through (2 October 2026)
+
+The user reports that neither the promised Italian data nor cardiologist access is available.
+Experiments055-057 are preparing prospective protocols and acquiring public data locally:055 uses
+LUDB wave boundaries;056 uses INCART expert-corrected beat types;057 uses European ST-T episode
+time/channel marks. No new result is claimed. Actual Challenge split metadata contains no INCART
+records; closed tests remain unread. Screening labels and the recommendation remain unchanged.
+The blinded50case packet remains unused; no cardiologist marks have been received.

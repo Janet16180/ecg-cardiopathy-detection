@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-02T20:29:14.498626+00:00",
+  "updated_at_utc": "2026-10-02T20:44:42.391634+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2790,7 +2790,7 @@
       "threads": 2
     },
     "closed_test_evaluated": false,
-    "next_action": "No general-localization promotion. User decision: blinded cardiologist lead/time-region annotations; local 50-ECG packet and 40-figure comparison gallery prepared. No further recipe variants or data download scheduled.",
+    "next_action": "Completed without promotion. User reports cardiologist unavailable; new independent public annotation benchmarks 055-057 are being prepared.",
     "protocol_commit": "da21b67",
     "cohort_manifest": "docs/experiment-054-cohorts.json",
     "source_commit": "2eb46c5",
@@ -2836,7 +2836,7 @@
     }
   },
   "localization_review_2026_10_02": {
-    "status": "awaiting_annotation_decision",
+    "status": "cardiologist_unavailable_public_benchmarks_preparing",
     "comparison_gallery": "outputs/localization_review_2026_10_02/index.html",
     "blinded_packet": "outputs/cardiologist_localization_review_2026_10_02/blinded_ecgs.pdf",
     "annotation_template": "outputs/cardiologist_localization_review_2026_10_02/annotations.csv",
@@ -2846,5 +2846,42 @@
     "proposed_review_records": 50,
     "proposed_review_unique_patients": 50,
     "clinical_region_accuracy_established": false
+  },
+  "experiment_055_wave_delineation": {
+    "status": "preparing_protocol",
+    "authorized": true,
+    "authorization_scope": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes.",
+    "public_dataset": "LUDB 1.0.1",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "next_action": "Freeze prospective protocol and integrity checks before any new score."
+  },
+  "experiment_056_expert_beat_localization": {
+    "status": "preparing_protocol",
+    "authorized": true,
+    "authorization_scope": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes.",
+    "public_dataset": "INCART 1.0.0",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "next_action": "Freeze prospective protocol and integrity checks before any new score."
+  },
+  "experiment_057_st_episode": {
+    "status": "preparing_protocol",
+    "authorized": true,
+    "authorization_scope": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes.",
+    "public_dataset": "European ST-T 1.0.0",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "next_action": "Freeze prospective protocol and integrity checks before any new score.",
+    "protocol": "docs/experiment-057-st-episode-localization.md"
   }
 }

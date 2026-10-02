@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-02T21:14:32.041662+00:00",
+  "updated_at_utc": "2026-10-02T21:28:01.764878+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2790,7 +2790,7 @@
       "threads": 2
     },
     "closed_test_evaluated": false,
-    "next_action": "Completed without promotion. User reports cardiologist unavailable; new independent public annotation benchmarks 055-057 are being prepared.",
+    "next_action": "Completed without promotion. Independent public expert benchmarks056and057 subsequently passed narrow localization review rules;055 full method failed. Clinical pipeline unchanged.",
     "protocol_commit": "da21b67",
     "cohort_manifest": "docs/experiment-054-cohorts.json",
     "source_commit": "2eb46c5",
@@ -2836,7 +2836,7 @@
     }
   },
   "localization_review_2026_10_02": {
-    "status": "independent_public_st_improvement_review_ready",
+    "status": "independent_public_beat_and_st_improvements_ready",
     "comparison_gallery": "outputs/localization_review_2026_10_02/index.html",
     "blinded_packet": "outputs/cardiologist_localization_review_2026_10_02/blinded_ecgs.pdf",
     "annotation_template": "outputs/cardiologist_localization_review_2026_10_02/annotations.csv",
@@ -2847,7 +2847,7 @@
     "proposed_review_unique_patients": 50,
     "clinical_region_accuracy_established": false,
     "public_expert_review": "outputs/localization_public_review_2026_10_02/index.html",
-    "next_action": "User review of 057 validated ST-change improvement; original cardiologist packet remains unused."
+    "next_action": "User review of056 ectopic-beat identity and057 conditional ST time/channel improvements."
   },
   "experiment_055_wave_delineation": {
     "status": "complete",
@@ -2961,7 +2961,7 @@
     }
   },
   "experiment_056_expert_beat_localization": {
-    "status": "running",
+    "status": "complete",
     "authorized": true,
     "authorization_scope": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes.",
     "public_dataset": "INCART 1.0.0",
@@ -2970,7 +2970,7 @@
       "threads": 2
     },
     "closed_test_evaluated": false,
-    "next_action": "Complete independent expert beat benchmark and executor results report.",
+    "next_action": "Review newly validated ectopic beat identity improvement and negative examples on local public gallery. Exact pathological lead/wave boundaries remain unverified; clinical pipeline unchanged. No more recipes launched.",
     "protocol_commit": "17b0292",
     "protocol": "docs/experiment-056-incart-beat-localization.md",
     "source_commit": "da9ef7a",
@@ -2980,7 +2980,110 @@
     ],
     "runner": "scripts/experiments/run_incart_localization056.py",
     "output_dir": "outputs/experiment056_incart_localization_v1",
-    "verification": "18 focused tests and Ruff; exact refit reproduced all1604 U_B unitmaps with zero difference."
+    "verification": "18 focused tests and Ruff; exact refit reproduced all1604 U_B unitmaps with zero difference.",
+    "results": "docs/experiment-056-incart-beat-localization-results.md",
+    "results_commits": [
+      "62a4605",
+      "698f519"
+    ],
+    "runtime_seconds": 808.6301395839546,
+    "reading": {
+      "methods": {
+        "aligned_residual": {
+          "auroc": 0.9550110802394928,
+          "ap": 0.5843144222700852,
+          "mixed_core_excess": 0.6913746103567491,
+          "mixed_core_hit": 0.8955073829851846,
+          "mixed_core_chance": 0.20413277262843554,
+          "normal_fpr": 0.19088274616488454,
+          "v_sensitivity": 0.9675713436464703,
+          "v_end_to_end_sensitivity": 0.9367986528756067
+        },
+        "U_B_fixed": {
+          "auroc": 0.8701286929130148,
+          "ap": 0.35642479512106295,
+          "mixed_core_excess": 0.53717150463216,
+          "mixed_core_hit": 0.7413042772605956,
+          "mixed_core_chance": 0.20413277262843554,
+          "normal_fpr": 0.5041893705996162,
+          "v_sensitivity": 0.9644535249457994,
+          "v_end_to_end_sensitivity": 0.9337481554757425
+        }
+      },
+      "paired": {
+        "auroc": {
+          "patients": 30,
+          "value": 0.08488238732647813,
+          "ci_low": 0.042982613058304114,
+          "ci_high": 0.13183591959175087
+        },
+        "mixed_core_excess": {
+          "patients": 30,
+          "value": 0.15420310572458906,
+          "ci_low": 0.06571149854171185,
+          "ci_high": 0.25813048743459716
+        },
+        "normal_fpr": {
+          "patients": 31,
+          "value": -0.31330662443473173,
+          "ci_low": -0.40445021792481495,
+          "ci_high": -0.23157579923245797
+        }
+      },
+      "gates": {
+        "auroc": true,
+        "top_beat": true,
+        "normal_specificity": true,
+        "nuisance": true
+      }
+    },
+    "coverage": {
+      "records": 75,
+      "patients": 32,
+      "reference_beats": 175907,
+      "scored_detections": 176214,
+      "reference_types": {
+        "N": 150410,
+        "V": 20013,
+        "R": 3174,
+        "A": 1944,
+        "F": 219,
+        "j": 92,
+        "n": 32,
+        "S": 16,
+        "Q": 6,
+        "B": 1
+      },
+      "matched_types": {
+        "N": 150303,
+        "V": 19998,
+        "R": 3173,
+        "A": 1943,
+        "unmatched": 431,
+        "F": 219,
+        "j": 92,
+        "n": 32,
+        "S": 16,
+        "Q": 6,
+        "B": 1
+      },
+      "excluded_cores": [
+        {
+          "record": "I02",
+          "patient": 1,
+          "core": 66,
+          "reason": "fewer_than_three_complete_beats"
+        },
+        {
+          "record": "I02",
+          "patient": 1,
+          "core": 67,
+          "reason": "fewer_than_three_complete_beats"
+        }
+      ]
+    },
+    "promote_for_review": true,
+    "independent_audit": "All primary patient stats, candidate/eligibility rules, native timing, thresholds and paired intervals reconstructed from saved tables;15source/11969input/8tablecache hashes verified."
   },
   "experiment_057_st_episode": {
     "status": "complete",
@@ -3001,7 +3104,7 @@
     "amendments": [
       "docs/experiment-057-annotation-audit-amendment.md"
     ],
-    "verification": "11 scientific tests and Ruff passed; scientist audited all90 annotation files before score.",
+    "verification": "11 scientific tests and Ruff before score; integrated final repository1349tests/Ruff/build passed.",
     "results": "docs/experiment-057-st-episode-localization-results.md",
     "runtime_seconds": 42.04375616600737,
     "reading": {

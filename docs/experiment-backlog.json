@@ -1387,13 +1387,13 @@
       "evidence": "Experiment 041 could check location only with an automatic premature-beat rule on 73 PTB-XL ECGs.",
       "value": 5,
       "clarity": 0.8,
-      "gpu_hours": 0.1,
-      "cpu_hours": 0.2,
-      "build_hours": 3.0,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.22461948321776518,
+      "build_hours": 0.65,
       "blocked_by": [],
-      "status": "in_progress",
+      "status": "done",
       "authorized": true,
-      "notes": "User2October2026 requests overcoming unavailable Italian data/cardiologist; public local acquisition and independent benchmark authorized by task. Experiment056 preparing prospective protocol. Actual closed Challenge split metadata confirms no INCART records in any group; all75records are eligible. Beat types manually corrected, times not manually corrected. No data uploads or new clinical labels."
+      "notes": "Experiment056passed all frozen gates: patient-macro ectopic-beat top selection89.55vs74.13%, +15.42points[6.57,25.81],30eligiblepatients; all75records32patients accounted. AUROC.9550vs.8701, normalbeat flags19.09vs50.42%;19%absoluteFPR remainslimit.13.48minuteCPUrun plus about40minute preparation/report bytimestamps. Exact beat identity validated; exact pathological wave/lead unverified. No INCART label fitting. Report docs/experiment-056-incart-beat-localization-results.md."
     },
     {
       "id": "rate_adaptive_wave_windows",
@@ -1580,7 +1580,7 @@
       ],
       "status": "open",
       "authorized": false,
-      "notes": "Saved scores plus a QRS-width measure from the 042 beats. Worth running only if the cardiologist minds infarcts explained by the rhythm layer; 049 showed the lead contrast is insensitive to this cost."
+      "notes": "Saved scores plus a QRS-width measure from the 042 beats. Worth running only if the cardiologist minds infarcts explained by the rhythm layer; 049 showed the lead contrast is insensitive to this cost.056provides independently validated unsupervised ectopicbeat scoring; prospective integration with048 needs threshold/normal-FPR evaluation and an exact-wave endpoint, not immediate promotion."
     },
     {
       "id": "cpu_timing_clinic_laptop",
@@ -1761,6 +1761,38 @@
       "status": "candidate",
       "authorized": false,
       "notes": "Ranked follow-up only. Stop for user review of the successful057 result; requires a new prospective protocol before any execution. Clinical labels and closed tests remain unchanged."
+    },
+    {
+      "id": "expert_beat_pipeline_integration",
+      "kind": "experiment",
+      "title": "Integrate the expert-validated ectopic-beat map with the screening explanation",
+      "question": "Can056 beat selection improve048 explanations while controlling normal highlights at a local referral budget?",
+      "value": 5,
+      "clarity": 0.7,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.2,
+      "build_hours": 2.0,
+      "blocked_by": [],
+      "status": "candidate",
+      "authorized": false,
+      "evidence": "056 patient-macro topbeat hit89.55%vs74.13%, but19.09%normalbeat flags and exact pathological wave/lead unverified.",
+      "notes": "After user reviews successful056/057 artifacts; freeze independent primary+threshold integration before any score. Do not reopen closed tests or change clinical labels."
+    },
+    {
+      "id": "absent_class_sensitivity_reporting",
+      "kind": "repo",
+      "title": "Exclude absent target classes from future patient sensitivity summaries",
+      "question": "Can forward-only summaries avoid assigning zero sensitivity to a subject without any target beats?",
+      "value": 2,
+      "clarity": 1.0,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.0,
+      "build_hours": 0.3,
+      "blocked_by": [],
+      "status": "candidate",
+      "authorized": false,
+      "evidence": "056 raw receipt end-to-end sensitivity averages a zero for one subject with noV; executor report discloses positive-subject corrected descriptive value. Co-primary and gates unaffected.",
+      "notes": "Frozen056source/receipt remain unchanged. Add forward-only helper/meaningful absent-class test in a successor; no new experiment launched after review-worthy gain."
     }
   ]
 }

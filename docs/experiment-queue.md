@@ -629,3 +629,11 @@ Original waveform examples and failures: `outputs/localization_public_review_202
 [055](experiment-055-ludb-wave-boundaries-results.md) is complete: QRS/T boundary overlap improved
 against cardiologist marks, but the full recipe failed because overall gain was below10points and P
 localization worsened.056 is running after exact predecessor/reference reconstruction.
+
+[056](experiment-056-incart-beat-localization-results.md) is complete and passed all gates:
+ectopic beat selection89.55%versus74.13%, paired+15.42points[6.57,25.81];75records/32patients,
+30eligible primary subjects. All predecessor unit scores reproduced with zero difference and an
+independent scientist reconstructed all primary results. Normalbeat flags fell to19.09%but remain
+a limitation. Beat identity is validated; exact abnormal wave/lead remains unverified.
+All056/057 success/failure examples are indexed in the local public gallery. No more studies were
+launched after these review-worthy gains. Final integration passed1349CPUtests, Ruff and packagebuilds.

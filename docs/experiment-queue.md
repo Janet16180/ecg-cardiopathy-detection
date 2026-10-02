@@ -571,3 +571,20 @@ The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.m
 - Completed MIMIC 200k preparation / older ECG-FM suite: `data/processed/mimic_ssl_200k/metadata.json` and `outputs/experiment003_mimic/{status.json,prepare_mimic_200k.log}`. The legacy experiment runner remains stopped after the refactor pause; do not restart it as a side effect of a new queue.
 - Environment: default `.venv` via direct `uv` commands; one V100 16 GB; shared lock `/tmp/ecg_project_gpu.lock`. Historical launch receipts retain `.venv-pretrained` paths.
 - Existing completed comparisons: `outputs/experiment004_cpc_40k/report.md` and `outputs/experiment005_cpc_word2vec/report.md`. Interpret them as exploratory PTB-XL proxy results, not validation of healthy status or student referral decisions.
+
+## Unsupervised localization follow-ups, 2 October 2026
+
+The user authorized autonomous localization research with subagents on the existing PR #61. Experiments
+052 and 053 committed their prospective protocols before scoring. They run on CPU in isolated worktrees, fit no pathology
+labels, and use local training/development ECGs. Each must reproduce the previous `U_B` results, compare
+fixed-size marks, and write its results report from live outputs. The closed test sets stay closed.
+
+| Experiment | Question | State |
+| --- | --- | --- |
+| 052 | Does comparison with the other beats in the same raw ECG improve focal localization? | Implementation; protocol committed |
+| 053 | Do training-normal calibrated lead/wave scores improve persistent lead localization? | Implementation; protocol committed |
+
+The existing PVC overlap target is an automatic proxy. Fixed wave windows can attribute an early beat to
+the preceding beat's T window; prospective common-support metrics and known-location waveform alterations
+will check localization without accepting a gain from wider highlights. Clinical region correctness still
+needs independent cardiologist marks or expert beat annotations.

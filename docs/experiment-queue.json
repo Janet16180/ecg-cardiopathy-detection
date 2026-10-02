@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-01T19:15:59.953767+00:00",
+  "updated_at_utc": "2026-10-02T20:00:20.943088+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2622,5 +2622,37 @@
       "CUDA_VISIBLE_DEVICES": ""
     },
     "next_action": "cpu_timing_clinic_laptop: rerun the script on the clinic laptop."
+  },
+  "experiment_052_raw_residual": {
+    "status": "implementation",
+    "authorized": true,
+    "authorization_scope": "User, 2 October 2026: autonomously improve unsupervised ECG localization with subagents on existing PR #61, stop for a strong improvement to review or an important decision. Local development data only.",
+    "protocol": "docs/experiment-052-raw-residual.md",
+    "runner": "scripts/experiments/run_raw_residual052.py",
+    "results": "docs/experiment-052-raw-residual-results.md",
+    "output_dir": "outputs/experiment052_raw_residual_v1",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "next_action": "Implement and verify scientific controls, reproduce predecessor, then run frozen CPU experiment.",
+    "protocol_commit": "7071dc4"
+  },
+  "experiment_053_calibrated_units": {
+    "status": "implementation",
+    "authorized": true,
+    "authorization_scope": "User, 2 October 2026: autonomously improve unsupervised ECG localization with subagents on existing PR #61, stop for a strong improvement to review or an important decision. Local development data only.",
+    "protocol": "docs/experiment-053-calibrated-units.md",
+    "runner": "scripts/experiments/run_calibrated_units053.py",
+    "results": "docs/experiment-053-calibrated-units-results.md",
+    "output_dir": "outputs/experiment053_calibrated_units_v1",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "next_action": "Implement and verify scientific controls, reproduce predecessor, then run frozen CPU experiment.",
+    "protocol_commit": "4b5f030"
   }
 }

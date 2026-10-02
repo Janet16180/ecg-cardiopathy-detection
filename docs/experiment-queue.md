@@ -645,3 +645,7 @@ the same PR #61. Experiment058 is preparing controlled generator tests,059 an in
 wave-boundary comparison, and [060](experiment-060-waveform-st-localization.md) a fixed
 waveform-anchor successor to057. These are prospective studies; no new score is claimed.
 Protocols must be committed before execution; closed tests remain closed.
+
+059 protocol is frozen (`c4dd7d5`, integrated `cc04db2`); its72non-EDB primary records
+exclude33 previously read source excerpts.060 protocol is frozen (`3b19a76`); four
+scientific checks and Ruff passed, with no score yet. Both run with two CPU threads.

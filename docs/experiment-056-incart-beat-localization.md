@@ -60,7 +60,8 @@ Primary labels are expert ventricular ectopic `V` versus ordinary `N`. Other bea
 L/R conduction beats, atrial ectopy, fusion and unknown) are excluded from this binary comparison and
 reported separately; they are never silently relabeled normal. All eligible matched N/V beats are
 evaluated. A patient contributes AUROC only with both classes across its pooled records. A core
-contributes the top-beat endpoint only with at least one matched V and one matched N. Report all
+contributes the top-beat endpoint when its expert annotations contain at least one V and one N,
+regardless of matching. A missed V therefore cannot remove a difficult mixed core. Report all
 patient/core exclusions and original annotation counts. Coverage is common to both maps; missed V
 beats are explicitly included in an end-to-end sensitivity denominator at the fixed threshold.
 

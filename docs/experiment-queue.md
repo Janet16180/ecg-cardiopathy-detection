@@ -649,3 +649,16 @@ Protocols must be committed before execution; closed tests remain closed.
 059 protocol is frozen (`c4dd7d5`, integrated `cc04db2`); its72non-EDB primary records
 exclude33 previously read source excerpts.060 protocol is frozen (`3b19a76`); four
 scientific checks and Ruff passed, with no score yet. Both run with two CPU threads.
+
+060 is running from frozen source `fd4e5bf`; no result is claimed while its
+receipt is partial.059 is acquiring/auditing public annotations before scoring.
+
+[060](experiment-060-waveform-st-localization-results.md) completed: waveform-onlyST
+hit71.71% versus51.97%, gain19.74points[9.21,31.58]; however the comparison against
+supplied-anchor057 has lower bound-7.89points, failing the frozen-5point margin.
+No promotion or retuning. All90records and original85record/76subject primary remained.
+
+[058](experiment-058-synthetic-generator-localization.md) protocol is frozen (`089a7c0`):
+publishedECGSYN equations plus a separate engineering generator; coupled leads,
+paired changes, shams and persistentchanges. Classifier/oldlocalizers are frozen.
+This qualifies a benchmark and cannot establish clinical improvement by itself.

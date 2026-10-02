@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-02T22:19:23.323722+00:00",
+  "updated_at_utc": "2026-10-02T22:22:04.194391+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -3127,7 +3127,7 @@
     "independent_audit": "All sources/data/outputs hashes, all90 early templates, patient-macro intervals and time/channel targets reproduced by independent scientist."
   },
   "experiment_060_waveform_st": {
-    "status": "source_prepared",
+    "status": "complete",
     "authorized": true,
     "authorization_scope": "User authorized autonomous localization iterations with synthetic ECG controls; classifier frozen; samePR61; no closed tests or label changes.",
     "protocol": "docs/experiment-060-waveform-st-localization.md",
@@ -3137,9 +3137,65 @@
       "device": "cpu",
       "threads": 2
     },
-    "next_action": "Commit prospective protocol before scores; exact057 reproduction; unchanged waveform detector; failures remain in original primary population.",
+    "next_action": "Fullrulefailednoninferiority; preserve result; no post-score retune. Independent audit pending.",
     "protocol_commit": "3b19a76",
-    "verification": "Four scientific failure/coverage/matching tests and Ruff passed before score."
+    "verification": "Four scientific failure/coverage/matching tests and Ruff passed before score.",
+    "source_commit": "fd4e5bf",
+    "results": "docs/experiment-060-waveform-st-localization-results.md",
+    "runtime_seconds": 19.115645425976254,
+    "reading": {
+      "primary": {
+        "st": {
+          "value": 0.7171052631578947,
+          "ci_low": 0.6118421052631579,
+          "ci_high": 0.8092105263157895,
+          "patients": 76,
+          "draws": 2000,
+          "seed": 57057
+        },
+        "whole": {
+          "value": 0.5197368421052632,
+          "ci_low": 0.40789473684210525,
+          "ci_high": 0.625,
+          "patients": 76,
+          "draws": 2000,
+          "seed": 57057
+        },
+        "supplied_st": {
+          "value": 0.7039473684210527,
+          "ci_low": 0.6052631578947368,
+          "ci_high": 0.7960526315789473,
+          "patients": 76,
+          "draws": 2000,
+          "seed": 57057
+        }
+      },
+      "paired_gain": {
+        "value": 0.19736842105263158,
+        "ci_low": 0.09210526315789473,
+        "ci_high": 0.3157894736842105,
+        "patients": 76,
+        "draws": 2000,
+        "seed": 57057
+      },
+      "versus_supplied_anchors": {
+        "value": 0.013157894736842105,
+        "ci_low": -0.07894736842105263,
+        "ci_high": 0.10526315789473684,
+        "patients": 76,
+        "draws": 2000,
+        "seed": 57057
+      },
+      "gates": {
+        "paired_gain": true,
+        "absolute_hit": true,
+        "noninferiority": false,
+        "counts": true,
+        "axis_stress": true,
+        "window_coverage": true
+      },
+      "promote_for_review": false
+    }
   },
   "experiment_059_hybrid_boundaries": {
     "status": "protocol_frozen",
@@ -3155,5 +3211,19 @@
     },
     "closed_test_evaluated": false,
     "next_action": "Audit public data grammar; unchanged hybrid; exact055integrity; commit source before scoring."
+  },
+  "experiment_058_synthetic_generator": {
+    "status": "protocol_frozen",
+    "authorized": true,
+    "protocol": "docs/experiment-058-synthetic-generator-localization.md",
+    "protocol_commit": "089a7c0",
+    "output_dir": "outputs/experiment058_synthetic_generator_v1",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "screening_classifier_changed": false,
+    "next_action": "Freeze source and test generator invariants before fixed-localizer benchmark. No synthetic-only clinical promotion."
   }
 }

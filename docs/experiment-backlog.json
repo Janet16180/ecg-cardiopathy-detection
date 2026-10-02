@@ -1719,16 +1719,16 @@
       "kind": "experiment",
       "title": "Waveform-derived anchors for independent ST-change localization",
       "question": "Does the successful057 comparison survive replacing supplied beat times with a waveform-only detector?",
-      "evidence": "055 full recipe failed but QRS/T boundaries improved;057 independently annotated ST-change comparison passed its frozen review rule.",
+      "evidence": "060 waveformST hit71.71% vs51.97%, gain19.74points[9.21,31.58], but vs057 lowerbound-7.89points failed5pointnoninferiority. All90 scored/original85 primary retained.",
       "value": 5,
       "clarity": 0.8,
       "gpu_hours": 0.0,
-      "cpu_hours": 0.2,
+      "cpu_hours": 0.005309901507215626,
       "build_hours": 1.5,
       "blocked_by": [],
-      "status": "candidate",
-      "authorized": false,
-      "notes": "Ranked follow-up only. Stop for user review of the successful057 result; requires a new prospective protocol before any execution. Clinical labels and closed tests remain unchanged."
+      "status": "done",
+      "authorized": true,
+      "notes": "docs/experiment-060-waveform-st-localization-results.md; no promotion or retuning. User resumed autonomous work after reviewing056/057."
     },
     {
       "id": "short_record_st_reference",
@@ -1758,9 +1758,9 @@
       "cpu_hours": 0.2,
       "build_hours": 3.0,
       "blocked_by": [],
-      "status": "candidate",
-      "authorized": false,
-      "notes": "Ranked follow-up only. Stop for user review of the successful057 result; requires a new prospective protocol before any execution. Clinical labels and closed tests remain unchanged."
+      "status": "running",
+      "authorized": true,
+      "notes": "User resumed autonomous localization;059 protocolc4dd7d5 frozen;72nonEDBQTDBrecords primary, jointmanualfiducials; source/annotationaudit precedes scores."
     },
     {
       "id": "expert_beat_pipeline_integration",
@@ -1793,6 +1793,38 @@
       "authorized": false,
       "evidence": "056 raw receipt end-to-end sensitivity averages a zero for one subject with noV; executor report discloses positive-subject corrected descriptive value. Co-primary and gates unaffected.",
       "notes": "Frozen056source/receipt remain unchanged. Add forward-only helper/meaningful absent-class test in a successor; no new experiment launched after review-worthy gain."
+    },
+    {
+      "id": "synthetic_localization_controls",
+      "kind": "experiment",
+      "title": "Paired raw educational generator controls for localization",
+      "question": "Can controlled paired ECGSYN-equation and engineering simulations expose wave/lead localization failures without changing the classifier?",
+      "evidence": "User proposes teaching ECG generators for localization only;052/054 simpleedits failed exactsupport gates; within-recordtemplates can erase persistentchanges.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.2,
+      "build_hours": 3.0,
+      "blocked_by": [],
+      "status": "running",
+      "authorized": true,
+      "notes": "058 frozenprotocol089a7c0; twofamilies andheldoutmorphology/geometry; fixed056/U_B comparators, realexpertsrequired forfuturecandidate. This differs from dropped synthetic classreferences."
+    },
+    {
+      "id": "synthetic_anchor_timing_st",
+      "kind": "experiment",
+      "title": "Synthetic anchor timing stress for ST localization",
+      "question": "Can a frozen timing-robust ST measure preserve supplied-anchor performance with waveform-only anchors on new expert data?",
+      "evidence": "060 strong pointgainvswholebeat but seven corrected/six regressedvs057; noninferiorityCI[-7.89,10.53]points failed.",
+      "value": 4,
+      "clarity": 0.6,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.2,
+      "build_hours": 2.0,
+      "blocked_by": [],
+      "status": "candidate",
+      "authorized": false,
+      "notes": "Follow-up only; no rerun/retune060. Investigate on058syntheticcontrols, then new prospective independent realcomparison; cannot count windows aspatients to narrowCI."
     }
   ]
 }

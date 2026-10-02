@@ -43,6 +43,12 @@ annotations. Legacy 041 overlap and strict beat-ownership hits, worst-window AUR
 each map's development-normal 95th percentile, and lead contrasts are descriptive. They cannot change
 the primary rule. A within-record map subtracts persistent disease and is not a replacement detector.
 
+Pre-score clarification: both maps use only candidate windows fully covered by the same complete-beat
+support mask (midpoint-owned R - 0.25 through R + 0.45 segments). No zero-filled unscored gap is eligible.
+For both maps, tied maxima use `numpy.isclose` with rtol 1e-10 and atol 1e-10. Primary hit, joint hit,
+distance and overlap are expectations over every tied maximum, not earliest-argmax tie breaking.
+Report tie counts. Figures use the median-time tied maximum for a deterministic descriptive mark.
+
 ## Independent exact-support synthetic checks
 
 Select 200 training NORM-only ECGs from unique patients by ascending ECG ID, excluding every development
@@ -64,6 +70,11 @@ Supporting evidence requires at least 80% joint localization separately for ST a
 score-change interval lower bound above zero. Loose overlap alone is insufficient. Synthetic checks
 show recovery of known signal edits, not correctness on human pathology. Do not present synthetic
 comparisons against U_B without recomputing its raw-input encoder/reference pipeline.
+
+Promotion for user review requires both the real primary improvement rule and both synthetic supporting
+rules above. A synthetic success alone does not promote the method. The nuisance threshold fitted on
+the same 200 unchanged records is an in-sample descriptive calibration, not an independently validated
+normal false-positive rate.
 
 ## Outputs and review
 

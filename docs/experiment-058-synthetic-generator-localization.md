@@ -25,8 +25,10 @@ Polyphase-interpolate RR to 500 Hz and hold its value over each latent cycle.
 
 Numerics differ explicitly from the official Matlab ODE solver: integrate the unit-cycle angle
 directly, and the linear relaxation z' = forcing - z using an exponential recurrence with averaged
-adjacent forcing samples. Each component starts at .008, so their sum starts at the official .04;
-respiratory baseline .005*sin(2*pi*.25*t) is divided over the five components. Render sixteen seconds
+adjacent forcing samples. Wave components start at zero; a separate unchanged background carries
+the official .04 initial state and respiratory baseline .005*sin(2*pi*.25*t), projected along the
+mean component direction. Thus inverting the T source cannot invert respiratory or initial-state
+background. Render sixteen seconds
 at 500 Hz and discard four seconds of burn-in, yielding twelve-second traces. Save latent anchors for
 generator audit and interventions only; localization receives no latent phase or anchors.
 
@@ -100,6 +102,10 @@ case and report the scorer failure. Secondary endpoints are exact-mask IoU, chan
 in the single fixed-area highlight, distance to the nearest observable support and tied-top counts.
 Persistent families remain distinct; template-subtraction failures are findings, not grounds for
 changing the algorithm.
+
+For every case, report uniform eligible-candidate chance and full observable-mask occupancy. Wide
+persistent support can make raw hit easy; neither support occupancy nor chance is hidden by the
+80% illustrative threshold.
 
 For each generator and method, fit a 95th-percentile record-max threshold on its 200 unchanged
 calibration subjects, then freeze it before all test scores. An unscorable calibration record has

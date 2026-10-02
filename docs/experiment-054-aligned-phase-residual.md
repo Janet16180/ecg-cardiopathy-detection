@@ -77,8 +77,11 @@ copy. The real rule and both synthetic rules must all pass; thresholds cannot be
 
 The 300 disjoint unchanged controls set each map's worst-score 95th percentile threshold. Report
 unchanged and offset-plus-drift nuisance red shares on synthetic holdout (offset 0.15 mV, drift 0.05 mV
-at 0.2 Hz), score changes, and ST time-shift/lead-permutation controls. A nuisance increase exceeding
-0.05 is an explicit review concern, descriptive rather than a replacement gate. Patient intervals use
+at 0.2 Hz), score changes, and ST time-shift/lead-permutation controls.
+The lead-permutation control permutes calibration reference channels together with waveform leads;
+it checks coordinate equivariance, not incorrect canonical lead assignment.
+A nuisance increase exceeding 0.05 is an explicit review concern, descriptive rather than a replacement
+gate. Patient intervals use
 2,000 draws, seed 54054. Development targets remain automatic and exploratory, never clinical truth.
 
 ## Execution and review

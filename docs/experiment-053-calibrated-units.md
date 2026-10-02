@@ -68,3 +68,6 @@ Add a descriptive raw-distance persistent map from exactly the candidate's 70%
 normal reference, taking median distances over beats, with the same independent
 control threshold. This separates the effect of calibration from aggregation;
 it cannot replace the primary result.
+For the focal premature-beat guardrail, average overlap over all tied maximal units
+(with the same 1e-12 absolute tolerance); chance remains the proportion of all units
+with overlap. Baseline legacy first-argmax metrics stay separate and exact.

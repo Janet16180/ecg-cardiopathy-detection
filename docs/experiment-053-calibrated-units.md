@@ -55,3 +55,16 @@ from 042, regardless of outcome; all waveform figures stay local under outputs.
 Write results from executed outputs, including failures and limitations. Clinical ground
 truth for exact leads and offsets is absent; infarct code locations and automatic PVC
 windows are development proxies. No claim of anatomical localization is authorized.
+
+## Pre-score amendment: tied empirical tails and matched aggregation control
+
+Empirical tails saturate above the largest calibration distance. For every regional
+endpoint, identify the maximal block score of each lead and include all leads within
+absolute tolerance 1e-12 of the ECG maximum. Regional membership is the fraction of
+these tied top leads in the region, for both candidate and baseline. Report tie and
+tail-saturation rates. Legacy first-argmax U_B metrics are reproduced separately,
+so the new tie-aware endpoint does not obscure predecessor integrity.
+Add a descriptive raw-distance persistent map from exactly the candidate's 70%
+normal reference, taking median distances over beats, with the same independent
+control threshold. This separates the effect of calibration from aggregation;
+it cannot replace the primary result.

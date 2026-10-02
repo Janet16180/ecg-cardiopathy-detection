@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-02T20:11:43.365218+00:00",
+  "updated_at_utc": "2026-10-02T20:16:31.902489+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2677,7 +2677,7 @@
     }
   },
   "experiment_053_calibrated_units": {
-    "status": "running",
+    "status": "complete",
     "authorized": true,
     "authorization_scope": "User, 2 October 2026: autonomously improve unsupervised ECG localization with subagents on existing PR #61, stop for a strong improvement to review or an important decision. Local development data only.",
     "protocol": "docs/experiment-053-calibrated-units.md",
@@ -2689,7 +2689,7 @@
       "threads": 2
     },
     "closed_test_evaluated": false,
-    "next_action": "Serialization-only successor running with identical frozen scientific method; reproduce baseline and write results report.",
+    "next_action": "No localization promotion; preserve negative result and serialization failure. 054 tests a distinct aligned-residual method.",
     "protocol_commit": "4b5f030",
     "amendments": {
       "1": "910c9a9"
@@ -2717,7 +2717,30 @@
         "reason": "Namespaced patient IDs could not be serialized as integers after scoring; no scientific recipe change. Maps and local figures preserved.",
         "failure_receipt": "outputs/experiment053_calibrated_units_v1/failure.json"
       }
-    ]
+    ],
+    "runtime_seconds": 197.6211990499869,
+    "reading": {
+      "decision": {
+        "primary_pass": false,
+        "benign_guardrail": true,
+        "focal_guardrail": false,
+        "worth_reviewing": false
+      },
+      "primary_paired_gain": {
+        "estimate": -0.019605589776592824,
+        "ci_low": -0.13285315160832545,
+        "ci_high": 0.09112137972216239,
+        "first_mean": 0.1095890410958904,
+        "second_mean": 0.12919463087248323
+      },
+      "focal_pvc_excess_gain": {
+        "estimate": -0.0350076103500761,
+        "ci_low": -0.0700254035629301,
+        "ci_high": -0.007610350076103504
+      },
+      "predecessor_max_absolute_unit_difference": 0.0
+    },
+    "results_commit": "a320ad7"
   },
   "experiment_051_beat_sum": {
     "status": "complete",
@@ -2753,5 +2776,22 @@
     "challenge_test_read": false,
     "ptbxl_test_read": false,
     "next_action": "Completed negative experiment; 052 and 053 investigate raw residuals and unequal wave-score distributions."
+  },
+  "experiment_054_aligned_residual": {
+    "status": "implementation",
+    "authorized": true,
+    "authorization_scope": "User, 2 October 2026, autonomous unsupervised localization work with subagents on existing PR #61; successor after 052 and 053 failed frozen rules.",
+    "protocol": "docs/experiment-054-aligned-phase-residual.md",
+    "runner": "scripts/experiments/run_raw_residual054.py",
+    "results": "docs/experiment-054-aligned-phase-residual-results.md",
+    "output_dir": "outputs/experiment054_aligned_phase_residual_v1",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "next_action": "Implement and test frozen bounded alignment/channel-max calibration recipe; reproduce 052 fully before new scores.",
+    "protocol_commit": "da21b67",
+    "cohort_manifest": "docs/experiment-054-cohorts.json"
   }
 }

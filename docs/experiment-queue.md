@@ -583,7 +583,8 @@ fixed-size marks, and write its results report from live outputs. The closed tes
 | --- | --- | --- |
 | 051 ([protocol](experiment-051-beat-sum-map.md), [results](experiment-051-beat-sum-map-results.md)) | Beat-score sums | Complete; neither map improved on U_B |
 | 052 ([protocol](experiment-052-raw-residual.md), [results](experiment-052-raw-residual-results.md)) | Does comparison with the other beats in the same raw ECG improve focal localization? | Complete; gain −0.009 [−0.166, +0.139], ST 20.5%, QRS 77.5%; no promotion |
-| 053 ([protocol](experiment-053-calibrated-units.md)) | Do training-normal calibrated lead/wave scores improve persistent lead localization? | CPU successor v2 running after patient-ID serialization failed; original artifacts preserved |
+| 053 ([protocol](experiment-053-calibrated-units.md), [results](experiment-053-calibrated-units-results.md)) | Do training-normal calibrated lead/wave scores improve persistent lead localization? | Complete; paired lead gain −0.020 [−0.133, +0.091], focal guardrail failed; no promotion |
+| 054 ([protocol](experiment-054-aligned-phase-residual.md)) | Does bounded beat alignment and independent normal residual calibration improve localization? | Implementation; protocol committed before scores |
 
 The existing PVC overlap target is an automatic proxy. Fixed wave windows can attribute an early beat to
 the preceding beat's T window; prospective common-support metrics and known-location waveform alterations

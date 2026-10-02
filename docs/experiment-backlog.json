@@ -1645,9 +1645,25 @@
       "cpu_hours": 0.3,
       "build_hours": 3.0,
       "blocked_by": [],
+      "status": "done",
+      "authorized": true,
+      "notes": "Experiment053 complete, negative: symmetric lead gain \u22120.020 [\u22120.133,+0.091], focal excess loss \u22120.035 [\u22120.070,\u22120.008]. All original unit scores reproduced exactly. docs/experiment-053-calibrated-units-results.md. Originalv1serializationfailure preserved; identicalmethodv2."
+    },
+    {
+      "id": "aligned_normal_residual_localization",
+      "kind": "experiment",
+      "title": "Aligned residuals with independent normal phase calibration",
+      "question": "Do bounded shared QRS alignment and normal per-record channel maximum references recover subtle ST changes and focal beats without using pathology labels?",
+      "evidence": "052 failed exact focal location and small ST edits; 053 corrected dimension bias but failed lead improvement. New recipe addresses alignment noise and residual comparison.",
+      "value": 4,
+      "clarity": 0.6,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.3,
+      "build_hours": 3.0,
+      "blocked_by": [],
       "status": "in_progress",
       "authorized": true,
-      "notes": "Experiment 053; protocol committed before scores. CPU, local training/development ECGs, fixed primary rule and support. Parent owns reporting queue; subagent runs and writes results."
+      "notes": "Experiment054 prospective protocol preparation. New200syntheticpatients disjoint from052and054calibration/control; same real >=.10 CI lower>0 andST/QRS>=80% gates."
     }
   ]
 }

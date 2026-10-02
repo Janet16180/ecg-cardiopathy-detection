@@ -108,3 +108,14 @@ are sel100, sel232, sel16265, sel30 and sele0106 (EDB diagnostic only), without
 selection on outcomes. Raw signals and per-record outputs remain ignored/local.
 Write aggregate results from executed outputs and send follow-up evidence to the
 parent-maintained backlog. Do not retune on any of the 105 QTDB records after scoring.
+
+## Pre-score native-format clarification
+
+The whole-source header audit found 53 records with 225000 samples, 29 with
+224999, and 23 with 224993, all two channels at 250 Hz. Preserve these native
+lengths (899.972–900 seconds), without padding, exclusion or resampling. The
+frozen interior eligibility limit of 899.5 seconds is valid in every record.
+Annotation-only audit found 8336 complete intervals, 2130 onset-missing T and
+714 onset-missing U intervals, with zero malformed events or displaced peaks.
+All boundary class numbers were compatible with the typed peaks. No truth
+onset is inferred. Matching, inference, denominators and gates are unchanged.

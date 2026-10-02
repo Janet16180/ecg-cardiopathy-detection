@@ -11,7 +11,7 @@ Implementation and the prospective calibration-channel permutation clarification
 `2eb46c5`. The CPU run took 117.18 seconds with two threads and no GPU. Live outputs are
 `outputs/experiment054_aligned_phase_residual_v1/`: receipt, normal references, development and synthetic
 maps, per-record tables, calibration/development shifts, local template arrays, 20 figures, and run log.
-No waveform was downloaded, uploaded or sent to an external service. No calibration, closed test,
+No waveform was downloaded, uploaded or sent to an external service. No reserved calibration, closed test,
 EchoNext or MIMIC waveform was read.
 
 ## Primary timing comparison

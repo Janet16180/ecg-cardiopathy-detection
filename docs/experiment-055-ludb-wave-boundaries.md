@@ -107,3 +107,27 @@ This dataset supplies independently annotated boundaries, not proof that a model
 red wave is diseased. An improved delineator must later be integrated with a
 normal-reference anomaly map in a new frozen comparison. No clinical label
 change or age-subgroup analysis is part of this experiment.
+
+## Pre-score annotation-format amendment
+
+A whole-dataset format-only audit found 31 lead streams with incomplete or
+nonstandard sequences before any waveform boundary score. Examples include
+`N, (, )` where the typed peak is just before the annotated onset, `N, )`
+with missing onset, and `(, )` without a typed peak. These are source coverage
+issues; missing boundaries must not be reconstructed from inference.
+
+Accept a contiguous, disjoint three-event group containing exactly one onset,
+one typed p/N/t peak and one offset when onset<offset. Preserve its original
+onset/offset; a peak outside the span is accepted only within 10 ms of the
+nearest endpoint, with its displacement and group explicitly audited.
+This prevents a distant peak from a neighboring partial wave being borrowed.
+Every accepted event is used once. Partial/untyped groups, nonpositive spans
+or more distant peaks remain UNKNOWN annotation coverage, with their samples
+and symbols recorded locally; they cannot enter an interval-IoU denominator.
+The primary includes every eligible complete valid/recovered wave, including
+unmatched/missing predicted slots at IoU0. Report published typed-wave totals,
+parsed valid counts, recovered groups and unknown events separately. Do not
+require valid counts to equal published totals. Inference, matching tolerances,
+primary weights and decision rule are unchanged. All 200 records remain evaluation-only.
+Use "physiological wave-boundary localization" for claims, without implying
+an anatomical heart region or that the wave is diseased.

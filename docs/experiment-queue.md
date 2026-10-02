@@ -610,3 +610,7 @@ LUDB wave boundaries;056 uses INCART expert-corrected beat types;057 uses Europe
 time/channel marks. No new result is claimed. Actual Challenge split metadata contains no INCART
 records; closed tests remain unread. Screening labels and the recommendation remain unchanged.
 The blinded50case packet remains unused; no cardiologist marks have been received.
+
+Public benchmark protocols are frozen before scores:055 `5069b24`,056 `17b0292`, and057
+`b72539a`. Experiment057 implementation passed ten focused scientific tests and Ruff;270public
+EDB files (487,662,449bytes) match published SHA-256checksums. These are preparation checks.

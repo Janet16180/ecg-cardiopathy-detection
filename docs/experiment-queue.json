@@ -2848,7 +2848,7 @@
     "clinical_region_accuracy_established": false
   },
   "experiment_055_wave_delineation": {
-    "status": "preparing_protocol",
+    "status": "protocol_frozen_implementation",
     "authorized": true,
     "authorization_scope": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes.",
     "public_dataset": "LUDB 1.0.1",
@@ -2857,10 +2857,12 @@
       "threads": 2
     },
     "closed_test_evaluated": false,
-    "next_action": "Freeze prospective protocol and integrity checks before any new score."
+    "next_action": "Complete source audit, predecessor reproduction and independent benchmark.",
+    "protocol_commit": "5069b24",
+    "protocol": "docs/experiment-055-ludb-wave-boundaries.md"
   },
   "experiment_056_expert_beat_localization": {
-    "status": "preparing_protocol",
+    "status": "protocol_frozen_implementation",
     "authorized": true,
     "authorization_scope": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes.",
     "public_dataset": "INCART 1.0.0",
@@ -2869,10 +2871,12 @@
       "threads": 2
     },
     "closed_test_evaluated": false,
-    "next_action": "Freeze prospective protocol and integrity checks before any new score."
+    "next_action": "Complete source audit, predecessor reproduction and independent benchmark.",
+    "protocol_commit": "17b0292",
+    "protocol": "docs/experiment-056-incart-beat-localization.md"
   },
   "experiment_057_st_episode": {
-    "status": "preparing_protocol",
+    "status": "protocol_frozen_implementation_ready",
     "authorized": true,
     "authorization_scope": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes.",
     "public_dataset": "European ST-T 1.0.0",
@@ -2881,7 +2885,10 @@
       "threads": 2
     },
     "closed_test_evaluated": false,
-    "next_action": "Freeze prospective protocol and integrity checks before any new score.",
-    "protocol": "docs/experiment-057-st-episode-localization.md"
+    "next_action": "Scientific code audit and predecessor integrity check before new scores.",
+    "protocol": "docs/experiment-057-st-episode-localization.md",
+    "protocol_commit": "b72539a",
+    "runner": "scripts/experiments/run_st_episode057.py",
+    "output_dir": "outputs/experiment057_st_episode_v1"
   }
 }

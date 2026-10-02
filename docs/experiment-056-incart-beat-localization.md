@@ -67,8 +67,10 @@ beats are explicitly included in an end-to-end sensitivity denominator at the fi
 ## Co-primary decision and guardrails
 
 Macro-average patient AUROC (each eligible patient equal weight) and macro-average each patient's
-mixed-core top-beat hit minus its matched V share among matched N/V beats. Tied top beats receive
-their expected V hit. The candidate must pass both:
+mixed-core top-beat hit minus its matched V share among all scored detected beats. Top-beat selection
+uses every scored detected beat, including other expert types and unmatched detections; annotations
+never restrict the model's candidate pool. A top beat counts V only when matched to expert V, otherwise
+zero. Tied top beats receive their expected V hit. The candidate must pass both:
 
 1. AUROC gain over U_B_fixed at least +0.05 with paired patient-bootstrap lower bound above zero.
 2. Top-beat hit-minus-chance gain at least +0.10 with paired patient-bootstrap lower bound above zero.

@@ -127,6 +127,21 @@ They include both channels with joint expert shading, fixed blue and hybrid
 red boundaries; missing T onsets are unshaded. These examples were prescribed
 before scoring and were not selected for favorable performance.
 
+An independent scientist verified 15 source, 317 input and 217 output hashes,
+reconstructed all 10,359 saved wave measurements and missing penalties, checked
+unique matching and P identity in all 105 records, and independently rebuilt
+the primary and T-guard bootstrap intervals to within 1e-13. The audit confirms
+every gate and the QRS-only claim, with receipt
+`outputs/experiment059_qtdb_hybrid_audit_v1/audit.json`. Inference accepts only
+waveforms and sampling frequency; expert labels enter the evaluator, not the
+boundary function. Boundary-within-30-ms percentages count start/end endpoints,
+not the fraction of entirely correct QRS intervals.
+
+The local `outputs/localization_iteration_review_2026_10_02/index.html` provides
+simpler previous/adaptive panels for the first annotated QRS in four prescribed
+records and the largest record-level QRS regression. Expert timing is joint
+across channels. Display-only baseline shifts do not affect any measurement.
+
 The result warrants reviewing adaptive QRS support in the localization layer.
 It has not yet demonstrated that replacing fixed supports improves U_B
 pathology localization, has no lead-specific truth, and is not a test of the

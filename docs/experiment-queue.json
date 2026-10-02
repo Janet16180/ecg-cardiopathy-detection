@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-02T22:22:04.194391+00:00",
+  "updated_at_utc": "2026-10-02T22:27:16.269661+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -3195,25 +3195,64 @@
         "window_coverage": true
       },
       "promote_for_review": false
-    }
+    },
+    "independent_audit": "outputs/experiment060_waveform_st_audit_v1/audit.json; all primary/bootstrap/domains reproduced,7waveform detectors replayed, no defect."
   },
   "experiment_059_hybrid_boundaries": {
-    "status": "protocol_frozen",
+    "status": "complete",
     "authorized": true,
     "protocol": "docs/experiment-059-hybrid-wave-boundaries.md",
     "protocol_commit": "cc04db2",
     "public_dataset": "QTDB1.0.0;72nonEDB primaryrecords",
-    "runner": "scripts/experiments/run_hybrid_boundaries059.py",
-    "output_dir": "outputs/experiment059_hybrid_boundaries_v1",
+    "runner": "scripts/experiments/run_hybrid_boundaries059_v2.py",
+    "output_dir": "outputs/experiment059_qtdb_hybrid_v2",
     "resources": {
       "device": "cpu",
       "threads": 2
     },
     "closed_test_evaluated": false,
-    "next_action": "Audit public data grammar; unchanged hybrid; exact055integrity; commit source before scoring."
+    "next_action": "Review adaptiveQRSboundary plots; allgatespass. Exactpathologicalwave/lead remainsunverified; no newvariantlaunchedafter strong059result.",
+    "source_commit": "cacf7e8",
+    "amendments": [
+      "ec7c041",
+      "docs/experiment-059-v2-execution-note.md"
+    ],
+    "verification": "17scientific tests/Ruff and independent codeaudit passed before score.",
+    "failed_pre_score_run": {
+      "source_commit": "43c5cff",
+      "output_dir": "outputs/experiment059_qtdb_hybrid_v1",
+      "reason": "edgefixedPnegativeonsetmarkedmissing; guardraised before anyQTDBmetric"
+    },
+    "runtime_seconds": 32.757348601007834,
+    "reading": {
+      "primary_gain": {
+        "estimate": 0.11202252257464347,
+        "ci_low": 0.08897911188224725,
+        "ci_high": 0.13635704319762204
+      },
+      "within30ms_gain": {
+        "estimate": 0.2605390493649674,
+        "ci_low": 0.20873981543676215,
+        "ci_high": 0.31651317091107617
+      },
+      "t_offset_deterioration_ms": {
+        "estimate": -17.681246963805552,
+        "ci_low": -35.98707054841969,
+        "ci_high": 2.621161120677466
+      },
+      "gates": {
+        "practical_iou": true,
+        "supported_iou": true,
+        "boundary_gain": true,
+        "t_guard": true
+      },
+      "worth_reviewing": true
+    },
+    "results": "docs/experiment-059-hybrid-wave-boundaries-results.md",
+    "independent_audit": "outputs/experiment059_qtdb_hybrid_audit_v1/audit.json andmatching_audit.json;549hashes/10359rows/allannotations&bootstrap reconstructed."
   },
   "experiment_058_synthetic_generator": {
-    "status": "protocol_frozen",
+    "status": "running",
     "authorized": true,
     "protocol": "docs/experiment-058-synthetic-generator-localization.md",
     "protocol_commit": "089a7c0",
@@ -3224,6 +3263,10 @@
     },
     "closed_test_evaluated": false,
     "screening_classifier_changed": false,
-    "next_action": "Freeze source and test generator invariants before fixed-localizer benchmark. No synthetic-only clinical promotion."
+    "next_action": "Read live partialoutputs; benchmark frozenmethods andbothsimulatorfamilies; no syntheticclinicalpromotion.",
+    "source_commit": "cf45db4",
+    "runner": "scripts/experiments/run_synthetic_generator058.py",
+    "amendment_commit": "e7081f0",
+    "verification": "Generator invariant/matching tests and Ruff passed; independent protocol/code review passed; puregeneration forecast0.149sec for12subjects plus108edits."
   }
 }

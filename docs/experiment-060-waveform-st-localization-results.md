@@ -26,6 +26,12 @@ marks were loaded after inference features had been saved.
 
 The predecessor integrity check verified 284 source/data files and 194 output
 hashes and reproduced 057's primary statistics and paired interval exactly.
+An independent audit verified all 13 new source hashes, 272 data hashes and
+188 immutable output hashes, rebuilt both paired bootstrap intervals and all
+90 evaluation domains, and reran the detector exactly for e0103 and all six
+regressions. Its local receipt is
+`outputs/experiment060_waveform_st_audit_v1/audit.json`; it confirms the failed
+noninferiority decision and found no implementation defect.
 
 | Frozen measurement | Result | Decision |
 | --- | --- | --- |

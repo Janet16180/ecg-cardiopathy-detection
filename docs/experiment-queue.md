@@ -662,3 +662,24 @@ No promotion or retuning. All90records and original85record/76subject primary re
 publishedECGSYN equations plus a separate engineering generator; coupled leads,
 paired changes, shams and persistentchanges. Classifier/oldlocalizers are frozen.
 This qualifies a benchmark and cannot establish clinical improvement by itself.
+
+059 is running from frozen source `43c5cff`, after17 scientific tests/Ruff and a
+pre-score native-length amendment.060 independent audit reproduced all primary
+results and confirmed its negative full-rule decision; no implementation defect.
+
+059v1 stopped before anyQTDBscore when an edge-span check failed; its receipts
+and source are preserved. The new [v2 execution note](experiment-059-v2-execution-note.md)
+freezes a forward-only correction (`cacf7e8`), with the same method and decision rule.
+v2 is running on all105 records; no result is claimed until completion.
+
+059v2 completed its72record primary with all gates passed: QRSIoU68.17%to79.37%,
+pairedgain11.20points[8.90,13.64]; endpointswithin30ms65.48%to91.54%. Executor report
+and independent audit are pending.058 is running from frozen source `cf45db4` after
+its pre-score background amendment (`e7081f0`); no synthetic outcome is claimed yet.
+
+[059](experiment-059-hybrid-wave-boundaries-results.md) is complete and independently
+audited: all72primaryrecords/2582expertQRSintervals retained,549hashes and10359
+measurements/matches reconstructed. Allgatespassed; this is QRSboundarytiming,
+not disease-region accuracy. Local before/after and regression review:
+`outputs/localization_iteration_review_2026_10_02/index.html`. Final integrated
+checks:1371CPUtests, Ruff and wheel/sdist passed;058 benchmark remains running.

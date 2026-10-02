@@ -1751,16 +1751,16 @@
       "kind": "experiment",
       "title": "Independent confirmation of QRS/T boundaries with fixed P windows",
       "question": "Can a frozen hybrid confirm055 QRS/T gains without its P degradation on another annotated source?",
-      "evidence": "055 full recipe failed but QRS/T boundaries improved;057 independently annotated ST-change comparison passed its frozen review rule.",
+      "evidence": "docs/experiment-059-hybrid-wave-boundaries-results.md; independentauditverified549hashes/10359measurements/matching/bootstrap.",
       "value": 4,
       "clarity": 0.7,
       "gpu_hours": 0.0,
-      "cpu_hours": 0.2,
+      "cpu_hours": 0.009099263500279954,
       "build_hours": 3.0,
       "blocked_by": [],
-      "status": "running",
+      "status": "done",
       "authorized": true,
-      "notes": "User resumed autonomous localization;059 protocolc4dd7d5 frozen;72nonEDBQTDBrecords primary, jointmanualfiducials; source/annotationaudit precedes scores."
+      "notes": "059v2 allgatespassed, independentlyreconstructed.72nonEDB primaryQTDBrecords; QRSIoU+.1120[.0890,.1364], endpointwithin30ms65.48%to91.54%. Pexact/Tguardpasses but completeTimprovementuncertain; recordbootstrapnotuniversalpatientIDs. All105nowdevelopment."
     },
     {
       "id": "expert_beat_pipeline_integration",
@@ -1825,6 +1825,24 @@
       "status": "candidate",
       "authorized": false,
       "notes": "Follow-up only; no rerun/retune060. Investigate on058syntheticcontrols, then new prospective independent realcomparison; cannot count windows aspatients to narrowCI."
+    },
+    {
+      "id": "qrs_support_anomaly_integration",
+      "kind": "experiment",
+      "title": "Integrate adaptive QRS support with anomaly highlights",
+      "question": "Does the independently confirmed QRS support improve abnormal-wave highlights against new expert truth?",
+      "evidence": "059 QRSendpointsharewithin30ms65.48%to91.54%, independent72records; this validatesboundarytiming only.058 providescontrolledknownchangestress, notexpertpathologicalwave labels.",
+      "value": 5,
+      "clarity": 0.6,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.2,
+      "build_hours": 3.0,
+      "blocked_by": [
+        "cardiologist_region_marks"
+      ],
+      "status": "candidate",
+      "authorized": false,
+      "notes": "Follow-up after userreview; freeze anomaly/support comparison before scoring onnewtruth. No 059retuning or clinicalpipeline replacement from boundaryresults alone."
     }
   ]
 }

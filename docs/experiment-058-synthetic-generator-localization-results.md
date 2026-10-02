@@ -63,6 +63,8 @@ flags to within 5.6e-17, all 468 per-kind intervals, four transient intervals, t
 intervals and all four gates to within 1e-13. It verified every one of the twelve source hashes,
 two input hashes and 8,460 output hashes, plus the cached parameter splits/projections, limb checks
 and calibration thresholds. The negative robustness verdict was independently confirmed.
+The separate audit receipt is `outputs/experiment058_synthetic_generator_audit_v1/audit.json`,
+SHA-256 `3f27700934ac0f7f9b1b6c5fd5db972f88b2edb8b48c3edc3267d5638f0e0095`.
 
 ## Held-out transient localization
 

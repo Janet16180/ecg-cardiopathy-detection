@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-02T20:02:00.509927+00:00",
+  "updated_at_utc": "2026-10-02T20:11:43.365218+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2624,7 +2624,7 @@
     "next_action": "cpu_timing_clinic_laptop: rerun the script on the clinic laptop."
   },
   "experiment_052_raw_residual": {
-    "status": "implementation",
+    "status": "complete",
     "authorized": true,
     "authorization_scope": "User, 2 October 2026: autonomously improve unsupervised ECG localization with subagents on existing PR #61, stop for a strong improvement to review or an important decision. Local development data only.",
     "protocol": "docs/experiment-052-raw-residual.md",
@@ -2636,30 +2636,88 @@
       "threads": 2
     },
     "closed_test_evaluated": false,
-    "next_action": "Implement and verify scientific controls, reproduce predecessor, then run frozen CPU experiment.",
+    "next_action": "Negative overall; ECG287 case improvement is descriptive. Evaluate a prospective alignment/normal-phase calibrated residual successor if 053 has no review-worthy gain.",
     "protocol_commit": "7071dc4",
     "amendments": {
-      "1": "614016e"
+      "1": "614016e",
+      "2": "2baa625"
+    },
+    "source_commit": "8411072",
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "OPENBLAS_NUM_THREADS": "2",
+      "OMP_NUM_THREADS": "2",
+      "MKL_NUM_THREADS": "2",
+      "CUDA_VISIBLE_DEVICES": "",
+      "PYTHONPATH": "/tmp/ecg-localization052"
+    },
+    "command": "CUDA_VISIBLE_DEVICES= OPENBLAS_CORETYPE=Haswell OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 PYTHONPATH=/tmp/ecg-localization052 .venv/bin/python -m scripts.experiments.run_raw_residual052",
+    "verification": "7 scientific tests and Ruff passed before run",
+    "results_commit": "2bbd3dc",
+    "runtime_seconds": 84.35630125901662,
+    "reading": {
+      "promote_for_review": false,
+      "paired_gain": {
+        "value": -0.008509755085097553,
+        "ci_low": -0.16552795693420694,
+        "ci_high": 0.13919394841269833
+      },
+      "raw_pvc_hit": 0.4794520547945205,
+      "baseline_pvc_hit": 0.4879618098796181,
+      "synthetic_ST_joint": {
+        "value": 0.205,
+        "ci_low": 0.15,
+        "ci_high": 0.265
+      },
+      "synthetic_QRS_joint": {
+        "value": 0.775,
+        "ci_low": 0.715,
+        "ci_high": 0.83
+      }
     }
   },
   "experiment_053_calibrated_units": {
-    "status": "implementation",
+    "status": "running",
     "authorized": true,
     "authorization_scope": "User, 2 October 2026: autonomously improve unsupervised ECG localization with subagents on existing PR #61, stop for a strong improvement to review or an important decision. Local development data only.",
     "protocol": "docs/experiment-053-calibrated-units.md",
-    "runner": "scripts/experiments/run_calibrated_localization053.py",
+    "runner": "scripts/experiments/run_calibrated_localization053_v2.py",
     "results": "docs/experiment-053-calibrated-units-results.md",
-    "output_dir": "outputs/experiment053_calibrated_units_v1",
+    "output_dir": "outputs/experiment053_calibrated_units_v2",
     "resources": {
       "device": "cpu",
       "threads": 2
     },
     "closed_test_evaluated": false,
-    "next_action": "Implement and verify scientific controls, reproduce predecessor, then run frozen CPU experiment.",
+    "next_action": "Serialization-only successor running with identical frozen scientific method; reproduce baseline and write results report.",
     "protocol_commit": "4b5f030",
     "amendments": {
       "1": "910c9a9"
-    }
+    },
+    "source_commit": "3705960",
+    "source_commits": [
+      "fe3c4ef",
+      "793a578",
+      "3705960"
+    ],
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "OPENBLAS_NUM_THREADS": "2",
+      "OMP_NUM_THREADS": "2",
+      "MKL_NUM_THREADS": "2",
+      "PYTHONPATH": "/tmp/ecg-localization053"
+    },
+    "command": "OPENBLAS_CORETYPE=Haswell OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 PYTHONPATH=/tmp/ecg-localization053 .venv/bin/python -m scripts.experiments.run_calibrated_localization053_v2",
+    "verification": "7 scientific tests and Ruff passed before run",
+    "attempts": [
+      {
+        "output_dir": "outputs/experiment053_calibrated_units_v1",
+        "source_commit": "793a578",
+        "status": "failed",
+        "reason": "Namespaced patient IDs could not be serialized as integers after scoring; no scientific recipe change. Maps and local figures preserved.",
+        "failure_receipt": "outputs/experiment053_calibrated_units_v1/failure.json"
+      }
+    ]
   },
   "experiment_051_beat_sum": {
     "status": "complete",

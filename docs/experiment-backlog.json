@@ -1629,9 +1629,9 @@
       "cpu_hours": 0.3,
       "build_hours": 3.0,
       "blocked_by": [],
-      "status": "in_progress",
+      "status": "done",
       "authorized": true,
-      "notes": "Experiment 052; protocol committed before scores. CPU, local training/development ECGs, fixed primary rule and support. Parent owns reporting queue; subagent runs and writes results."
+      "notes": "Experiment052 complete, negative: pairedPVC gain \u22120.009 [\u22120.166,+0.139]; exact syntheticST20.5%,QRS77.5%,both below80%rule. ECG287 oddbeat found, case-only success. docs/experiment-052-raw-residual-results.md. Follow-up alignment and independent normal phase calibration."
     },
     {
       "id": "normal_calibrated_unit_localization",

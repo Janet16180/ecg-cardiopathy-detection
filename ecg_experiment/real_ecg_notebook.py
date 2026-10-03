@@ -1,4 +1,4 @@
-"""Build a portable, real-recording explanation of existing localization results."""
+"""Create directly runnable and portable explanations of real localization results."""
 
 from __future__ import annotations
 
@@ -23,6 +23,30 @@ import numpy as np
 from IPython.display import Markdown, display
 
 plt.rcParams.update({"font.size": 10, "figure.dpi": 110})
+"""
+
+LOCAL_RECORDINGS = """from pathlib import Path
+import sys
+
+working_directory = Path.cwd()
+repository = next(
+    (directory for directory in (working_directory, *working_directory.parents)
+     if (directory / "ecg_experiment" / "real_ecg_notebook.py").is_file()),
+    None,
+)
+if repository is None:
+    raise FileNotFoundError("Open this notebook from the project checkout or its notebooks folder.")
+sys.path.insert(0, str(repository))
+
+from ecg_experiment.real_ecg_notebook import load_notebook_metrics
+from ecg_experiment.real_notebook_cases import load_real_evidence_cases
+from ecg_experiment.real_notebook_ptb import load_real_ptb_cases
+
+bundle = {
+    "cases": load_real_ptb_cases(repository) + load_real_evidence_cases(repository),
+    "metrics": load_notebook_metrics(repository),
+}
+print(f"Loaded {len(bundle['cases'])} real examples from local recordings and saved results.")
 """
 
 PLOTTING = '''def plot_record(case, marks=None, limits=None, title=None):
@@ -147,8 +171,19 @@ def _code(text: str) -> Any:
     return nbformat.v4.new_code_cell(text)
 
 
-def _metrics(root: Path) -> dict[str, Any]:
-    """Read previously completed experiments without running an evaluation."""
+def load_notebook_metrics(root: Path) -> dict[str, Any]:
+    """Read previously completed experiments without running an evaluation.
+
+    Parameters
+    ----------
+    root : Path
+        Project checkout containing the completed experiment outputs.
+
+    Returns
+    -------
+    dict
+        Saved beat and boundary metrics with receipt paths and hashes.
+    """
     paths = {
         "beat": root / "outputs/experiment056_incart_localization_v1/result.json",
         "boundary": root / "outputs/experiment059_qtdb_hybrid_v2/result.json",
@@ -236,21 +271,34 @@ def make_notebook(payload: dict[str, Any], include_data: bool = True) -> Any:
     raw = json.dumps(payload, allow_nan=False, separators=(",", ":")).encode()
     digest = hashlib.sha256(raw).hexdigest()
     encoded = base64.b64encode(gzip.compress(raw, mtime=0)).decode()
+    execution_notes = (
+        """The portable local version contains its selected real waveforms, saved model outputs,
+and source notes. **Restart the kernel and run all cells:** it needs Python, NumPy, Matplotlib,
+and IPython, but no repository checkout, model weights, GPU, internet connection, or original
+data folders."""
+        if include_data
+        else """**Select the project's `.venv` Python kernel, then restart the kernel and run all cells.**
+This notebook reads the original public recordings and completed cached results from the local
+checkout. It works when Jupyter starts in the project root or its `notebooks` folder. No separate
+builder command, model weights, GPU, network access, or refitting is required. The raw recordings
+and saved experiment outputs must already be present locally; they stay outside Git."""
+    )
     cells = [
-        _markdown("""# Understanding ECG localization with real recordings
+        _markdown(
+            """# Understanding ECG localization with real recordings
 
 This notebook explains the existing research in plain language. It includes ECGs labeled normal
 and ECGs with different recorded abnormalities, then shows two improvements tested against expert
 annotations. A normal ECG does not prove that a person has no heart disease.
 
-The portable local version contains its selected real waveforms, saved model outputs, and source
-notes. **Restart the kernel and run all cells:** it needs Python, NumPy, Matplotlib, and IPython,
-but no repository checkout, model weights, GPU, internet connection, or original data folders.
-The HTML export can be read without running Python.
+"""
+            + execution_notes
+            + """
 
 This is a replay and explanation of completed research, not a diagnostic tool. The examples were
 chosen for illustration from already-read development data. They do not form an independent test.
-"""),
+"""
+        ),
         _markdown("""## 1. Reading the picture
 
 An ECG records voltage over time. Each lead is a different electrical view of the same heartbeat,
@@ -283,12 +331,7 @@ the original samples; they do not modify the ECG or add new algorithm prediction
             )
         )
     else:
-        cells.append(
-            _code(
-                'raise RuntimeError("This Git copy omits patient waveforms. Generate the portable local "\n'
-                '                   "version with: python -m scripts.reports.build_real_ecg_notebook")'
-            )
-        )
+        cells.append(_code(LOCAL_RECORDINGS))
     cells.extend(
         [
             _code(PLOTTING),
@@ -392,7 +435,7 @@ Real examples come from [PTB-XL](https://physionet.org/content/ptb-xl/1.0.3/),
 sampling rates, annotation notes, and saved-result receipt hashes are stored in this notebook.
 The project reports for Experiments 056 and 059 describe the full protocols and comparison rules.
 
-The embedded bundle stores original waveform samples and saved explanation results. Rerunning
+The loaded bundle contains original waveform samples and saved explanation results. Rerunning
 this notebook redraws and explains those results; it does not run the neural networks or repeat
 the full benchmarks. No protected final-test cohort is accessed.
 """),
@@ -402,6 +445,26 @@ the full benchmarks. No protected final-test cohort is accessed.
             ),
         ]
     )
+    if not include_data:
+        cells.extend(
+            [
+                _markdown("""## Explore the localization steps visually
+
+Run the next cell to create an offline interactive HTML explanation in `notebooks/`.
+It shows real beat/reference overlays, difference scores, sliding windows, a lead-by-beat
+map, and expert QRS boundaries. It replays the frozen methods on existing examples;
+it does not train or evaluate a new model. No separate builder command is required.
+"""),
+                _code(
+                    "from ecg_experiment.localization_visual import build_visual_explanation\n\n"
+                    "visual_path = build_visual_explanation(\n"
+                    "    repository, repository / 'notebooks/localization-explained.executed.html'\n"
+                    ")\n"
+                    "display(Markdown('Interactive explanation saved to `' + str(visual_path) "
+                    "+ '`. Open that HTML file in your browser.'))"
+                ),
+            ]
+        )
     notebook = nbformat.v4.new_notebook(cells=cells)
     notebook.metadata.kernelspec = {"display_name": "Python 3", "language": "python", "name": "python3"}
     notebook.metadata.language_info = {"name": "python", "version": "3.11"}
@@ -409,31 +472,16 @@ the full benchmarks. No protected final-test cohort is accessed.
     notebook.metadata.contains_patient_waveforms = include_data
     if include_data:
         notebook.cells[3].metadata.jupyter = {"source_hidden": True}
-    else:
-        notebook.cells.insert(
-            0,
-            _markdown("""**Repository blueprint:** this Git copy contains explanations
-and plotting code, but no patient waveform payload or figure outputs. Generate the self-contained
-local notebook and offline HTML with:
-
-```bash
-OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 .venv/bin/python -m scripts.reports.build_real_ecg_notebook
-```
-
-Use the resulting `notebooks/14-jr-real-ecg-localization.executed.ipynb`
-for the portable, runnable version. Raw recordings remain local according to the project's data policy.
-"""),
-        )
     return notebook
 
 
 def build_notebooks(root: Path, destination: Path, template: Path | None = None) -> Path:
-    """Build a local standalone notebook and optionally a data-free Git template."""
+    """Build a portable notebook and optionally a directly runnable Git notebook."""
     from ecg_experiment.real_notebook_cases import load_real_evidence_cases
     from ecg_experiment.real_notebook_ptb import load_real_ptb_cases
 
     cases = load_real_ptb_cases(root) + load_real_evidence_cases(root)
-    payload = {"cases": cases, "metrics": _metrics(root)}
+    payload = {"cases": cases, "metrics": load_notebook_metrics(root)}
     destination.mkdir(parents=True, exist_ok=True)
     path = destination / "14-jr-real-ecg-localization.executed.ipynb"
     nbformat.write(make_notebook(payload), path)

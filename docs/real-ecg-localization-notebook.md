@@ -1,22 +1,24 @@
 # Real ECG localization notebook
 
-The portable notebook explains the completed research with real patient recordings, saved screening
+The notebook explains the completed research with real patient recordings, saved screening
 decisions, and expert-annotated comparisons. It uses no synthetic ECGs and runs no training or new
 performance evaluation. Its Markdown sections explain the method, findings, and conclusions.
 
-## Open the local artifacts
+## Run the notebook directly
 
-- Notebook: `notebooks/14-jr-real-ecg-localization.executed.ipynb`.
-- Offline reading version: `notebooks/14-jr-real-ecg-localization.executed.html`.
-- Executed verification: `outputs/real_ecg_notebook_2026_10_02/validation.json`.
+Open [notebook 14](../notebooks/14-jr-real-ecg-localization.ipynb) in Jupyter, select the project's
+`.venv` Python kernel, and choose **Restart Kernel and Run All Cells**. Start Jupyter in the project
+root or its `notebooks` folder. You do not need to run `build_real_ecg_notebook` first.
 
-The notebook embeds the selected original waveform samples and saved results. Restarting the kernel
-and running all cells requires Python, NumPy, Matplotlib, and IPython. It needs no original data
-folders, repository imports, model weights, GPU, or network access. The HTML embeds every figure and
-needs no Python or external page assets. The source links are optional references.
+The first loading cell finds the checkout and imports shared helpers. They read original local
+PTB-XL, INCART, and QTDB recordings and verify cached result hashes before drawing the examples.
+The project environment supplies the needed Python packages. Existing data and completed outputs
+must be available; no neural model weights, GPU, internet, training, or threshold refitting is needed.
+Missing local files raise their actual file errors instead of directing you to a builder.
 
-The [repository blueprint](../notebooks/14-jr-real-ecg-localization.ipynb) excludes patient waveforms
-and outputs. The builder below produces the complete local artifact; raw data remain outside Git.
+The tracked notebook has executable cells and explanations, with no stored patient waveform payload
+or figure outputs. Running it loads the data into memory and displays the figures. Clear outputs
+before committing the notebook so raw recordings and patient figures remain outside Git.
 
 ## What the reader sees
 
@@ -54,21 +56,17 @@ The notebook keeps screening, abnormal-beat selection, and wave boundaries separ
 validated components and their limits without promoting them into a fully validated clinical
 localization system or changing the classifier or label definitions.
 
-## Rebuild and verification
+## Interactive localization explanation
 
-From the checkout with the already-completed outputs and original public recordings:
+The final cell creates `notebooks/localization-explained.executed.html`. Open it in a browser to
+choose a beat and lead, compare real beat/reference shapes, slide a scoring window, click the
+lead-by-beat map, and inspect expert QRS boundaries. All page resources are embedded and work
+offline. No separate builder command is needed. Details and executed checks are in
+[the visual explanation guide](localization-visual-explanation.md).
 
-```bash
-OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 .venv/bin/python -m scripts.reports.build_real_ecg_notebook
-```
+## Direct-run verification
 
-The builder imports existing shared helpers and replays cached scores; it does not load neural
-encoders or refit thresholds. Combined decisions come from executed notebook 13 or are proved
-unchanged over its recorded threshold rounding interval. The rule provenance stays in the payload.
-The selected PTB records are development fold 9. No protected final-test cohort is accessed.
-
-Executed on 2026-10-02: 13 real examples, 17 code cells, 24 inline figures, and zero errors.
-All embedded waveform samples matched the original native WFDB samples exactly. A second complete
-execution in an empty temporary folder reproduced all 24 PNG outputs identically. Saved cache and
-selected input hashes were checked, and an independent scientific review passed. The repository
-test suite passed all 1,372 tests; Ruff checks and formatting passed for the new Python files.
+On 2026-10-02, notebook 14 was executed directly with the project environment from its `notebooks`
+folder, without invoking the builder. All 18 code cells completed, showing 13 real examples and
+24 inline figures, with zero errors. Its last cell created the interactive HTML. The tracked copy was then saved with cleared outputs and
+execution counts. Shared loading helpers verified the saved cache and selected input hashes.

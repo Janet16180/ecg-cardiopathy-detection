@@ -14,7 +14,7 @@ derived from these notebooks is described in [clean cohorts v1](../docs/clean-co
 
 | Notebook | Source | Main questions |
 | --- | --- | --- |
-| `01-jr-ptbxl.ipynb` | PTB-XL | Missing and implausible values, diagnoses by age and sex, signal integrity, devices |
+| `01-jr-ptbxl.ipynb` | PTB-XL | Full EDA: structure, descriptive statistics, missing-value patterns, univariate and bi/multivariate analysis, temporal trends, class balance, preprocessing, signal integrity and normalization |
 | `02-jr-mimic.ipynb` | MIMIC-IV-ECG (800k metadata, 200k signals) | Repeat recordings, machine measurements and their consistency, lead order, devices |
 | `03-jr-challenge.ipynb` | Georgia, CPSC 2018, CPSC-Extra, Chapman | Format, diagnoses by age and sex, duplicates, rail artifacts, filtering |
 | `04-jr-code15.ipynb` | CODE-15% (all 18 parts) | Labels and mortality by age and sex, padding and duration, amplitude unit, sampling rate |
@@ -55,3 +55,5 @@ from the raw files.
 | `processed.py` | Comparisons of the project's processed arrays with the raw files |
 | `cross.py` | All sources in one table; six common findings on one vocabulary; source fingerprinting |
 | `stats.py` | Prevalence with Wilson intervals, chi-square tests, logistic-regression odds ratios, prevalence plots |
+| `profile.py` | Column profiles, descriptive statistics with Tukey outliers and skewness, frequencies, missingness correlation, Cramér's V, baseline removal and lead standardization |
+| `ptbxl_cleaning.py` | PTB-XL preprocessing: placeholders, implausible values, missing values, high-cardinality columns, signal flags, with a log of every step |

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How ECG localization chooses a place</title>
+<style>
+:root{--ink:#1d2939;--blue:#2166ac;--green:#25844b;--orange:#dc773d;--red:#c34448;--muted:#526478}
+*{box-sizing:border-box}body{margin:0;background:#f4f7fa;color:var(--ink);font:17px/1.65 system-ui,sans-serif}
+main{max-width:1140px;margin:auto;padding:36px 22px 70px}h1{font-size:clamp(30px,4vw,48px);line-height:1.16;letter-spacing:-1px}
+h2{font-size:26px;line-height:1.3;margin-top:0}h3{font-size:20px}p{max-width:85ch}.intro{font-size:21px;color:var(--muted)}
+.panel{background:white;padding:26px;border:1px solid #dce4ed;border-radius:16px;margin:24px 0;box-shadow:0 4px 14px #1d293905}
+.flow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.node{flex:1;min-width:145px;background:#eaf1fa;border-radius:10px;padding:14px}
+.node small{display:block;color:var(--muted)}.arrow{font-size:24px;color:var(--blue)}.note{padding:14px 18px;background:#eef4fc;border-left:4px solid var(--blue);border-radius:4px}
+.warning{background:#fff5e9;border-left-color:var(--orange)}.controls{display:flex;align-items:end;gap:18px;flex-wrap:wrap;margin:18px 0}
+.controls>div{max-width:100%;min-width:0}pre{white-space:pre-wrap;overflow-wrap:anywhere}.formula{overflow-wrap:anywhere}
+label{font-size:14px;font-weight:600;display:block}select,button,input{font:inherit}select,button{background:white;color:var(--ink);border:1px solid #b8c6d5;border-radius:8px;padding:9px 12px}
+button{cursor:pointer}button:hover{background:#edf3fb}select{max-width:100%}input[type=range]{width:100%;accent-color:var(--blue)}input[type=checkbox]{accent-color:var(--green)}
+canvas{width:100%;height:260px;display:block;border:1px solid #e0e7ef;border-radius:8px;background:white}canvas.heat{height:330px;cursor:pointer}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin:12px 0}.dot{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px}
+.blue{background:var(--blue)}.green{background:var(--green)}.orange{background:var(--orange)}.gray{background:#8292a4}.red{background:var(--red)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}.stats{display:flex;gap:14px;flex-wrap:wrap}.stat{background:#f1f5fa;padding:14px 20px;border-radius:10px;flex:1;min-width:210px}.stat strong{font-size:28px;display:block}
+.small{font-size:14px;color:var(--muted)}.result{font-size:19px;background:#edf5ff;padding:20px;border-radius:12px}.formula{font-family:ui-monospace,monospace;background:#f0f3f7;padding:15px;border-radius:8px;font-size:15px}
+table{border-collapse:collapse;width:100%;font-size:15px}th,td{padding:10px;text-align:left;border-bottom:1px solid #e0e7ef}a{color:var(--blue)}details{margin-top:18px}summary{cursor:pointer;color:var(--muted)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}.tabs a{padding:7px 11px;background:white;border:1px solid #dce4ed;border-radius:8px;text-decoration:none;font-size:14px}
+@media(max-width:700px){.two{grid-template-columns:1fr}.panel{padding:18px}main{padding:22px 12px}.arrow{display:none}canvas{height:230px}}
+</style>
+</head>
+<body><main>
+<p class="small">Real ECG recordings · existing experiments · interactive explanation</p>
+<h1>How does the algorithm choose<br>a place in the ECG?</h1>
+<p class="intro">It compares repeated beats, finds where their shapes differ most, and returns a <strong>beat, lead, and time interval</strong>. A separate method estimates the QRS boundaries.</p>
+<div class="note">“Place” here means coordinates on the ECG trace. A lead is an electrical view of the heart; it does not identify an anatomical injury. These algorithms suggest where to look.</div>
+<nav class="tabs" aria-label="Explanation steps"><a href="#beats">1. Find beats</a><a href="#compare">2. Compare shapes</a><a href="#score">3. Score differences</a><a href="#choose">4. Pick coordinates</a><a href="#boundaries">5. Trace QRS borders</a><a href="#evidence">What was validated?</a></nav>
+<section class="panel">
+<h2>The architecture for localization</h2>
+<div class="flow"><div class="node">Real voltage samples<small>Multiple leads over time</small></div><span class="arrow">→</span><div class="node">Detect and align beats<small>Build a reference from other beats</small></div><span class="arrow">→</span><div class="node">Measure differences<small>Compare short regions in every lead</small></div><span class="arrow">→</span><div class="node">Return coordinates<small>Beat + lead + 140 ms interval</small></div></div>
+<p>This candidate localization method uses signal processing and an unsupervised comparison within each recording. It applies a defined statistical recipe rather than training another neural network. Neural networks also use mathematics, but learn their weights during training. The existing screening classifier and its attention maps are separate AI components.</p>
+</section>
+<section class="panel" id="beats">
+<h2>1. Find the repeated beats</h2>
+<p>The algorithm detects the main spikes, called R peaks. They give it anchors for cutting the continuous recording into comparable beats. It uses the voltages to find these anchors; expert labels are only used later to check the answer.</p>
+<div class="controls"><div><label for="caseSelect">Real example</label><select id="caseSelect"></select></div><div><label for="leadSelect">Electrical view / lead</label><select id="leadSelect"></select></div><div><label for="beatSelect">Beat under inspection</label><select id="beatSelect"></select></div><button id="reset">Show the algorithm’s choice</button></div>
+<label><input type="checkbox" id="expert" checked> Show expert ventricular-beat labels for checking</label>
+<div class="legend"><span><i class="dot blue"></i>Window under inspection</span><span><i class="dot gray"></i>Detected R peak</span><span><i class="dot green"></i>Expert ventricular-beat timestamp</span></div>
+<canvas id="raw" aria-label="Real ECG lead with detected peaks and candidate window"></canvas>
+<p id="caseNote" class="small"></p>
+</section>
+<section class="panel" id="compare">
+<h2>2. Compare one beat with the other beats</h2>
+<p>The method subtracts each beat’s local voltage baseline and allows a small alignment correction of up to 10 milliseconds. It then takes the median shape of the <strong>other beats</strong>. The beat being inspected is excluded from its own reference.</p>
+<div class="legend"><span><i class="dot blue"></i>Beat under inspection</span><span><i class="dot gray"></i>Reference from the other beats</span></div>
+<canvas id="comparison" aria-label="Real baseline-subtracted beat and leave-one-out reference"></canvas>
+<p id="alignment" class="small"></p>
+<div class="note warning">The reference means “typical of the other beats in this recording.” It is not guaranteed to be clinically normal. A change repeated on every beat can disappear into the reference.</div>
+</section>
+<section class="panel" id="score">
+<h2>3. Turn the difference into a score</h2>
+<p>At every sample, the method measures how far the blue line is from the reference. It divides by a typical QRS voltage range for that lead, then squares the difference. This gives a non-negative score and allows comparisons across leads.</p>
+<div class="formula">sample score = ((beat voltage − reference voltage) / lead scale)²</div>
+<canvas id="residual" aria-label="Squared normalized voltage difference over the inspected beat"></canvas>
+<p class="small">The red curve is the actual score field used by the sliding window. Gray areas belong to a neighboring beat. A window can cross that boundary and include both beats’ sample scores; its center determines which beat receives the window.</p>
+<h3>Slide the window</h3>
+<p>The algorithm averages that sample score within a <strong>140-millisecond window</strong>, moving the window in 10-millisecond steps. Move the slider to see how the interval and its average score change.</p>
+<label for="windowSlider">Inspect eligible windows on this beat and lead</label><input id="windowSlider" type="range" min="0" max="1" value="0">
+<p id="windowScore" class="result"></p>
+</section>
+<section class="panel" id="choose">
+<h2>4. Choose a beat, lead, and interval</h2>
+<p>The method searches all eligible windows across all leads. A beat receives the largest score from the windows assigned to it by their nearest detected R peak. The highest-scoring beat supplies the saved candidate shown below.</p>
+<p class="small">Each cell shows the largest window score for one beat in one lead. Click a cell to inspect that combination. Brightness is relative to the maximum in this example; it is not disease probability.</p>
+<canvas id="heat" class="heat" aria-label="Interactive lead by beat score map"></canvas>
+<p id="heatSelection" class="small"></p>
+<div id="savedChoice" class="result"></div>
+<p id="checkChoice" class="note"></p>
+<p>Moving the controls explores existing scores. It does not retrain the model or change the algorithm’s saved choice.</p>
+</section>
+<section class="panel" id="boundaries">
+<h2>5. A separate question: where does QRS start and end?</h2>
+<p>The difference window above has a fixed width. It can fall on QRS, on a recovery wave, or on noise. To draw physiological QRS borders, the separate boundary method follows how quickly the filtered voltage changes.</p>
+<div class="controls"><div><label for="boundarySelect">Expert-annotated real example</label><select id="boundarySelect"></select></div><div><label for="channelSelect">Recorded channel</label><select id="channelSelect"></select></div></div>
+<div class="legend"><span><i class="dot green"></i>Expert joint QRS interval</span><span><i class="dot orange"></i>Earlier fixed box</span><span><i class="dot blue"></i>Candidate joint borders</span></div>
+<label for="borderView">Compare interval borders</label><select id="borderView"><option value="both">Both methods and expert</option><option value="fixed">Earlier fixed box and expert</option><option value="hybrid">Candidate and expert</option></select>
+<canvas id="qrs" aria-label="Real ECG with fixed candidate and expert QRS intervals"></canvas>
+<h3>Follow the local slope</h3>
+<p>The line below is a smoothed measure of voltage change. The algorithm finds activity connected to the nearby maximum, above 12% of that maximum. It closes small gaps and adds a small margin. It combines both channels using the earliest start and latest end.</p>
+<canvas id="envelope" aria-label="QRS derivative envelope with activity threshold and channel borders"></canvas>
+<p id="boundaryNote" class="note"></p>
+<p class="small">The expert timing is joint across the two channels. It validates wave boundaries, not the location of diseased tissue or a pathological lead. Voltages use the database header’s nominal scale.</p>
+</section>
+<section class="panel" id="evidence">
+<h2>What the real-data evaluations established</h2>
+<div class="stats"><div class="stat"><small>Ventricular beat selected in mixed V/N segments</small><strong id="beatMetric"></strong><span class="small">Patient-averaged; 30 eligible INCART patients</span></div><div class="stat"><small>QRS endpoint within 30 ms of the expert</small><strong id="qrsMetric"></strong><span class="small">72 QTDB records; 2,582 complete QRS intervals</span></div></div>
+<p>The first result checks <strong>beat identity</strong>. The second checks <strong>QRS timing</strong>. They are separate evaluations. Neither confirms that the selected lead and short window are the exact pathological region.</p>
+<div class="note warning">Remaining limitations: normal-labeled beats can be selected, noise can dominate, and persistent abnormalities can resemble the recording’s own reference. T-wave improvement is still uncertain. These candidates have not become a fully validated clinical localization system.</div>
+<p>All displayed waveforms are real. The chosen success and failure examples explain the method; they do not create a new accuracy estimate. No synthetic ECGs, new training, or protected final-test records are used.</p>
+<details><summary>Sources, exact method details, and reproducibility</summary><p>Public recordings: <a href="https://physionet.org/content/incartdb/1.0.0/">INCART 1.0.0</a> and <a href="https://physionet.org/content/qtdb/1.0.0/">QT Database 1.0.0</a>. The project’s Experiments 056 and 059 contain the full benchmark reports.</p><p>INCART: native 257 Hz waveform shown; scoring replay uses 500 Hz, 10-second cores with up to ±0.5 seconds of context. Reference beats require complete support. Baseline is the median from R−100 to−60 ms; lead scale is median QRS peak-to-peak voltage, with a 0.1 mV floor. No per-beat amplitude fit. Sample ownership is bounded by neighboring-R midpoints; eligible windows can cross those midpoints. Residual arrays and coordinates return to the original recording timeline.</p><p>QTDB: native 250 Hz; full-record 0.5–30 Hz filtering and smoothed absolute derivative. The activity search is restricted to R−120 to+160 ms; the local maximum lies within ±60 ms. Threshold is 12%, gaps are closed over about 10 ms, borders expand by 8 ms. Existing P boundaries are preserved by the full hybrid method.</p><p id="displayNote"></p><pre id="integrity" class="small"></pre></details>
+</section>
+<p id="status" class="small" role="status">Loading the embedded real recordings…</p>
+</main>
+<script id="realData" type="application/json">__REAL_LOCALIZATION_DATA__</script>
+<script>
+'use strict';
+const data=JSON.parse(document.getElementById('realData').textContent);
+const beats=data.cases.filter(c=>c.kind==='incart'), boundaries=data.cases.filter(c=>c.kind==='qtdb');
+const state={caseIndex:0,lead:0,beat:0,window:0,allowed:[],boundary:0,channel:0};
+const $=id=>document.getElementById(id), colors={blue:'#2166ac',gray:'#8292a4',green:'#25844b',orange:'#dc773d',red:'#c34448'};
+const fmt=(v,n=3)=>Number(v).toFixed(n), percent=v=>(100*v).toFixed(1)+'%';
+function options(id,items){$(id).replaceChildren(...items.map((text,i)=>{const o=document.createElement('option');o.value=i;o.textContent=text;return o;}));}
+function canvas(id){const node=$(id), rect=node.getBoundingClientRect(), ratio=window.devicePixelRatio||1;node.width=rect.width*ratio;node.height=rect.height*ratio;const ctx=node.getContext('2d');ctx.scale(ratio,ratio);return {ctx,w:rect.width,h:rect.height};}
+function chart(id,time,series,bands=[],vertical=[],ylab='',extras={}){
+ const {ctx,w,h}=canvas(id),p={l:64,r:20,t:24,b:42},xmin=extras.xmin??time[0],xmax=extras.xmax??time[time.length-1];
+ let vals=series.flatMap(s=>s.y.filter((_,i)=>time[i]>=xmin&&time[i]<=xmax));
+ let low=extras.zero?0:Math.min(...vals), high=Math.max(...vals);if(high===low)high=low+1;const margin=(high-low)*.12;low=extras.zero?0:low-margin;high+=margin;
+ const x=v=>p.l+(v-xmin)/(xmax-xmin)*(w-p.l-p.r),y=v=>h-p.b-(v-low)/(high-low)*(h-p.t-p.b);
+ ctx.clearRect(0,0,w,h);ctx.font='12px system-ui';ctx.textBaseline='middle';
+ for(let i=0;i<=5;i++){const v=xmin+(xmax-xmin)*i/5;ctx.strokeStyle='#e3e9f0';ctx.beginPath();ctx.moveTo(x(v),p.t);ctx.lineTo(x(v),h-p.b);ctx.stroke();ctx.fillStyle='#526478';ctx.textAlign='center';ctx.fillText(fmt(v,extras.ms?0:2),x(v),h-22);}
+ for(let i=0;i<=3;i++){const v=low+(high-low)*i/3;ctx.strokeStyle='#e3e9f0';ctx.beginPath();ctx.moveTo(p.l,y(v));ctx.lineTo(w-p.r,y(v));ctx.stroke();ctx.textAlign='right';ctx.fillStyle='#526478';ctx.fillText(fmt(v,2),p.l-8,y(v));}
+ ctx.save();ctx.beginPath();ctx.rect(p.l,p.t,w-p.l-p.r,h-p.t-p.b);ctx.clip();
+ for(const b of bands){ctx.fillStyle=b.color;ctx.globalAlpha=b.alpha??.17;ctx.fillRect(x(b.start),p.t,x(b.end)-x(b.start),h-p.t-p.b);ctx.globalAlpha=1;ctx.strokeStyle=b.color;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x(b.start),p.t);ctx.lineTo(x(b.start),h-p.b);ctx.moveTo(x(b.end),p.t);ctx.lineTo(x(b.end),h-p.b);ctx.stroke();}ctx.globalAlpha=1;
+ for(const s of series){ctx.strokeStyle=s.color;ctx.lineWidth=s.width??1.6;ctx.setLineDash(s.dash??[]);ctx.beginPath();let began=false;for(let i=0;i<time.length;i++){if(time[i]<xmin||time[i]>xmax)continue;if(!began){ctx.moveTo(x(time[i]),y(s.y[i]));began=true;}else ctx.lineTo(x(time[i]),y(s.y[i]));}ctx.stroke();}ctx.setLineDash([]);
+ for(const v of vertical){ctx.strokeStyle=v.color;ctx.setLineDash([3,4]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x(v.time),p.t);ctx.lineTo(x(v.time),h-p.b);ctx.stroke();if(v.label){ctx.fillStyle=v.color;ctx.textAlign='center';ctx.fillText(v.label,x(v.time),p.t+10);}}ctx.setLineDash([]);ctx.restore();
+ ctx.fillStyle='#526478';ctx.textAlign='left';ctx.fillText(ylab,p.l,p.t-11);ctx.textAlign='center';ctx.fillText(extras.ms?'Milliseconds from detected R peak':'Seconds in original recording',(p.l+w-p.r)/2,h-5);
+}
+function candidate(c){return c.method_results.find(m=>m.role==='candidate');}
+function mark(c){return c.marks.find(m=>m.method==='aligned_residual');}
+function matchIndex(values,value){let idx=0;for(let i=1;i<values.length;i++)if(Math.abs(values[i]-value)<Math.abs(values[idx]-value))idx=i;return idx;}
+function setWindows(saved=false){const c=beats[state.caseIndex],s=c.steps,win=s.windows.aligned_residual;state.allowed=win.starts.map((_,i)=>i).filter(i=>win.owner_r_sample[i]===s.beat_r_sample[state.beat]);
+ if(!state.allowed.length)throw Error('No eligible window on selected beat');let best=0;for(let i=1;i<state.allowed.length;i++)if(win.scores[state.lead][state.allowed[i]]>win.scores[state.lead][state.allowed[best]])best=i;
+ state.window=saved?matchIndex(state.allowed.map(i=>win.starts[i]),mark(c).start):best;$('windowSlider').max=state.allowed.length-1;$('windowSlider').value=state.window;}
+function resetChoice(){const c=beats[state.caseIndex];state.beat=c.steps.selected_beat_index;state.lead=mark(c).lead;$('leadSelect').value=state.lead;$('beatSelect').value=state.beat;setWindows(true);drawBeats();}
+function changeCase(){const c=beats[state.caseIndex];options('leadSelect',c.leads);options('beatSelect',c.steps.beat_r_time.map((t,i)=>'Beat '+(i+1)+' · R '+fmt(t)+' s'));resetChoice();}
+function drawHeat(c){const {ctx,w,h}=canvas('heat'),s=c.steps,win=s.windows.aligned_residual,cols=s.beat_r_time.length,rows=c.leads.length,l=64,t=25,r=15,b=40,cw=(w-l-r)/cols,ch=(h-t-b)/rows;
+ const matrix=c.leads.map((_,lead)=>s.beat_r_sample.map(sample=>{const xs=win.scores[lead].filter((_,i)=>win.owner_r_sample[i]===sample);return xs.length?Math.max(...xs):null;}));const max=Math.max(...matrix.flat().filter(v=>v!==null));
+ ctx.clearRect(0,0,w,h);ctx.font='12px system-ui';for(let lead=0;lead<rows;lead++){ctx.fillStyle='#526478';ctx.textAlign='right';ctx.fillText(c.leads[lead],l-10,t+lead*ch+ch*.66);for(let beat=0;beat<cols;beat++){const value=matrix[lead][beat],f=value===null?0:Math.sqrt(value/max);ctx.fillStyle=value===null?'#eceff3':`rgb(${Math.round(245-215*f)},${Math.round(248-142*f)},${Math.round(253-74*f)})`;ctx.fillRect(l+beat*cw,t+lead*ch,cw-2,ch-2);}}
+ ctx.strokeStyle='#c34448';ctx.lineWidth=3;ctx.strokeRect(l+state.beat*cw,t+state.lead*ch,cw-2,ch-2);ctx.textAlign='center';ctx.fillStyle='#526478';for(let beat=0;beat<cols;beat++)ctx.fillText(beat+1,l+(beat+.5)*cw,h-20);
+ $('heat').onclick=event=>{const rect=$('heat').getBoundingClientRect();const col=Math.floor((event.clientX-rect.left-l)/cw),row=Math.floor((event.clientY-rect.top-t)/ch);if(col<0||col>=cols||row<0||row>=rows||matrix[row][col]===null)return;state.beat=col;state.lead=row;$('leadSelect').value=row;$('beatSelect').value=col;setWindows();drawBeats();};
+ $('heatSelection').textContent='Inspecting beat '+(state.beat+1)+', lead '+c.leads[state.lead]+'. Map brightness uses a square-root display scale; numeric scores stay unchanged.';
+}
+function drawBeats(){const c=beats[state.caseIndex],s=c.steps,win=s.windows.aligned_residual,idx=state.allowed[state.window],start=win.starts[idx],end=start+.14,peak=s.beat_r_time[state.beat],rel=s.beat_relative_time.map(t=>1000*t),band={start:(start-peak)*1000,end:(end-peak)*1000,color:colors.blue};
+ const expert=$('expert').checked?c.expert_annotations.filter(a=>a.symbol==='V').map(a=>({time:a.time_seconds,color:colors.green,label:'V'})):[];
+ const detected=s.beat_r_time.map(time=>({time,color:colors.gray}));chart('raw',c.time,[{y:c.signal[state.lead],color:'#202832'}],[{start,end,color:colors.blue}],[...detected,...expert],c.leads[state.lead]+' · recorded mV');
+ chart('comparison',rel,[{y:s.predictions[state.beat][state.lead],color:colors.gray,width:2.2},{y:s.original_beats[state.beat][state.lead],color:colors.blue,width:1.8}],[band],[],c.leads[state.lead]+' · baseline-subtracted mV',{ms:true});
+ const [ownStart,ownEnd]=s.owned_intervals[state.beat],low=Math.min(-.25,start-peak),high=Math.max(.45,end-peak);
+ const left=Math.max(0,Math.floor((peak+low-s.context_start)*s.fs)),right=Math.min(s.field[state.lead].length,Math.ceil((peak+high-s.context_start)*s.fs));
+ const fieldTime=Array.from({length:right-left},(_,i)=>1000*((left+i)/s.fs+s.context_start-peak));
+ const shade=[{start:low*1000,end:(ownStart-peak)*1000,color:'#8c96a5',alpha:.22},{start:(ownEnd-peak)*1000,end:high*1000,color:'#8c96a5',alpha:.22}];
+ chart('residual',fieldTime,[{y:s.field[state.lead].slice(left,right),color:colors.red}], [...shade,band],[], 'Actual score field used by the window',{ms:true,zero:true});
+ $('alignment').textContent='Beat '+(state.beat+1)+': detected R at '+fmt(peak)+' s. Alignment correction '+fmt(s.beat_shift_ms[state.beat],0)+' ms; lead scale '+fmt(s.lead_scales_mv[state.lead])+' mV. The reference is returned to this beat’s original timeline.';
+ $('windowScore').textContent=c.leads[state.lead]+': '+fmt(start)+'–'+fmt(end)+' s · average difference score '+fmt(win.scores[state.lead][idx],6);
+ $('caseNote').textContent=c.id.includes('core6')?'The saved algorithm choice is on the altered complex of a beat labeled ventricular ectopic. This is a clear teaching example, not exact pathological-region truth.':c.id.includes('core13')?'This saved candidate belongs to an expert ventricular beat, but its interval falls after QRS and this recording has visible drift. Correct beat identity does not verify the highlighted wave.':'This is a real failure: the largest difference score selects a beat annotated as normal instead of the ventricular ectopic beat.';
+ const chosen=candidate(c),cm=mark(c);$('savedChoice').textContent='Saved algorithm choice: beat at R '+fmt(chosen.selected_detected_r_time)+' s · lead '+c.leads[cm.lead]+' · '+fmt(cm.start)+'–'+fmt(cm.end)+' s · score '+fmt(chosen.score,6);
+ $('checkChoice').textContent=chosen.selected_beat_type==='V'?'Expert check: this chosen beat is labeled ventricular ectopic (V). This supports the beat identity; the expert label does not verify the precise lead or short interval.':'Expert check: the chosen beat is labeled '+chosen.selected_beat_type+'. This is a failure of selecting the ventricular ectopic beat, despite a high difference score.';
+ drawHeat(c);
+}
+function changeBoundary(){const c=boundaries[state.boundary];options('channelSelect',c.leads);state.channel=0;drawBoundary();}
+function drawBoundary(){const c=boundaries[state.boundary],s=c.steps,lead=state.channel;const view=$('borderView').value;const shades=c.marks.filter(m=>m.method==='expert'||view==='both'||m.method===view).map(m=>({start:m.start,end:m.end,color:m.color}));chart('qrs',c.time,[{y:c.signal[lead],color:'#202832'}],shades,[],c.leads[lead]+' · nominal mV');
+ chart('envelope',s.time,[{y:s.derivative_envelope[lead],color:colors.blue},{y:s.time.map(()=>s.thresholds[lead]),color:colors.orange,dash:[5,4]}],[{start:s.search_start,end:s.search_end,color:colors.gray,alpha:.10},{start:s.lead_bounds[lead][0],end:s.lead_bounds[lead][1],color:colors.blue}],[{time:s.maximum_time[lead],color:colors.red,label:'Local maximum'}], 'Smoothed absolute voltage change',{zero:true});
+ const before=c.method_results.find(m=>m.method==='fixed'),after=c.method_results.find(m=>m.method==='hybrid');$('boundaryNote').textContent=c.plain_language+' QRS overlap: earlier '+percent(before.iou)+', candidate '+percent(after.iou)+'. Channel borders '+fmt(s.lead_bounds[lead][0])+'–'+fmt(s.lead_bounds[lead][1])+' s; combined borders '+fmt(s.joint_bounds[0])+'–'+fmt(s.joint_bounds[1])+' s.';
+}
+options('caseSelect',beats.map(c=>c.id.includes('core6')?'Clear beat-shape example · 60–70 s':c.id.includes('core0')?'Failure: a normal-labeled beat selected · 0–10 s':'Success with a post-QRS mark and drift · 130–140 s'));
+options('boundarySelect',boundaries.map(c=>c.id.includes('sel100')?'Boundary improvement · sel100':'Boundary failure · sel49'));
+$('caseSelect').onchange=e=>{state.caseIndex=Number(e.target.value);changeCase();};$('leadSelect').onchange=e=>{state.lead=Number(e.target.value);setWindows();drawBeats();};$('beatSelect').onchange=e=>{state.beat=Number(e.target.value);setWindows();drawBeats();};$('windowSlider').oninput=e=>{state.window=Number(e.target.value);drawBeats();};$('reset').onclick=resetChoice;$('expert').onchange=drawBeats;
+$('boundarySelect').onchange=e=>{state.boundary=Number(e.target.value);changeBoundary();};$('channelSelect').onchange=e=>{state.channel=Number(e.target.value);drawBoundary();};$('borderView').onchange=drawBoundary;
+window.addEventListener('resize',()=>{drawBeats();drawBoundary();});
+$('beatMetric').textContent=percent(data.metrics.incart.methods.U_B_fixed.mixed_core_hit)+' → '+percent(data.metrics.incart.methods.aligned_residual.mixed_core_hit);
+$('qrsMetric').textContent=percent(data.metrics.qtdb.waves.QRS.fixed.within_30ms)+' → '+percent(data.metrics.qtdb.waves.QRS.hybrid.within_30ms);
+$('displayNote').textContent=data.display_note;$('integrity').textContent=JSON.stringify(data.cases.map(c=>({example:c.id,...c.steps.integrity})),null,2);
+changeCase();changeBoundary();$('status').textContent='Five real examples loaded. Everything on this page is embedded; it works offline.';
+window.ecgLocalization={state,beats,boundaries,drawBeats,drawBoundary,changeCase};
+</script>
+</body></html>

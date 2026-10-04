@@ -1,0 +1,3 @@
+# Executed portable copies embed local patient waveforms and figures.
+*.executed.ipynb
+*.executed.html

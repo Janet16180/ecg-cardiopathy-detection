@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-01T02:05:54.148912+00:00",
+  "updated_at_utc": "2026-10-02T22:59:15.717257+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2268,5 +2268,1023 @@
     ],
     "merge_status_source": "GitHub pull request records",
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
+  },
+  "experiment_041_fragment_localization": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User agreed scope on 30 September 2026: xECG time-section maps, unsupervised and label-guided, PTB-XL development only, premature-beat check; ECG-JEPA only as prespecified fallback",
+    "protocol": "docs/experiment-041-fragment-localization.md",
+    "protocol_commit": "086cc87",
+    "source_commit": "27c392a",
+    "output_dir": "outputs/experiment041_fragment_localization_v1",
+    "runner": "scripts/experiments/run_fragment_localization041.py",
+    "results": "docs/experiment-041-fragment-localization-results.md",
+    "reading": {
+      "part1_localizes": true,
+      "part1_keeps_detection": false,
+      "part2_improves_detection": true,
+      "part2_fewer_benign_marks": false,
+      "jepa_fallback_triggered": true
+    },
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_HOME": ".venv/lib/python3.11/site-packages/nvidia/cuda_runtime"
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "Fallback 041b ran as arm J of Experiment 042. Follow-ups are in the backlog."
+  },
+  "experiment_042_lead_wave_maps": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User, 30 September 2026: run both per-lead approaches (ECG-JEPA patches and beat-aligned waves) and write a new notebook only if the result improves",
+    "protocol": "docs/experiment-042-lead-wave-maps.md",
+    "protocol_commit": "175356a",
+    "amendments": {
+      "1": "1f6a3da"
+    },
+    "source_commit": "810a3e7",
+    "output_dir": "outputs/experiment042_lead_wave_maps_v1",
+    "runner": "scripts/experiments/run_lead_wave_maps042.py",
+    "results": "docs/experiment-042-lead-wave-maps-results.md",
+    "notebook": "notebooks/12-jr-beat-wave-maps.ipynb",
+    "reading": {
+      "B_improves_on_041": true,
+      "J_improves_on_041": false,
+      "lead_test_passed": false
+    },
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell"
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "Notebook for arm B. Follow-ups: section_map_with_ecg_score, rate_adaptive_wave_windows, cardiologist_region_marks."
+  },
+  "experiment_043_ann_heads": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User, 30 September 2026: three arms (an MLP head, an attention head on the map, the tutor's CNN + transformer), extra improvements ordered by probability of success, continue overnight without questions on the PR #61 branch without merging",
+    "protocol": "docs/experiment-043-ann-heads.md",
+    "protocol_commit": "4b81ee4",
+    "source_commits": {
+      "networks": "3bb6e39",
+      "stage1": "6228bff",
+      "stage2": "aad3023",
+      "stage3": "fcf9711"
+    },
+    "output_dir": "outputs/experiment043_ann_heads_v1",
+    "outputs": [
+      "outputs/experiment043_ann_heads_v1/stage1",
+      "outputs/experiment043_ann_heads_v1/stage2",
+      "outputs/experiment043_ann_heads_v1/stage3"
+    ],
+    "runner": "scripts/experiments/run_ann_heads043.py",
+    "results": "docs/experiment-043-ann-heads-results.md",
+    "reading": {
+      "logistic_concat": "beats",
+      "mlp_xecg": "matches",
+      "mlp_concat": "matches",
+      "logistic_jepa": "matches",
+      "attention_jepa": "matches",
+      "cnn_transformer": "below",
+      "U_B_gated_improves_on_U_B": false,
+      "attention_jepa_map_improves_on_U_B": false,
+      "cnn_transformer_map_improves_on_U_B": false
+    },
+    "runtime_seconds": {
+      "stage1": 198,
+      "stage2": 1602,
+      "stage3": 3075
+    },
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_VISIBLE_DEVICES": "stage 1 empty, stages 2-3 0"
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "logistic_concat became pipeline v3's readout (Experiment 044). The protocol's demonstration notebook for logistic_concat is still to be written. Follow-ups: benign_referrals_v3, ecg_level_explanation_rule, weighted_ensemble, cnn_transformer_pretraining, jepa_finetune_attention (deferred)."
+  },
+  "experiment_044_pipeline_v3": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized follow-up experiments when results show improvements (protocol, 1 October 2026)",
+    "protocol": "docs/experiment-044-pipeline-v3.md",
+    "protocol_commit": "755c7b0",
+    "source_commits": {
+      "runner": "5f291cf",
+      "rate_matched_post_hoc": "ebfa146",
+      "report": "1493648"
+    },
+    "output_dir": "outputs/experiment044_pipeline_v3_v1",
+    "outputs": [
+      "outputs/experiment044_pipeline_v3_v1",
+      "outputs/experiment044_rate_matched_v1"
+    ],
+    "runner": "scripts/experiments/run_pipeline_v3_044.py",
+    "results": "docs/experiment-044-pipeline-v3-results.md",
+    "specification": "docs/pipeline-v3.md",
+    "reading": {
+      "decision": "adopt_v3",
+      "primary_v3_minus_v2_composite": 0.008,
+      "primary_ci": [
+        0.004,
+        0.012
+      ],
+      "normals_referred_v3_minus_v2_pp": 0.28
+    },
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell"
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "Pipeline v3 is the candidate pipeline. Follow-up: benign_referrals_v3 (which 'other' ECGs v3 refers). Experiment 046 tests pipeline v4 with the 045 ensemble readout."
+  },
+  "experiment_045_two_layer_map": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized follow-up experiments when results show improvements; saved scores only",
+    "protocol": "docs/experiment-045-two-layer-map.md",
+    "protocol_commit": "cab7341",
+    "source_commits": {
+      "runner": "4334836",
+      "logging_fix": "555761a",
+      "report": "297777c"
+    },
+    "output_dir": "outputs/experiment045_two_layer_map_v1",
+    "runner": "scripts/experiments/run_two_layer_map045.py",
+    "results": "docs/experiment-045-two-layer-map-results.md",
+    "reading": {
+      "two_layer_map_improves_on_U_B": false,
+      "ensemble_vs_v3_readout": "beats",
+      "ensemble_vs_R": "beats"
+    },
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell"
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "Experiment 046 (pipeline v4 with the ensemble readout) is running in a separate worktree. Follow-ups: ecg_level_explanation_rule, weighted_ensemble."
+  },
+  "experiment_046_pipeline_v4": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized follow-up experiments when results show improvements (1 October 2026)",
+    "protocol": "docs/experiment-046-pipeline-v4.md",
+    "protocol_commit": "5170a37",
+    "source_commits": {
+      "runner": "b0455d9",
+      "report": "682c6dd"
+    },
+    "output_dir": "outputs/experiment046_pipeline_v4_v1",
+    "outputs": [
+      "outputs/experiment046_pipeline_v4_v1",
+      "outputs/experiment046_pipeline_v4_smoke"
+    ],
+    "runner": "scripts/experiments/run_pipeline_v4_046.py",
+    "results": "docs/experiment-046-pipeline-v4-results.md",
+    "specification": "docs/pipeline-v4.md",
+    "reading": {
+      "decision": "adopt_v4",
+      "primary_v4_minus_v3_composite": 0.0121,
+      "primary_ci": [
+        0.0082,
+        0.0161
+      ],
+      "other_referred_v4": 0.275,
+      "other_referred_v3": 0.249,
+      "attention_head_retrain_bit_identical": true
+    },
+    "runtime_seconds": 671,
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_VISIBLE_DEVICES": "0"
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "Pipeline v4 is the candidate pipeline. Follow-ups: other_referrals_cardiologist (the 'other' cost, 27.5% against 24.9%), weighted_ensemble, cpu_timing_clinic_laptop."
+  },
+  "experiment_047_explanation_rule": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized follow-up experiments when results show improvements; saved scores only",
+    "protocol": "docs/experiment-047-explanation-rule.md",
+    "protocol_commit": "12f6c28",
+    "source_commits": {
+      "runner": "54b61be",
+      "report": "8e74e86"
+    },
+    "output_dir": "outputs/experiment047_explanation_rule_v1",
+    "runner": "scripts/experiments/run_explanation_rule047.py",
+    "results": "docs/experiment-047-explanation-rule-results.md",
+    "reading": {
+      "rule_improves_on_U_B": false,
+      "rule_improves_on_attention_jepa": true,
+      "hit_minus_chance_minus_U_B": -0.136,
+      "hit_minus_chance_minus_U_B_ci": [
+        -0.232,
+        -0.057
+      ],
+      "rule_anterior_contrast": 0.215,
+      "rule_anterior_contrast_ci": [
+        0.099,
+        0.336
+      ]
+    },
+    "runtime_seconds": 64,
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "Superseded by Experiment 048: switching on U_B being red sent 7 referred PVC ECGs to the attention layer, all of which U_B had localized."
+  },
+  "experiment_048_pvc_switch": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized follow-up experiments when results show improvements; saved scores only",
+    "protocol": "docs/experiment-048-pvc-switch.md",
+    "protocol_commit": "1e0fec8",
+    "source_commits": {
+      "runner": "3bd6cf9",
+      "report": "bf00219"
+    },
+    "output_dir": "outputs/experiment048_pvc_switch_v1",
+    "runner": "scripts/experiments/run_pvc_switch048.py",
+    "results": "docs/experiment-048-pvc-switch-results.md",
+    "figures": "docs/figures/experiment-048",
+    "reading": {
+      "pvc_switch_improves_on_U_B": true,
+      "pvc_switch_improves_on_attention_jepa": true,
+      "hit_minus_chance": 0.69,
+      "hit_minus_chance_minus_U_B": 0.0,
+      "anterior_contrast": 0.189,
+      "anterior_contrast_ci": [
+        0.067,
+        0.307
+      ],
+      "referred_anterior_infarcts_to_U_B": [
+        68,
+        136
+      ],
+      "referred_inferior_infarcts_to_U_B": [
+        43,
+        112
+      ]
+    },
+    "runtime_seconds": 82,
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "The PVC switch is the recommended explanation rule (docs/pipeline-v4.md, Explanation). Follow-ups: pvc_switch_specificity, other cost in cardiologist review."
+  },
+  "experiment_049_focal_switch": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized follow-up experiments when results show improvements; saved scores only",
+    "protocol": "docs/experiment-049-focal-switch.md",
+    "protocol_commit": "adb5d08",
+    "source_commits": {
+      "runner": "2dc1a53",
+      "report": "40c0d24"
+    },
+    "output_dir": "outputs/experiment049_focal_switch_v1",
+    "runner": "scripts/experiments/run_focal_switch049.py",
+    "results": "docs/experiment-049-focal-switch-results.md",
+    "reading": {
+      "focal_switch_improves_on_pvc_switch": false,
+      "hit_minus_chance_minus_pvc_switch": -0.405,
+      "hit_minus_chance_minus_pvc_switch_ci": [
+        -0.536,
+        -0.275
+      ],
+      "normal_focal_ratio_q975": 22.4,
+      "pvc_focal_ratio_median": 18.8,
+      "combined_50_pvc_switch_hit_rate": 0.932
+    },
+    "runtime_seconds": 90,
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "The PVC switch with combined_50 referral stays the best configuration. Follow-up: norm_reference_ectopy_review (12 NORM-only normals with one extreme beat)."
+  },
+  "experiment_050_attention_findings": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized follow-up experiments when results show improvements (1 October 2026)",
+    "protocol": "docs/experiment-050-attention-finding-heads.md",
+    "protocol_commit": "ae1c879",
+    "source_commits": {
+      "runner": "e65735f",
+      "report": "5a4cd8c"
+    },
+    "output_dir": "outputs/experiment050_attention_findings_v1",
+    "outputs": [
+      "outputs/experiment050_attention_findings_v1",
+      "outputs/experiment050_attention_findings_smoke"
+    ],
+    "runner": "scripts/experiments/run_attention_findings050.py",
+    "results": "docs/experiment-050-attention-finding-heads-results.md",
+    "reading": {
+      "pvc_detection_sph": "below",
+      "attention_minus_xecg_pvc_sph": -0.0068,
+      "attention_minus_xecg_pvc_sph_ci": [
+        -0.0128,
+        -0.0015
+      ],
+      "pvc_map_keeps_localization": false,
+      "pvc_map_hit_minus_chance_minus_U_B": -0.045,
+      "pvc_map_hit_minus_chance_minus_U_B_ci": [
+        -0.148,
+        0.054
+      ]
+    },
+    "runtime_seconds": 1172,
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_VISIBLE_DEVICES": "0"
+    },
+    "calibration_test_evaluated": false,
+    "next_action": "Pipelines v3 and v4 keep the xECG finding heads; 048's rule keeps U_B. Follow-ups: pvc_score_ensemble, token_only_explanation."
+  },
+  "cpu_inference_timing": {
+    "status": "complete",
+    "kind": "measurement, not an experiment (no score computed)",
+    "document": "docs/inference-timing-cpu.md",
+    "script": "scripts/reports/time_inference_cpu.py",
+    "source_commit": "8304ab6",
+    "output_dir": "outputs/inference_timing_cpu_v1",
+    "reading": {
+      "per_ecg_median_ms_4_threads": 328,
+      "per_ecg_median_ms_1_thread": 826,
+      "peak_rss_mib": 2261,
+      "outputs_match_gpu_path": true
+    },
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "CUDA_VISIBLE_DEVICES": ""
+    },
+    "next_action": "cpu_timing_clinic_laptop: rerun the script on the clinic laptop."
+  },
+  "experiment_052_raw_residual": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User, 2 October 2026: autonomously improve unsupervised ECG localization with subagents on existing PR #61, stop for a strong improvement to review or an important decision. Local development data only.",
+    "protocol": "docs/experiment-052-raw-residual.md",
+    "runner": "scripts/experiments/run_raw_residual052.py",
+    "results": "docs/experiment-052-raw-residual-results.md",
+    "output_dir": "outputs/experiment052_raw_residual_v1",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "next_action": "Negative overall; ECG287 case improvement is descriptive. Evaluate a prospective alignment/normal-phase calibrated residual successor if 053 has no review-worthy gain.",
+    "protocol_commit": "7071dc4",
+    "amendments": {
+      "1": "614016e",
+      "2": "2baa625"
+    },
+    "source_commit": "8411072",
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "OPENBLAS_NUM_THREADS": "2",
+      "OMP_NUM_THREADS": "2",
+      "MKL_NUM_THREADS": "2",
+      "CUDA_VISIBLE_DEVICES": "",
+      "PYTHONPATH": "/tmp/ecg-localization052"
+    },
+    "command": "CUDA_VISIBLE_DEVICES= OPENBLAS_CORETYPE=Haswell OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 PYTHONPATH=/tmp/ecg-localization052 .venv/bin/python -m scripts.experiments.run_raw_residual052",
+    "verification": "7 scientific tests and Ruff passed before run",
+    "results_commit": "2bbd3dc",
+    "runtime_seconds": 84.35630125901662,
+    "reading": {
+      "promote_for_review": false,
+      "paired_gain": {
+        "value": -0.008509755085097553,
+        "ci_low": -0.16552795693420694,
+        "ci_high": 0.13919394841269833
+      },
+      "raw_pvc_hit": 0.4794520547945205,
+      "baseline_pvc_hit": 0.4879618098796181,
+      "synthetic_ST_joint": {
+        "value": 0.205,
+        "ci_low": 0.15,
+        "ci_high": 0.265
+      },
+      "synthetic_QRS_joint": {
+        "value": 0.775,
+        "ci_low": 0.715,
+        "ci_high": 0.83
+      }
+    }
+  },
+  "experiment_053_calibrated_units": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User, 2 October 2026: autonomously improve unsupervised ECG localization with subagents on existing PR #61, stop for a strong improvement to review or an important decision. Local development data only.",
+    "protocol": "docs/experiment-053-calibrated-units.md",
+    "runner": "scripts/experiments/run_calibrated_localization053_v2.py",
+    "results": "docs/experiment-053-calibrated-units-results.md",
+    "output_dir": "outputs/experiment053_calibrated_units_v2",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "next_action": "No localization promotion; preserve negative result and serialization failure. 054 tests a distinct aligned-residual method.",
+    "protocol_commit": "4b5f030",
+    "amendments": {
+      "1": "910c9a9"
+    },
+    "source_commit": "3705960",
+    "source_commits": [
+      "fe3c4ef",
+      "793a578",
+      "3705960"
+    ],
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "OPENBLAS_NUM_THREADS": "2",
+      "OMP_NUM_THREADS": "2",
+      "MKL_NUM_THREADS": "2",
+      "PYTHONPATH": "/tmp/ecg-localization053"
+    },
+    "command": "OPENBLAS_CORETYPE=Haswell OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 PYTHONPATH=/tmp/ecg-localization053 .venv/bin/python -m scripts.experiments.run_calibrated_localization053_v2",
+    "verification": "7 scientific tests and Ruff passed before run",
+    "attempts": [
+      {
+        "output_dir": "outputs/experiment053_calibrated_units_v1",
+        "source_commit": "793a578",
+        "status": "failed",
+        "reason": "Namespaced patient IDs could not be serialized as integers after scoring; no scientific recipe change. Maps and local figures preserved.",
+        "failure_receipt": "outputs/experiment053_calibrated_units_v1/failure.json"
+      }
+    ],
+    "runtime_seconds": 197.6211990499869,
+    "reading": {
+      "decision": {
+        "primary_pass": false,
+        "benign_guardrail": true,
+        "focal_guardrail": false,
+        "worth_reviewing": false
+      },
+      "primary_paired_gain": {
+        "estimate": -0.019605589776592824,
+        "ci_low": -0.13285315160832545,
+        "ci_high": 0.09112137972216239,
+        "first_mean": 0.1095890410958904,
+        "second_mean": 0.12919463087248323
+      },
+      "focal_pvc_excess_gain": {
+        "estimate": -0.0350076103500761,
+        "ci_low": -0.0700254035629301,
+        "ci_high": -0.007610350076103504
+      },
+      "predecessor_max_absolute_unit_difference": 0.0
+    },
+    "results_commit": "a320ad7"
+  },
+  "experiment_051_beat_sum": {
+    "status": "complete",
+    "authorized": true,
+    "protocol": "docs/experiment-051-beat-sum-map.md",
+    "protocol_commit": "84c89b2",
+    "source_commit": "88e4ffb",
+    "results": "docs/experiment-051-beat-sum-map-results.md",
+    "output_dir": "outputs/experiment051_beat_sum_v1",
+    "runner": "scripts/experiments/run_beat_sum051.py",
+    "reading": {
+      "beat_sum": {
+        "keeps_premature_localization": false,
+        "gains": {
+          "lead": false,
+          "benign": false,
+          "detection": false
+        },
+        "improves_on_U_B": false
+      },
+      "beat_sum_relative": {
+        "keeps_premature_localization": false,
+        "gains": {
+          "lead": false,
+          "benign": false,
+          "detection": false
+        },
+        "improves_on_U_B": false
+      }
+    },
+    "runtime_seconds": 95.54044433310628,
+    "calibration_test_evaluated": false,
+    "challenge_test_read": false,
+    "ptbxl_test_read": false,
+    "next_action": "Completed negative experiment; 052 and 053 investigate raw residuals and unequal wave-score distributions."
+  },
+  "experiment_054_aligned_residual": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User, 2 October 2026, autonomous unsupervised localization work with subagents on existing PR #61; successor after 052 and 053 failed frozen rules.",
+    "protocol": "docs/experiment-054-aligned-phase-residual.md",
+    "runner": "scripts/experiments/run_raw_residual054.py",
+    "results": "docs/experiment-054-aligned-phase-residual-results.md",
+    "output_dir": "outputs/experiment054_aligned_phase_residual_v1",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "next_action": "Completed without promotion. Independent public expert benchmarks056and057 subsequently passed narrow localization review rules;055 full method failed. Clinical pipeline unchanged.",
+    "protocol_commit": "da21b67",
+    "cohort_manifest": "docs/experiment-054-cohorts.json",
+    "source_commit": "2eb46c5",
+    "amendments": {
+      "1": "2eb46c5"
+    },
+    "environment": {
+      "OPENBLAS_CORETYPE": "Haswell",
+      "OPENBLAS_NUM_THREADS": "2",
+      "OMP_NUM_THREADS": "2",
+      "MKL_NUM_THREADS": "2",
+      "CUDA_VISIBLE_DEVICES": "",
+      "PYTHONPATH": "/tmp/ecg-localization052"
+    },
+    "command": "CUDA_VISIBLE_DEVICES= MPLCONFIGDIR=/tmp/ecg-mpl054 OPENBLAS_CORETYPE=Haswell OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 PYTHONPATH=/tmp/ecg-localization052 .venv/bin/python -m scripts.experiments.run_raw_residual054",
+    "verification": "13 focused tests before run; integrated repository: 1318 CPU tests, Ruff, source distribution and wheel passed.",
+    "results_commits": [
+      "c0efb7b",
+      "25a0e64"
+    ],
+    "runtime_seconds": 117.180043806904,
+    "reading": {
+      "promote_for_review": false,
+      "passes_real_rule": true,
+      "paired_gain": {
+        "value": 0.14183287195316355,
+        "ci_low": 0.0010385482245950566,
+        "ci_high": 0.287402332197244
+      },
+      "raw_pvc_hit": 0.6297946818327816,
+      "baseline_pvc_hit": 0.4879618098796181,
+      "pvc_tie_records": 69,
+      "synthetic_ST_joint": {
+        "value": 0.125,
+        "ci_low": 0.08,
+        "ci_high": 0.175
+      },
+      "synthetic_QRS_joint": {
+        "value": 0.5925,
+        "ci_low": 0.5275,
+        "ci_high": 0.66
+      }
+    }
+  },
+  "localization_review_2026_10_02": {
+    "status": "independent_public_beat_and_st_improvements_ready",
+    "comparison_gallery": "outputs/localization_review_2026_10_02/index.html",
+    "blinded_packet": "outputs/cardiologist_localization_review_2026_10_02/blinded_ecgs.pdf",
+    "annotation_template": "outputs/cardiologist_localization_review_2026_10_02/annotations.csv",
+    "selection_key": "outputs/cardiologist_localization_review_2026_10_02/selection_key_local_only.json",
+    "annotations_received": false,
+    "selection_seed": 20261002,
+    "proposed_review_records": 50,
+    "proposed_review_unique_patients": 50,
+    "clinical_region_accuracy_established": false,
+    "public_expert_review": "outputs/localization_public_review_2026_10_02/index.html",
+    "next_action": "User review of056 ectopic-beat identity and057 conditional ST time/channel improvements."
+  },
+  "experiment_055_wave_delineation": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes.",
+    "public_dataset": "LUDB 1.0.1",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "next_action": "Complete recipe failed frozen gain/P guard; preserve genuine QRS/T gains and P failure. No deployment or post-score recipe tuning. Independent hybrid confirmation is a backlog candidate.",
+    "protocol_commit": "5069b24",
+    "protocol": "docs/experiment-055-ludb-wave-boundaries.md",
+    "source_commit": "7164258",
+    "amendments": [
+      "e0f4c5e"
+    ],
+    "runner": "scripts/experiments/run_ludb_boundaries055.py",
+    "output_dir": "outputs/experiment055_ludb_boundaries_v1",
+    "results": "docs/experiment-055-ludb-wave-boundaries-results.md",
+    "results_commit": "c00d268",
+    "runtime_seconds": 151.92710163700394,
+    "reading": {
+      "records": 200,
+      "subjects": 200,
+      "fixed_primary_iou": 0.5565263444483334,
+      "adaptive_primary_iou": 0.6514050075554896,
+      "primary_gain": {
+        "estimate": 0.0948786631071562,
+        "ci_low": 0.08041680553663626,
+        "ci_high": 0.10901857121219544
+      },
+      "waves": {
+        "P": {
+          "records_with_truth": 176,
+          "eligible_truth_waves": 16785,
+          "fixed": {
+            "iou": 0.5019642422068427,
+            "onset_mae_ms": 51.12449319108196,
+            "offset_mae_ms": 45.02990973775286,
+            "within_30ms": 0.2885936474121301,
+            "missing": 0.0006673416789396171
+          },
+          "adaptive": {
+            "iou": 0.41792093499482763,
+            "onset_mae_ms": 222.82718930054455,
+            "offset_mae_ms": 215.695064811277,
+            "within_30ms": 0.4782661538154978,
+            "missing": 0.41382050010556637
+          },
+          "iou_gain": {
+            "estimate": -0.08404330721201515,
+            "ci_low": -0.11352502285020127,
+            "ci_high": -0.05411494484531412
+          }
+        },
+        "QRS": {
+          "records_with_truth": 200,
+          "eligible_truth_waves": 21843,
+          "fixed": {
+            "iou": 0.6681133514516607,
+            "onset_mae_ms": 15.786578791906585,
+            "offset_mae_ms": 31.849244985938732,
+            "within_30ms": 0.6979549705561239,
+            "missing": 0.0
+          },
+          "adaptive": {
+            "iou": 0.8388815465188548,
+            "onset_mae_ms": 8.049472552386623,
+            "offset_mae_ms": 10.843629842276577,
+            "within_30ms": 0.9644058986348614,
+            "missing": 0.0
+          },
+          "iou_gain": {
+            "estimate": 0.17076819506719423,
+            "ci_low": 0.1595412815684309,
+            "ci_high": 0.18122904475765106
+          }
+        },
+        "T": {
+          "records_with_truth": 200,
+          "eligible_truth_waves": 19650,
+          "fixed": {
+            "iou": 0.4914507208895955,
+            "onset_mae_ms": 48.69376317052702,
+            "offset_mae_ms": 106.58553425850317,
+            "within_30ms": 0.20093734871586577,
+            "missing": 0.005221734892787524
+          },
+          "adaptive": {
+            "iou": 0.6677622766119962,
+            "onset_mae_ms": 67.08567249791025,
+            "offset_mae_ms": 80.17435906672681,
+            "within_30ms": 0.6172082664051775,
+            "missing": 0.08655439140890435
+          },
+          "iou_gain": {
+            "estimate": 0.17631155572240054,
+            "ci_low": 0.1484822539108598,
+            "ci_high": 0.20184020774456987
+          }
+        }
+      },
+      "decision": {
+        "practical_gain": false,
+        "supported_gain": true,
+        "all_wave_gains_nonnegative": false,
+        "worth_reviewing": false
+      }
+    }
+  },
+  "experiment_056_expert_beat_localization": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes.",
+    "public_dataset": "INCART 1.0.0",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "next_action": "Review newly validated ectopic beat identity improvement and negative examples on local public gallery. Exact pathological lead/wave boundaries remain unverified; clinical pipeline unchanged. No more recipes launched.",
+    "protocol_commit": "17b0292",
+    "protocol": "docs/experiment-056-incart-beat-localization.md",
+    "source_commit": "da9ef7a",
+    "amendments": [
+      "a2c1642",
+      "42dacd5"
+    ],
+    "runner": "scripts/experiments/run_incart_localization056.py",
+    "output_dir": "outputs/experiment056_incart_localization_v1",
+    "verification": "18 focused tests and Ruff; exact refit reproduced all1604 U_B unitmaps with zero difference.",
+    "results": "docs/experiment-056-incart-beat-localization-results.md",
+    "results_commits": [
+      "62a4605",
+      "698f519"
+    ],
+    "runtime_seconds": 808.6301395839546,
+    "reading": {
+      "methods": {
+        "aligned_residual": {
+          "auroc": 0.9550110802394928,
+          "ap": 0.5843144222700852,
+          "mixed_core_excess": 0.6913746103567491,
+          "mixed_core_hit": 0.8955073829851846,
+          "mixed_core_chance": 0.20413277262843554,
+          "normal_fpr": 0.19088274616488454,
+          "v_sensitivity": 0.9675713436464703,
+          "v_end_to_end_sensitivity": 0.9367986528756067
+        },
+        "U_B_fixed": {
+          "auroc": 0.8701286929130148,
+          "ap": 0.35642479512106295,
+          "mixed_core_excess": 0.53717150463216,
+          "mixed_core_hit": 0.7413042772605956,
+          "mixed_core_chance": 0.20413277262843554,
+          "normal_fpr": 0.5041893705996162,
+          "v_sensitivity": 0.9644535249457994,
+          "v_end_to_end_sensitivity": 0.9337481554757425
+        }
+      },
+      "paired": {
+        "auroc": {
+          "patients": 30,
+          "value": 0.08488238732647813,
+          "ci_low": 0.042982613058304114,
+          "ci_high": 0.13183591959175087
+        },
+        "mixed_core_excess": {
+          "patients": 30,
+          "value": 0.15420310572458906,
+          "ci_low": 0.06571149854171185,
+          "ci_high": 0.25813048743459716
+        },
+        "normal_fpr": {
+          "patients": 31,
+          "value": -0.31330662443473173,
+          "ci_low": -0.40445021792481495,
+          "ci_high": -0.23157579923245797
+        }
+      },
+      "gates": {
+        "auroc": true,
+        "top_beat": true,
+        "normal_specificity": true,
+        "nuisance": true
+      }
+    },
+    "coverage": {
+      "records": 75,
+      "patients": 32,
+      "reference_beats": 175907,
+      "scored_detections": 176214,
+      "reference_types": {
+        "N": 150410,
+        "V": 20013,
+        "R": 3174,
+        "A": 1944,
+        "F": 219,
+        "j": 92,
+        "n": 32,
+        "S": 16,
+        "Q": 6,
+        "B": 1
+      },
+      "matched_types": {
+        "N": 150303,
+        "V": 19998,
+        "R": 3173,
+        "A": 1943,
+        "unmatched": 431,
+        "F": 219,
+        "j": 92,
+        "n": 32,
+        "S": 16,
+        "Q": 6,
+        "B": 1
+      },
+      "excluded_cores": [
+        {
+          "record": "I02",
+          "patient": 1,
+          "core": 66,
+          "reason": "fewer_than_three_complete_beats"
+        },
+        {
+          "record": "I02",
+          "patient": 1,
+          "core": 67,
+          "reason": "fewer_than_three_complete_beats"
+        }
+      ]
+    },
+    "promote_for_review": true,
+    "independent_audit": "All primary patient stats, candidate/eligibility rules, native timing, thresholds and paired intervals reconstructed from saved tables;15source/11969input/8tablecache hashes verified."
+  },
+  "experiment_057_st_episode": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User, 2 October 2026: overcome unavailable Italian data and cardiologist access; bounded public local acquisitions and independent localization experiments on existing PR #61. No closed tests, uploads or clinical label changes.",
+    "public_dataset": "European ST-T 1.0.0",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "next_action": "Review local original ECG examples and expert ST timelines. Method passed conditional two-hour/two-channel ST-change localization gate; clinical pipeline unchanged. No post-score recipe variants launched.",
+    "protocol": "docs/experiment-057-st-episode-localization.md",
+    "protocol_commit": "b72539a",
+    "runner": "scripts/experiments/run_st_episode057.py",
+    "output_dir": "outputs/experiment057_st_episode_v1",
+    "source_commit": "f0feff4",
+    "amendments": [
+      "docs/experiment-057-annotation-audit-amendment.md"
+    ],
+    "verification": "11 scientific tests and Ruff before score; integrated final repository1349tests/Ruff/build passed.",
+    "results": "docs/experiment-057-st-episode-localization-results.md",
+    "runtime_seconds": 42.04375616600737,
+    "reading": {
+      "records": 90,
+      "patients": 79,
+      "primary_records": 85,
+      "paired_gain": {
+        "value": 0.16776315789473684,
+        "ci_low": 0.07236842105263158,
+        "ci_high": 0.27631578947368424,
+        "patients": 76,
+        "draws": 2000,
+        "seed": 57057
+      },
+      "passes_primary": true,
+      "passes_counts": true,
+      "passes_axis_stress": true,
+      "clinical_single_ecg_localization_established": false
+    },
+    "independent_audit": "All sources/data/outputs hashes, all90 early templates, patient-macro intervals and time/channel targets reproduced by independent scientist."
+  },
+  "experiment_060_waveform_st": {
+    "status": "complete",
+    "authorized": true,
+    "authorization_scope": "User authorized autonomous localization iterations with synthetic ECG controls; classifier frozen; samePR61; no closed tests or label changes.",
+    "protocol": "docs/experiment-060-waveform-st-localization.md",
+    "runner": "scripts/experiments/run_waveform_st060.py",
+    "output_dir": "outputs/experiment060_waveform_st_v1",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "next_action": "Fullrulefailednoninferiority; preserve result; no post-score retune. Independent audit pending.",
+    "protocol_commit": "3b19a76",
+    "verification": "Four scientific failure/coverage/matching tests and Ruff passed before score.",
+    "source_commit": "fd4e5bf",
+    "results": "docs/experiment-060-waveform-st-localization-results.md",
+    "runtime_seconds": 19.115645425976254,
+    "reading": {
+      "primary": {
+        "st": {
+          "value": 0.7171052631578947,
+          "ci_low": 0.6118421052631579,
+          "ci_high": 0.8092105263157895,
+          "patients": 76,
+          "draws": 2000,
+          "seed": 57057
+        },
+        "whole": {
+          "value": 0.5197368421052632,
+          "ci_low": 0.40789473684210525,
+          "ci_high": 0.625,
+          "patients": 76,
+          "draws": 2000,
+          "seed": 57057
+        },
+        "supplied_st": {
+          "value": 0.7039473684210527,
+          "ci_low": 0.6052631578947368,
+          "ci_high": 0.7960526315789473,
+          "patients": 76,
+          "draws": 2000,
+          "seed": 57057
+        }
+      },
+      "paired_gain": {
+        "value": 0.19736842105263158,
+        "ci_low": 0.09210526315789473,
+        "ci_high": 0.3157894736842105,
+        "patients": 76,
+        "draws": 2000,
+        "seed": 57057
+      },
+      "versus_supplied_anchors": {
+        "value": 0.013157894736842105,
+        "ci_low": -0.07894736842105263,
+        "ci_high": 0.10526315789473684,
+        "patients": 76,
+        "draws": 2000,
+        "seed": 57057
+      },
+      "gates": {
+        "paired_gain": true,
+        "absolute_hit": true,
+        "noninferiority": false,
+        "counts": true,
+        "axis_stress": true,
+        "window_coverage": true
+      },
+      "promote_for_review": false
+    },
+    "independent_audit": "outputs/experiment060_waveform_st_audit_v1/audit.json; all primary/bootstrap/domains reproduced,7waveform detectors replayed, no defect."
+  },
+  "experiment_059_hybrid_boundaries": {
+    "status": "complete",
+    "authorized": true,
+    "protocol": "docs/experiment-059-hybrid-wave-boundaries.md",
+    "protocol_commit": "cc04db2",
+    "public_dataset": "QTDB1.0.0;72nonEDB primaryrecords",
+    "runner": "scripts/experiments/run_hybrid_boundaries059_v2.py",
+    "output_dir": "outputs/experiment059_qtdb_hybrid_v2",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "next_action": "Review adaptiveQRSboundary plots; allgatespass. Exactpathologicalwave/lead remainsunverified; no newvariantlaunchedafter strong059result.",
+    "source_commit": "cacf7e8",
+    "amendments": [
+      "ec7c041",
+      "docs/experiment-059-v2-execution-note.md"
+    ],
+    "verification": "17scientific tests/Ruff and independent codeaudit passed before score.",
+    "failed_pre_score_run": {
+      "source_commit": "43c5cff",
+      "output_dir": "outputs/experiment059_qtdb_hybrid_v1",
+      "reason": "edgefixedPnegativeonsetmarkedmissing; guardraised before anyQTDBmetric"
+    },
+    "runtime_seconds": 32.757348601007834,
+    "reading": {
+      "primary_gain": {
+        "estimate": 0.11202252257464347,
+        "ci_low": 0.08897911188224725,
+        "ci_high": 0.13635704319762204
+      },
+      "within30ms_gain": {
+        "estimate": 0.2605390493649674,
+        "ci_low": 0.20873981543676215,
+        "ci_high": 0.31651317091107617
+      },
+      "t_offset_deterioration_ms": {
+        "estimate": -17.681246963805552,
+        "ci_low": -35.98707054841969,
+        "ci_high": 2.621161120677466
+      },
+      "gates": {
+        "practical_iou": true,
+        "supported_iou": true,
+        "boundary_gain": true,
+        "t_guard": true
+      },
+      "worth_reviewing": true
+    },
+    "results": "docs/experiment-059-hybrid-wave-boundaries-results.md",
+    "independent_audit": "outputs/experiment059_qtdb_hybrid_audit_v1/audit.json andmatching_audit.json;549hashes/10359rows/allannotations&bootstrap reconstructed."
+  },
+  "experiment_058_synthetic_generator": {
+    "status": "complete",
+    "authorized": true,
+    "protocol": "docs/experiment-058-synthetic-generator-localization.md",
+    "protocol_commit": "089a7c0",
+    "output_dir": "outputs/experiment058_synthetic_generator_v1",
+    "resources": {
+      "device": "cpu",
+      "threads": 2
+    },
+    "closed_test_evaluated": false,
+    "screening_classifier_changed": false,
+    "next_action": "Review independentlyconfirmed059QRSboundaryimprovement alongside058stressfailures. No additionalrecipes or jobs scheduled; classifier/closedtests unchanged.",
+    "source_commit": "cf45db4",
+    "runner": "scripts/experiments/run_synthetic_generator058.py",
+    "amendment_commit": "e7081f0",
+    "verification": "Generator invariant/matching tests and Ruff passed; independent protocol/code review passed; puregeneration forecast0.149sec for12subjects plus108edits.",
+    "runtime_seconds": 1099.1719388869824,
+    "reading": {
+      "qualification": {
+        "max_processed_sham_difference": 0.0,
+        "max_limb_error": 1.7763568394002505e-15,
+        "all_masks_match_noiseless_counterfactual": true,
+        "uninformative": {},
+        "elapsed_seconds": 133.83004485897254,
+        "subjects_per_generator": 600
+      },
+      "provisional_synthetic_robustness_pass": false,
+      "clinical_promotion": false,
+      "test_traces": 7200,
+      "method_rows": 14400,
+      "inference_failures": 0
+    },
+    "independent_audit": "outputs/experiment058_synthetic_generator_audit_v1/audit.json; all7200cases/14400rows/8460hashes/bootstrap reconstructed.",
+    "results": "docs/experiment-058-synthetic-generator-localization-results.md"
   }
 }

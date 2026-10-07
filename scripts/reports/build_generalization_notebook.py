@@ -60,6 +60,7 @@ CELLS = [
         pilot_curve, provenance, save_aggregate_report, source_counts,
         sph_ranking, transfer_matrix, verify_saved_scores,
     )
+    from ecg_experiment.eda.generalization_university import budget_comparison, workload_scenarios
 
     sns.set_theme(style='whitegrid', context='notebook', palette='colorblind')
     plt.rcParams.update({'figure.figsize': (10, 4.5), 'axes.titlesize': 14, 'figure.dpi': 115})
@@ -429,7 +430,175 @@ CELLS = [
     (
         "markdown",
         """
-    ## 7. Now narrow the question to young people
+    ## 7. What have we learned for a university population?
+
+    The important question is not simply whether we can score ECGs from another hospital. It is whether
+    the model could help a nurse and cardiologist find students who need follow-up, with a manageable
+    number of false referrals. Here we bring the main findings together before designing the young-person
+    tests. Every hospital result below has been executed; the university workload examples are explicitly
+    hypothetical.
+
+    ### Finding 1: source diversity helps, but the gain is not a guarantee
+
+    At SPH, fitting on several sources raised xECG AUROC from 0.915 to 0.939. Leaving out different source
+    families also showed useful transfer. We have evidence that the model learns something that travels
+    beyond one source. The home-source loss reminds us that the improvement is not universal.
+
+    ### Finding 2: the benefit can survive a practical referral rule
+
+    Earlier, a historical cutoff transferred poorly. What if we instead choose a normal-referral budget
+    and use 200 separate local normal ECGs to set each model's cutoff? The next comparison uses the same
+    SPH evaluation patients and the same chosen budgets. It asks whether broader training still helps
+    when we compare the models under a similar workload constraint.
+    """,
+    ),
+    (
+        "code",
+        """
+    budget_results = budget_comparison(pilot)
+    sns.lineplot(data=budget_results, x='Budget (%)', y='Caught (%)', hue='Training',
+                 marker='o', errorbar=None)
+    palette = dict(zip(['PTB-XL only', 'Several sources'], sns.color_palette()[:2], strict=True))
+    for training, group in budget_results.groupby('Training', sort=False):
+        plt.fill_between(group['Budget (%)'], group['Low'], group['High'],
+                         color=palette[training], alpha=0.15)
+    plt.xticks([1, 2, 5, 10])
+    plt.ylim(0, 100)
+    plt.xlabel('Chosen budget: percentage of normal ECGs allowed to be referred')
+    plt.ylabel('Abnormally annotated ECGs caught (%)')
+    plt.title('Measured SPH simulation: broader training helps at matched referral budgets')
+    plt.tight_layout()
+    plt.show()
+    at_five = budget_results[budget_results['Budget (%)'].eq(5)].set_index('Training')
+    display(Markdown(
+        f"At the 5% budget, the one-source model catches **{at_five.loc['PTB-XL only', 'Caught (%)']:.1f}%** "
+        "of abnormal annotations; the pooled model catches "
+        f"**{at_five.loc['Several sources', 'Caught (%)']:.1f}%**. "
+        "The shaded bands are saved 95% patient-bootstrap intervals for mean sensitivity across pilot draws. "
+        "They are not intervals for Italy, and their overlap is not a paired significance test."
+    ))
+    """,
+    ),
+    (
+        "markdown",
+        """
+    **How to read this finding:** with a similar normal-referral budget, the pooled model catches more
+    of SPH's abnormal annotations. This gives us a more practical reason to investigate broader training
+    than the AUROC gain alone. Increasing the budget catches more, but sends more normal ECGs for review.
+    The budget applies to normal ECGs, not to all ECGs, and it is a target rather than an exact guarantee.
+
+    The local normals come from SPH, so this is **limited local calibration**, not zero-local-data transfer.
+    These findings belong to the historical binary head. They do not validate a later pipeline or establish
+    sensitivity to cardiologist-defined abnormalities in young students.
+
+    ### Finding 3: few positives can make false referrals dominate the workload
+
+    Suppose we screened 1,000 people. The next graph asks what the SPH operating rates would imply if
+    1%, 2% or 5% had positive annotations. We keep the measured SPH sensitivity and false-referral rate
+    fixed and change only that assumed share.
+
+    **This is an arithmetic illustration, not a measured student result.** We do not know the Italian
+    students' positive rate, and their sensitivity and false-referral rate could differ from SPH's.
+    """,
+    ),
+    (
+        "code",
+        """
+    workload = workload_scenarios(pilot)
+    outcomes = ['Positive annotations caught', 'Normal annotations referred', 'Positive annotations missed']
+    plotted = workload[workload['Outcome'].isin(outcomes)]
+    sns.barplot(data=plotted, x='Assumed positive share', y='ECGs', hue='Outcome',
+                hue_order=outcomes, errorbar=None)
+    plt.title('Illustration: expected review workload per 1,000 people at a 5% normal-referral budget')
+    plt.xlabel('Hypothetical positive-annotation share (not measured in students)')
+    plt.ylabel('Expected ECGs per 1,000 people')
+    plt.legend(title='', loc='upper left', bbox_to_anchor=(1.02, 1))
+    plt.tight_layout()
+    plt.show()
+    workload_table = workload.pivot(index='Assumed positive share', columns='Outcome', values='ECGs')
+    workload_table['Total referrals'] = (workload_table['Positive annotations caught']
+                                       + workload_table['Normal annotations referred'])
+    workload_table['Positive share among referrals (%)'] = (
+        100 * workload_table['Positive annotations caught'] / workload_table['Total referrals'])
+    display(workload_table[outcomes + ['Total referrals', 'Positive share among referrals (%)']].round(1))
+    one_percent = workload_table.loc['1%']
+    display(Markdown(
+        f"In the **hypothetical 1% scenario**, about {one_percent['Positive annotations caught']:.0f} "
+        f"positively annotated ECGs would be caught, alongside "
+        f"{one_percent['Normal annotations referred']:.0f} normal ECGs sent for review. "
+        f"About {one_percent['Positive annotations missed']:.0f} positive ECGs would be missed. "
+        "We need to discuss workload and missed findings together, even with a strong ranking score."
+    ))
+    """,
+    ),
+    (
+        "markdown",
+        """
+    **What this means for a university:** the nurse and cardiologist would see the ECGs above the cutoff,
+    including many that may ultimately be read as normal. A model can provide useful ordering without
+    every referral being an abnormal ECG. The clinical outcome and acceptable workload need to be agreed
+    before calling the system a useful student screen.
+
+    These counts assume hospital operating rates remain unchanged when the positive share changes.
+    They show why the question matters; they do not predict the Italian workload.
+
+    ### Finding 4: a larger normal pilot makes the referral budget more predictable
+
+    The earlier pilot plot showed a range of possible normal-referral rates. Now we ask a more direct
+    question: **how often does a pilot keep the achieved rate between 4% and 6%, when we chose 5%?**
+    """,
+    ),
+    (
+        "code",
+        """
+    pilot_reliability = pilot_curve(pilot)
+    pilot_reliability['Pilots within 4–6% (%)'] = 100 * pilot_reliability['Within one point']
+    sns.lineplot(data=pilot_reliability, x='Local normals', y='Pilots within 4–6% (%)',
+                 marker='o', errorbar=None)
+    plt.xscale('log')
+    plt.xticks(pilot_reliability['Local normals'], pilot_reliability['Local normals'])
+    plt.ylim(0, 100)
+    plt.xlabel('Number of independently read local normal ECGs')
+    plt.ylabel('Pilots achieving a 4–6% normal-referral rate (%)')
+    plt.title('Measured SPH simulation: more normal ECGs give more reliable workload control')
+    plt.tight_layout()
+    plt.show()
+    reliable = pilot_reliability.set_index('Local normals')['Pilots within 4–6% (%)']
+    display(Markdown(
+        f"With **200 normals**, {reliable.loc[200]:.0f}% of simulated pilots land within that range; "
+        f"with **1,000 normals**, {reliable.loc[1000]:.0f}% do. "
+        "This is evidence about cutoff stability inside SPH, not a promise that the same pilot size "
+        "will be sufficient at an Italian university. Normal-only calibration cannot measure sensitivity."
+    ))
+    """,
+    ),
+    (
+        "markdown",
+        """
+    ### Finding 5: limited labels are promising, but young-person learning remains open
+
+    The small-label experiment found useful ranking with pretrained features before using every available
+    label. That suggests a smaller labeled study can be informative. It does not establish how many young
+    ECGs we need, because finding types and the number of young positive cases may be different.
+    """,
+    ),
+    (
+        "code",
+        """
+    small = labels['summaries']['sph']['pooled']['1000']['xecg']['auroc']['mean']
+    full = labels['summaries']['sph']['pooled']['all']['xecg']['auroc']
+    display(Markdown(
+        f"In the pooled-source small-label study, **1,000 total labeled ECGs** gave mean SPH AUROC "
+        f"**{small:.3f}**, compared with **{full:.3f}** using the full eligible label pool. "
+        "Those are existing hospital results. They motivate a few-young-label experiment; "
+        "they do not replace it or imply equal performance."
+    ))
+    """,
+    ),
+    (
+        "markdown",
+        """
+    ### The part that is still missing: directly test young people
 
     The broad experiments changed the source. The next experiments would change **age as well as source**.
     None of the results above measures that combined change.
@@ -514,6 +683,28 @@ CELLS = [
     Passing hospital tests adds evidence; it does not give a numerical probability of Italian success.
     We cannot turn a 0.939 SPH AUROC into an Italian AUROC.
 
+    **Our conclusions from the measured findings:**
+
+    1. **Broader-source fitting is worth studying for transfer.** It improved SPH ranking and caught
+       more SPH positive annotations at matched chosen normal-referral budgets. The home-source loss
+       and unequal training sizes limit how broadly we can interpret that benefit.
+    2. **A referral rule needs its own evaluation.** A portable ordering does not establish a portable
+       cutoff. A separate local-normal pilot helped control workload in SPH simulations.
+    3. **Small data can answer useful questions, but the positive cases matter.** Hospital label-budget
+       results support starting a limited-label study. Normal-only pilot data can set a cutoff, but cannot
+       show how many abnormalities are caught, and neither result establishes young-person performance.
+    4. **The next evidence must address age and setting together.** The strongest available hospital
+       transfer results still involve hospital patients, not Italian university students. Age-matched
+       development evaluations are needed before we can make a more specific claim.
+
+    | Question a reader might ask | What this notebook can answer |
+    |---|---|
+    | Can the score travel beyond one source? | Yes, these development comparisons show useful transfer |
+    | Does pooled training improve every population? | No; PTB-XL full-development ranking fell |
+    | Can we choose a manageable workload? | Local-normal simulations show a workable approach to study |
+    | Will 1,000 young labels be enough? | Unknown; 1,000-label results here came from hospital populations |
+    | Will the model work on Italian students? | Unknown until independent data from that population exist |
+
     The evidence becomes closer to our real question at each step, but only the broad steps have results:
     """,
     ),
@@ -556,12 +747,6 @@ CELLS = [
     This notebook rereads local output files; it contains no invented performance scores. Patient-level
     SPH predictions are used only for the integrity check and are never displayed or exported.
     No raw credentialed ECGs, Challenge test records, or EchoNext test records are loaded.
-
-    - [022b: cross-source fitting and family holdouts](../docs/experiment-022b-multisource-readout-results.md)
-    - [025b: smaller label budgets](../docs/experiment-025b-label-efficiency-multisource-results.md)
-    - [030: local-normal referral-budget simulation](../docs/experiment-030-referral-budget-results.md)
-    - [Audit: prior exposure and limits of the evidence](../docs/audit-2026-09-30.md)
-    - [Cardiologist meeting: student screening context](../docs/cardiologist-meeting-prep.md)
 
     Build: `uv run --no-sync python -m scripts.reports.build_generalization_notebook`
 

@@ -57,3 +57,18 @@ from the raw files.
 | `stats.py` | Prevalence with Wilson intervals, chi-square tests, logistic-regression odds ratios, prevalence plots |
 | `profile.py` | Column profiles, descriptive statistics with Tukey outliers and skewness, frequencies, missingness correlation, Cramér's V, baseline removal and lead standardization |
 | `ptbxl_cleaning.py` | PTB-XL preprocessing: placeholders, implausible values, missing values, high-cardinality columns, signal flags, with a log of every step |
+
+## Course deliverables
+
+| Notebook | Content |
+| --- | --- |
+| `Avance1.8.ipynb` | Avance 1: exploratory analysis of PTB-XL (team) |
+| `Avance2.8.ipynb` | Avance 2: feature engineering, the team version that combines the three individual ones |
+| `Avance2.8-ag.ipynb`, `Avance2.8-el.ipynb`, `Avance2.8-jr.ipynb` | Individual Avance 2 versions by Andre, Emiliano and Janet; Emiliano's runs in Google Colab |
+
+`Avance2.8.ipynb` runs from start to finish in about two minutes once its feature cache exists; the first run
+measures the 21,799 ECGs in parallel and writes `outputs/avance2_fusion/`:
+
+```bash
+uv run --no-sync jupyter nbconvert --to notebook --execute --inplace notebooks/Avance2.8.ipynb
+```

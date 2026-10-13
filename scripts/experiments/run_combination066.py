@@ -7,6 +7,7 @@ Phases::
     run_combination066 quality   # lead-quality classifier on fit records (CPU)
     run_combination066 maps      # five declared maps and the combiner (CPU, 8 processes)
     run_combination066 score     # integrity checks, LocBench, strata, standardized noise, result.json
+    run_combination066 separation  # record the data-separation checks in result.json
 
 ``--smoke`` uses 16 scored and 16 combiner records and a separate folder; nothing is scored. See
 ``docs/experiment-066-combination.md``.
@@ -820,10 +821,40 @@ def score_phase() -> None:
     print(json.dumps(decisions, indent=1), flush=True)
 
 
+def separation_phase() -> None:
+    """Record the data-separation checks of the fitted quantities in ``result.json``."""
+    out, _ = folders(False)
+    forbidden = forbidden_ids()
+    partition = load_partition()
+    fit = partition[partition.partition == "fit"].reset_index(drop=True)
+    heldout = set(fit.ecg_id[mil.heldout_mask(fit.patient_id.to_numpy())].astype(int))
+    with np.load(out / "quality/q.npz") as q:
+        quality_ids = set(q["fit_ids"].astype(int).tolist())
+        scored = set(q["scored_ids"].astype(int).tolist())
+    combiner = set(combiner_records().ecg_id.astype(int))
+    clean = set(fit.ecg_id[fit.clean_normal].astype(int))
+    checks = {
+        "quality_records": len(quality_ids),
+        "quality_forbidden": len(quality_ids & forbidden),
+        "combiner_records": len(combiner),
+        "combiner_forbidden": len(combiner & forbidden),
+        "combiner_outside_065_heldout": len(combiner - heldout),
+        "combiner_fit_clean_normals": len(combiner & clean),
+        "mapped_ecgad_holdout": len(scored & holdout_ids()),
+    }
+    checks["pass"] = all(v == 0 for k, v in checks.items() if not k.endswith("_records"))
+    result = json.loads((out / "result.json").read_text())
+    result["integrity"]["separation"] = checks
+    write_json_atomic(out / "result.json", result)
+    print(json.dumps(checks), flush=True)
+    if not checks["pass"]:
+        raise ValueError(f"Data separation failed: {checks}")
+
+
 def main() -> None:
     """Command-line entry point."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("phase", choices=["mil", "quality", "maps", "score"])
+    parser.add_argument("phase", choices=["mil", "quality", "maps", "score", "separation"])
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()
     torch.set_num_threads(8)
@@ -833,10 +864,12 @@ def main() -> None:
         quality_phase(args.smoke)
     elif args.phase == "maps":
         maps_phase(args.smoke)
-    else:
-        if args.smoke:
-            raise ValueError("The smoke run is not scored")
+    elif args.smoke:
+        raise ValueError("The smoke run is not scored")
+    elif args.phase == "score":
         score_phase()
+    else:
+        separation_phase()
 
 
 if __name__ == "__main__":

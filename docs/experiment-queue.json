@@ -3675,5 +3675,61 @@
         0.024
       ]
     }
+  },
+  "localization_program_2_2026_10_13": {
+    "status": "active",
+    "authorized": true,
+    "authorization_scope": "User authorized a day of unsupervised localization experiments needing no new cardiologist marks (measurement criteria, replacement test, serial pairs, DINO v2), after the Italian collaboration fell through; same PR #61.",
+    "plan": "docs/localization-program-2-2026-10-13.md",
+    "experiments": [
+      "069",
+      "070",
+      "071",
+      "072"
+    ]
+  },
+  "experiment_069_criteria": {
+    "status": "implementing",
+    "authorized": true,
+    "name": "Measurement-based criteria localizer",
+    "branch": "exp/069-criteria",
+    "worktree": "/tmp/ecg-wt-069",
+    "resources": {
+      "device": "cpu"
+    },
+    "next_action": "Subagent writes the protocol, commits it before any score, runs and reports."
+  },
+  "experiment_070_replacement": {
+    "status": "implementing",
+    "authorized": true,
+    "name": "Replacement faithfulness test of localization maps",
+    "branch": "exp/070-replacement",
+    "worktree": "/tmp/ecg-wt-070",
+    "resources": {
+      "device": "cpu, brief cuda"
+    },
+    "next_action": "Subagent writes the protocol, commits it before any score, runs and reports."
+  },
+  "experiment_071_serial": {
+    "status": "implementing",
+    "authorized": true,
+    "name": "Same-patient serial change maps",
+    "branch": "exp/071-serial",
+    "worktree": "/tmp/ecg-wt-071",
+    "resources": {
+      "device": "cpu"
+    },
+    "next_action": "Subagent writes the protocol, commits it before any score, runs and reports."
+  },
+  "experiment_072_dino_v2": {
+    "status": "implementing",
+    "authorized": true,
+    "name": "SimDINO v2: whole record, lead-local tokens",
+    "branch": "exp/072-dino-v2",
+    "worktree": "/tmp/ecg-wt-072",
+    "resources": {
+      "device": "cuda"
+    },
+    "next_action": "Subagent writes the protocol, commits it before any score, runs and reports."
   }
 }

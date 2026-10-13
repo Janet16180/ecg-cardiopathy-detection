@@ -780,3 +780,11 @@ paint-the-textbook-region alone scored +0.028 [+0.000, +0.057], and the combiner
 (+0.009 [-0.005, +0.022]). Lead, within-QRS and outside-QRS gains held; the development timing deficit did not
 reproduce. The QRS prior remains best for LAFB, CRBBB and CLBBB. The ECGAD holdout is now spent. The programme
 summary is [localization-program-results-2026-10-13.md](localization-program-results-2026-10-13.md).
+
+## Localization programme part 2, 13 October 2026
+
+The Italian collaboration is no longer available, so no new cardiologist marks are expected. The user authorized a day
+of unsupervised experiments that need none ([plan](localization-program-2-2026-10-13.md)): 069 (measurement-based
+criteria localizer), 070 (replacement faithfulness test of every map), 071 (same-patient serial change maps) and 072
+(SimDINO v2 on whole records with lead-local tokens) are being implemented in separate worktrees. ECGAD development
+readings are exploratory from now on; the holdout is spent.

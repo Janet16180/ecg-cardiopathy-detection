@@ -42,6 +42,7 @@ WEIGHT_DECAY = 0.05
 CLIP_NORM = 3.0
 WARMUP_SHARE = 0.05
 CHECKPOINT_SECONDS = 900
+MIN_CAP_GB = 4.0
 
 
 def _pool_record(row: tuple[str, str, str, str]) -> tuple[str, np.ndarray | None]:
@@ -97,14 +98,15 @@ def build_pool() -> None:
 
 
 def pick_device(cap_gb: float) -> torch.device:
-    """Choose the GPU with the most free memory and cap this process's share of it."""
-    free = [torch.cuda.mem_get_info(i)[0] for i in range(torch.cuda.device_count())]
+    """Choose the GPU with the most free memory and cap this process at ``cap_gb`` or free memory - 0.7 GB."""
+    free = [torch.cuda.mem_get_info(i)[0] / 2**30 for i in range(torch.cuda.device_count())]
     index = int(np.argmax(free))
-    total = torch.cuda.get_device_properties(index).total_memory
-    if free[index] < cap_gb * 2**30:
-        raise RuntimeError(f"GPU {index} has only {free[index] / 2**30:.1f} GB free")
-    torch.cuda.set_per_process_memory_fraction(cap_gb * 2**30 / total, index)
-    print(f"GPU {index}: {free[index] / 2**30:.1f} GB free, cap {cap_gb} GB", flush=True)
+    cap = min(cap_gb, free[index] - 0.7)
+    if cap < MIN_CAP_GB:
+        raise RuntimeError(f"GPU {index} has only {free[index]:.1f} GB free")
+    total = torch.cuda.get_device_properties(index).total_memory / 2**30
+    torch.cuda.set_per_process_memory_fraction(cap / total, index)
+    print(f"GPU {index}: {free[index]:.1f} GB free, cap {cap:.1f} GB", flush=True)
     return torch.device(f"cuda:{index}")
 
 
@@ -138,6 +140,7 @@ def train_steps(
     device: torch.device,
     log: Path | None,
     checkpoint: Path | None,
+    batch_size: int = BATCH,
 ) -> list[dict[str, float]]:
     """Run optimizer steps ``first`` to ``last - 1`` of a ``total``-step schedule."""
     loss_module = dk.new_loss_module()
@@ -147,7 +150,7 @@ def train_steps(
     records, saved = [], time.time()
     student.train()
     for step in range(first, last):
-        index = np.sort(order.integers(0, len(beats), BATCH))
+        index = np.sort(order.integers(0, len(beats), batch_size))
         batch = torch.from_numpy(beats[index]).to(device, non_blocking=True)
         for group in optimizer.param_groups:
             group["lr"] = dk.learning_rate(step, total, PEAK_LR, warmup)
@@ -169,7 +172,7 @@ def train_steps(
                     handle.write(json.dumps(row) + "\n")
                 print(json.dumps(row), flush=True)
         if checkpoint is not None and time.time() - saved > CHECKPOINT_SECONDS:
-            save_state(checkpoint, student, teacher, optimizer, step + 1, total)
+            save_state(checkpoint, student, teacher, optimizer, step + 1, total, batch_size)
             saved = time.time()
     return records
 
@@ -181,51 +184,70 @@ def save_state(
     optimizer: torch.optim.Optimizer,
     step: int,
     total: int,
+    batch_size: int,
 ) -> None:
-    """Atomic checkpoint of both networks, the optimizer and the step counter."""
+    """Atomic checkpoint of both networks, the optimizer, the step counter and the batch size."""
     state = {
         "student": student.state_dict(),
         "teacher": teacher.state_dict(),
         "optimizer": optimizer.state_dict(),
         "step": step,
         "total": total,
+        "batch": batch_size,
     }
     torch.save(state, path.with_suffix(".part"))
     os.replace(path.with_suffix(".part"), path)
 
 
+def profile_batch(beats: np.ndarray, device: torch.device, batch_size: int) -> dict[str, object]:
+    """Time 50 updates after 10 warm-up updates at one batch size."""
+    student, teacher = new_models(device)
+    optimizer = new_optimizer(student)
+    torch.cuda.reset_peak_memory_stats(device)
+    train_steps(beats, student, teacher, optimizer, 0, 10, 10000, device, None, None, batch_size)
+    torch.cuda.synchronize(device)
+    started = time.time()
+    records = train_steps(beats, student, teacher, optimizer, 10, 60, 10000, device, None, None, batch_size)
+    torch.cuda.synchronize(device)
+    seconds = (time.time() - started) / 50
+    return {
+        "batch": batch_size,
+        "seconds_per_update": seconds,
+        "peak_allocated_gb": torch.cuda.max_memory_allocated(device) / 2**30,
+        "updates_in_2h": int(7200 / seconds),
+        "epochs_in_2h": int(7200 / seconds) * batch_size / len(beats),
+        "last_losses": records[-1],
+    }
+
+
 def profile(cap_gb: float) -> None:
-    """Real GPU profile: seconds per update and peak memory at the declared batch."""
+    """Real GPU profile at batch 256 and, if that does not fit the cap, at batch 128."""
     beats = np.load(BEAT_DIR / "beats.npy", mmap_mode="r")
+    result: dict[str, object] = {"beats_in_pool": len(beats), "attempts": []}
     with gpu_lock("cuda"):
         device = pick_device(cap_gb)
-        student, teacher = new_models(device)
-        optimizer = new_optimizer(student)
-        torch.cuda.reset_peak_memory_stats(device)
-        train_steps(beats, student, teacher, optimizer, 0, 10, 10000, device, None, None)
-        torch.cuda.synchronize(device)
-        started = time.time()
-        records = train_steps(beats, student, teacher, optimizer, 10, 60, 10000, device, None, None)
-        torch.cuda.synchronize(device)
-        seconds = (time.time() - started) / 50
-        result = {
-            "device": torch.cuda.get_device_name(device),
-            "batch": BATCH,
-            "seconds_per_update": seconds,
-            "peak_allocated_gb": torch.cuda.max_memory_allocated(device) / 2**30,
-            "updates_in_2h": int(7200 / seconds),
-            "beats_in_pool": len(beats),
-            "epochs_in_2h": int(7200 / seconds) * BATCH / len(beats),
-            "student_parameters": sum(p.numel() for p in student.parameters()),
-            "backbone_parameters": sum(p.numel() for p in student.backbone.parameters()),
-            "last_losses": records[-1],
-        }
+        result["device"] = torch.cuda.get_device_name(device)
+        result["cap_gb"] = torch.cuda.get_per_process_memory_fraction(device) * (
+            torch.cuda.get_device_properties(device).total_memory / 2**30
+        )
+        for batch_size in (BATCH, BATCH // 2):
+            try:
+                attempt = profile_batch(beats, device, batch_size)
+            except torch.OutOfMemoryError:
+                result["attempts"].append({"batch": batch_size, "out_of_memory": True})
+                torch.cuda.empty_cache()
+                continue
+            result["attempts"].append(attempt)
+            break
+    student = dk.Network()
+    result["student_parameters"] = sum(p.numel() for p in student.parameters())
+    result["backbone_parameters"] = sum(p.numel() for p in student.backbone.parameters())
     OUTPUT.mkdir(parents=True, exist_ok=True)
     (OUTPUT / "gpu_profile.json").write_text(json.dumps(result, indent=2))
     print(json.dumps(result, indent=2))
 
 
-def pretrain(steps: int, cap_gb: float) -> None:
+def pretrain(steps: int, batch_size: int, cap_gb: float) -> None:
     """Full pretraining run (resumes from the local checkpoint if present)."""
     beats = np.load(BEAT_DIR / "beats.npy")
     checkpoint = BEAT_DIR / "checkpoint.pt"
@@ -238,35 +260,32 @@ def pretrain(steps: int, cap_gb: float) -> None:
         first = 0
         if checkpoint.exists():
             state = torch.load(checkpoint, map_location=device)
-            if state["total"] != steps:
+            if state["total"] != steps or state["batch"] != batch_size:
                 raise ValueError("Checkpoint belongs to another schedule")
             student.load_state_dict(state["student"])
             teacher.load_state_dict(state["teacher"])
             optimizer.load_state_dict(state["optimizer"])
             first = state["step"]
         started = time.time()
-        train_steps(beats, student, teacher, optimizer, first, steps, steps, device, log, checkpoint)
-        save_state(checkpoint, student, teacher, optimizer, steps, steps)
+        train_steps(
+            beats, student, teacher, optimizer, first, steps, steps, device, log, checkpoint, batch_size
+        )
+        save_state(checkpoint, student, teacher, optimizer, steps, steps, batch_size)
     torch.save(
         {"teacher": teacher.state_dict(), "student": student.state_dict(), "steps": steps},
         OUTPUT / "model.pt",
     )
-    (OUTPUT / "pretrain_summary.json").write_text(
-        json.dumps(
-            {
-                "steps": steps,
-                "resumed_from": first,
-                "seconds_this_session": time.time() - started,
-                "beats": len(beats),
-                "batch": BATCH,
-                "seed": SEED,
-            },
-            indent=2,
-        )
-    )
+    summary = {
+        "steps": steps,
+        "resumed_from": first,
+        "seconds_this_session": time.time() - started,
+        "beats": len(beats),
+        "batch": batch_size,
+        "seed": SEED,
+    }
+    (OUTPUT / "pretrain_summary.json").write_text(json.dumps(summary, indent=2))
 
 
-BANK_PER_BIN = 4096
 NEIGHBOURS = 3
 REACH = 1
 CALIBRATION_SHARE = 0.2
@@ -302,23 +321,23 @@ def features(backbone: dk.BeatViT | None, beats: dk.Beats, device: torch.device)
     parts = []
     for begin in range(0, len(beats.windows), FEATURE_BATCH):
         part = dk.Beats(
-            *(
-                getattr(beats, f)[begin : begin + FEATURE_BATCH]
-                for f in ("windows", "valid", "starts", "prematurity")
-            )
+            *(getattr(beats, f)[begin : begin + FEATURE_BATCH] for f in dk.Beats.__dataclass_fields__)
         )
         parts.append(dk.patch_features(backbone, part, device))
     return torch.cat(parts)
 
 
-def build_bank(feats: torch.Tensor, valid: np.ndarray, size: int, seed: int) -> torch.Tensor:
-    """Random ``size`` valid patches per lead and phase bin (the same beats for all leads of a bin)."""
-    rng = np.random.default_rng(seed)
-    bank = torch.empty((dk.LEADS, dk.PHASES, size, feats.shape[-1]), dtype=feats.dtype, device=feats.device)
-    for phase in range(dk.PHASES):
-        chosen = rng.choice(np.flatnonzero(valid[:, phase]), size, replace=False)
-        bank[:, phase] = feats[torch.from_numpy(chosen).to(feats.device), :, phase].transpose(0, 1)
-    return bank
+def build_bank(backbone: dk.BeatViT | None, beats: dk.Beats, device: torch.device) -> torch.Tensor:
+    """Every patch of every bank beat whose 24 patches all lie inside the record, as ``[12, 24, n, dim]``."""
+    full = beats.valid.all(axis=1)
+    kept = dk.Beats(beats.windows[full], beats.valid[full], beats.starts[full], beats.prematurity[full])
+    parts = []
+    for begin in range(0, len(kept.windows), FEATURE_BATCH):
+        part = dk.Beats(
+            *(getattr(kept, f)[begin : begin + FEATURE_BATCH] for f in dk.Beats.__dataclass_fields__)
+        )
+        parts.append(dk.patch_features(backbone, part, device).permute(1, 2, 0, 3))
+    return torch.cat(parts, dim=2).contiguous()
 
 
 def calibration(distance: torch.Tensor, valid: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -358,12 +377,12 @@ def load_backbone(model_path: Path | None, device: torch.device) -> dk.BeatViT:
 
 
 def fit_reference(
-    backbone: dk.BeatViT, bank: dk.Beats, held: dk.Beats, size: int, device: torch.device
+    backbone: dk.BeatViT, bank: dk.Beats, held: dk.Beats, device: torch.device
 ) -> tuple[dict[str, torch.Tensor], dict[str, tuple]]:
     """Patch banks from bank normals and distance statistics from calibration normals."""
     banks, stats = {}, {}
     for name, net, cosine in (("dino", backbone, True), ("raw", None, False)):
-        banks[name] = build_bank(features(net, bank, device), bank.valid, size, SEED)
+        banks[name] = build_bank(net, bank, device)
         distance = dk.knn_distance(features(net, held, device), banks[name], NEIGHBOURS, REACH, cosine)
         stats[name] = calibration(distance, held.valid)
     stats["prematurity"] = (float(held.prematurity.mean()), float(held.prematurity.std()))
@@ -391,7 +410,7 @@ def chunk_scores(
     return scores
 
 
-def make_maps(model_path: Path | None, out: Path, limit: int | None, bank_size: int, cap_gb: float) -> None:
+def make_maps(model_path: Path | None, out: Path, limit: int | None, cap_gb: float) -> None:
     """Bank, calibration and float16 maps for every target record and variant."""
     _, index = open_cache()
     position = dict(zip(index.ecg_id.astype(int), range(len(index)), strict=True))
@@ -418,7 +437,7 @@ def make_maps(model_path: Path | None, out: Path, limit: int | None, bank_size: 
         backbone = load_backbone(model_path, device)
         bank = stack(record_beats([position[i] for i in bank_rows.ecg_id], pool))
         held = stack(record_beats([position[i] for i in calibration_rows.ecg_id], pool))
-        banks, stats = fit_reference(backbone, bank, held, bank_size, device)
+        banks, stats = fit_reference(backbone, bank, held, device)
         del bank, held
         print(f"Bank and calibration ready in {time.time() - started:.0f} s", flush=True)
         for begin in range(0, len(targets), TARGET_CHUNK):
@@ -429,7 +448,7 @@ def make_maps(model_path: Path | None, out: Path, limit: int | None, bank_size: 
                 beat_counts[begin + j] = len(record.windows)
                 for variant in VARIANTS:
                     part = scores[variant][offsets[j] : offsets[j + 1]]
-                    maps[variant][begin + j] = dk.beat_map(part, record).astype(np.float16)
+                    maps[variant][begin + j] = dk.signed_log1p(dk.beat_map(part, record)).astype(np.float16)
             print(
                 f"{begin + len(per_record)}/{len(targets)} records, {time.time() - started:.0f} s", flush=True
             )
@@ -447,7 +466,7 @@ def make_maps(model_path: Path | None, out: Path, limit: int | None, bank_size: 
         "model_sha256": None if model_path is None else sha256_file(model_path),
         "bank_records": len(bank_rows),
         "calibration_records": len(calibration_rows),
-        "bank_per_bin": bank_size,
+        "bank_beats": int(banks["dino"].shape[2]),
         "neighbours": NEIGHBOURS,
         "reach": REACH,
         "targets": len(targets),
@@ -469,12 +488,12 @@ def main() -> None:
     sub.add_parser("profile").add_argument("--cap-gb", type=float, default=9.0)
     run = sub.add_parser("pretrain")
     run.add_argument("--steps", type=int, required=True)
+    run.add_argument("--batch", type=int, default=BATCH)
     run.add_argument("--cap-gb", type=float, default=9.0)
     maps = sub.add_parser("maps")
     maps.add_argument("--model", type=Path)
     maps.add_argument("--out", type=Path, default=OUTPUT)
     maps.add_argument("--limit", type=int)
-    maps.add_argument("--bank-size", type=int, default=BANK_PER_BIN)
     maps.add_argument("--cap-gb", type=float, default=9.0)
     args = parser.parse_args()
     torch.set_num_threads(THREADS)
@@ -483,9 +502,9 @@ def main() -> None:
     elif args.command == "profile":
         profile(args.cap_gb)
     elif args.command == "pretrain":
-        pretrain(args.steps, args.cap_gb)
+        pretrain(args.steps, args.batch, args.cap_gb)
     elif args.command == "maps":
-        make_maps(args.model, args.out, args.limit, args.bank_size, args.cap_gb)
+        make_maps(args.model, args.out, args.limit, args.cap_gb)
 
 
 if __name__ == "__main__":

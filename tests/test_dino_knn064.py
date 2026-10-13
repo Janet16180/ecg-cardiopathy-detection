@@ -141,3 +141,10 @@ def test_beat_map_takes_maximum_and_fills_minimum() -> None:
     assert out[3, 2 * (200 + 100) + 5] == 5.0
     assert out[3, 2 * 260 + 5] == 7.0
     assert out[0, 0] == out.min() == -1.0
+
+
+def test_signed_log1p_is_monotone_and_bounded() -> None:
+    values = np.array([-1e9, -2.0, 0.0, 0.5, 3.0, 1e30])
+    out = dk.signed_log1p(values)
+    assert (np.diff(out) > 0).all()
+    assert np.isfinite(out.astype(np.float16)).all()

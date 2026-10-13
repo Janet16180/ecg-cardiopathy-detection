@@ -657,7 +657,9 @@ def phase_candidates(phase: int, reach: int) -> slice:
 
 
 @torch.no_grad()
-def knn_distance(queries: torch.Tensor, bank: torch.Tensor, k: int, reach: int, cosine: bool) -> torch.Tensor:
+def knn_distance(
+    queries: torch.Tensor, bank: torch.Tensor, k: int, reach: int, cosine: bool, rows: int = 2048
+) -> torch.Tensor:
     """
     Mean distance of each query patch to its ``k`` nearest bank patches of the same lead and nearby phase.
 
@@ -673,6 +675,8 @@ def knn_distance(queries: torch.Tensor, bank: torch.Tensor, k: int, reach: int, 
         Neighbouring phase bins on each side.
     cosine : bool
         Cosine distance of normalized features if True, else Euclidean distance.
+    rows : int
+        Query beats per matrix product.
 
     Returns
     -------
@@ -683,13 +687,16 @@ def knn_distance(queries: torch.Tensor, bank: torch.Tensor, k: int, reach: int, 
     for lead in range(LEADS):
         for phase in range(PHASES):
             candidates = bank[lead, phase_candidates(phase, reach)].reshape(-1, bank.shape[-1])
-            query = queries[:, lead, phase]
-            if cosine:
-                nearest = (query @ candidates.T).float().topk(k, dim=1).values
-                out[:, lead, phase] = 1 - nearest.mean(dim=1)
-            else:
-                nearest = torch.cdist(query.float(), candidates.float()).topk(k, dim=1, largest=False).values
-                out[:, lead, phase] = nearest.mean(dim=1)
+            for begin in range(0, len(queries), rows):
+                query = queries[begin : begin + rows, lead, phase]
+                if cosine:
+                    nearest = (query @ candidates.T).topk(k, dim=1).values.float()
+                    out[begin : begin + rows, lead, phase] = 1 - nearest.mean(dim=1)
+                else:
+                    distance = torch.cdist(query.float(), candidates.float())
+                    out[begin : begin + rows, lead, phase] = distance.topk(
+                        k, dim=1, largest=False
+                    ).values.mean(dim=1)
     return out
 
 
@@ -792,3 +799,20 @@ def read_pool_signal(backend: str, path: str, index: str) -> np.ndarray:
     if backend == "challenge_wfdb":
         return read_record(ROOT / CHALLENGE_ROOT, str(Path(path).relative_to(CHALLENGE_ROOT)))
     return read_signal(backend, path, index)
+
+
+def signed_log1p(values: np.ndarray) -> np.ndarray:
+    """
+    Monotone ``sign(x) * log(1 + |x|)``, so that float16 storage cannot overflow.
+
+    Parameters
+    ----------
+    values : np.ndarray
+        Map values.
+
+    Returns
+    -------
+    np.ndarray
+        Transformed values with the same order.
+    """
+    return np.sign(values) * np.log1p(np.abs(values))

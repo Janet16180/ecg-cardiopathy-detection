@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -25,6 +26,7 @@ from ecg_experiment.ecgad import load_split
 from ecg_experiment.eda.ptbxl import load_metadata, load_statements
 from ecg_experiment.files import sha256_file, write_json_atomic, write_npz_atomic
 from ecg_experiment.gpu import gpu_lock
+from ecg_experiment.locbench import ecgad_record_metrics, load_benchmark, scored_ecg_ids
 from ecg_experiment.locbench_cache import CACHE_DIR, open_cache
 from ecg_experiment.locbench_data import PARTITION_PATH, REGION_TABLE, load_partition
 from ecg_experiment.paths import to_stored
@@ -543,17 +545,125 @@ def maps_phase(smoke: bool) -> None:
     )
 
 
+LOCBENCH061 = ROOT / "outputs/experiment061_locbench_v1"
+
+
+def reproduce_bar(bar: str) -> dict[str, Any]:
+    """
+    Recompute the bar's A2 from 061's saved ECGAD development maps with LocBench's own metric functions.
+
+    Returns
+    -------
+    dict
+        Recomputed and saved A2; raises if they differ.
+    """
+    bench = load_benchmark()
+    folder = LOCBENCH061 / "tables" / bar
+    saved_ids = json.loads((folder / "meta.json").read_text())["ecgad_ecg_ids"]
+    if saved_ids != bench.ecgad["ecg_id"].astype(int).tolist():
+        raise ValueError("061 ECGAD order differs from the benchmark")
+    maps = np.load(folder / "ecgad_maps.npy", mmap_mode="r")
+    values = [
+        ecgad_record_metrics(np.asarray(m, np.float32), labels)["A2"]
+        for m, labels in zip(maps, bench.ecgad_labels, strict=True)
+    ]
+    recomputed = float(np.nanmean(values))
+    saved = json.loads((LOCBENCH061 / "result.json").read_text())["bar"]["A2"]["value"]
+    if recomputed != saved:
+        raise ValueError(f"Bar A2 not reproduced: {recomputed} against {saved}")
+    return {"bar": bar, "A2_recomputed": recomputed, "A2_saved": saved}
+
+
+def score_phase() -> None:
+    """Score every variant with LocBench's CLI, paired against every 061 baseline, and update result.json."""
+    out = output_dir(False)
+    result = json.loads((out / "result.json").read_text())
+    locbench061 = json.loads((LOCBENCH061 / "result.json").read_text())
+    bar = locbench061["bar"]["method"]
+    reproduction = reproduce_bar(bar)
+    scored = scored_ecg_ids()
+    work = Path(os.environ.get("ECG065_CACHE", "/tmp/ecg065-cache")) / "score"
+    work.mkdir(parents=True, exist_ok=True)
+    baselines = sorted(p for p in (LOCBENCH061 / "tables").iterdir() if p.is_dir())
+    readings = {}
+    for variant in VARIANTS:
+        parts = []
+        for set_name in ("ecgad_dev", "evaluation"):
+            ids = np.load(out / f"maps_index_{set_name}.npy")
+            maps = np.load(out / f"maps_{variant}_{set_name}.npy", mmap_mode="r")
+            parts.append((ids, maps))
+        ids = np.concatenate([p[0] for p in parts])
+        row = {}
+        for set_index, (set_ids, _) in enumerate(parts):
+            for position, ecg_id in enumerate(set_ids):
+                row.setdefault(int(ecg_id), (set_index, position))
+        combined = np.lib.format.open_memmap(
+            work / f"{variant}.npy", mode="w+", dtype=np.float32, shape=(len(scored), 12, mil.SAMPLES)
+        )
+        for k, ecg_id in enumerate(scored):
+            set_index, position = row[int(ecg_id)]
+            combined[k] = parts[set_index][1][position]
+        combined.flush()
+        del combined
+        (work / f"{variant}.ids.json").write_text(json.dumps([int(e) for e in scored]))
+        target = out / "locbench" / variant
+        command = [
+            str(ROOT / ".venv/bin/python"),
+            "-m",
+            "scripts.experiments.run_locbench_score",
+            "--maps",
+            str(work / f"{variant}.npy"),
+            "--ids",
+            str(work / f"{variant}.ids.json"),
+            "--name",
+            variant,
+            "--out",
+            str(target),
+        ]
+        for folder in baselines:
+            command += ["--compare", str(folder)]
+        subprocess.run(command, check=True, cwd=Path(__file__).resolve().parents[2])
+        summary = json.loads((target / "summary.json").read_text())
+        readings[variant] = {
+            "metrics": summary["metrics"],
+            "paired": summary["paired"],
+            "maps_sha256": summary["inputs"]["maps_sha256"],
+        }
+        (work / f"{variant}.npy").unlink()
+        print(f"{variant}: A2 {summary['metrics']['A2']['value']:.4f}", flush=True)
+    primary = readings["mil_lse"]["paired"][bar]["A2"]
+    if primary["ci_low"] > 0:
+        decision = "beats the bar"
+    elif primary["ci_high"] < 0:
+        decision = "below"
+    else:
+        decision = "matches"
+    result["locbench"] = {
+        "bar": locbench061["bar"],
+        "bar_reproduction": reproduction,
+        "baselines_compared": [p.name for p in baselines],
+        "variants": readings,
+        "primary_comparison": {"variant": "mil_lse", "against": bar, "A2_difference": primary},
+        "decision": decision,
+        "locbench061_result_sha256": sha256_file(LOCBENCH061 / "result.json"),
+    }
+    write_json_atomic(out / "result.json", result)
+    print(json.dumps(result["locbench"]["primary_comparison"], indent=1), decision, flush=True)
+
+
 def main() -> None:
     """Command-line entry point."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("phase", choices=["train", "maps"])
+    parser.add_argument("phase", choices=["train", "maps", "score"])
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()
     torch.set_num_threads(8)
     if args.phase == "train":
         train_phase(args.smoke)
-    else:
+    elif args.phase == "maps":
         maps_phase(args.smoke)
+    else:
+        score_phase()
 
 
 if __name__ == "__main__":

@@ -780,6 +780,51 @@ def decide(variant: dict) -> str:
     return "inconclusive"
 
 
+def integrity(tag: str, bar_a2: float) -> dict:
+    """
+    Integrity checks of the protocol that can be recomputed from saved outputs.
+
+    Parameters
+    ----------
+    tag : str
+        Model tag.
+    bar_a2 : float
+        ``qrs_prior`` A2 as recomputed by the scorer in this run.
+
+    Returns
+    -------
+    dict
+        Bar reproduction, determinism, QRS indicator agreement, data separation and map checks.
+    """
+    saved = json.loads((ROOT / "outputs/experiment061_locbench_v1/result.json").read_text())
+    saved_a2 = saved["methods"]["qrs_prior"]["metrics"]["A2"]["value"]
+    determinism = {}
+    for variant in VARIANTS:
+        rerun = np.load(OUT / f"smoke/ecgad_dev_{variant}.npy").astype(np.float64)
+        first = np.load(OUT / f"maps_{tag}/ecgad_dev_{variant}.npy", mmap_mode="r")[: len(rerun)]
+        determinism[variant] = float(np.abs(rerun - first).max())
+    ids = json.loads((LOCAL / f"score_{tag}/ids.json").read_text())
+    inside = np.load(LOCAL / f"score_{tag}/qrs_inside.npy")
+    reference = load_tables(ROOT / "outputs/experiment061_locbench_v1/tables/qrs_prior", maps=True)
+    position = {e: k for k, e in enumerate(ids)}
+    mismatched = sum(
+        int(((np.asarray(reference["ecgad_maps"][j]) >= 0.5) != inside[position[int(e)]][None]).sum())
+        for j, e in enumerate(reference["ecgad"]["ecg_id"].to_numpy())
+    )
+    table = training_split()
+    partition = load_partition().set_index("ecg_id")
+    return {
+        "bar_a2_reproduced": {"saved_061": saved_a2, "this_run": bar_a2, "exact": saved_a2 == bar_a2},
+        "determinism_max_abs_difference_5_records": determinism,
+        "qrs_indicator_mismatched_lead_samples_vs_061": mismatched,
+        "training_records_in_ecgad": int(table.ecg_id.isin(set(load_split().ecg_id)).sum()),
+        "training_records_in_evaluation": int(
+            (partition.loc[table.ecg_id, "partition"] == "evaluation").sum()
+        ),
+        "maps_finite_checked_at_write": True,
+    }
+
+
 def collect(tag: str) -> None:
     """
     Write ``result.json`` from the LocBench summaries, strata and noise readings of every variant.
@@ -839,6 +884,7 @@ def collect(tag: str) -> None:
             }
             for name in ("ecgad_dev", "evaluation")
         },
+        "integrity": integrity(tag, variants["primary"]["paired"]["qrs_prior"]["A2"]["b"]),
         "variants": variants,
     }
     (OUT / "result.json").write_text(json.dumps(result, indent=1))

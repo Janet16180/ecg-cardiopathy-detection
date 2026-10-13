@@ -39,10 +39,11 @@ from ecg_experiment.inpaint063 import (
     train_mask,
     variant_maps,
 )
-from ecg_experiment.locbench import scored_ecg_ids
+from ecg_experiment.locbench import load_tables, scored_ecg_ids
 from ecg_experiment.locbench_baselines061 import exact_signal, qrs_prior_map
 from ecg_experiment.locbench_cache import open_cache
 from ecg_experiment.locbench_data import load_partition
+from ecg_experiment.locbench_strata import STRATA, strata_paired, strata_table
 from ecg_experiment.paths import to_stored
 
 OUT = ROOT / "outputs/experiment063_inpaint_v1"
@@ -52,6 +53,7 @@ VAL_SHARE = 0.1
 BATCH = 64
 NOISE_PROBABILITY = 0.6
 THREADS = 8
+BAR_C1 = 0.3529
 
 
 def log(message: str) -> None:
@@ -726,10 +728,153 @@ def assemble(tag: str) -> None:
     log(f"assemble: QRS share of samples {inside[:, 100:4900].mean():.4f}")
 
 
+def combine(tag: str, source: str, name: str) -> None:
+    """
+    Write a scorer input equal to the 061 QRS indicator plus value / (1 + value) of an assembled variant.
+
+    Parameters
+    ----------
+    tag : str
+        Model tag whose ``score_<tag>`` folder holds the assembled inputs.
+    source : str
+        Assembled nonnegative variant used as the evidence.
+    name : str
+        Output variant name.
+    """
+    target = LOCAL / f"score_{tag}"
+    inside = np.load(target / "qrs_inside.npy")
+    values = np.load(target / f"{source}.npy", mmap_mode="r")
+    out = np.lib.format.open_memmap(target / f"{name}.npy", mode="w+", dtype=np.float32, shape=values.shape)
+    for k in range(len(values)):
+        value = np.asarray(values[k], dtype=np.float32)
+        out[k] = inside[k][None, :].astype(np.float32) + value / (1 + value)
+    if not np.isfinite(out).all():
+        raise ValueError(f"Non-finite scorer input for {name}")
+    out.flush()
+    log(f"combine {name}: QRS indicator plus {source} evidence, {len(values)} records")
+
+
+def decide(variant: dict) -> str:
+    """
+    Apply the protocol decision rule to one scored variant.
+
+    Parameters
+    ----------
+    variant : dict
+        Entry of ``result.json`` ``variants``.
+
+    Returns
+    -------
+    str
+        ``positive``, ``positive but drawn to noise``, ``negative`` or ``inconclusive``.
+    """
+    a2 = variant["paired"]["qrs_prior"]["A2"]
+    if a2["ci_low"] > 0:
+        return (
+            "positive"
+            if variant["metrics"]["C1"]["value"] <= BAR_C1 + 0.05
+            else "positive but drawn to noise"
+        )
+    if a2["ci_high"] < 0:
+        return "negative"
+    return "inconclusive"
+
+
+def collect(tag: str) -> None:
+    """
+    Write ``result.json`` from the LocBench summaries, strata and noise readings of every variant.
+
+    Parameters
+    ----------
+    tag : str
+        Model tag.
+    """
+    bench = OUT / "locbench"
+    reference = ROOT / "outputs/experiment061_locbench_v1/tables"
+    residual = strata_table(*_ecgad_maps(reference / "residual056"))
+    variants = {}
+    names = [
+        v for v in (*VARIANTS, "qrs_combined", "raw_qrs_combined") if (bench / v / "summary.json").exists()
+    ]
+    for variant in names:
+        summary = json.loads((bench / variant / "summary.json").read_text())
+        tables = bench / variant / "tables"
+        strata = json.loads((tables / "strata.json").read_text())
+        own = pd.read_csv(tables / "strata.csv")
+        variants[variant] = {
+            "metrics": summary["metrics"],
+            "paired": summary["paired"],
+            "a1_check": summary["a1_check"],
+            "strata": strata["summary"],
+            "strata_paired_vs_qrs_prior": strata["paired_vs_reference"],
+            "strata_paired_vs_residual056": {name: strata_paired(own, residual, name) for name in STRATA},
+            "C1_std": json.loads((tables / "noise_std.json").read_text()),
+            "code_commit": summary["code_commit"],
+            "inputs": summary["inputs"],
+        }
+    versions = {"v1": "primary", "v2": "raw_qrs_combined"}
+    decisions = {
+        version: {
+            "variant": name,
+            "decision": decide(variants[name]),
+            "paired_A2": variants[name]["paired"]["qrs_prior"]["A2"],
+        }
+        for version, name in versions.items()
+        if name in variants
+    }
+    result = {
+        "experiment": "063",
+        "tag": tag,
+        "protocol": "docs/experiment-063-masked-reconstruction.md",
+        "decisions": decisions,
+        "bar_c1": BAR_C1,
+        "profile": json.loads((OUT / "profile.json").read_text()),
+        "training": json.loads((OUT / f"train_{tag}.json").read_text()),
+        "calibration": json.loads((OUT / f"calibration_{tag}.json").read_text()),
+        "maps": {
+            name: {
+                k: v
+                for k, v in json.loads((OUT / f"maps_{tag}/{name}_manifest.json").read_text()).items()
+                if k != "ecg_ids"
+            }
+            for name in ("ecgad_dev", "evaluation")
+        },
+        "variants": variants,
+    }
+    (OUT / "result.json").write_text(json.dumps(result, indent=1))
+    for version, entry in decisions.items():
+        a2 = entry["paired_A2"]
+        log(
+            f"collect {version}: {entry['decision']}, A2 difference {a2['value']:.4f} "
+            f"[{a2['ci_low']:.4f}, {a2['ci_high']:.4f}]"
+        )
+
+
+def _ecgad_maps(folder: Path) -> tuple[np.ndarray, np.ndarray]:
+    """
+    ECGAD development maps and record IDs of a LocBench tables folder.
+
+    Parameters
+    ----------
+    folder : Path
+        Tables folder written by the LocBench scorer.
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray]
+        Maps (198, 12, 5000) and ``ecg_id`` per row.
+    """
+    tables = load_tables(folder, maps=True)
+    return tables["ecgad_maps"], tables["ecgad"]["ecg_id"].to_numpy()
+
+
 def main() -> None:
     """Parse arguments and run a subcommand."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["prepare", "profile", "train", "maps", "calibration", "assemble"])
+    parser.add_argument(
+        "command",
+        choices=["prepare", "profile", "train", "maps", "calibration", "assemble", "combine", "collect"],
+    )
     parser.add_argument("--steps", type=int, default=20_000)
     parser.add_argument("--eval-every", type=int, default=500)
     parser.add_argument("--patience", type=int, default=8)
@@ -737,6 +882,8 @@ def main() -> None:
     parser.add_argument("--set", default="ecgad_dev")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--cap-gb", type=float, default=8.0)
+    parser.add_argument("--source", default="raw")
+    parser.add_argument("--name", default="raw_qrs_combined")
     args = parser.parse_args()
     if args.command == "prepare":
         prepare()
@@ -748,6 +895,10 @@ def main() -> None:
         maps(args.set, args.tag, args.cap_gb, args.limit)
     elif args.command == "assemble":
         assemble(args.tag)
+    elif args.command == "combine":
+        combine(args.tag, args.source, args.name)
+    elif args.command == "collect":
+        collect(args.tag)
     else:
         calibration(args.tag, args.cap_gb)
 

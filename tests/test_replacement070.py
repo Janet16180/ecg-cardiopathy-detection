@@ -141,3 +141,16 @@ def test_spearman_helpers():
     assert out["value"] == pytest.approx(1.0)
     assert out["ci_low"] > 0.9
     assert rp.map_spearman(np.arange(5.0), -np.arange(5.0), 50, 1)["value"] == pytest.approx(-1.0)
+
+
+def test_replacement_energy_matches_masks():
+    plan, _ = make_plan()
+    difference = np.random.default_rng(2).normal(size=(12, rp.SAMPLES))
+    energy = rp.replacement_energy(difference, plan, 0.10)
+    masks = rp.pass_masks(plan_tensors(plan), "cpu").numpy()
+    layout = rp.pass_layout(3)
+    first = layout["regions"] + 1 * (1 + rp.CONTROL_DRAWS)
+    expected = (masks[first] * difference**2).sum()
+    controls = np.mean([(masks[first + r] * difference**2).sum() for r in range(1, 1 + rp.CONTROL_DRAWS)])
+    assert energy[0, 0] == pytest.approx(expected)
+    assert energy[0, 1] == pytest.approx(controls)

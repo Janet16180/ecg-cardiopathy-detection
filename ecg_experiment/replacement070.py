@@ -1032,3 +1032,31 @@ def summarize(
             ),
         }
     return out
+
+
+def replacement_energy(difference: np.ndarray, plan: dict[str, np.ndarray], fraction: float) -> np.ndarray:
+    """
+    Squared counterpart difference summed over each map region and over its matched controls (binary masks).
+
+    Parameters
+    ----------
+    difference : np.ndarray
+        (12, 5000) counterpart minus record.
+    plan : dict[str, np.ndarray]
+        ``record_plan`` arrays.
+    fraction : float
+        Region size.
+
+    Returns
+    -------
+    np.ndarray
+        (maps, 2): energy of the map region and mean energy of its ``CONTROL_DRAWS`` controls, in mV^2.
+    """
+    energy = np.asarray(difference, np.float64)[:, START:STOP] ** 2
+    selected = np.asarray(plan["ranks"]) < selection_count(fraction)
+    inverse, sources = np.asarray(plan["inverse"], np.int64), np.asarray(plan["sources"], np.int64)
+    out = np.zeros((len(selected), 2))
+    for m, mask in enumerate(selected):
+        out[m, 0] = energy[mask].sum()
+        out[m, 1] = np.mean([energy[mask[inverse[r]][:, sources[r]]].sum() for r in range(len(inverse))])
+    return out

@@ -844,6 +844,54 @@ def integrity(summaries: dict[str, Any], smoke: bool, a2: dict[str, Any]) -> dic
     return checks
 
 
+def energy_descriptive(loaded: dict[tuple[str, str], Any], smoke: bool) -> dict[str, Any]:
+    """
+    Post hoc, not declared: replaced energy of each map region at 10% relative to its matched controls.
+
+    The control matches size, leads and wave labels but not how much signal the replacement changes; this
+    reading shows how far each map selects samples where the counterpart differs most from the record.
+    """
+    out = {}
+    for name in ("A", "N"):
+        folder = work_dir(name, smoke)
+        arrays = {
+            n: np.load(folder / f"{n}.npy", mmap_mode="r") for n in (*PLAN_ARRAYS, "difference", "status")
+        }
+        rows = np.flatnonzero(np.asarray(arrays["status"]) == 1)
+        energy = np.stack(
+            [
+                rp.replacement_energy(arrays["difference"][row], plan_row(arrays, row), rp.FRACTIONS[1])
+                for row in rows
+            ]
+        )
+        ratio = np.log(np.maximum(energy[:, :, 0], 1e-12) / np.maximum(energy[:, :, 1], 1e-12))
+        entry = {
+            "mean_log_energy_ratio": dict(zip(rp.MAPS, ratio.mean(axis=0).round(4).tolist(), strict=True)),
+            "mean_map_energy_mv2": dict(
+                zip(rp.MAPS, energy[:, :, 0].mean(axis=0).round(4).tolist(), strict=True)
+            ),
+            "mean_control_energy_mv2": dict(
+                zip(rp.MAPS, energy[:, :, 1].mean(axis=0).round(4).tolist(), strict=True)
+            ),
+        }
+        for detector in ("a", "b"):
+            item = loaded.get((name, detector))
+            if item is not None:
+                scores = item["arrays"][PRIMARY_METRIC].mean(axis=0)
+                entry[f"spearman_S10_{detector}_vs_log_energy_ratio"] = rp.spearman(
+                    scores, ratio.mean(axis=0)
+                )
+                within = [
+                    rp.spearman(item["arrays"][PRIMARY_METRIC][:, k], ratio[:, k])
+                    for k in range(len(rp.MAPS))
+                ]
+                entry[f"within_map_spearman_S10_{detector}_vs_log_energy_ratio"] = dict(
+                    zip(rp.MAPS, np.round(within, 4).tolist(), strict=True)
+                )
+        out[name] = entry
+    return out
+
+
 def write_record_tables(loaded: dict[tuple[str, str], Any], out: Path) -> None:
     """Long per-record CSV of every metric and map, per set and detector."""
     for (name, detector), item in loaded.items():
@@ -901,6 +949,7 @@ def analyze_phase(smoke: bool) -> None:
                 for k, m in enumerate(rp.MAPS)
             },
             "superclass_S10_A_a": superclass_means(loaded[("A", "a")]),
+            "post_hoc_energy_ratio": energy_descriptive(loaded, smoke),
         },
         "integrity": integrity(summaries, smoke, a2),
         "hashes": {

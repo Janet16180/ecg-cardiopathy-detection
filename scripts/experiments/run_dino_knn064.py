@@ -333,15 +333,18 @@ def features(backbone: dk.BeatViT | None, beats: dk.Beats, device: torch.device)
 
 def build_bank(backbone: dk.BeatViT | None, beats: dk.Beats, device: torch.device) -> torch.Tensor:
     """Every patch of every bank beat whose 24 patches all lie inside the record, as ``[12, 24, n, dim]``."""
-    full = beats.valid.all(axis=1)
-    kept = dk.Beats(beats.windows[full], beats.valid[full], beats.starts[full], beats.prematurity[full])
-    parts = []
-    for begin in range(0, len(kept.windows), FEATURE_BATCH):
-        part = dk.Beats(
-            *(getattr(kept, f)[begin : begin + FEATURE_BATCH] for f in dk.Beats.__dataclass_fields__)
-        )
-        parts.append(dk.patch_features(backbone, part, device).permute(1, 2, 0, 3))
-    return torch.cat(parts, dim=2).contiguous()
+    full = np.flatnonzero(beats.valid.all(axis=1))
+    bank = None
+    for begin in range(0, len(full), FEATURE_BATCH):
+        rows = full[begin : begin + FEATURE_BATCH]
+        part = dk.Beats(beats.windows[rows], beats.valid[rows], beats.starts[rows], beats.prematurity[rows])
+        values = dk.patch_features(backbone, part, device).permute(1, 2, 0, 3)
+        if bank is None:
+            bank = torch.empty(
+                (dk.LEADS, dk.PHASES, len(full), values.shape[-1]), dtype=values.dtype, device=device
+            )
+        bank[:, :, begin : begin + len(rows)] = values
+    return bank
 
 
 def calibration(distance: torch.Tensor, valid: np.ndarray) -> tuple[np.ndarray, np.ndarray]:

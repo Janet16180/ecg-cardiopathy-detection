@@ -187,3 +187,13 @@ score had been computed. Branch `experiment/fragment-localization041` (061 compl
    the bar with the same intervals but cannot change the primary verdict.
 3. Map storage: all maps are float16; the largest `normative_v1` value is about 93, far below the float16
    limit, so no further transform is applied.
+
+## Amendment 3 (12 October 2026, before any 062 score)
+
+061 Amendment 3 (`docs/experiment-061-amendment-3-noise-standardized.md`, merged from
+`experiment/fragment-localization041`) adds a lead-standardized noise reading. `C1_std` is reported for every
+062 variant beside the unchanged C1, computed with `ecg_experiment/locbench_noise.py` on each variant's tables.
+The strata (Amendment 2) and `C1_std` are computed with the library functions behind
+`run_locbench_strata.py` and `run_locbench_noise.py`; the 061 reference tables (`qrs_prior`, `residual056`) are
+copied into the 062 output folder first, so that no file of Experiment 061 is written. The paired strata are
+reported against both `qrs_prior` and `residual056`.

@@ -192,3 +192,19 @@ Written after Experiment 061 amendment 3 (merged into this branch) and before an
 variant as a secondary reading beside C1 (061 baselines: random 0.501, amplitude 0.521, qrs_prior 0.560,
 U_B 0.720, residual056 0.707). Raw C1 is confounded by lead level, and the z maps are scaled per lead by sigma,
 so C1_std is the fairer reading of attraction to noise. The decision rule and its C1 condition do not change.
+
+### Amendment 4, 12 October 2026, after the v1 scores, before scoring v2
+
+v1 was scored (decision: negative; `primary` A2 0.6017, paired A2 against `qrs_prior` -0.1402 [-0.1716, -0.1095]).
+The unnormalized `raw` variant scored A2 0.7091 and its QRS strata beat the `qrs_prior` tiebreak inside QRS
+(A2_qrs 0.597 against 0.539), while the z maps flatten the QRS emphasis (21% of the `primary` map's top 5% of
+ECGAD development lead-samples lie in QRS against 74% for `raw`, base rate 16%) and are drawn to noise
+(C1_std 0.70). One iteration, v2, is declared from the same model and saved maps, with no retraining:
+
+- v2 primary: `raw_qrs_combined` = 1 inside the 061 `qrs_prior` QRS intervals plus raw / (1 + raw), where raw
+  is the `raw` map in mV. It is the analogue of `qrs_combined` with the raw evidence; the anomaly evidence alone
+  is the v1 `raw` variant, already reported.
+- Primary comparison and decision rule as above (paired A2 against `qrs_prior`, the C1 carry-forward
+  condition), with the strata, C1_std and all other readings reported.
+- This variant was chosen after seeing v1 ECGAD development scores, so its ECGAD development result is
+  optimistically biased; only the ECGAD holdout (Experiment 067) can confirm it. v1 stays reported in full.

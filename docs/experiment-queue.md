@@ -812,3 +812,6 @@ does not track ECGAD development A2 (Spearman +0.174 [-0.007, +0.327], -0.033 wi
 how much signal energy the region replaces (0.76). The whole-lead variant favours the 065-based maps (`units_v2` +1.02
 over `qrs_prior`), in line with ECGAD lead AUROC. One integrity check failed: the `random` map's score is -0.005
 [-0.010, -0.001] instead of containing 0; the cause was not found and no decision changes.
+
+073 (per-lead interval criteria: each criterion painted only on leads whose own measurement crosses the threshold) is
+being implemented in a separate worktree, as a follow-up to 069's chance-level lead AUROC.

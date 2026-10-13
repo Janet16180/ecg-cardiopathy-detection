@@ -2168,8 +2168,8 @@
       "cpu_hours": 0.5,
       "build_hours": 3.0,
       "blocked_by": [],
-      "status": "open",
-      "authorized": false,
+      "status": "running",
+      "authorized": true,
       "notes": "Also: criteria evidence as patient-specific weak labels for the combiner; drop the source-disagreement reliability factor; ask about wide-P and V1 R/S rules that fire in 25% and 5.7% of clean normals."
     },
     {

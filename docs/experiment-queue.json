@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-13T21:44:46.240004+00:00",
+  "updated_at_utc": "2026-10-13T21:45:55.258527+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -3685,7 +3685,8 @@
       "069",
       "070",
       "071",
-      "072"
+      "072",
+      "073"
     ]
   },
   "experiment_069_criteria": {
@@ -3842,5 +3843,16 @@
       "device": "cuda"
     },
     "next_action": "Subagent writes the protocol, commits it before any score, runs and reports."
+  },
+  "experiment_073_per_lead_criteria": {
+    "status": "implementing",
+    "authorized": true,
+    "name": "Per-lead interval criteria localizer",
+    "branch": "exp/073-per-lead-criteria",
+    "worktree": "/tmp/ecg-wt-073",
+    "resources": {
+      "device": "cpu"
+    },
+    "next_action": "Subagent writes the protocol, commits it before any score, runs and reports. Backlog loc_per_lead_interval_criteria."
   }
 }

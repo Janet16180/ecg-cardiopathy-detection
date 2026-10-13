@@ -977,7 +977,7 @@ def ub_float16_check(smoke: bool, count: int = 50) -> dict[str, Any]:
     references = ho.load_frozen()["references"]
     largest = 0.0
     for k, ecg_id in enumerate(ids):
-        new = ub_map(exact_signal(stored[k]), references)
+        new = np.asarray(ub_map(exact_signal(stored[k]), references), np.float32)
         new = np.clip(new, -FLOAT16_MAX, FLOAT16_MAX).astype(np.float16).astype(np.float64)
         largest = max(largest, float(np.max(np.abs(new - np.asarray(saved[row_of[ecg_id]], np.float64)))))
     return {"records": len(ids), "max_abs_difference": largest, "pass": largest == 0.0}

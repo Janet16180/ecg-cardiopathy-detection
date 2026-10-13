@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-13T22:17:30.745971+00:00",
+  "updated_at_utc": "2026-10-13T22:23:42.257407+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -200,7 +200,8 @@
     "deferred_for_cost": "Runner and evidence retained; stopped when actual runtime exceeded the adopted planning gate after the user requested cheaper experiments; no automatic resume.",
     "gpu_profiling_only": "GPU profile active in a manifest without any full training stage.",
     "full_stage_launched": "Comparative full stage launched after measured GPU profile; observe actual updates and completion before calling it a result.",
-    "implementing": "Authorized implementation and verification in progress; no executable run is implied."
+    "implementing": "Authorized implementation and verification in progress; no executable run is implied.",
+    "cancelled": "Stopped by the user before completion; no results report; partial outputs are not results."
   },
   "runtime": {
     "executable_manifest": "outputs/experiment_queue_016_encoder_motion_v10_bridge/queue.json",
@@ -3677,7 +3678,7 @@
     }
   },
   "localization_program_2_2026_10_13": {
-    "status": "active",
+    "status": "complete",
     "authorized": true,
     "authorization_scope": "User authorized a day of unsupervised localization experiments needing no new cardiologist marks (measurement criteria, replacement test, serial pairs, DINO v2), after the Italian collaboration fell through; same PR #61.",
     "plan": "docs/localization-program-2-2026-10-13.md",
@@ -3687,7 +3688,8 @@
       "071",
       "072",
       "073"
-    ]
+    ],
+    "closing_note": "Method search paused by the user after 069-071 and 073; 072 cancelled. No new marked test set exists, so further ECGAD development comparisons are not informative."
   },
   "experiment_069_criteria": {
     "status": "complete",
@@ -3834,7 +3836,7 @@
     }
   },
   "experiment_072_dino_v2": {
-    "status": "implementing",
+    "status": "cancelled",
     "authorized": true,
     "name": "SimDINO v2: whole record, lead-local tokens",
     "branch": "exp/072-dino-v2",
@@ -3842,7 +3844,12 @@
     "resources": {
       "device": "cuda"
     },
-    "next_action": "Subagent writes the protocol, commits it before any score, runs and reports."
+    "next_action": "Cancelled by the user on 2026-10-13 during the 'mix' pretraining run, when the localization method search was paused. Protocol and amendment 1 are committed on the unmerged branch; partial outputs of the 'local' variant are not results.",
+    "protocol_commits": [
+      "f31b27a",
+      "4b3578e"
+    ],
+    "partial_outputs": "outputs/experiment072_dino_v2_v1 (unreported)"
   },
   "experiment_073_per_lead_criteria": {
     "status": "complete",

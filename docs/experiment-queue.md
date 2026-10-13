@@ -820,3 +820,8 @@ beat-level criteria for focal beats, matches the bar (A2 0.733, -0.009 [-0.041, 
 recovered; +0.074 [+0.007, +0.138] over `qrs_prior`). The label-free `perlead_qrs` reached 0.766 (+0.024 [+0.006,
 +0.044] over the bar), but only +0.003 over 069 `criteria_qrs`, so the gain comes from the QRS time prior. One
 amendment before any score kept short QT record-level.
+
+072 (SimDINO v2 with lead-local tokens) was cancelled by the user during its second pretraining run, when the
+localization method search was paused: without a new marked test set, further comparisons on ECGAD development are not
+informative. Its protocol is committed on the unmerged branch `exp/072-dino-v2`; partial outputs are not results. The
+part 2 programme is closed.

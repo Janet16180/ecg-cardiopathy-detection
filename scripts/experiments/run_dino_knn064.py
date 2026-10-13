@@ -32,6 +32,7 @@ from ecg_experiment.locbench import scored_ecg_ids
 from ecg_experiment.locbench_baselines061 import exact_signal, qrs_prior_map
 from ecg_experiment.locbench_cache import open_cache
 from ecg_experiment.locbench_data import load_partition
+from ecg_experiment.locbench_strata import STRATA, strata_paired
 from ecg_experiment.paths import to_stored
 
 BEAT_DIR = Path(os.environ.get("ECG064_BEATS", "/tmp/ecg064-beats"))
@@ -520,6 +521,80 @@ def combine_qrs(out: Path, qrs_dir: Path) -> None:
     (out / "maps_qrs_lex_dino.ids.json").write_text(json.dumps([int(i) for i in qrs_ids]))
 
 
+BASELINE_TABLES = Path("outputs/experiment061_locbench_v1/tables")
+SCORED = ("dino_z", "dino_dist", "dino_z_rr", "qrs_lex_dino", "raw_z", "raw_dist")
+HEADLINE = ("A1", "A2", "A3", "A4", "A5", "A6", "B1/macro", "B2/macro", "B3/macro", "C1", "C2", "D1")
+
+
+def variant_reading(folder: Path, references: dict[str, Path]) -> dict[str, object]:
+    """Every LocBench metric, the paired differences, the QRS strata and C1_std of one scored variant."""
+    summary = json.loads((folder / "summary.json").read_text())
+    strata = pd.read_csv(folder / "tables" / "strata.csv")
+    strata_pairs = {}
+    for name, reference in references.items():
+        if reference.resolve() != (folder / "tables").resolve():
+            other = pd.read_csv(reference / "strata.csv")
+            strata_pairs[name] = {stratum: strata_paired(strata, other, stratum) for stratum in STRATA}
+    return {
+        "metrics": summary["metrics"],
+        "paired": summary["paired"],
+        "strata": json.loads((folder / "tables" / "strata.json").read_text())["summary"],
+        "strata_paired": strata_pairs,
+        "C1_std": json.loads((folder / "tables" / "noise_std.json").read_text()),
+        "maps_sha256": summary["inputs"]["maps_sha256"],
+        "code_commit": summary["code_commit"],
+    }
+
+
+def report(out: Path, protocol_commit: str) -> None:
+    """Assemble result.json from the scored variants, the integrity rescoring and the run receipts."""
+    references = {
+        "qrs_prior": BASELINE_TABLES / "qrs_prior",
+        "residual056": BASELINE_TABLES / "residual056",
+        "raw_z": out / "score" / "raw_z" / "tables",
+    }
+    variants = {
+        v: variant_reading(out / "score" / v, references) for v in SCORED if (out / "score" / v).exists()
+    }
+    primary = variants["dino_z"]
+    integrity = json.loads((out / "integrity_qrs_prior" / "summary.json").read_text())["metrics"]
+    frozen = json.loads((BASELINE_TABLES.parent / "result.json").read_text())["methods"]["qrs_prior"][
+        "metrics"
+    ]
+    shared = [m for m in frozen if m in integrity]
+    reproduced = all(integrity[m] == frozen[m] for m in shared)
+    versus_bar = primary["paired"]["qrs_prior"]["A2"]
+    versus_raw = primary["paired"]["raw_z"]["A2"]
+    result = {
+        "experiment": "064",
+        "protocol": "docs/experiment-064-dino-patch-knn.md",
+        "protocol_commit": protocol_commit,
+        "pool": json.loads((BEAT_DIR / "summary.json").read_text()),
+        "gpu_profile": json.loads((out / "gpu_profile.json").read_text()),
+        "pretrain": json.loads((out / "pretrain_summary.json").read_text()),
+        "pretrain_last_log": json.loads((out / "pretrain_log.jsonl").read_text().splitlines()[-1]),
+        "maps": json.loads((out / "maps_receipt.json").read_text()),
+        "integrity": {
+            "qrs_prior_rebuilt_metrics_identical": reproduced,
+            "metrics_compared": len(shared),
+            "A2": integrity["A2"],
+        },
+        "variants": variants,
+        "headline": {
+            v: {m: r["metrics"][m] for m in HEADLINE if m in r["metrics"]} for v, r in variants.items()
+        },
+        "decision": {
+            "primary_A2_minus_qrs_prior": versus_bar,
+            "localizes": versus_bar["ci_low"] > 0,
+            "A2_dino_z_minus_raw_z": versus_raw,
+            "learned_features_add": versus_raw["ci_low"] > 0,
+            "noise_flag": {v: r["C1_std"]["ci_low"] > 0.60 for v, r in variants.items()},
+        },
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=1))
+    print(json.dumps(result["decision"], indent=1))
+
+
 def main() -> None:
     """Command-line entry point."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -539,6 +614,9 @@ def main() -> None:
     combine = sub.add_parser("combine")
     combine.add_argument("--out", type=Path, default=OUTPUT)
     combine.add_argument("--qrs", type=Path, default=BEAT_DIR / "integrity")
+    summarize = sub.add_parser("report")
+    summarize.add_argument("--out", type=Path, default=OUTPUT)
+    summarize.add_argument("--protocol-commit", required=True)
     args = parser.parse_args()
     torch.set_num_threads(THREADS)
     if args.command == "pool":
@@ -551,6 +629,8 @@ def main() -> None:
         rebuild_qrs_prior(args.out)
     elif args.command == "combine":
         combine_qrs(args.out, args.qrs)
+    elif args.command == "report":
+        report(args.out, args.protocol_commit)
     elif args.command == "maps":
         make_maps(args.model, args.out, args.limit, args.cap_gb)
 

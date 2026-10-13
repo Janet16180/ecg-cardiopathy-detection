@@ -3500,5 +3500,16 @@
         0.039
       ]
     }
+  },
+  "experiment_066_combination": {
+    "status": "implementing",
+    "authorized": true,
+    "name": "Factorized combination with a learned lead-quality filter",
+    "branch": "exp/066-combination",
+    "worktree": "/tmp/ecg-wt-066",
+    "resources": {
+      "device": "cpu, optional cuda for MIL cross-fit"
+    },
+    "next_action": "Subagent writes the protocol (clinical prior table, factor/textbook/quality/learned maps), commits it before any score, runs and reports."
   }
 }

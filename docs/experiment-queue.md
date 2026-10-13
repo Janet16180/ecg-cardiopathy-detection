@@ -741,3 +741,8 @@ finding in the right leads (A3 0.644, +0.188 [+0.108, +0.268]; region lead AUROC
 waves. Its QRS-combined variant scored 0.712 (-0.030) and beat the bar on the region test (B1 +0.029 [+0.020, +0.039]).
 C1_std 0.583. No single map from 062-065 beats the QRS prior on the primary; each is strong on a different axis, which
 sets up Experiment 066.
+
+066 (factorized combination with a learned lead-quality filter) is being implemented in `/tmp/ecg-wt-066`. Its primary map
+multiplies the 065 finding probabilities, the 065 per-lead evidence and a clinical component prior written before any
+score, painted over whole delineated waves; a diagnose-then-paint-the-textbook-region baseline tests whether it
+localizes beyond the diagnosis, and a lead-quality classifier trained on the PTB-XL noise notes tests noise suppression.

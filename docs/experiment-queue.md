@@ -795,3 +795,11 @@ finding's leads and waves was 0.616, +0.080 [-0.005, +0.171] over normal-normal 
 against the 062 population map; on 74 looser pairs it was worse than 062 (-0.088 [-0.154, -0.024]). A matched normal
 ECG of another patient worked as well as the patient's own. A single-ECG model trained on change maps scored ECGAD
 development A2 0.687 (-0.055 against `qrs_prior`, exploratory).
+
+[069](experiment-069-criteria-localizer-results.md) (measurement-based criteria localizer) is complete. Published
+criteria applied to per-lead measurements (own, GE 12SL and Philips Uni-G) match the bar (A2 0.724, -0.018 [-0.061,
++0.020]) and add nothing to `units_v2` (+0.0008). On the region test, which is independent for these label-free maps,
+they beat `qrs_prior` (B1 +0.048, B2 +0.054), but global criteria such as QRS duration paint every lead, so lead AUROC
+on ECGAD is at chance (0.495). With the QRS time prior first, the label-free `criteria_qrs` map reached 0.763 (+0.021
+[-0.000, +0.043]). Before the protocol freeze, pooled unit checks ran over whole PTB-XL+ feature files including folds
+9-10 (no labels or per-record values); this is disclosed in the protocol.

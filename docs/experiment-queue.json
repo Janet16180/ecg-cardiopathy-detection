@@ -3689,7 +3689,7 @@
     ]
   },
   "experiment_069_criteria": {
-    "status": "implementing",
+    "status": "complete",
     "authorized": true,
     "name": "Measurement-based criteria localizer",
     "branch": "exp/069-criteria",
@@ -3697,7 +3697,49 @@
     "resources": {
       "device": "cpu"
     },
-    "next_action": "Subagent writes the protocol, commits it before any score, runs and reports."
+    "next_action": "Matches the bar; adds nothing to units_v2. Label-free criteria_qrs 0.763 is the best map without region-table training.",
+    "protocol": "docs/experiment-069-criteria-localizer.md",
+    "results": "docs/experiment-069-criteria-localizer-results.md",
+    "output_dir": "outputs/experiment069_criteria_v1",
+    "source_commit": "23d043f",
+    "closed_data_note": "Before the protocol freeze, pooled unit and percentile checks ran over whole PTB-XL+ feature files, including folds 9-10 and ECGAD rows (no labels, marks or per-record values). Disclosed to the user.",
+    "reading": {
+      "criteria_A2": 0.7241,
+      "criteria_vs_bar": [
+        -0.0178,
+        -0.061,
+        0.02
+      ],
+      "criteria_vs_units_v2": [
+        -0.043,
+        -0.08,
+        -0.011
+      ],
+      "criteria_qrs_A2": 0.7631,
+      "criteria_qrs_vs_bar": [
+        0.0212,
+        -0.0003,
+        0.043
+      ],
+      "units_v2_criteria_vs_units_v2": [
+        0.0008,
+        -0.0011,
+        0.0026
+      ],
+      "criteria_B1_vs_bar": [
+        0.048,
+        0.036,
+        0.059
+      ],
+      "criteria_B2_vs_bar": [
+        0.054,
+        0.036,
+        0.071
+      ],
+      "criteria_A3": 0.495,
+      "criteria_C1_std": 0.526,
+      "criteria_D1": 0.876
+    }
   },
   "experiment_070_replacement": {
     "status": "implementing",

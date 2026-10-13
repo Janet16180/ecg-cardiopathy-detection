@@ -2155,6 +2155,22 @@
       "status": "open",
       "authorized": false,
       "notes": "Also calibrate the null per lead x bin to remove the PQ bias; check reading variability with near-simultaneous pairs."
+    },
+    {
+      "id": "loc_per_lead_interval_criteria",
+      "kind": "experiment",
+      "title": "Per-lead interval criteria and beat-level criteria",
+      "question": "Do criteria painted only on leads whose own interval exceeds the threshold (QRS, PR, QTc per lead) and beat-level criteria for focal beats recover lead localization?",
+      "evidence": "069: global criteria paint all 12 leads in 72% of marked ECGAD records, A3 0.495; region-test B1 +0.048 and B2 +0.054 over qrs_prior (independent for label-free maps).",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.5,
+      "build_hours": 3.0,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "Also: criteria evidence as patient-specific weak labels for the combiner; drop the source-disagreement reliability factor; ask about wide-P and V1 R/S rules that fire in 25% and 5.7% of clean normals."
     }
   ]
 }

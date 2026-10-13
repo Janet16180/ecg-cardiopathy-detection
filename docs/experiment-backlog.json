@@ -2003,6 +2003,24 @@
       "status": "open",
       "authorized": false,
       "notes": "Question for the cardiologist meeting (docs/cardiologist-meeting-prep.md); no compute."
+    },
+    {
+      "id": "loc_mil_wave_instances",
+      "kind": "experiment",
+      "title": "MIL heads with wave-level instances and sparse pooling",
+      "question": "Do statement-trained heads localize in time when instances are beat x lead x wave units with a 300 ms receptive field, top-k pooling and a separate rhythm branch?",
+      "evidence": "065: A3 0.644 (+0.188) and D1 0.962, but A4 -0.157 [-0.188, -0.122]; 1.1 s receptive field and log-mean-exp pooling light whole leads; 1AVB B1 0.555, LNGQT 0.476.",
+      "value": 4,
+      "clarity": 0.6,
+      "gpu_hours": 1.0,
+      "cpu_hours": 1.0,
+      "build_hours": 5.0,
+      "blocked_by": [
+        "experiment_066_combination"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": "Run after 066 shows whether a fixed component prior already recovers the time axis."
     }
   ]
 }

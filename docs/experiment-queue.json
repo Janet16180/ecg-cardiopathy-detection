@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-13T02:24:21.016408+00:00",
+  "updated_at_utc": "2026-10-13T02:49:31.112835+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -3369,7 +3369,7 @@
     }
   },
   "experiment_063_inpaint": {
-    "status": "implementing",
+    "status": "complete",
     "authorized": true,
     "name": "Masked cross-lead and cross-beat reconstruction",
     "branch": "exp/063-inpaint",
@@ -3377,7 +3377,30 @@
     "resources": {
       "device": "cuda"
     },
-    "next_action": "Subagent writes the protocol, implements and smoke-tests; scores with LocBench after 061 lands."
+    "next_action": "Negative; raw error channel is an input candidate for 066.",
+    "protocol": "docs/experiment-063-masked-reconstruction.md",
+    "results": "docs/experiment-063-masked-reconstruction-results.md",
+    "output_dir": "outputs/experiment063_inpaint_v1",
+    "source_commit": "da9dd67",
+    "reading": {
+      "primary_A2": 0.6017,
+      "primary_vs_bar": [
+        -0.1402,
+        -0.1716,
+        -0.1095
+      ],
+      "raw_A2": 0.709,
+      "v2_raw_qrs_combined_A2": 0.7317,
+      "v2_vs_bar": [
+        -0.0103,
+        -0.0221,
+        0.0015
+      ],
+      "v2_note": "post hoc, scored once",
+      "raw_A2_qrs": 0.597,
+      "v2_C1_std": 0.537,
+      "v2_D1": 0.78
+    }
   },
   "experiment_064_dino_knn": {
     "status": "implementing",

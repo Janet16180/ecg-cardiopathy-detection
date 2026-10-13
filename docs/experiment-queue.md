@@ -721,3 +721,8 @@ ECGAD development A2 0.694, -0.048 [-0.092, -0.007] against `qrs_prior`. It is t
 (A3 0.635, +0.179 over the bar) and for detection (D1 0.855 against U_B's 0.762); its loss is in time, because it
 puts evidence in ST, T and PR while the marks sit on QRS. Its declared prior-combined variant scored A2 0.753,
 +0.011 [-0.008, +0.031]. It feeds Experiment 066.
+
+[063](experiment-063-masked-reconstruction-results.md) (masked cross-lead and cross-beat reconstruction) is complete and
+negative: the primary z map scored A2 0.602, -0.140 [-0.172, -0.110] against `qrs_prior`; dividing by the predicted
+sigma removed the QRS emphasis and drew the map to real noise (C1_std 0.70). The raw error map scored 0.709, and the
+post-hoc QRS-combined version 0.732, -0.010 [-0.022, +0.002], with lead AUROC +0.106 over the bar and C1_std 0.537.

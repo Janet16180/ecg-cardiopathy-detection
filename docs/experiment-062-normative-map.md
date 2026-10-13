@@ -165,3 +165,25 @@ true, bar `qrs_prior`, A2 0.7419 [0.7082, 0.7743] on 92 records), but its result
    macro, C1 and D1 values and intervals in 061's `result.json` exactly. A failure stops the scoring.
 3. Scoring uses `scripts/experiments/run_locbench_score.py` once per variant, with `--compare` against the five
    061 baseline table folders.
+
+## Amendment 2 (12 October 2026, before any 062 score)
+
+Written after the coordinator's note that Experiment 061 is complete (`docs/experiment-061-locbench-results.md`;
+bar `qrs_prior`, A2 0.7419 [0.7082, 0.7743]) and that the cardiologist marks concentrate on QRS complexes (16.1%
+of samples, 35.9% of marks). Maps of the six declared variants had been built (`maps_receipt.json`), and no 062
+score had been computed. Branch `experiment/fragment-localization041` (061 complete plus its Amendment 2) is merged.
+
+1. QRS-stratified reading. After `run_locbench_score`, `scripts/experiments/run_locbench_strata.py` is run with
+   the `qrs_prior` tables as reference and the `residual056` tables and every 062 variant's tables
+   (061 Amendment 2: `A2_qrs` inside the 059 hybrid QRS mask, `A2_nonqrs` outside). Reported for the primary:
+   paired A2 against `qrs_prior` (the primary comparison, unchanged), and paired `A2_qrs` and `A2_nonqrs`
+   against `qrs_prior` and against `residual056`.
+2. One added declared variant, secondary and descriptive, combining a physiological prior with the anomaly
+   evidence: `qrs_lexicographic` = Q + u / (u + 5), where u is the `normative_v1` map and Q is 1 inside the
+   QRS onset-to-offset interval of each of the method's own delineated beats (after the alignment shift),
+   0 elsewhere. It ranks QRS above non-QRS samples, as `qrs_prior` does, and inside each stratum ranks by
+   the anomaly evidence instead of `qrs_prior`'s amplitude tiebreak; the squashing keeps float16 resolution.
+   `normative_v1` (anomaly evidence alone) stays the only primary; `qrs_lexicographic` is reported against
+   the bar with the same intervals but cannot change the primary verdict.
+3. Map storage: all maps are float16; the largest `normative_v1` value is about 93, far below the float16
+   limit, so no further transform is applied.

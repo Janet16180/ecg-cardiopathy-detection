@@ -83,15 +83,22 @@ def main() -> None:
     save_tables(tables, args.out / "tables")
     summary["paired"] = compare(tables, args.compare)
     summary["inputs"] = {
-        "maps": str(args.maps), "maps_sha256": sha256_file(args.maps), "maps_dtype": str(maps.dtype),
-        "ids": str(args.ids), "ids_sha256": sha256_file(args.ids),
+        "maps": str(args.maps),
+        "maps_sha256": sha256_file(args.maps),
+        "maps_dtype": str(maps.dtype),
+        "ids": str(args.ids),
+        "ids_sha256": sha256_file(args.ids),
     }
     summary["benchmark_counts"] = bench.counts
     summary["code_commit"] = git_head(ROOT)
     summary["seconds"] = time.perf_counter() - began
     write_json_atomic(args.out / "summary.json", summary)
-    LOG.info("A2 %.4f [%.4f, %.4f]", summary["metrics"]["A2"]["value"], summary["metrics"]["A2"]["ci_low"],
-             summary["metrics"]["A2"]["ci_high"])
+    LOG.info(
+        "A2 %.4f [%.4f, %.4f]",
+        summary["metrics"]["A2"]["value"],
+        summary["metrics"]["A2"]["ci_low"],
+        summary["metrics"]["A2"]["ci_high"],
+    )
 
 
 if __name__ == "__main__":

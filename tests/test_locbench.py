@@ -78,13 +78,23 @@ def test_interval_mask_is_half_open() -> None:
 
 def test_pairing_rules_on_synthetic_annotation() -> None:
     marks = [
-        (100, "p-wave onset"), (140, "p-wave offset"), (160, "QRS onset"), (210, "QRS offset"),
-        (300, "t-wave onset"), (420, "t-wave offset"),
+        (100, "p-wave onset"),
+        (140, "p-wave offset"),
+        (160, "QRS onset"),
+        (210, "QRS offset"),
+        (300, "t-wave onset"),
+        (420, "t-wave offset"),
         # Second beat: P onset without offset, and an extra P onset before the next.
-        (600, "p-wave onset"), (650, "p-wave onset"), (700, "p-wave offset"), (720, "QRS onset"),
+        (600, "p-wave onset"),
+        (650, "p-wave onset"),
+        (700, "p-wave offset"),
+        (720, "QRS onset"),
         (900, "QRS offset"),
         # Third beat: QRS offset too far from onset; T offset beyond 300 samples.
-        (1200, "QRS onset"), (1400, "QRS offset"), (1500, "t-wave onset"), (1850, "t-wave offset"),
+        (1200, "QRS onset"),
+        (1400, "QRS offset"),
+        (1500, "t-wave onset"),
+        (1850, "t-wave offset"),
     ]
     samples = np.array([sample for sample, _ in marks])
     notes = [note for _, note in marks]
@@ -94,8 +104,11 @@ def test_pairing_rules_on_synthetic_annotation() -> None:
     assert components["QRS"].tolist() == [[160, 210]]
     assert components["ST"].tolist() == [[210, 300], [1400, 1500]]
     assert components["T"].tolist() == [[300, 420]]
-    assert pair_marks(samples, notes, "QRS onset", "QRS offset", 200).tolist() == [[160, 210], [720, 900],
-                                                                                   [1200, 1400]]
+    assert pair_marks(samples, notes, "QRS onset", "QRS offset", 200).tolist() == [
+        [160, 210],
+        [720, 900],
+        [1200, 1400],
+    ]
 
 
 def test_precision_at_top_counts_ties_by_expectation() -> None:
@@ -123,16 +136,35 @@ def synthetic_tables(seed: int) -> dict:
     rng = np.random.default_rng(seed)
     patients = np.repeat(np.arange(40), 2)
     marked = rng.random(80) < 0.5
-    ecgad = pd.DataFrame({"ecg_id": np.arange(80), "patient_id": patients, "marked": marked,
-                          "A2": np.where(marked, rng.random(80), np.nan), "record_score": rng.random(80)})
+    ecgad = pd.DataFrame(
+        {
+            "ecg_id": np.arange(80),
+            "patient_id": patients,
+            "marked": marked,
+            "A2": np.where(marked, rng.random(80), np.nan),
+            "record_score": rng.random(80),
+        }
+    )
     for column in ("A3", "A4", "A6", "marked_share"):
         ecgad[column] = ecgad["A2"]
     labels = rng.random((80, 200)) < 0.2
     positive, negative, exact = a1_histograms(rng.random((80, 200)) + labels, labels, bins=1024)
-    detection = pd.DataFrame({"ecg_id": np.arange(80), "patient_id": patients, "y": rng.integers(0, 2, 80),
-                              "record_score": rng.random(80)})
-    return {"name": "synthetic", "ecgad": ecgad, "detection": detection, "a1_positive": positive,
-            "a1_negative": negative, "a1_exact": exact}
+    detection = pd.DataFrame(
+        {
+            "ecg_id": np.arange(80),
+            "patient_id": patients,
+            "y": rng.integers(0, 2, 80),
+            "record_score": rng.random(80),
+        }
+    )
+    return {
+        "name": "synthetic",
+        "ecgad": ecgad,
+        "detection": detection,
+        "a1_positive": positive,
+        "a1_negative": negative,
+        "a1_exact": exact,
+    }
 
 
 def test_bootstrap_is_reproducible_and_paired() -> None:
@@ -150,3 +182,20 @@ def test_bootstrap_is_reproducible_and_paired() -> None:
     assert shifted["value"] == pytest.approx(0.1)
     assert shifted["ci_low"] == pytest.approx(0.1)
     assert metric_interval(tables, "A2", draws=200)["records"] == int(tables["ecgad"]["marked"].sum())
+
+
+def test_unit_field_takes_maximum_and_fills_minimum() -> None:
+    from ecg_experiment.lead_wave_maps import UnitMap
+    from ecg_experiment.locbench_baselines061 import random_map, unit_field
+
+    units = UnitMap(
+        np.array([2.0, 5.0, 3.0]), np.array([0, 0, 4]), np.array([0.2, 0.21, 1.0]), np.array([0.3, 0.25, 1.1])
+    )
+    field = unit_field(units)
+    assert field[0, 100:105].tolist() == [2.0] * 5
+    assert field[0, 105:125].tolist() == [5.0] * 20
+    assert field[4, 500:550].tolist() == [3.0] * 50
+    assert field[1].tolist() == [2.0] * 5000
+    assert unit_field(UnitMap(np.array([]), np.array([]), np.array([]), np.array([]))) is None
+    assert np.array_equal(random_map(7), random_map(7))
+    assert not np.array_equal(random_map(7), random_map(8))

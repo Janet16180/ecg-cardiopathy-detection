@@ -325,8 +325,13 @@ def _noise_set(
         leads = [lead for lead in record.noisy_leads.split(";") if lead]
         if not 1 <= len(leads) <= len(LEADS) - 1:
             continue
-        rows.append({"ecg_id": int(record.ecg_id), "patient_id": int(record.patient_id),
-                     "noisy_leads": record.noisy_leads})
+        rows.append(
+            {
+                "ecg_id": int(record.ecg_id),
+                "patient_id": int(record.patient_id),
+                "noisy_leads": record.noisy_leads,
+            }
+        )
         masks.append(np.isin(LEADS, leads))
     return pd.DataFrame(rows), np.array(masks)
 
@@ -349,8 +354,10 @@ def build_benchmark() -> Benchmark:
     clean = evaluation[evaluation["clean_normal"]][["ecg_id", "patient_id"]].reset_index(drop=True)
     positive = np.array(
         [
-            any(likelihood >= 50 and classes.get(code) in DETECTION_CLASSES
-                for code, likelihood in meta.at[ecg_id, "scp_codes"].items())
+            any(
+                likelihood >= 50 and classes.get(code) in DETECTION_CLASSES
+                for code, likelihood in meta.at[ecg_id, "scp_codes"].items()
+            )
             for ecg_id in evaluation["ecg_id"]
         ]
     )
@@ -358,13 +365,19 @@ def build_benchmark() -> Benchmark:
     detection = evaluation[keep][["ecg_id", "patient_id"]].reset_index(drop=True)
     detection["y"] = positive[keep].astype(int)
     counts = {
-        "ecgad_development": {"records": len(ecgad), "patients": int(ecgad["patient_id"].nunique()),
-                              "marked": int(ecgad["marked"].sum())},
+        "ecgad_development": {
+            "records": len(ecgad),
+            "patients": int(ecgad["patient_id"].nunique()),
+            "marked": int(ecgad["marked"].sum()),
+        },
         "region": region_counts,
         "noise": {"records": len(noise), "patients": int(noise["patient_id"].nunique())},
         "clean_normals": {"records": len(clean), "patients": int(clean["patient_id"].nunique())},
-        "detection": {"records": len(detection), "positives": int(detection["y"].sum()),
-                      "patients": int(detection["patient_id"].nunique())},
+        "detection": {
+            "records": len(detection),
+            "positives": int(detection["y"].sum()),
+            "patients": int(detection["patient_id"].nunique()),
+        },
     }
     return Benchmark(
         ecgad, labels, region, region_leads, region_time, noise, noise_leads, clean, detection, counts
@@ -728,8 +741,9 @@ def record_tables(
         record_map = _record_map(maps, int(position[ecg_id]))
         leads[row] = lead_scores(record_map)
         records[row] = record_score(record_map)
-    record_table = pd.DataFrame({"ecg_id": scored, "patient_id": patients.loc[scored].to_numpy(),
-                                 "record_score": records})
+    record_table = pd.DataFrame(
+        {"ecg_id": scored, "patient_id": patients.loc[scored].to_numpy(), "record_score": records}
+    )
     for index, lead in enumerate(LEADS):
         record_table[f"lead_{lead}"] = leads[:, index]
     score_of = record_table.set_index("ecg_id")["record_score"]
@@ -975,8 +989,14 @@ def metric_interval(
     ids, patients, statistic, point = metric_statistic(tables, metric)
     values, skipped = _bootstrap(patients, [statistic], draws, seed)
     low, high = np.percentile(values[:, 0], [2.5, 97.5])
-    return {"value": point, "ci_low": float(low), "ci_high": float(high), "records": len(ids),
-            "patients": int(len(np.unique(patients))), "skipped_draws": skipped}
+    return {
+        "value": point,
+        "ci_low": float(low),
+        "ci_high": float(high),
+        "records": len(ids),
+        "patients": int(len(np.unique(patients))),
+        "skipped_draws": skipped,
+    }
 
 
 def summarize(tables: dict[str, Any], draws: int = DRAWS, seed: int = SEED) -> dict[str, Any]:
@@ -997,8 +1017,10 @@ def summarize(tables: dict[str, Any], draws: int = DRAWS, seed: int = SEED) -> d
     dict[str, Any]
         ``name``, ``metrics`` keyed by ``metric_names`` and ``a1_check`` (exact, binned, absolute difference).
     """
-    binned = binned_auroc(tables["a1_positive"].sum(axis=0).astype(np.float64),
-                          tables["a1_negative"].sum(axis=0).astype(np.float64))
+    binned = binned_auroc(
+        tables["a1_positive"].sum(axis=0).astype(np.float64),
+        tables["a1_negative"].sum(axis=0).astype(np.float64),
+    )
     difference = abs(binned - float(tables["a1_exact"]))
     if difference > A1_TOLERANCE:
         raise ValueError(f"Binned A1 differs from exact by {difference}")
@@ -1042,9 +1064,16 @@ def paired_difference(
         raise ValueError(f"Populations of {metric} differ between methods")
     values, skipped = _bootstrap(patients, [statistic_a, statistic_b], draws, seed)
     low, high = np.percentile(values[:, 0] - values[:, 1], [2.5, 97.5])
-    return {"value": point_a - point_b, "ci_low": float(low), "ci_high": float(high),
-            "a": point_a, "b": point_b,
-            "records": len(ids_a), "patients": int(len(np.unique(patients))), "skipped_draws": skipped}
+    return {
+        "value": point_a - point_b,
+        "ci_low": float(low),
+        "ci_high": float(high),
+        "a": point_a,
+        "b": point_b,
+        "records": len(ids_a),
+        "patients": int(len(np.unique(patients))),
+        "skipped_draws": skipped,
+    }
 
 
 TABLE_FRAMES = ("records", "ecgad", "region", "noise_control", "detection")
@@ -1064,11 +1093,15 @@ def save_tables(tables: dict[str, Any], folder: Path) -> None:
     folder.mkdir(parents=True, exist_ok=True)
     for frame in TABLE_FRAMES:
         tables[frame].to_csv(folder / f"{frame}.csv", index=False, float_format="%.17g")
-    np.savez_compressed(folder / "a1_histograms.npz", positive=tables["a1_positive"],
-                        negative=tables["a1_negative"])
+    np.savez_compressed(
+        folder / "a1_histograms.npz", positive=tables["a1_positive"], negative=tables["a1_negative"]
+    )
     np.save(folder / "ecgad_maps.npy", tables["ecgad_maps"].astype(np.float32))
-    meta = {"name": tables["name"], "a1_exact": float(tables["a1_exact"]),
-            "ecgad_ecg_ids": tables["ecgad"]["ecg_id"].astype(int).tolist()}
+    meta = {
+        "name": tables["name"],
+        "a1_exact": float(tables["a1_exact"]),
+        "ecgad_ecg_ids": tables["ecgad"]["ecg_id"].astype(int).tolist(),
+    }
     (folder / "meta.json").write_text(json.dumps(meta, indent=1))
 
 

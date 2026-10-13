@@ -3547,5 +3547,16 @@
       "noise_suppression_adopted": false,
       "quality_classifier_lead_auroc": 0.728
     }
+  },
+  "experiment_068_combiner_v2": {
+    "status": "implementing",
+    "authorized": true,
+    "name": "Learned unit combiner v2 with cross-fitted MIL evidence",
+    "branch": "exp/068-combiner-v2",
+    "worktree": "/tmp/ecg-wt-068",
+    "resources": {
+      "device": "cuda (MIL cross-fit), cpu"
+    },
+    "next_action": "Subagent writes the protocol, cross-fits MIL over the fit partition, trains the combiner on all region-statement records, scores and reports; runs before 067."
   }
 }

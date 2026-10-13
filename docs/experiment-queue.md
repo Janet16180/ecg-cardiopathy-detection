@@ -755,3 +755,8 @@ follow QRS more than the statements predict. A small combiner learned on 289 fit
 development A2 so far, 0.760 (+0.018 [-0.020, +0.058] against the bar, +0.036 [+0.011, +0.062] against `factor`), and
 the best within-QRS reading (A2_qrs 0.641). The learned lead-quality filter (lead AUROC 0.728 on fit noise records)
 lowered C1_std only from 0.580 to 0.563 and was not adopted.
+
+068 (learned unit combiner v2) is being implemented in `/tmp/ecg-wt-068`: it retrains the 065 heads in five patient folds
+over the fit partition so the 066 combiner can learn from every fit record with a region statement (about seven times
+the 289 records 066 used), and adds a softened lead factor. It runs before 067, whose candidates gain `units_v2` only if
+its development A2 exceeds 0.760.

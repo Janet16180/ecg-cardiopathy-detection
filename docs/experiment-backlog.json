@@ -2121,6 +2121,40 @@
       "status": "open",
       "authorized": false,
       "notes": "Combine with the ASMI question for the cardiologist."
+    },
+    {
+      "id": "loc_serial_closed_folds",
+      "kind": "experiment",
+      "title": "Serial pairs from PTB-XL folds 9 and 10 outside ECGAD",
+      "question": "With more same-patient pairs, does a patient's own earlier normal ECG localize new findings better than a population or matched-stranger reference?",
+      "evidence": "071: 20 primary evaluation pairs; serial minus null +0.080 [-0.005, +0.171]; matched stranger as good as own baseline.",
+      "value": 2,
+      "clarity": 0.5,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.5,
+      "build_hours": 2.0,
+      "blocked_by": [
+        "user approval to read folds 9-10 outside ECGAD"
+      ],
+      "status": "blocked",
+      "authorized": false,
+      "notes": "Folds 9-10 are part of the final test; needs the user's decision."
+    },
+    {
+      "id": "loc_serial_st_t",
+      "kind": "experiment",
+      "title": "Serial change for ST-T findings only",
+      "question": "Does serial or matched-stranger change evidence, restricted to ST and T and combined with a population map, help ischemia and injury localization?",
+      "evidence": "071 descriptive: serial beat 062 and qrs_prior in ST-T families (2-7 records each; ST injury 0.698 vs 0.300 and 0.376).",
+      "value": 2,
+      "clarity": 0.4,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.5,
+      "build_hours": 2.0,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "Also calibrate the null per lead x bin to remove the PQ bias; check reading variability with near-simultaneous pairs."
     }
   ]
 }

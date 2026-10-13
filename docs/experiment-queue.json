@@ -3711,7 +3711,7 @@
     "next_action": "Subagent writes the protocol, commits it before any score, runs and reports."
   },
   "experiment_071_serial": {
-    "status": "implementing",
+    "status": "complete",
     "authorized": true,
     "name": "Same-patient serial change maps",
     "branch": "exp/071-serial",
@@ -3719,7 +3719,41 @@
     "resources": {
       "device": "cpu"
     },
-    "next_action": "Subagent writes the protocol, commits it before any score, runs and reports."
+    "next_action": "Negative/inconclusive: own-patient baseline adds nothing over a matched stranger or the 062 population map.",
+    "protocol": "docs/experiment-071-serial.md",
+    "results": "docs/experiment-071-serial-results.md",
+    "output_dir": "outputs/experiment071_serial_v1",
+    "source_commit": "350ccd5",
+    "reading": {
+      "forward_pairs_evaluation": 20,
+      "serial_B1u": 0.616,
+      "serial_minus_null": [
+        0.08,
+        -0.005,
+        0.171
+      ],
+      "serial_minus_normative062": [
+        -0.007,
+        -0.17,
+        0.12
+      ],
+      "finding_free_serial_minus_normative062": [
+        -0.088,
+        -0.154,
+        -0.024
+      ],
+      "cross_minus_null_forward": [
+        0.112,
+        0.036,
+        0.182
+      ],
+      "serial_units_ECGAD_dev_A2": 0.687,
+      "serial_units_vs_bar": [
+        -0.055,
+        -0.098,
+        -0.013
+      ]
+    }
   },
   "experiment_072_dino_v2": {
     "status": "implementing",

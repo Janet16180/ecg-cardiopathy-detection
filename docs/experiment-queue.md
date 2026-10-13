@@ -788,3 +788,10 @@ of unsupervised experiments that need none ([plan](localization-program-2-2026-1
 criteria localizer), 070 (replacement faithfulness test of every map), 071 (same-patient serial change maps) and 072
 (SimDINO v2 on whole records with lead-local tokens) are being implemented in separate worktrees. ECGAD development
 readings are exploratory from now on; the holdout is spent.
+
+[071](experiment-071-serial-results.md) (same-patient serial change maps) is complete and inconclusive to negative. Only
+20 evaluation pairs have a normal ECG followed by a new region statement. The change map's unit AUROC for the new
+finding's leads and waves was 0.616, +0.080 [-0.005, +0.171] over normal-normal pairs and -0.007 [-0.170, +0.120]
+against the 062 population map; on 74 looser pairs it was worse than 062 (-0.088 [-0.154, -0.024]). A matched normal
+ECG of another patient worked as well as the patient's own. A single-ECG model trained on change maps scored ECGAD
+development A2 0.687 (-0.055 against `qrs_prior`, exploratory).

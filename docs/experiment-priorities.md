@@ -93,57 +93,61 @@ penalty; one that ranks high earns a protocol like any other.
 | 27 | challenge_data_quality_note | repo | Short write-up of the Challenge 2021 and CODE-15 data problems | 3 | 0.8 | 6.0 | 0.98 | - |
 | 28 | multitask_head | experiment | Multi-label auxiliary head on frozen features versus the binary head | 3 | 0.6 | 3.5 | 0.96 | - |
 | 29 | ecgad_benchmark_readout | experiment | The 026 score on the public PTB-XL anomaly-detection split | 3 | 0.6 | 3.5 | 0.96 | - |
-| 30 | shared_readout_module | repo | One shared frozen-readout module for new experiments | 2 | 0.8 | 3.0 | 0.92 | - |
-| 31 | loc_mil_wave_instances | experiment | MIL heads with wave-level instances and sparse pooling | 4 | 0.6 | 7.0 | 0.91 | - |
-| 32 | echo_multitask_transfer | experiment | Do ECG-abnormality labels reduce the echo labels needed? | 3 | 0.6 | 4.0 | 0.90 | - |
-| 33 | explanation_thresholds_local_normals | repo | Fit the explanation's switch and red thresholds on the site's local normals | 2 | 0.6 | 1.8 | 0.89 | - |
-| 34 | near_duplicates | repo | Near-duplicate pass across Challenge sources | 3 | 0.7 | 6.0 | 0.86 | - |
-| 35 | rate_adaptive_wave_windows | experiment | Beat-aligned wave windows that follow QRS width and QT | 3 | 0.5 | 3.3 | 0.83 | - |
-| 36 | quality_policy_v2 | repo | Quality policy v2 review flags (edge zero runs, short dropouts) | 2 | 0.8 | 4.0 | 0.80 | - |
-| 37 | loc_lead_local_encoder | experiment | Lead-local encoder or scoring with an Einthoven consistency check | 4 | 0.6 | 9.0 | 0.80 | - |
-| 38 | device_control | experiment | Device-controlled probes (drop or balance CS100 3) | 2 | 0.6 | 2.3 | 0.79 | - |
-| 39 | loc_new_weak_signal | experiment | New weak supervision for localization: beat-level ectopy labels and fit-partition wave timing | 4 | 0.5 | 6.5 | 0.78 | - |
-| 40 | prototype_head | experiment | Learned prototype head anchored to real training ECGs | 4 | 0.6 | 10.0 | 0.76 | - |
-| 41 | ecg_age_gap | wild | ECG heart age: predicted minus real age as a risk signal | 3 | 0.5 | 4.0 | 0.75 | - |
-| 42 | highpass_ablation | experiment | Zero-phase 0.5 Hz high-pass as a harmonization arm | 3 | 0.6 | 6.5 | 0.71 | - |
-| 43 | vcg_qrst_angle | wild | Vectorcardiogram features: spatial QRS-T angle and loop shape | 3 | 0.6 | 7.0 | 0.68 | - |
-| 44 | pvc_score_ensemble | experiment | Unfitted mean of the xECG PVC z-score and the attention PVC logit | 2 | 0.5 | 2.5 | 0.63 | - |
-| 45 | loc_region_family_growth | experiment | Grow WPW and lateral MI region families to 20 records | 2 | 0.5 | 2.5 | 0.63 | - |
-| 46 | weighted_ensemble | experiment | Ensemble weights fitted on the 043 validation split | 2 | 0.4 | 1.7 | 0.61 | - |
-| 47 | domain_adversarial | wild | Device-adversarial readout (gradient reversal against source) | 3 | 0.5 | 6.0 | 0.61 | - |
-| 48 | crop_tta | experiment | 2.5 s crops with test-time averaging for frozen readouts | 2 | 0.6 | 4.0 | 0.60 | - |
-| 49 | e017_second_seed | experiment | 017 morphology-template second-seed replication | 2 | 0.6 | 4.0 | 0.60 | - |
-| 50 | loc_inpaint_v2 | experiment | Masked reconstruction v2: sigma trained on noisy records, lead-group masks over ST/T | 3 | 0.6 | 9.0 | 0.60 | - |
-| 51 | token_only_explanation | experiment | Two-colour explanation from the tokens alone (attention_pvc for rhythm, attention_jepa for morphology) | 2 | 0.4 | 2.5 | 0.51 | - |
-| 52 | llm_measurement_reader | wild | LLM reading PTB-XL measurements as text | 2 | 0.4 | 6.0 | 0.33 | - |
-| 53 | cpc_pretrain_cohorts_v2 | experiment | CPC continued pretraining on quality-first cohorts v2 | 2 | 0.5 | 11.0 | 0.30 | - |
-| 54 | raw_signal_detector_baseline | experiment | A raw-signal one-class detector trained on the same normals | 2 | 0.5 | 11.5 | 0.29 | - |
-| 55 | tsfm_transfer | wild | Frozen general time-series or audio foundation models as ECG encoders | 2 | 0.4 | 8.0 | 0.28 | - |
-| 56 | cnn_transformer_pretraining | experiment | Self-supervised pretraining of the tutor's CNN + transformer on cohorts v4 | 3 | 0.4 | 19.0 | 0.28 | - |
-| 57 | vcg_rotation_ssl | wild | Heart-axis rotation augmentation via VCG projection | 3 | 0.3 | 16.0 | 0.22 | - |
-| 58 | core_lead_masking | experiment | CoRe-style lead-drop masking in CPC pretraining | 2 | 0.4 | 14.0 | 0.21 | - |
-| 59 | clustering_multisource | experiment | Source-controlled clustering of multi-source embeddings | 1 | 0.4 | 7.0 | 0.15 | - |
-| 60 | report_alignment | experiment | ECG-report alignment with PTB-XL cardiologist reports | 2 | 0.3 | 25.0 | 0.12 | - |
-| 61 | cpc_simdino_resource_plan040 | repo | Prospective resource plan for the fixed Transformer objective factorial | 3 | 0.9 | 0.6 | 3.49 | @fresh_compute_budget_authorization |
-| 62 | cardiologist_region_marks | repo | Page for the cardiologist to mark abnormal leads and waves | 5 | 0.8 | 3.0 | 3.23 | @cardiologist_meeting |
-| 63 | final_frozen_test | experiment | One-time confirmatory test of the frozen pipeline on untouched data | 5 | 0.9 | 3.0 | 3.12 | @user_freeze_decision |
-| 64 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
-| 65 | cpu_timing_clinic_laptop | repo | Rerun the CPU timing script on the clinic laptop | 3 | 0.9 | 1.2 | 2.46 | @clinic_laptop_available |
-| 66 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
-| 67 | norm_reference_ectopy_review | repo | Cardiologist review of NORM-only normals with one extreme beat | 3 | 0.7 | 1.1 | 2.00 | @cardiologist_meeting |
-| 68 | qrs_support_anomaly_integration | experiment | Integrate adaptive QRS support with anomaly highlights | 5 | 0.6 | 3.2 | 1.68 | cardiologist_region_marks |
-| 69 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
-| 70 | loc_textbook_vs_combiner_power | experiment | Separate the learned combiner from textbook painting | 3 | 0.6 | 1.5 | 1.47 | loc_new_marked_test_set |
-| 71 | loc_conduction_component_weight | experiment | Conduction-aware component weight after the cardiologist's view | 3 | 0.6 | 2.5 | 1.14 | loc_asmi_mark_review |
-| 72 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
-| 73 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
-| 74 | benign_variant_contrast | experiment | Teach the map that benign rhythm variants are normal | 3 | 0.4 | 2.2 | 0.81 | @cardiologist_meeting |
-| 75 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
-| 76 | aligned_residual_tail_resolution | experiment | Continuous normal residual tails after expert region review | 3 | 0.4 | 3.3 | 0.66 | cardiologist_region_marks |
-| 77 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
-| 78 | pvc_switch_specificity | experiment | A more specific rhythm switch for 048's explanation | 2 | 0.4 | 2.3 | 0.53 | other_referrals_cardiologist |
-| 79 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
-| 80 | jepa_finetune_attention | experiment | Fine-tune ECG-JEPA end to end under the attention head | 2 | 0.3 | 12.5 | 0.17 | @user_decision |
+| 30 | loc_per_lead_interval_criteria | experiment | Per-lead interval criteria and beat-level criteria | 3 | 0.6 | 3.5 | 0.96 | - |
+| 31 | shared_readout_module | repo | One shared frozen-readout module for new experiments | 2 | 0.8 | 3.0 | 0.92 | - |
+| 32 | loc_mil_wave_instances | experiment | MIL heads with wave-level instances and sparse pooling | 4 | 0.6 | 7.0 | 0.91 | - |
+| 33 | echo_multitask_transfer | experiment | Do ECG-abnormality labels reduce the echo labels needed? | 3 | 0.6 | 4.0 | 0.90 | - |
+| 34 | explanation_thresholds_local_normals | repo | Fit the explanation's switch and red thresholds on the site's local normals | 2 | 0.6 | 1.8 | 0.89 | - |
+| 35 | near_duplicates | repo | Near-duplicate pass across Challenge sources | 3 | 0.7 | 6.0 | 0.86 | - |
+| 36 | rate_adaptive_wave_windows | experiment | Beat-aligned wave windows that follow QRS width and QT | 3 | 0.5 | 3.3 | 0.83 | - |
+| 37 | quality_policy_v2 | repo | Quality policy v2 review flags (edge zero runs, short dropouts) | 2 | 0.8 | 4.0 | 0.80 | - |
+| 38 | loc_lead_local_encoder | experiment | Lead-local encoder or scoring with an Einthoven consistency check | 4 | 0.6 | 9.0 | 0.80 | - |
+| 39 | device_control | experiment | Device-controlled probes (drop or balance CS100 3) | 2 | 0.6 | 2.3 | 0.79 | - |
+| 40 | loc_new_weak_signal | experiment | New weak supervision for localization: beat-level ectopy labels and fit-partition wave timing | 4 | 0.5 | 6.5 | 0.78 | - |
+| 41 | prototype_head | experiment | Learned prototype head anchored to real training ECGs | 4 | 0.6 | 10.0 | 0.76 | - |
+| 42 | ecg_age_gap | wild | ECG heart age: predicted minus real age as a risk signal | 3 | 0.5 | 4.0 | 0.75 | - |
+| 43 | highpass_ablation | experiment | Zero-phase 0.5 Hz high-pass as a harmonization arm | 3 | 0.6 | 6.5 | 0.71 | - |
+| 44 | vcg_qrst_angle | wild | Vectorcardiogram features: spatial QRS-T angle and loop shape | 3 | 0.6 | 7.0 | 0.68 | - |
+| 45 | pvc_score_ensemble | experiment | Unfitted mean of the xECG PVC z-score and the attention PVC logit | 2 | 0.5 | 2.5 | 0.63 | - |
+| 46 | loc_region_family_growth | experiment | Grow WPW and lateral MI region families to 20 records | 2 | 0.5 | 2.5 | 0.63 | - |
+| 47 | loc_serial_closed_folds | experiment | Serial pairs from PTB-XL folds 9 and 10 outside ECGAD | 2 | 0.5 | 2.5 | 0.63 | - |
+| 48 | weighted_ensemble | experiment | Ensemble weights fitted on the 043 validation split | 2 | 0.4 | 1.7 | 0.61 | - |
+| 49 | domain_adversarial | wild | Device-adversarial readout (gradient reversal against source) | 3 | 0.5 | 6.0 | 0.61 | - |
+| 50 | crop_tta | experiment | 2.5 s crops with test-time averaging for frozen readouts | 2 | 0.6 | 4.0 | 0.60 | - |
+| 51 | e017_second_seed | experiment | 017 morphology-template second-seed replication | 2 | 0.6 | 4.0 | 0.60 | - |
+| 52 | loc_inpaint_v2 | experiment | Masked reconstruction v2: sigma trained on noisy records, lead-group masks over ST/T | 3 | 0.6 | 9.0 | 0.60 | - |
+| 53 | token_only_explanation | experiment | Two-colour explanation from the tokens alone (attention_pvc for rhythm, attention_jepa for morphology) | 2 | 0.4 | 2.5 | 0.51 | - |
+| 54 | loc_serial_st_t | experiment | Serial change for ST-T findings only | 2 | 0.4 | 2.5 | 0.51 | - |
+| 55 | loc_replacement_energy_matched | experiment | Energy-matched replacement test with record-specific counterpart and insertion arm | 2 | 0.6 | 6.0 | 0.49 | - |
+| 56 | llm_measurement_reader | wild | LLM reading PTB-XL measurements as text | 2 | 0.4 | 6.0 | 0.33 | - |
+| 57 | cpc_pretrain_cohorts_v2 | experiment | CPC continued pretraining on quality-first cohorts v2 | 2 | 0.5 | 11.0 | 0.30 | - |
+| 58 | raw_signal_detector_baseline | experiment | A raw-signal one-class detector trained on the same normals | 2 | 0.5 | 11.5 | 0.29 | - |
+| 59 | tsfm_transfer | wild | Frozen general time-series or audio foundation models as ECG encoders | 2 | 0.4 | 8.0 | 0.28 | - |
+| 60 | cnn_transformer_pretraining | experiment | Self-supervised pretraining of the tutor's CNN + transformer on cohorts v4 | 3 | 0.4 | 19.0 | 0.28 | - |
+| 61 | vcg_rotation_ssl | wild | Heart-axis rotation augmentation via VCG projection | 3 | 0.3 | 16.0 | 0.22 | - |
+| 62 | core_lead_masking | experiment | CoRe-style lead-drop masking in CPC pretraining | 2 | 0.4 | 14.0 | 0.21 | - |
+| 63 | clustering_multisource | experiment | Source-controlled clustering of multi-source embeddings | 1 | 0.4 | 7.0 | 0.15 | - |
+| 64 | report_alignment | experiment | ECG-report alignment with PTB-XL cardiologist reports | 2 | 0.3 | 25.0 | 0.12 | - |
+| 65 | cpc_simdino_resource_plan040 | repo | Prospective resource plan for the fixed Transformer objective factorial | 3 | 0.9 | 0.6 | 3.49 | @fresh_compute_budget_authorization |
+| 66 | cardiologist_region_marks | repo | Page for the cardiologist to mark abnormal leads and waves | 5 | 0.8 | 3.0 | 3.23 | @cardiologist_meeting |
+| 67 | final_frozen_test | experiment | One-time confirmatory test of the frozen pipeline on untouched data | 5 | 0.9 | 3.0 | 3.12 | @user_freeze_decision |
+| 68 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
+| 69 | cpu_timing_clinic_laptop | repo | Rerun the CPU timing script on the clinic laptop | 3 | 0.9 | 1.2 | 2.46 | @clinic_laptop_available |
+| 70 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
+| 71 | norm_reference_ectopy_review | repo | Cardiologist review of NORM-only normals with one extreme beat | 3 | 0.7 | 1.1 | 2.00 | @cardiologist_meeting |
+| 72 | qrs_support_anomaly_integration | experiment | Integrate adaptive QRS support with anomaly highlights | 5 | 0.6 | 3.2 | 1.68 | cardiologist_region_marks |
+| 73 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
+| 74 | loc_textbook_vs_combiner_power | experiment | Separate the learned combiner from textbook painting | 3 | 0.6 | 1.5 | 1.47 | loc_new_marked_test_set |
+| 75 | loc_conduction_component_weight | experiment | Conduction-aware component weight after the cardiologist's view | 3 | 0.6 | 2.5 | 1.14 | loc_asmi_mark_review |
+| 76 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
+| 77 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
+| 78 | benign_variant_contrast | experiment | Teach the map that benign rhythm variants are normal | 3 | 0.4 | 2.2 | 0.81 | @cardiologist_meeting |
+| 79 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
+| 80 | aligned_residual_tail_resolution | experiment | Continuous normal residual tails after expert region review | 3 | 0.4 | 3.3 | 0.66 | cardiologist_region_marks |
+| 81 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
+| 82 | pvc_switch_specificity | experiment | A more specific rhythm switch for 048's explanation | 2 | 0.4 | 2.3 | 0.53 | other_referrals_cardiologist |
+| 83 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
+| 84 | jepa_finetune_attention | experiment | Fine-tune ECG-JEPA end to end under the attention head | 2 | 0.3 | 12.5 | 0.17 | @user_decision |
 
 Reruns after Ningbo (`rerun_of` in the backlog): 022 as `ningbo_sph_transfer`, 024 as `rerun_024_multisource`,
 025 as `rerun_025_ningbo`, 026 as `multisource_normal_manifold` and 027 as `multisource_calibration`. 023 is

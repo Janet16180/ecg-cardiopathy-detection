@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-13T02:49:31.112835+00:00",
+  "updated_at_utc": "2026-10-13T21:44:46.240004+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -3742,7 +3742,7 @@
     }
   },
   "experiment_070_replacement": {
-    "status": "implementing",
+    "status": "complete",
     "authorized": true,
     "name": "Replacement faithfulness test of localization maps",
     "branch": "exp/070-replacement",
@@ -3750,7 +3750,42 @@
     "resources": {
       "device": "cpu, brief cuda"
     },
-    "next_action": "Subagent writes the protocol, commits it before any score, runs and reports."
+    "next_action": "Replacement test does not track ECGAD marks: qrs_prior more faithful than units_v2 under both detectors; detector (a) drop follows replaced energy. Whole-lead variant favours 065-based maps. Kept as a lead check only.",
+    "protocol": "docs/experiment-070-replacement.md",
+    "results": "docs/experiment-070-replacement-results.md",
+    "output_dir": "outputs/experiment070_replacement_v1",
+    "source_commit": "75bf466",
+    "integrity_failure": "Random map S(10%) interval excludes 0 (-0.0054 [-0.0103, -0.0010]); cause not found; about 1% of the smallest faithful score, changes no decision.",
+    "reading": {
+      "detector_a_held_auroc": 0.972,
+      "units_v2_minus_qrs_prior_S10_a": [
+        -0.608,
+        -0.702,
+        -0.518
+      ],
+      "units_v2_minus_qrs_prior_S10_b": [
+        -0.138,
+        -0.179,
+        -0.098
+      ],
+      "units_v2_minus_qrs_prior_W_a": [
+        1.02,
+        0.89,
+        1.14
+      ],
+      "spearman_S10_vs_A2_a": [
+        0.174,
+        -0.007,
+        0.327
+      ],
+      "spearman_S10_vs_A2_a_without_random": [
+        -0.033,
+        -0.258,
+        0.159
+      ],
+      "faithful_maps_a": "12 of 14; residual056 not separable; random below 0",
+      "post_hoc_energy_spearman_a": 0.76
+    }
   },
   "experiment_071_serial": {
     "status": "complete",

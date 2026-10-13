@@ -803,3 +803,12 @@ they beat `qrs_prior` (B1 +0.048, B2 +0.054), but global criteria such as QRS du
 on ECGAD is at chance (0.495). With the QRS time prior first, the label-free `criteria_qrs` map reached 0.763 (+0.021
 [-0.000, +0.043]). Before the protocol freeze, pooled unit checks ran over whole PTB-XL+ feature files including folds
 9-10 (no labels or per-record values); this is disclosed in the protocol.
+
+[070](experiment-070-replacement-results.md) (replacement faithfulness test) is complete and does not agree with the
+ECGAD marks. Replacing a map's top 10% of lead-samples with a normal counterpart, against matched random regions, lowers
+a held-out detector's abnormal logit for 12 of 14 maps, but `qrs_prior` is more faithful than `units_v2` under both
+detectors (-0.608 [-0.702, -0.518] logits with the new ResNet, -0.138 [-0.179, -0.098] with 065). Across maps the score
+does not track ECGAD development A2 (Spearman +0.174 [-0.007, +0.327], -0.033 without `random`); post hoc, it follows
+how much signal energy the region replaces (0.76). The whole-lead variant favours the 065-based maps (`units_v2` +1.02
+over `qrs_prior`), in line with ECGAD lead AUROC. One integrity check failed: the `random` map's score is -0.005
+[-0.010, -0.001] instead of containing 0; the cause was not found and no decision changes.

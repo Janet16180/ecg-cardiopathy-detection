@@ -58,6 +58,7 @@ SIZES = {"A": 1500, "N": 400}
 SMOKE_SIZES = {"A": 6, "N": 3, "E": 3}
 WORKERS = 8
 CHUNK = 40
+LOCK_SECONDS = 600
 SAVED = ("normative_v1", "raw", "dino_dist", "mil_lse")
 REBUILT = tuple(name for name in rp.MAPS if name not in SAVED)
 DEVELOPMENT_TABLES = {
@@ -517,18 +518,21 @@ def score_set(
     stored, _ = load_rows(records.ecg_id.to_numpy())
     todo = np.flatnonzero((status == 1) & ~done)
     began, gpu_seconds = time.time(), 0.0
-    for start in range(0, len(todo), CHUNK):
-        rows = todo[start : start + CHUNK]
+    position = 0
+    while position < len(todo):
         with gpu_lock(device):
             locked = time.time()
-            for row in rows:
-                logits[row] = rp.record_logits(
-                    model, stored[row], arrays["difference"][row], plan_row(arrays, row), device
-                )
+            while position < len(todo) and time.time() - locked < LOCK_SECONDS:
+                rows = todo[position : position + CHUNK]
+                for row in rows:
+                    logits[row] = rp.record_logits(
+                        model, stored[row], arrays["difference"][row], plan_row(arrays, row), device
+                    )
+                done[rows] = True
+                logits.flush()
+                np.save(done_path, done)
+                position += len(rows)
             gpu_seconds += time.time() - locked
-        done[rows] = True
-        logits.flush()
-        np.save(done_path, done)
         print(
             f"{name} {detector_name}: {int(done.sum())}/{int((status == 1).sum())} records, "
             f"{time.time() - began:.0f} s",

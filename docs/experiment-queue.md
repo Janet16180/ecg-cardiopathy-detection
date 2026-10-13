@@ -703,3 +703,15 @@ of why 041-060 fell short. The ECGAD cardiologist benchmark (399 PTB-XL fold-10 
 marks) was carved out of the final test and split by patient into development and holdout halves
 ([ecgad-benchmark-v1.md](ecgad-benchmark-v1.md)). [061](experiment-061-locbench.md) protocol is frozen: LocBench v1
 (ECGAD development, clinical region test, noise-lead control, detection) and five baselines. No score yet.
+
+061 is running. 062 (normative phase-aligned map), 063 (masked reconstruction), 064 (SimDINO beat patch tokens with
+phase-matched kNN) and 065 (finding-specific multiple-instance heads) are being implemented in separate worktrees;
+each commits its protocol before scoring with LocBench. A shared local waveform cache
+(`ecg_experiment/locbench_cache.py`, `/tmp/ecg-locbench-cache`) holds folds 1-8 and the ECGAD records.
+
+[061](experiment-061-locbench-results.md) is complete; every integrity check passed and LocBench v1 is adopted. The
+best baseline is a disease-blind QRS indicator (`qrs_prior`, ECGAD development A2 0.742 [0.708, 0.774]), because
+the cardiologist marks concentrate on QRS complexes; U_B scored 0.632 and the 056 residual 0.680. Amendment 2
+([QRS strata](experiment-061-amendment-2-qrs-strata.md)) adds A2 inside and outside the QRS: inside, every
+baseline is near chance (about 0.54) except the 056 residual (0.607). Both reference maps are drawn to noisy leads
+(C1 0.67 and 0.80).

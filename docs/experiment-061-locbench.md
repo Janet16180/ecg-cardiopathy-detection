@@ -108,3 +108,70 @@ No method choice, threshold or set definition changes after scores.
 
 `outputs/experiment061_locbench_v1/`: `result.json` (inputs, hashes, every metric with intervals, counts and
 exclusions), per-record metric tables, maps for the ECGAD development records (float16), and `run.log`.
+
+## Amendment 1, 12 October 2026, before any score
+
+Implementation clarifications written while building `ecg_experiment/locbench.py`, before any map was scored.
+Only set counts from metadata had been read. No definition above changes; the points below fix details the
+protocol leaves open.
+
+Component boundaries:
+
+- An interval is half-open, [start mark, end mark), as in the Experiment 059 evaluator. "Same beat" means that
+  no other start mark of the same kind lies between the start mark and its end mark (P onset for P and PR, QRS
+  onset for QRS, QRS offset for ST, T onset for T). The end mark must come strictly after the start mark, at most
+  the stated window later (P 150, QRS 125, T 300, PR 200, ST 200 samples).
+- "An interval in 100-4899" means an interval that overlaps samples 100-4899. The four records without an
+  ECGdeli file (7120, 13196 and 18247 in `evaluation`, 21602 in `fit`) are excluded from the region set and
+  counted.
+
+Sets:
+
+- Region set: a rhythm statement is an SCP statement with `rhythm` = 1, at any likelihood. A WPW record needs
+  both PR and QRS intervals. The strict variant keeps region-set records with no other `diagnostic` = 1
+  statement at any likelihood; it reports the families with at least 20 strict records and their macro mean.
+- Noise set: "clean rhythm" is `CLEAN_RHYTHMS` (SR, SARRH, SBRAD), as for clean normals. The named leads are the
+  union over the four noise columns (`locbench_data.noisy_leads`), and that union must hold 1-11 leads.
+- ECGAD: a record is marked if any sample in 100-4899 is marked (94 records, as in the split). A2 skips the
+  marked records whose every scored lead-sample is marked and A4 those whose every scored sample is marked in
+  some lead; both are counted.
+
+Metrics:
+
+- Percentiles are `numpy.percentile` with linear interpolation. Every AUROC is the Mann-Whitney statistic with
+  ties counted as half. A6 uses the top k = 2,880 lead-samples (5% of 12 x 4,800); values tied with the k-th
+  largest are counted by expectation, as if ties were broken at random.
+- Intervals: each metric is bootstrapped over the patients of the records it averages or ranks, with the
+  `intervals.py` draw convention (patients in `np.unique` order, `rng.integers(0, P, P)` on a fresh
+  `default_rng(61061)`, 2,000 draws, 2.5 and 97.5 linear percentiles). Record-level AUROCs (A5, C2, D1) skip
+  single-class draws and count them. B macro draws over the patients of the eligible families' records; a draw
+  that misses a family is skipped and counted. A paired difference uses the same draws for both methods.
+- A1 point estimate is the exact Mann-Whitney AUROC over all points. Its bootstrap ranks all points once,
+  quantizes the average ranks into 65,536 equal-count bins (tied values share a bin), keeps per-record
+  positive and negative counts per bin, and computes each draw from the weighted sum of the record histograms,
+  counting pairs within a bin as ties. The binned full-set value must match the exact one to 1e-4.
+
+Maps and baselines:
+
+- The signal is the PTB-XL physical record in float64, recovered exactly from the float32 cache as
+  round(1000 x) / 1000 (PTB-XL gain 1,000, baseline 0; equality with `wfdb.rdsamp` is checked in the run).
+- Maps are evaluated in float32. The ECGAD development maps are saved in float32 so that A1 paired differences
+  are exact; region and noise maps are saved in float16 for display; detection records keep lead and record
+  scores only. Uncovered samples get the minimum of that record's covered values.
+- `random`: `default_rng([61061, ecg_id])` per record, so a record's map does not depend on the set.
+- `amplitude`: `scipy.ndimage.median_filter` with a centred 301-sample (0.6 s) window per lead, edge mode
+  `nearest`.
+- `qrs_prior`: the half-open QRS intervals `hybrid[:, 1]` of `joint_hybrid(signal, fs=500)`, the same on all
+  12 leads; invalid (-1) intervals are skipped.
+- `U_B`: references from every kept beat of the `fit` clean normals with at least two kept beats (042 rule);
+  each piece's score fills [round(500 start), round(500 end)) on its lead, maximum where pieces overlap.
+- `residual056`: `incart_localization056.score_signal` on the 10-second record with the refitted `U_B`
+  references (they only set the piece-coverage mask, not the residual), its `aligned_residual` 140 ms windows
+  broadcast to their samples with the maximum where windows overlap.
+- A record for which a baseline cannot be built (fewer than two kept beats for `U_B`, fewer than three complete
+  beats for `residual056`) gets a constant zero map and is counted.
+
+Integrity: the 042 check uses the first 20 records of the saved `unit_scores.npz` order (all fold 9) and its
+5,872-record fit set rebuilt with the 042 selection rule; the 056 check rescores INCART records I01, I02 and
+I03 completely with 056's saved `normal_reference.pkl` (hash checked against its receipt) and compares both
+methods' beat scores with `detected_beats.csv`.

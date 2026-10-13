@@ -154,4 +154,11 @@ version is reported. The ECGAD holdout half is not read here.
 
 ## Amendments
 
-None yet.
+### Amendment 1, 12 October 2026, before any score
+
+- The ECGAD development maps are saved in float32, as Experiment 061 does for its baselines (its amendment 1),
+  so that ties from float16 rounding do not enter A1-A6 and paired differences are exact. The evaluation
+  partition maps stay float16. The scorer receives one float32 array for `locbench.scored_ecg_ids()`, assembled
+  from the two sets.
+- GPU profile (`profile.json`): 0.048 s per update at batch 64, peak 1.7 GB, 0.05 s per record for the 140-mask
+  inference. The maximum is set to 60,000 updates (about 48 minutes), with the early stopping above.

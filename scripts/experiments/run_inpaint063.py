@@ -551,7 +551,7 @@ def record_set(name: str) -> np.ndarray:
 
 def maps(name: str, tag: str, cap_gb: float, limit: int | None) -> None:
     """
-    Write float16 LocBench maps (n, 12, 5000) for every declared variant of a record set.
+    Write LocBench maps (n, 12, 5000) for every declared variant: float32 for ECGAD, float16 otherwise.
 
     Parameters
     ----------
@@ -569,9 +569,10 @@ def maps(name: str, tag: str, cap_gb: float, limit: int | None) -> None:
     target = OUT / "smoke" if limit else OUT / f"maps_{tag}"
     target.mkdir(parents=True, exist_ok=True)
     signals, peaks = load_records(ecg_ids)
+    dtype = np.float32 if name == "ecgad_dev" else np.float16
     outputs = {
         variant: np.lib.format.open_memmap(
-            target / f"{name}_{variant}.npy.part", mode="w+", dtype=np.float16, shape=(len(ecg_ids), 12, 5000)
+            target / f"{name}_{variant}.npy.part", mode="w+", dtype=dtype, shape=(len(ecg_ids), 12, 5000)
         )
         for variant in VARIANTS
     }

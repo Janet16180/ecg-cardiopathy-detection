@@ -3598,5 +3598,23 @@
       "training_records": 3517,
       "crossfit_oof_macro_auroc": 0.9338
     }
+  },
+  "experiment_067_holdout": {
+    "status": "implementing",
+    "authorized": true,
+    "name": "One-time ECGAD holdout confirmation of the frozen localization maps",
+    "branch": "exp/067-holdout",
+    "worktree": "/tmp/ecg-wt-067",
+    "resources": {
+      "device": "cpu"
+    },
+    "candidates": [
+      "qrs_prior",
+      "qrs_lexicographic",
+      "factor",
+      "units_learned",
+      "units_v2"
+    ],
+    "next_action": "Subagent commits the protocol (primary: units_v2 minus qrs_prior), builds and hashes holdout maps without labels, then scores once."
   }
 }

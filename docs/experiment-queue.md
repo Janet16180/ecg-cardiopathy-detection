@@ -767,3 +767,8 @@ so far, 0.767, +0.025 [-0.013, +0.065] against `qrs_prior` (matches, not beats),
 region-table weak-label objective is saturated (cross-validated AUROC 0.922 for every linear variant). The remaining
 gap to the bar is timing (A4 -0.066), while lead localization is far better (A3 +0.199). `units_v2` joins the 067
 candidates.
+
+067 (one-time ECGAD holdout confirmation) is running in `/tmp/ecg-wt-067`. Candidates: `qrs_prior`, 062
+`qrs_lexicographic`, 066 `factor` and `units_learned`, 068 `units_v2`; primary comparison `units_v2` minus `qrs_prior`.
+The protocol is committed first, the holdout maps are built and hashed without labels, and the marks are read by a
+single scoring run.

@@ -2053,6 +2053,22 @@
       "status": "open",
       "authorized": false,
       "notes": "Development half only until 067; add to docs/cardiologist-meeting-prep.md."
+    },
+    {
+      "id": "loc_new_weak_signal",
+      "kind": "experiment",
+      "title": "New weak supervision for localization: beat-level ectopy labels and fit-partition wave timing",
+      "question": "Can a training signal other than region-table weak labels (beat-level labels from the 065 PVC and PAC heads, or a QRS-time preference learned from fit ECGdeli components) move the time axis the combiners lose?",
+      "evidence": "068: 289 to 3,517 training records changed A2 by +0.0015 [-0.0025, +0.0054]; weak-label CV AUROC saturated at 0.922; remaining gap to qrs_prior is A4 -0.066 [-0.102, -0.027].",
+      "value": 4,
+      "clarity": 0.5,
+      "gpu_hours": 0.5,
+      "cpu_hours": 1.0,
+      "build_hours": 5.0,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "Also: multiply unit maps by the record's 065 abnormal probability to recover D1; apply lead quality only to MIL lead features; fix a=0.25."
     }
   ]
 }

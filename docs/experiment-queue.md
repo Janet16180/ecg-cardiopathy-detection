@@ -760,3 +760,10 @@ lowered C1_std only from 0.580 to 0.563 and was not adopted.
 over the fit partition so the 066 combiner can learn from every fit record with a region statement (about seven times
 the 289 records 066 used), and adds a softened lead factor. It runs before 067, whose candidates gain `units_v2` only if
 its development A2 exceeds 0.760.
+
+[068](experiment-068-combiner-v2-results.md) (learned unit combiner v2) is complete. `units_v2` has the best development A2
+so far, 0.767, +0.025 [-0.013, +0.065] against `qrs_prior` (matches, not beats), and +0.007 [+0.001, +0.012] against
+066 `units_learned`. Twelve times more training records changed nothing by themselves (+0.0015 [-0.0025, +0.0054]): the
+region-table weak-label objective is saturated (cross-validated AUROC 0.922 for every linear variant). The remaining
+gap to the bar is timing (A4 -0.066), while lead localization is far better (A3 +0.199). `units_v2` joins the 067
+candidates.

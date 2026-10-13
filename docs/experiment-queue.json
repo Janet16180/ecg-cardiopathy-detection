@@ -3549,7 +3549,7 @@
     }
   },
   "experiment_068_combiner_v2": {
-    "status": "implementing",
+    "status": "complete",
     "authorized": true,
     "name": "Learned unit combiner v2 with cross-fitted MIL evidence",
     "branch": "exp/068-combiner-v2",
@@ -3557,6 +3557,46 @@
     "resources": {
       "device": "cuda (MIL cross-fit), cpu"
     },
-    "next_action": "Subagent writes the protocol, cross-fits MIL over the fit partition, trains the combiner on all region-statement records, scores and reports; runs before 067."
+    "next_action": "Matches the bar; best development A2, so units_v2 joins the 067 candidates.",
+    "protocol": "docs/experiment-068-combiner-v2.md",
+    "results": "docs/experiment-068-combiner-v2-results.md",
+    "output_dir": "outputs/experiment068_combiner_v2",
+    "source_commit": "87bee2b",
+    "reading": {
+      "primary_A2": 0.7671,
+      "primary_vs_bar": [
+        0.0252,
+        -0.013,
+        0.0647
+      ],
+      "vs_units_learned": [
+        0.0068,
+        0.0012,
+        0.0125
+      ],
+      "vs_textbook": [
+        0.0178,
+        0.0016,
+        0.0354
+      ],
+      "vs_nolead": [
+        0.0038,
+        0.0021,
+        0.0055
+      ],
+      "more_data_only_vs_units_learned": [
+        0.0015,
+        -0.0025,
+        0.0054
+      ],
+      "A3": 0.655,
+      "A4": 0.785,
+      "A2_qrs": 0.638,
+      "A2_nonqrs": 0.733,
+      "C1_std": 0.54,
+      "D1": 0.617,
+      "training_records": 3517,
+      "crossfit_oof_macro_auroc": 0.9338
+    }
   }
 }

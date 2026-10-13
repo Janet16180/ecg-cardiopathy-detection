@@ -943,3 +943,92 @@ def train_detector(
             if stale >= patience:
                 break
     return best_state, history
+
+
+METRICS = (
+    "S_5",
+    "S_10",
+    "S_20",
+    "AOPC_raw",
+    "AOPC_matched",
+    "drop_map_10",
+    "drop_control_10",
+    "W",
+    "drop_leads",
+    "drop_lead_control",
+)
+
+
+def metric_arrays(read: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
+    """
+    Per-record (records, maps) arrays of every declared metric.
+
+    Parameters
+    ----------
+    read : dict[str, np.ndarray]
+        ``readings`` output.
+
+    Returns
+    -------
+    dict[str, np.ndarray]
+        Metric name in ``METRICS`` to (records, maps) float64.
+    """
+    out = {f"S_{round(100 * f)}": read["S"][:, :, k] for k, f in enumerate(FRACTIONS)}
+    out.update(
+        AOPC_raw=read["AOPC_raw"],
+        AOPC_matched=read["AOPC_matched"],
+        drop_map_10=read["drop_map"][:, :, 1],
+        drop_control_10=read["drop_control"][:, :, 1],
+        W=read["W"],
+        drop_leads=read["drop_leads"],
+        drop_lead_control=read["drop_lead_control"],
+    )
+    return {name: np.asarray(out[name], np.float64) for name in METRICS}
+
+
+def summarize(
+    arrays: dict[str, np.ndarray],
+    patients: np.ndarray,
+    maps: tuple[str, ...],
+    pair: tuple[str, str],
+    draws: int,
+    seed: int,
+) -> dict[str, dict]:
+    """
+    Mean and interval of every metric and map, and the paired difference of one map pair, on the same draws.
+
+    Parameters
+    ----------
+    arrays : dict[str, np.ndarray]
+        ``metric_arrays`` output.
+    patients : np.ndarray
+        Patient of each record.
+    maps : tuple[str, ...]
+        Map names in column order.
+    pair : tuple[str, str]
+        (first, second) map names; the difference is first minus second.
+    draws : int
+        Bootstrap draws.
+    seed : int
+        Seed.
+
+    Returns
+    -------
+    dict[str, dict]
+        Metric to ``maps`` (map to ``interval`` output) and ``paired`` (``interval`` of the difference).
+    """
+    names = list(arrays)
+    matrix = np.concatenate([arrays[name] for name in names], axis=1)
+    boot = bootstrap_means(matrix, patients, draws, seed)
+    first, second = maps.index(pair[0]), maps.index(pair[1])
+    out = {}
+    for j, name in enumerate(names):
+        block = slice(j * len(maps), (j + 1) * len(maps))
+        values, sample = arrays[name], boot[:, block]
+        out[name] = {
+            "maps": {m: interval(values[:, k].mean(), sample[:, k]) for k, m in enumerate(maps)},
+            "paired": interval(
+                (values[:, first] - values[:, second]).mean(), sample[:, first] - sample[:, second]
+            ),
+        }
+    return out

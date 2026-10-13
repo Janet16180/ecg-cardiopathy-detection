@@ -35,9 +35,12 @@ from ecg_experiment import combination066 as cb
 from ecg_experiment import holdout067 as ho
 from ecg_experiment import mil065 as mil
 from ecg_experiment import replacement070 as rp
+from ecg_experiment.ecgad import load_labels
+from ecg_experiment.eda.ptbxl import load_metadata, load_statements
 from ecg_experiment.files import sha256_file, write_json_atomic
 from ecg_experiment.gpu import gpu_lock
-from ecg_experiment.locbench_baselines061 import exact_signal
+from ecg_experiment.locbench import ecgad_record_metrics
+from ecg_experiment.locbench_baselines061 import exact_signal, ub_map
 from ecg_experiment.locbench_cache import open_cache
 from ecg_experiment.locbench_data import load_partition
 from ecg_experiment.provenance import git_head, utc_now
@@ -86,6 +89,8 @@ PUBLISHED_A2 = {
 MAP_TOLERANCE = 1e-5
 BAG_TOLERANCE = 1e-3
 DETECTOR_MINIMUM = 0.85
+FLOAT16_MAX = 65504.0
+PLAN_ARRAYS = ("ranks", "leads", "inverse", "sources", "triplets")
 SOURCES = (
     "docs/experiment-070-replacement.md",
     "ecg_experiment/replacement070.py",
@@ -333,7 +338,7 @@ def _worker_init() -> None:
 
 def _difference(new: np.ndarray, saved: np.ndarray) -> float:
     if saved.dtype == np.float16:
-        new = new.astype(np.float16)
+        new = np.clip(new, -FLOAT16_MAX, FLOAT16_MAX).astype(np.float16)
     return float(np.max(np.abs(new.astype(np.float64) - np.asarray(saved, np.float64))))
 
 
@@ -592,14 +597,437 @@ def profile_phase(detector_name: str, smoke: bool) -> None:
     print(json.dumps(profile), flush=True)
 
 
+DRAWS = 2000
+BOOT_SEED = 61061
+MARK_SEED = 61062
+PAIR = ("units_v2", "qrs_prior")
+PRIMARY_METRIC = "S_10"
+SUPERCLASSES = ("MI", "STTC", "CD", "HYP")
+
+
+def development_a2() -> tuple[np.ndarray, np.ndarray, dict[str, float]]:
+    """
+    Per-record ECGAD development A2 of the 14 maps from the saved tables.
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray, dict[str, float]]
+        (records, maps) A2 of the records where A2 is defined, their patients, and each map's table mean.
+    """
+    frames = {name: pd.read_csv(DEVELOPMENT_TABLES[name] / "ecgad.csv") for name in rp.MAPS}
+    first = frames[rp.MAPS[0]]
+    kept = first.loc[first["A2"].notna(), ["ecg_id", "patient_id"]]
+    marks = np.column_stack(
+        [frames[name].set_index("ecg_id").loc[kept.ecg_id, "A2"].to_numpy() for name in rp.MAPS]
+    )
+    if not np.isfinite(marks).all():
+        raise ValueError("A2 is undefined for a record in some map table")
+    means = {name: float(frames[name]["A2"].mean()) for name in rp.MAPS}
+    return marks, kept.patient_id.to_numpy(), means
+
+
+def a2_reproduction(means: dict[str, float]) -> dict[str, Any]:
+    """
+    Table means against the published values, and two saved development maps rescored from the marks.
+
+    Parameters
+    ----------
+    means : dict[str, float]
+        ``development_a2`` table means.
+
+    Returns
+    -------
+    dict[str, Any]
+        Per-map comparisons and ``pass``.
+    """
+    published = {
+        name: {"table": means[name], "published": value, "pass": abs(means[name] - value) <= 5e-5}
+        for name, value in PUBLISHED_A2.items()
+    }
+    exact = {
+        name: {"table": means[name], "declared": value, "pass": abs(means[name] - value) <= 1e-12}
+        for name, value in ho.DEVELOPMENT_A2.items()
+    }
+    records = ho.split_records("development")
+    marks = ho.label_rows(load_labels(), records.bench_index.to_numpy())
+    rescored = {}
+    for name in ("qrs_prior", "units_v2"):
+        saved, row_of = development_saved_maps()[name]
+        table = pd.read_csv(DEVELOPMENT_TABLES[name] / "ecgad.csv").set_index("ecg_id")
+        differences = []
+        for k, ecg_id in enumerate(records.ecg_id):
+            value = ecgad_record_metrics(np.asarray(saved[row_of[int(ecg_id)]]), marks[k])["A2"]
+            if np.isfinite(value):
+                differences.append(abs(value - table.at[int(ecg_id), "A2"]))
+        rescored[name] = {"records": len(differences), "max_abs_difference": float(max(differences))}
+        rescored[name]["pass"] = rescored[name]["max_abs_difference"] <= 1e-12
+    passed = all(v["pass"] for group in (published, exact, rescored) for v in group.values())
+    return {"published": published, "declared": exact, "rescored": rescored, "pass": passed}
+
+
+def load_set(name: str, detector: str, smoke: bool) -> dict[str, Any] | None:
+    """Load the records, readings and metric arrays of one set under one detector (None if unscored)."""
+    path = out_dir(smoke) / f"logits_{detector}_{name}.npz"
+    if not path.exists():
+        return None
+    records = read_records(name, smoke)
+    with np.load(path) as saved:
+        if not np.array_equal(saved["ecg_id"], records.ecg_id.to_numpy()):
+            raise ValueError(f"Record order of {path} differs")
+        valid = saved["status"] == 1
+        logits = saved["logits"][valid]
+    if not np.isfinite(logits).all():
+        raise ValueError(f"Unscored passes in {path}")
+    read = rp.readings(logits, len(rp.MAPS))
+    return {
+        "records": records[valid].reset_index(drop=True),
+        "excluded": records.loc[~valid, "ecg_id"].astype(int).tolist(),
+        "read": read,
+        "arrays": rp.metric_arrays(read),
+    }
+
+
+def set_summary(loaded: dict[str, Any]) -> dict[str, Any]:
+    """Intervals of every metric, the record-level original logit and full-replacement drop."""
+    patients = loaded["records"].patient_id.to_numpy()
+    read = loaded["read"]
+    summary = rp.summarize(loaded["arrays"], patients, rp.MAPS, PAIR, DRAWS, BOOT_SEED)
+    record_level = np.column_stack([read["original"], read["full"]]).astype(np.float64)
+    boot = rp.bootstrap_means(record_level, patients, DRAWS, BOOT_SEED)
+    return {
+        "records": len(patients),
+        "patients": int(len(np.unique(patients))),
+        "excluded": loaded["excluded"],
+        "original_logit": rp.interval(record_level[:, 0].mean(), boot[:, 0]),
+        "full_replacement_drop": rp.interval(record_level[:, 1].mean(), boot[:, 1]),
+        "metrics": summary,
+    }
+
+
+def spearman_readings(
+    loaded: dict[tuple[str, str], Any], marks: np.ndarray, mark_patients: np.ndarray
+) -> dict:
+    """Correlate S(10%) with ECGAD development A2: joint, without random, over maps; every scored set."""
+    out = {}
+    without = [k for k, name in enumerate(rp.MAPS) if name != "random"]
+    for (name, detector), item in loaded.items():
+        if item is None or name == "N":
+            continue
+        scores = item["arrays"][PRIMARY_METRIC]
+        patients = item["records"].patient_id.to_numpy()
+        key = f"{name}_{detector}"
+        out[key] = {
+            "joint": rp.joint_spearman(scores, patients, marks, mark_patients, DRAWS, (BOOT_SEED, MARK_SEED)),
+            "joint_without_random": rp.joint_spearman(
+                scores[:, without], patients, marks[:, without], mark_patients, DRAWS, (BOOT_SEED, MARK_SEED)
+            ),
+            "over_maps": rp.map_spearman(scores.mean(axis=0), marks.mean(axis=0), DRAWS, BOOT_SEED),
+        }
+    return out
+
+
+def superclass_means(item: dict[str, Any]) -> dict[str, Any]:
+    """Descriptive mean S(10%) per detection superclass of the record's statements (likelihood >= 50)."""
+    meta = load_metadata()
+    classes = load_statements()["diagnostic_class"]
+    scores = item["arrays"][PRIMARY_METRIC]
+    out = {}
+    for superclass in SUPERCLASSES:
+        member = np.array(
+            [
+                any(v >= 50 and classes.get(c) == superclass for c, v in meta.at[int(e), "scp_codes"].items())
+                for e in item["records"].ecg_id
+            ]
+        )
+        out[superclass] = {
+            "records": int(member.sum()),
+            **{m: float(scores[member, k].mean()) for k, m in enumerate(rp.MAPS)},
+        }
+    return out
+
+
+def rebuild_checks(smoke: bool) -> dict[str, Any]:
+    """Largest difference between rebuilt and saved maps per set and map."""
+    out = {}
+    for name in SETS:
+        values = np.load(work_dir(name, smoke) / "rebuild.npy")
+        out[name] = {}
+        for j, map_name in enumerate(REBUILT):
+            column = values[:, j][np.isfinite(values[:, j])]
+            out[name][map_name] = {
+                "records_compared": int(len(column)),
+                "max_abs_difference": float(column.max()) if len(column) else None,
+            }
+    for name in ("A", "N"):
+        out[name]["U_B"]["note"] = "float16 comparison saturated (no clip); see U_B_float16_recheck"
+    compared = [
+        v for group in out.values() for v in group.values() if v["records_compared"] and "note" not in v
+    ]
+    out["pass"] = all(v["max_abs_difference"] <= MAP_TOLERANCE for v in compared)
+    return out
+
+
+def path_check(smoke: bool) -> dict[str, Any]:
+    """Detector (b): GPU-path logits of the unmodified records against the 065 CPU path (bf16)."""
+    out = {}
+    for name in SETS:
+        path = out_dir(smoke) / f"logits_b_{name}.npz"
+        if not path.exists():
+            continue
+        with np.load(path) as saved:
+            valid = saved["status"] == 1
+            gpu = saved["logits"][valid, rp.pass_layout(len(rp.MAPS))["original"]]
+        cpu = np.load(work_dir(name, smoke) / "cpu_path_logits_b.npy")[valid]
+        out[name] = {
+            "max_abs_difference": float(np.abs(gpu - cpu).max()),
+            "mean_abs_difference": float(np.abs(gpu - cpu).mean()),
+        }
+    return out
+
+
+def decisions(summaries: dict[str, Any]) -> dict[str, Any]:
+    """Per-map verdicts and the primary paired verdict on set A under detector (a)."""
+    primary = summaries["A_a"]["metrics"][PRIMARY_METRIC]
+    words = {"above": "faithful", "below": "anti-faithful", "contains 0": "not separable"}
+    pair = rp.verdict(primary["paired"])
+    pair_words = {
+        "above": "units_v2 more faithful",
+        "below": "qrs_prior more faithful",
+        "contains 0": "no difference",
+    }
+    return {
+        "maps": {m: words[rp.verdict(v)] for m, v in primary["maps"].items()},
+        "primary_pair": {**primary["paired"], "verdict": pair_words[pair]},
+    }
+
+
+def integrity(summaries: dict[str, Any], smoke: bool, a2: dict[str, Any]) -> dict[str, Any]:
+    """Every declared integrity check."""
+    detector = json.loads((out_dir(smoke) / "detector_a.json").read_text())
+    prepare = json.loads((out_dir(smoke) / "prepare.json").read_text())
+    null = {}
+    for detector_name in ("a", "b"):
+        path = out_dir(smoke) / f"score_{detector_name}.json"
+        if path.exists():
+            sets = json.loads(path.read_text())["sets"]
+            null[detector_name] = {n: s["null_check_max_abs_difference"] for n, s in sets.items()}
+    random_interval = summaries["A_a"]["metrics"][PRIMARY_METRIC]["maps"]["random"]
+    full = summaries["A_a"]["full_replacement_drop"]
+    checks = {
+        "detector_a_held_auroc": {
+            "value": detector["held_auroc"],
+            "minimum": DETECTOR_MINIMUM,
+            "pass": detector["held_auroc"] >= DETECTOR_MINIMUM,
+        },
+        "nothing_replaced": {
+            "signal_identity": "x + taper(0) * d == x bitwise (tests/test_replacement070.py)",
+            "logit_max_abs_difference_against_separate_pass": null,
+            "pass": all(v <= 1e-4 for group in null.values() for v in group.values()),
+        },
+        "random_map_S10_contains_0": {
+            **random_interval,
+            "pass": random_interval["ci_low"] <= 0 <= random_interval["ci_high"],
+        },
+        "operator_full_replacement_lowers_A_logit": {**full, "pass": full["value"] > 0},
+        "bags_065": {
+            **{n: s["bag_check"] for n, s in prepare["sets"].items()},
+            "pass": all(
+                s["bag_check"]["max_abs_difference"] <= BAG_TOLERANCE for s in prepare["sets"].values()
+            ),
+        },
+        "maps_rebuilt": rebuild_checks(smoke),
+        "U_B_float16_recheck": ub_float16_check(smoke),
+        "a2_reproduction": a2,
+        "detector_b_gpu_path_against_cpu_path": path_check(smoke),
+    }
+    checks["pass"] = all(v["pass"] for k, v in checks.items() if isinstance(v, dict) and "pass" in v)
+    return checks
+
+
+def write_record_tables(loaded: dict[tuple[str, str], Any], out: Path) -> None:
+    """Long per-record CSV of every metric and map, per set and detector."""
+    for (name, detector), item in loaded.items():
+        if item is None:
+            continue
+        rows = []
+        for k, map_name in enumerate(rp.MAPS):
+            frame = item["records"][["ecg_id", "patient_id"]].copy()
+            frame["map"] = map_name
+            for metric, values in item["arrays"].items():
+                frame[metric] = values[:, k]
+            rows.append(frame)
+        table = pd.concat(rows, ignore_index=True)
+        table.to_csv(out / f"records_{detector}_{name}_metrics.csv", index=False, float_format="%.6g")
+        level = item["records"][["ecg_id", "patient_id"]].copy()
+        level["original_logit"] = item["read"]["original"]
+        level["full_replacement_drop"] = item["read"]["full"]
+        level.to_csv(out / f"records_{detector}_{name}_logits.csv", index=False, float_format="%.6g")
+
+
 def analyze_phase(smoke: bool) -> None:
-    """Raise until this phase is written (after the scoring code is tested)."""
-    raise NotImplementedError(f"analyze {smoke} {git_head(ROOT)}")
+    """Every reading, decision and integrity check into ``result.json``."""
+    out = out_dir(smoke)
+    marks, mark_patients, means = development_a2()
+    loaded = {(name, detector): load_set(name, detector, smoke) for detector in ("a", "b") for name in SETS}
+    summaries = {f"{n}_{d}": set_summary(item) for (n, d), item in loaded.items() if item is not None}
+    composition = np.load(work_dir("A", smoke) / "composition.npy")[
+        np.load(work_dir("A", smoke) / "status.npy") == 1
+    ]
+    a2 = a2_reproduction(means)
+    result = {
+        "experiment": "070",
+        "protocol": "docs/experiment-070-replacement.md",
+        "created": utc_now(),
+        "code_commit": git_head(ROOT),
+        "smoke": smoke,
+        "maps": list(rp.MAPS),
+        "fractions": list(rp.FRACTIONS),
+        "control_draws": rp.CONTROL_DRAWS,
+        "lead_draws": rp.LEAD_DRAWS,
+        "select": json.loads((out / "select.json").read_text()),
+        "detector_a": json.loads((out / "detector_a.json").read_text()),
+        "prepare": json.loads((out / "prepare.json").read_text()),
+        "summaries": summaries,
+        "decisions": decisions(summaries),
+        "validation": {
+            "ecgad_development_a2": means,
+            "a2_records": len(marks),
+            "a2_patients": int(len(np.unique(mark_patients))),
+            "spearman": spearman_readings(loaded, marks, mark_patients),
+        },
+        "descriptive": {
+            "composition_top10_A": {
+                m: dict(zip(rp.LABELS, composition[:, k].mean(axis=0).round(4).tolist(), strict=True))
+                for k, m in enumerate(rp.MAPS)
+            },
+            "superclass_S10_A_a": superclass_means(loaded[("A", "a")]),
+        },
+        "integrity": integrity(summaries, smoke, a2),
+        "hashes": {
+            "sources": {path: sha256_file(ROOT / path) for path in SOURCES},
+            "records": {n: sha256_file(out / f"records_{n}.csv") for n in SETS},
+            "logits": {p.name: sha256_file(p) for p in sorted(out.glob("logits_*.npz"))},
+            "detector_a": sha256_file(out / "detector_a.pt"),
+            "partition": sha256_file(ROOT / "docs/locbench-partition-v1.json"),
+        },
+    }
+    write_record_tables(loaded, out)
+    write_json_atomic(out / "result.json", result)
+    print(
+        json.dumps({"decisions": result["decisions"], "integrity_pass": result["integrity"]["pass"]}),
+        flush=True,
+    )
+
+
+def ub_float16_check(smoke: bool, count: int = 50) -> dict[str, Any]:
+    """U_B rebuilt on set-A records in 061's float16 file, clipped to the float16 range as 061 saved it."""
+    saved, row_of = evaluation_references()["U_B"]
+    records = read_records("A", smoke)
+    ids = [int(e) for e in records.ecg_id if int(e) in row_of][:count]
+    stored, _ = load_rows(np.array(ids))
+    references = ho.load_frozen()["references"]
+    largest = 0.0
+    for k, ecg_id in enumerate(ids):
+        new = ub_map(exact_signal(stored[k]), references)
+        new = np.clip(new, -FLOAT16_MAX, FLOAT16_MAX).astype(np.float16).astype(np.float64)
+        largest = max(largest, float(np.max(np.abs(new - np.asarray(saved[row_of[ecg_id]], np.float64)))))
+    return {"records": len(ids), "max_abs_difference": largest, "pass": largest == 0.0}
+
+
+EXAMPLE_MAP = "units_v2"
+EXAMPLES = 3
+
+
+def example_figure(smoke: bool) -> Path:
+    """Plot record, counterpart, map-region and control replacement of three set-A records (10%)."""
+    import matplotlib  # noqa: PLC0415
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt  # noqa: PLC0415
+
+    folder = work_dir("A", smoke)
+    records = read_records("A", smoke)
+    arrays = {n: np.load(folder / f"{n}.npy", mmap_mode="r") for n in (*PLAN_ARRAYS, "difference", "status")}
+    rows = np.flatnonzero(np.asarray(arrays["status"]) == 1)[:EXAMPLES]
+    stored, _ = load_rows(records.ecg_id.to_numpy()[rows])
+    layout = rp.pass_layout(len(rp.MAPS))
+    first = layout["regions"] + (rp.MAPS.index(EXAMPLE_MAP) * len(rp.FRACTIONS) + 1) * (1 + rp.CONTROL_DRAWS)
+    fig, axes = plt.subplots(EXAMPLES, 2, figsize=(13, 3.2 * EXAMPLES), squeeze=False)
+    seconds = np.arange(rp.SAMPLES) / 500
+    for k, row in enumerate(rows):
+        plan = {n: torch.from_numpy(np.asarray(v).astype(np.int64)) for n, v in plan_row(arrays, row).items()}
+        weights = rp.taper(rp.pass_masks(plan, "cpu")[[first, first + 1]]).numpy()
+        x, d = stored[k].astype(np.float64), np.asarray(arrays["difference"][row], np.float64)
+        for column, (title, w) in enumerate(
+            ((f"{EXAMPLE_MAP} top 10%", weights[0]), ("matched control", weights[1]))
+        ):
+            lead = int(np.argmax(w.sum(axis=1)))
+            ax = axes[k, column]
+            ax.plot(seconds, x[lead], color="#888888", lw=0.8, label="record")
+            ax.plot(
+                seconds, x[lead] + d[lead], color="#4c78a8", lw=0.6, alpha=0.7, label="normal counterpart"
+            )
+            ax.plot(seconds, x[lead] + w[lead] * d[lead], color="#e45756", lw=0.9, label="after replacement")
+            ax.fill_between(seconds, *ax.get_ylim(), where=w[lead] > 0.5, color="#e45756", alpha=0.08, lw=0)
+            ax.set_xlim(1.0, 6.0)
+            ax.set_title(f"ecg_id {int(records.ecg_id[row])}, lead {LEADS[lead]}: {title}", fontsize=9)
+            ax.set_xlabel("s")
+            ax.set_ylabel("mV")
+    axes[0, 0].legend(fontsize=8, loc="upper right")
+    fig.tight_layout()
+    path = out_dir(smoke) / "operator_examples.png"
+    fig.savefig(path, dpi=110)
+    plt.close(fig)
+    return path
+
+
+def scatter_figure(smoke: bool) -> Path:
+    """S(10%) on set A under both detectors against ECGAD development A2, one point per map."""
+    import matplotlib  # noqa: PLC0415
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt  # noqa: PLC0415
+
+    result = json.loads((out_dir(smoke) / "result.json").read_text())
+    a2 = result["validation"]["ecgad_development_a2"]
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    for ax, detector in zip(axes, ("a", "b"), strict=True):
+        key = f"A_{detector}"
+        if key not in result["summaries"]:
+            continue
+        maps = result["summaries"][key]["metrics"][PRIMARY_METRIC]["maps"]
+        for name in rp.MAPS:
+            value = maps[name]
+            ax.errorbar(
+                a2[name],
+                value["value"],
+                yerr=[[value["value"] - value["ci_low"]], [value["ci_high"] - value["value"]]],
+                fmt="o",
+                color="#4c78a8",
+                ms=4,
+                lw=0.8,
+            )
+            ax.annotate(
+                name, (a2[name], value["value"]), fontsize=7, xytext=(3, 3), textcoords="offset points"
+            )
+        ax.axhline(0, color="#888888", lw=0.6)
+        rho = result["validation"]["spearman"][key]["joint"]
+        ax.set_title(
+            f"detector ({detector}): Spearman {rho['value']:.2f} [{rho['ci_low']:.2f}, {rho['ci_high']:.2f}]",
+            fontsize=10,
+        )
+        ax.set_xlabel("ECGAD development A2")
+        ax.set_ylabel("S(10%): map drop minus matched-control drop (logit)")
+    fig.tight_layout()
+    path = out_dir(smoke) / "replacement_vs_a2.png"
+    fig.savefig(path, dpi=110)
+    plt.close(fig)
+    return path
 
 
 def figures_phase(smoke: bool) -> None:
-    """Raise until this phase is written (after the scoring code is tested)."""
-    raise NotImplementedError(f"figures {smoke}")
+    """Write the operator examples and the A2 scatter."""
+    print(example_figure(smoke), scatter_figure(smoke), flush=True)
 
 
 def main() -> None:

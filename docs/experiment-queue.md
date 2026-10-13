@@ -715,3 +715,9 @@ the cardiologist marks concentrate on QRS complexes; U_B scored 0.632 and the 05
 ([QRS strata](experiment-061-amendment-2-qrs-strata.md)) adds A2 inside and outside the QRS: inside, every
 baseline is near chance (about 0.54) except the 056 residual (0.607). Both reference maps are drawn to noisy leads
 (C1 0.67 and 0.80).
+
+[062](experiment-062-normative-map-results.md) (normative phase-aligned map) is complete and negative on its primary:
+ECGAD development A2 0.694, -0.048 [-0.092, -0.007] against `qrs_prior`. It is the best map so far for which lead
+(A3 0.635, +0.179 over the bar) and for detection (D1 0.855 against U_B's 0.762); its loss is in time, because it
+puts evidence in ST, T and PR while the marks sit on QRS. Its declared prior-combined variant scored A2 0.753,
++0.011 [-0.008, +0.031]. It feeds Experiment 066.

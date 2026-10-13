@@ -746,3 +746,12 @@ sets up Experiment 066.
 multiplies the 065 finding probabilities, the 065 per-lead evidence and a clinical component prior written before any
 score, painted over whole delineated waves; a diagnose-then-paint-the-textbook-region baseline tests whether it
 localizes beyond the diagnosis, and a lead-quality classifier trained on the PTB-XL noise notes tests noise suppression.
+
+[066](experiment-066-combination-results.md) (factorized combination with a lead-quality filter) is complete. The primary
+`factor` map (065 finding probability x 065 lead evidence x a clinical component prior) matches the bar but does not beat
+it: A2 0.725, -0.017 [-0.056, +0.021]. It loses to the diagnose-then-paint-the-textbook-region baseline (0.749; -0.025
+[-0.050, -0.002]), and painting textbook regions from the true PTB-XL statements reaches only 0.758, so the ECGAD marks
+follow QRS more than the statements predict. A small combiner learned on 289 fit-partition records gave the best
+development A2 so far, 0.760 (+0.018 [-0.020, +0.058] against the bar, +0.036 [+0.011, +0.062] against `factor`), and
+the best within-QRS reading (A2_qrs 0.641). The learned lead-quality filter (lead AUROC 0.728 on fit noise records)
+lowered C1_std only from 0.580 to 0.563 and was not adopted.

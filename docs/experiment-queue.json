@@ -3502,7 +3502,7 @@
     }
   },
   "experiment_066_combination": {
-    "status": "implementing",
+    "status": "complete",
     "authorized": true,
     "name": "Factorized combination with a learned lead-quality filter",
     "branch": "exp/066-combination",
@@ -3510,6 +3510,42 @@
     "resources": {
       "device": "cpu, optional cuda for MIL cross-fit"
     },
-    "next_action": "Subagent writes the protocol (clinical prior table, factor/textbook/quality/learned maps), commits it before any score, runs and reports."
+    "next_action": "Primary matches the bar; units_learned best development A2. Candidates for 067: qrs_prior, qrs_lexicographic, factor, units_learned.",
+    "protocol": "docs/experiment-066-combination.md",
+    "results": "docs/experiment-066-combination-results.md",
+    "output_dir": "outputs/experiment066_combination_v1",
+    "source_commit": "d0ade37",
+    "reading": {
+      "factor_A2": 0.7247,
+      "factor_vs_bar": [
+        -0.0173,
+        -0.0558,
+        0.0212
+      ],
+      "factor_vs_textbook": [
+        -0.0247,
+        -0.0498,
+        -0.0016
+      ],
+      "textbook_A2": 0.7494,
+      "textbook_true_A2": 0.7582,
+      "units_learned_A2": 0.7604,
+      "units_learned_vs_bar": [
+        0.0184,
+        -0.0195,
+        0.0582
+      ],
+      "units_learned_vs_factor": [
+        0.036,
+        0.011,
+        0.062
+      ],
+      "units_learned_A2_qrs": 0.641,
+      "factor_A2_qrs": 0.617,
+      "factor_q_C1_std": 0.563,
+      "factor_C1_std": 0.58,
+      "noise_suppression_adopted": false,
+      "quality_classifier_lead_auroc": 0.728
+    }
   }
 }

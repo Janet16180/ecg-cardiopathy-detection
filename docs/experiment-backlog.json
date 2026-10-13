@@ -2021,6 +2021,38 @@
       "status": "open",
       "authorized": false,
       "notes": "Run after 066 shows whether a fixed component prior already recovers the time axis."
+    },
+    {
+      "id": "loc_quality_rescaled",
+      "kind": "experiment",
+      "title": "Rescaled lead-quality classifier for noise suppression",
+      "question": "Does a balanced or quantile-rescaled lead-quality probability, with gamma tuned on fit noise records, cut the pull to noisy leads where 066's filter barely acted?",
+      "evidence": "066: quality lead AUROC 0.728 but median q 0.056, so suppression weight median 0.89; C1_std 0.580 to 0.563 only.",
+      "value": 3,
+      "clarity": 0.7,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.5,
+      "build_hours": 2.0,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "CPU only; reuse 066 features."
+    },
+    {
+      "id": "loc_ecgad_statement_strata",
+      "kind": "experiment",
+      "title": "Statement-stratified ECGAD reading and cardiologist question on mark placement",
+      "question": "For which statements do the cardiologist's marks depart from textbook leads and waves, and why?",
+      "evidence": "066: textbook painting from true statements reaches A2 0.758 and loses to qrs_prior for LAFB, CRBBB and LPR; marks favour QRS.",
+      "value": 3,
+      "clarity": 0.8,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.5,
+      "build_hours": 1.0,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "Development half only until 067; add to docs/cardiologist-meeting-prep.md."
     }
   ]
 }

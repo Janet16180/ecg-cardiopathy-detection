@@ -3448,7 +3448,7 @@
     }
   },
   "experiment_065_mil": {
-    "status": "implementing",
+    "status": "complete",
     "authorized": true,
     "name": "Finding-specific multiple-instance heads",
     "branch": "exp/065-mil",
@@ -3456,6 +3456,49 @@
     "resources": {
       "device": "cuda"
     },
-    "next_action": "Subagent writes the protocol, implements and smoke-tests; scores with LocBench after 061 lands."
+    "next_action": "Negative; MIL lead evidence (A3 0.644, B2 +0.143) is an input candidate for 066.",
+    "protocol": "docs/experiment-065-finding-mil.md",
+    "results": "docs/experiment-065-finding-mil-results.md",
+    "output_dir": "outputs/experiment065_mil_v1",
+    "source_commit": "e2aa2a8",
+    "reading": {
+      "primary_A2": 0.6624,
+      "primary_vs_bar": [
+        -0.0796,
+        -0.1177,
+        -0.0393
+      ],
+      "A3": 0.644,
+      "A3_vs_bar": [
+        0.188,
+        0.108,
+        0.268
+      ],
+      "A4_vs_bar": [
+        -0.157,
+        -0.188,
+        -0.122
+      ],
+      "B2_macro_vs_bar": [
+        0.143,
+        0.12,
+        0.168
+      ],
+      "A2_qrs": 0.569,
+      "A2_nonqrs": 0.611,
+      "C1_std": 0.583,
+      "D1": 0.962,
+      "mil_lse_qrs_A2": 0.712,
+      "mil_lse_qrs_vs_bar": [
+        -0.03,
+        -0.053,
+        -0.005
+      ],
+      "mil_lse_qrs_B1_macro_vs_bar": [
+        0.029,
+        0.02,
+        0.039
+      ]
+    }
   }
 }

@@ -733,3 +733,11 @@ and the learned features added nothing over raw waveform patches (+0.009 [-0.018
 amplified flat P, PR, ST and TP bins (C1_std 0.76); the uncalibrated distance scored 0.712, and raw 40 ms patches
 0.749. Lead localization was weak for every map (A3 0.53-0.58), but beat-level detection was the best so far (D1 0.887
 for the distance map, 0.919 combined with the QRS prior).
+
+[065](experiment-065-finding-mil-results.md) (finding-specific multiple-instance heads trained on PTB-XL statements of
+the fit partition) is complete and negative: A2 0.662, -0.080 [-0.118, -0.039] against `qrs_prior`. The heads put the
+finding in the right leads (A3 0.644, +0.188 [+0.108, +0.268]; region lead AUROC +0.143) and detect best of all maps
+(D1 0.962), but lose time (A4 -0.157), because a 1.1 s receptive field and broad pooling light whole leads rather than
+waves. Its QRS-combined variant scored 0.712 (-0.030) and beat the bar on the region test (B1 +0.029 [+0.020, +0.039]).
+C1_std 0.583. No single map from 062-065 beats the QRS prior on the primary; each is strong on a different axis, which
+sets up Experiment 066.

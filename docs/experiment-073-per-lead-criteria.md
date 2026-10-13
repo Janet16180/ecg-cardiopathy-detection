@@ -190,3 +190,18 @@ paired whole-patient bootstraps (2,000 draws, seed 61061).
 every reading, decisions and file hashes; LocBench tables per map; reference tables copied into `ref/` before the
 strata and noise CLIs write into them). A smoke run on a few records checks shapes and timing and is not scored.
 The results report is `docs/experiment-073-per-lead-criteria-results.md`.
+
+## Amendment 1, 13 October 2026, before any score
+
+The smoke run (16 scored, 200 `fit` clean-normal and 40 `fit` sanity records; nothing scored, no ECGAD or
+`evaluation` value read) printed the criterion prevalence on its 200 `fit` clean normals. Per-lead `qtc_short`
+(QTc <= 390 ms in some lead) was met in 76.5% of them, against 11% for the 069 record-level criterion. A lead's QT
+is never longer than the record's QT, and the AHA (Part IV) measures QT in the lead with the longest interval, so
+a per-lead "<=" QTc condition fires on normal leads whose T ends early. `qtc_short` therefore keeps the 069
+record-level condition (consensus QTc <= 390 ms, painted on all 12 leads) in `perlead`, `perlead_median`,
+`perlead_shift`, `perlead_agree` and `perlead_qrs`; in `perlead_own` it uses the own record-level QTc, as
+`criteria_own` did. A per-lead short-QT criterion is not possible with these measurements.
+
+No other definition changes. The same smoke readout showed per-lead `pr_long` met in 11% of those normals against
+6.5% for the record-level criterion: Uni-G's per-lead PR uses a common P onset, so it is at least the record PR.
+That is the frozen design, and it is reported, not changed.

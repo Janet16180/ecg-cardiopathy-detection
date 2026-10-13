@@ -13,7 +13,7 @@ import json
 import os
 import subprocess
 import time
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 
@@ -26,9 +26,12 @@ from ecg_experiment.ecgad import load_split
 from ecg_experiment.eda.ptbxl import load_metadata, load_statements
 from ecg_experiment.files import sha256_file, write_json_atomic, write_npz_atomic
 from ecg_experiment.gpu import gpu_lock
-from ecg_experiment.locbench import ecgad_record_metrics, load_benchmark, scored_ecg_ids
+from ecg_experiment.locbench import ecgad_record_metrics, load_benchmark, load_tables, scored_ecg_ids
+from ecg_experiment.locbench_baselines061 import exact_signal, qrs_prior_map
 from ecg_experiment.locbench_cache import CACHE_DIR, open_cache
 from ecg_experiment.locbench_data import PARTITION_PATH, REGION_TABLE, load_partition
+from ecg_experiment.locbench_noise import noise_summary, standardized_noise_table
+from ecg_experiment.locbench_strata import STRATA, strata_paired, strata_summary, strata_table
 from ecg_experiment.paths import to_stored
 from ecg_experiment.provenance import git_head, utc_now
 from ecg_experiment.waveforms import LEADS
@@ -574,8 +577,56 @@ def reproduce_bar(bar: str) -> dict[str, Any]:
     return {"bar": bar, "A2_recomputed": recomputed, "A2_saved": saved}
 
 
+def qrs_one(signal: np.ndarray) -> np.ndarray:
+    """059 hybrid QRS indicator of one record, the inside part of 061's ``qrs_prior_map``."""
+    prior, _ = qrs_prior_map(exact_signal(np.asarray(signal)))
+    return prior[0] >= 0.5
+
+
+def qrs_masks(ecg_ids: np.ndarray, work: Path) -> np.ndarray:
+    """QRS indicator (n, 5000) of every scored record, computed once with 8 processes and cached."""
+    path = work / "qrs_mask.npy"
+    if path.exists() and np.array_equal(np.load(work / "qrs_mask_ids.npy"), ecg_ids):
+        return np.load(path)
+    raw, index = open_cache()
+    row_of = dict(zip(index.ecg_id, range(len(index)), strict=True))
+    signals = (raw[row_of[int(e)]] for e in ecg_ids)
+    with ProcessPoolExecutor(8) as pool:
+        masks = np.stack(list(pool.map(qrs_one, signals, chunksize=32)))
+    np.save(path, masks)
+    np.save(work / "qrs_mask_ids.npy", ecg_ids)
+    return masks
+
+
+def scored_maps(out: Path, variant: str, scored: np.ndarray, work: Path, qrs: np.ndarray) -> Path:
+    """Write one variant's float32 maps for the scored records, in ``scored`` order, to local disk."""
+    source = "mil_lse" if variant == "mil_lse_qrs" else variant
+    parts = []
+    for set_name in ("ecgad_dev", "evaluation"):
+        ids = np.load(out / f"maps_index_{set_name}.npy")
+        parts.append((ids, np.load(out / f"maps_{source}_{set_name}.npy", mmap_mode="r")))
+    row = {}
+    for set_index, (set_ids, _) in enumerate(parts):
+        for position, ecg_id in enumerate(set_ids):
+            row.setdefault(int(ecg_id), (set_index, position))
+    path = work / f"{variant}.npy"
+    combined = np.lib.format.open_memmap(
+        path, mode="w+", dtype=np.float32, shape=(len(scored), 12, mil.SAMPLES)
+    )
+    for k, ecg_id in enumerate(scored):
+        set_index, position = row[int(ecg_id)]
+        record = np.asarray(parts[set_index][1][position], np.float32)
+        if variant == "mil_lse_qrs":
+            record = qrs[k][None, :].astype(np.float32) + record / record.max()
+        combined[k] = record
+    combined.flush()
+    del combined
+    (work / f"{variant}.ids.json").write_text(json.dumps([int(e) for e in scored]))
+    return path
+
+
 def score_phase() -> None:
-    """Score every variant with LocBench's CLI, paired against every 061 baseline, and update result.json."""
+    """Score every variant on LocBench with the strata and standardized-noise readings; update result.json."""
     out = output_dir(False)
     result = json.loads((out / "result.json").read_text())
     locbench061 = json.loads((LOCBENCH061 / "result.json").read_text())
@@ -584,35 +635,24 @@ def score_phase() -> None:
     scored = scored_ecg_ids()
     work = Path(os.environ.get("ECG065_CACHE", "/tmp/ecg065-cache")) / "score"
     work.mkdir(parents=True, exist_ok=True)
+    qrs = qrs_masks(scored, work)
     baselines = sorted(p for p in (LOCBENCH061 / "tables").iterdir() if p.is_dir())
+    references = {
+        name: load_tables(LOCBENCH061 / "tables" / name, maps=True) for name in ("qrs_prior", "residual056")
+    }
+    reference_strata = {
+        name: strata_table(t["ecgad_maps"], t["ecgad"]["ecg_id"].to_numpy()) for name, t in references.items()
+    }
     readings = {}
-    for variant in VARIANTS:
-        parts = []
-        for set_name in ("ecgad_dev", "evaluation"):
-            ids = np.load(out / f"maps_index_{set_name}.npy")
-            maps = np.load(out / f"maps_{variant}_{set_name}.npy", mmap_mode="r")
-            parts.append((ids, maps))
-        ids = np.concatenate([p[0] for p in parts])
-        row = {}
-        for set_index, (set_ids, _) in enumerate(parts):
-            for position, ecg_id in enumerate(set_ids):
-                row.setdefault(int(ecg_id), (set_index, position))
-        combined = np.lib.format.open_memmap(
-            work / f"{variant}.npy", mode="w+", dtype=np.float32, shape=(len(scored), 12, mil.SAMPLES)
-        )
-        for k, ecg_id in enumerate(scored):
-            set_index, position = row[int(ecg_id)]
-            combined[k] = parts[set_index][1][position]
-        combined.flush()
-        del combined
-        (work / f"{variant}.ids.json").write_text(json.dumps([int(e) for e in scored]))
+    for variant in [*VARIANTS, "mil_lse_qrs"]:
+        maps_path = scored_maps(out, variant, scored, work, qrs)
         target = out / "locbench" / variant
         command = [
             str(ROOT / ".venv/bin/python"),
             "-m",
             "scripts.experiments.run_locbench_score",
             "--maps",
-            str(work / f"{variant}.npy"),
+            str(maps_path),
             "--ids",
             str(work / f"{variant}.ids.json"),
             "--name",
@@ -623,13 +663,28 @@ def score_phase() -> None:
         for folder in baselines:
             command += ["--compare", str(folder)]
         subprocess.run(command, check=True, cwd=Path(__file__).resolve().parents[2])
+        maps_path.unlink()
         summary = json.loads((target / "summary.json").read_text())
+        tables = load_tables(target / "tables", maps=True)
+        strata = strata_table(tables["ecgad_maps"], tables["ecgad"]["ecg_id"].to_numpy())
+        strata.to_csv(target / "strata.csv", index=False, float_format="%.17g")
+        strata_reading = {
+            "summary": strata_summary(strata),
+            "paired": {
+                name: {stratum: strata_paired(strata, table, stratum) for stratum in STRATA}
+                for name, table in reference_strata.items()
+            },
+        }
+        noise_table = standardized_noise_table(target / "tables")
+        noise_table.to_csv(target / "noise_std.csv", index=False, float_format="%.17g")
         readings[variant] = {
             "metrics": summary["metrics"],
             "paired": summary["paired"],
+            "strata": strata_reading,
+            "noise_std": noise_summary(noise_table),
             "maps_sha256": summary["inputs"]["maps_sha256"],
         }
-        (work / f"{variant}.npy").unlink()
+        write_json_atomic(target / "readings065.json", readings[variant])
         print(f"{variant}: A2 {summary['metrics']['A2']['value']:.4f}", flush=True)
     primary = readings["mil_lse"]["paired"][bar]["A2"]
     if primary["ci_low"] > 0:
@@ -642,10 +697,12 @@ def score_phase() -> None:
         "bar": locbench061["bar"],
         "bar_reproduction": reproduction,
         "baselines_compared": [p.name for p in baselines],
+        "reference_strata": {name: strata_summary(table) for name, table in reference_strata.items()},
         "variants": readings,
         "primary_comparison": {"variant": "mil_lse", "against": bar, "A2_difference": primary},
         "decision": decision,
         "locbench061_result_sha256": sha256_file(LOCBENCH061 / "result.json"),
+        "score_git_head": git_head(ROOT),
     }
     write_json_atomic(out / "result.json", result)
     print(json.dumps(result["locbench"]["primary_comparison"], indent=1), decision, flush=True)

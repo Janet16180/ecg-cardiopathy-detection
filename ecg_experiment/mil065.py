@@ -16,7 +16,6 @@ from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
 import torch
-from scipy.ndimage import median_filter
 from scipy.signal import butter, sosfiltfilt
 from scipy.stats import spearmanr
 from sklearn.metrics import roc_auc_score
@@ -553,8 +552,11 @@ def amplitude_map(raw: np.ndarray) -> np.ndarray:
     np.ndarray
         Map of the same shape.
     """
-    raw = np.asarray(raw, np.float32)
-    return np.abs(raw - median_filter(raw, size=(1, 1, int(0.6 * FS) + 1), mode="nearest"))
+    raw = np.asarray(raw, np.float64)
+    columns = raw.reshape(-1, raw.shape[-1]).T
+    window = int(0.6 * FS) + 1
+    median = pd.DataFrame(columns).rolling(window, center=True, min_periods=1).median().to_numpy()
+    return np.abs(columns - median).T.reshape(raw.shape).astype(np.float32)
 
 
 def native_pool(full: np.ndarray, steps: int) -> np.ndarray:

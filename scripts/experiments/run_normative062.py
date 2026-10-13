@@ -8,8 +8,7 @@ Usage::
 
 ``fit`` writes ``normative.pkl`` and ``fit_summary.json``; ``maps`` writes one float16 memmap per
 declared variant (``maps_<variant>.npy``, shape (n, 12, 5000)), ``ecg_ids.npy`` and
-``record_summary.csv``. Without ``--ids`` the targets are the ECGAD development records followed by the
-whole LocBench ``evaluation`` partition. No ECGAD label is read.
+``record_summary.csv``. Without ``--ids`` the targets are ``locbench.scored_ecg_ids()``.
 """
 
 from __future__ import annotations
@@ -18,6 +17,8 @@ import argparse
 import json
 import os
 import pickle
+import subprocess
+import sys
 import time
 from multiprocessing import Pool
 from pathlib import Path
@@ -29,11 +30,23 @@ from ecg_experiment import ROOT
 from ecg_experiment import normative_map062 as nm
 from ecg_experiment.ecgad import load_split
 from ecg_experiment.files import sha256_file
+from ecg_experiment.locbench import (
+    ecgad_record_metrics,
+    load_benchmark,
+    load_tables,
+    scored_ecg_ids,
+    summarize,
+)
 from ecg_experiment.locbench_cache import open_cache
 from ecg_experiment.locbench_data import PARTITION_PATH, load_partition
 from ecg_experiment.paths import to_stored
+from ecg_experiment.provenance import git_head
 
 OUT = ROOT / "outputs/experiment062_normative_v1"
+BASELINE_DIR = ROOT / "outputs/experiment061_locbench_v1"
+BASELINES = ("random", "amplitude", "qrs_prior", "U_B", "residual056")
+BAR = "qrs_prior"
+TOLERANCE = 1e-12
 WORKERS = 8
 SOURCES = (
     "ecg_experiment/normative_map062.py",
@@ -91,18 +104,14 @@ def fit_ids(limit: int | None = None) -> np.ndarray:
 
 def default_targets() -> np.ndarray:
     """
-    ECGAD development records, then every LocBench ``evaluation`` record.
+    Return the LocBench v1 scored records.
 
     Returns
     -------
     np.ndarray
-        ECG IDs.
+        ``locbench.scored_ecg_ids()``, sorted.
     """
-    split = load_split()
-    partition = load_partition()
-    development = split[split.partition == "development"].ecg_id.to_numpy().astype(int)
-    evaluation = partition[partition.partition == "evaluation"].ecg_id.to_numpy().astype(int)
-    return np.concatenate([development, evaluation])
+    return scored_ecg_ids()
 
 
 def run_fit(out: Path, limit: int | None) -> None:
@@ -185,6 +194,7 @@ def run_maps(out: Path, ids: np.ndarray) -> None:
         del array
         os.replace(out / f"maps_{name}.npy.part", out / f"maps_{name}.npy")
     np.save(out / "ecg_ids.npy", ids)
+    (out / "ecg_ids.json").write_text(json.dumps([int(e) for e in ids]))
     table = pd.DataFrame(rows).set_index("ecg_id").loc[ids].reset_index()
     table.to_csv(out / "record_summary.csv", index=False)
     receipt = {
@@ -205,16 +215,120 @@ def run_maps(out: Path, ids: np.ndarray) -> None:
     print(json.dumps({k: v for k, v in receipt.items() if k not in ("failed_ids",)}, indent=2))
 
 
+def reproduce061(baseline: str = "residual056") -> dict:
+    """
+    Integrity check of Amendment 1: rescore 061's scored float32 ECGAD maps and re-summarize its tables.
+
+    Parameters
+    ----------
+    baseline : str
+        061 baseline to reproduce.
+
+    Returns
+    -------
+    dict
+        Per-record maximum absolute differences, summary differences and ``passed``.
+    """
+    folder = BASELINE_DIR / "tables" / baseline
+    maps = np.load(folder / "ecgad_maps.npy", mmap_mode="r")
+    bench = load_benchmark()
+    saved = pd.read_csv(folder / "ecgad.csv").set_index("ecg_id")
+    columns = ("A2", "A3", "A4", "A6", "marked_share")
+    worst = dict.fromkeys(columns, 0.0)
+    for position, ecg_id in enumerate(bench.ecgad.ecg_id):
+        metrics = ecgad_record_metrics(np.asarray(maps[position]), bench.ecgad_labels[position])
+        for column in columns:
+            a, b = metrics[column], saved.at[int(ecg_id), column]
+            if np.isnan(a) != np.isnan(b):
+                worst[column] = np.inf
+            elif not np.isnan(a):
+                worst[column] = max(worst[column], abs(a - b))
+    receipt = json.loads((BASELINE_DIR / "result.json").read_text())["methods"][baseline]["metrics"]
+    summary = summarize(load_tables(folder))["metrics"]
+    keys = ("value", "ci_low", "ci_high")
+    summary_difference = {
+        metric: max(abs(summary[metric][key] - receipt[metric][key]) for key in keys)
+        for metric in ("A2", "B1/macro", "C1", "D1")
+    }
+    return {
+        "baseline": baseline,
+        "ecgad_records": int(len(bench.ecgad)),
+        "per_record_max_abs_difference": worst,
+        "summary_max_abs_difference": summary_difference,
+        "tolerance": TOLERANCE,
+        "passed": bool(max(worst.values()) <= TOLERANCE and max(summary_difference.values()) <= TOLERANCE),
+    }
+
+
+def run_score(out: Path) -> None:
+    """
+    Integrity check, then score every variant with the LocBench CLI and write ``result.json``.
+
+    Parameters
+    ----------
+    out : Path
+        Output directory holding the maps.
+    """
+    start = time.time()
+    integrity = reproduce061()
+    print(json.dumps(integrity, indent=2))
+    if not integrity["passed"]:
+        raise RuntimeError("061 reproduction failed; nothing is scored")
+    for name in nm.VARIANTS:
+        command = [
+            sys.executable,
+            "-m",
+            "scripts.experiments.run_locbench_score",
+            "--maps",
+            str(out / f"maps_{name}.npy"),
+            "--ids",
+            str(out / "ecg_ids.json"),
+            "--name",
+            name,
+            "--out",
+            str(out / "locbench" / name),
+        ]
+        for baseline in BASELINES:
+            command += ["--compare", str(BASELINE_DIR / "tables" / baseline)]
+        subprocess.run(command, check=True, cwd=ROOT)
+    summaries = {
+        name: json.loads((out / "locbench" / name / "summary.json").read_text()) for name in nm.VARIANTS
+    }
+    primary = summaries[nm.PRIMARY]["paired"][BAR]["A2"]
+    result = {
+        "experiment": "062",
+        "protocol": "docs/experiment-062-normative-map.md",
+        "code_commit": git_head(ROOT),
+        "sources_sha256": {source: sha256_file(ROOT / source) for source in SOURCES},
+        "fit": json.loads((out / "fit_summary.json").read_text()),
+        "maps": json.loads((out / "maps_receipt.json").read_text()),
+        "integrity": integrity,
+        "bar": BAR,
+        "primary": nm.PRIMARY,
+        "primary_A2_difference": primary,
+        "beats_bar": bool(primary["ci_low"] > 0),
+        "variants": {name: summary["metrics"] for name, summary in summaries.items()},
+        "paired": {name: summary["paired"] for name, summary in summaries.items()},
+        "benchmark_counts": summaries[nm.PRIMARY]["benchmark_counts"],
+        "scoring_seconds": time.time() - start,
+    }
+    (out / "result.json").write_text(json.dumps(result, indent=2))
+    print(json.dumps({"primary_A2_difference": primary, "beats_bar": result["beats_bar"]}, indent=2))
+
+
 def main() -> None:
     """Parse arguments and run a stage."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("stage", choices=("fit", "maps"))
+    parser.add_argument("stage", choices=("fit", "maps", "score"))
     parser.add_argument("--out", type=Path, default=OUT)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--ids", type=Path, default=None, help="Text file of target ECG IDs, one per line")
     args = parser.parse_args()
     if args.stage == "fit":
         run_fit(args.out, args.limit)
+        return
+    if args.stage == "score":
+        run_score(args.out)
         return
     ids = np.loadtxt(args.ids, dtype=int, ndmin=1) if args.ids else default_targets()
     run_maps(args.out, ids[: args.limit] if args.limit else ids)

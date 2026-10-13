@@ -28,6 +28,8 @@ from ecg_experiment import dino_knn064 as dk
 from ecg_experiment.ecgad import load_split
 from ecg_experiment.files import sha256_file
 from ecg_experiment.gpu import gpu_lock
+from ecg_experiment.locbench import scored_ecg_ids
+from ecg_experiment.locbench_baselines061 import exact_signal, qrs_prior_map
 from ecg_experiment.locbench_cache import open_cache
 from ecg_experiment.locbench_data import load_partition
 from ecg_experiment.paths import to_stored
@@ -457,6 +459,7 @@ def make_maps(model_path: Path | None, out: Path, limit: int | None, cap_gb: flo
         maps[variant].flush()
         shutil.move(local / f"maps_{variant}.npy", out / f"maps_{variant}.npy")
     np.save(out / "ecg_ids.npy", targets)
+    (out / "ecg_ids.json").write_text(json.dumps([int(i) for i in targets]))
     np.save(out / "beat_counts.npy", beat_counts)
     np.savez(
         out / "calibration.npz",
@@ -481,6 +484,42 @@ def make_maps(model_path: Path | None, out: Path, limit: int | None, cap_gb: flo
     print(json.dumps(receipt, indent=2))
 
 
+def _qrs_prior(position: int) -> np.ndarray:
+    if "signals" not in _CACHE:
+        _CACHE["signals"], _ = open_cache()
+    return qrs_prior_map(exact_signal(_CACHE["signals"][position]))[0].astype(np.float32)
+
+
+def rebuild_qrs_prior(out: Path) -> None:
+    """Rebuild the 061 ``qrs_prior`` maps with the frozen function for every scored record."""
+    _, index = open_cache()
+    position = dict(zip(index.ecg_id.astype(int), range(len(index)), strict=True))
+    ids = scored_ecg_ids()
+    out.mkdir(parents=True, exist_ok=True)
+    maps = np.lib.format.open_memmap(out / "qrs_prior.npy", "w+", np.float32, (len(ids), dk.LEADS, 5000))
+    with Pool(THREADS) as pool:
+        for row, values in enumerate(pool.imap(_qrs_prior, [position[int(i)] for i in ids], chunksize=16)):
+            maps[row] = values
+    maps.flush()
+    (out / "qrs_prior.ids.json").write_text(json.dumps([int(i) for i in ids]))
+
+
+def combine_qrs(out: Path, qrs_dir: Path) -> None:
+    """``qrs_lex_dino``: 100 inside the 061 ``qrs_prior`` QRS (>= 0.5) plus the stored ``dino_z``, float32."""
+    ids = np.load(out / "ecg_ids.npy")
+    dino = np.load(out / "maps_dino_z.npy", mmap_mode="r")
+    qrs = np.load(qrs_dir / "qrs_prior.npy", mmap_mode="r")
+    qrs_ids = json.loads((qrs_dir / "qrs_prior.ids.json").read_text())
+    row = {int(e): i for i, e in enumerate(ids)}
+    combined = np.lib.format.open_memmap(
+        out / "maps_qrs_lex_dino.npy", "w+", np.float32, (len(qrs_ids), dk.LEADS, 5000)
+    )
+    for i, ecg_id in enumerate(qrs_ids):
+        combined[i] = 100.0 * (qrs[i] >= 0.5) + dino[row[int(ecg_id)]].astype(np.float32)
+    combined.flush()
+    (out / "maps_qrs_lex_dino.ids.json").write_text(json.dumps([int(i) for i in qrs_ids]))
+
+
 def main() -> None:
     """Command-line entry point."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -496,6 +535,10 @@ def main() -> None:
     maps.add_argument("--out", type=Path, default=OUTPUT)
     maps.add_argument("--limit", type=int)
     maps.add_argument("--cap-gb", type=float, default=9.0)
+    sub.add_parser("qrs-prior").add_argument("--out", type=Path, default=BEAT_DIR / "integrity")
+    combine = sub.add_parser("combine")
+    combine.add_argument("--out", type=Path, default=OUTPUT)
+    combine.add_argument("--qrs", type=Path, default=BEAT_DIR / "integrity")
     args = parser.parse_args()
     torch.set_num_threads(THREADS)
     if args.command == "pool":
@@ -504,6 +547,10 @@ def main() -> None:
         profile(args.cap_gb)
     elif args.command == "pretrain":
         pretrain(args.steps, args.batch, args.cap_gb)
+    elif args.command == "qrs-prior":
+        rebuild_qrs_prior(args.out)
+    elif args.command == "combine":
+        combine_qrs(args.out, args.qrs)
     elif args.command == "maps":
         make_maps(args.model, args.out, args.limit, args.cap_gb)
 

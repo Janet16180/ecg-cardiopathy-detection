@@ -3403,7 +3403,7 @@
     }
   },
   "experiment_064_dino_knn": {
-    "status": "implementing",
+    "status": "complete",
     "authorized": true,
     "name": "SimDINO beat patch tokens with phase-matched kNN",
     "branch": "exp/064-dino-knn",
@@ -3411,7 +3411,41 @@
     "resources": {
       "device": "cuda"
     },
-    "next_action": "Subagent writes the protocol, implements and smoke-tests; scores with LocBench after 061 lands."
+    "next_action": "Negative; dino_dist detection (D1 0.887) and qrs_lex_dino are input candidates for 066.",
+    "protocol": "docs/experiment-064-dino-patch-knn.md",
+    "results": "docs/experiment-064-dino-patch-knn-results.md",
+    "output_dir": "outputs/experiment064_dino_knn_v1",
+    "source_commit": "21a278b",
+    "reading": {
+      "primary_A2": 0.6703,
+      "primary_vs_bar": [
+        -0.0716,
+        -0.1191,
+        -0.0267
+      ],
+      "dino_z_vs_raw_z": [
+        0.0092,
+        -0.0184,
+        0.0389
+      ],
+      "dino_dist_A2": 0.7116,
+      "qrs_lex_dino_A2": 0.747,
+      "qrs_lex_dino_vs_bar": [
+        0.005,
+        -0.015,
+        0.027
+      ],
+      "raw_dist_A2": 0.749,
+      "dino_z_A2_qrs": 0.565,
+      "dino_z_C1_std": 0.76,
+      "dino_z_D1": 0.861,
+      "dino_dist_D1": 0.887,
+      "qrs_lex_dino_D1": 0.919,
+      "A3_range": [
+        0.53,
+        0.58
+      ]
+    }
   },
   "experiment_065_mil": {
     "status": "implementing",

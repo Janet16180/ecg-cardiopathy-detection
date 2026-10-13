@@ -726,3 +726,10 @@ puts evidence in ST, T and PR while the marks sit on QRS. Its declared prior-com
 negative: the primary z map scored A2 0.602, -0.140 [-0.172, -0.110] against `qrs_prior`; dividing by the predicted
 sigma removed the QRS emphasis and drew the map to real noise (C1_std 0.70). The raw error map scored 0.709, and the
 post-hoc QRS-combined version 0.732, -0.010 [-0.022, +0.002], with lead AUROC +0.106 over the bar and C1_std 0.537.
+
+[064](experiment-064-dino-patch-knn-results.md) (SimDINO beat patch tokens with phase-matched kNN against clean normals)
+is complete and negative: the primary calibrated map scored A2 0.670, -0.072 [-0.119, -0.027] against `qrs_prior`,
+and the learned features added nothing over raw waveform patches (+0.009 [-0.018, +0.039]). The per-bin calibration
+amplified flat P, PR, ST and TP bins (C1_std 0.76); the uncalibrated distance scored 0.712, and raw 40 ms patches
+0.749. Lead localization was weak for every map (A3 0.53-0.58), but beat-level detection was the best so far (D1 0.887
+for the distance map, 0.919 combined with the QRS prior).

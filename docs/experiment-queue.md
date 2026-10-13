@@ -1,6 +1,60 @@
 # Experiment queue
 
-**Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
+**Updated:** 2 October 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
+
+**1 October, Experiments 046-050 completed, and a CPU timing measured:**
+[Experiment 046](experiment-046-pipeline-v4-results.md) adopted [pipeline v4](pipeline-v4.md), v3 with the
+unfitted ensemble readout of 045. It catches more athlete-criteria abnormal ECGs at 5% with 200 local
+normals (composite +0.0121 [+0.0082, +0.0161] over v3), but it refers more "other" ECGs, such as sinus
+bradycardia (27.5% against 24.9%). Three explanation experiments, on saved scores, explain a referred ECG with
+042's beat-wave map `U_B` (rhythm) or the attention contributions (morphology).
+[Experiment 047](experiment-047-explanation-rule-results.md) switched on `U_B` being red. It is negative by
+its rule: it lost premature-beat hits (-0.136 [-0.232, -0.057]).
+[Experiment 048](experiment-048-pvc-switch-results.md) switched on the xECG PVC head instead. It keeps every
+`U_B` premature-beat hit and gains infarct-lead information (anterior contrast +0.189 [0.067, 0.307]). It is
+the recommended explanation rule, although it sends half of the referred anterior infarcts to `U_B`.
+[Experiment 049](experiment-049-focal-switch-results.md) is negative: a label-free focal-beat switch reached
+only 24 of 49 referred PVC ECGs, because 12 NORM-only normals have one extreme beat. It confirmed the PVC
+switch with the `combined_50` referral as the best configuration so far (93% of PVC ECGs explained on the
+premature beat). [Experiment 050](experiment-050-attention-finding-heads-results.md) is negative: attention
+finding heads on ECG-JEPA tokens are below the xECG PVC head at SPH (-0.0068 [-0.0128, -0.0015]), and the
+PVC token map does not keep localization by the margin. The [CPU timing](inference-timing-cpu.md) of v4 plus
+the explanation is about 0.33 s per ECG with 4 threads (0.83 s with one), with a 2.3 GiB peak, and the CPU
+outputs equal the GPU path's. Outputs: `outputs/experiment046_pipeline_v4_v1/` to
+`outputs/experiment050_attention_findings_v1/`, `outputs/inference_timing_cpu_v1/`.
+
+**1 October, Experiments 043-045 completed; 046 running:** the user asked whether a neural network at the
+end, an attention head or the tutor's CNN + transformer would do better, and asked for the work to continue
+overnight. [Experiment 043](experiment-043-ann-heads-results.md) ran three stages against pipeline v2's
+readout R. The logistic readout on concatenated xECG + JEPA features beats R (SPH +0.0017 [+0.0008, +0.0026],
+full development +0.0041). MLP heads and the attention head on JEPA tokens match R (attention SPH +0.0017
+[-0.0003, +0.0039]); the tutor's CNN + transformer from scratch is below R (SPH -0.0097 [-0.0119, -0.0075]).
+No map improved on 042's `U_B`. [Experiment 044](experiment-044-pipeline-v3-results.md) adopted the
+concatenated readout as [pipeline v3](pipeline-v3.md): composite sensitivity at 5% with 200 local normals
+0.797 against 0.789 (+0.0080 [+0.0040, +0.0120]), at a higher normal referral rate (5.74% against 5.45%).
+[Experiment 045](experiment-045-two-layer-map-results.md) found that a two-layer map (`U_B`, then
+`attention_jepa`) loses premature-beat localization (-0.309 [-0.418, -0.202]), and that the mean-logit
+ensemble of `logistic_concat` and `attention_jepa` beats pipeline v3's readout (SPH +0.0038 [0.0028, 0.0049],
+full +0.0058). Experiment 046, pipeline v4 with the ensemble readout, is running in a separate worktree.
+Outputs: `outputs/experiment043_ann_heads_v1/`, `outputs/experiment044_pipeline_v3_v1/`,
+`outputs/experiment045_two_layer_map_v1/`.
+
+**30 September, Experiment 042 completed:** the user asked for both per-lead approaches.
+[Experiment 042](experiment-042-lead-wave-maps-results.md) compared ECG-JEPA patch tokens (the 041b fallback)
+with beat-aligned P, QRS, ST and T pieces per lead. The beat-aligned map improves on 041 by its prespecified
+rule: its top unit was on the premature beat in 93% of PVC ECGs (chance 20%), and it put red on 7.7% of benign
+variants against 27%. ECG-JEPA did not improve on 041, and no map passed the infarct lead test. Notebook
+`notebooks/12-jr-beat-wave-maps.ipynb` shows the beat-aligned map. Outputs:
+`outputs/experiment042_lead_wave_maps_v1/`.
+
+**30 September, Experiment 041 completed:** after the closeout, the user asked for the tutor's localization
+idea and agreed its scope. [Experiment 041](experiment-041-fragment-localization-results.md) scored each
+250 ms xECG section on PTB-XL development data. The unsupervised per-section distance put its top section on
+a premature beat 82% of the time against 15% by chance (+0.669 [0.582, 0.758]), but as a worst-section
+screen it reached AUROC 0.777 against 0.923 for the whole-ECG distance. The label-guided map reached 0.926
+and still localized premature beats (77%). Neither map marked benign rhythm variants less (27% each). The
+prespecified ECG-JEPA fallback (041b) is triggered and needs its own protocol; follow-ups are in the
+backlog. Outputs: `outputs/experiment041_fragment_localization_v1/`.
 
 **30 September day closed:** The user chose to close out today's completed work and merge it
 into `main`. Experiment 039 finished all 36 fits and 18 audits; Experiment 040 completed its
@@ -476,6 +530,17 @@ groups.
 | 035 ([protocol](experiment-035-hard-subset.md), [results](experiment-035-hard-subset-results.md)) | Why pooled readouts lose on the PTB-XL hard subset | Normal-label mismatch; reweighting recovers 81% with no SPH cost | `outputs/experiment035_hard_subset_v1/` |
 | 036 ([protocol](experiment-036-random-encoder.md), [results](experiment-036-random-encoder-results.md)) | Does the normal reference need pretraining? | Yes: pretrained 0.878 against random 0.686 at SPH | `outputs/experiment036_random_encoder_v1/` |
 | 037 ([protocol](experiment-037-pipeline-v2.md), [results](experiment-037-pipeline-v2-results.md)) | Pipeline v2: 035 readout with 030 and 033 operating points | Adopted by rule (-0.0048 composite, fails strict non-inferiority); spec in [pipeline-v2](pipeline-v2.md) | `outputs/experiment037_pipeline_v2_v1/` |
+| 041 ([protocol](experiment-041-fragment-localization.md), [results](experiment-041-fragment-localization-results.md)) | Where in the ECG is the abnormality? Per-section maps | Unsupervised map finds premature beats (+0.669 over chance) but worst section detects at 0.777; label-guided 0.926; JEPA fallback triggered | `outputs/experiment041_fragment_localization_v1/` |
+| 042 ([protocol](experiment-042-lead-wave-maps.md), [results](experiment-042-lead-wave-maps-results.md)) | Per-lead maps: ECG-JEPA patches and beat-aligned waves | Beat-aligned improves on 041 (premature beats 93% against 20%; benign red 7.7% against 27%); JEPA does not; lead test not passed | `outputs/experiment042_lead_wave_maps_v1/` |
+| 043 ([protocol](experiment-043-ann-heads.md), [results](experiment-043-ann-heads-results.md)) | ANN heads, attention head on JEPA tokens, tutor's CNN + transformer | xECG + JEPA logistic beats R (SPH +0.0017); MLPs and attention match; CNN + transformer below (-0.0097); no map improves on `U_B` | `outputs/experiment043_ann_heads_v1/` |
+| 044 ([protocol](experiment-044-pipeline-v3.md), [results](experiment-044-pipeline-v3-results.md)) | Pipeline v3: concatenated-feature readout with 030 and 033 operating points | Adopted; composite +0.0080 [+0.0040, +0.0120] at 5%, normals referred 5.74% against 5.45%; spec in [pipeline-v3](pipeline-v3.md) | `outputs/experiment044_pipeline_v3_v1/` |
+| 045 ([protocol](experiment-045-two-layer-map.md), [results](experiment-045-two-layer-map-results.md)) | Two-layer explanation map and a detection ensemble, from saved scores | Two-layer map loses premature-beat localization; ensemble beats v3's readout (SPH +0.0038, full +0.0058) | `outputs/experiment045_two_layer_map_v1/` |
+| 046 ([protocol](experiment-046-pipeline-v4.md), [results](experiment-046-pipeline-v4-results.md)) | Pipeline v4: v3 with the 045 ensemble readout | Adopted; composite +0.0121 [+0.0082, +0.0161] at 5%; "other" referred 27.5% against 24.9%; spec in [pipeline-v4](pipeline-v4.md) | `outputs/experiment046_pipeline_v4_v1/` |
+| 047 ([protocol](experiment-047-explanation-rule.md), [results](experiment-047-explanation-rule-results.md)) | Explain referred ECGs with `U_B` when it is red, else attention | Negative: loses premature-beat hits (-0.136 [-0.232, -0.057]); keeps lead information | `outputs/experiment047_explanation_rule_v1/` |
+| 048 ([protocol](experiment-048-pvc-switch.md), [results](experiment-048-pvc-switch-results.md)) | Switch the explanation on the xECG PVC head | Improves on `U_B`: keeps every premature-beat hit, anterior contrast +0.189 [0.067, 0.307]; sends 68 of 136 referred anterior infarcts to `U_B`; recommended rule | `outputs/experiment048_pvc_switch_v1/` |
+| 049 ([protocol](experiment-049-focal-switch.md), [results](experiment-049-focal-switch-results.md)) | Label-free focal-versus-diffuse switch | Negative (-0.405 against the PVC switch); normals' threshold too high; PVC switch with `combined_50` referral best so far | `outputs/experiment049_focal_switch_v1/` |
+| 050 ([protocol](experiment-050-attention-finding-heads.md), [results](experiment-050-attention-finding-heads-results.md)) | Attention PVC and WPW heads on ECG-JEPA tokens | Negative: PVC below the xECG head at SPH (-0.0068); PVC map does not keep localization (-0.045 [-0.148, +0.054]) | `outputs/experiment050_attention_findings_v1/` |
+| CPU timing ([note](inference-timing-cpu.md)) | Pipeline v4 plus the explanation without a GPU | 0.33 s per ECG at 4 threads, 0.83 s at 1; 2.3 GiB peak; outputs equal the GPU path | `outputs/inference_timing_cpu_v1/` |
 
 Next, ranked in the [backlog](experiment-backlog.json) and [priorities](experiment-priorities.md):
 `referral_budget_operating_point`, then `hybrid_screening_score` and `rhythm_findings_detector`, with the
@@ -506,3 +571,257 @@ The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.m
 - Completed MIMIC 200k preparation / older ECG-FM suite: `data/processed/mimic_ssl_200k/metadata.json` and `outputs/experiment003_mimic/{status.json,prepare_mimic_200k.log}`. The legacy experiment runner remains stopped after the refactor pause; do not restart it as a side effect of a new queue.
 - Environment: default `.venv` via direct `uv` commands; one V100 16 GB; shared lock `/tmp/ecg_project_gpu.lock`. Historical launch receipts retain `.venv-pretrained` paths.
 - Existing completed comparisons: `outputs/experiment004_cpc_40k/report.md` and `outputs/experiment005_cpc_word2vec/report.md`. Interpret them as exploratory PTB-XL proxy results, not validation of healthy status or student referral decisions.
+
+## Unsupervised localization follow-ups, 2 October 2026
+
+The user authorized autonomous localization research with subagents on the existing PR #61. Experiments
+052-054 committed their prospective protocols before scoring. They run on CPU in isolated worktrees, fit no pathology
+labels, and use local training/development ECGs. Each must reproduce the previous `U_B` results, compare
+fixed-size marks, and write its results report from live outputs. The closed test sets stay closed.
+
+| Experiment | Question | State |
+| --- | --- | --- |
+| 051 ([protocol](experiment-051-beat-sum-map.md), [results](experiment-051-beat-sum-map-results.md)) | Beat-score sums | Complete; neither map improved on U_B |
+| 052 ([protocol](experiment-052-raw-residual.md), [results](experiment-052-raw-residual-results.md)) | Does comparison with the other beats in the same raw ECG improve focal localization? | Complete; gain −0.009 [−0.166, +0.139], ST 20.5%, QRS 77.5%; no promotion |
+| 053 ([protocol](experiment-053-calibrated-units.md), [results](experiment-053-calibrated-units-results.md)) | Do training-normal calibrated lead/wave scores improve persistent lead localization? | Complete; paired lead gain −0.020 [−0.133, +0.091], focal guardrail failed; no promotion |
+| 054 ([protocol](experiment-054-aligned-phase-residual.md), [results](experiment-054-aligned-phase-residual-results.md)) | Does bounded beat alignment and independent normal residual calibration improve localization? | Complete; automatic timing gain +0.142 [+0.001, +0.287], but ST 12.5% and QRS 59.3% failed; no promotion |
+
+The existing PVC overlap target is an automatic proxy. Fixed wave windows can attribute an early beat to
+the preceding beat's T window; prospective common-support metrics and known-location waveform alterations
+will check localization without accepting a gain from wider highlights. Clinical region correctness still
+needs independent cardiologist marks or expert beat annotations.
+
+Integrated verification: 1,318 CPU tests, Ruff, source distribution and wheel passed. Three subagents
+ran or independently audited the experiments. The existing PR #61 holds all changes. The next decision
+is independent cardiologist region annotations; no further recipe search or new data download is scheduled.
+
+Local review artifacts: `outputs/localization_review_2026_10_02/index.html` has 40 comparison figures,
+including failures. `outputs/cardiologist_localization_review_2026_10_02/` contains a proposed blinded
+50-ECG packet and annotation template. Selection uses 50 distinct existing development patients,
+ten per existing normal, benign, PVC, anterior and inferior group, with randomized order and seed
+20261002. Give the reader only `blinded_ecgs.pdf` and `annotations.csv`; retain the selection key and
+model highlights until annotations are frozen. No expert annotations have been received.
+
+## Public expert annotations after cardiologist access fell through (2 October 2026)
+
+The user reports that neither the promised Italian data nor cardiologist access is available.
+Experiments055-057 are preparing prospective protocols and acquiring public data locally:055 uses
+LUDB wave boundaries;056 uses INCART expert-corrected beat types;057 uses European ST-T episode
+time/channel marks. No new result is claimed. Actual Challenge split metadata contains no INCART
+records; closed tests remain unread. Screening labels and the recommendation remain unchanged.
+The blinded50case packet remains unused; no cardiologist marks have been received.
+
+Public benchmark protocols are frozen before scores:055 `5069b24`,056 `17b0292`, and057
+`b72539a`. Experiment057 implementation passed ten focused scientific tests and Ruff;270public
+EDB files (487,662,449bytes) match published SHA-256checksums. These are preparation checks.
+
+055 and057 are running CPU-only from frozen sources `7164258` and `f0feff4`;057 includes
+[a prospective annotation-completeness amendment](experiment-057-annotation-audit-amendment.md).
+No results are asserted while receipts remain incomplete.056 implementation is being finalized.
+
+## Independent public localization results (2 October 2026)
+
+[057](experiment-057-st-episode-localization-results.md) is complete: independent expert ST-change
+time/channel hit improved from53.6%to70.4%, paired+16.8points[7.2,27.6],76subjects. All frozen
+gates passed; an independent scientist reproduced references/targets/intervals. This is conditional
+on supplied beat anchors and two-hour/two-channel context; the clinical pipeline is unchanged.
+Original waveform examples and failures: `outputs/localization_public_review_2026_10_02/index.html`.
+[055](experiment-055-ludb-wave-boundaries-results.md) is complete: QRS/T boundary overlap improved
+against cardiologist marks, but the full recipe failed because overall gain was below10points and P
+localization worsened.056 is running after exact predecessor/reference reconstruction.
+
+[056](experiment-056-incart-beat-localization-results.md) is complete and passed all gates:
+ectopic beat selection89.55%versus74.13%, paired+15.42points[6.57,25.81];75records/32patients,
+30eligible primary subjects. All predecessor unit scores reproduced with zero difference and an
+independent scientist reconstructed all primary results. Normalbeat flags fell to19.09%but remain
+a limitation. Beat identity is validated; exact abnormal wave/lead remains unverified.
+All056/057 success/failure examples are indexed in the local public gallery. No more studies were
+launched after these review-worthy gains. Final integration passed1349CPUtests, Ruff and packagebuilds.
+
+## Synthetic localization iterations resumed (2 October 2026)
+
+The user authorized continued autonomous iterations with the screening classifier frozen and
+the same PR #61. Experiment058 is preparing controlled generator tests,059 an independent
+wave-boundary comparison, and [060](experiment-060-waveform-st-localization.md) a fixed
+waveform-anchor successor to057. These are prospective studies; no new score is claimed.
+Protocols must be committed before execution; closed tests remain closed.
+
+059 protocol is frozen (`c4dd7d5`, integrated `cc04db2`); its72non-EDB primary records
+exclude33 previously read source excerpts.060 protocol is frozen (`3b19a76`); four
+scientific checks and Ruff passed, with no score yet. Both run with two CPU threads.
+
+060 is running from frozen source `fd4e5bf`; no result is claimed while its
+receipt is partial.059 is acquiring/auditing public annotations before scoring.
+
+[060](experiment-060-waveform-st-localization-results.md) completed: waveform-onlyST
+hit71.71% versus51.97%, gain19.74points[9.21,31.58]; however the comparison against
+supplied-anchor057 has lower bound-7.89points, failing the frozen-5point margin.
+No promotion or retuning. All90records and original85record/76subject primary remained.
+
+[058](experiment-058-synthetic-generator-localization.md) protocol is frozen (`089a7c0`):
+publishedECGSYN equations plus a separate engineering generator; coupled leads,
+paired changes, shams and persistentchanges. Classifier/oldlocalizers are frozen.
+This qualifies a benchmark and cannot establish clinical improvement by itself.
+
+059 is running from frozen source `43c5cff`, after17 scientific tests/Ruff and a
+pre-score native-length amendment.060 independent audit reproduced all primary
+results and confirmed its negative full-rule decision; no implementation defect.
+
+059v1 stopped before anyQTDBscore when an edge-span check failed; its receipts
+and source are preserved. The new [v2 execution note](experiment-059-v2-execution-note.md)
+freezes a forward-only correction (`cacf7e8`), with the same method and decision rule.
+v2 is running on all105 records; no result is claimed until completion.
+
+059v2 completed its72record primary with all gates passed: QRSIoU68.17%to79.37%,
+pairedgain11.20points[8.90,13.64]; endpointswithin30ms65.48%to91.54%. Executor report
+and independent audit are pending.058 is running from frozen source `cf45db4` after
+its pre-score background amendment (`e7081f0`); no synthetic outcome is claimed yet.
+
+[059](experiment-059-hybrid-wave-boundaries-results.md) is complete and independently
+audited: all72primaryrecords/2582expertQRSintervals retained,549hashes and10359
+measurements/matches reconstructed. Allgatespassed; this is QRSboundarytiming,
+not disease-region accuracy. Local before/after and regression review:
+`outputs/localization_iteration_review_2026_10_02/index.html`. Final integrated
+checks:1371CPUtests, Ruff and wheel/sdist passed;058 benchmark remains running.
+
+058 completed all7200testtraces/14400methodrows in1099.17seconds. Generator
+qualificationpassed; allfour generator/distribution robustnessdecisions failed,
+with extra-noise flags and persistent-ST misses. Independent reconstruction
+verifiedallcases/intervals/8460outputhashes. No clinicalpromotion. Executor report
+is being written; the local iteration gallery nowcontains66verifiedfigures.
+
+[058 executed report](experiment-058-synthetic-generator-localization-results.md) and
+independent audit are complete. All three058–060 studies have reports and audits.
+The review-worthy result is059QRSboundarytiming;058robustness and060full-rule
+noninferiority failed. No further study was launched. Classifier/clinicalpipeline
+and closedtests remain unchanged. Same PR #61; local66figure review is ready.
+
+## Localization programme, 12 October 2026
+
+The user authorized a new localization programme ([plan](localization-program-2026-10-12.md)) after a review
+of why 041-060 fell short. The ECGAD cardiologist benchmark (399 PTB-XL fold-10 records with lead-by-sample
+marks) was carved out of the final test and split by patient into development and holdout halves
+([ecgad-benchmark-v1.md](ecgad-benchmark-v1.md)). [061](experiment-061-locbench.md) protocol is frozen: LocBench v1
+(ECGAD development, clinical region test, noise-lead control, detection) and five baselines. No score yet.
+
+061 is running. 062 (normative phase-aligned map), 063 (masked reconstruction), 064 (SimDINO beat patch tokens with
+phase-matched kNN) and 065 (finding-specific multiple-instance heads) are being implemented in separate worktrees;
+each commits its protocol before scoring with LocBench. A shared local waveform cache
+(`ecg_experiment/locbench_cache.py`, `/tmp/ecg-locbench-cache`) holds folds 1-8 and the ECGAD records.
+
+[061](experiment-061-locbench-results.md) is complete; every integrity check passed and LocBench v1 is adopted. The
+best baseline is a disease-blind QRS indicator (`qrs_prior`, ECGAD development A2 0.742 [0.708, 0.774]), because
+the cardiologist marks concentrate on QRS complexes; U_B scored 0.632 and the 056 residual 0.680. Amendment 2
+([QRS strata](experiment-061-amendment-2-qrs-strata.md)) adds A2 inside and outside the QRS: inside, every
+baseline is near chance (about 0.54) except the 056 residual (0.607). Both reference maps are drawn to noisy leads
+(C1 0.67 and 0.80).
+
+[062](experiment-062-normative-map-results.md) (normative phase-aligned map) is complete and negative on its primary:
+ECGAD development A2 0.694, -0.048 [-0.092, -0.007] against `qrs_prior`. It is the best map so far for which lead
+(A3 0.635, +0.179 over the bar) and for detection (D1 0.855 against U_B's 0.762); its loss is in time, because it
+puts evidence in ST, T and PR while the marks sit on QRS. Its declared prior-combined variant scored A2 0.753,
++0.011 [-0.008, +0.031]. It feeds Experiment 066.
+
+[063](experiment-063-masked-reconstruction-results.md) (masked cross-lead and cross-beat reconstruction) is complete and
+negative: the primary z map scored A2 0.602, -0.140 [-0.172, -0.110] against `qrs_prior`; dividing by the predicted
+sigma removed the QRS emphasis and drew the map to real noise (C1_std 0.70). The raw error map scored 0.709, and the
+post-hoc QRS-combined version 0.732, -0.010 [-0.022, +0.002], with lead AUROC +0.106 over the bar and C1_std 0.537.
+
+[064](experiment-064-dino-patch-knn-results.md) (SimDINO beat patch tokens with phase-matched kNN against clean normals)
+is complete and negative: the primary calibrated map scored A2 0.670, -0.072 [-0.119, -0.027] against `qrs_prior`,
+and the learned features added nothing over raw waveform patches (+0.009 [-0.018, +0.039]). The per-bin calibration
+amplified flat P, PR, ST and TP bins (C1_std 0.76); the uncalibrated distance scored 0.712, and raw 40 ms patches
+0.749. Lead localization was weak for every map (A3 0.53-0.58), but beat-level detection was the best so far (D1 0.887
+for the distance map, 0.919 combined with the QRS prior).
+
+[065](experiment-065-finding-mil-results.md) (finding-specific multiple-instance heads trained on PTB-XL statements of
+the fit partition) is complete and negative: A2 0.662, -0.080 [-0.118, -0.039] against `qrs_prior`. The heads put the
+finding in the right leads (A3 0.644, +0.188 [+0.108, +0.268]; region lead AUROC +0.143) and detect best of all maps
+(D1 0.962), but lose time (A4 -0.157), because a 1.1 s receptive field and broad pooling light whole leads rather than
+waves. Its QRS-combined variant scored 0.712 (-0.030) and beat the bar on the region test (B1 +0.029 [+0.020, +0.039]).
+C1_std 0.583. No single map from 062-065 beats the QRS prior on the primary; each is strong on a different axis, which
+sets up Experiment 066.
+
+066 (factorized combination with a learned lead-quality filter) is being implemented in `/tmp/ecg-wt-066`. Its primary map
+multiplies the 065 finding probabilities, the 065 per-lead evidence and a clinical component prior written before any
+score, painted over whole delineated waves; a diagnose-then-paint-the-textbook-region baseline tests whether it
+localizes beyond the diagnosis, and a lead-quality classifier trained on the PTB-XL noise notes tests noise suppression.
+
+[066](experiment-066-combination-results.md) (factorized combination with a lead-quality filter) is complete. The primary
+`factor` map (065 finding probability x 065 lead evidence x a clinical component prior) matches the bar but does not beat
+it: A2 0.725, -0.017 [-0.056, +0.021]. It loses to the diagnose-then-paint-the-textbook-region baseline (0.749; -0.025
+[-0.050, -0.002]), and painting textbook regions from the true PTB-XL statements reaches only 0.758, so the ECGAD marks
+follow QRS more than the statements predict. A small combiner learned on 289 fit-partition records gave the best
+development A2 so far, 0.760 (+0.018 [-0.020, +0.058] against the bar, +0.036 [+0.011, +0.062] against `factor`), and
+the best within-QRS reading (A2_qrs 0.641). The learned lead-quality filter (lead AUROC 0.728 on fit noise records)
+lowered C1_std only from 0.580 to 0.563 and was not adopted.
+
+068 (learned unit combiner v2) is being implemented in `/tmp/ecg-wt-068`: it retrains the 065 heads in five patient folds
+over the fit partition so the 066 combiner can learn from every fit record with a region statement (about seven times
+the 289 records 066 used), and adds a softened lead factor. It runs before 067, whose candidates gain `units_v2` only if
+its development A2 exceeds 0.760.
+
+[068](experiment-068-combiner-v2-results.md) (learned unit combiner v2) is complete. `units_v2` has the best development A2
+so far, 0.767, +0.025 [-0.013, +0.065] against `qrs_prior` (matches, not beats), and +0.007 [+0.001, +0.012] against
+066 `units_learned`. Twelve times more training records changed nothing by themselves (+0.0015 [-0.0025, +0.0054]): the
+region-table weak-label objective is saturated (cross-validated AUROC 0.922 for every linear variant). The remaining
+gap to the bar is timing (A4 -0.066), while lead localization is far better (A3 +0.199). `units_v2` joins the 067
+candidates.
+
+067 (one-time ECGAD holdout confirmation) is running in `/tmp/ecg-wt-067`. Candidates: `qrs_prior`, 062
+`qrs_lexicographic`, 066 `factor` and `units_learned`, 068 `units_v2`; primary comparison `units_v2` minus `qrs_prior`.
+The protocol is committed first, the holdout maps are built and hashed without labels, and the marks are read by a
+single scoring run.
+
+[067](experiment-067-holdout-results.md) (one-time ECGAD holdout confirmation) is complete; the holdout marks were read
+by a single scoring run after the protocol and map hashes were committed. `units_v2` is confirmed: holdout A2 0.764
+against 0.727 for `qrs_prior`, +0.037 [+0.012, +0.065]; 066 `units_learned` +0.032 [+0.007, +0.060]. Diagnose-then-
+paint-the-textbook-region alone scored +0.028 [+0.000, +0.057], and the combiner's gain over it is not separable
+(+0.009 [-0.005, +0.022]). Lead, within-QRS and outside-QRS gains held; the development timing deficit did not
+reproduce. The QRS prior remains best for LAFB, CRBBB and CLBBB. The ECGAD holdout is now spent. The programme
+summary is [localization-program-results-2026-10-13.md](localization-program-results-2026-10-13.md).
+
+## Localization programme part 2, 13 October 2026
+
+The Italian collaboration is no longer available, so no new cardiologist marks are expected. The user authorized a day
+of unsupervised experiments that need none ([plan](localization-program-2-2026-10-13.md)): 069 (measurement-based
+criteria localizer), 070 (replacement faithfulness test of every map), 071 (same-patient serial change maps) and 072
+(SimDINO v2 on whole records with lead-local tokens) are being implemented in separate worktrees. ECGAD development
+readings are exploratory from now on; the holdout is spent.
+
+[071](experiment-071-serial-results.md) (same-patient serial change maps) is complete and inconclusive to negative. Only
+20 evaluation pairs have a normal ECG followed by a new region statement. The change map's unit AUROC for the new
+finding's leads and waves was 0.616, +0.080 [-0.005, +0.171] over normal-normal pairs and -0.007 [-0.170, +0.120]
+against the 062 population map; on 74 looser pairs it was worse than 062 (-0.088 [-0.154, -0.024]). A matched normal
+ECG of another patient worked as well as the patient's own. A single-ECG model trained on change maps scored ECGAD
+development A2 0.687 (-0.055 against `qrs_prior`, exploratory).
+
+[069](experiment-069-criteria-localizer-results.md) (measurement-based criteria localizer) is complete. Published
+criteria applied to per-lead measurements (own, GE 12SL and Philips Uni-G) match the bar (A2 0.724, -0.018 [-0.061,
++0.020]) and add nothing to `units_v2` (+0.0008). On the region test, which is independent for these label-free maps,
+they beat `qrs_prior` (B1 +0.048, B2 +0.054), but global criteria such as QRS duration paint every lead, so lead AUROC
+on ECGAD is at chance (0.495). With the QRS time prior first, the label-free `criteria_qrs` map reached 0.763 (+0.021
+[-0.000, +0.043]). Before the protocol freeze, pooled unit checks ran over whole PTB-XL+ feature files including folds
+9-10 (no labels or per-record values); this is disclosed in the protocol.
+
+[070](experiment-070-replacement-results.md) (replacement faithfulness test) is complete and does not agree with the
+ECGAD marks. Replacing a map's top 10% of lead-samples with a normal counterpart, against matched random regions, lowers
+a held-out detector's abnormal logit for 12 of 14 maps, but `qrs_prior` is more faithful than `units_v2` under both
+detectors (-0.608 [-0.702, -0.518] logits with the new ResNet, -0.138 [-0.179, -0.098] with 065). Across maps the score
+does not track ECGAD development A2 (Spearman +0.174 [-0.007, +0.327], -0.033 without `random`); post hoc, it follows
+how much signal energy the region replaces (0.76). The whole-lead variant favours the 065-based maps (`units_v2` +1.02
+over `qrs_prior`), in line with ECGAD lead AUROC. One integrity check failed: the `random` map's score is -0.005
+[-0.010, -0.001] instead of containing 0; the cause was not found and no decision changes.
+
+[073](experiment-073-per-lead-criteria-results.md) (per-lead interval criteria) is complete. Painting each criterion
+only on leads whose own Uni-G interval crosses the threshold, with fascicular blocks split into their lead patterns and
+beat-level criteria for focal beats, matches the bar (A2 0.733, -0.009 [-0.041, +0.023]). Marked records painted on all
+12 leads fell from 72% to 38%, but lead AUROC rose only to 0.531, +0.036 [-0.018, +0.090] over 069 `criteria` (not
+recovered; +0.074 [+0.007, +0.138] over `qrs_prior`). The label-free `perlead_qrs` reached 0.766 (+0.024 [+0.006,
++0.044] over the bar), but only +0.003 over 069 `criteria_qrs`, so the gain comes from the QRS time prior. One
+amendment before any score kept short QT record-level.
+
+072 (SimDINO v2 with lead-local tokens) was cancelled by the user during its second pretraining run, when the
+localization method search was paused: without a new marked test set, further comparisons on ECGAD development are not
+informative. Its protocol is committed on the unmerged branch `exp/072-dino-v2`; partial outputs are not results. The
+part 2 programme is closed.

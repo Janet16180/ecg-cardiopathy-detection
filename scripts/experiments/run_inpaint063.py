@@ -14,7 +14,7 @@ import math
 import os
 import time
 from collections.abc import Iterator
-from concurrent.futures import Future, ThreadPoolExecutor
+from concurrent.futures import Future, ProcessPoolExecutor, ThreadPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -39,6 +39,8 @@ from ecg_experiment.inpaint063 import (
     train_mask,
     variant_maps,
 )
+from ecg_experiment.locbench import scored_ecg_ids
+from ecg_experiment.locbench_baselines061 import exact_signal, qrs_prior_map
 from ecg_experiment.locbench_cache import open_cache
 from ecg_experiment.locbench_data import load_partition
 from ecg_experiment.paths import to_stored
@@ -658,10 +660,76 @@ def calibration(tag: str, cap_gb: float) -> None:
     log(f"calibration {tag}: {json.dumps(summary)}")
 
 
+def qrs_inside(ecg_id: int) -> np.ndarray:
+    """
+    Compute the 061 ``qrs_prior`` QRS indicator of one record.
+
+    Parameters
+    ----------
+    ecg_id : int
+        PTB-XL record ID.
+
+    Returns
+    -------
+    np.ndarray
+        Boolean (5000,), true inside the 059 hybrid QRS intervals.
+    """
+    signals, _ = open_cache()
+    prior, _ = qrs_prior_map(exact_signal(signals[cache_rows(np.array([ecg_id]))[0]]))
+    return prior[0] >= 0.5
+
+
+def assemble(tag: str) -> None:
+    """
+    Build one float32 scorer input per variant for ``locbench.scored_ecg_ids()`` on local disk.
+
+    Parameters
+    ----------
+    tag : str
+        Model tag whose ``maps_<tag>`` folder is read.
+    """
+    ids = scored_ecg_ids()
+    folder = OUT / f"maps_{tag}"
+    where = {}
+    for name in ("ecgad_dev", "evaluation"):
+        manifest = json.loads((folder / f"{name}_manifest.json").read_text())
+        where.update({e: (name, k) for k, e in enumerate(manifest["ecg_ids"])})
+    missing = [int(e) for e in ids if int(e) not in where]
+    if missing:
+        raise ValueError(f"{len(missing)} scored records have no map, e.g. {missing[:5]}")
+    target = LOCAL / f"score_{tag}"
+    target.mkdir(parents=True, exist_ok=True)
+    (target / "ids.json").write_text(json.dumps([int(e) for e in ids]))
+    with ProcessPoolExecutor(THREADS) as pool:
+        inside = np.stack(list(pool.map(qrs_inside, [int(e) for e in ids], chunksize=32)))
+    np.save(target / "qrs_inside.npy", inside)
+    for variant in (*VARIANTS, "qrs_combined"):
+        source = "primary" if variant == "qrs_combined" else variant
+        arrays = {
+            name: np.load(folder / f"{name}_{source}.npy", mmap_mode="r")
+            for name in ("ecgad_dev", "evaluation")
+        }
+        out = np.lib.format.open_memmap(
+            target / f"{variant}.npy", mode="w+", dtype=np.float32, shape=(len(ids), 12, 5000)
+        )
+        for k, e in enumerate(ids):
+            name, row = where[int(e)]
+            value = np.asarray(arrays[name][row], dtype=np.float32)
+            if variant == "qrs_combined":
+                value = inside[k][None, :].astype(np.float32) + value / (1 + value)
+            out[k] = value
+        if not np.isfinite(out).all():
+            raise ValueError(f"Non-finite scorer input for {variant}")
+        out.flush()
+        del out
+        log(f"assemble {variant}: {len(ids)} records -> {target / (variant + '.npy')}")
+    log(f"assemble: QRS share of samples {inside[:, 100:4900].mean():.4f}")
+
+
 def main() -> None:
     """Parse arguments and run a subcommand."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["prepare", "profile", "train", "maps", "calibration"])
+    parser.add_argument("command", choices=["prepare", "profile", "train", "maps", "calibration", "assemble"])
     parser.add_argument("--steps", type=int, default=20_000)
     parser.add_argument("--eval-every", type=int, default=500)
     parser.add_argument("--patience", type=int, default=8)
@@ -678,6 +746,8 @@ def main() -> None:
         train(args.steps, args.eval_every, args.patience, args.tag, args.cap_gb)
     elif args.command == "maps":
         maps(args.set, args.tag, args.cap_gb, args.limit)
+    elif args.command == "assemble":
+        assemble(args.tag)
     else:
         calibration(args.tag, args.cap_gb)
 

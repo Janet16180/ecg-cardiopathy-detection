@@ -184,3 +184,11 @@ Written after Experiment 061 finished (its results and its amendment 2 merged in
 - Scoring assembles one float32 array for `locbench.scored_ecg_ids()` (4,871 records) per variant on local disk
   from the saved maps. Saved z maps are far below the float16 limit of 65,504 (a z of 65,504 would need an error
   above 700 mV at the smallest sigma), and every saved map is checked finite, so float16 storage does not clip.
+
+### Amendment 3, 12 October 2026, before any score
+
+Written after Experiment 061 amendment 3 (merged into this branch) and before any 063 map was scored.
+`C1_std` (lead-standardized noisy-lead AUROC, `scripts/experiments/run_locbench_noise.py`) is reported for every
+variant as a secondary reading beside C1 (061 baselines: random 0.501, amplitude 0.521, qrs_prior 0.560,
+U_B 0.720, residual056 0.707). Raw C1 is confounded by lead level, and the z maps are scaled per lead by sigma,
+so C1_std is the fairer reading of attraction to noise. The decision rule and its C1 condition do not change.

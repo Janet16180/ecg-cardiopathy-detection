@@ -778,6 +778,8 @@ VARIANTS = {
     "no_noise_weight": (("persistent_raw", "focal_raw", "interval", "beat"), "sum"),
 }
 PRIMARY = "normative_v1"
+LEXICOGRAPHIC = "qrs_lexicographic"
+SQUASH = 5.0
 PERSISTENT = (
     ("persistent", "full", True),
     ("persistent_raw", "full", False),
@@ -931,6 +933,48 @@ def combine(scores: dict[str, np.ndarray], components: tuple[str, ...], mode: st
     return out
 
 
+def qrs_mask(knots: np.ndarray, samples: int = SAMPLES) -> np.ndarray:
+    """
+    Mark samples inside any beat's QRS onset-to-offset interval of the method's own delineation.
+
+    Parameters
+    ----------
+    knots : np.ndarray
+        (beats, 6) warp knots after alignment.
+    samples : int
+        Record length.
+
+    Returns
+    -------
+    np.ndarray
+        Boolean (samples,) mask, shared by all leads.
+    """
+    mask = np.zeros(samples, dtype=bool)
+    for row in knots:
+        mask[max(int(np.ceil(row[1])), 0) : max(min(int(np.floor(row[2])) + 1, samples), 0)] = True
+    return mask
+
+
+def qrs_lexicographic(anomaly: np.ndarray, knots: np.ndarray) -> np.ndarray:
+    """
+    Rank QRS samples above the rest and, inside each, by the anomaly map (Amendment 2 variant).
+
+    Parameters
+    ----------
+    anomaly : np.ndarray
+        (LEADS, samples) non-negative primary map.
+    knots : np.ndarray
+        (beats, 6) warp knots.
+
+    Returns
+    -------
+    np.ndarray
+        (LEADS, samples) float32 map in [0, 2).
+    """
+    squashed = anomaly / (anomaly + SQUASH)
+    return (qrs_mask(knots, anomaly.shape[1])[None] + squashed).astype(np.float32)
+
+
 def record_maps(signal: np.ndarray, age: float, sex: float, normative: Normative) -> tuple[dict, dict]:
     """
     Build the map of every declared variant for one record on the original 500 Hz timeline.
@@ -953,7 +997,7 @@ def record_maps(signal: np.ndarray, age: float, sex: float, normative: Normative
     features = record_features(signal)
     if features is None:
         flat = np.zeros((LEADS, signal.shape[1]), dtype=np.float32)
-        return dict.fromkeys(VARIANTS, flat), {"failed": True, "beats": 0}
+        return dict.fromkeys((*VARIANTS, LEXICOGRAPHIC), flat), {"failed": True, "beats": 0}
     covariates = design(features.intervals[:1], np.array([age]), np.array([sex]))[0]
     scores = component_scores(features, covariates, normative)
     beats = len(features.knots)
@@ -961,6 +1005,7 @@ def record_maps(signal: np.ndarray, age: float, sex: float, normative: Normative
         name: to_timeline(combine(scores, components, mode, beats), features.knots, signal.shape[1])
         for name, (components, mode) in VARIANTS.items()
     }
+    maps[LEXICOGRAPHIC] = qrs_lexicographic(maps[PRIMARY], features.knots)
     summary = {
         "failed": False,
         "beats": beats,

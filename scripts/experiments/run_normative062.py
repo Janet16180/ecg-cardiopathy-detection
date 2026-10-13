@@ -17,6 +17,7 @@ import argparse
 import json
 import os
 import pickle
+import shutil
 import subprocess
 import sys
 import time
@@ -39,6 +40,8 @@ from ecg_experiment.locbench import (
 )
 from ecg_experiment.locbench_cache import open_cache
 from ecg_experiment.locbench_data import PARTITION_PATH, load_partition
+from ecg_experiment.locbench_noise import noise_summary, standardized_noise_table
+from ecg_experiment.locbench_strata import STRATA, strata_paired, strata_summary, strata_table
 from ecg_experiment.paths import to_stored
 from ecg_experiment.provenance import git_head
 
@@ -47,6 +50,7 @@ BASELINE_DIR = ROOT / "outputs/experiment061_locbench_v1"
 BASELINES = ("random", "amplitude", "qrs_prior", "U_B", "residual056")
 BAR = "qrs_prior"
 TOLERANCE = 1e-12
+SCORED = (*nm.VARIANTS, nm.LEXICOGRAPHIC)
 WORKERS = 8
 SOURCES = (
     "ecg_experiment/normative_map062.py",
@@ -180,7 +184,7 @@ def run_maps(out: Path, ids: np.ndarray) -> None:
         name: np.lib.format.open_memmap(
             out / f"maps_{name}.npy.part", mode="w+", dtype=np.float16, shape=(len(ids), nm.LEADS, nm.SAMPLES)
         )
-        for name in nm.VARIANTS
+        for name in (*nm.VARIANTS, nm.LEXICOGRAPHIC)
     }
     position = {int(e): i for i, e in enumerate(ids)}
     rows = []
@@ -203,8 +207,9 @@ def run_maps(out: Path, ids: np.ndarray) -> None:
         "failed_ids": table.ecg_id[table.failed].astype(int).tolist(),
         "variants": {name: [list(components), mode] for name, (components, mode) in nm.VARIANTS.items()},
         "primary": nm.PRIMARY,
+        "secondary": {nm.LEXICOGRAPHIC: f"Q + u / (u + {nm.SQUASH}) on {nm.PRIMARY}"},
         "seconds": time.time() - start,
-        "maps_sha256": {name: sha256_file(out / f"maps_{name}.npy") for name in nm.VARIANTS},
+        "maps_sha256": {name: sha256_file(out / f"maps_{name}.npy") for name in maps},
         "ecg_ids_sha256": sha256_file(out / "ecg_ids.npy"),
         "normative_sha256": sha256_file(out / "normative.pkl"),
         "sources_sha256": {
@@ -260,6 +265,60 @@ def reproduce061(baseline: str = "residual056") -> dict:
     }
 
 
+def secondary_readings(out: Path) -> dict:
+    """
+    QRS strata (061 Amendment 2) and lead-standardized noise (061 Amendment 3) of every scored variant.
+
+    The 061 reference tables are copied into ``out/locbench/ref061`` so no 061 file is written. Cached in
+    ``out/secondary.json``.
+
+    Parameters
+    ----------
+    out : Path
+        Output directory holding ``locbench/<variant>`` tables.
+
+    Returns
+    -------
+    dict
+        ``strata`` (per variant: summary, paired against ``qrs_prior`` and ``residual056``) and
+        ``noise_std`` (per variant and reference: summary).
+    """
+    cache = out / "secondary.json"
+    if cache.exists():
+        return json.loads(cache.read_text())
+    references = {}
+    for baseline in ("qrs_prior", "residual056"):
+        copy = out / "locbench" / "ref061" / baseline
+        if not copy.exists():
+            shutil.copytree(BASELINE_DIR / "tables" / baseline, copy)
+        references[baseline] = copy
+    folders = {**references, **{name: out / "locbench" / name / "tables" for name in SCORED}}
+    tables = {}
+    for name, folder in folders.items():
+        loaded = load_tables(folder, maps=True)
+        tables[name] = strata_table(loaded["ecgad_maps"], loaded["ecgad"]["ecg_id"].to_numpy())
+        tables[name].to_csv(folder / "strata.csv", index=False, float_format="%.17g")
+    strata = {
+        name: {
+            "summary": strata_summary(table),
+            "paired": {
+                reference: {stratum: strata_paired(table, tables[reference], stratum) for stratum in STRATA}
+                for reference in references
+                if reference != name
+            },
+        }
+        for name, table in tables.items()
+    }
+    noise = {}
+    for name, folder in folders.items():
+        table = standardized_noise_table(folder)
+        table.to_csv(folder / "noise_std.csv", index=False, float_format="%.17g")
+        noise[name] = noise_summary(table)
+    result = {"strata": strata, "noise_std": noise}
+    cache.write_text(json.dumps(result, indent=1))
+    return result
+
+
 def run_score(out: Path) -> None:
     """
     Integrity check, then score every variant with the LocBench CLI and write ``result.json``.
@@ -274,7 +333,7 @@ def run_score(out: Path) -> None:
     print(json.dumps(integrity, indent=2))
     if not integrity["passed"]:
         raise RuntimeError("061 reproduction failed; nothing is scored")
-    for name in nm.VARIANTS:
+    for name in SCORED:
         command = [
             sys.executable,
             "-m",
@@ -291,9 +350,7 @@ def run_score(out: Path) -> None:
         for baseline in BASELINES:
             command += ["--compare", str(BASELINE_DIR / "tables" / baseline)]
         subprocess.run(command, check=True, cwd=ROOT)
-    summaries = {
-        name: json.loads((out / "locbench" / name / "summary.json").read_text()) for name in nm.VARIANTS
-    }
+    summaries = {name: json.loads((out / "locbench" / name / "summary.json").read_text()) for name in SCORED}
     primary = summaries[nm.PRIMARY]["paired"][BAR]["A2"]
     result = {
         "experiment": "062",
@@ -309,6 +366,8 @@ def run_score(out: Path) -> None:
         "beats_bar": bool(primary["ci_low"] > 0),
         "variants": {name: summary["metrics"] for name, summary in summaries.items()},
         "paired": {name: summary["paired"] for name, summary in summaries.items()},
+        "strata": secondary_readings(out)["strata"],
+        "noise_std": secondary_readings(out)["noise_std"],
         "benchmark_counts": summaries[nm.PRIMARY]["benchmark_counts"],
         "scoring_seconds": time.time() - start,
     }

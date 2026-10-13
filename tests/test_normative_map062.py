@@ -94,3 +94,14 @@ def test_patient_folds_keep_patients_together():
     folds = nm.patient_folds(patients, folds=3, seed=0)
     for patient in np.unique(patients):
         assert len(set(folds[patients == patient])) == 1
+
+
+def test_lexicographic_ranks_qrs_first_and_keeps_anomaly_order():
+    knots = np.array([[1000.0, 1150.0, 1200.0, 1260.0, 1350.0, 1400.0]])
+    anomaly = np.zeros((nm.LEADS, nm.SAMPLES), dtype=np.float32)
+    anomaly[0, 1300] = 50.0
+    anomaly[1, 1170] = 2.0
+    combined = nm.qrs_lexicographic(anomaly, knots)
+    assert combined[2, 1170] > combined[0, 1300]
+    assert combined[1, 1170] > combined[2, 1170]
+    assert combined.max() < 2.0

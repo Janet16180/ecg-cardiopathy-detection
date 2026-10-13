@@ -162,3 +162,31 @@ held-out AUROCs, sanity checks, LocBench readings), `weights_<model>.pt`, `bags_
 065's ECGAD development maps are saved and scored in float32; `evaluation` maps stay float16. No model, map
 definition or decision changes. At this point the networks were training; no held-out AUROC or map of the
 full run had been read.
+
+## Amendment 2, 12 October 2026, before any score
+
+Written after Experiment 061 finished (its results report and amendments 2 and 3) and before any LocBench
+score of this experiment. At this point two of the five networks had finished training; their held-out macro
+AUROCs (logged during training) were the only outputs of the full run that had been read. No map had been
+produced.
+
+- Code base: the branch merges `experiment/fragment-localization041` (061 complete, with its amendments 2 and
+  3) instead of `exp/061-locbench`.
+- Bar: 061's bar is `qrs_prior` (A2 0.7419 [0.7082, 0.7743]). The primary comparison is the paired A2 of
+  `mil_lse` minus `qrs_prior`, with the decision rule above unchanged. `run_locbench_score` is run with
+  `--compare` on every 061 baseline tables folder (`random`, `amplitude`, `qrs_prior`, `U_B`, `residual056`).
+- QRS-stratified reading (061 amendment 2): `A2_qrs` and `A2_nonqrs` of every variant from
+  `ecg_experiment.locbench_strata` (`strata_table`, `strata_summary`), with paired differences
+  (`strata_paired`) against `qrs_prior` and `residual056`, computed from the saved ECGAD maps of all methods
+  and written into this experiment's own LocBench folder (061's folders are not written). Secondary.
+- Lead-standardized noise reading (061 amendment 3): `C1_std` of every variant with
+  `scripts/experiments/run_locbench_noise.py` on this experiment's tables folders. Near 0.5 means not drawn to
+  noise. Secondary.
+- One more declared secondary variant, `mil_lse_qrs`: a physiological prior combined with the anomaly
+  evidence, M' = Q + M / max(M), where Q is 1 inside the 059 hybrid QRS intervals (the inside part of 061's
+  `qrs_prior_map`, `qrs_prior >= 0.5`) and 0 elsewhere, and M is the `mil_lse` map of the same record (record
+  maximum over leads and samples). Q orders QRS before non-QRS samples and M orders samples within each
+  stratum, so the paired A2 of `mil_lse_qrs` against `qrs_prior` asks whether the evidence adds to the prior.
+  `mil_lse` (the anomaly evidence alone) stays the primary.
+- Storage: every 065 map is a sum or maximum of probabilities times sigmoids (at most 48, the
+  `mil_lse_qrs` map at most 2), so float16 does not clip and no transform is applied.

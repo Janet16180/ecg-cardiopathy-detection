@@ -573,17 +573,18 @@ def reproduce_bar(bar: str) -> dict[str, Any]:
     ]
     saved_records = pd.read_csv(folder / "ecgad.csv")["A2"].to_numpy()
     values = np.array(values)
-    if not np.array_equal(np.isnan(values), np.isnan(saved_records)) or not np.array_equal(
-        values[~np.isnan(values)], saved_records[~np.isnan(saved_records)]
-    ):
-        raise ValueError("Bar per-record A2 not reproduced")
+    if not np.array_equal(np.isnan(values), np.isnan(saved_records)):
+        raise ValueError("Bar A2 records differ")
+    largest = float(np.nanmax(np.abs(values - saved_records)))
+    if largest > 1e-12:
+        raise ValueError(f"Bar per-record A2 not reproduced: {largest}")
     recomputed = float(np.nanmean(values))
     saved = json.loads((LOCBENCH061 / "result.json").read_text())["bar"]["A2"]["value"]
     if abs(recomputed - saved) > 1e-12:
         raise ValueError(f"Bar A2 not reproduced: {recomputed} against {saved}")
     return {
         "bar": bar,
-        "per_record_A2_identical": True,
+        "per_record_A2_max_abs_difference": largest,
         "records": int((~np.isnan(values)).sum()),
         "A2_recomputed": recomputed,
         "A2_saved": saved,

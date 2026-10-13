@@ -1146,12 +1146,14 @@ def save_maps(path: Path, maps: np.ndarray, ecg_ids: np.ndarray, dtype: type = n
     ecg_ids : np.ndarray
         ``ecg_id`` of each row.
     dtype : type
-        Stored dtype.
+        Stored dtype. Values beyond its finite range (65,504 for float16) are clipped to it, so a map with
+        larger values must be transformed monotonically before it is stored for scoring.
     """
     path.parent.mkdir(parents=True, exist_ok=True)
+    limit = np.finfo(dtype).max
     out = np.lib.format.open_memmap(path.with_suffix(".npy.part"), mode="w+", dtype=dtype, shape=maps.shape)
     for start in range(0, len(maps), 256):
-        out[start : start + 256] = maps[start : start + 256]
+        out[start : start + 256] = np.clip(maps[start : start + 256], -limit, limit)
     out.flush()
     del out
     os.replace(path.with_suffix(".npy.part"), path)

@@ -148,3 +148,18 @@ def test_signed_log1p_is_monotone_and_bounded() -> None:
     out = dk.signed_log1p(values)
     assert (np.diff(out) > 0).all()
     assert np.isfinite(out.astype(np.float16)).all()
+
+
+def test_activation_checkpointing_keeps_gradients() -> None:
+    torch.manual_seed(0)
+    backbone = dk.BeatViT(width=32, depth=2, heads=4)
+    patches = torch.randn(3, dk.TOKENS, dk.PATCH)
+    leads, phases = dk.token_grid(torch.device("cpu"))
+    grads = []
+    for flag in (False, True):
+        backbone.zero_grad()
+        backbone.checkpoint = flag
+        cls, tokens = backbone(patches, leads, phases)
+        (cls.sum() + tokens.pow(2).mean()).backward()
+        grads.append(backbone.embed.weight.grad.clone())
+    assert torch.allclose(grads[0], grads[1], atol=1e-6)

@@ -17,6 +17,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import torch
+import torch.utils.checkpoint
 from scipy.signal import butter, filtfilt, resample_poly
 from torch import nn
 from torch.nn import functional as F  # noqa: N812
@@ -278,6 +279,7 @@ class BeatViT(nn.Module):
         self.mask_token = nn.Parameter(torch.zeros(width))
         self.blocks = nn.ModuleList(Block(width, heads) for _ in range(depth))
         self.norm = nn.LayerNorm(width)
+        self.checkpoint = False
         self.apply(_init)
 
     def forward(
@@ -317,7 +319,10 @@ class BeatViT(nn.Module):
             keys = torch.cat([torch.ones_like(valid[:, :1]), valid], dim=1)
             attn_mask = keys[:, None, None, :]
         for block in self.blocks:
-            x = block(x, attn_mask)
+            if self.checkpoint and self.training and torch.is_grad_enabled():
+                x = torch.utils.checkpoint.checkpoint(block, x, attn_mask, use_reentrant=False)
+            else:
+                x = block(x, attn_mask)
         x = self.norm(x)
         return x[:, 0], x[:, 1:]
 

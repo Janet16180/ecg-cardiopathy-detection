@@ -114,6 +114,7 @@ def new_models(device: torch.device) -> tuple[dk.Network, dk.Network]:
     """Seeded student and its frozen EMA teacher copy."""
     torch.manual_seed(SEED)
     student = dk.Network().to(device)
+    student.backbone.checkpoint = True
     teacher = copy.deepcopy(student)
     for parameter in teacher.parameters():
         parameter.requires_grad_(False)

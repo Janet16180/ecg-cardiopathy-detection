@@ -162,3 +162,25 @@ version is reported. The ECGAD holdout half is not read here.
   from the two sets.
 - GPU profile (`profile.json`): 0.048 s per update at batch 64, peak 1.7 GB, 0.05 s per record for the 140-mask
   inference. The maximum is set to 60,000 updates (about 48 minutes), with the early stopping above.
+
+### Amendment 2, 12 October 2026, before any score
+
+Written after Experiment 061 finished (its results and its amendment 2 merged into this branch) and before any
+063 map was scored. The model, masks, primary variant, primary comparison and decision rule do not change.
+
+- The bar is `qrs_prior` (061 results: A2 0.7419 [0.7082, 0.7743], C1 0.3529). The primary comparison is the
+  paired A2 of `primary` minus `qrs_prior`, computed by `scripts/experiments/run_locbench_score.py` with
+  `--compare outputs/experiment061_locbench_v1/tables/qrs_prior` (and `residual056`). The C1 carry-forward
+  condition of the decision rule uses the bar's C1 of 0.3529.
+- QRS-stratified reading (061 amendment 2): `A2_qrs` and `A2_nonqrs` for every variant with
+  `scripts/experiments/run_locbench_strata.py`, reference `qrs_prior`; paired `A2_qrs` and `A2_nonqrs` of
+  `primary` against `residual056` and `qrs_prior` are reported. These are secondary readings.
+- One more descriptive variant, declared now: `qrs_combined` = 1 inside the 061 `qrs_prior` QRS intervals
+  (`locbench_baselines061.qrs_prior_map >= 0.5`, the 059 hybrid delineation on the exact physical signal) plus
+  z / (1 + z) of the `primary` map, which lies in [0, 1). It ranks every QRS sample above every non-QRS sample
+  and orders samples inside each stratum by the anomaly evidence alone, so its A2 shows what the evidence adds
+  to the prior. It is not the primary and cannot change the decision; the anomaly-only `primary` is reported
+  beside it.
+- Scoring assembles one float32 array for `locbench.scored_ecg_ids()` (4,871 records) per variant on local disk
+  from the saved maps. Saved z maps are far below the float16 limit of 65,504 (a z of 65,504 would need an error
+  above 700 mV at the smallest sigma), and every saved map is checked finite, so float16 storage does not clip.

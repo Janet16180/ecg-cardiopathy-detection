@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-13T01:26:34.902581+00:00",
+  "updated_at_utc": "2026-10-13T02:00:59.008698+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -3304,7 +3304,7 @@
     ]
   },
   "experiment_061_locbench": {
-    "status": "running",
+    "status": "complete",
     "authorized": true,
     "protocol": "docs/experiment-061-locbench.md",
     "output_dir": "outputs/experiment061_locbench_v1",
@@ -3312,7 +3312,33 @@
       "device": "cpu",
       "threads": 8
     },
-    "next_action": "Subagent implementing metrics and baselines in worktree /tmp/ecg-wt-061 (branch exp/061-locbench)."
+    "next_action": "Bar for 062-066 is qrs_prior; methods also report the QRS-stratified reading.",
+    "branch": "exp/061-locbench",
+    "source_commit": "301aaca",
+    "results": "docs/experiment-061-locbench-results.md",
+    "amendment_2": "docs/experiment-061-amendment-2-qrs-strata.md",
+    "runtime_seconds": 336,
+    "reading": {
+      "bar": "qrs_prior",
+      "qrs_prior": {
+        "A2": 0.7419,
+        "B1_macro": 0.7283,
+        "C1": 0.3529,
+        "D1": 0.6321
+      },
+      "U_B": {
+        "A2": 0.6315,
+        "C1": 0.6732,
+        "D1": 0.7621
+      },
+      "residual056": {
+        "A2": 0.6796,
+        "C1": 0.8006,
+        "D1": 0.5934,
+        "A2_qrs": 0.607
+      },
+      "strata_note": "Inside QRS every baseline is near chance (A2_qrs about 0.54) except residual056."
+    }
   },
   "experiment_062_normative": {
     "status": "implementing",

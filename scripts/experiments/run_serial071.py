@@ -618,7 +618,9 @@ def noise_readings(
             "partner": p,
             "patient_id": int(patient.loc[e]),
             "named": int(named.sum()),
-            "kind": "null" if (e, p) in set(zip(nulls.ecg_id, nulls.partner, strict=True)) else "change",
+            "kind": "normal_pair"
+            if (e, p) in set(zip(nulls.ecg_id, nulls.partner, strict=True))
+            else "change",
         }
         for name in ("serial", "cross"):
             field = painted[(e, p)][name]
@@ -694,7 +696,7 @@ def summarize_primary(
         if column in noise and len(noise)
     }
     result["noise"]["records"] = len(noise)
-    result["noise"]["records_null"] = int((noise.kind == "null").sum()) if len(noise) else 0
+    result["noise"]["records_null"] = int((noise.kind == "normal_pair").sum()) if len(noise) else 0
     result["decisions"] = decisions(result)
     return result
 
@@ -997,6 +999,47 @@ def copy_references(out: Path) -> dict[str, Path]:
     return copies
 
 
+def secondary_pair_readings(out: Path, work: Path) -> dict[str, Any]:
+    """Region readings of the secondary map on every evaluation change pair, paired against others."""
+    table = pd.read_csv(out / "tables" / "pair_readings.csv")
+    ids = json.loads((work / "scored_ids.json").read_text())
+    row = {e: k for k, e in enumerate(ids)}
+    maps = np.load(work / f"{SECONDARY}.npy", mmap_mode="r")
+    serial = table[table.method == "serial"].reset_index(drop=True)
+    rows = []
+    for record in serial.itertuples(index=False):
+        masks = sr.unit_masks(read_components(int(record.ecg_id)))
+        values = sr.region_readings(
+            np.asarray(maps[row[int(record.ecg_id)]]), tuple(record.new.split(";")), masks
+        )
+        rows.append(
+            {
+                "set": record.set,
+                "ecg_id": int(record.ecg_id),
+                "partner": int(record.partner),
+                "patient_id": int(record.patient_id),
+                "method": SECONDARY,
+                **values,
+            }
+        )
+    frame = pd.DataFrame(rows)
+    frame.to_csv(out / "tables" / "secondary_pair_readings.csv", index=False)
+    result: dict[str, Any] = {}
+    for set_name in SETS:
+        mine = frame[frame.set == set_name].set_index("ecg_id")
+        entry: dict[str, Any] = {"B1u": describe(mine.B1u.to_numpy(), mine.patient_id.to_numpy())}
+        for other in ("serial", "units_v2", "textbook", "normative_v1"):
+            theirs = (
+                table[(table.set == set_name) & (table.method == other)].set_index("ecg_id").loc[mine.index]
+            )
+            entry[f"minus_{other}"] = sr.paired_mean_difference(
+                mine.B1u.to_numpy(), theirs.B1u.to_numpy(), mine.patient_id.to_numpy()
+            )
+        result[set_name] = entry
+    write_json_atomic(out / "secondary_pairs.json", result)
+    return result
+
+
 def locbench_phase() -> None:
     """Integrity checks, LocBench scoring of the secondary map with paired comparisons, strata and noise."""
     out, work = folders(False)
@@ -1008,6 +1051,7 @@ def locbench_phase() -> None:
     if not integrity["units_v2_rebuild"]["pass"]:
         raise ValueError(f"068 features do not rebuild units_v2: {integrity['units_v2_rebuild']}")
     write_json_atomic(out / "integrity.json", integrity)
+    secondary_pair_readings(out, work)
     refs = copy_references(out)
     target = out / "locbench" / SECONDARY
     python = str(ROOT / ".venv/bin/python")
@@ -1082,6 +1126,7 @@ def report_phase() -> None:
         },
         "secondary": {
             "receipt": json.loads((out / "secondary_receipt.json").read_text()),
+            "pairs": json.loads((out / "secondary_pairs.json").read_text()),
             "locbench": readings,
         },
     }

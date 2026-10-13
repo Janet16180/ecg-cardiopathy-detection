@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+import pandas as pd
 import torch
 
 from ecg_experiment import ROOT
@@ -570,11 +571,23 @@ def reproduce_bar(bar: str) -> dict[str, Any]:
         ecgad_record_metrics(np.asarray(m, np.float32), labels)["A2"]
         for m, labels in zip(maps, bench.ecgad_labels, strict=True)
     ]
+    saved_records = pd.read_csv(folder / "ecgad.csv")["A2"].to_numpy()
+    values = np.array(values)
+    if not np.array_equal(np.isnan(values), np.isnan(saved_records)) or not np.array_equal(
+        values[~np.isnan(values)], saved_records[~np.isnan(saved_records)]
+    ):
+        raise ValueError("Bar per-record A2 not reproduced")
     recomputed = float(np.nanmean(values))
     saved = json.loads((LOCBENCH061 / "result.json").read_text())["bar"]["A2"]["value"]
-    if recomputed != saved:
+    if abs(recomputed - saved) > 1e-12:
         raise ValueError(f"Bar A2 not reproduced: {recomputed} against {saved}")
-    return {"bar": bar, "A2_recomputed": recomputed, "A2_saved": saved}
+    return {
+        "bar": bar,
+        "per_record_A2_identical": True,
+        "records": int((~np.isnan(values)).sum()),
+        "A2_recomputed": recomputed,
+        "A2_saved": saved,
+    }
 
 
 def qrs_one(signal: np.ndarray) -> np.ndarray:

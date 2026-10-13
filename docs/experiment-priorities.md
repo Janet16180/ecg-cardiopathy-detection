@@ -93,18 +93,18 @@ penalty; one that ranks high earns a protocol like any other.
 | 27 | challenge_data_quality_note | repo | Short write-up of the Challenge 2021 and CODE-15 data problems | 3 | 0.8 | 6.0 | 0.98 | - |
 | 28 | multitask_head | experiment | Multi-label auxiliary head on frozen features versus the binary head | 3 | 0.6 | 3.5 | 0.96 | - |
 | 29 | ecgad_benchmark_readout | experiment | The 026 score on the public PTB-XL anomaly-detection split | 3 | 0.6 | 3.5 | 0.96 | - |
-| 30 | loc_per_lead_interval_criteria | experiment | Per-lead interval criteria and beat-level criteria | 3 | 0.6 | 3.5 | 0.96 | - |
-| 31 | shared_readout_module | repo | One shared frozen-readout module for new experiments | 2 | 0.8 | 3.0 | 0.92 | - |
-| 32 | loc_mil_wave_instances | experiment | MIL heads with wave-level instances and sparse pooling | 4 | 0.6 | 7.0 | 0.91 | - |
-| 33 | echo_multitask_transfer | experiment | Do ECG-abnormality labels reduce the echo labels needed? | 3 | 0.6 | 4.0 | 0.90 | - |
-| 34 | explanation_thresholds_local_normals | repo | Fit the explanation's switch and red thresholds on the site's local normals | 2 | 0.6 | 1.8 | 0.89 | - |
-| 35 | near_duplicates | repo | Near-duplicate pass across Challenge sources | 3 | 0.7 | 6.0 | 0.86 | - |
-| 36 | rate_adaptive_wave_windows | experiment | Beat-aligned wave windows that follow QRS width and QT | 3 | 0.5 | 3.3 | 0.83 | - |
-| 37 | quality_policy_v2 | repo | Quality policy v2 review flags (edge zero runs, short dropouts) | 2 | 0.8 | 4.0 | 0.80 | - |
-| 38 | loc_lead_local_encoder | experiment | Lead-local encoder or scoring with an Einthoven consistency check | 4 | 0.6 | 9.0 | 0.80 | - |
-| 39 | device_control | experiment | Device-controlled probes (drop or balance CS100 3) | 2 | 0.6 | 2.3 | 0.79 | - |
-| 40 | loc_new_weak_signal | experiment | New weak supervision for localization: beat-level ectopy labels and fit-partition wave timing | 4 | 0.5 | 6.5 | 0.78 | - |
-| 41 | prototype_head | experiment | Learned prototype head anchored to real training ECGs | 4 | 0.6 | 10.0 | 0.76 | - |
+| 30 | shared_readout_module | repo | One shared frozen-readout module for new experiments | 2 | 0.8 | 3.0 | 0.92 | - |
+| 31 | loc_mil_wave_instances | experiment | MIL heads with wave-level instances and sparse pooling | 4 | 0.6 | 7.0 | 0.91 | - |
+| 32 | echo_multitask_transfer | experiment | Do ECG-abnormality labels reduce the echo labels needed? | 3 | 0.6 | 4.0 | 0.90 | - |
+| 33 | explanation_thresholds_local_normals | repo | Fit the explanation's switch and red thresholds on the site's local normals | 2 | 0.6 | 1.8 | 0.89 | - |
+| 34 | near_duplicates | repo | Near-duplicate pass across Challenge sources | 3 | 0.7 | 6.0 | 0.86 | - |
+| 35 | rate_adaptive_wave_windows | experiment | Beat-aligned wave windows that follow QRS width and QT | 3 | 0.5 | 3.3 | 0.83 | - |
+| 36 | quality_policy_v2 | repo | Quality policy v2 review flags (edge zero runs, short dropouts) | 2 | 0.8 | 4.0 | 0.80 | - |
+| 37 | loc_lead_local_encoder | experiment | Lead-local encoder or scoring with an Einthoven consistency check | 4 | 0.6 | 9.0 | 0.80 | - |
+| 38 | device_control | experiment | Device-controlled probes (drop or balance CS100 3) | 2 | 0.6 | 2.3 | 0.79 | - |
+| 39 | loc_new_weak_signal | experiment | New weak supervision for localization: beat-level ectopy labels and fit-partition wave timing | 4 | 0.5 | 6.5 | 0.78 | - |
+| 40 | prototype_head | experiment | Learned prototype head anchored to real training ECGs | 4 | 0.6 | 10.0 | 0.76 | - |
+| 41 | loc_criteria_within_record_rank | experiment | Within-record ranking of criteria evidence across leads | 2 | 0.6 | 2.5 | 0.76 | - |
 | 42 | ecg_age_gap | wild | ECG heart age: predicted minus real age as a risk signal | 3 | 0.5 | 4.0 | 0.75 | - |
 | 43 | highpass_ablation | experiment | Zero-phase 0.5 Hz high-pass as a harmonization arm | 3 | 0.6 | 6.5 | 0.71 | - |
 | 44 | vcg_qrst_angle | wild | Vectorcardiogram features: spatial QRS-T angle and loop shape | 3 | 0.6 | 7.0 | 0.68 | - |

@@ -813,5 +813,10 @@ how much signal energy the region replaces (0.76). The whole-lead variant favour
 over `qrs_prior`), in line with ECGAD lead AUROC. One integrity check failed: the `random` map's score is -0.005
 [-0.010, -0.001] instead of containing 0; the cause was not found and no decision changes.
 
-073 (per-lead interval criteria: each criterion painted only on leads whose own measurement crosses the threshold) is
-being implemented in a separate worktree, as a follow-up to 069's chance-level lead AUROC.
+[073](experiment-073-per-lead-criteria-results.md) (per-lead interval criteria) is complete. Painting each criterion
+only on leads whose own Uni-G interval crosses the threshold, with fascicular blocks split into their lead patterns and
+beat-level criteria for focal beats, matches the bar (A2 0.733, -0.009 [-0.041, +0.023]). Marked records painted on all
+12 leads fell from 72% to 38%, but lead AUROC rose only to 0.531, +0.036 [-0.018, +0.090] over 069 `criteria` (not
+recovered; +0.074 [+0.007, +0.138] over `qrs_prior`). The label-free `perlead_qrs` reached 0.766 (+0.024 [+0.006,
++0.044] over the bar), but only +0.003 over 069 `criteria_qrs`, so the gain comes from the QRS time prior. One
+amendment before any score kept short QT record-level.

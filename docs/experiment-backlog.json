@@ -2168,7 +2168,7 @@
       "cpu_hours": 0.5,
       "build_hours": 3.0,
       "blocked_by": [],
-      "status": "running",
+      "status": "done",
       "authorized": true,
       "notes": "Also: criteria evidence as patient-specific weak labels for the combiner; drop the source-disagreement reliability factor; ask about wide-P and V1 R/S rules that fire in 25% and 5.7% of clean normals."
     },
@@ -2187,6 +2187,22 @@
       "status": "open",
       "authorized": false,
       "notes": "Also find the random-map bias (float64 CPU replay, taper at scored-range edges). Keep the whole-lead variant W as a label-free lead check (favours 065-based maps, same direction as A3)."
+    },
+    {
+      "id": "loc_criteria_within_record_rank",
+      "kind": "experiment",
+      "title": "Within-record ranking of criteria evidence across leads",
+      "question": "Does ranking criteria evidence within a record (lead share of the record's evidence, or top-k leads), with a focal-beat lead score for beat-level criteria, recover lead localization that thresholds alone do not?",
+      "evidence": "073: per-lead thresholds cut all-12-lead painting from 72% to 38% of marked records but A3 rose only +0.036 [-0.018, +0.090] over 069 criteria; perlead_qrs A2 0.766 (+0.024 [+0.006, +0.044] over qrs_prior) mostly from the QRS prior; beat criteria A2 +0.008 but A3 exactly 0.",
+      "value": 2,
+      "clarity": 0.6,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.5,
+      "build_hours": 2.0,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "Count ECGAD development records with PVC statements first. perlead_qrs with the reliability factor is the cheapest label-free candidate for any future marked set. Ask the cardiologist about the wide-P rule (24.6% of fit normals on lead II) and V1 R/S (5.7%)."
     }
   ]
 }

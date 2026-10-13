@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-13T21:45:55.258527+00:00",
+  "updated_at_utc": "2026-10-13T22:17:30.745971+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -3845,7 +3845,7 @@
     "next_action": "Subagent writes the protocol, commits it before any score, runs and reports."
   },
   "experiment_073_per_lead_criteria": {
-    "status": "implementing",
+    "status": "complete",
     "authorized": true,
     "name": "Per-lead interval criteria localizer",
     "branch": "exp/073-per-lead-criteria",
@@ -3853,6 +3853,51 @@
     "resources": {
       "device": "cpu"
     },
-    "next_action": "Subagent writes the protocol, commits it before any score, runs and reports. Backlog loc_per_lead_interval_criteria."
+    "next_action": "Per-lead painting matches the bar and does not recover lead AUROC beyond 069. Label-free perlead_qrs 0.766 is the best map without region-table training, but its gain over the bar comes from the QRS time prior.",
+    "protocol": "docs/experiment-073-per-lead-criteria.md",
+    "results": "docs/experiment-073-per-lead-criteria-results.md",
+    "output_dir": "outputs/experiment073_per_lead_criteria_v1",
+    "source_commit": "df8f0a9",
+    "amendment": "Amendment 1 after the smoke run, before any score: qtc_short stays record-level (per-lead fired in 76.5% of 200 fit clean normals).",
+    "reading": {
+      "perlead_A2": 0.7334,
+      "perlead_vs_bar": [
+        -0.0085,
+        -0.0411,
+        0.0227
+      ],
+      "perlead_A3": 0.531,
+      "perlead_A3_vs_069_criteria": [
+        0.036,
+        -0.018,
+        0.09
+      ],
+      "perlead_A3_vs_bar": [
+        0.074,
+        0.007,
+        0.138
+      ],
+      "perlead_qrs_A2": 0.7661,
+      "perlead_qrs_vs_bar": [
+        0.0242,
+        0.0061,
+        0.0436
+      ],
+      "perlead_qrs_vs_069_criteria_qrs": [
+        0.003,
+        -0.0105,
+        0.0164
+      ],
+      "all_12_leads_share_marked": [
+        0.723,
+        0.383
+      ],
+      "reliability_factor": "kept by rule; C1_std -0.0041 [-0.0096, -0.0005], A2 unchanged",
+      "beat_criteria_A2": [
+        0.0082,
+        0.0037,
+        0.0135
+      ]
+    }
   }
 }

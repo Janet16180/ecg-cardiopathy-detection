@@ -3288,7 +3288,7 @@
     "results": "docs/experiment-058-synthetic-generator-localization-results.md"
   },
   "localization_program_2026_10_12": {
-    "status": "active",
+    "status": "complete",
     "authorized": true,
     "authorization_scope": "User authorized new localization experiments (DINO and other architectures, preprocessing, training strategies), the ECGAD carve-out from PTB-XL fold 10 with a patient development/holdout split, and the PTB-XL+ download; same PR #61; no closed tests or label changes.",
     "plan": "docs/localization-program-2026-10-12.md",
@@ -3300,8 +3300,10 @@
       "064",
       "065",
       "066",
+      "068",
       "067"
-    ]
+    ],
+    "results": "docs/localization-program-results-2026-10-13.md"
   },
   "experiment_061_locbench": {
     "status": "complete",
@@ -3600,7 +3602,7 @@
     }
   },
   "experiment_067_holdout": {
-    "status": "implementing",
+    "status": "complete",
     "authorized": true,
     "name": "One-time ECGAD holdout confirmation of the frozen localization maps",
     "branch": "exp/067-holdout",
@@ -3615,6 +3617,63 @@
       "units_learned",
       "units_v2"
     ],
-    "next_action": "Subagent commits the protocol (primary: units_v2 minus qrs_prior), builds and hashes holdout maps without labels, then scores once."
+    "next_action": "ECGAD holdout spent. units_v2 confirmed against qrs_prior; gains beyond textbook painting not separable.",
+    "protocol": "docs/experiment-067-holdout.md",
+    "results": "docs/experiment-067-holdout-results.md",
+    "output_dir": "outputs/experiment067_holdout_v1",
+    "source_commit": "01aaf0c",
+    "reading": {
+      "primary_A2": 0.7641,
+      "bar_A2": 0.7268,
+      "primary_vs_bar": [
+        0.0374,
+        0.0121,
+        0.0649
+      ],
+      "decision": "confirmed",
+      "scoring_attempts": 1,
+      "units_learned_vs_bar": [
+        0.0322,
+        0.0067,
+        0.0595
+      ],
+      "factor_vs_bar": [
+        -0.0024,
+        -0.031,
+        0.0261
+      ],
+      "qrs_lexicographic_vs_bar": [
+        -0.0181,
+        -0.0374,
+        0.0009
+      ],
+      "textbook_vs_bar": [
+        0.0282,
+        0.0002,
+        0.0571
+      ],
+      "textbook_true_A2": 0.7671,
+      "units_v2_vs_textbook": [
+        0.009,
+        -0.005,
+        0.022
+      ],
+      "units_v2_A3": 0.616,
+      "units_v2_A2_qrs_vs_bar": [
+        0.067,
+        0.023,
+        0.116
+      ],
+      "units_v2_A2_nonqrs_vs_bar": [
+        0.047,
+        0.007,
+        0.091
+      ],
+      "units_v2_A4_vs_bar": [
+        -0.009,
+        -0.041,
+        0.024
+      ]
+    }
   }
 }

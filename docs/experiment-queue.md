@@ -772,3 +772,11 @@ candidates.
 `qrs_lexicographic`, 066 `factor` and `units_learned`, 068 `units_v2`; primary comparison `units_v2` minus `qrs_prior`.
 The protocol is committed first, the holdout maps are built and hashed without labels, and the marks are read by a
 single scoring run.
+
+[067](experiment-067-holdout-results.md) (one-time ECGAD holdout confirmation) is complete; the holdout marks were read
+by a single scoring run after the protocol and map hashes were committed. `units_v2` is confirmed: holdout A2 0.764
+against 0.727 for `qrs_prior`, +0.037 [+0.012, +0.065]; 066 `units_learned` +0.032 [+0.007, +0.060]. Diagnose-then-
+paint-the-textbook-region alone scored +0.028 [+0.000, +0.057], and the combiner's gain over it is not separable
+(+0.009 [-0.005, +0.022]). Lead, within-QRS and outside-QRS gains held; the development timing deficit did not
+reproduce. The QRS prior remains best for LAFB, CRBBB and CLBBB. The ECGAD holdout is now spent. The programme
+summary is [localization-program-results-2026-10-13.md](localization-program-results-2026-10-13.md).

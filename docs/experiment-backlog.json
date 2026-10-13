@@ -2069,6 +2069,58 @@
       "status": "open",
       "authorized": false,
       "notes": "Also: multiply unit maps by the record's 065 abnormal probability to recover D1; apply lead quality only to MIL lead features; fix a=0.25."
+    },
+    {
+      "id": "loc_new_marked_test_set",
+      "kind": "experiment",
+      "title": "A new untouched localization test set",
+      "question": "Where can a fresh set of lead-by-sample abnormality marks come from now that the ECGAD holdout is spent (cardiologist marks on local student ECGs, or another public marked set)?",
+      "evidence": "067 spent the ECGAD holdout; any further localization method needs an independent confirmation set.",
+      "value": 5,
+      "clarity": 0.5,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.5,
+      "build_hours": 4.0,
+      "blocked_by": [],
+      "status": "open",
+      "authorized": false,
+      "notes": "Ask the cardiologist whether marking 50-100 local ECGs on the LocBench contract is feasible."
+    },
+    {
+      "id": "loc_textbook_vs_combiner_power",
+      "kind": "experiment",
+      "title": "Separate the learned combiner from textbook painting",
+      "question": "Is the combiner's gain over diagnose-then-paint-the-textbook-region real once more marked records are available?",
+      "evidence": "067: units_v2 minus textbook +0.009 [-0.005, +0.022] on holdout, significant on development (+0.018 [+0.002, +0.035]).",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.5,
+      "build_hours": 1.0,
+      "blocked_by": [
+        "loc_new_marked_test_set"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": ""
+    },
+    {
+      "id": "loc_conduction_component_weight",
+      "kind": "experiment",
+      "title": "Conduction-aware component weight after the cardiologist's view",
+      "question": "Should LAFB, CRBBB and CLBBB maps weight the whole QRS in all leads, as the marks suggest, instead of textbook leads?",
+      "evidence": "067: qrs_prior best for LAFB (0.873), CRBBB (0.856) and CLBBB (0.835) on both halves, ahead of every textbook-based map.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.5,
+      "build_hours": 2.0,
+      "blocked_by": [
+        "loc_asmi_mark_review"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": "Combine with the ASMI question for the cardiologist."
     }
   ]
 }

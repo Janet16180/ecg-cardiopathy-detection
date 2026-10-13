@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-02T22:59:15.717257+00:00",
+  "updated_at_utc": "2026-10-13T01:17:25.507696+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -3286,5 +3286,32 @@
     },
     "independent_audit": "outputs/experiment058_synthetic_generator_audit_v1/audit.json; all7200cases/14400rows/8460hashes/bootstrap reconstructed.",
     "results": "docs/experiment-058-synthetic-generator-localization-results.md"
+  },
+  "localization_program_2026_10_12": {
+    "status": "active",
+    "authorized": true,
+    "authorization_scope": "User authorized new localization experiments (DINO and other architectures, preprocessing, training strategies), the ECGAD carve-out from PTB-XL fold 10 with a patient development/holdout split, and the PTB-XL+ download; same PR #61; no closed tests or label changes.",
+    "plan": "docs/localization-program-2026-10-12.md",
+    "benchmark": "docs/ecgad-benchmark-v1.md",
+    "experiments": [
+      "061",
+      "062",
+      "063",
+      "064",
+      "065",
+      "066",
+      "067"
+    ]
+  },
+  "experiment_061_locbench": {
+    "status": "protocol_frozen",
+    "authorized": true,
+    "protocol": "docs/experiment-061-locbench.md",
+    "output_dir": "outputs/experiment061_locbench_v1",
+    "resources": {
+      "device": "cpu",
+      "threads": 8
+    },
+    "next_action": "Implement LocBench v1 metrics and the five baselines in a worktree; run integrity checks, then score."
   }
 }

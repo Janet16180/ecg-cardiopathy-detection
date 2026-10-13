@@ -695,3 +695,11 @@ independent audit are complete. All three058–060 studies have reports and audi
 The review-worthy result is059QRSboundarytiming;058robustness and060full-rule
 noninferiority failed. No further study was launched. Classifier/clinicalpipeline
 and closedtests remain unchanged. Same PR #61; local66figure review is ready.
+
+## Localization programme, 12 October 2026
+
+The user authorized a new localization programme ([plan](localization-program-2026-10-12.md)) after a review
+of why 041-060 fell short. The ECGAD cardiologist benchmark (399 PTB-XL fold-10 records with lead-by-sample
+marks) was carved out of the final test and split by patient into development and holdout halves
+([ecgad-benchmark-v1.md](ecgad-benchmark-v1.md)). [061](experiment-061-locbench.md) protocol is frozen: LocBench v1
+(ECGAD development, clinical region test, noise-lead control, detection) and five baselines. No score yet.

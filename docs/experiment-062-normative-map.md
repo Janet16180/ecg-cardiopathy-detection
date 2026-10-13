@@ -145,3 +145,23 @@ groups and EchoNext test are never read.
 `maps_receipt.json`, the scoring outputs per variant (`locbench/<variant>/summary.json` and tables),
 `result.json` and `run.log`. The running agent writes `docs/experiment-062-normative-map-results.md` from
 `result.json`.
+
+## Amendment 1 (12 October 2026, before any 062 score)
+
+After the protocol commit, branch `exp/061-locbench` was merged (commits `ce42921` "LocBench ready" and `301aaca`).
+Experiment 061 has completed (`outputs/experiment061_locbench_v1/result.json`: status `complete`, `adopted`
+true, bar `qrs_prior`, A2 0.7419 [0.7082, 0.7743] on 92 records), but its results report is not yet committed.
+
+1. Bar. The primary comparison is against `qrs_prior`, the bar named in 061's completed receipt, because the
+   programme fixes the bar as the best 061 baseline and that receipt is final. This is stricter than the
+   fallback in the frozen text. Paired differences against `U_B` and `residual056` (and the other baselines)
+   are reported beside it. The decision rule is otherwise unchanged: `normative_v1` beats the bar if the paired
+   A2 difference against `qrs_prior` has a 95% lower bound above zero.
+2. Integrity check. 061 saved maps only for a display subset (1,578 records), so a full rescoring through the
+   CLI is impossible. The check becomes: (a) recompute per-record A2, A3, A4 and A6 of every ECGAD development
+   record from the saved `residual056` display maps with `locbench.ecgad_record_metrics` and match the saved
+   `tables/residual056/ecgad.csv` (exactly, or to float16 rounding if 061 scored float32 maps, which is then
+   stated); (b) `locbench.summarize(load_tables(...))` on the saved `residual056` tables reproduces the A2, B1
+   macro, C1 and D1 values and intervals in 061's `result.json` exactly. A failure stops the scoring.
+3. Scoring uses `scripts/experiments/run_locbench_score.py` once per variant, with `--compare` against the five
+   061 baseline table folders.

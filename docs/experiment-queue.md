@@ -703,3 +703,8 @@ of why 041-060 fell short. The ECGAD cardiologist benchmark (399 PTB-XL fold-10 
 marks) was carved out of the final test and split by patient into development and holdout halves
 ([ecgad-benchmark-v1.md](ecgad-benchmark-v1.md)). [061](experiment-061-locbench.md) protocol is frozen: LocBench v1
 (ECGAD development, clinical region test, noise-lead control, detection) and five baselines. No score yet.
+
+061 is running. 062 (normative phase-aligned map), 063 (masked reconstruction), 064 (SimDINO beat patch tokens with
+phase-matched kNN) and 065 (finding-specific multiple-instance heads) are being implemented in separate worktrees;
+each commits its protocol before scoring with LocBench. A shared local waveform cache
+(`ecg_experiment/locbench_cache.py`, `/tmp/ecg-locbench-cache`) holds folds 1-8 and the ECGAD records.

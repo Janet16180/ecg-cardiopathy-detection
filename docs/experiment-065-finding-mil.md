@@ -155,3 +155,10 @@ consequences directly.
 `outputs/experiment065_mil_v1/`: `result.json` (inputs and hashes, heads and counts, training histories,
 held-out AUROCs, sanity checks, LocBench readings), `weights_<model>.pt`, `bags_*.npz`, `maps_<variant>_<set>.npy`
 (float16), `finding_maps_*.npz`, `run.log`. Runner: `scripts/experiments/run_mil065.py`.
+
+## Amendment 1, 12 October 2026, before any score
+
+061's amendment 1 saves ECGAD development maps in float32 so that A1 paired differences are exact. To match,
+065's ECGAD development maps are saved and scored in float32; `evaluation` maps stay float16. No model, map
+definition or decision changes. At this point the networks were training; no held-out AUROC or map of the
+full run had been read.

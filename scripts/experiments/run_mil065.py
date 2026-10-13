@@ -425,11 +425,12 @@ def write_maps(
     files: dict[str, Any] = {}
     for set_name, ecg_ids in sets.items():
         positions = np.array([row_of[e] for e in ecg_ids])
+        dtype = np.float32 if set_name == "ecgad_dev" else np.float16
         maps = {
             v: np.lib.format.open_memmap(
                 out / f"maps_{v}_{set_name}.npy.part",
                 mode="w+",
-                dtype=np.float16,
+                dtype=dtype,
                 shape=(len(ecg_ids), 12, 5000),
             )
             for v in variants
@@ -451,7 +452,7 @@ def write_maps(
                 for variant, (vgroup, mode) in variants.items():
                     if vgroup == group:
                         native = mil.combined_map(bag, evidence, abnormal_heads, mode)
-                        maps[variant][chunk] = mil.upsample(native).astype(np.float16)
+                        maps[variant][chunk] = mil.upsample(native).astype(dtype)
                 if group == "mil_lse":
                     keep = finding_keep[chunk]
                     finding_maps.append(evidence[keep].astype(np.float16))

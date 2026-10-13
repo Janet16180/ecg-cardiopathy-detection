@@ -525,7 +525,7 @@ def combine_qrs(out: Path, qrs_dir: Path) -> None:
 
 
 BASELINE_TABLES = Path("outputs/experiment061_locbench_v1/tables")
-SCORED = ("dino_z", "dino_dist", "dino_z_rr", "qrs_lex_dino", "raw_z", "raw_dist")
+SCORED = ("dino_z", "dino_dist", "dino_z_rr", "qrs_lex_dino", "raw_z", "raw_dist", "random_z", "random_dist")
 HEADLINE = ("A1", "A2", "A3", "A4", "A5", "A6", "B1/macro", "B2/macro", "B3/macro", "C1", "C2", "D1")
 
 

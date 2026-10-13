@@ -39,7 +39,7 @@ from ecg_experiment.ecgad import load_labels
 from ecg_experiment.eda.ptbxl import load_metadata, load_statements
 from ecg_experiment.files import sha256_file, write_json_atomic
 from ecg_experiment.gpu import gpu_lock
-from ecg_experiment.locbench import ecgad_record_metrics
+from ecg_experiment.locbench import START, STOP, ecgad_record_metrics
 from ecg_experiment.locbench_baselines061 import exact_signal, ub_map
 from ecg_experiment.locbench_cache import open_cache
 from ecg_experiment.locbench_data import load_partition
@@ -1083,13 +1083,66 @@ def figures_phase(smoke: bool) -> None:
     print(example_figure(smoke), scatter_figure(smoke), flush=True)
 
 
+FRESH_SUBSETS = 10
+FRESH_SEED = 70099
+
+
+def fresh_random_phase(smoke: bool) -> None:
+    """
+    Post hoc, not declared: S(10%) of fresh uniform random regions on set A under detector (a).
+
+    Each record gets ``FRESH_SUBSETS`` new uniform subsets of the 10% size, each against the record's own 8
+    saved control transforms. The expected value is exactly 0 because every control is a bijection of
+    lead-samples.
+    """
+    device = device_setup()
+    model = load_detector("a", smoke, device)
+    folder = work_dir("A", smoke)
+    inverse = np.load(folder / "inverse.npy").astype(np.int64)
+    sources = np.load(folder / "sources.npy").astype(np.int64)
+    difference = np.load(folder / "difference.npy", mmap_mode="r")
+    records = read_records("A", smoke)
+    stored, _ = load_rows(records.ecg_id.to_numpy())
+    count = rp.selection_count(rp.FRACTIONS[1])
+    rng = np.random.default_rng(FRESH_SEED)
+    scores = []
+    with gpu_lock(device), torch.no_grad():
+        for row in range(len(records)):
+            masks = np.zeros((FRESH_SUBSETS * (1 + rp.CONTROL_DRAWS) + 1, len(LEADS), rp.SAMPLES), np.float32)
+            for j in range(FRESH_SUBSETS):
+                flat = np.zeros(len(LEADS) * rp.SCORED, bool)
+                flat[rng.choice(flat.size, count, replace=False)] = True
+                region = flat.reshape(len(LEADS), rp.SCORED)
+                first = 1 + j * (1 + rp.CONTROL_DRAWS)
+                masks[first, :, START:STOP] = region
+                for r in range(rp.CONTROL_DRAWS):
+                    masks[first + 1 + r, :, START:STOP] = region[inverse[row, r]][:, sources[row, r]]
+            weights = rp.taper(torch.from_numpy(masks).to(device))
+            x = torch.from_numpy(np.asarray(stored[row], np.float32)).to(device)
+            d = torch.from_numpy(np.array(difference[row], np.float32)).to(device)
+            z = model(rp.replaced(x, d, weights)).cpu().numpy()
+            drops = (z[0] - z[1:]).reshape(FRESH_SUBSETS, 1 + rp.CONTROL_DRAWS)
+            scores.append(float((drops[:, 0] - drops[:, 1:].mean(axis=1)).mean()))
+    scores = np.array(scores)
+    result = {
+        "records": len(scores),
+        "fresh_subsets_per_record": FRESH_SUBSETS,
+        "seed": FRESH_SEED,
+        "mean_S10": float(scores.mean()),
+        "standard_error": float(scores.std() / np.sqrt(len(scores))),
+    }
+    write_json_atomic(out_dir(smoke) / "post_hoc_fresh_random.json", result)
+    print(json.dumps(result), flush=True)
+
+
 def main() -> None:
     """Command-line entry point."""
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument(
-        "phase", choices=("select", "train", "prepare", "profile", "score", "analyze", "figures")
+        "phase",
+        choices=("select", "train", "prepare", "profile", "score", "analyze", "figures", "fresh_random"),
     )
     parser.add_argument("detector", nargs="?", choices=("a", "b"), default="a")
     parser.add_argument("--smoke", action="store_true")
@@ -1109,6 +1162,8 @@ def main() -> None:
         analyze_phase(args.smoke)
     elif args.phase == "figures":
         figures_phase(args.smoke)
+    elif args.phase == "fresh_random":
+        fresh_random_phase(args.smoke)
 
 
 if __name__ == "__main__":

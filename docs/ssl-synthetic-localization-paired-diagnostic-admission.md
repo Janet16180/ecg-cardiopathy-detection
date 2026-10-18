@@ -1,0 +1,13 @@
+# Diagnostic payload access and interpretation clarifications
+
+18 October 2026. Freeze these implementation details before the saved-map diagnostic runs. The original diagnostic protocol and all predecessor verdicts remain unchanged.
+
+The only array payloads this diagnostic may open, including for hashing, are the CURRENT paired study's evaluation `probabilities_R.npy` and `probabilities_S.npy`, and preparation `support.npy` and `candidate.npy`. All other NPY/NPZ banks, processed or raw waveforms, raw source metadata/clinical files, and model checkpoint formats remain closed. JSON receipts, selected case/qualification metadata, source/config/protocol text and training progress text can be freshly hashed/read within the stated diagnostic scope.
+
+For every prohibited payload referenced by a receipt, compare its declared digest to the immutable catalogs of the explicitly SHA-anchored passed parent training audit or parent metrics audit. Authorities are their `input_sha256` entries, the metrics audit's `waveform_digest_scope_exceptions` digest map, and the training audit's `metadata_only_scope_exceptions[*].expected_sha256`. Reject conflicting or absent authoritative digests; never open the payload to resolve a missing declaration. Record each exception, expected digest, authority and zero-read status. File size may be inspected as metadata. Do not apply the older generic receipt verifier, which would reopen unused waveform/checkpoint files.
+
+Calibration and evaluation remain separate, with within-role patient identities never pooled. Recomputing the existing higher95 calibration threshold from its saved maps is an integrity comparison only; retain the frozen bytes/threshold for every flag. The joint calibration control flag count is at most3/64 under strict greater-than, with ties possibly reducing it. This is fitted-data accounting, not fresh specificity evidence.
+
+Convert paired flag vectors to numeric arrays before subtraction and patient bootstraps. Report both transition directions and persistent flags. The within-S nuisance-versus-unchanged contrast and the cross-arm S-versus-R nuisance contrast answer different questions; the original failed cross-arm veto remains failed regardless of within-S overlap.
+
+Signed margins and raw probability levels are descriptive within an arm; they are not calibrated confidence comparisons across arms. Cross-arm flags retain each arm's frozen threshold. Candidate-window output alignment does not identify causal internal features. Optimization-step losses remain descriptive correlated measurements, without stepwise confidence intervals or checkpoint selection.

@@ -42,5 +42,12 @@
   "allow_waveform_reads": false,
   "parent_evaluation_sha256": "5041fab51ce83a8ea2bc89beed347c0981d5e53de8852233e31410400f07e9a4",
   "parent_training_audit_sha256": "55b50f8c9705aeacfce7e19334a1b987a0ebb527b3924f2ff362eb099a10359a",
-  "parent_metrics_audit_sha256": "464a438c0a3e48ed7a60bf2f7ea2195fcb23b26369c45394c00fa8aaaa118976"
+  "parent_metrics_audit_sha256": "464a438c0a3e48ed7a60bf2f7ea2195fcb23b26369c45394c00fa8aaaa118976",
+  "payload_access_addendum": "docs/ssl-synthetic-localization-paired-diagnostic-admission.md",
+  "allowed_array_payloads": [
+    "outputs/ssl_synthetic_localization/paired_background_v1/evaluation/probabilities_R.npy",
+    "outputs/ssl_synthetic_localization/paired_background_v1/evaluation/probabilities_S.npy",
+    "outputs/ssl_synthetic_localization/paired_background_v1/preparation/support.npy",
+    "outputs/ssl_synthetic_localization/paired_background_v1/preparation/candidate.npy"
+  ]
 }

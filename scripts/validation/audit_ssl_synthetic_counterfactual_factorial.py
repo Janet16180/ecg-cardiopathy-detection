@@ -71,6 +71,7 @@ class Audit:
         self.allowance = 238.0
         self.checks, self.failures = 0, []
         self.bindings, self.verified, self.exceptions, self.authorities = {}, {}, {}, {}
+        self.partial_rows = {}
 
     def live(self) -> None:
         """Enforce CPU and monotonic deadlines before another bounded unit of work."""
@@ -111,6 +112,12 @@ class Audit:
         else:
             self.check(label, expected == actual)
 
+    def require(self, label: str, condition: bool) -> None:
+        """Fail closed on an identity/authority violation before numerical work can continue."""
+        self.check(label, condition)
+        if not condition:
+            raise ValueError("Audit integrity violation: " + label)
+
     def accounting(self, label: str, expected: float, actual: float) -> None:
         """Compare exact receipt-derived cost arithmetic using the prospective 1e-9 accounting tolerance."""
         self.check(label, math.isclose(expected, actual, rel_tol=0, abs_tol=1e-9))
@@ -145,7 +152,7 @@ class Audit:
 
     def declare(self, name: str, value: str) -> None:
         """Reject divergent frozen byte identities for the same path."""
-        self.check(
+        self.require(
             "digest_declaration_consistency", name not in self.bindings or self.bindings[name] == value
         )
         self.bindings[name] = value
@@ -171,28 +178,28 @@ class Audit:
 
     def catalog(self, name: str, report: dict) -> None:
         """Extract deferred digest authorities only from explicitly anchored passed parent audits."""
-        self.check("passed_parent_digest_catalog", report["all_passed"] and report["mismatch_count"] == 0)
+        self.require("passed_parent_digest_catalog", report["all_passed"] and report["mismatch_count"] == 0)
         catalog = dict(report["input_sha256"])
         for path, value in report.get("deferred_payload_scope_exceptions", {}).items():
-            self.check(
+            self.require(
                 "internal_authority_catalog_consistency",
                 path not in catalog or catalog[path] == value["expected_sha256"],
             )
             catalog[path] = value["expected_sha256"]
         for path, value in report.get("metadata_only_scope_exceptions", {}).items():
-            self.check(
+            self.require(
                 "internal_authority_catalog_consistency",
                 path not in catalog or catalog[path] == value["expected_sha256"],
             )
             catalog[path] = value["expected_sha256"]
         for path, value in report.get("waveform_digest_scope_exceptions", {}).items():
             digest = value if isinstance(value, str) else value["expected_sha256"]
-            self.check(
+            self.require(
                 "internal_authority_catalog_consistency", path not in catalog or catalog[path] == digest
             )
             catalog[path] = digest
         for path, value in catalog.items():
-            self.check(
+            self.require(
                 "authority_catalog_consistency",
                 path not in self.authorities or self.authorities[path]["expected_sha256"] == value,
             )
@@ -209,13 +216,20 @@ class Audit:
                 raise ValueError("Nonrelative source binding rejected before payload access")
             if metadata_only(name):
                 authority = self.authorities.get(name)
-                self.check("deferred_payload_authority_present", authority is not None)
+                self.require("deferred_payload_authority_present", authority is not None)
                 if authority is not None:
-                    self.check("deferred_payload_authority_digest", expected == authority["expected_sha256"])
-                    self.exceptions[name] = dict(authority, payload_read=False)
+                    self.require(
+                        "deferred_payload_authority_digest", expected == authority["expected_sha256"]
+                    )
+                    partial = self.partial_rows.get(name)
+                    self.exceptions[name] = dict(
+                        authority, whole_payload_read=False, payload_read=partial is not None
+                    )
+                    if partial is not None:
+                        self.exceptions[name]["partial_payload_rows"] = partial
             else:
                 observed = self.digest(name)
-                self.check("fresh_permitted_sha256", observed == expected)
+                self.require("fresh_permitted_sha256", observed == expected)
                 self.verified[name] = observed
 
 
@@ -472,6 +486,7 @@ def recompute_maps(
     """Recompute every model/uniform/phase row; raw-voltage rows retain explicit waveform-free scope."""
     rows, responses = [], []
     saved_rows = {(row["method"], row["case"]): row for row in declared["rows"]}
+    audit.require("stored2816_rows_no_duplicate_or_extra", len(declared["rows"]) == len(saved_rows) == 2816)
     for index in range(2256, 2768):
         audit.live()
         case, local = cases[index - 2000], index - 2000
@@ -538,6 +553,10 @@ def recompute_maps(
     for row in rows:
         audit.complete("per_case_native_metric", row, saved_rows[row["method"], row["case"]])
     saved_response = {(row["method"], row["case"]): row for row in declared["responses"]}
+    audit.require(
+        "stored1024_response_rows_no_duplicate_or_extra",
+        len(declared["responses"]) == len(saved_response) == 1024,
+    )
     for row in responses:
         audit.complete("per_case_response_all 23fields", row, saved_response[row["method"], row["case"]])
     audit.equal("all_saved_case_rows_retained", 2816, len(rows))
@@ -627,7 +646,9 @@ def inspect_components(audit: Audit, values: dict, arm: str) -> None:
         )
         audit.equal("exact_float32_paired_total", expected, values["total"])
         audit.check(
-            "bounded_probability_hinge_consistency", values["hinge"] <= 1.2 and values["consistency"] <= 1
+            "bounded_probability_hinge_consistency",
+            values["hinge"] <= 1.2 + 64 * np.finfo(np.float32).eps
+            and values["consistency"] <= 1 + 64 * np.finfo(np.float32).eps,
         )
 
 
@@ -674,6 +695,7 @@ def training_identity(  # noqa: C901
     )
     old_support_name = PARENT + "/preparation/support.npy"
     old_support = np.load(root / old_support_name, mmap_mode="r", allow_pickle=False)
+    audit.partial_rows[old_support_name] = [0, 1999]
     audit.check("old_support_geometry", old_support.shape == (2768, 12, 2500) and old_support.dtype == bool)
     for index in range(2000):
         audit.equal(
@@ -723,6 +745,7 @@ def training_identity(  # noqa: C901
             )
         info = training["arms"][arm]
         describe_state(audit, expected, info["initialization"], arm + ":initial")
+        describe_state(audit, expected, profile["recovery"][arm]["initialization"], arm + ":profile_initial")
         audit.equal(
             "fixed600_exposure_accounting",
             {
@@ -831,30 +854,36 @@ def run(root: Path, evaluation_sha: str, script_sha: str) -> dict:  # noqa: C901
         raise FileExistsError("Factorial independent audit refuses overwrite")
     if Path(__file__) != destination / "audit_script.py":
         raise ValueError("Execute only the frozen exact audit-script copy")
-    audit.equal(
-        "prospective_exact_script", script_sha, audit.digest(STUDY + "/independent_audit_v1/audit_script.py")
+    audit.require(
+        "prospective_exact_script",
+        script_sha == audit.digest(STUDY + "/independent_audit_v1/audit_script.py"),
     )
-    audit.equal("prospective_evaluation_anchor", evaluation_sha, audit.digest(evaluation_name))
+    audit.require("prospective_evaluation_anchor", evaluation_sha == audit.digest(evaluation_name))
     evaluation = audit.receipt(evaluation_name)
     audit.deadline(evaluation)
-    audit.check("forward_evaluation_complete", evaluation["evaluation_completed"])
+    audit.require("forward_evaluation_complete", evaluation["evaluation_completed"])
     audit.check("no_v1_evaluation_outputs", not (root / STUDY / "evaluation").exists())
     audit.declare(STUDY + "/independent_audit_v1/audit_script.py", script_sha)
     policy = "docs/ssl-synthetic-localization-counterfactual-factorial-audit.md"
     audit.declare(policy, audit.digest(policy))
     reports = {}
     for name, expected in ANCHORS.items():
-        audit.equal("immutable_predecessor_anchor", expected, audit.digest(name))
+        audit.require("immutable_predecessor_anchor", expected == audit.digest(name))
         reports[name] = audit.receipt(name)
         if "preparation" not in name:
             audit.catalog(name, reports[name])
     prep = reports[STUDY + "/preparation/summary.json"]
-    audit.check(
+    audit.require(
         "passed_full_new_qualification",
         prep["qualification_gate_passed"] and prep["failed_cases"] == 0 and prep["cases"] == 768,
     )
     for file, digest in prep["output_sha256"].items():
-        audit.authorities[STUDY + "/preparation/" + file] = {
+        name = STUDY + "/preparation/" + file
+        audit.require(
+            "new_qualification_authority_consistent",
+            name not in audit.authorities or audit.authorities[name]["expected_sha256"] == digest,
+        )
+        audit.authorities[name] = {
             "expected_sha256": digest,
             "authority_receipts": [STUDY + "/preparation/summary.json"],
         }
@@ -1159,6 +1188,25 @@ def self_test() -> None:  # noqa: C901
         pass
     else:
         raise AssertionError("Exhausted live audit allowance did not stop")
+    identity = Audit(Path("/tmp/absent-artificial-factorial"))
+    try:
+        identity.declare("metadata.json", "a")
+        identity.declare("metadata.json", "b")
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("Conflicting source declaration did not stop")
+    mask_name = PARENT + "/preparation/support.npy"
+    scope = Audit(Path("/tmp/absent-artificial-factorial"))
+    scope.authorities[mask_name] = {"expected_sha256": "frozen", "authority_receipts": ["anchored"]}
+    scope.declare(mask_name, "frozen")
+    scope.partial_rows[mask_name] = [0, 1999]
+    scope.verify()
+    scope.verify()
+    if scope.exceptions[mask_name]["whole_payload_read"] or scope.exceptions[mask_name][
+        "partial_payload_rows"
+    ] != [0, 1999]:
+        raise AssertionError("Repeated verification lost partial TRAIN-mask scope")
     print("Artificial factorial audit tests passed; no study artifacts were read")
 
 

@@ -53,7 +53,7 @@ cases. Positive baselines must equal their matching shared-nuisance control byte
 192 processed backgrounds plus support/candidate masks, never duplicated baseline/edited banks.
 Failure placeholders remain locally with explicit reasons and block the entire qualification gate.
 
-The exact seven eventual array headers (background/support/candidate plus four R/S role probability
+The exact five eventual array headers (background/support/candidate plus two combined R/S probability
 files) are included with 253,440,000 payload bytes and 64 MiB metadata reserve in storage admission.
 Use one numerical CPU thread, hidden CUDA, a new output directory and 1,800-second stage CPU ceiling;
 retain input/source/output hashes, all failures, measured costs and cumulative original resource gates.

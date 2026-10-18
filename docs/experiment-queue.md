@@ -7,8 +7,9 @@ endpoint is the average loss effect on direct edited AP, guarded against baselin
 weak selectivity and increased control alerts. It reuses the exact 500 TRAIN patients and requires
 both BCE arms to reproduce their predecessor final states exactly. New 64/128 calibration/evaluation
 patients exclude all 384 previously spent validation patients. All new source is locally committed; 38 artificial CPU tests and Ruff passed. Independent source review passed. The one qualification passed all 192 backgrounds and 768 cases,
-with 768 exact replays and 384 matching baselines, zero failures or replacements. Actual four-arm
-GPU profiling is authorized and must pass before fits; no performance score has run. All work stays local;
+with 768 exact replays and 384 matching baselines, zero failures or replacements. The actual four-arm GPU profile passed all four exact recoveries and runtime/storage forecasts.
+The four fixed fits are authorized, with exact predecessor BCE closure before paired fits. No
+performance score has run. All work stays local;
 closed tests remain closed and earlier failed advancement decisions are unchanged.
 
 **18 October saved-map diagnostic complete:** The authorized

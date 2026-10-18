@@ -38,14 +38,17 @@ must have no collision. Every variant of a latent subject stays in its role.
 
 Training uses 500 independent latent subjects/examples: 375 positive paired edits, alternating focal
 and persistent; 125 zero-intervention examples, alternating ordinary shams and stress-nuisance controls.
-The ordinary nuisance stream is present through the same acquisition pipeline in every kind; declared
-stress nuisances are balanced independently of target presence. Profile A supplies training/validation;
+Clean and nuisance-present inputs are balanced within positive examples independently of edit mode
+and location, and among zero-intervention controls; clean inputs cannot uniquely imply a negative target.
+For validation/evaluation, both positive modes use the same independently assigned nuisance flag for
+a subject; sham controls are clean and nuisance controls carry the generator nuisance stream. Profile A supplies training/validation;
 profile B is absent from optimization and threshold calibration. Design-only qualification of B is
 allowed before this frozen model experiment. No generator parameter is adjusted after model scores.
 
 Validation has 128 A subjects, each with focal, persistent, sham and nuisance versions. Engineering
 evaluation has 256 B subjects, each with those four versions; secondary A versions on the same subjects
-measure same-renderer behavior. Use identical subjects/parameters/draws for all arms. Count correlated
+measure same-profile behavior. B changes only the edit profile, retaining the background simulator
+and timing distribution; this is held-out edit-profile transfer, not independent-domain validation. Use identical subjects/parameters/draws for all arms. Count correlated
 variants as one subject, never independent evidence. All model inferences and per-subject results stay
 local; only aggregate reports enter Git.
 
@@ -101,6 +104,9 @@ positive edited-record flag rates to expose vacuous thresholds. Report paired bo
 Advancement requires B subject-macro AP S−R >=0.05, paired 95% lower bound >0, and neither sham nor
 nuisance flag-rate increase S−R >0.05. This one-seed engineering rule does not establish clinical utility.
 A passing result motivates a separately frozen replication; failure is retained and reported.
+
+Report fixed-area precision and target recall in the top 1% (300 cells) of the full score map. At the
+cutoff, assign tied cells fractional expected inclusion to keep exactly 300 cells of credited area.
 
 Contextual diagnostics are uniform scores (AP equals prevalence), raw absolute voltage, and an oracle
 phase prior that highlights every broad candidate ST window for every beat and all 12 leads, without

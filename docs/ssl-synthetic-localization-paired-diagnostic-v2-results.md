@@ -15,6 +15,9 @@ altered.
 
 ## Exact paired control flags
 
+Patient-bootstrap intervals are conditional on these fixed fitted models and this one training
+schedule/initialization; they do not estimate training-order or pretraining-seed uncertainty.
+
 Flags use the original strict maximum-map threshold: R 0.923113226890564 and S 0.9675309062004089.
 Calibration and evaluation patients remain separate. Intervals are paired whole-patient 95%
 bootstrap intervals, 2,000 draws, seed 20261026, with no skipped draws. Calibration rows are
@@ -224,7 +227,7 @@ retained.
 The independent audit passed 57,450 checks with zero mismatches at absolute numerical tolerance
 1e-12. It reproduced all 384 paired-control rows, 512 positive rows, seven aggregate sections,
 seventeen positive-statistic fields, paired patient intervals, fixed loss blocks, all eight parent
-summary blocks, frozen thresholds and all nine failed-conjunction decision gates. It freshly
+summary blocks, frozen thresholds and all nine decision gates of the failed conjunction. It freshly
 verified 188 permitted files and retained 58 authority-only forbidden-payload exceptions.
 
 The auditor used separate numerical reductions rather than production diagnostic calculators. It

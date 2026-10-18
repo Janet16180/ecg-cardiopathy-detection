@@ -46,3 +46,15 @@ The admitted follow-up is a separately frozen existing-map counterfactual diagno
 baseline must exactly match an already predicted same-subject control. That reanalysis can examine
 intervention responsiveness without new inference, fitting or thresholds, and cannot reverse this
 pilot's failed primary rule. Profile B is now development evidence.
+
+## Explicit root-receipt binding closure
+
+The first counterfactual admission stopped because the original audit receipt did not explicitly bind
+the root evaluation summary, despite recomputing its reported values. The failed admission is retained.
+A new metadata-only closure binds the unchanged evaluation summary, original audit and supplement,
+rechecks 141 prior bindings and compares 766 values with zero mismatches. Its receipt is
+`final_audit_v1/reproduction_binding_closure.json`, SHA-256
+`abff7844814238a75922280d59932a28f856c20abf5b522407ef120f1ea444f2`.
+No model inference, optimization or real waveform read occurred. The original audit and evaluation
+bytes remain unchanged. The separately frozen v2 counterfactual diagnostic subsequently completed;
+see its [results report](ssl-synthetic-localization-counterfactual-v2-results.md).

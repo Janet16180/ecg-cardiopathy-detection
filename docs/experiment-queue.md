@@ -10,15 +10,21 @@ selected patients passed the [real-cache gate](ssl-synthetic-localization-real-c
 Initial generator v1 passed its design grid but failed 28/3,060 planned occupancy checks; its failure is
 retained. The [bounded v2 amendment](ssl-synthetic-localization-pilot-generator-v2.md) qualifies all
 3,060 planned cases with exact replays. Prepared A-only training/validation banks and independent
-counterfactual replay pass; the entire stream currently occupies about 1.22 GB. The first actual GPU profile stopped at the deterministic CUDA interpolation backward check; its
+counterfactual replay pass. The first actual GPU profile stopped at the deterministic CUDA interpolation backward check; its
 [failed report](ssl-synthetic-localization-profile-results.md) is retained. A [prospective equivalent output implementation](ssl-synthetic-localization-pilot-deterministic-output.md)
 passes CPU operator/gradient parity and its separate actual GPU profile, including exact replay.
 The fixed 1,000-update SSL plus 600-update R/S/F fits completed in 68.473 seconds with exact matching
 and frozen-encoder checks; see the [training report](ssl-synthetic-localization-training-results.md).
 The reviewed frozen evaluation completed: held-out-profile AP was R 0.637958, S 0.640600, F 0.157875;
 S−R +0.002642 [−0.003550, +0.008333] fails the frozen advancement rule. Both control point-vetoes pass.
-Independent saved-map recomputation is in progress. A prospective existing-map counterfactual-response
-audit will diagnose input responsiveness without new inference, tuning or changing the failed primary result. The user requested all further progress remain local, with no pushes or PR updates. Engineering-test real
+[Independent saved-map recomputation](ssl-synthetic-localization-numerical-audit-results.md) passed all
+123,007 checks with zero mismatches; a separate 766-check provenance closure also passes. The
+[saved-map counterfactual audit](ssl-synthetic-localization-counterfactual-v2-results.md) completed
+all 1,024 positive pairs without new inference: both R/S respond selectively to introduced changes.
+This does not change the failed primary result. The separately frozen
+[real-background follow-up](ssl-synthetic-localization-real-background-study.md) is being implemented
+and reviewed: qualify fixed additive edits on 192 validation patients, then conditionally evaluate
+existing frozen R/S models after an actual inference profile. No new fitting is scheduled. The user requested all further progress remain local, with no pushes or PR updates. Engineering-test real
 waveforms, reserved tests and earlier stopped experiments remain closed/stopped; clinical annotation
 audit still lacks ECGAD artifacts. See the JSON catalog for live receipt hashes and the agents' reports.
 

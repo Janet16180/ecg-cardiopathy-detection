@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "original_pilot_completed_advancement_failed_independent_audit_running",
+    "status": "original_pilot_failed_diagnostics_complete_real_background_implementation",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Independently recompute saved maps, metrics, thresholds, bootstrap intervals and all source/artifact bindings. Then freeze a bounded existing-map counterfactual-response diagnostic using exact same-subject control counterparts. No added training or threshold tuning; the original advancement rule remains failed. All further work stays local, without pushes or PR updates.",
+    "next_action": "Original primary advancement remains failed. Saved-map counterfactual response completed with exact matched controls for all 1024 positive pairs and positive B response/selectivity intervals for both R/S. Implement and review the separately frozen real-background qualification, then actual inference profile and conditional frozen R/S transfer. No new fits. All changes remain local without pushes or PR updates.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2348,6 +2348,17 @@
     "independent_final_audit_receipt": "outputs/ssl_synthetic_localization/pilot_v1/final_audit_v1/summary.json",
     "independent_final_audit_receipt_sha256": "45f54b7e773653c0f76f48898a6bf3fe38f4cb42df280bf8605aaad0b24d40ad",
     "independent_final_audit_report": "docs/ssl-synthetic-localization-numerical-audit-results.md",
-    "independent_final_audit_passed": true
+    "independent_final_audit_passed": true,
+    "counterfactual_audit_receipt": "outputs/ssl_synthetic_localization/pilot_v1/counterfactual_audit_v2/summary.json",
+    "counterfactual_audit_receipt_sha256": "209f3c1b560c181c295f16042dd982e50c6f17da051acac903a411311a6bfc79",
+    "counterfactual_audit_report": "docs/ssl-synthetic-localization-counterfactual-v2-results.md",
+    "numerical_binding_closure_receipt": "outputs/ssl_synthetic_localization/pilot_v1/final_audit_v1/reproduction_binding_closure.json",
+    "numerical_binding_closure_receipt_sha256": "abff7844814238a75922280d59932a28f856c20abf5b522407ef120f1ea444f2",
+    "real_background_protocol": "docs/ssl-synthetic-localization-real-background-study.md",
+    "real_background_clarifications": "docs/ssl-synthetic-localization-real-background-clarifications.md",
+    "real_background_configuration": "configs/ssl_synthetic_real_background_v1.json",
+    "real_background_scored": false,
+    "remote_updates_paused_by_user": true,
+    "missing_required_scope": "Historical setup-only readiness receipt; later actual profile/training/evaluation are recorded separately."
   }
 }

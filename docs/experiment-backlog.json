@@ -1411,17 +1411,30 @@
       "kind": "repo",
       "title": "Audit intervention responsiveness using saved paired-control maps",
       "question": "Do the trained maps respond to the exact added voltage edit rather than already highlighting its latent phase/lead locations?",
-      "evidence": "Original pilot did not establish SSL benefit; both trained arms exceed uniform, raw-voltage and broad-phase diagnostics, leaving input responsiveness to distinguish. Existing same-subject controls equal paired baselines.",
+      "evidence": "Executed saved-map audit: all 1024 counterpart pairs exact; R/S B AP-response and selectivity intervals positive. Report docs/ssl-synthetic-localization-counterfactual-v2-results.md.",
       "value": 4,
       "clarity": 0.9,
       "gpu_hours": 0,
-      "cpu_hours": 0.5,
+      "cpu_hours": 0.009512362884166667,
       "build_hours": 2,
-      "blocked_by": [
-        "@original_pilot_numerical_audit"
-      ],
+      "blocked_by": [],
+      "status": "done",
+      "notes": "No new inference, training or thresholds. Original AP gain remains +0.002642 with interval crossing zero and advancement failed. Exploratory AP-change contrast is partly lower baseline-site AP and is not a new edited-AP gain. V1 provenance admission failure retained; explicit binding closure enabled V2."
+    },
+    {
+      "id": "ssl_synthetic_real_background_transfer",
+      "kind": "repo",
+      "title": "Qualify introduced voltage edits on real backgrounds and test frozen localizers",
+      "question": "Do existing toy-trained R/S models recover deliberately added voltage changes on fixed real ECG backgrounds?",
+      "evidence": "Original pilot failed SSL advancement, but saved-map R/S input-response diagnostics passed the prospectively specified conditional admission. New protocol and exact rendering clarification committed before new patient selection or scoring.",
+      "value": 4,
+      "clarity": 0.9,
+      "gpu_hours": 0.25,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [],
       "status": "proposed",
-      "notes": "Prospective existing-map diagnostic, no new model inference/training/thresholds. Preserve original FAIL; B now development. Verify exact baseline/control equality, then evaluate target-site probability/AP changes versus unedited candidate ST and outside regions, whole latent-subject intervals. Estimates prospective."
+      "notes": "Implementation and review in progress. Reserve 500 disjoint TRAIN patients without reading their waveforms; use 64/128 original VALIDATION patients for calibration/evaluation. All 768 cases must qualify, then actual-path profile and inference-only R/S transfer. No native disease labels, fitting, causal domain-mismatch claim or closed test. Runtime estimates are ceilings, not measured results."
     }
   ]
 }

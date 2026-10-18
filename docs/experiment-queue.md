@@ -1,5 +1,17 @@
 # Experiment queue
 
+**18 October counterfactual-loss finding verified:** The [four-arm factorial](ssl-synthetic-localization-counterfactual-factorial.md)
+completed with an initialization-averaged direct edited-AP gain of **0.060490 [0.045504,0.075278]**.
+All twelve prospectively frozen gates pass. Independent verification passed 154,715 checks with zero
+mismatches, covering 2,816 case rows, 1,024 response rows, all 23 response fields and exact BCE training
+closure. SSL plus paired loss has the highest pooled AP 0.567574. The benefit is heterogeneous:
+random focal AP increases 0.277629 while repeated-edit AP decreases 0.075376; pooled admission does
+not imply improvement in every mode. See the [executed results](ssl-synthetic-localization-counterfactual-factorial-results.md).
+Labels are introduced changes above 0.005 mV, not verified native pathology; single fitted randomness
+and the already studied pulse family limit the finding. Complete cumulative CPU 745.814 seconds,
+GPU-wall 382.224 seconds; newstage CPU 175.881 seconds. Replication and saved-map mode diagnosis are
+ranked only, with storage/protocol/profile gates. No further fit or remote action is scheduled.
+
 **18 October counterfactual-loss factorial prepared:** The user authorized continued local work
 until an important finding. The [prospective protocol](ssl-synthetic-localization-counterfactual-factorial.md)
 compares four matched arms: random/SSL initialization by BCE/BCE plus paired loss. Its single primary

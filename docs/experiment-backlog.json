@@ -1471,17 +1471,50 @@
       "kind": "experiment",
       "title": "Test paired response supervision against BCE under matched initializations",
       "question": "Does explicit paired counterfactual supervision improve direct localization and response over BCE for random and SSL initializations?",
-      "evidence": "Saved-map diagnosis confirms R high pre-edit phase-aligned output and weak introduced response; S7persistent control flags cannot be explained as noise-only errors. Existing BCE supervision alone leaves room for an output phase prior. Scientific design review supports a four-arm factorial as a hypothesis, not a proven remedy.",
+      "evidence": "Executed four-arm factorial and independent saved-output/state audit: primary direct edited-AP loss effect +0.060489877 [0.045504322,0.075277774], all12 prospective gates pass;154715 independent checks/0 mismatches. Exact BCE600-loss/tensor predecessor closure. Gains are focal-dominated; random repeated-edit AP decreases0.075376. SSL+paired has highest pooled AP0.567574, not clinical accuracy.",
       "value": 4,
       "clarity": 0.75,
-      "gpu_hours": 0.1,
-      "cpu_hours": 0.2,
+      "gpu_hours": 0.04328092978166752,
+      "cpu_hours": 0.04885569765166666,
       "build_hours": 4,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Complete local study; docs/ssl-synthetic-localization-counterfactual-factorial-results.md. Newstage155.811347214 GPU-wall and175.880511546 scientific CPU seconds including verification; build4h remains an unmetered estimate. Forward CPU scoring argument-order bug was caught/fixed in NEWsource before any performance scoring, without altering pinnedv1. One fixed initialization/schedule/pulse family on fresh development patients; no clinical validation. No automatic replication or remote actions."
+    },
+    {
+      "id": "ssl_synthetic_factorial_seed_replication",
+      "kind": "experiment",
+      "title": "Replicate the fixed paired-loss factorial under independent training randomness",
+      "question": "Does the direct localization benefit persist across independent initialization/pretraining and training-order randomness without tuning the fixed objective?",
+      "evidence": "The first audited factorial improves directAP by0.06049 and passes12gates, but all intervals condition on one fitted initialization/schedule. SSL+paired is best pooled; the random repeated-edit decline must remain visible.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0.15,
+      "cpu_hours": 0.2,
+      "build_hours": 3,
       "blocked_by": [
-        "@frozen_source_and_actual_profile"
+        "@prospective_replication_protocol_and_actual_profile",
+        "@storage_plan_within_4GiB"
       ],
-      "status": "in_progress",
-      "notes": "Prospective protocol docs/ssl-synthetic-localization-counterfactual-factorial.md freezes the initialization-averaged loss effect on direct edited AP, twelve guards, fixed probability hinge margin 0.20 and weight 1.0, exact BCE-state reproduction, matched 500 TRAIN/2,000 inputs/600 updates and new 64/128 disjoint original VALIDATION patients. Source review and actual GPU profile gate execution. No scores or new patient selection yet. No automatic replication or remote actions. Costs remain estimates."
+      "status": "proposed",
+      "notes": "No fit scheduled. Freeze exact seed handling, matched budget, same objective and primary/12guards before scoring; report focal/repeated effects without choosing favorable modes. Use separately frozen permitted fresh development patients, never closed tests. Currentstream~3.93GB leaves insufficient room for another full fourbank192background study under4GiB; require an honest storage plan preserving all existing artifacts. Clinical annotation audit remains separate."
+    },
+    {
+      "id": "ssl_synthetic_factorial_mode_diagnostic",
+      "kind": "experiment",
+      "title": "Explain the focal benefit and repeated-edit tradeoff using saved maps",
+      "question": "How do directAP, target coverage, lead ranking and pre-edit phase alignment change under paired training in each edit mode?",
+      "evidence": "Audited pooled benefit coexists with random focalAP gain0.277629 and repeatedAP decline0.075376; pooled admission guards do not guarantee mode-level improvement.",
+      "value": 3,
+      "clarity": 0.85,
+      "gpu_hours": 0,
+      "cpu_hours": 0.03,
+      "build_hours": 1.5,
+      "blocked_by": [
+        "@prospective_saved_map_diagnostic_protocol"
+      ],
+      "status": "proposed",
+      "notes": "Saved outputs only; no new inference/fits/thresholds or native disease claim. Freeze contrasts/regions before calculation, retain every patient, report ranking/coverage/baseline response components. This can characterize output behavior but cannot prove internal feature causality. Not automatically launched after the important finding."
     }
   ]
 }

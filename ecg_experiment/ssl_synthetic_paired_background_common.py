@@ -81,6 +81,18 @@ def explicit_predecessor_values(reports: dict[str, Any]) -> None:
         raise ValueError("Original primary, decision or thresholds differ from numerical reproduction")
 
 
+def _validate_counterparts(group: list[dict[str, Any]]) -> None:
+    """Check both positive baseline identities against their corresponding control variant."""
+    for positive in group[:2]:
+        control = group[3 if positive["nuisance"] else 2]
+        if positive.get("matched_control_case_index", control["case_index"]) != control["case_index"]:
+            raise ValueError("Matched control alias differs from exact paired index")
+        if positive["baseline_sha256"] != control["edited_sha256"]:
+            raise ValueError("Positive baseline no longer matches its control")
+        if positive["nuisance_parameters"] != control["nuisance_parameters"]:
+            raise ValueError("Paired nuisance parameters differ")
+
+
 def _validate_patient_group(
     group: list[dict[str, Any]], subject: int, local: int, profile: str, patients: set[str]
 ) -> None:
@@ -107,14 +119,7 @@ def _validate_patient_group(
         raise ValueError("Subject alias differs from global subject")
     if [c["target"] for c in group] != [True, True, False, False]:
         raise ValueError("Target flags changed")
-    for positive in group[:2]:
-        control = group[3 if positive["nuisance"] else 2]
-        if positive.get("matched_control_case_index", control["case_index"]) != control["case_index"]:
-            raise ValueError("Matched control alias differs from exact paired index")
-        if positive["baseline_sha256"] != control["edited_sha256"]:
-            raise ValueError("Positive baseline no longer matches its control")
-        if positive["nuisance_parameters"] != control["nuisance_parameters"]:
-            raise ValueError("Paired nuisance parameters differ")
+    _validate_counterparts(group)
 
 
 def validate_case_plan(cases: list[dict[str, Any]]) -> dict[str, list[int]]:

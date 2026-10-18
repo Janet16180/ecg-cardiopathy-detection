@@ -360,6 +360,7 @@ def _admission(original_audit: Path) -> tuple[dict, dict, dict]:
     _merge_hashes(sources, {name: sha256_file(ROOT / name) for name in NEW_SOURCES})
     _merge_hashes(sources, audit.get("source_sha256", {}))
     inputs = dict(original["input_sha256"])
+    _merge_hashes(inputs, audit.get("input_sha256", {}))
     _merge_hashes(
         inputs, {to_stored(ORIGINAL / name): digest for name, digest in original["output_sha256"].items()}
     )

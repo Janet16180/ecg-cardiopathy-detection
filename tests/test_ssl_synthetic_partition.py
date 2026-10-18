@@ -123,6 +123,8 @@ def test_mixed_fold_patient_is_excluded_in_full(tmp_path):
         ("ecg_id", "1.5"),
         ("patient_id", "NaN"),
         ("patient_id", "0"),
+        ("patient_id", ""),
+        ("ecg_id", "missing"),
         ("strat_fold", "11"),
         ("filename_hr", "records500/../00001_hr"),
         ("filename_hr", "/absolute/00001_hr"),
@@ -134,7 +136,9 @@ def test_malformed_metadata_fails_before_filesystem_inspection(tmp_path, field, 
     rows = metadata_rows()
     rows[0][field] = value
     with patch.object(Path, "is_file") as inspect:
-        with pytest.raises(ValueError, match="positive finite integers|recording path|invalid source fold"):
+        with pytest.raises(
+            ValueError, match="positive finite integers|[Rr]ecording path|invalid source fold"
+        ):
             build_partition(csv_bytes(rows), POLICY, tmp_path)
         inspect.assert_not_called()
 

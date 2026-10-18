@@ -6,7 +6,7 @@ import csv
 import hashlib
 import io
 from collections import Counter, defaultdict
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -60,7 +60,10 @@ def canonical_identifier(value: str) -> str:
     str
         Canonical integer text, shared by values such as ``123`` and ``123.0``.
     """
-    number = Decimal(value)
+    try:
+        number = Decimal(value)
+    except InvalidOperation as error:
+        raise ValueError("Identifiers and folds must be positive finite integers") from error
     if not number.is_finite() or number <= 0 or number != number.to_integral_value():
         raise ValueError("Identifiers and folds must be positive finite integers")
     return str(int(number))

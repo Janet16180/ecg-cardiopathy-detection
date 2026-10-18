@@ -11,8 +11,9 @@ with 768 exact replays and 384 matching baselines, zero failures or replacements
 All four fixed fits completed. Both BCE arms reproduced all 600 predecessor losses and final
 tensor identities exactly. Before any scores, independent review caught a scoring helper argument
 order error; the [forward policy](ssl-synthetic-localization-counterfactual-factorial-evaluation-v2.md)
-requires new source/tests while preserving pinned v1 and every scientific endpoint. Evaluation
-awaits that integration/review; no performance score has run. All work stays local;
+requires new source/tests while preserving pinned v1 and every scientific endpoint. The new scorer passed real-helper/end-to-end tests (43 new factorial tests total) and independent
+review. One forward evaluation is authorized with unchanged profiled GPU helpers and all twelve
+gates; independent saved-output verification follows. No performance result is available yet. All work stays local;
 closed tests remain closed and earlier failed advancement decisions are unchanged.
 
 **18 October saved-map diagnostic complete:** The authorized

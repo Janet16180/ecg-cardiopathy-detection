@@ -13,8 +13,10 @@ retained. The [bounded v2 amendment](ssl-synthetic-localization-pilot-generator-
 counterfactual replay pass; the entire stream currently occupies about 1.22 GB. The first actual GPU profile stopped at the deterministic CUDA interpolation backward check; its
 [failed report](ssl-synthetic-localization-profile-results.md) is retained. A [prospective equivalent output implementation](ssl-synthetic-localization-pilot-deterministic-output.md)
 passes CPU operator/gradient parity and its separate actual GPU profile, including exact replay.
-The fixed 1,000-update SSL plus 600-update R/S/F fits are now running under the shared GPU lock.
-No localization score has run. The user requested all further progress remain local, with no pushes or PR updates. Engineering-test real
+The fixed 1,000-update SSL plus 600-update R/S/F fits completed in 68.473 seconds with exact matching
+and frozen-encoder checks; see the [training report](ssl-synthetic-localization-training-results.md).
+The reviewed frozen evaluation is now running, with A calibration preceding B inference and an independent
+saved-map audit to follow. The user requested all further progress remain local, with no pushes or PR updates. Engineering-test real
 waveforms, reserved tests and earlier stopped experiments remain closed/stopped; clinical annotation
 audit still lacks ECGAD artifacts. See the JSON catalog for live receipt hashes and the agents' reports.
 

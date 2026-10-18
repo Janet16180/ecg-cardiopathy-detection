@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "plan_and_path_preflight_complete",
+    "status": "partition_checksum_audit_and_cpu_runtime_complete",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,13 +2281,11 @@
     "performance_scored": false,
     "training_started": false,
     "closed_test_authorized": false,
-    "next_action": "Build a permitted-training patient partition and restore the shared Python runtime; qualify the generator, reproduce any predecessor, and freeze the executable pilot before its real GPU profile and training. ECGAD development audit awaits missing arrays. No job is running.",
-    "readiness_report": "docs/ssl-synthetic-localization-readiness.md",
-    "readiness_receipt": "outputs/ssl_synthetic_localization/readiness.json",
-    "readiness_receipt_sha256": "ccf77a90ea68f7f22441963c9465711417c76c8b5d940aa68355160fa0d6e6c0",
+    "next_action": "Freeze and run a permitted training/validation waveform integrity, units and quality audit without opening engineering-test waveforms. Qualify controlled edits, reproduce any reused predecessor, and freeze/profile the executable pilot before training. ECGAD development audit still awaits arrays. No job is running.",
+    "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
+    "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
+    "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
     "missing_required": [
-      "project_python",
-      "training_partition",
       "qualified_generator",
       "training_protocol",
       "gpu_profile"
@@ -2296,6 +2294,19 @@
       "name": "NVIDIA GeForce GTX 1060 3GB",
       "total_mib": 3072,
       "profile_completed": false
-    }
+    },
+    "initial_readiness_report": "docs/ssl-synthetic-localization-readiness.md",
+    "initial_readiness_receipt": "outputs/ssl_synthetic_localization/readiness.json",
+    "initial_readiness_receipt_sha256": "ccf77a90ea68f7f22441963c9465711417c76c8b5d940aa68355160fa0d6e6c0",
+    "partition_policy": "docs/ssl-synthetic-localization-partition.md",
+    "partition_manifest": "data/processed/ssl_synthetic_localization_v1/partition.json",
+    "partition_manifest_sha256": "8c47123df83da631765e120cfec8e944a8a2b18a34b14bd0a39ab07061e48e2f",
+    "partition_receipt": "outputs/ssl_synthetic_localization/partition_summary.json",
+    "partition_receipt_sha256": "a64474f5f53f7c095eefda5c50f49336727639353485e010efb6215d48c1498b",
+    "checksum_audit_receipt": "outputs/ssl_synthetic_localization/partition_checksum_audit.json",
+    "checksum_audit_receipt_sha256": "8aecf4d84481b2e7de1894ea71fad133c55d23f8f38d6a318bf4971d57db5070",
+    "runtime_receipt": "outputs/ssl_synthetic_localization/runtime_restore.json",
+    "runtime_receipt_sha256": "7a9be3a9fc8a92490a0065382ec112e8c0fcc8d1d40cf0983ed3def0d04dda61",
+    "training_admitted": false
   }
 }

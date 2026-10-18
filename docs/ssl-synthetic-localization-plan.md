@@ -178,6 +178,9 @@ not ECG payloads. A successful command does not mean training is ready or the la
 The command's exit status distinguishes incomplete prerequisites from malformed configuration.
 
 The readiness report is summarized in [ssl-synthetic-localization-readiness.md](ssl-synthetic-localization-readiness.md).
+The later [setup report](ssl-synthetic-localization-setup-results.md) records the completed patient
+partition, declared-checksum duplicate audit and restored CPU runtime. Those preparations do not admit
+training or complete the annotation/waveform-quality gates.
 The shared [queue](experiment-queue.md) and [catalog](experiment-queue.json) track this stream.
 Experiment numbers will be reserved when the executable training protocol is frozen, avoiding collisions
 with the other session. Follow-up studies enter [the ranked backlog](experiment-priorities.md).

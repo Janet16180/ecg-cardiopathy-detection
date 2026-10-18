@@ -1,6 +1,7 @@
 # Experiment priorities
 
-Updated 18 October 2026 to add the user-authorized SSL and synthetic localization stream.
+Updated 18 October 2026 after the SSL/synthetic patient split and declared-checksum audit.
+The pinned CPU runtime is restored; the permitted-waveform input audit is next.
 Earlier completed-study summaries retain their original dates. Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
 explains the scoring, shows the current ranking and records what the papers suggest. The backlog is for
 choosing the next study. It does not authorize or schedule anything: the execution queue remains
@@ -55,7 +56,7 @@ penalty; one that ranks high earns a protocol like any other.
 
 | Rank | ID | Kind | Candidate | Value | Clarity | Hours | Score | Waiting on |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | --- |
-| 1 | ssl_synthetic_partition | repo | Patient partition for real SSL and synthetic localization | 5 | 0.9 | 2.2 | 3.64 | - |
+| 1 | ssl_synthetic_waveform_audit | repo | Qualify permitted ECG inputs before SSL and synthetic editing | 5 | 0.9 | 3.5 | 2.89 | - |
 | 2 | cpc_validation_accounting040 | repo | Avoid repeated full-source validation in future CPC stage gates | 3 | 0.9 | 1.7 | 2.07 | - |
 | 3 | training_io_local_prefetch | repo | Serve training caches from local disk with read-ahead | 3 | 0.9 | 3.7 | 1.68 | - |
 | 4 | cpc_recurrent_checkpoint_contract | repo | Require exact recurrent checkpoint recovery in future CPC runners | 2 | 0.9 | 1.2 | 1.63 | - |
@@ -94,7 +95,7 @@ penalty; one that ranks high earns a protocol like any other.
 | 37 | final_frozen_test | experiment | One-time confirmatory test of the frozen pipeline on untouched data | 5 | 0.9 | 3.0 | 3.12 | @user_freeze_decision |
 | 38 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
 | 39 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
-| 40 | ssl_synthetic_generator_qualification | repo | Qualify controlled waveform alterations for localization supervision | 5 | 0.8 | 4.5 | 2.26 | ssl_synthetic_partition, @project_python_runtime |
+| 40 | ssl_synthetic_generator_qualification | repo | Qualify controlled waveform alterations for localization supervision | 5 | 0.8 | 4.5 | 2.26 | ssl_synthetic_waveform_audit |
 | 41 | ssl_synthetic_annotation_audit | repo | Technical audit of ECGAD development labels | 4 | 0.8 | 3.5 | 1.71 | @ecgad_development_artifacts |
 | 42 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
 | 43 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |

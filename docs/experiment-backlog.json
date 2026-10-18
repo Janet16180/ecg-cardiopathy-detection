@@ -1330,15 +1330,15 @@
       "kind": "repo",
       "title": "Patient partition for real SSL and synthetic localization",
       "question": "Can every pretraining, edited and repeated recording be assigned without patient leakage?",
-      "evidence": "18 October path-only preflight found source PTB-XL paths but no stream patient partition; docs/ssl-synthetic-localization-readiness.md.",
+      "evidence": "Executed metadata partition and official checksum audit: docs/ssl-synthetic-localization-setup-results.md; zero patient overlap and no declared exact signal-file duplicates.",
       "value": 5,
       "clarity": 0.9,
       "gpu_hours": 0,
       "cpu_hours": 0.2,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "proposed",
-      "notes": "New stream authorized by the user. Use folds 1-8, group all versions and repeated patient ECGs, preserve reserved tests. No phenotype score is needed. Estimates are prospective."
+      "status": "done",
+      "notes": "Completed on 18 October. Source folds 1-8 assigned to train/validation/engineering_test at patient level, folds 9-10 excluded. All eligible paths present, deterministic replay verified. No waveform payload opened. Preparation/build time not separately metered; original estimates retained. Waveform quality/near-duplicate limits move to the input audit."
     },
     {
       "id": "ssl_synthetic_generator_qualification",
@@ -1352,8 +1352,7 @@
       "cpu_hours": 0.5,
       "build_hours": 4,
       "blocked_by": [
-        "ssl_synthetic_partition",
-        "@project_python_runtime"
+        "ssl_synthetic_waveform_audit"
       ],
       "status": "proposed",
       "notes": "Start with a controlled ST intervention and independent rendering mechanisms. Keep mask occupancy, sham/noise checks and real-background uncertainty. New code only; old artifacts are missing locally."
@@ -1391,6 +1390,21 @@
       ],
       "status": "proposed",
       "notes": "Audit development only with a preselected 20-record sample and label-geometry checks. Do not relabel clinically by engineer judgment or reread the spent holdout. This is distinct from generator qualification."
+    },
+    {
+      "id": "ssl_synthetic_waveform_audit",
+      "kind": "repo",
+      "title": "Qualify permitted ECG inputs before SSL and synthetic editing",
+      "question": "Are permitted training/validation inputs intact, consistently decoded in mV with the expected leads and usable signal quality?",
+      "evidence": "The 18 October patient/checksum audit passed but never decoded waveform payloads; docs/ssl-synthetic-localization-setup-results.md. Runtime is now restored.",
+      "value": 5,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Freeze policy before reading waveforms. Audit train/validation only and preserve engineering-test waveform restrictions. Include fresh checksum verification, units/lead order, finite/flat/clipped signals and explicit retained failures; do not relabel clinically or silently alter the frozen manifest. Estimates are prospective."
     }
   ]
 }

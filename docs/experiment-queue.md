@@ -1,14 +1,16 @@
 # Experiment queue
 
-**18 October SSL and synthetic localization stream:** The user authorized an independent research plan
-and implementation alongside another session's No Time to Train PR. The [staged plan](ssl-synthetic-localization-plan.md)
-owns new `ssl_synthetic_` files on `research/ssl-synthetic-localization`, based on `main`. The committed payload-free prerequisite check completed;
-[the readiness report](ssl-synthetic-localization-readiness.md) records five missing required paths
-and the local GTX 1060 3 GB inventory. No actual GPU profile has run. The main checkout has downloaded source data but lacks the project
-environment and historical localization artifacts. No performance has been scored, no training started,
-and no closed test authorized. The executable pilot protocol, patient separation, qualified generator,
-predecessor reproduction and real GPU cost gate precede any training. This stream resumes only its own
-new work; earlier stopped experiments remain stopped.
+**18 October SSL and synthetic localization stream:** The independent [plan](ssl-synthetic-localization-plan.md)
+continues on `research/ssl-synthetic-localization` alongside the other session's No Time to Train PR.
+The [executed setup report](ssl-synthetic-localization-setup-results.md) records a metadata-only split:
+12,078 training, 1,476 validation and 1,469 engineering-test patients, with zero overlap; 3,846 patients
+from folds 9–10 stay excluded. Official checksum metadata declares 21,799 unique signal-file digests.
+No waveform or diagnostic value was interpreted. The shared pinned Python environment is restored;
+40 focused CPU tests pass. No actual GPU profile, training or performance scoring has run. Waveform
+quality, generator qualification, predecessor reproduction and the executable pilot/resource gate remain
+required. ECGAD annotation artifacts remain missing. Training and closed tests are not admitted; earlier
+stopped experiments remain stopped. The next task is a prospectively defined training/validation input
+audit, preserving unread engineering-test waveforms. No job is running.
 
 **Updated:** 18 October 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 

@@ -1,5 +1,7 @@
 # Experiment queue
 
+**18 October, reference-localization investigation:** The user authorized a planned, autonomous agent study of No Time to Train. [NTT-01](ntt-01-reference-label-audit.md) first audits public PTB reasoning annotations, provenance, identifier overlap and grounding shortcuts. This is a CPU information audit, with no new model or closed-test score. PR61 already contains localization studies through 073; its ECGAD holdout is spent. The parallel SSL/synthetic work in PR67 remains separate.
+
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
 **30 September day closed:** The user chose to close out today's completed work and merge it

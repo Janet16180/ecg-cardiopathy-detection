@@ -2268,5 +2268,13 @@
     ],
     "merge_status_source": "GitHub pull request records",
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
+  },
+  "ntt01_reference_label_audit": {
+    "status": "protocol_frozen_pending_implementation",
+    "authorized": true,
+    "protocol": "docs/ntt-01-reference-label-audit.md",
+    "output_dir": "outputs/ntt01_reference_label_audit",
+    "scope": "Public PTB reasoning annotations and local metadata only; no model, waveform or closed-test scoring",
+    "next_action": "Implement and verify audit, freeze sources, execute once, report measured findings."
   }
 }

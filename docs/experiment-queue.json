@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "first_gpu_profile_failed_deterministic_successor_preparing",
+    "status": "matched_pilot_training_running",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2279,9 +2279,9 @@
     "output_dir": "outputs/ssl_synthetic_localization",
     "other_stream_pull_request_dependency": false,
     "performance_scored": false,
-    "training_started": false,
+    "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "The first actual GPU replay failed because CUDA linear interpolation backward is nondeterministic. Its receipt is retained. A prospective mathematically equivalent output implementation passed CPU operator/gradient parity; a separate profile_v2 must pass before any full training. Batch, objective, schedules, patient identities and endpoints remain frozen. No full fit or localization score has run.",
+    "next_action": "Fixed matched training is running under the shared GPU lock: 1000 real masked-SSL updates, then 600 updates each for R, S and frozen-encoder F. Use the reviewed local evaluation only after successful fits and exact checkpoint/source integrity checks; calibrate on A controls before B inference. All work stays local: user requested no further pushes or PR updates.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2291,7 +2291,7 @@
     "gpu_inventory": {
       "name": "NVIDIA GeForce GTX 1060 3GB",
       "total_mib": 3072,
-      "profile_completed": false
+      "profile_completed": true
     },
     "initial_readiness_report": "docs/ssl-synthetic-localization-readiness.md",
     "initial_readiness_receipt": "outputs/ssl_synthetic_localization/readiness.json",
@@ -2305,7 +2305,7 @@
     "checksum_audit_receipt_sha256": "8aecf4d84481b2e7de1894ea71fad133c55d23f8f38d6a318bf4971d57db5070",
     "runtime_receipt": "outputs/ssl_synthetic_localization/runtime_restore.json",
     "runtime_receipt_sha256": "7a9be3a9fc8a92490a0065382ec112e8c0fcc8d1d40cf0983ed3def0d04dda61",
-    "training_admitted": false,
+    "training_admitted": true,
     "pilot_protocol": "docs/ssl-synthetic-localization-pilot.md",
     "generator_amendment": "docs/ssl-synthetic-localization-pilot-generator-v2.md",
     "pilot_configuration": "configs/ssl_synthetic_pilot_v1.json",
@@ -2322,6 +2322,9 @@
     "independent_preparation_audit_receipt": "outputs/ssl_synthetic_localization/pilot_v1/prep_audit_v1/summary.json",
     "independent_preparation_audit_receipt_sha256": "644ae770d3e091feefd0c18e91505c46a93367473b6cafc6171898b344286fcf",
     "failed_gpu_profile_receipt": "outputs/ssl_synthetic_localization/pilot_v1/profile/summary.json",
-    "deterministic_output_amendment": "docs/ssl-synthetic-localization-pilot-deterministic-output.md"
+    "deterministic_output_amendment": "docs/ssl-synthetic-localization-pilot-deterministic-output.md",
+    "gpu_profile_receipt": "outputs/ssl_synthetic_localization/pilot_v1/profile_v2/summary.json",
+    "gpu_profile_receipt_sha256": "d585e5faed5145e7e4159ab8b9132025b300b819ae6b4deef3f26330ceae81e7",
+    "training_output_dir": "outputs/ssl_synthetic_localization/pilot_v1/training"
   }
 }

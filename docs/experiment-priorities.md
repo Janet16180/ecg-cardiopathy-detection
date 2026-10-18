@@ -103,6 +103,84 @@ penalty; one that ranks high earns a protocol like any other.
 | 45 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
 | 46 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
 
+Reruns after Ningbo (`rerun_of` in the backlog): 022 as `ningbo_sph_transfer`, 024 as `rerun_024_multisource`,
+025 as `rerun_025_ningbo`, 026 as `multisource_normal_manifold` and 027 as `multisource_calibration`. 023 is
+not affected (echo labels). Both blockers (`ningbo_eda`, `challenge_label_mapping`) were closed by PR #20 on 29 September 2026.
+`multisource_calibration` is done as [Experiment 027b](experiment-027b-multisource-calibration-results.md): pooling
+hospitals for calibration did not restore 95% sensitivity at SPH, which leaves `site_recalibration` first.
+`multisource_normal_manifold` is done as [Experiment 026b](experiment-026b-multisource-normal-manifold-results.md):
+fitting the distance from normal on several hospitals' normals raised SPH AUROC (xECG 0.858 to 0.878) but closed
+only about a third of the gap to the supervised probe.
+`ningbo_sph_transfer` and `multisource_lso` are done together as
+[Experiment 022b](experiment-022b-multisource-readout-results.md): the readout fitted on PTB-XL plus the
+Challenge training groups raised SPH AUROC (xECG 0.915 to 0.939), with Ningbo carrying about half of it, but
+its threshold calibrated on the same hospitals did not transfer.
+`rerun_025_ningbo` is done as [Experiment 025b](experiment-025b-label-efficiency-multisource-results.md):
+pooled PTB-XL and Challenge label draws raise SPH AUROC by about 0.02 at every budget, but the xECG draws
+miss the 90% rule at 250 and 1,000 labels, so the decision is `mixed`; the encoder ranking holds. Its
+home-site cost on the hard added subset is the new candidate `label_harmonization_hard_subset`.
+Later reruns reuse the frozen [Challenge record split](challenge-splits-v1.md).
+`rerun_024_multisource` is done as [Experiment 024b](experiment-024b-multisource-geometry-results.md): with four
+hospitals, JEPA and xECG clusters follow diagnosis more than hospital, though a probe still names the hospital
+(AUROC 0.93-0.95); 024's device-over-diagnosis pattern was CPC-specific, so `device_control` lost value.
+`site_recalibration` and `local_normal_manifold` are done as
+[Experiment 029](experiment-029-local-adaptation-results.md): a guaranteed 95% sensitivity at a new site needs at
+least 45 local positives and then refers about half or more of normals, and local normals add almost nothing to
+the normal reference. `stable_threshold` is dropped as superseded by 029.
+`referral_budget_operating_point` is done as [Experiment 030](experiment-030-referral-budget-results.md): a
+threshold at a fixed share of local normals catches about 78% of abnormal SPH ECGs at a 5% budget (91
+referrals per 1,000 at 5% prevalence), and about 1,000 local normals hold the budget within ±1 point in 9 of
+10 pilots; other hospitals' normals miss it by a factor of up to four. `hybrid_screening_score` should be judged
+at these budgets; the distance score alone trails the readout by 0.19 sensitivity at 5%.
+`cohorts_v4_echonext` is done as [cohorts v4](clean-cohorts-v4.md): the 71,823 usable EchoNext training ECGs
+enter after the curated sources, so 25k and 50k equal v3 and the 100k and 200k tiers hold no MIMIC.
+`cohorts_v3_cpc_caches` and `pretraining_scaling_curve_v3` now carry a note on the choice between v3 and v4.
+`echonext_rows_v2` is done as [clean EchoNext v2](clean-echonext-v2.md): it adds `most_recent_ecg` and a
+separate `use_evaluation` that keeps the 60 noise-dominated ECGs, and its cohort entry gate passed.
+
+New on 29 September 2026, after 029:
+- `referral_budget_operating_point` (first): set the threshold by a referral budget, fitted on local normals
+  only, which a mostly healthy student pilot can supply.
+- `hybrid_screening_score` raised in value, to be judged at the same budgets.
+- `rhythm_findings_detector`: the rhythm findings the athlete criteria call abnormal and our label ignores.
+- `normal_manifold_novelty_search` and `challenge_data_quality_note`: checks before claiming the two candidate
+  paper findings.
+- `final_frozen_test`: one confirmatory run on the untouched PTB-XL test and Challenge test groups, after the
+  operating-point rule is chosen.
+- Waiting on the cardiologist: `student_criteria_label`, `young_subgroup_readout`; waiting on clinic ECGs:
+  `enriched_positive_sensitivity`.
+
+After 030 and the novelty search (29 September 2026): `referral_budget_operating_point` is done as
+[Experiment 030](experiment-030-referral-budget-results.md). A 5% referral budget with 200 local normals catches
+77.5% of abnormal SPH ECGs, conduction findings are most misses, and the rate itself needs 1,000-2,000 local
+normals to hold within one point. `normal_manifold_novelty_search` is done
+([search](normal-manifold-novelty-search.md), verdict partly new) and added six baselines a reviewer would ask
+for, led by `one_class_embedding_baselines`.
+
+After 031, 032 and the code review (29 September 2026): `hybrid_screening_score` is done as
+[Experiment 031](experiment-031-hybrid-screening-score-results.md), negative overall but helpful on held-out
+conditions, which gives `hybrid_rare_conditions`. `rhythm_findings_detector` is done as
+[Experiment 032](experiment-032-rhythm-findings-results.md): the finding heads transfer to SPH, and the binary
+screen misses many PVC and WPW ECGs, which gives `screen_with_finding_heads`. The
+[code review](code-quality-review-2026-09-29.md) adds `shared_intervals_module` and `shared_readout_module`.
+
+After 033-035 (30 September 2026): [033](experiment-033-finding-heads-screen-results.md) adopts the combined
+binary plus PVC/WPW screen; [034](experiment-034-one-class-baselines-results.md) keeps Mahalanobis as the
+normal reference; [035](experiment-035-hard-subset-results.md) explains the hard-subset loss as a normal-label
+mismatch and fixes it by reweighting. `pipeline_v2_rethreshold` recomputes 030 and 033 on the fixed readout and
+defines the candidate for `final_frozen_test`.
+
+Done on 28 September 2026: `e022_sph` (Experiment 022), `label_efficiency` (Experiment 025),
+`fulldev_encoders` (inside 022), `snomed_equivalence` (PR #5), `e024_geometry` (Experiment 024) `calibrated_threshold_sph` (Experiment 027), `e023_echonext` (Experiment 023) and
+`normal_manifold` (Experiment 026) and `echo_label_efficiency` (Experiment 028). Summary: [findings of 28 September](findings-2026-09-28.md).
+
+Dropped: `beat_tokens` (already tested in Experiment 006; the paper's gain is 0.004) and
+`synthetic_references` (training on synthetic PTB-XL ECGs loses about 0.09 AUROC; see the literature review).
+
+The leaders share a pattern. They are cheap, mostly reuse cached features or fix known pipeline gaps, and test
+whether our existing numbers mean what we think. Architecture candidates rank lower because our experiments
+and the papers both find small architecture effects on PTB-XL.
+
 ## Evidence behind the estimates
 
 The value and clarity estimates come from the [literature review](literature-review-2026-09-28.md) and the

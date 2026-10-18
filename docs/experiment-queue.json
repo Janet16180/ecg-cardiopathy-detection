@@ -2344,6 +2344,10 @@
       "draws": 2000,
       "skipped_draws": 0,
       "seed": 20261019
-    }
+    },
+    "independent_final_audit_receipt": "outputs/ssl_synthetic_localization/pilot_v1/final_audit_v1/summary.json",
+    "independent_final_audit_receipt_sha256": "45f54b7e773653c0f76f48898a6bf3fe38f4cb42df280bf8605aaad0b24d40ad",
+    "independent_final_audit_report": "docs/ssl-synthetic-localization-numerical-audit-results.md",
+    "independent_final_audit_passed": true
   }
 }

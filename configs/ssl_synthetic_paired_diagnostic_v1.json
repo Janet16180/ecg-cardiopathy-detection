@@ -1,0 +1,46 @@
+{
+  "study_id": "ssl_synthetic_paired_diagnostic_v1",
+  "parent_study_id": "ssl_synthetic_paired_background_v1",
+  "seed": 20261026,
+  "bootstrap_seed": 20261026,
+  "bootstrap_draws": 2000,
+  "calibration_patients": 64,
+  "evaluation_patients": 128,
+  "probability_global_case_offset": 2000,
+  "probability_shape": [
+    768,
+    12,
+    2500
+  ],
+  "mask_shape": [
+    2768,
+    12,
+    2500
+  ],
+  "roles": [
+    "calibration",
+    "evaluation"
+  ],
+  "arms": [
+    "R",
+    "S"
+  ],
+  "positive_modes": [
+    "focal",
+    "repeated"
+  ],
+  "cpu_seconds_run_ceiling": 120,
+  "cpu_seconds_audit_ceiling": 120,
+  "cpu_seconds_combined_ceiling": 240,
+  "parent_stage_cpu_ceiling": 1800,
+  "global_cpu_ceiling": 14400,
+  "cache_bytes_ceiling": 4294967296,
+  "new_output_bytes_ceiling": 16777216,
+  "failure_reporting_reserve_seconds": 2,
+  "fit_models": false,
+  "new_inference": false,
+  "allow_waveform_reads": false,
+  "parent_evaluation_sha256": "5041fab51ce83a8ea2bc89beed347c0981d5e53de8852233e31410400f07e9a4",
+  "parent_training_audit_sha256": "55b50f8c9705aeacfce7e19334a1b987a0ebb527b3924f2ff362eb099a10359a",
+  "parent_metrics_audit_sha256": "464a438c0a3e48ed7a60bf2f7ea2195fcb23b26369c45394c00fa8aaaa118976"
+}

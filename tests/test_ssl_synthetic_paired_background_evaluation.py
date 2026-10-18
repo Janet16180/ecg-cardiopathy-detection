@@ -132,3 +132,10 @@ def test_infinite_logits_cannot_be_hidden_by_sigmoid(monkeypatch: pytest.MonkeyP
         model.bias.fill_(bad)
     with pytest.raises(ValueError, match="logits"):
         evaluation.predict_batch(model, {}, [2000])
+
+
+def test_final_actual_storage_guard_preserves_room_for_receipt() -> None:
+    """A passed forecast cannot hide later stream growth at the stage boundary."""
+    evaluation.final_storage_guard(100, 1024**2 + 100)
+    with pytest.raises(ValueError, match="Actual whole-stream"):
+        evaluation.final_storage_guard(101, 1024**2 + 100)

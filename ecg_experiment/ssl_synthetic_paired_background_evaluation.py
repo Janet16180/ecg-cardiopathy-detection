@@ -277,6 +277,12 @@ def _after_training(context: dict) -> tuple[dict, dict]:
     return reports["training"], reports["profile"]
 
 
+def final_storage_guard(actual_bytes: int, ceiling_bytes: int) -> None:
+    """Reserve one MiB for the final aggregate receipt inside the actual whole-stream cap."""
+    if actual_bytes + 1024**2 > ceiling_bytes:
+        raise ValueError("Actual whole-stream storage exceeds the cap including final receipt reserve")
+
+
 def evaluate_paired_background() -> dict[str, Any]:
     """Run one fixed evaluation, freezing calibration before B and preserving every failure."""
     if EVALUATION.exists():
@@ -357,6 +363,8 @@ def evaluate_paired_background() -> dict[str, Any]:
             check_budget(context, clock)
             outputs = {p.name: sha256_file(p) for p in EVALUATION.iterdir() if p.is_file()}
             check_budget(context, clock)
+            actual_bytes = stream_bytes()
+            final_storage_guard(actual_bytes, context["config"]["cache_bytes_ceiling"])
             elapsed, used = time.perf_counter() - wall, time.process_time() - cpu
             progress["completed"] = True
             result = {
@@ -392,7 +400,8 @@ def evaluate_paired_background() -> dict[str, Any]:
                 + elapsed,
                 "global_cpu_seconds": context["prior_cpu_seconds"] + clock["prior_stage_cpu"] + used,
                 "peak_cuda_allocated_bytes": torch.cuda.max_memory_allocated(),
-                "stream_bytes": stream_bytes(),
+                "stream_bytes": actual_bytes,
+                "final_receipt_storage_reserve_bytes": 1024**2,
                 "original_advancement_passed": False,
                 "clinical_claim": False,
                 "new_training_updates": 0,

@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "counterfactual_factorial_source_integrated_tests_passed",
+    "status": "counterfactual_factorial_qualification_authorized",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2488,7 +2488,7 @@
     },
     "counterfactual_loss_factorial": {
       "study_id": "ssl_synthetic_counterfactual_factorial_v1",
-      "status": "source_integrated_pending_final_review",
+      "status": "qualification_authorized_after_source_review",
       "authorized": true,
       "authorization_scope": "User requested continuing local coordinated work until an important conclusion or finding. No pushes or PR updates.",
       "protocol": "docs/ssl-synthetic-localization-counterfactual-factorial.md",
@@ -2498,12 +2498,14 @@
       "performance_scored": false,
       "closed_test_authorized": false,
       "primary_endpoint": "Initialization-averaged paired-loss effect on direct edited-map AP; secondary interaction and AP-response effects.",
-      "next_action": "Final independent source review, then one qualification. Actual four-arm GPU profile must pass before any fit; exact BCE final states and 600 losses must reproduce before paired fits. No new score yet.",
+      "next_action": "One CPU qualification has coordinator GO after independent source review. No fit before actual four-arm GPU profile passes; no performance score yet.",
       "protocol_commit": "8beb272",
       "data_source_commit": "019c974",
       "training_evaluation_source_commit": "cfd50db",
-      "new_artificial_tests_passed": 37,
-      "ruff_passed": true
+      "new_artificial_tests_passed": 38,
+      "ruff_passed": true,
+      "final_data_source_commit": "e9c2d82",
+      "source_review_passed": true
     }
   }
 }

@@ -1,5 +1,14 @@
 # Experiment queue
 
+**18 October SSL and synthetic localization stream:** The user authorized an independent research plan
+and implementation alongside another session's No Time to Train PR. The [staged plan](ssl-synthetic-localization-plan.md)
+owns new `ssl_synthetic_` files on `research/ssl-synthetic-localization`, based on `main`. Setup begins with
+a payload-free prerequisite check. The main checkout has downloaded source data but lacks the project
+environment and historical localization artifacts. No performance has been scored, no training started,
+and no closed test authorized. The executable pilot protocol, patient separation, qualified generator,
+predecessor reproduction and real GPU cost gate precede any training. This stream resumes only its own
+new work; earlier stopped experiments remain stopped.
+
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
 **30 September day closed:** The user chose to close out today's completed work and merge it

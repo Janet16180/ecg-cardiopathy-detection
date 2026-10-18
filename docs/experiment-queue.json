@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-01T02:05:54.148912+00:00",
+  "updated_at_utc": "2026-10-18T20:33:58.873665+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2268,5 +2268,19 @@
     ],
     "merge_status_source": "GitHub pull request records",
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
+  },
+  "ssl_synthetic_localization": {
+    "status": "plan_committed_preflight_pending",
+    "authorized": true,
+    "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
+    "branch": "research/ssl-synthetic-localization",
+    "plan": "docs/ssl-synthetic-localization-plan.md",
+    "preflight_specification": "configs/ssl_synthetic_readiness.json",
+    "output_dir": "outputs/ssl_synthetic_localization",
+    "other_stream_pull_request_dependency": false,
+    "performance_scored": false,
+    "training_started": false,
+    "closed_test_authorized": false,
+    "next_action": "Run the payload-free readiness check, report missing prerequisites, and prepare the patient partition and generator qualification before freezing the pilot protocol and actual GPU profile."
   }
 }

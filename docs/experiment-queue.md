@@ -22,9 +22,9 @@ S−R +0.002642 [−0.003550, +0.008333] fails the frozen advancement rule. Both
 [saved-map counterfactual audit](ssl-synthetic-localization-counterfactual-v2-results.md) completed
 all 1,024 positive pairs without new inference: both R/S respond selectively to introduced changes.
 This does not change the failed primary result. The separately frozen
-[real-background follow-up](ssl-synthetic-localization-real-background-study.md) is being implemented
-and reviewed: qualify fixed additive edits on 192 validation patients, then conditionally evaluate
-existing frozen R/S models after an actual inference profile. No new fitting is scheduled. The user requested all further progress remain local, with no pushes or PR updates. Engineering-test real
+[real-background follow-up](ssl-synthetic-localization-real-background-study.md) qualified fixed additive edits on all 192 validation backgrounds and 768 cases without failures; all
+384 positive baselines match controls exactly. Frozen R/S transfer implementation is under review,
+followed by an actual calibration-only inference profile before any performance scoring. No new fitting is scheduled. The user requested all further progress remain local, with no pushes or PR updates. Engineering-test real
 waveforms, reserved tests and earlier stopped experiments remain closed/stopped; clinical annotation
 audit still lacks ECGAD artifacts. See the JSON catalog for live receipt hashes and the agents' reports.
 

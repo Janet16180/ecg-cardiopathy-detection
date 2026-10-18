@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "original_pilot_failed_diagnostics_complete_real_background_implementation",
+    "status": "real_background_qualified_frozen_transfer_implementation",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Original primary advancement remains failed. Saved-map counterfactual response completed with exact matched controls for all 1024 positive pairs and positive B response/selectivity intervals for both R/S. Implement and review the separately frozen real-background qualification, then actual inference profile and conditional frozen R/S transfer. No new fits. All changes remain local without pushes or PR updates.",
+    "next_action": "Real-background qualification passed for all 192 validation backgrounds and 768 cases, with 384 exact paired controls and no failures. Integrate and review frozen R/S profile/evaluation implementation, run the actual calibration-only inference profile, then conditionally score all fixed cases without fitting. Original SSL primary remains failed; no pushes or PR updates.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2359,6 +2359,9 @@
     "real_background_configuration": "configs/ssl_synthetic_real_background_v1.json",
     "real_background_scored": false,
     "remote_updates_paused_by_user": true,
-    "missing_required_scope": "Historical setup-only readiness receipt; later actual profile/training/evaluation are recorded separately."
+    "missing_required_scope": "Historical setup-only readiness receipt; later actual profile/training/evaluation are recorded separately.",
+    "real_background_qualification_receipt": "outputs/ssl_synthetic_localization/real_background_v1/preparation/summary.json",
+    "real_background_qualification_receipt_sha256": "32b387379d3fc8d11e52d2bd9e022f9cadc6b69b4e58f1f00f06de7286921b7b",
+    "real_background_qualification_passed": true
   }
 }

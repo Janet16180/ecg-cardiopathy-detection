@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "paired_saved_map_diagnostic_implementation",
+    "status": "paired_diagnostic_complete_audited",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Implement and review a four-array allowlisted diagnostic. Reproduce parent summary/gates, then paired control transitions and probability levels, mode-specific introduced-response statistics and descriptive training losses. No new thresholds, model fitting or clinical labels.",
+    "next_action": "Completed saved-map diagnosis, no further scoring or fits. Seven SSL nuisance flags persist on unchanged ECGs and one new flag appears; many unflagged maxima also shift, so no nuisance-invariance claim. R has strong phase-aligned pre-edit outputs and little introduced response, not a proven internal mechanism. Preserve all failed parent gates. Rank a prospective R/S by BCE/paired-loss factorial with edited-AP/probability-response/control guards, fresh validation patients and actual profile. Clinical annotation recovery remains separate. All local/no pushes.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2445,10 +2445,10 @@
       "cumulative_cpu_seconds": 545.1449704129989,
       "cumulative_gpu_wall_seconds": 226.41281207299835
     },
-    "latest_results_report": "docs/ssl-synthetic-localization-paired-background-results.md",
+    "latest_results_report": "docs/ssl-synthetic-localization-paired-diagnostic-v2-results.md",
     "paired_saved_map_diagnostic": {
       "study_id": "ssl_synthetic_paired_diagnostic_v1",
-      "status": "protocol_frozen_implementation",
+      "status": "completed_v2_independently_audited",
       "authorized": true,
       "authorization_scope": "User requested continuing after explanation of unwanted control flags and random-arm phase alignment. Saved-output diagnosis first, all local without pushes.",
       "protocol": "docs/ssl-synthetic-localization-paired-diagnostic.md",
@@ -2461,7 +2461,30 @@
       "new_inference": false,
       "waveform_reads_allowed": false,
       "parent_advancement_passed": false,
-      "next_action": "Implement and review a four-array allowlisted diagnostic. Reproduce parent summary/gates, then paired control transitions and probability levels, mode-specific introduced-response statistics and descriptive training losses. No new thresholds, model fitting or clinical labels."
+      "next_action": "Completed saved-map diagnosis, no further scoring or fits. Seven SSL nuisance flags persist on unchanged ECGs and one new flag appears; many unflagged maxima also shift, so no nuisance-invariance claim. R has strong phase-aligned pre-edit outputs and little introduced response, not a proven internal mechanism. Preserve all failed parent gates. Rank a prospective R/S by BCE/paired-loss factorial with edited-AP/probability-response/control guards, fresh validation patients and actual profile. Clinical annotation recovery remains separate. All local/no pushes.",
+      "source_commit": "a5e21a4",
+      "source_review_passed": true,
+      "artificial_tests_passed": 16,
+      "retained_v1_failure": "outputs/ssl_synthetic_localization/paired_background_v1/diagnostic_v1/failure.json",
+      "retained_v1_failure_sha256": "3d41af8ff1c592ee1b7f0a1ac89d9744e796aef3b72cee64b71155151565bb67",
+      "retained_v1_report": "docs/ssl-synthetic-localization-paired-diagnostic-results.md",
+      "v2_policy": "docs/ssl-synthetic-localization-paired-diagnostic-v2.md",
+      "v2_configuration": "configs/ssl_synthetic_paired_diagnostic_v2.json",
+      "v2_output_dir": "outputs/ssl_synthetic_localization/paired_background_v1/diagnostic_v2",
+      "v2_source_commit": "0917dd9",
+      "v2_source_review_passed": true,
+      "v2_receipt": "outputs/ssl_synthetic_localization/paired_background_v1/diagnostic_v2/summary.json",
+      "v2_receipt_sha256": "4d095ece86c26a665e647477c2713007a51ec12bcb4fe8615c94438945a698f7",
+      "diagnostic_completed": true,
+      "results_report": "docs/ssl-synthetic-localization-paired-diagnostic-v2-results.md",
+      "audit_receipt": "outputs/ssl_synthetic_localization/paired_background_v1/diagnostic_v2/audit/summary.json",
+      "audit_receipt_sha256": "3180a8ea87a626294a629302a842184cda4f7ac1f438bfcef631e3199682e3c8",
+      "independent_audit_passed": true,
+      "independent_checks": 57450,
+      "independent_mismatches": 0,
+      "diagnostic_all_attempt_cpu_seconds": 24.788812610999997,
+      "cumulative_cpu_seconds": 569.9337830239988,
+      "paired_stage_cpu_seconds": 135.80085195200002
     }
   }
 }

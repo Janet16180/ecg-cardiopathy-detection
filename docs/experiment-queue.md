@@ -1,13 +1,18 @@
 # Experiment queue
 
-**18 October saved-map diagnostic authorized:** The user approved continuing with the
-[control/phase diagnostic](ssl-synthetic-localization-paired-diagnostic.md) and its
-[payload-access clarification](ssl-synthetic-localization-paired-diagnostic-admission.md). Its protocol
-is committed before new aggregates. The analysis will separate paired nuisance-versus-unchanged
-alert flips from the failed cross-arm veto, inspect absolute probability levels and phase-window
-alignment, and summarize saved training losses. Only current saved probability maps/masks and
-allowed metadata are read; no waveform payloads, model files, fitting, inference, new thresholds or
-closed tests. Implementation and source review are in progress. All work remains local.
+**18 October saved-map diagnostic complete:** The authorized
+[diagnostic](ssl-synthetic-localization-paired-diagnostic.md) completed in its separately frozen
+[forward adapter](ssl-synthetic-localization-paired-diagnostic-v2.md), preserving the first admission
+stop from rounded CPU accounting. All scientific comparisons and parent verdicts remain unchanged.
+The [executed report](ssl-synthetic-localization-paired-diagnostic-v2-results.md) shows seven of S's
+eight nuisance-control alerts already occurred on unchanged ECGs, with one new alert and no reverse
+flip. Scores still shifted on other patients; no noise-invariance or clinical false-positive claim
+follows. R had strong pre-edit phase-window output alignment and weak introduction response, without
+proving internal feature reliance. Independent arithmetic passed 57,450 checks with zero mismatches
+across all 384 control and 512 positive rows. All diagnostic attempts plus verification consumed
+24.789 CPU seconds; cumulative CPU is 569.934 seconds, paired-stage CPU 135.801 seconds and GPU-wall
+remains 226.413 seconds. A four-arm R/S by BCE/paired-loss study is ranked behind a new protocol and
+actual profile. No further fits, thresholds, data access, pushes or PR updates are scheduled.
 
 **18 October matched-control training complete:** The authorized
 [real-background study](ssl-synthetic-localization-paired-background-study.md) completed qualification,

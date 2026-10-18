@@ -1456,15 +1456,32 @@
       "kind": "repo",
       "title": "Explain phase reliance and control flags using saved paired-study maps",
       "question": "Which saved-output patterns account for the weak random-arm selectivity and excess relative nuisance-control flags?",
-      "evidence": "Paired training has positive AP-response primary but full advancement failed; R repeated baseline-site AP is already .618227, and S nuisance controls flag8/128 versus R1/128. S unchanged controls flag7/128, so the relative veto alone does not establish noise causation.",
+      "evidence": "Executed saved-map diagnostic and independent verification: 57,450 checks, zero mismatches, 384 control and 512 positive rows. S had seven persistent alerts and one nuisance-only alert, with no reverse flip; many other maxima shifted. R outputs favored phase windows before editing and responded weakly to the introduction. Report: docs/ssl-synthetic-localization-paired-diagnostic-v2-results.md.",
       "value": 4,
       "clarity": 0.9,
       "gpu_hours": 0,
-      "cpu_hours": 0.1,
+      "cpu_hours": 0.006885781280833333,
       "build_hours": 1,
       "blocked_by": [],
+      "status": "done",
+      "notes": "No waveform or checkpoint reads, GPU, inference or fitting. The original full decision remains failed; within-arm flips do not replace the cross-arm veto. The v1 admission stop from rounded accounting is retained and charged once. All attempts plus verification consumed 24.789 CPU seconds; implementation time is unmetered. No clinical or internal-feature causal conclusion."
+    },
+    {
+      "id": "ssl_synthetic_counterfactual_loss_factorial",
+      "kind": "experiment",
+      "title": "Test paired response supervision against BCE under matched initializations",
+      "question": "Does explicit paired counterfactual supervision improve direct localization and response over BCE for random and SSL initializations?",
+      "evidence": "Saved-map diagnosis confirms R high pre-edit phase-aligned output and weak introduced response; S7persistent control flags cannot be explained as noise-only errors. Existing BCE supervision alone leaves room for an output phase prior. Scientific design review supports a four-arm factorial as a hypothesis, not a proven remedy.",
+      "value": 4,
+      "clarity": 0.75,
+      "gpu_hours": 0.1,
+      "cpu_hours": 0.2,
+      "build_hours": 4,
+      "blocked_by": [
+        "@prospective_factorial_protocol_and_actual_profile"
+      ],
       "status": "proposed",
-      "notes": "User explicitly authorized continuation. Protocol5245d2e/admission35882b3 frozen before new aggregates. Implementation/source review in progress. Only four current map/mask arrays may open; unused waveform/model digests verified through passed authoritative audit declarations. Separate within-arm nuisance flips from cross-arm veto, probability levels from rankings, and loss trajectories from localization. No actual run yet; no new fitting/inference or clinical label repair."
+      "notes": "Propose four arms: R/S initialization crossed with BCE/BCE plus a paired loss. Match the 500 training backgrounds, 2,000 inputs, schedule, architecture, initial head and update budget; inference remains single-signal. Freeze one margin/weight, armwise contrasts and factorial interaction before scoring. Retain edited-AP, probability-response and control guards, and report baseline/edited components. Use new disjoint original VALIDATION patients; the earlier 384 are development evidence. Reuse TRAIN caches and forecast all four prediction banks within the existing 4 GiB cap. Profile the actual new loss path before fitting. No automatic replication, threshold tuning, GAN or clinical claim. Costs are prospective estimates."
     }
   ]
 }

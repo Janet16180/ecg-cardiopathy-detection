@@ -12,8 +12,10 @@ All four fixed fits completed. Both BCE arms reproduced all 600 predecessor loss
 tensor identities exactly. Before any scores, independent review caught a scoring helper argument
 order error; the [forward policy](ssl-synthetic-localization-counterfactual-factorial-evaluation-v2.md)
 requires new source/tests while preserving pinned v1 and every scientific endpoint. The new scorer passed real-helper/end-to-end tests (43 new factorial tests total) and independent
-review. One forward evaluation is authorized with unchanged profiled GPU helpers and all twelve
-gates; independent saved-output verification follows. No performance result is available yet. All work stays local;
+review. The one forward evaluation completed: primary direct-AP loss effect +0.060490 [0.045504,0.075278],
+all twelve gates true, pending the authorized independent audit. Gains are heterogeneous: focal
+localization improves while random-initialized repeated-edit AP declines. No further fit or clinical
+claim follows; earlier failed verdicts remain unchanged. All work stays local;
 closed tests remain closed and earlier failed advancement decisions are unchanged.
 
 **18 October saved-map diagnostic complete:** The authorized

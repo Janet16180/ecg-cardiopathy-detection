@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "counterfactual_factorial_forward_evaluation_authorized",
+    "status": "counterfactual_factorial_evaluated_independent_audit_authorized",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2488,17 +2488,17 @@
     },
     "counterfactual_loss_factorial": {
       "study_id": "ssl_synthetic_counterfactual_factorial_v1",
-      "status": "forward_evaluation_v2_authorized",
+      "status": "evaluation_v2_completed_all12gates_pending_independent_audit",
       "authorized": true,
       "authorization_scope": "User requested continuing local coordinated work until an important conclusion or finding. No pushes or PR updates.",
       "protocol": "docs/ssl-synthetic-localization-counterfactual-factorial.md",
       "configuration": "configs/ssl_synthetic_counterfactual_factorial_v1.json",
       "output_dir": "outputs/ssl_synthetic_localization/counterfactual_factorial_v1",
       "training_started": true,
-      "performance_scored": false,
+      "performance_scored": true,
       "closed_test_authorized": false,
       "primary_endpoint": "Initialization-averaged paired-loss effect on direct edited-map AP; secondary interaction and AP-response effects.",
-      "next_action": "One forward evaluation authorized after real-helper regression/end-to-end tests and independent review. Exact profiled GPU helper objects and all12gates unchanged. Calibration for all4arms frozen before anyB. Independent audit follows saved outputs; no successor fits.",
+      "next_action": "Independent saved-map/training-state audit authorized once under frozen scope; main all12gates true but conclusion pending verification. DirectAP average+0.06049; random repeated-edit AP worsens despite focal/pooled gain. No new fit or clinical claim.",
       "protocol_commit": "8beb272",
       "data_source_commit": "019c974",
       "training_evaluation_source_commit": "cfd50db",
@@ -2521,7 +2521,23 @@
       "evaluation_forward_policy_commit": "9d19076",
       "evaluation_forward_source_commit": "8cfe3cc",
       "evaluation_source_review_passed": true,
-      "evaluation_output_dir": "outputs/ssl_synthetic_localization/counterfactual_factorial_v1/evaluation_v2"
+      "evaluation_output_dir": "outputs/ssl_synthetic_localization/counterfactual_factorial_v1/evaluation_v2",
+      "evaluation_completed": true,
+      "evaluation_receipt": "outputs/ssl_synthetic_localization/counterfactual_factorial_v1/evaluation_v2/summary.json",
+      "evaluation_receipt_sha256": "3f4555614180442c1eb82c5e5b20ca4137d53ae35697421bfa4337cf4f588d28",
+      "engineering_replication_admitted_provisional": true,
+      "independent_audit_source_commit": "f7e0630",
+      "independent_audit_script_sha256": "f788774f938ddc9192778719f4f446305c6d391fb837e6e428ec9651bab18051",
+      "primary_result": {
+        "difference": 0.06048987696660143,
+        "ci_low": 0.04550432201725426,
+        "ci_high": 0.07527777385229446,
+        "subjects": 128,
+        "cases": 128,
+        "draws": 2000,
+        "skipped_draws": 0,
+        "seed": 20261027
+      }
     }
   }
 }

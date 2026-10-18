@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-18T20:33:58.873665+00:00",
+  "updated_at_utc": "2026-10-18T20:36:50.995343+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "plan_committed_preflight_pending",
+    "status": "plan_and_path_preflight_complete",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,6 +2281,21 @@
     "performance_scored": false,
     "training_started": false,
     "closed_test_authorized": false,
-    "next_action": "Run the payload-free readiness check, report missing prerequisites, and prepare the patient partition and generator qualification before freezing the pilot protocol and actual GPU profile."
+    "next_action": "Build a permitted-training patient partition and restore the shared Python runtime; qualify the generator, reproduce any predecessor, and freeze the executable pilot before its real GPU profile and training. ECGAD development audit awaits missing arrays. No job is running.",
+    "readiness_report": "docs/ssl-synthetic-localization-readiness.md",
+    "readiness_receipt": "outputs/ssl_synthetic_localization/readiness.json",
+    "readiness_receipt_sha256": "ccf77a90ea68f7f22441963c9465711417c76c8b5d940aa68355160fa0d6e6c0",
+    "missing_required": [
+      "project_python",
+      "training_partition",
+      "qualified_generator",
+      "training_protocol",
+      "gpu_profile"
+    ],
+    "gpu_inventory": {
+      "name": "NVIDIA GeForce GTX 1060 3GB",
+      "total_mib": 3072,
+      "profile_completed": false
+    }
   }
 }

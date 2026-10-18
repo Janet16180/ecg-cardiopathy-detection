@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-30",
+  "updated": "2026-10-18",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -1324,6 +1324,73 @@
       "status": "open",
       "authorized": false,
       "notes": "Forward implementation only; new source identity, protocol and validation receipts required. Never edit pinned039/040/diagnostic sources or weaken integrity checks. Measure cold/warm validation, latecell gate and checkpoint costs; preserve all18fits/three seeds/exposures/coefficient. Full training allocation remains separate. Hours are planning estimates. Day closeout: user chose to merge completed work and leave the 18 full fits unrun today; no follow-up is scheduled automatically."
+    },
+    {
+      "id": "ssl_synthetic_partition",
+      "kind": "repo",
+      "title": "Patient partition for real SSL and synthetic localization",
+      "question": "Can every pretraining, edited and repeated recording be assigned without patient leakage?",
+      "evidence": "18 October path-only preflight found source PTB-XL paths but no stream patient partition; docs/ssl-synthetic-localization-readiness.md.",
+      "value": 5,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.2,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "New stream authorized by the user. Use folds 1-8, group all versions and repeated patient ECGs, preserve reserved tests. No phenotype score is needed. Estimates are prospective."
+    },
+    {
+      "id": "ssl_synthetic_generator_qualification",
+      "kind": "repo",
+      "title": "Qualify controlled waveform alterations for localization supervision",
+      "question": "Can a compact generator provide tracked change masks without seams, nuisance labels or lost lead coupling?",
+      "evidence": "PR61 Experiment058 reports exact paired generator support but failed residual robustness; this does not establish clinical validity. Pinned-source reconstruction and control checks precede training.",
+      "value": 5,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 4,
+      "blocked_by": [
+        "ssl_synthetic_partition",
+        "@project_python_runtime"
+      ],
+      "status": "proposed",
+      "notes": "Start with a controlled ST intervention and independent rendering mechanisms. Keep mask occupancy, sham/noise checks and real-background uncertainty. New code only; old artifacts are missing locally."
+    },
+    {
+      "id": "ssl_synthetic_pilot",
+      "kind": "experiment",
+      "title": "Real ECG SSL followed by synthetic localization supervision",
+      "question": "Does real-data SSL initialization improve cross-generator localization over matched random initialization?",
+      "evidence": "User proposed this sequence on 18 October; Experiment064 only scored SSL features by normal-patch distance and did not test synthetic-mask fine-tuning.",
+      "value": 5,
+      "clarity": 0.5,
+      "gpu_hours": 2,
+      "cpu_hours": 4,
+      "build_hours": 6,
+      "blocked_by": [
+        "ssl_synthetic_generator_qualification"
+      ],
+      "status": "proposed",
+      "notes": "Plan in docs/ssl-synthetic-localization-plan.md. Freeze R/S/F arms, one-seed pilot, masks, metrics, resource gates and executable protocol before scores. GTX1060 3GB requires a fresh actual profile. No independent clinical confirmation without unused compatible expert truth."
+    },
+    {
+      "id": "ssl_synthetic_annotation_audit",
+      "kind": "repo",
+      "title": "Technical audit of ECGAD development labels",
+      "question": "Are record matching, lead/sample coordinates and score sensitivity to mask boundaries technically coherent?",
+      "evidence": "ECGAD annotation reliability is uncertain; local data arrays and match table are absent in the 18 October preflight.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [
+        "@ecgad_development_artifacts"
+      ],
+      "status": "proposed",
+      "notes": "Audit development only with a preselected 20-record sample and label-geometry checks. Do not relabel clinically by engineer judgment or reread the spent holdout. This is distinct from generator qualification."
     }
   ]
 }

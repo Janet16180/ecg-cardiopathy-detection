@@ -21,13 +21,13 @@ from ecg_experiment.gpu import gpu_lock
 from ecg_experiment.paths import to_stored
 from ecg_experiment.ssl_synthetic_data import load_bank, positive_class_weight
 from ecg_experiment.ssl_synthetic_model import (
-    DenseWaveformModel,
     localization_update,
     matched_schedule,
     model_description,
     ssl_update,
     state_digest,
 )
+from ecg_experiment.ssl_synthetic_model_v2 import DenseWaveformModel
 from ecg_experiment.ssl_synthetic_preparation import (
     BASE,
     PREPARATION,
@@ -69,6 +69,7 @@ def prior_preparation_cpu() -> float:
         "generator_pilot_v2/qualification.json",
         "pilot_v1/preparation/summary.json",
         "pilot_v1/prep_audit_v1/summary.json",
+        "pilot_v1/profile/summary.json",
     )
     reports = [json.loads((BASE / name).read_text()) for name in names]
     return sum(float(report.get("cpu_seconds", report["wall_seconds"])) for report in reports)
@@ -111,7 +112,8 @@ def execute_fits(
         Completed phase accounting; exceptions leave admission/failure/progress evidence locally.
     """
     prior_cpu = prior_preparation_cpu() + float(profile["cpu_seconds"])
-    profile_wall = float(profile["wall_seconds"])
+    failed_profile = json.loads((BASE / "pilot_v1/profile/summary.json").read_text())
+    profile_wall = float(profile["wall_seconds"]) + float(failed_profile["wall_seconds"])
     with gpu_lock("cuda", blocking=False):
         TRAINING.mkdir(parents=True, exist_ok=False)
         wall, cpu = time.perf_counter(), time.process_time()
@@ -440,7 +442,7 @@ def train() -> dict[str, Any]:
         raise FileExistsError("Training output directory must be new")
     config = json.loads((ROOT / "configs/ssl_synthetic_pilot_v1.json").read_text())
     prep_path = PREPARATION / "summary.json"
-    profile_path = BASE / "pilot_v1/profile/summary.json"
+    profile_path = BASE / "pilot_v1/profile_v2/summary.json"
     prep, profile = verify_receipt(prep_path), verify_receipt(profile_path)
     verify_hashes(prep["bank_sha256"])
     if not prep["preparation_gate_passed"] or not profile["profile_gate_passed"]:
@@ -467,12 +469,14 @@ def train() -> dict[str, Any]:
     source_names = (
         "ecg_experiment/ssl_synthetic_training.py",
         "ecg_experiment/ssl_synthetic_model.py",
+        "ecg_experiment/ssl_synthetic_model_v2.py",
         "ecg_experiment/ssl_synthetic_data.py",
         "ecg_experiment/ssl_synthetic_preparation.py",
         "scripts/experiments/run_ssl_synthetic_pilot.py",
         "configs/ssl_synthetic_pilot_v1.json",
         "docs/ssl-synthetic-localization-pilot.md",
         "docs/ssl-synthetic-localization-pilot-generator-v2.md",
+        "docs/ssl-synthetic-localization-pilot-deterministic-output.md",
         "ecg_experiment/gpu.py",
         "ecg_experiment/files.py",
         "ecg_experiment/paths.py",

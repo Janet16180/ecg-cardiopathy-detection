@@ -423,6 +423,13 @@ def audit_counterfactual(original_audit: Path) -> dict[str, Any]:
             raise ValueError("Counterfactual audit requires one numerical thread")
         original, sources, inputs = _admission(original_audit)
         config = json.loads((ROOT / "configs/ssl_synthetic_pilot_v1.json").read_text())
+        reproduction = json.loads(original_audit.read_text())
+        prior_cpu = original["total_preparation_training_evaluation_cpu_seconds"] + reproduction.get(
+            "cpu_seconds", 0
+        )
+        cpu_deadline = cpu + config["cpu_seconds_ceiling"] - prior_cpu
+        if time.process_time() >= cpu_deadline:
+            raise TimeoutError("Cumulative protocol CPU ceiling exhausted before the diagnostic")
         banks, probabilities, pairings = _saved_inputs()
         progress["verified_positive_pairs"] = sum(map(len, pairings.values()))
         write_new_json(
@@ -436,6 +443,8 @@ def audit_counterfactual(original_audit: Path) -> dict[str, Any]:
         )
         summaries = {}
         for profile in ("B", "A"):
+            if time.process_time() >= cpu_deadline:
+                raise TimeoutError("Cumulative protocol CPU ceiling exhausted")
             prior_rows = json.loads((ORIGINAL / f"{profile}_local_case_metrics.json").read_text())["rows"]
             rows, controls = _profile_rows(
                 banks[profile],
@@ -467,6 +476,8 @@ def audit_counterfactual(original_audit: Path) -> dict[str, Any]:
             }
             progress["completed_profiles"].append(profile)
         verify_inference_hashes(sources | inputs)
+        if time.process_time() >= cpu_deadline:
+            raise TimeoutError("Cumulative protocol CPU ceiling exhausted")
         output_hashes = {path.name: sha256_file(path) for path in DESTINATION.iterdir() if path.is_file()}
         size = sum(path.stat().st_size for path in DESTINATION.iterdir() if path.is_file())
         if size > 99 * 1024**2:
@@ -482,6 +493,8 @@ def audit_counterfactual(original_audit: Path) -> dict[str, Any]:
             "profiles": summaries,
             "wall_seconds": time.perf_counter() - wall,
             "cpu_seconds": time.process_time() - cpu,
+            "prior_protocol_and_reproduction_cpu_seconds": prior_cpu,
+            "cumulative_cpu_seconds": prior_cpu + time.process_time() - cpu,
             "new_output_bytes_before_summary": size,
             "new_output_ceiling_bytes": 100 * 1024**2,
             "original_advancement_passed": False,

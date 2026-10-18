@@ -50,8 +50,8 @@ For each arm, average focal and persistent values equally within each subject, t
 all 256 subjects. Give whole-subject percentile 95% intervals using the shared `patient_groups`/
 `patient_resample` helpers, 2,000 shared draws, seed 20261019, NumPy linear percentiles. Report focal
 and persistent separately. Compute S-minus-R contrasts in AP change and probability-response/selectivity
-changes with the same paired subject draws, explicitly exploratory. Probability maps are calibrated
-separately across arms, so absolute probability differences/differences-of-differences do not imply a
+changes with the same paired subject draws, explicitly exploratory. Recording thresholds are fitted separately across arms; probability values themselves are not
+probability-calibrated. Absolute probability differences/differences-of-differences do not imply a
 common clinical effect scale. F is a lower-adaptation-capacity diagnostic. Invent no advancement rule.
 
 For each profile, subject and arm, also compare the existing nuisance and sham maps: report full-map
@@ -65,7 +65,8 @@ response is not attributed to one of those components separately.
 Commit new implementation/tests before execution. Use one CPU numerical thread, CUDA hidden,
 and no GPU lock/model API. Save only aggregate results, local per-case numeric diagnostics and source/
 artifact hashes under a new `outputs/ssl_synthetic_localization/pilot_v1/counterfactual_audit_v1/`.
-Refuse overwrite. Limit new output to 100 MiB; do not duplicate probability maps or waveform arrays.
+Refuse overwrite. Retain measured CPU cost and enforce the original 14,400-second cumulative
+protocol CPU ceiling, including the completed pilot and independent reproduction audit. Limit new output to 100 MiB; do not duplicate probability maps or waveform arrays.
 Keep the original evaluation, calibration and advancement verdict unchanged. No patient data,
 weights or individual predictions leave the machine. Write results from all live outputs, including
 any failure. Diagnosis validity, clinical pathology support, real-data transfer and fresh confirmation

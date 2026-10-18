@@ -2384,6 +2384,31 @@
     "real_background_independent_audit_passed": true,
     "real_background_retained_incomplete_audit_receipt": "outputs/ssl_synthetic_localization/real_background_v1/independent_audit/summary.json",
     "real_background_retained_incomplete_audit_receipt_sha256": "1abb154769d86615460e7b66e6f44760c6994afd0d9408a68b89535b7878278d",
-    "updated_plan": "docs/ssl-synthetic-localization-next-steps.md"
+    "updated_plan": "docs/ssl-synthetic-localization-next-steps.md",
+    "paired_background_study": {
+      "study_id": "ssl_synthetic_paired_background_v1",
+      "status": "actual_training_profile_running",
+      "authorized": true,
+      "authorization_scope": "User explicitly said go ahead after explanation of training on real ECG backgrounds with matched positive/control examples. All local; no pushes or PR updates.",
+      "protocol": "docs/ssl-synthetic-localization-paired-background-study.md",
+      "configuration": "configs/ssl_synthetic_paired_background_v1.json",
+      "output_dir": "outputs/ssl_synthetic_localization/paired_background_v1",
+      "protocol_commit": "57def47",
+      "training_patients": 500,
+      "training_unique_inputs": 2000,
+      "calibration_patients": 64,
+      "evaluation_patients": 128,
+      "localization_updates_per_arm": 600,
+      "primary_endpoint": "S minus R difference in patient-macro AP response (edited AP minus matched baseline-site AP).",
+      "training_started": false,
+      "performance_scored": false,
+      "closed_test_authorized": false,
+      "next_action": "Reviewed actual R/S training-path profile is running once under shared GPU lock, including next-update recovery and calibration-only inference. Full fits await successful measured resource gate and coordinator admission.",
+      "qualification_receipt": "outputs/ssl_synthetic_localization/paired_background_v1/preparation/summary.json",
+      "qualification_receipt_sha256": "38a9c533be62157d0696c14468da9f4d908338069b54c6fe3bbe2790bdca2f18",
+      "qualification_passed": true,
+      "qualification_report": "docs/ssl-synthetic-localization-paired-background-qualification-results.md",
+      "source_review_passed": true
+    }
   }
 }

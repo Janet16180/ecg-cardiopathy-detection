@@ -1,5 +1,16 @@
 # Experiment queue
 
+**18 October matched-control training authorized:** The user approved the next
+[real-background training study](ssl-synthetic-localization-paired-background-study.md). Its protocol
+and configuration are committed before patient selection or fitting: 500 fixed TRAIN patients,
+2,000 matched edited/control inputs, 600 updates for each R/S arm, and 64/128 separate calibration/
+evaluation patients excluding the prior192. The primary is the paired SSL gain in intervention AP
+response, guarded by edited-AP noninferiority, positive within-arm response/selectivity and control
+flags. All692backgrounds and2768cases passed qualification on the first fixed selection, with
+1384exact matched controls and no failures. All55paired artificial tests and source review pass. The actual GPU training-path profile is
+running once, including model/AdamW next-update recovery and calibration-only inference; no full fit
+or localization score has run. All further work remains local without pushes or PR updates.
+
 **18 October SSL and synthetic localization stream:** The user authorized unattended work with
 coordinated agents in independent worktrees, on draft PR #67. The original [pilot protocol](ssl-synthetic-localization-pilot.md)
 freezes a 2,048-patient real-SSL subset, 500 synthetic training examples, matched R/S/F fits and

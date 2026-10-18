@@ -96,7 +96,7 @@ penalty; one that ranks high earns a protocol like any other.
 | 38 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
 | 39 | ssl_synthetic_annotation_audit | repo | Technical audit of ECGAD development labels | 4 | 0.8 | 3.5 | 1.71 | @ecgad_development_artifacts |
 | 40 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
-| 41 | ssl_synthetic_paired_background_training | experiment | Train matched positive and control variants on real ECG backgrounds | 4 | 0.8 | 4.8 | 1.47 | @prospective_paired_training_protocol_and_profile |
+| 41 | ssl_synthetic_paired_background_training | experiment | Train matched positive and control variants on real ECG backgrounds | 4 | 0.8 | 4.8 | 1.47 | @paired_data_qualification_and_actual_training_profile |
 | 42 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
 | 43 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
 | 44 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |

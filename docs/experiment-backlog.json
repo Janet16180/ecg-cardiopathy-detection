@@ -1448,10 +1448,10 @@
       "cpu_hours": 0.5,
       "build_hours": 4,
       "blocked_by": [
-        "@prospective_paired_training_protocol_and_profile"
+        "@paired_data_qualification_and_actual_training_profile"
       ],
       "status": "proposed",
-      "notes": "Reserve existing 500 disjoint TRAIN patients; their waveforms remain unread. Freeze cases, R/S matching, response primary and decision rule, new disjoint original-VALIDATION calibration/evaluation patients, qualification and actual training-path profile before any fit. No isolated causal background claim; whole stream must remain within existing ceilings. No run launched. Cost values are prospective estimates."
+      "notes": "User explicitly authorized execution after explanation. Protocol57def47 frozen: 500TRAINbackgrounds/2000inputs,600updatesR/S,64/128new-to-followup originalVALIDATION patients. Primary response gain>=.02 withCIlo>0, editedAPnoninferiority and response/control guards. Implementation/review in progress; no new data selection, qualification or GPU use yet. All local/no pushes."
     }
   ]
 }

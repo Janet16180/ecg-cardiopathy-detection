@@ -1441,17 +1441,30 @@
       "kind": "experiment",
       "title": "Train matched positive and control variants on real ECG backgrounds",
       "question": "Does balanced paired-control training improve introduced-change responsiveness, and does real-data SSL help under that training recipe?",
-      "evidence": "Frozen real-background transfer has positive edited AP advantage for S but stronger baseline-site alignment, no clear focal gain and low positive-flag coverage. Both models remain intervention-responsive. See docs/ssl-synthetic-localization-next-steps.md.",
+      "evidence": "Executed matched R/S fits and new-patient evaluation: edited AP .346928/.511194; primary AP-response gain .237969 [.198587,.278683]. Full advancement failed on R selectivity lower bound and nuisance-control increase. Both independent audits passed 274874 checks without mismatches. Report docs/ssl-synthetic-localization-paired-background-results.md.",
       "value": 4,
       "clarity": 0.8,
-      "gpu_hours": 0.25,
-      "cpu_hours": 0.5,
+      "gpu_hours": 0.025108488155277782,
+      "cpu_hours": 0.030836677594722223,
       "build_hours": 4,
-      "blocked_by": [
-        "@paired_data_qualification_and_actual_training_profile"
-      ],
+      "blocked_by": [],
+      "status": "done",
+      "notes": "All 692 backgrounds/2768 cases qualify; each model 600 updates/9600 presentations across500patients/2000inputs. Strong focal response but repeated edited AP is lower for S; primary gain includes lower baseline-site ordering. Seven of nine gates pass; do not relax failed gates or launch replication automatically. All data/outputs local. Measured numerical runtime includes both final audits; implementation time unmetered."
+    },
+    {
+      "id": "ssl_synthetic_paired_failure_diagnostic",
+      "kind": "repo",
+      "title": "Explain phase reliance and control flags using saved paired-study maps",
+      "question": "Which saved-output patterns account for the weak random-arm selectivity and excess relative nuisance-control flags?",
+      "evidence": "Paired training has positive AP-response primary but full advancement failed; R repeated baseline-site AP is already .618227, and S nuisance controls flag8/128 versus R1/128. S unchanged controls flag7/128, so the relative veto alone does not establish noise causation.",
+      "value": 4,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 1,
+      "blocked_by": [],
       "status": "proposed",
-      "notes": "User explicitly authorized execution after explanation. Protocol57def47 frozen: 500TRAINbackgrounds/2000inputs,600updatesR/S,64/128new-to-followup originalVALIDATION patients. Primary response gain>=.02 withCIlo>0, editedAPnoninferiority and response/control guards. Implementation/review in progress; no new data selection, qualification or GPU use yet. All local/no pushes."
+      "notes": "Freeze a diagnostic-only protocol before new aggregate analysis. Use existing maps/masks/loss traces, retain patients/thresholds and both failed gates, no new inference/fitting or clinical label repair. Include paired unchanged/nuisance flag overlap and mode-specific input response; distinguish probability magnitude from ranking. Runtime estimates prospective. No run launched."
     }
   ]
 }

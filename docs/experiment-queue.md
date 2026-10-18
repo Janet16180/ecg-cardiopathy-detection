@@ -1,15 +1,19 @@
 # Experiment queue
 
-**18 October matched-control training authorized:** The user approved the next
-[real-background training study](ssl-synthetic-localization-paired-background-study.md). Its protocol
-and configuration are committed before patient selection or fitting: 500 fixed TRAIN patients,
-2,000 matched edited/control inputs, 600 updates for each R/S arm, and 64/128 separate calibration/
-evaluation patients excluding the prior192. The primary is the paired SSL gain in intervention AP
-response, guarded by edited-AP noninferiority, positive within-arm response/selectivity and control
-flags. All692backgrounds and2768cases passed qualification on the first fixed selection, with
-1384exact matched controls and no failures. All55paired artificial tests and source review pass. The actual GPU training-path profile is
-running once, including model/AdamW next-update recovery and calibration-only inference; no full fit
-or localization score has run. All further work remains local without pushes or PR updates.
+**18 October matched-control training complete:** The authorized
+[real-background study](ssl-synthetic-localization-paired-background-study.md) completed qualification,
+actual profiling, both fixed 600-update fits and frozen evaluation. Each arm saw the same 500 TRAIN
+patients, 2,000 inputs and 9,600 presentations; calibration/evaluation used 64/128 separate patients
+excluding the prior 192. All 692 backgrounds and 2,768 variants qualified without failure or replacement.
+The [results](ssl-synthetic-localization-paired-background-results.md) report edited AP R 0.346928,
+S 0.511194, and primary counterfactual AP-response gain +0.237969 [0.198587, 0.278683]. Focal
+localization improved; repeated edited AP was lower for S despite greater response. The complete
+advancement rule failed on R's selectivity lower bound and S's nuisance-control flag increase.
+Independent training and saved-map audits passed 274,874 checks with zero mismatches, reproducing all
+nine gates. Complete cumulative CPU was 545.145 seconds and GPU-wall 226.413 seconds, within the
+unchanged runtime/storage ceilings. Follow-up saved-map diagnostics are ranked; no extra fitting,
+threshold changes, closed tests, pushes or PR updates are scheduled. Labels remain introduced changes,
+not clinically verified native pathology.
 
 **18 October SSL and synthetic localization stream:** The user authorized unattended work with
 coordinated agents in independent worktrees, on draft PR #67. The original [pilot protocol](ssl-synthetic-localization-pilot.md)

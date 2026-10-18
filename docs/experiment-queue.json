@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "initial_pilot_and_real_background_transfer_complete_audited",
+    "status": "paired_background_training_complete_audited",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Completed and independently audited the original pilot and prospective frozen real-background transfer. Preserve original advancement FAIL. Prepare a separately frozen paired positive/control training experiment on reserved real backgrounds, with new disjoint validation patients and actual training profile before fitting. Recover/audit compatible expert development annotations before clinical comparisons. No new experiment or closed test is launched; no pushes or PR updates.",
+    "next_action": "The fixed experiment is complete with both independent audits passing. Preserve the failed full rule: R selectivity lower bound and S minus R nuisance-control increase failed. Rank a saved-map diagnostic of phase reliance and control flags before specifying any new fitting/replication protocol. Expert clinical annotation audit remains separate; no further fits, closed tests or remote actions scheduled.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2387,7 +2387,7 @@
     "updated_plan": "docs/ssl-synthetic-localization-next-steps.md",
     "paired_background_study": {
       "study_id": "ssl_synthetic_paired_background_v1",
-      "status": "actual_training_profile_running",
+      "status": "completed_full_advancement_failed_independently_audited",
       "authorized": true,
       "authorization_scope": "User explicitly said go ahead after explanation of training on real ECG backgrounds with matched positive/control examples. All local; no pushes or PR updates.",
       "protocol": "docs/ssl-synthetic-localization-paired-background-study.md",
@@ -2400,15 +2400,51 @@
       "evaluation_patients": 128,
       "localization_updates_per_arm": 600,
       "primary_endpoint": "S minus R difference in patient-macro AP response (edited AP minus matched baseline-site AP).",
-      "training_started": false,
-      "performance_scored": false,
+      "training_started": true,
+      "performance_scored": true,
       "closed_test_authorized": false,
-      "next_action": "Reviewed actual R/S training-path profile is running once under shared GPU lock, including next-update recovery and calibration-only inference. Full fits await successful measured resource gate and coordinator admission.",
+      "next_action": "The fixed experiment is complete with both independent audits passing. Preserve the failed full rule: R selectivity lower bound and S minus R nuisance-control increase failed. Rank a saved-map diagnostic of phase reliance and control flags before specifying any new fitting/replication protocol. Expert clinical annotation audit remains separate; no further fits, closed tests or remote actions scheduled.",
       "qualification_receipt": "outputs/ssl_synthetic_localization/paired_background_v1/preparation/summary.json",
       "qualification_receipt_sha256": "38a9c533be62157d0696c14468da9f4d908338069b54c6fe3bbe2790bdca2f18",
       "qualification_passed": true,
       "qualification_report": "docs/ssl-synthetic-localization-paired-background-qualification-results.md",
-      "source_review_passed": true
-    }
+      "source_review_passed": true,
+      "profile_receipt": "outputs/ssl_synthetic_localization/paired_background_v1/profile/summary.json",
+      "profile_receipt_sha256": "07cdf8c7517aa686337b16cb9128102c6e3d1c9954cc1c1edea26f6fc0658d76",
+      "profile_passed": true,
+      "training_completed": true,
+      "training_receipt": "outputs/ssl_synthetic_localization/paired_background_v1/training/summary.json",
+      "training_receipt_sha256": "1896e9c638f27590d4a90c582536926dfbc85ffe57db1f08da12f7e3da8bf44c",
+      "evaluation_receipt": "outputs/ssl_synthetic_localization/paired_background_v1/evaluation/summary.json",
+      "evaluation_receipt_sha256": "5041fab51ce83a8ea2bc89beed347c0981d5e53de8852233e31410400f07e9a4",
+      "evaluation_report": "docs/ssl-synthetic-localization-paired-background-results.md",
+      "primary_result": {
+        "difference": 0.23796868962139273,
+        "ci_low": 0.19858721249268396,
+        "ci_high": 0.2786831905800864,
+        "subjects": 128,
+        "cases": 256,
+        "draws": 2000,
+        "seed": 20261025
+      },
+      "engineering_replication_admitted": false,
+      "failed_gates": [
+        "R_selectivity_contrast_lower_bound_positive",
+        "nuisance_point_increase_bounded"
+      ],
+      "training_audit_receipt": "outputs/ssl_synthetic_localization/paired_background_v1/training_audit/summary.json",
+      "training_audit_receipt_sha256": "55b50f8c9705aeacfce7e19334a1b987a0ebb527b3924f2ff362eb099a10359a",
+      "training_audit_passed": true,
+      "profile_report": "docs/ssl-synthetic-localization-paired-background-profile-results.md",
+      "training_report": "docs/ssl-synthetic-localization-paired-background-training-results.md",
+      "metrics_audit_receipt": "outputs/ssl_synthetic_localization/paired_background_v1/metrics_audit/summary.json",
+      "metrics_audit_receipt_sha256": "464a438c0a3e48ed7a60bf2f7ea2195fcb23b26369c45394c00fa8aaaa118976",
+      "metrics_audit_passed": true,
+      "independent_audit_checks": 274874,
+      "independent_audit_mismatches": 0,
+      "cumulative_cpu_seconds": 545.1449704129989,
+      "cumulative_gpu_wall_seconds": 226.41281207299835
+    },
+    "latest_results_report": "docs/ssl-synthetic-localization-paired-background-results.md"
   }
 }

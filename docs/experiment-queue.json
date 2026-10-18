@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "paired_background_training_complete_audited",
+    "status": "paired_saved_map_diagnostic_implementation",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "The fixed experiment is complete with both independent audits passing. Preserve the failed full rule: R selectivity lower bound and S minus R nuisance-control increase failed. Rank a saved-map diagnostic of phase reliance and control flags before specifying any new fitting/replication protocol. Expert clinical annotation audit remains separate; no further fits, closed tests or remote actions scheduled.",
+    "next_action": "Implement and review a four-array allowlisted diagnostic. Reproduce parent summary/gates, then paired control transitions and probability levels, mode-specific introduced-response statistics and descriptive training losses. No new thresholds, model fitting or clinical labels.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2445,6 +2445,23 @@
       "cumulative_cpu_seconds": 545.1449704129989,
       "cumulative_gpu_wall_seconds": 226.41281207299835
     },
-    "latest_results_report": "docs/ssl-synthetic-localization-paired-background-results.md"
+    "latest_results_report": "docs/ssl-synthetic-localization-paired-background-results.md",
+    "paired_saved_map_diagnostic": {
+      "study_id": "ssl_synthetic_paired_diagnostic_v1",
+      "status": "protocol_frozen_implementation",
+      "authorized": true,
+      "authorization_scope": "User requested continuing after explanation of unwanted control flags and random-arm phase alignment. Saved-output diagnosis first, all local without pushes.",
+      "protocol": "docs/ssl-synthetic-localization-paired-diagnostic.md",
+      "admission_addendum": "docs/ssl-synthetic-localization-paired-diagnostic-admission.md",
+      "configuration": "configs/ssl_synthetic_paired_diagnostic_v1.json",
+      "output_dir": "outputs/ssl_synthetic_localization/paired_background_v1/diagnostic_v1",
+      "protocol_commit": "5245d2e",
+      "admission_commit": "35882b3",
+      "new_fitting": false,
+      "new_inference": false,
+      "waveform_reads_allowed": false,
+      "parent_advancement_passed": false,
+      "next_action": "Implement and review a four-array allowlisted diagnostic. Reproduce parent summary/gates, then paired control transitions and probability levels, mode-specific introduced-response statistics and descriptive training losses. No new thresholds, model fitting or clinical labels."
+    }
   }
 }

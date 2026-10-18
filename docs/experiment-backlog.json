@@ -1464,7 +1464,7 @@
       "build_hours": 1,
       "blocked_by": [],
       "status": "proposed",
-      "notes": "Freeze a diagnostic-only protocol before new aggregate analysis. Use existing maps/masks/loss traces, retain patients/thresholds and both failed gates, no new inference/fitting or clinical label repair. Include paired unchanged/nuisance flag overlap and mode-specific input response; distinguish probability magnitude from ranking. Runtime estimates prospective. No run launched."
+      "notes": "User explicitly authorized continuation. Protocol5245d2e/admission35882b3 frozen before new aggregates. Implementation/source review in progress. Only four current map/mask arrays may open; unused waveform/model digests verified through passed authoritative audit declarations. Separate within-arm nuisance flips from cross-arm veto, probability levels from rankings, and loss trajectories from localization. No actual run yet; no new fitting/inference or clinical label repair."
     }
   ]
 }

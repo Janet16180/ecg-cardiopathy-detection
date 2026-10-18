@@ -1,5 +1,14 @@
 # Experiment queue
 
+**18 October saved-map diagnostic authorized:** The user approved continuing with the
+[control/phase diagnostic](ssl-synthetic-localization-paired-diagnostic.md) and its
+[payload-access clarification](ssl-synthetic-localization-paired-diagnostic-admission.md). Its protocol
+is committed before new aggregates. The analysis will separate paired nuisance-versus-unchanged
+alert flips from the failed cross-arm veto, inspect absolute probability levels and phase-window
+alignment, and summarize saved training losses. Only current saved probability maps/masks and
+allowed metadata are read; no waveform payloads, model files, fitting, inference, new thresholds or
+closed tests. Implementation and source review are in progress. All work remains local.
+
 **18 October matched-control training complete:** The authorized
 [real-background study](ssl-synthetic-localization-paired-background-study.md) completed qualification,
 actual profiling, both fixed 600-update fits and frozen evaluation. Each arm saw the same 500 TRAIN

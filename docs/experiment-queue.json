@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "inputs_and_bounded_generator_qualified_gpu_profile_pending",
+    "status": "first_gpu_profile_failed_deterministic_successor_preparing",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,7 +2281,7 @@
     "performance_scored": false,
     "training_started": false,
     "closed_test_authorized": false,
-    "next_action": "Actual source-bound batch16 GPU profile and independent runner review precede full1000-step realSSL plus matched600-stepR/S/F pilot. Preparedbanks use qualified bounded generatorv2; failedv1 admission retained. No real engineering-test/closedpayload access; ECGAD arrays still absent. Agents own separateworktrees; coordinator owns main stream and draftPR67.",
+    "next_action": "The first actual GPU replay failed because CUDA linear interpolation backward is nondeterministic. Its receipt is retained. A prospective mathematically equivalent output implementation passed CPU operator/gradient parity; a separate profile_v2 must pass before any full training. Batch, objective, schedules, patient identities and endpoints remain frozen. No full fit or localization score has run.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2320,6 +2320,8 @@
     "pilot_preparation_receipt": "outputs/ssl_synthetic_localization/pilot_v1/preparation/summary.json",
     "pilot_preparation_receipt_sha256": "fca2a12b12606acda862ffe2ea149df1f112d4b0af58c737958da13afd440011",
     "independent_preparation_audit_receipt": "outputs/ssl_synthetic_localization/pilot_v1/prep_audit_v1/summary.json",
-    "independent_preparation_audit_receipt_sha256": "644ae770d3e091feefd0c18e91505c46a93367473b6cafc6171898b344286fcf"
+    "independent_preparation_audit_receipt_sha256": "644ae770d3e091feefd0c18e91505c46a93367473b6cafc6171898b344286fcf",
+    "failed_gpu_profile_receipt": "outputs/ssl_synthetic_localization/pilot_v1/profile/summary.json",
+    "deterministic_output_amendment": "docs/ssl-synthetic-localization-pilot-deterministic-output.md"
   }
 }

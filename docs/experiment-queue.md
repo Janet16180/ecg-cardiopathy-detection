@@ -10,8 +10,9 @@ selected patients passed the [real-cache gate](ssl-synthetic-localization-real-c
 Initial generator v1 passed its design grid but failed 28/3,060 planned occupancy checks; its failure is
 retained. The [bounded v2 amendment](ssl-synthetic-localization-pilot-generator-v2.md) qualifies all
 3,060 planned cases with exact replays. Prepared A-only training/validation banks and independent
-counterfactual replay pass; the entire stream currently occupies about 1.22 GB. The actual GPU profile
-and runner review still precede training. No full fit or model score has run. Engineering-test real
+counterfactual replay pass; the entire stream currently occupies about 1.22 GB. The first actual GPU profile stopped at the deterministic CUDA interpolation backward check; its
+[failed report](ssl-synthetic-localization-profile-results.md) is retained. A [prospective equivalent output implementation](ssl-synthetic-localization-pilot-deterministic-output.md)
+passes CPU operator/gradient parity and awaits its separate GPU profile. No full fit or model score has run. Engineering-test real
 waveforms, reserved tests and earlier stopped experiments remain closed/stopped; clinical annotation
 audit still lacks ECGAD artifacts. See the JSON catalog for live receipt hashes and the agents' reports.
 

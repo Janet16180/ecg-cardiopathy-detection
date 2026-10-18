@@ -21,9 +21,11 @@ unsaved optimizer states. Check source/input identity before and after calculati
 preparation, profile, training, forward evaluation and parent audit receipts. Missing/conflicting
 authority stops verification.
 
-Only the four new probability banks and two new boolean masks may be read as numerical array
-payloads. Model-only original/predecessor/final/recovery checkpoints may be read on CPU solely for
-state integrity; no CUDA or inference. No raw or processed ECG waveform payload is read or hashed.
+Numerical array access is limited to the four new probability banks, two new boolean masks,
+and ONLY rows0–1999 of the predecessor support mask for native TRAIN class-weight reconstruction.
+Do not access its old validation rows. The600×16 integer schedule is permitted execution metadata.
+Original/predecessor/final model-only checkpoints and recovery model/optimizer/RNG checkpoints may
+be read on CPU solely for state integrity; no CUDA or inference. No raw or processed ECG waveform payload is read or hashed.
 Background-file and unused ancestor-payload identities depend on explicitly SHA-anchored passed
 qualification/audit declarations; record every deferred exception and its authority. Mask generation
 and raw-voltage diagnostics remain qualification/source-bound claims, not independent waveform

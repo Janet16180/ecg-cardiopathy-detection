@@ -6,8 +6,9 @@ compares four matched arms: random/SSL initialization by BCE/BCE plus paired los
 endpoint is the average loss effect on direct edited AP, guarded against baseline suppression,
 weak selectivity and increased control alerts. It reuses the exact 500 TRAIN patients and requires
 both BCE arms to reproduce their predecessor final states exactly. New 64/128 calibration/evaluation
-patients exclude all 384 previously spent validation patients. Source review, full qualification
-and an actual GPU profile precede any fits; no new selection or score has run. All work stays local;
+patients exclude all 384 previously spent validation patients. All new source is locally committed; 37 artificial CPU tests and Ruff passed. Final independent
+source review and full qualification precede the actual GPU profile and any fits; no new selection
+or score has run. All work stays local;
 closed tests remain closed and earlier failed advancement decisions are unchanged.
 
 **18 October saved-map diagnostic complete:** The authorized

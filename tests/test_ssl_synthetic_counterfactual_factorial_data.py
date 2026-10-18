@@ -150,6 +150,13 @@ def test_mixed_mask_routing_never_uses_old_validation_rows():
 
     old, new = Routed(2000), Routed(768)
     context = {"train_support": old, "train_candidate": old, "new_support": new, "new_candidate": new}
+    context["cases"] = [
+        {
+            key: array_sha256(np.array([index if index < 2000 else index - 2000]))
+            for key in ("support_sha256", "candidate_sha256")
+        }
+        for index in range(2768)
+    ]
     for index in (0, 1999, 2000, 2255, 2256, 2767):
         expected = index if index < 2000 else index - 2000
         assert common.support_for_case(context, index)[0] == expected
@@ -304,3 +311,18 @@ def test_first_anchor_case_failure_retained_stops_further_raw(config, monkeypatc
     assert len(cases) == 8
     assert info[1]["status"] == "processing_failed"
     assert all(case["qualification"]["failures"] for case in cases)
+
+
+def test_changed_active_mask_rejected_before_weight_count():
+    expected = np.zeros((12, 2500), dtype=bool)
+    changed = expected.copy()
+    changed[0, 0] = True
+    context = {
+        "cases": [{"support_sha256": array_sha256(expected), "candidate_sha256": array_sha256(expected)}],
+        "train_support": {0: changed},
+        "train_candidate": {0: changed},
+    }
+    with pytest.raises(ValueError, match="Active support row changed"):
+        common.support_for_case(context, 0)
+    with pytest.raises(ValueError, match="Active candidate row changed"):
+        common.candidate_for_case(context, 0)

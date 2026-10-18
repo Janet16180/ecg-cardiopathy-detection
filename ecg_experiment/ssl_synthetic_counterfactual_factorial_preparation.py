@@ -178,6 +178,7 @@ def _prepare() -> dict:
         name: sha256_file(PREPARATION / name)
         for name in ("selection.json", "cases.json", "backgrounds.npy", "support.npy", "candidate.npy")
     }
+    guard(context, wall, cpu)
     failures = Counter(reason for case in cases for reason in case["qualification"]["failures"])
     bad_backgrounds = sum(
         row["status"] != "processed" or not row.get("minimum_anchor_gate_passed", False) for row in metadata
@@ -185,7 +186,7 @@ def _prepare() -> dict:
     projection = storage_projection()
     elapsed_cpu, elapsed_wall = time.process_time() - cpu, time.perf_counter() - wall
     budget = (
-        elapsed_cpu < config["cpu_seconds_stage_ceiling"]
+        max(elapsed_cpu, elapsed_wall) < config["cpu_seconds_stage_ceiling"]
         and context["prior_cpu_seconds"] + elapsed_cpu < config["cpu_seconds_ceiling"]
     )
     storage = projection["projected_whole_stream_bytes"] <= config["cache_bytes_ceiling"]

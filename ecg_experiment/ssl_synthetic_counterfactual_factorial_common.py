@@ -144,7 +144,7 @@ def source_bindings(names: tuple[str, ...], authorities: dict) -> dict:
 
 def predecessor_metadata(extra_source_names: tuple[str, ...] = ()) -> dict:
     """Bind only consumed metadata plus three passed audit catalogs, without ancestor waveform reads."""
-    audits, authorities = {}, {}
+    audits, authorities, frozen_sources = {}, {}, {}
     for name, digest in ANCHORS.items():
         if sha256_file(ROOT / name) != digest:
             raise ValueError("Passed predecessor audit anchor changed")
@@ -154,6 +154,7 @@ def predecessor_metadata(extra_source_names: tuple[str, ...] = ()) -> dict:
         audits[name] = report
         merge(authorities, report["input_sha256"])
         merge(authorities, report["source_sha256"])
+        merge(frozen_sources, report["source_sha256"])
         for field in (
             "metadata_only_scope_exceptions",
             "deferred_payload_scope_exceptions",
@@ -184,7 +185,16 @@ def predecessor_metadata(extra_source_names: tuple[str, ...] = ()) -> dict:
         if name not in authorities:
             raise ValueError("Consumed predecessor metadata has no passed-audit authority")
         inputs[name] = authorities[name]
+    merge(
+        frozen_sources,
+        {
+            name: digest
+            for name, digest in authorities.items()
+            if Path(name).suffix in {".py", ".md", ".toml", ".lock"} or name.startswith("configs/")
+        },
+    )
     sources = source_bindings(SOURCE_NAMES + extra_source_names, authorities)
+    merge(sources, frozen_sources)
     verify_bindings(sources, inputs, authorities)
     reports = {key: json.loads((ROOT / name).read_bytes()) for key, name in names.items()}
     numeric = audits[to_stored(PARENT / "metrics_audit/summary.json")]
@@ -309,17 +319,21 @@ def _case_index(index: int) -> int:
 
 
 def support_for_case(context: dict, index: int) -> np.ndarray:
-    """Route old TRAIN or new validation support without constructing a duplicate mixed array."""
+    """Route and verify native support before every use, including schedule-weight counting."""
     index = _case_index(index)
-    return context["train_support"][index] if index < 2000 else context["new_support"][new_case_row(index)]
+    row = context["train_support"][index] if index < 2000 else context["new_support"][new_case_row(index)]
+    if array_sha256(row) != context["cases"][index]["support_sha256"]:
+        raise ValueError("Active support row changed")
+    return row
 
 
 def candidate_for_case(context: dict, index: int) -> np.ndarray:
-    """Route old TRAIN or new validation candidate mask with the same explicit global offset."""
+    """Route and verify the candidate row without constructing a duplicate mixed mask bank."""
     index = _case_index(index)
-    return (
-        context["train_candidate"][index] if index < 2000 else context["new_candidate"][new_case_row(index)]
-    )
+    row = context["train_candidate"][index] if index < 2000 else context["new_candidate"][new_case_row(index)]
+    if array_sha256(row) != context["cases"][index]["candidate_sha256"]:
+        raise ValueError("Active candidate row changed")
+    return row
 
 
 def render_checked(context: dict, index: int) -> dict:

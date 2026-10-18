@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "counterfactual_factorial_qualification_authorized",
+    "status": "counterfactual_factorial_qualified_profile_authorized",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2488,7 +2488,7 @@
     },
     "counterfactual_loss_factorial": {
       "study_id": "ssl_synthetic_counterfactual_factorial_v1",
-      "status": "qualification_authorized_after_source_review",
+      "status": "qualification_passed_actual_profile_authorized",
       "authorized": true,
       "authorization_scope": "User requested continuing local coordinated work until an important conclusion or finding. No pushes or PR updates.",
       "protocol": "docs/ssl-synthetic-localization-counterfactual-factorial.md",
@@ -2498,14 +2498,17 @@
       "performance_scored": false,
       "closed_test_authorized": false,
       "primary_endpoint": "Initialization-averaged paired-loss effect on direct edited-map AP; secondary interaction and AP-response effects.",
-      "next_action": "One CPU qualification has coordinator GO after independent source review. No fit before actual four-arm GPU profile passes; no performance score yet.",
+      "next_action": "Actual four-arm training/recovery and calibration-only inference profile authorized under GPU lock. No full fit before forecast/recovery pass. All192/768 qualified, no replacements.",
       "protocol_commit": "8beb272",
       "data_source_commit": "019c974",
       "training_evaluation_source_commit": "cfd50db",
       "new_artificial_tests_passed": 38,
       "ruff_passed": true,
       "final_data_source_commit": "e9c2d82",
-      "source_review_passed": true
+      "source_review_passed": true,
+      "qualification_passed": true,
+      "qualification_receipt": "outputs/ssl_synthetic_localization/counterfactual_factorial_v1/preparation/summary.json",
+      "qualification_receipt_sha256": "498251dc05013ece766d3877755fe0a000db5b8a1db8dc2ffdcddad4bbefcdba"
     }
   }
 }

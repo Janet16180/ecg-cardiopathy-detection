@@ -195,8 +195,10 @@ saved-map audit is reported below only after its actual execution.
 ## Independent numerical audit
 
 The separately committed audit ran once and passed 154,715 checks with zero mismatches. It
-independently recomputed all 2,816 local metric rows, 1,024 response rows, 23 response fields,
-thresholds, patient/mode aggregates, factorial contrasts, bootstrap intervals and all twelve gates.
+checked all 2,816 local metric rows and independently recomputed the 2,560 model, uniform and
+phase-prior rows, all 1,024 response rows, 23 response fields, thresholds, patient/mode aggregates,
+factorial contrasts, bootstrap intervals and all twelve gates. The 256 raw-voltage case values remain
+source-bound; their aggregate arithmetic was independently recomputed.
 It also checked all four fitted tensor states and the exact 600-loss/component/full-state BCE
 closure. Its primary was 0.060489876966601436 [0.04550432201725428, 0.07527777385229448], matching
 the production receipt within the frozen 1e-12 tolerance.

@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "real_background_qualified_frozen_transfer_implementation",
+    "status": "initial_pilot_and_real_background_transfer_complete_audited",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Real-background qualification passed for all 192 validation backgrounds and 768 cases, with 384 exact paired controls and no failures. Integrate and review frozen R/S profile/evaluation implementation, run the actual calibration-only inference profile, then conditionally score all fixed cases without fitting. Original SSL primary remains failed; no pushes or PR updates.",
+    "next_action": "Completed and independently audited the original pilot and prospective frozen real-background transfer. Preserve original advancement FAIL. Prepare a separately frozen paired positive/control training experiment on reserved real backgrounds, with new disjoint validation patients and actual training profile before fitting. Recover/audit compatible expert development annotations before clinical comparisons. No new experiment or closed test is launched; no pushes or PR updates.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2357,11 +2357,33 @@
     "real_background_protocol": "docs/ssl-synthetic-localization-real-background-study.md",
     "real_background_clarifications": "docs/ssl-synthetic-localization-real-background-clarifications.md",
     "real_background_configuration": "configs/ssl_synthetic_real_background_v1.json",
-    "real_background_scored": false,
+    "real_background_scored": true,
     "remote_updates_paused_by_user": true,
     "missing_required_scope": "Historical setup-only readiness receipt; later actual profile/training/evaluation are recorded separately.",
     "real_background_qualification_receipt": "outputs/ssl_synthetic_localization/real_background_v1/preparation/summary.json",
     "real_background_qualification_receipt_sha256": "32b387379d3fc8d11e52d2bd9e022f9cadc6b69b4e58f1f00f06de7286921b7b",
-    "real_background_qualification_passed": true
+    "real_background_qualification_passed": true,
+    "real_background_profile_receipt": "outputs/ssl_synthetic_localization/real_background_v1/profile/summary.json",
+    "real_background_profile_receipt_sha256": "895d13375fb0ffb45f7b86500a9f903307a96c274fb6a2ef8862d5a19b831332",
+    "real_background_profile_passed": true,
+    "real_background_evaluation_receipt": "outputs/ssl_synthetic_localization/real_background_v1/evaluation/summary.json",
+    "real_background_evaluation_receipt_sha256": "ed578802c4864a4534bc06ba115f7a0835922d5b0c6c16d0be839be148db08ce",
+    "real_background_result": {
+      "R_ap": 0.2320882498784474,
+      "S_ap": 0.28939702176325416,
+      "difference": 0.05730877188480671,
+      "ci_low": 0.03700009021420425,
+      "ci_high": 0.07752689940488966,
+      "patients": 128,
+      "scope": "Introduced-voltage support on real backgrounds, exploratory engineering development; no new advancement rule."
+    },
+    "real_background_evaluation_report": "docs/ssl-synthetic-localization-real-transfer-results.md",
+    "real_background_qualification_report": "docs/ssl-synthetic-localization-real-background-qualification-results.md",
+    "real_background_independent_audit_receipt": "outputs/ssl_synthetic_localization/real_background_v1/independent_audit_completion/summary.json",
+    "real_background_independent_audit_receipt_sha256": "b701dd865d7f8991521cd9199fc3fab39963fb89e177c3e383e0a033289e13f8",
+    "real_background_independent_audit_passed": true,
+    "real_background_retained_incomplete_audit_receipt": "outputs/ssl_synthetic_localization/real_background_v1/independent_audit/summary.json",
+    "real_background_retained_incomplete_audit_receipt_sha256": "1abb154769d86615460e7b66e6f44760c6994afd0d9408a68b89535b7878278d",
+    "updated_plan": "docs/ssl-synthetic-localization-next-steps.md"
   }
 }

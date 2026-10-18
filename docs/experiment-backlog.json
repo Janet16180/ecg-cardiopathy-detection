@@ -1426,15 +1426,32 @@
       "kind": "repo",
       "title": "Qualify introduced voltage edits on real backgrounds and test frozen localizers",
       "question": "Do existing toy-trained R/S models recover deliberately added voltage changes on fixed real ECG backgrounds?",
-      "evidence": "Original pilot failed SSL advancement, but saved-map R/S input-response diagnostics passed the prospectively specified conditional admission. New protocol and exact rendering clarification committed before new patient selection or scoring.",
+      "evidence": "All 192 real backgrounds/768 cases qualify. Frozen R/S evaluation on 128 patients: AP .232088/.289397; difference .057309 [.037000,.077527], concentrated in repeated changes. Independent completion checks 90,376 values without mismatches. Report docs/ssl-synthetic-localization-real-transfer-results.md.",
       "value": 4,
       "clarity": 0.9,
-      "gpu_hours": 0.25,
-      "cpu_hours": 0.5,
+      "gpu_hours": 0.007388531362777636,
+      "cpu_hours": 0.012342221036388889,
       "build_hours": 3,
       "blocked_by": [],
+      "status": "done",
+      "notes": "No fitting, patient drops or closed tests. Pre-edit baseline-site AP is higher for S, so edited AP alone does not establish stronger intervention response. Focal difference interval crosses zero; record flags cover only 34/256 S and 16/256 R positives. Original pilot advancement remains failed. Initial audit schema omission failure retained. Measured stage GPU-wall/CPU and both independent audits are charged; build time remains unmetered."
+    },
+    {
+      "id": "ssl_synthetic_paired_background_training",
+      "kind": "experiment",
+      "title": "Train matched positive and control variants on real ECG backgrounds",
+      "question": "Does balanced paired-control training improve introduced-change responsiveness, and does real-data SSL help under that training recipe?",
+      "evidence": "Frozen real-background transfer has positive edited AP advantage for S but stronger baseline-site alignment, no clear focal gain and low positive-flag coverage. Both models remain intervention-responsive. See docs/ssl-synthetic-localization-next-steps.md.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0.25,
+      "cpu_hours": 0.5,
+      "build_hours": 4,
+      "blocked_by": [
+        "@prospective_paired_training_protocol_and_profile"
+      ],
       "status": "proposed",
-      "notes": "Implementation and review in progress. Reserve 500 disjoint TRAIN patients without reading their waveforms; use 64/128 original VALIDATION patients for calibration/evaluation. All 768 cases must qualify, then actual-path profile and inference-only R/S transfer. No native disease labels, fitting, causal domain-mismatch claim or closed test. Runtime estimates are ceilings, not measured results."
+      "notes": "Reserve existing 500 disjoint TRAIN patients; their waveforms remain unread. Freeze cases, R/S matching, response primary and decision rule, new disjoint original-VALIDATION calibration/evaluation patients, qualification and actual training-path profile before any fit. No isolated causal background claim; whole stream must remain within existing ceilings. No run launched. Cost values are prospective estimates."
     }
   ]
 }

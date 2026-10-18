@@ -248,9 +248,10 @@ def matched_schedule(kinds: np.ndarray, steps: int, seed: int) -> np.ndarray:
     np.ndarray
         Step by 16 matrix of bank positions, cycling independently shuffled pools.
     """
-    rng = np.random.default_rng(seed)
+    streams = np.random.SeedSequence(seed).spawn(3)
     columns = []
-    for kind, size in (("positive", 12), ("sham", 2), ("nuisance", 2)):
+    for (kind, size), stream in zip((("positive", 12), ("sham", 2), ("nuisance", 2)), streams, strict=True):
+        rng = np.random.default_rng(stream)
         pool = np.flatnonzero(kinds == kind)
         if not len(pool):
             raise ValueError(f"Empty training pool: {kind}")

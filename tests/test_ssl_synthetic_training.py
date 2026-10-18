@@ -67,6 +67,9 @@ def test_busy_gpu_cannot_create_training_output(tmp_path, monkeypatch):
     destination = tmp_path / "training"
     monkeypatch.setattr("ecg_experiment.ssl_synthetic_training.TRAINING", destination)
     monkeypatch.setattr("ecg_experiment.ssl_synthetic_training.prior_preparation_cpu", lambda: 0)
+    monkeypatch.setattr("ecg_experiment.ssl_synthetic_training.BASE", tmp_path)
+    (tmp_path / "pilot_v1/profile").mkdir(parents=True)
+    (tmp_path / "pilot_v1/profile/summary.json").write_text('{"wall_seconds": 0}')
 
     @contextmanager
     def busy(device, *, blocking):
@@ -83,6 +86,9 @@ def test_expired_admission_retains_failure_without_gpu_work(tmp_path, monkeypatc
     destination = tmp_path / "training"
     monkeypatch.setattr("ecg_experiment.ssl_synthetic_training.TRAINING", destination)
     monkeypatch.setattr("ecg_experiment.ssl_synthetic_training.prior_preparation_cpu", lambda: 0)
+    monkeypatch.setattr("ecg_experiment.ssl_synthetic_training.BASE", tmp_path)
+    (tmp_path / "pilot_v1/profile").mkdir(parents=True)
+    (tmp_path / "pilot_v1/profile/summary.json").write_text('{"wall_seconds": 0}')
 
     @contextmanager
     def available(device, *, blocking):

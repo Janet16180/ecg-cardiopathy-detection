@@ -1,5 +1,15 @@
 # Experiment queue
 
+**18 October counterfactual-loss factorial prepared:** The user authorized continued local work
+until an important finding. The [prospective protocol](ssl-synthetic-localization-counterfactual-factorial.md)
+compares four matched arms: random/SSL initialization by BCE/BCE plus paired loss. Its single primary
+endpoint is the average loss effect on direct edited AP, guarded against baseline suppression,
+weak selectivity and increased control alerts. It reuses the exact 500 TRAIN patients and requires
+both BCE arms to reproduce their predecessor final states exactly. New 64/128 calibration/evaluation
+patients exclude all 384 previously spent validation patients. Source review, full qualification
+and an actual GPU profile precede any fits; no new selection or score has run. All work stays local;
+closed tests remain closed and earlier failed advancement decisions are unchanged.
+
 **18 October saved-map diagnostic complete:** The authorized
 [diagnostic](ssl-synthetic-localization-paired-diagnostic.md) completed in its separately frozen
 [forward adapter](ssl-synthetic-localization-paired-diagnostic-v2.md), preserving the first admission

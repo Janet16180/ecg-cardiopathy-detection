@@ -1478,10 +1478,10 @@
       "cpu_hours": 0.2,
       "build_hours": 4,
       "blocked_by": [
-        "@prospective_factorial_protocol_and_actual_profile"
+        "@frozen_source_and_actual_profile"
       ],
-      "status": "proposed",
-      "notes": "Propose four arms: R/S initialization crossed with BCE/BCE plus a paired loss. Match the 500 training backgrounds, 2,000 inputs, schedule, architecture, initial head and update budget; inference remains single-signal. Freeze one margin/weight, armwise contrasts and factorial interaction before scoring. Retain edited-AP, probability-response and control guards, and report baseline/edited components. Use new disjoint original VALIDATION patients; the earlier 384 are development evidence. Reuse TRAIN caches and forecast all four prediction banks within the existing 4 GiB cap. Profile the actual new loss path before fitting. No automatic replication, threshold tuning, GAN or clinical claim. Costs are prospective estimates."
+      "status": "in_progress",
+      "notes": "Prospective protocol docs/ssl-synthetic-localization-counterfactual-factorial.md freezes the initialization-averaged loss effect on direct edited AP, twelve guards, fixed probability hinge margin 0.20 and weight 1.0, exact BCE-state reproduction, matched 500 TRAIN/2,000 inputs/600 updates and new 64/128 disjoint original VALIDATION patients. Source review and actual GPU profile gate execution. No scores or new patient selection yet. No automatic replication or remote actions. Costs remain estimates."
     }
   ]
 }

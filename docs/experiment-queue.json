@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-18T20:36:50.995343+00:00",
+  "updated_at_utc": "2026-10-18T23:25:10.786839+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "paired_diagnostic_complete_audited",
+    "status": "counterfactual_factorial_protocol_prepared",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2485,6 +2485,20 @@
       "diagnostic_all_attempt_cpu_seconds": 24.788812610999997,
       "cumulative_cpu_seconds": 569.9337830239988,
       "paired_stage_cpu_seconds": 135.80085195200002
+    },
+    "counterfactual_loss_factorial": {
+      "study_id": "ssl_synthetic_counterfactual_factorial_v1",
+      "status": "prospective_protocol_prepared_pending_source_review_and_profile",
+      "authorized": true,
+      "authorization_scope": "User requested continuing local coordinated work until an important conclusion or finding. No pushes or PR updates.",
+      "protocol": "docs/ssl-synthetic-localization-counterfactual-factorial.md",
+      "configuration": "configs/ssl_synthetic_counterfactual_factorial_v1.json",
+      "output_dir": "outputs/ssl_synthetic_localization/counterfactual_factorial_v1",
+      "training_started": false,
+      "performance_scored": false,
+      "closed_test_authorized": false,
+      "primary_endpoint": "Initialization-averaged paired-loss effect on direct edited-map AP; secondary interaction and AP-response effects.",
+      "next_action": "Implement and independently review new source; freeze it before qualification. Require actual four-arm GPU profile and exact predecessor BCE final-state reproduction before new calibration/evaluation. Twelve prospective gates; no tuning or automatic extra fits."
     }
   }
 }

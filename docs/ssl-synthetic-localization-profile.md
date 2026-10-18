@@ -45,7 +45,8 @@ count conservatively covers all three arms on 128*4 validation and 256*4*2 A/B e
 batch 16. GPU forecast = actual full profile wall seconds + 2*W + 600 seconds reserve, at most 7,200.
 CPU forecast = prior preparation CPU charges + actual profile CPU seconds + 2*W + 600 seconds reserve,
 at most 14,400. Prior charges include permitted-input audit, real cache, every retained generator
-qualification (including failed v1), and actual synthetic bank preparation. Use `cpu_seconds` when
+qualification (including failed v1), actual synthetic bank preparation and its independent 1,012-case
+preparation replay audit. Bind that audit receipt and its local script hash. Use `cpu_seconds` when
 recorded, otherwise conservatively charge its `wall_seconds`; label that fallback explicitly. These
 are forecasts, not measured full-training costs. Require all entire-stream files, including earlier
 qualification outputs and a summary reserve, to stay within 4 GiB. Record formulas and each component.

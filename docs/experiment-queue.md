@@ -8,8 +8,11 @@ weak selectivity and increased control alerts. It reuses the exact 500 TRAIN pat
 both BCE arms to reproduce their predecessor final states exactly. New 64/128 calibration/evaluation
 patients exclude all 384 previously spent validation patients. All new source is locally committed; 38 artificial CPU tests and Ruff passed. Independent source review passed. The one qualification passed all 192 backgrounds and 768 cases,
 with 768 exact replays and 384 matching baselines, zero failures or replacements. The actual four-arm GPU profile passed all four exact recoveries and runtime/storage forecasts.
-The four fixed fits are authorized, with exact predecessor BCE closure before paired fits. No
-performance score has run. All work stays local;
+All four fixed fits completed. Both BCE arms reproduced all 600 predecessor losses and final
+tensor identities exactly. Before any scores, independent review caught a scoring helper argument
+order error; the [forward policy](ssl-synthetic-localization-counterfactual-factorial-evaluation-v2.md)
+requires new source/tests while preserving pinned v1 and every scientific endpoint. Evaluation
+awaits that integration/review; no performance score has run. All work stays local;
 closed tests remain closed and earlier failed advancement decisions are unchanged.
 
 **18 October saved-map diagnostic complete:** The authorized

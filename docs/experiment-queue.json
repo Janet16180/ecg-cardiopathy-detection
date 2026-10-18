@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "counterfactual_factorial_profile_passed_training_authorized",
+    "status": "counterfactual_factorial_training_complete_forward_evaluation_pending",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2488,17 +2488,17 @@
     },
     "counterfactual_loss_factorial": {
       "study_id": "ssl_synthetic_counterfactual_factorial_v1",
-      "status": "actual_profile_passed_fixed_training_authorized",
+      "status": "four_fits_complete_exact_bce_closure_pending_forward_evaluation",
       "authorized": true,
       "authorization_scope": "User requested continuing local coordinated work until an important conclusion or finding. No pushes or PR updates.",
       "protocol": "docs/ssl-synthetic-localization-counterfactual-factorial.md",
       "configuration": "configs/ssl_synthetic_counterfactual_factorial_v1.json",
       "output_dir": "outputs/ssl_synthetic_localization/counterfactual_factorial_v1",
-      "training_started": false,
+      "training_started": true,
       "performance_scored": false,
       "closed_test_authorized": false,
       "primary_endpoint": "Initialization-averaged paired-loss effect on direct edited-map AP; secondary interaction and AP-response effects.",
-      "next_action": "Actual four-arm profile/recovery PASS, 328.321s GPU-stage and330.837s CPU-stage forecast. Four fixed600-step fits authorized; exact RB/SB final tensors and all600losses must reproduce before RP/SP. Evaluation needs separate admission.",
+      "next_action": "All4fixed600-step fits completed; RB/SB exactly reproduced final tensor identities and600losses. Before any calibration/evaluation, integrate/review a NEWv2 scorer correcting a helper argument-order bug found in source before any scores. Pinnedv1 remains unchanged; same GPU inference path/profile and all12gates retained.",
       "protocol_commit": "8beb272",
       "data_source_commit": "019c974",
       "training_evaluation_source_commit": "cfd50db",
@@ -2512,7 +2512,13 @@
       "profile_passed": true,
       "profile_receipt": "outputs/ssl_synthetic_localization/counterfactual_factorial_v1/profile/summary.json",
       "profile_receipt_sha256": "4007840a2363359567627025f37143c01119ce2e1668d99b154f9297907fd87f",
-      "qualification_report": "docs/ssl-synthetic-localization-counterfactual-factorial-qualification-results.md"
+      "qualification_report": "docs/ssl-synthetic-localization-counterfactual-factorial-qualification-results.md",
+      "training_completed": true,
+      "training_receipt": "outputs/ssl_synthetic_localization/counterfactual_factorial_v1/training/summary.json",
+      "training_receipt_sha256": "0a4ea42f74a79270c06b9dc43238ca203f8846a17557faee379e159619586b46",
+      "bce_reproduction_passed": true,
+      "evaluation_forward_policy": "docs/ssl-synthetic-localization-counterfactual-factorial-evaluation-v2.md",
+      "evaluation_forward_policy_commit": "9d19076"
     }
   }
 }

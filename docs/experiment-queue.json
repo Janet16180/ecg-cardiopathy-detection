@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "partition_checksum_audit_and_cpu_runtime_complete",
+    "status": "inputs_and_bounded_generator_qualified_gpu_profile_pending",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,13 +2281,11 @@
     "performance_scored": false,
     "training_started": false,
     "closed_test_authorized": false,
-    "next_action": "Freeze and run a permitted training/validation waveform integrity, units and quality audit without opening engineering-test waveforms. Qualify controlled edits, reproduce any reused predecessor, and freeze/profile the executable pilot before training. ECGAD development audit still awaits arrays. No job is running.",
+    "next_action": "Actual source-bound batch16 GPU profile and independent runner review precede full1000-step realSSL plus matched600-stepR/S/F pilot. Preparedbanks use qualified bounded generatorv2; failedv1 admission retained. No real engineering-test/closedpayload access; ECGAD arrays still absent. Agents own separateworktrees; coordinator owns main stream and draftPR67.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
     "missing_required": [
-      "qualified_generator",
-      "training_protocol",
       "gpu_profile"
     ],
     "gpu_inventory": {
@@ -2307,6 +2305,21 @@
     "checksum_audit_receipt_sha256": "8aecf4d84481b2e7de1894ea71fad133c55d23f8f38d6a318bf4971d57db5070",
     "runtime_receipt": "outputs/ssl_synthetic_localization/runtime_restore.json",
     "runtime_receipt_sha256": "7a9be3a9fc8a92490a0065382ec112e8c0fcc8d1d40cf0983ed3def0d04dda61",
-    "training_admitted": false
+    "training_admitted": false,
+    "pilot_protocol": "docs/ssl-synthetic-localization-pilot.md",
+    "generator_amendment": "docs/ssl-synthetic-localization-pilot-generator-v2.md",
+    "pilot_configuration": "configs/ssl_synthetic_pilot_v1.json",
+    "input_audit_receipt": "outputs/ssl_synthetic_localization/input_audit_v1/summary.json",
+    "input_audit_receipt_sha256": "160bc03cd0d476f1679508635f99c2c2affe31bb0e565f1592adbd9dd504e2fa",
+    "real_cache_receipt": "outputs/ssl_synthetic_localization/real_cache_v1/summary.json",
+    "real_cache_receipt_sha256": "d06ae164fdf6444fe3d82a734fc874172e4e3d5cfdf0020a241c58aa6810cf70",
+    "generator_failed_v1_receipt": "outputs/ssl_synthetic_localization/generator_pilot_v1/qualification.json",
+    "generator_failed_v1_receipt_sha256": "929ec1870e831a35967f3b2085cf9028cc04f71b1237c3debf8526243eff9d50",
+    "generator_qualified_v2_receipt": "outputs/ssl_synthetic_localization/generator_pilot_v2/qualification.json",
+    "generator_qualified_v2_receipt_sha256": "452ec35407527fda26bcfb1fa22532783849e0c4b266825c6684a52cc1e2b2ef",
+    "pilot_preparation_receipt": "outputs/ssl_synthetic_localization/pilot_v1/preparation/summary.json",
+    "pilot_preparation_receipt_sha256": "fca2a12b12606acda862ffe2ea149df1f112d4b0af58c737958da13afd440011",
+    "independent_preparation_audit_receipt": "outputs/ssl_synthetic_localization/pilot_v1/prep_audit_v1/summary.json",
+    "independent_preparation_audit_receipt_sha256": "644ae770d3e091feefd0c18e91505c46a93367473b6cafc6171898b344286fcf"
   }
 }

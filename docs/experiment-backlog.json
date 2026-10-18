@@ -1345,7 +1345,7 @@
       "kind": "repo",
       "title": "Qualify controlled waveform alterations for localization supervision",
       "question": "Can a compact generator provide tracked change masks without seams, nuisance labels or lost lead coupling?",
-      "evidence": "PR61 Experiment058 reports exact paired generator support but failed residual robustness; this does not establish clinical validity. Pinned-source reconstruction and control checks precede training.",
+      "evidence": "V1fixedplanned-domain qualification fails28occupancy cases, allretained; boundedv2passesall3060pairs/replays. Reports docs/ssl-synthetic-localization-generator-pilot-v1-results.md and-v2-results.md.",
       "value": 5,
       "clarity": 0.8,
       "gpu_hours": 0,
@@ -1354,8 +1354,8 @@
       "blocked_by": [
         "ssl_synthetic_waveform_audit"
       ],
-      "status": "proposed",
-      "notes": "Start with a controlled ST intervention and independent rendering mechanisms. Keep mask occupancy, sham/noise checks and real-background uncertainty. New code only; old artifacts are missing locally."
+      "status": "done",
+      "notes": "Originalgrid26.494s,v1planned-domain29.305s,v2planned-domain38.161s, eachoneCPUthread. No numericalpredecessorperformancecomparison or clinicalvalidity claim. V2narrowsdomain prospectively; all plannedseeds kept."
     },
     {
       "id": "ssl_synthetic_pilot",
@@ -1371,8 +1371,8 @@
       "blocked_by": [
         "ssl_synthetic_generator_qualification"
       ],
-      "status": "proposed",
-      "notes": "Plan in docs/ssl-synthetic-localization-plan.md. Freeze R/S/F arms, one-seed pilot, masks, metrics, resource gates and executable protocol before scores. GTX1060 3GB requires a fresh actual profile. No independent clinical confirmation without unused compatible expert truth."
+      "status": "in_progress",
+      "notes": "Original fixed protocolcommittedbeforeinputaudit/modelscore: docs/ssl-synthetic-localization-pilot.md plusboundedgenv2amendment. All inputs/banks pass; actualGPUprofile+independentreview pendingbefore1000SSL/600R/S/F updates. No clinicalconfirmation or reservedtestaccess. Estimatesremainprospective."
     },
     {
       "id": "ssl_synthetic_annotation_audit",
@@ -1396,15 +1396,15 @@
       "kind": "repo",
       "title": "Qualify permitted ECG inputs before SSL and synthetic editing",
       "question": "Are permitted training/validation inputs intact, consistently decoded in mV with the expected leads and usable signal quality?",
-      "evidence": "The 18 October patient/checksum audit passed but never decoded waveform payloads; docs/ssl-synthetic-localization-setup-results.md. Runtime is now restored.",
+      "evidence": "Full15,657-record audit passes with11trainingquality exclusions andallvalidationretained; docs/ssl-synthetic-localization-input-audit-results.md.",
       "value": 5,
       "clarity": 0.9,
       "gpu_hours": 0,
       "cpu_hours": 0.5,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "proposed",
-      "notes": "Freeze policy before reading waveforms. Audit train/validation only and preserve engineering-test waveform restrictions. Include fresh checksum verification, units/lead order, finite/flat/clipped signals and explicit retained failures; do not relabel clinically or silently alter the frozen manifest. Estimates are prospective."
+      "status": "done",
+      "notes": "Executed106.906CPU/121.187wallseconds, one thread. Selectedrealcache2048/2048usable,11.082CPU/11.170wallseconds. Buildtime not separately metered. No protected payload opened; waveformquality does not establish clinical normality."
     }
   ]
 }

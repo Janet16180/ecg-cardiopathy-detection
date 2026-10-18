@@ -1,16 +1,19 @@
 # Experiment queue
 
-**18 October SSL and synthetic localization stream:** The independent [plan](ssl-synthetic-localization-plan.md)
-continues on `research/ssl-synthetic-localization` alongside the other session's No Time to Train PR.
-The [executed setup report](ssl-synthetic-localization-setup-results.md) records a metadata-only split:
-12,078 training, 1,476 validation and 1,469 engineering-test patients, with zero overlap; 3,846 patients
-from folds 9–10 stay excluded. Official checksum metadata declares 21,799 unique signal-file digests.
-No waveform or diagnostic value was interpreted. The shared pinned Python environment is restored;
-40 focused CPU tests pass. No actual GPU profile, training or performance scoring has run. Waveform
-quality, generator qualification, predecessor reproduction and the executable pilot/resource gate remain
-required. ECGAD annotation artifacts remain missing. Training and closed tests are not admitted; earlier
-stopped experiments remain stopped. The next task is a prospectively defined training/validation input
-audit, preserving unread engineering-test waveforms. No job is running.
+**18 October SSL and synthetic localization stream:** The user authorized unattended work with
+coordinated agents in independent worktrees, on draft PR #67. The original [pilot protocol](ssl-synthetic-localization-pilot.md)
+freezes a 2,048-patient real-SSL subset, 500 synthetic training examples, matched R/S/F fits and
+held-out edit-profile evaluation. The [input audit](ssl-synthetic-localization-input-audit-results.md)
+verified and decoded all 15,657 permitted training/validation ECGs: zero integrity failures, 11 training
+quality exclusions, all validation retained and 6,142 protected records unread. All 2,048 prospectively
+selected patients passed the [real-cache gate](ssl-synthetic-localization-real-cache-results.md).
+Initial generator v1 passed its design grid but failed 28/3,060 planned occupancy checks; its failure is
+retained. The [bounded v2 amendment](ssl-synthetic-localization-pilot-generator-v2.md) qualifies all
+3,060 planned cases with exact replays. Prepared A-only training/validation banks and independent
+counterfactual replay pass; the entire stream currently occupies about 1.22 GB. The actual GPU profile
+and runner review still precede training. No full fit or model score has run. Engineering-test real
+waveforms, reserved tests and earlier stopped experiments remain closed/stopped; clinical annotation
+audit still lacks ECGAD artifacts. See the JSON catalog for live receipt hashes and the agents' reports.
 
 **Updated:** 18 October 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 

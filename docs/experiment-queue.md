@@ -15,8 +15,10 @@ counterfactual replay pass; the entire stream currently occupies about 1.22 GB. 
 passes CPU operator/gradient parity and its separate actual GPU profile, including exact replay.
 The fixed 1,000-update SSL plus 600-update R/S/F fits completed in 68.473 seconds with exact matching
 and frozen-encoder checks; see the [training report](ssl-synthetic-localization-training-results.md).
-The reviewed frozen evaluation is now running, with A calibration preceding B inference and an independent
-saved-map audit to follow. The user requested all further progress remain local, with no pushes or PR updates. Engineering-test real
+The reviewed frozen evaluation completed: held-out-profile AP was R 0.637958, S 0.640600, F 0.157875;
+S−R +0.002642 [−0.003550, +0.008333] fails the frozen advancement rule. Both control point-vetoes pass.
+Independent saved-map recomputation is in progress. A prospective existing-map counterfactual-response
+audit will diagnose input responsiveness without new inference, tuning or changing the failed primary result. The user requested all further progress remain local, with no pushes or PR updates. Engineering-test real
 waveforms, reserved tests and earlier stopped experiments remain closed/stopped; clinical annotation
 audit still lacks ECGAD artifacts. See the JSON catalog for live receipt hashes and the agents' reports.
 

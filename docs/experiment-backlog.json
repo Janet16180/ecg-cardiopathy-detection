@@ -1362,7 +1362,7 @@
       "kind": "experiment",
       "title": "Real ECG SSL followed by synthetic localization supervision",
       "question": "Does real-data SSL initialization improve cross-generator localization over matched random initialization?",
-      "evidence": "User proposed this sequence on 18 October; Experiment064 only scored SSL features by normal-patch distance and did not test synthetic-mask fine-tuning.",
+      "evidence": "Original one-seed pilot completed: B AP R 0.637958, S 0.640600; paired gain +0.002642, 95% interval [-0.003550,+0.008333], below frozen +0.05 rule. F 0.157875. Independent numerical audit pending.",
       "value": 5,
       "clarity": 0.5,
       "gpu_hours": 2,
@@ -1371,8 +1371,8 @@
       "blocked_by": [
         "ssl_synthetic_generator_qualification"
       ],
-      "status": "in_progress",
-      "notes": "Original fixed protocolcommittedbeforeinputaudit/modelscore: docs/ssl-synthetic-localization-pilot.md plusboundedgenv2amendment. All inputs/banks pass; actualGPUprofile+independentreview pendingbefore1000SSL/600R/S/F updates. No clinicalconfirmation or reservedtestaccess. Estimatesremainprospective."
+      "status": "done",
+      "notes": "No advancement. Fits consumed 68.473 wall/68.392 CPU seconds; evaluation 34.474 wall/34.217 CPU seconds, plus preserved failed and passed profiles/preparation costs. Real SSL used 2048 permitted patients and 16000 presentations; 500 synthetic training subjects. B is now development evidence. No clinical transfer or disease result; no further training justified solely by this outcome."
     },
     {
       "id": "ssl_synthetic_annotation_audit",
@@ -1405,6 +1405,23 @@
       "blocked_by": [],
       "status": "done",
       "notes": "Executed106.906CPU/121.187wallseconds, one thread. Selectedrealcache2048/2048usable,11.082CPU/11.170wallseconds. Buildtime not separately metered. No protected payload opened; waveformquality does not establish clinical normality."
+    },
+    {
+      "id": "ssl_synthetic_counterfactual_audit",
+      "kind": "repo",
+      "title": "Audit intervention responsiveness using saved paired-control maps",
+      "question": "Do the trained maps respond to the exact added voltage edit rather than already highlighting its latent phase/lead locations?",
+      "evidence": "Original pilot did not establish SSL benefit; both trained arms exceed uniform, raw-voltage and broad-phase diagnostics, leaving input responsiveness to distinguish. Existing same-subject controls equal paired baselines.",
+      "value": 4,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [
+        "@original_pilot_numerical_audit"
+      ],
+      "status": "proposed",
+      "notes": "Prospective existing-map diagnostic, no new model inference/training/thresholds. Preserve original FAIL; B now development. Verify exact baseline/control equality, then evaluate target-site probability/AP changes versus unedited candidate ST and outside regions, whole latent-subject intervals. Estimates prospective."
     }
   ]
 }

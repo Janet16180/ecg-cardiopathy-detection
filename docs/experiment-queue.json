@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "matched_training_complete_frozen_evaluation_running",
+    "status": "original_pilot_completed_advancement_failed_independent_audit_running",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2278,10 +2278,10 @@
     "preflight_specification": "configs/ssl_synthetic_readiness.json",
     "output_dir": "outputs/ssl_synthetic_localization",
     "other_stream_pull_request_dependency": false,
-    "performance_scored": false,
+    "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "All fixed fits completed and exact matching/payload/source hashes verified. The reviewed single frozen evaluation is now running locally; freeze A-control calibration before B inference. Independent saved-map recomputation follows. No further pushes or PR updates; no real engineering-test or reserved payload access.",
+    "next_action": "Independently recompute saved maps, metrics, thresholds, bootstrap intervals and all source/artifact bindings. Then freeze a bounded existing-map counterfactual-response diagnostic using exact same-subject control counterparts. No added training or threshold tuning; the original advancement rule remains failed. All further work stays local, without pushes or PR updates.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2330,6 +2330,20 @@
     "training_receipt": "outputs/ssl_synthetic_localization/pilot_v1/training/summary.json",
     "training_receipt_sha256": "9c855f74e98ae5f1706ec9baf3fe46b1f104f1e2c24b936b011b96cb00f4b265",
     "training_report": "docs/ssl-synthetic-localization-training-results.md",
-    "evaluation_output_dir": "outputs/ssl_synthetic_localization/pilot_v1/evaluation"
+    "evaluation_output_dir": "outputs/ssl_synthetic_localization/pilot_v1/evaluation",
+    "performance_scope": "Pure-simulation voltage-intervention localization on fixed A/B edit profiles; no real clinical localization score or reserved test.",
+    "evaluation_receipt": "outputs/ssl_synthetic_localization/pilot_v1/evaluation/summary.json",
+    "evaluation_receipt_sha256": "118b0a84324c6ba2b7a77a6761c79abca3c9d4b5e743673d2ec452a33d762aaf",
+    "engineering_advancement_passed": false,
+    "primary_result": {
+      "difference": 0.0026415196285817896,
+      "ci_low": -0.003550148046029515,
+      "ci_high": 0.008332708520918079,
+      "subjects": 256,
+      "cases": 512,
+      "draws": 2000,
+      "skipped_draws": 0,
+      "seed": 20261019
+    }
   }
 }

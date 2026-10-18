@@ -70,7 +70,14 @@ def predict_batch(model: torch.nn.Module, context: dict, indices: list[int]) -> 
     signals = np.stack([render_checked(context, index)["edited"] for index in indices])
     device = next(model.parameters()).device
     with torch.inference_mode():
-        values = model(torch.from_numpy(signals).to(device)).sigmoid().cpu().numpy()
+        logits = model(torch.from_numpy(signals).to(device))
+        if (
+            tuple(logits.shape) != signals.shape
+            or logits.dtype != torch.float32
+            or not torch.isfinite(logits).all()
+        ):
+            raise ValueError("Native logits must have finite float32 waveform geometry")
+        values = logits.sigmoid().cpu().numpy()
     if values.shape != signals.shape or values.dtype != np.float32 or not np.isfinite(values).all():
         raise ValueError("Native probability geometry, dtype or finiteness changed")
     return values

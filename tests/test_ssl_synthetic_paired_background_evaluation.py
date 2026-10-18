@@ -120,3 +120,15 @@ def test_shared_inference_receives_only_observed_waveform(monkeypatch: pytest.Mo
     np.testing.assert_array_equal(model.seen[0], edited)
     assert result.shape == (1, 12, 2500)
     assert np.isfinite(result).all()
+
+
+@pytest.mark.parametrize("bad", [float("inf"), -float("inf"), float("nan")])
+def test_infinite_logits_cannot_be_hidden_by_sigmoid(monkeypatch: pytest.MonkeyPatch, bad: float) -> None:
+    """Sigmoid maps infinity to a finite probability, so raw logits need their own guard."""
+    monkeypatch.setattr(evaluation, "render_checked", lambda *_: {"edited": np.zeros((12, 2500), np.float32)})
+    model = torch.nn.Conv1d(12, 12, 1)
+    with torch.no_grad():
+        model.weight.zero_()
+        model.bias.fill_(bad)
+    with pytest.raises(ValueError, match="logits"):
+        evaluation.predict_batch(model, {}, [2000])

@@ -120,3 +120,27 @@ def test_live_guard_charges_cumulative_costs_and_reserve(
     }
     with pytest.raises(TimeoutError):
         common.check_budget(context, {"wall": 0.0, "cpu": 0.0}, reserve)
+
+
+def test_explicit_predecessor_values_detect_changed_threshold_or_primary() -> None:
+    """Numerical guard verifies thresholds and old primary beyond their receipt digest bindings."""
+    original = {
+        "profiles": {"B": {"s_minus_r_average_precision": {"difference": 0.00264}}},
+        "decision": {"engineering_advancement_passed": False},
+        "calibration": {"thresholds": {"S": 0.9}},
+    }
+    audit = {**copy.deepcopy(original), "all_passed": True, "mismatch_count": 0, "thresholds": {"S": 0.9}}
+    reports = {
+        "original_evaluation": original,
+        "original_numeric_audit": audit,
+        "predecessor_evaluation": {"calibration": {"thresholds": {"S": 0.99}}},
+        "predecessor_calibration": {"thresholds": {"S": 0.99}},
+    }
+    common.explicit_predecessor_values(reports)
+    reports["predecessor_calibration"]["thresholds"]["S"] = 0.98
+    with pytest.raises(ValueError, match="thresholds"):
+        common.explicit_predecessor_values(reports)
+    reports["predecessor_calibration"]["thresholds"]["S"] = 0.99
+    original["profiles"]["B"]["s_minus_r_average_precision"]["difference"] = 0.003
+    with pytest.raises(ValueError, match="primary"):
+        common.explicit_predecessor_values(reports)

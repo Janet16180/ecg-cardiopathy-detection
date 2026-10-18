@@ -59,6 +59,28 @@ def predecessor_integrity(audit: dict[str, Any], transfer: dict[str, Any], origi
             raise ValueError("Predecessor numerical reproduction differs: " + key)
 
 
+def explicit_predecessor_values(reports: dict[str, Any]) -> None:
+    """Compare source-bound calibration and original independently reproduced primary values."""
+    transfer = reports["predecessor_evaluation"]
+    if not same_values(
+        transfer["calibration"]["thresholds"], reports["predecessor_calibration"]["thresholds"]
+    ):
+        raise ValueError("Predecessor calibration thresholds differ")
+    original, audit = reports["original_evaluation"], reports["original_numeric_audit"]
+    if not audit["all_passed"] or audit["mismatch_count"]:
+        raise ValueError("Original numerical audit no longer passes")
+    comparisons = (
+        (
+            original["profiles"]["B"]["s_minus_r_average_precision"],
+            audit["profiles"]["B"]["s_minus_r_average_precision"],
+        ),
+        (original["decision"], audit["decision"]),
+        (original["calibration"]["thresholds"], audit["thresholds"]),
+    )
+    if not all(same_values(first, second) for first, second in comparisons):
+        raise ValueError("Original primary, decision or thresholds differ from numerical reproduction")
+
+
 def _validate_patient_group(
     group: list[dict[str, Any]], subject: int, local: int, profile: str, patients: set[str]
 ) -> None:
@@ -81,10 +103,14 @@ def _validate_patient_group(
         for c in group
     ):
         raise ValueError("Background/subject/profile coordinate changed")
+    if any(c.get("subject", subject) != subject for c in group):
+        raise ValueError("Subject alias differs from global subject")
     if [c["target"] for c in group] != [True, True, False, False]:
         raise ValueError("Target flags changed")
     for positive in group[:2]:
         control = group[3 if positive["nuisance"] else 2]
+        if positive.get("matched_control_case_index", control["case_index"]) != control["case_index"]:
+            raise ValueError("Matched control alias differs from exact paired index")
         if positive["baseline_sha256"] != control["edited_sha256"]:
             raise ValueError("Positive baseline no longer matches its control")
         if positive["nuisance_parameters"] != control["nuisance_parameters"]:
@@ -120,6 +146,8 @@ def admit_context(extra_source_names: tuple[str, ...] = ()) -> dict[str, Any]:
         "predecessor_evaluation": BASE / "real_background_v1/evaluation/summary.json",
         "original_evaluation": BASE / "pilot_v1/evaluation/summary.json",
         "original_training": BASE / "pilot_v1/training/summary.json",
+        "original_numeric_audit": BASE / "pilot_v1/final_audit_v1/summary.json",
+        "predecessor_calibration": BASE / "real_background_v1/evaluation/calibration.json",
     }
     reports = {name: _read_receipt(path) for name, path in paths.items()}
     prep = reports["preparation"]
@@ -128,6 +156,7 @@ def admit_context(extra_source_names: tuple[str, ...] = ()) -> dict[str, Any]:
     predecessor_integrity(
         reports["predecessor_audit"], reports["predecessor_evaluation"], reports["original_evaluation"]
     )
+    explicit_predecessor_values(reports)
     config = json.loads(CONFIG_PATH.read_text())
     sources = {name: sha256_file(ROOT / name) for name in SOURCE_NAMES + extra_source_names}
     inputs = {to_stored(path): sha256_file(path) for path in paths.values()}

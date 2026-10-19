@@ -114,3 +114,38 @@ def test_v2_prior_self_cost_ledger_is_counted_once(tmp_path):
     (study / "prospective_ledger.json").write_text(json.dumps(ledger))
     with pytest.raises(ValueError, match="additive CPU ledger"):
         verify_resources(root, study, main, lambda: None)
+
+
+def test_bindings_keep_amendment_root_separate_from_parent_and_study(tmp_path):
+    from scripts.validation.audit_ssl_synthetic_generated_quality_v2 import bindings
+
+    root = tmp_path / "output_host"
+    source_root = tmp_path / "source_checkout"
+    study = root / "outputs/ssl_synthetic_localization/generated_quality_v2"
+    parent = root / PARENT
+    study.mkdir(parents=True)
+    parent.mkdir(parents=True)
+    source_root.mkdir()
+    (source_root / "author.py").write_text("source")
+    snapshot = study / "source_snapshot/author.py"
+    snapshot.parent.mkdir()
+    snapshot.write_text("source")
+    (parent / "input.json").write_text("parent")
+    (study / "result.json").write_text("result")
+    amendment = {}
+    for name in ("failure.json", "profile.json", "prospective_ledger.json"):
+        relative = f"outputs/ssl_synthetic_localization/generated_quality_v1/{name}"
+        target = root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(name)
+        amendment[relative] = hashlib.sha256(target.read_bytes()).hexdigest()
+    main = {
+        "source_sha256": {"author.py": hashlib.sha256(snapshot.read_bytes()).hexdigest()},
+        "input_sha256": {"input.json": hashlib.sha256((parent / "input.json").read_bytes()).hexdigest()},
+        "output_sha256": {"result.json": hashlib.sha256((study / "result.json").read_bytes()).hexdigest()},
+        "amendment_input_sha256": amendment,
+    }
+    assert bindings(root, source_root, study, parent, main, lambda: None) == 7
+    (root / next(iter(amendment))).write_text("corrupt")
+    with pytest.raises(ValueError, match="amendment receipt binding"):
+        bindings(root, source_root, study, parent, main, lambda: None)

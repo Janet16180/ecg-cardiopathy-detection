@@ -146,9 +146,11 @@ def bindings(
         for path in (bound_path(source_root, name), bound_path(study / "source_snapshot", name)):
             require(file_digest(path, guard) == expected, f"source binding {name}")
             count += 1
-    for root, catalog in ((parent, main["input_sha256"]), (study, main["output_sha256"])):
+    for catalog_root, catalog in ((parent, main["input_sha256"]), (study, main["output_sha256"])):
         for name, expected in catalog.items():
-            require(file_digest(bound_path(root, name), guard) == expected, f"artifact binding {name}")
+            require(
+                file_digest(bound_path(catalog_root, name), guard) == expected, f"artifact binding {name}"
+            )
             count += 1
     amendment = main["amendment_input_sha256"]
     for name in ("failure.json", "profile.json", "prospective_ledger.json"):

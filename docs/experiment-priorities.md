@@ -108,7 +108,7 @@ penalty; one that ranks high earns a protocol like any other.
 | 34 | report_alignment | experiment | ECG-report alignment with PTB-XL cardiologist reports | 2 | 0.3 | 25.0 | 0.12 | - |
 | 35 | cpc_simdino_resource_plan040 | repo | Prospective resource plan for the fixed Transformer objective factorial | 3 | 0.9 | 0.6 | 3.49 | @fresh_compute_budget_authorization |
 | 36 | final_frozen_test | experiment | One-time confirmatory test of the frozen pipeline on untouched data | 5 | 0.9 | 3.0 | 3.12 | @user_freeze_decision |
-| 37 | ssl_synthetic_generated_quality | experiment | Qualify a larger released-generator bank and exact intervention supports | 5 | 0.9 | 3.0 | 2.60 | @prospective_v2_resource_amendment_and_source_review |
+| 37 | ssl_synthetic_randomized_localization | experiment | Learn randomized introduced-change support on public generated backgrounds | 5 | 0.9 | 2.8 | 2.67 | @prospective_randomized_protocol_source_and_actual_training_profile |
 | 38 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
 | 39 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
 | 40 | ssl_synthetic_factorial_mode_diagnostic | experiment | Explain the focal benefit and repeated-edit tradeoff using saved maps | 3 | 0.8 | 1.5 | 2.06 | @prospective_saved_map_diagnostic_protocol |

@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Profile and execute the128fixed-seed generated-quality/support qualification on GPU under its committed protocol and shared lock, then independently verify savedarrays. No learning/disease validation claimed.",
+    "next_action": "Commit and review a bounded randomized-support learning protocol on the released-generator backgrounds, with generator-seed holdout, matched permuted-label control and actual-path GPU profile before fitting. No classification substitution, real data or clinical disease masks.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2600,7 +2600,7 @@
       "historical_protocol_status": "unexecuted_missing_parent_receipts; superseded_for_this_host_by_separate_standalone_probe"
     },
     "continuation_2026_10_19": {
-      "status": "quality_v1_profile_stopped_before_bank_v2_resource_amendment_in_preparation",
+      "status": "released_generator_quality_completed_independently_verified_randomized_learning_protocol_in_preparation",
       "historical_payloads_present": false,
       "history_preserved": true,
       "gpu_access_verified": true,
@@ -2622,8 +2622,8 @@
       "standalone_audit_report": "docs/ssl-synthetic-localization-pretrained-generator-independent-audit-v1-results.md",
       "quality_source_commit": "be9ea5f",
       "quality_execution": "awaiting_final_numerical_source_review_and_actual_path_profile",
-      "verified_current_machine_cpu_seconds": 1.6714985129999997,
-      "verified_current_machine_gpu_wall_seconds": 0.0,
+      "verified_current_machine_cpu_seconds": 12.057117989999998,
+      "verified_current_machine_gpu_wall_seconds": 13.564630086999387,
       "quality_v1_output": "outputs/ssl_synthetic_localization/generated_quality_v1",
       "quality_v1_profile_verdict": "failed_wall_forecast1550.645226>1200; no bank generated",
       "quality_v1_failure": "outputs/ssl_synthetic_localization/generated_quality_v1/failure.json",
@@ -2637,7 +2637,25 @@
         "skipped": 6,
         "seconds": 87.87,
         "log": "outputs/ssl_synthetic_localization/continuation_cpu_tests_v1.log"
-      }
+      },
+      "quality_v2_output": "outputs/ssl_synthetic_localization/generated_quality_v2",
+      "quality_v2_main_receipt_sha256": "0067dc16c609a7209cb626e8d31600f6b654d192e3b0803968ca3275db1660b2",
+      "quality_v2_results_report": "docs/ssl-synthetic-localization-generated-quality-v2-results.md",
+      "quality_v2_independent_report": "docs/ssl-synthetic-localization-generated-quality-independent-audit-v2-results.md",
+      "quality_v2_bank_samples": 128,
+      "quality_v2_variants": 512,
+      "quality_v2_operational_gates_passed": 15,
+      "quality_v2_independent_scalar_checks": 18190,
+      "quality_v2_independent_binding_checks": 126,
+      "quality_v2_mismatches": 0,
+      "quality_v2_primary": {
+        "difference": 0.8094248365473182,
+        "ci_low": 0.8038931804338517,
+        "ci_high": 0.8148564292963815,
+        "interpretation": "independent-lead derivative activity timing vs circular shifts; not physiological validation"
+      },
+      "quality_v2_execution": "completed_with_independent_saved_output_audit",
+      "randomized_learning": "separate_protocol_in_preparation; do not use fixed fixtures for training"
     }
   },
   "experiment_041_cpu_screening": {

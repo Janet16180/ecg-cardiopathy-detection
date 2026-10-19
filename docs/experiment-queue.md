@@ -1,5 +1,16 @@
 # Experiment queue
 
+**19 October actual released-generator bank verified:** Pulse2Pulse generated all128fixedseeds
+and512canonicalvariants. All15operationalgates pass; the independent audit passed18,190scalar
+and126bindingchecks with zero mismatches and exact variant/mask reconstruction.
+See [executed results](ssl-synthetic-localization-generated-quality-v2-results.md) and
+[independent audit](ssl-synthetic-localization-generated-quality-independent-audit-v2-results.md).
+Native-minus-shifted independent-lead activity Jaccard is0.809425[0.803893,0.814856], an engineering
+timing proxy. Cumulative measured new-machineCPU12.057118seconds/GPU-lock13.564630seconds
+include the retained failedprofile and its audit. Clinical plausibility, diseaseconditioning and
+real disease localization remain unproven. Fixed-position fixtures cannot train a meaningful
+localizer; a separately committed randomized-support learning study is being prepared.
+
 **19 October actual GPU profile retained:** Qualityv1 completed four exact CPU predecessor
 replays and one CUDA profile, then stopped before the bank: full-path wall5.822870seconds
 forecast1,550.645226seconds exceeded the frozen1,200second cap. Peak CUDA allocation45,372,928bytes

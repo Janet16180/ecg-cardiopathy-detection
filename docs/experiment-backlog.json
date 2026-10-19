@@ -1628,17 +1628,32 @@
       "kind": "experiment",
       "title": "Qualify a larger released-generator bank and exact intervention supports",
       "question": "Do fixed generated signals show aligned cross-lead activity and support numerically exact focal/repeated interventions?",
-      "evidence": "V1 actual GPU profile stops beforebank on wallforecast1550.645>1200seconds, while2GiB memory gate passes. Failed outputs/costs retained. V2 resource amendment to1800seconds in preparation, without endpoint changes.",
+      "evidence": "Actual128seed/512variant releasedgeneratorbank passed15operationalgates; independent18190scalar/126bindingchecks0mismatches. Primarycoherence+.809425[.803893,.814856]. docs/ssl-synthetic-localization-generated-quality-v2-results.md.",
       "value": 5,
       "clarity": 0.9,
       "gpu_hours": 0.5,
       "cpu_hours": 0.5,
       "build_hours": 2,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "V1profile wallforecastfailure preserved/charged; v2resourceonly amendment passed. Fixedposition fixtures are not learningbenchmark. AllnewmachineCPU12.057118s/GPU13.564630s throughaudit; clinicalfidelity/units/diseasecontrol unresolved."
+    },
+    {
+      "id": "ssl_synthetic_randomized_localization",
+      "kind": "experiment",
+      "title": "Learn randomized introduced-change support on public generated backgrounds",
+      "question": "Can a signal-only localizer trained with correct varied masks outperform permuted supervision and amplitude on held-out generator seeds?",
+      "evidence": "ReleasedPulse2Pulse bank exists, exactmask mechanism verified; priorfixedtimes/lead cannot establish learning. Newprospective randomized lead/time/sign/width/amplitude protocol in preparation.",
+      "value": 5,
+      "clarity": 0.9,
+      "gpu_hours": 0.33,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
       "blocked_by": [
-        "@prospective_v2_resource_amendment_and_source_review"
+        "@prospective_randomized_protocol_source_and_actual_training_profile"
       ],
       "status": "proposed",
-      "notes": "Same128seeds,controls,metrics and profilefactor2. Fixed-position masks only qualify introduced numerical support; no model training or disease mask claim."
+      "notes": "No fixedfixture training, no clinicalorrealdata labels. Sameinputs/init/updatebudget across supervised/permutedarms. Reportfocal/repeatedandcontrols,seedconditionalintervals,allfailures."
     }
   ]
 }

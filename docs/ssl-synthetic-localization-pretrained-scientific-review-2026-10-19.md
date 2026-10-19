@@ -136,3 +136,37 @@ verdict or sample-selection rule. Numerical verification belongs to the separate
 The executing coordinator's results report should retain the v1 profile failure, unknown physical
 calibration, generator provenance limits and the fixed-support shortcut caveat. No further model
 training or claims about real abnormality localization follow from these saved results.
+
+## Randomized-support learning source review
+
+The new [learning protocol](ssl-synthetic-localization-randomized-learning-v1.md) was frozen in
+`68a4931` before new randomized interventions or fits. Scientific GO applies to implementation commit
+`b612efc` and these reviewed digests:
+
+- Numerical helper `ecg_experiment/ssl_synthetic_randomized_localization.py`:
+  `a8af5f609994ace4ce93acb0e8217ff85285d969ef9003f58267162a0c87d6c0`.
+- Controller `ecg_experiment/ssl_synthetic_randomized_localization_run.py`:
+  `9fb927be7459a82e0790fb786b42e63c7327e9f5cea90475bd7b6df982afb169`.
+
+Reviewed the complete numerical helper, controller, wrapper and artificial tests. Parameter draws,
+canonical-lead hulls, final-array masks, training-only class weights and mask derangement, fixed
+observed-only network, identical initialization, interleaved batch schedule and all twelve scientific
+gates match the prospective design. The secondary spatial prior uses training masks only. Both arms
+finish fitting before evaluation; paired responses use matched nuisance maps only for scoring. The
+same grouped seed-resampling sequence underlies pooled and mode-specific intervals.
+
+Pre-execution review identified missing full step-two recovery verification, delayed offending-case
+persistence, missing explicit sham/limb checks, and a draft arm-by-arm schedule differing from the
+interleaved protocol. The frozen source fixes these before any real optimization. Original and
+recovered step-two and step-three model/Adam states and losses are checked exactly, while scientific
+fits start from the common initial model with fresh Adam. Failed support cases are retained before
+rejection. Actual full-path profiling separately records cold work, recurring steps and inference;
+CPU, whole-wall and GPU-lock forecasts and guards use their declared separate limits.
+
+This is a scientifically useful bounded test of learning introduced changes because locations,
+leads, widths, signs and amplitudes vary, background seeds are held out from fitting, and the matched
+permuted-target arm controls for learning broad target priors. It remains one smooth-offset family,
+one fitted randomness and generated-background evaluation. A PASS would not establish disease
+localization, physiological perturbation validity, self-supervised advantage or an untouched patient
+test. No such claims are encoded in the source verdict. Independent numerical review, committed
+integration and required tests remain separate launch conditions.

@@ -1,5 +1,6 @@
 """Checks for NTT affinity geometry, label permutations and fitting-only cluster selection."""
 
+import json
 import time
 from types import SimpleNamespace
 
@@ -120,3 +121,14 @@ def test_kmeans_iteration_exhaustion_is_not_convergence(monkeypatch):
     model.n_iter_ = 4
     _, ok = fit_model(np.zeros((4, 2)), "kmeans", "none", 2, 1)
     assert ok
+
+
+def test_low_rank_pca_metadata_is_strict_json_serializable():
+    """A retained dimension below the cap must not leak NumPy scalars into receipts."""
+    rng = np.random.default_rng(71)
+    values = rng.normal(size=(50, 3)) @ rng.normal(size=(3, 30))
+    for view in ("native_qrs", "physical"):
+        state, _ = fit_view(values, np.arange(40), view)
+        assert type(state["dimensions"]) is int
+        assert 1 <= state["dimensions"] < 16
+        assert json.loads(json.dumps(state)) == state

@@ -123,7 +123,7 @@ def fit_view(values: np.ndarray, fitting: np.ndarray, view: str) -> tuple[dict, 
         state = fit_representation(frame.iloc[fitting], nuisance.iloc[fitting], "raw")
         transformed = transform_representation(state, frame, nuisance)
         return {
-            "dimensions": state["dimensions"],
+            "dimensions": int(state["dimensions"]),
             "explained_variance": float(state["pca"].explained_variance_ratio_[: state["dimensions"]].sum()),
         }, transformed
     if view.startswith("ntt_"):
@@ -131,7 +131,7 @@ def fit_view(values: np.ndarray, fitting: np.ndarray, view: str) -> tuple[dict, 
             axis=0
         )
     pca = PCA(n_components=0.95, svd_solver="full").fit(values[fitting])
-    keep = min(16, pca.n_components_)
+    keep = int(min(16, pca.n_components_))
     return {
         "dimensions": keep,
         "explained_variance": float(pca.explained_variance_ratio_[:keep].sum()),
@@ -255,7 +255,7 @@ def single_reference_fit(
         "fit_balanced": balanced(all_labels[fitting], configuration["clusters"]),
         "anchor_balanced": balanced(labels, configuration["clusters"]),
         "silhouette": silhouette(transformed[anchors], labels),
-        "dimensions": state["dimensions"],
+        "dimensions": int(state["dimensions"]),
     }, labels
 
 

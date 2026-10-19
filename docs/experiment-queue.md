@@ -1,5 +1,12 @@
 # Experiment queue
 
+**18 October finding-grounding successor frozen:** The existing public PTB reasoning file matches
+the authored corrected0.0.2release exactly. Read-only role/task qualification found97development
+patients, including56with variable training answers for the same context and offered leads.
+[Experiment043](experiment-043-lead-grounding.md) freezes a two-fit test of waveform information
+against matched context/offer-only HGB, with a fixed lookup guard. No grounding fit or performance
+score has been produced. This is a conditional benchmark task with generated annotations.
+
 **18 October executed CPU comparison:** 041v2 reproduced the saved historical probabilities exactly,
 then completed the frozen two-arm fit. HGB AUROC 0.946512 versus logistic 0.918070, paired difference
 +0.028442 [0.021141,0.036076]; sensitivity at separate normal-only 5% thresholds 0.781656 versus

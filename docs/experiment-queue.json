@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T02:32:03.785977+00:00",
+  "updated_at_utc": "2026-10-19T02:49:16.266775+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2290,5 +2290,13 @@
     "next_action": "Prepare model-independent SPH features within passed profile budget; then one frozen external comparison.",
     "qualification": "outputs/experiment042_measurement_transfer_v1/qualification/completion.json",
     "profile": "outputs/experiment042_measurement_transfer_v1/profile/completion.json"
+  },
+  "experiment_043_lead_grounding": {
+    "status": "protocol_frozen_pending_implementation",
+    "authorized": true,
+    "protocol": "docs/experiment-043-lead-grounding.md",
+    "output_dir": "outputs/experiment043_lead_grounding_v1",
+    "next_action": "Implement/review fixed waveform-versus-context HGB comparison on corrected public finding-conditioned benchmark; no grounding fit or performance yet.",
+    "scope": "Conditional sparse benchmark answers, not native clinical disease masks or explanation of041."
   }
 }

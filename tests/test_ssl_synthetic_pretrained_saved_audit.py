@@ -182,3 +182,20 @@ def test_resource_ledger_and_forecast_integrity(tmp_path):
     (tmp_path / "profile.json").write_text(json.dumps(profile))
     with pytest.raises(ValueError, match="profile forecast"):
         check_resources(tmp_path, main, {"output_bytes_ceiling": 96 * 1024**2})
+
+
+def test_terminal_audit_ledger_charges_failure_and_unknown_prior(tmp_path):
+    import json
+    import time
+
+    from scripts.validation.audit_ssl_synthetic_pretrained_standalone import write_audit_ledger
+
+    (tmp_path / "failure.json").write_text('{"all_passed":false}')
+    write_audit_ledger(
+        tmp_path, "failure.json", "main", 3.0, (time.process_time() - 0.2, time.perf_counter() - 0.3)
+    )
+    value = json.loads((tmp_path / "prospective_ledger.json").read_text())
+    assert value["cpu_seconds"] >= 0.2
+    assert value["cumulative_cpu_seconds"] == 3 + value["cpu_seconds"]
+    assert value["entries"][0]["receipt"] == "failure.json"
+    assert value["gpu_wall_seconds"] == 0

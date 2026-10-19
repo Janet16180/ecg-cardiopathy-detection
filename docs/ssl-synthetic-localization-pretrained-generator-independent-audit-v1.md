@@ -30,11 +30,14 @@ mismatches, or exceeded budgets yield FAIL and remain retained. No automatic ret
 
 The new audit directory is `pretrained_generator_standalone_v1/independent_audit_v1`.
 Copy the committed checker there as `audit_script.py` and execute that exact file with
-explicit `--root`, `--main-sha`, `--script-sha`. The audit refuses an existing summary or
+explicit `--root`, `--source-root`, `--main-sha`, `--script-sha`. The first root hosts
+outputs; the second is the committed worktree whose source bytes were frozen by main. The audit refuses an existing summary or
 failure receipt. Use CUDA hidden and OMP/OPENBLAS/MKL/NUMEXPR threads all 1. A fresh
 120 CPU-second and 120 monotonic-wall-second cap, 2-second failure reserve, and 16 MiB
 output cap are additional to the main 180 seconds/96 MiB. Hash reads check the deadline.
-The audit charges its elapsed CPU/wall once, adds CPU to the standalone main cost and
+The audit writes an immutable additive prospective_ledger.json after hashing its success/failure
+receipt. Terminal CPU/wall includes that receipt write/hash; ledger serialization follows the
+measurement endpoint. It charges elapsed CPU/wall once, adds CPU to the standalone main cost and
 keeps GPU-wall zero. It reports exact saved-output checks separately from source-bound
 claims and includes final actual output bytes. No old stream costs or prior hashes are
 reused as evidence. Read no raw/processed/closed ECGs, patient IDs or other outputs.

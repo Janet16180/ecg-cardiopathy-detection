@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import os
+import resource
 import signal
 import time
 from pathlib import Path
@@ -257,13 +258,63 @@ def check_claims(main: dict[str, Any]) -> None:
     require(main["torch_threads"] == main["torch_interop_threads"] == 1, "single main torch threads")
 
 
-def audit(root: Path, main_sha: str, script_sha: str) -> dict[str, Any]:
+def write_audit_ledger(
+    destination: Path,
+    receipt_name: str,
+    main_sha: str,
+    main_cpu: float | None,
+    clock: tuple[float, float],
+) -> None:
+    """Record terminal audit cost after receipt writing and hashing.
+
+    Parameters
+    ----------
+    destination : Path
+        Audit output directory.
+    receipt_name, main_sha : str
+        Audit receipt filename and admitted predecessor hash.
+    main_cpu : float or None
+        Verified predecessor CPU cost, absent if admission failed.
+    clock : tuple[float, float]
+        Audit CPU and monotonic wall starts.
+    """
+    digest = hashlib.sha256((destination / receipt_name).read_bytes()).hexdigest()
+    cpu, wall = time.process_time() - clock[0], time.perf_counter() - clock[1]
+    value = {
+        "accounting_scope": "prospective_standalone_only",
+        "historical_receipts_available": False,
+        "main_sha256": main_sha,
+        "main_cpu_seconds": main_cpu,
+        "entries": [
+            {
+                "stage": "independent_saved_output_audit",
+                "receipt": receipt_name,
+                "sha256": digest,
+                "cpu_seconds": cpu,
+                "wall_seconds": wall,
+                "gpu_wall_seconds": 0.0,
+            }
+        ],
+        "cpu_seconds": cpu,
+        "wall_seconds": wall,
+        "gpu_wall_seconds": 0.0,
+        "cumulative_cpu_seconds": main_cpu + cpu if main_cpu is not None else None,
+        "audit_budget_passed": cpu < 120 and wall < 120,
+        "additive_budget_passed": main_cpu + cpu < 300 if main_cpu is not None else None,
+        "measurement_endpoint": "after audit receipt write/hash, before terminal ledger serialization",
+    }
+    with (destination / "prospective_ledger.json").open("x") as stream:
+        json.dump(value, stream, indent=2, allow_nan=False)
+        stream.write("\n")
+
+
+def audit(root: Path, source_root: Path, main_sha: str, script_sha: str) -> dict[str, Any]:
     """Run one bounded saved-output audit from its frozen copied script.
 
     Parameters
     ----------
-    root : Path
-        Repository hosting the authorized outputs.
+    root, source_root : Path
+        Output-host repository and committed source worktree.
     main_sha, script_sha : str
         Coordinator-admitted SHA-256 bindings.
 
@@ -273,6 +324,7 @@ def audit(root: Path, main_sha: str, script_sha: str) -> dict[str, Any]:
         Independent aggregate audit receipt.
     """
     clock = (time.process_time(), time.perf_counter())
+    main_cpu: float | None = None
     study = root / RELATIVE
     destination = study / "independent_audit_v1"
     require(Path(__file__).absolute() == destination / "audit_script.py", "execute exact copied checker")
@@ -301,13 +353,13 @@ def audit(root: Path, main_sha: str, script_sha: str) -> dict[str, Any]:
         torch.set_num_threads(1)
         torch.set_num_interop_threads(1)
         require(sha256(Path(__file__), guard) == script_sha, "admitted checker SHA")
-        require(sha256(root / CORE_NAME, guard) == CORE_SHA256, "frozen independent arithmetic core")
+        require(sha256(source_root / CORE_NAME, guard) == CORE_SHA256, "frozen independent arithmetic core")
         require(sha256(study / "summary.json", guard) == main_sha, "admitted main SHA")
         main = read_json(study / "summary.json")
         config = read_json(
             study / "source_snapshot/configs/ssl_synthetic_pretrained_generator_standalone_v1.json"
         )
-        bindings = check_bindings(root, study, main, guard)
+        bindings = check_bindings(source_root, study, main, guard)
         for asset in config["public_assets"]:
             path = local_path(study, asset["filename"])
             require(path.stat().st_size == asset["bytes"], "public asset byte count")
@@ -334,12 +386,13 @@ def audit(root: Path, main_sha: str, script_sha: str) -> dict[str, Any]:
         require(all(gates.values()), "technical gate failure")
         check_claims(main)
         resources = check_resources(study, main, config)
+        main_cpu = resources["main_cpu_seconds"]
         ledger = read_json(study / "prospective_ledger.json")
         require(ledger["entries"][0]["sha256"] == main_sha, "ledger main binding")
-        require(check_bindings(root, study, main, guard) == bindings, "bindings unchanged after audit")
+        require(check_bindings(source_root, study, main, guard) == bindings, "bindings unchanged after audit")
         require(sha256(study / "summary.json", guard) == main_sha, "main unchanged after audit")
         require(sha256(Path(__file__), guard) == script_sha, "checker unchanged after audit")
-        require(sha256(root / CORE_NAME, guard) == CORE_SHA256, "core unchanged after audit")
+        require(sha256(source_root / CORE_NAME, guard) == CORE_SHA256, "core unchanged after audit")
         guard()
         result = {
             "all_passed": True,
@@ -359,6 +412,7 @@ def audit(root: Path, main_sha: str, script_sha: str) -> dict[str, Any]:
             "architecture_execution_source_bound": True,
             "clinical_claim": False,
             "accounting_scope": "prospective_standalone_only",
+            "peak_rss_bytes": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024,
             "cpu_seconds": time.process_time() - clock[0],
             "wall_seconds": time.perf_counter() - clock[1],
         }
@@ -371,6 +425,7 @@ def audit(root: Path, main_sha: str, script_sha: str) -> dict[str, Any]:
         with (destination / "summary.json").open("x") as stream:
             json.dump(result, stream, indent=2, allow_nan=False)
             stream.write("\n")
+        write_audit_ledger(destination, "summary.json", main_sha, main_cpu, clock)
         return result
     except Exception as error:
         with (destination / "failure.json").open("x") as stream:
@@ -388,6 +443,7 @@ def audit(root: Path, main_sha: str, script_sha: str) -> dict[str, Any]:
                 indent=2,
             )
             stream.write("\n")
+        write_audit_ledger(destination, "failure.json", main_sha, main_cpu, clock)
         raise
     finally:
         signal.setitimer(signal.ITIMER_REAL, 0)
@@ -398,10 +454,13 @@ def main() -> None:
     """Parse explicit audit bindings and print aggregate status."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, required=True)
+    parser.add_argument("--source-root", type=Path, required=True)
     parser.add_argument("--main-sha", required=True)
     parser.add_argument("--script-sha", required=True)
     args = parser.parse_args()
-    print(json.dumps(audit(args.root.absolute(), args.main_sha, args.script_sha)))
+    print(
+        json.dumps(audit(args.root.absolute(), args.source_root.absolute(), args.main_sha, args.script_sha))
+    )
 
 
 if __name__ == "__main__":

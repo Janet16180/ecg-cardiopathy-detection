@@ -37,3 +37,12 @@ remains unmeasured. Private dense/pooled vectors are available for a separate cl
 [CLUSTER-03](../clustering/cluster03-native-reference/results.md) now clusters both the raw native
 vectors and No Time to Train affinity outputs on a broader matched cohort. Stable partitions depend
 on representation/reference choices; the failed persistence gate and phenotype limits are retained.
+
+## Blinded review readiness
+
+[NTT-07](ntt07-blinded-review/results.md) prepares thirty anonymous calibrated twelve-lead cases and
+thirty pending forms. Its independently audited wider-layout repair preserves the original clipping
+failure and the exact same selected patients. The [semantic guide](ntt07-blinded-review/annotation-validation.md)
+and [forward strict import policy](ntt07-blinded-review/strict-import-policy.md) preserve signal,
+coordinate, provenance and alternative-evidence semantics. No human annotations or clinical
+localization score exist; clinician rubric approval and actual review remain pending.

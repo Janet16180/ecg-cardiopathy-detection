@@ -35,5 +35,6 @@ reference-informed annotation enrichment rather than independently discovered di
 [CLUSTER-04](cluster04-bank-robustness/results.md) tests fifty support-bank draws within the fixed
 reference pool. Its conditional robustness gate passes, and five-bank coordinate averaging improves
 assignment persistence. This does not reverse CLUSTER-03 or establish clinical disease categories.
-CLUSTER-05 is completing the separately frozen dimension, regional-pooling and scalar-scale comparison;
-its final protocol/results will be linked after integration.
+[CLUSTER-05](cluster05-matched-controls/results.md) completes the separately frozen dimension,
+regional-pooling and scalar-scale comparison. Its matched concordance gate fails, and fixed-GMM
+posthoc checks expose numerical-scale dependence. Neither result supplies clinical evidence masks.

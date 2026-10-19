@@ -1356,7 +1356,7 @@
       "blocked_by": [],
       "status": "open",
       "authorized": true,
-      "notes": "PR67 role reconciliation completed: 13,938 training ECGs / 12,078 patients. NTT-02/03 implement numeric candidate references only; a complete typed contract still needs ordinal spans, absent findings and equivalent acceptable evidence without inventing negatives. No new data or clinical definitions."
+      "notes": "PR67 role reconciliation completed:13,938 training ECGs/12,078patients. NTT07 now supplies typed semantic validation including bound ordinal coordinates, absence/unknown and alternative sets. A public-silver QA importer with executed source-to-contract round trips remains unimplemented; do not treat schema or synthetic fixtures as that conversion."
     },
     {
       "id": "ntt_masked_abnormal_reference_transfer",
@@ -1498,16 +1498,16 @@
       "kind": "repo",
       "title": "Represent equivalent specialist evidence and interval semantics",
       "question": "Can a finding accept multiple recurring beats, lead combinations and explicit absent/unknown evidence?",
-      "evidence": "NTT01 symbolic intervals and NTT-03 nominated-versus-alternativebeat ambiguity show why unselected windows cannot all be negative.",
+      "evidence": "NTT-07 executes pending forms plus typed semantic evidence validation: exact signal/lead binding, bounded timestamps/samples, bound beat ordinals, alternative/joint sets, unknown unmarked samples and provenance checks. No real clinical annotations exist.",
       "value": 5,
       "clarity": 0.9,
       "gpu_hours": 0.0,
       "cpu_hours": 0.1,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "open",
-      "authorized": false,
-      "notes": "Draft schema, synthetic-only example and specialist review guide now in schemas/ecg-evidence-annotation-v1.schema.json and docs/ecg-evidence-annotation-guide.md; structural checks passed. Still needs semantic adapter checks for bounds, references and beat-list binding, plus cardiologist review. No new clinical labels or model score."
+      "status": "done",
+      "authorized": true,
+      "notes": "Engineering contract and synthetic checks completed; docs/research/localization/ntt07-blinded-review/results.md. The forward strict import policy rejects nonfinite/nonstandard JSON and adjudication without a lineage-aware policy. Cardiologist rubric approval and clinical validity remain separate blocked work; software does not authenticate reviewers."
     },
     {
       "id": "ecg_independent_expert_evidence",
@@ -1526,7 +1526,7 @@
       ],
       "status": "blocked",
       "authorized": false,
-      "notes": "Plan patient-disjoint adjudication and acceptable evidence sets with cardiologist. No recruitment/data sharing/closed-set access is authorized by this backlog entry."
+      "notes": "NTT07 prepared a local30-case blinded development packet and30blankforms, with independent technical audits. There are zero actual clinician annotations and no rubric approval. Actual patient-disjoint expert/adjudication evaluation remains blocked. No recruitment, contact, uploads, data sharing or closed-set access is authorized by this entry."
     },
     {
       "id": "ecg_native_proposal_coverage",
@@ -1758,7 +1758,7 @@
       "blocked_by": [],
       "status": "done",
       "authorized": true,
-      "notes": "docs/research/clustering/cluster04-bank-robustness/results.md. All110 fits and50x60 classifier predictions independently reproduced. Sampling is within a finite explored support pool; source co-occurrence, physical-baseline bank uncertainty and independent patient/source confirmation remain unresolved. No clinical localization claim."
+      "notes": "docs/research/clustering/cluster04-bank-robustness/results.md. All110 fits and50x60 classifier predictions independently reproduced. Sampling is within a finite explored support pool; source co-occurrence, physical-baseline bank uncertainty and independent patient/source confirmation remain unresolved. No clinical localization claim. Posthoc smaller43-anchor group:25stable single versus41with five-bank averaging; primary unchanged."
     },
     {
       "id": "native_embedding_cluster_geometry",
@@ -1801,12 +1801,12 @@
       "value": 5,
       "clarity": 0.75,
       "gpu_hours": 0,
-      "cpu_hours": 0.012027777777777776,
+      "cpu_hours": 0.012028484605770145,
       "build_hours": 3,
       "blocked_by": [],
       "status": "done",
       "authorized": true,
-      "notes": "docs/research/clustering/cluster05-matched-controls/results.md. Exact receipt runtime and independent audit are recorded in the queue/results once integrated. Conditional reference associations do not establish disease subtypes; equal-patient regional PCA is a separate follow-up."
+      "notes": "docs/research/clustering/cluster05-matched-controls/results.md. All1440 grid fits and23controls independently reconstructed exactly. Candidate CPU hours are measured study walltime excluding tests/audit. Fixed-GMM posthoc diagnostics show scale sensitivity; regional basis retained10.79% regionvariance. No disease categories or clinical evidence claim."
     },
     {
       "id": "ntt_reference_dictionary_evidence",
@@ -1862,6 +1862,22 @@
       "status": "open",
       "authorized": false,
       "notes": "Cache-only follow-up; distinguish fixed configuration from re-selection, nine-shot fullpool from independent banks, and correlated support draws from independent samples. Do not select a favorable bank or claim clinical validation."
+    },
+    {
+      "id": "blinded_evidence_packet_readiness",
+      "kind": "repo",
+      "title": "Prepare a blinded local ECG packet and semantic annotation checks",
+      "question": "Can independent finding-specific review start from calibrated signals and genuinely pending forms without exposing predictions?",
+      "evidence": "NTT07 completed30cases/180PDFpages/180PNGs/30pendingforms, zeroannotations; independent all-artifact/role/coordinate/privacy auditpassed. Original4mV clippingfailure preserved; repaired15mV layout retainedsamepatients.",
+      "value": 5,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.06705594236745188,
+      "build_hours": 4,
+      "blocked_by": [],
+      "status": "done",
+      "authorized": true,
+      "notes": "docs/research/localization/ntt07-blinded-review/results.md. CPUcost includes rounded first-attempt27.90s plus exact repairedwall; excludes tests/audits/build. Technical readiness is not clinical rubric approval or evidence accuracy. Activepacket staysprivate underoutputs/ntt07_blinded_review/layout_v2/reviewer/."
     }
   ]
 }

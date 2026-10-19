@@ -40,8 +40,8 @@ After each result:
 CLUSTER-04 has completed conditional bank robustness with a passing gate; CLUSTER-05 has completed
 matched dimension/pooling/scale controls with a failed concordance gate. Their results preserve the
 original CLUSTER-03 failure. New scale/aggregation and regional-covariance follow-ups are ranked below;
-they require their own protocols and are not running. Blinded clinical-review infrastructure is being
-prepared; human evidence annotations remain unavailable.
+they require their own protocols and are not running. Blinded clinical-review infrastructure is complete
+and technically audited; human evidence annotations and clinical rubric approval remain unavailable.
 
 [CLUSTER-03](research/clustering/cluster03-native-reference/results.md) completed native encoder and
 No Time to Train reference-affinity clustering on 1,993 matched patients. Stable selected groups fail
@@ -87,11 +87,11 @@ penalty; one that ranks high earns a protocol like any other.
 | Rank | ID | Kind | Candidate | Value | Clarity | Hours | Score | Waiting on |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | --- |
 | 1 | ntt_reference_contract | repo | Preserve finding and coordinate semantics in public silver references | 5 | 0.8 | 2.1 | 4.69 | - |
-| 2 | ecg_acceptable_evidence_contract | repo | Represent equivalent specialist evidence and interval semantics | 5 | 0.9 | 2.1 | 3.73 | - |
-| 3 | physical_feature_reliability | experiment | Audit heuristic morphology features and beat-consistency measurements | 4 | 0.8 | 3.1 | 2.54 | - |
-| 4 | cpc_validation_accounting040 | repo | Avoid repeated full-source validation in future CPC stage gates | 3 | 0.9 | 1.7 | 2.07 | - |
-| 5 | training_io_local_prefetch | repo | Serve training caches from local disk with read-ahead | 3 | 0.9 | 3.7 | 1.68 | - |
-| 6 | cpc_recurrent_checkpoint_contract | repo | Require exact recurrent checkpoint recovery in future CPC runners | 2 | 0.9 | 1.2 | 1.63 | - |
+| 2 | physical_feature_reliability | experiment | Audit heuristic morphology features and beat-consistency measurements | 4 | 0.8 | 3.1 | 2.54 | - |
+| 3 | cpc_validation_accounting040 | repo | Avoid repeated full-source validation in future CPC stage gates | 3 | 0.9 | 1.7 | 2.07 | - |
+| 4 | training_io_local_prefetch | repo | Serve training caches from local disk with read-ahead | 3 | 0.9 | 3.7 | 1.68 | - |
+| 5 | cpc_recurrent_checkpoint_contract | repo | Require exact recurrent checkpoint recovery in future CPC runners | 2 | 0.9 | 1.2 | 1.63 | - |
+| 6 | ecg_native_proposal_coverage | experiment | Compare native beat proposals with visual proposals | 4 | 0.7 | 3.1 | 1.59 | - |
 | 7 | normal_score_confounders | experiment | Does the normal-reference score track noise, device, age, sex or heart rate? | 3 | 0.8 | 3.0 | 1.39 | - |
 | 8 | manifold_score_ablation | experiment | Ablations of the normal-reference score | 3 | 0.8 | 3.5 | 1.28 | - |
 | 9 | jepa_xecg_concat | experiment | Concatenated ECG-JEPA and xECG features | 3 | 0.6 | 2.5 | 1.14 | - |
@@ -134,18 +134,17 @@ penalty; one that ranks high earns a protocol like any other.
 | 46 | ntt_reference_dictionary_evidence | experiment | Prospective finding dictionary and clinically sufficient reference evidence | 5 | 0.7 | 4.1 | 1.61 | ecg_independent_expert_evidence, @cardiologist_reference_dictionary_review |
 | 47 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
 | 48 | measurement_multisource_training | experiment | Human-read multisource training for the CPU measurement screen | 4 | 0.8 | 4.0 | 1.60 | @prospective_multisource_protocol, @local_challenge_training_manifests |
-| 49 | ecg_native_proposal_coverage | experiment | Compare native beat proposals with visual proposals | 4 | 0.7 | 3.1 | 1.59 | ecg_acceptable_evidence_contract |
-| 50 | ntt_native_encoder_reference_evaluation | experiment | Frozen native ECG encoder reference matching on automatic signal regions | 5 | 0.7 | 4.5 | 1.53 | ecg_independent_expert_evidence, @prospective_independent_source_and_support_uncertainty_protocol |
-| 51 | lead_grounding_membership_followup | experiment | Prospective exact-membership test of frozen lead-grounding models | 3 | 0.6 | 1.6 | 1.45 | @prospective_membership_protocol_and_patient_role |
-| 52 | ntt_masked_abnormal_reference_transfer | experiment | Test abnormal masked references against diagnosis and QRS priors | 5 | 0.6 | 5.0 | 1.23 | ntt_reference_contract, @working_gpu_profile, @independent_localization_reference |
-| 53 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
-| 54 | cluster_independent_source_transfer | experiment | Test morphology partitions on another permitted human-read development source | 4 | 0.6 | 5.1 | 1.06 | physical_feature_reliability, @permitted_independent_development_source |
-| 55 | grouped_shap_localization_audit | experiment | Compare grouped SHAP with expert evidence and existing replacement controls | 4 | 0.5 | 4.0 | 1.00 | ntt_reference_contract, @independent_localization_reference |
-| 56 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
-| 57 | clustering_multisource | experiment | Source-controlled clustering of multi-source embeddings | 4 | 0.5 | 7.0 | 0.76 | ntt_reference_contract |
-| 58 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
-| 59 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
-| 60 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
+| 49 | ntt_native_encoder_reference_evaluation | experiment | Frozen native ECG encoder reference matching on automatic signal regions | 5 | 0.7 | 4.5 | 1.53 | ecg_independent_expert_evidence, @prospective_independent_source_and_support_uncertainty_protocol |
+| 50 | lead_grounding_membership_followup | experiment | Prospective exact-membership test of frozen lead-grounding models | 3 | 0.6 | 1.6 | 1.45 | @prospective_membership_protocol_and_patient_role |
+| 51 | ntt_masked_abnormal_reference_transfer | experiment | Test abnormal masked references against diagnosis and QRS priors | 5 | 0.6 | 5.0 | 1.23 | ntt_reference_contract, @working_gpu_profile, @independent_localization_reference |
+| 52 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
+| 53 | cluster_independent_source_transfer | experiment | Test morphology partitions on another permitted human-read development source | 4 | 0.6 | 5.1 | 1.06 | physical_feature_reliability, @permitted_independent_development_source |
+| 54 | grouped_shap_localization_audit | experiment | Compare grouped SHAP with expert evidence and existing replacement controls | 4 | 0.5 | 4.0 | 1.00 | ntt_reference_contract, @independent_localization_reference |
+| 55 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
+| 56 | clustering_multisource | experiment | Source-controlled clustering of multi-source embeddings | 4 | 0.5 | 7.0 | 0.76 | ntt_reference_contract |
+| 57 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
+| 58 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
+| 59 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
 
 Reruns after Ningbo (`rerun_of` in the backlog): 022 as `ningbo_sph_transfer`, 024 as `rerun_024_multisource`,
 025 as `rerun_025_ningbo`, 026 as `multisource_normal_manifold` and 027 as `multisource_calibration`. 023 is

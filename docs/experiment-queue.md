@@ -1,5 +1,7 @@
 # Experiment queue
 
+**19 October, clustering both representations:** the user authorized [CLUSTER-03](research/clustering/cluster03-native-reference/protocol.md), comparing raw ECG-JEPA vectors with No Time to Train reference-conditioned affinities and physical features. The prospective cohort is the prior 1,999 development patients minus six reference overlaps, with a new CPU profile and bounded extraction before clustering. No new clustering score has run. PR #71 stays draft; no push or merge.
+
 PR #71 is a draft after the user revoked merge authorization. Earlier work was pushed under the personal account; do not merge or publish further implementation without renewed authorization. The dated summaries below retain their original delivery context.
 
 **19 October, native signal result:** [NTT-06 completed](research/localization/ntt06-native-encoder/results.md) with the real frozen ECG-JEPA checkpoint and no image model input. Native QRS balanced accuracy 91.67% versus physical 92.78%; primary gain -1.11 pp [-5.98, +4.31], advancement gate failed. Native QRS exceeds its shifted-window control by 8.33 pp [3.67, 13.01], but whole-record context and unvalidated expert evidence prevent a clinical localization claim. A real CPU profile passed; all 87 permitted waveforms were processed and 14,802 candidate assignments saved locally. Independent saved-output review passed; integrated CPU suite 1,491 passed / six skipped, Ruff and offline package build passed. No further job, push or merge is scheduled. Closed tests remain closed.

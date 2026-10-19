@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T15:29:06.987701+00:00",
+  "updated_at_utc": "2026-10-19T16:45:57.546095+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2549,5 +2549,18 @@
     "integrated_test_seconds": 76.43,
     "ruff_passed": true,
     "package_build_passed": true
+  },
+  "cluster03_native_reference": {
+    "status": "protocol_frozen_implementation_pending",
+    "authorized": true,
+    "protocol": "docs/research/clustering/cluster03-native-reference/protocol.md",
+    "scope": "Matched native ECG-JEPA, NTT prototype/region affinities and physical morphology; new bounded CPU extraction on existing natural development cohort.",
+    "candidate_patients": 1993,
+    "excluded_reference_overlap": 6,
+    "output_dir": "outputs/cluster03_native_reference",
+    "profile_dir": "outputs/cluster03_native_profile",
+    "cache_dir": "outputs/cluster03_native_cache",
+    "publication": "local_only_pr71_draft_no_merge",
+    "next_action": "Implement and freeze stages, profile actual CPU extraction before 1993-record admission, then label-blind stable clustering and support-label permutation controls."
   }
 }

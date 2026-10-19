@@ -1,6 +1,6 @@
 # Experiment queue
 
-**19 October, clustering both representations:** the user authorized [CLUSTER-03](research/clustering/cluster03-native-reference/protocol.md), comparing raw ECG-JEPA vectors with No Time to Train reference-conditioned affinities and physical features. The prospective cohort is the prior 1,999 development patients minus six reference overlaps, with a new CPU profile and bounded extraction before clustering. No new clustering score has run. PR #71 stays draft; no push or merge.
+**19 October, clustering both representations:** the user authorized [CLUSTER-03](research/clustering/cluster03-native-reference/protocol.md), comparing raw ECG-JEPA vectors with No Time to Train reference-conditioned affinities and physical features. The prospective cohort is the prior 1,999 development patients minus six reference overlaps, with a new CPU profile and bounded extraction before clustering. The first profile stopped before real ECG encoding because a case-sensitive lead-name check rejected standard uppercase aliases. The preserved failure and [forward execution correction](research/clustering/cluster03-native-reference/execution-v2.md) retain every scientific gate. No clustering score has run. PR #71 stays draft; no push or merge.
 
 PR #71 is a draft after the user revoked merge authorization. Earlier work was pushed under the personal account; do not merge or publish further implementation without renewed authorization. The dated summaries below retain their original delivery context.
 

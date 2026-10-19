@@ -2551,16 +2551,18 @@
     "package_build_passed": true
   },
   "cluster03_native_reference": {
-    "status": "protocol_frozen_implementation_pending",
+    "status": "profile_stopped_canonical_spelling_successor_implementation",
     "authorized": true,
     "protocol": "docs/research/clustering/cluster03-native-reference/protocol.md",
     "scope": "Matched native ECG-JEPA, NTT prototype/region affinities and physical morphology; new bounded CPU extraction on existing natural development cohort.",
     "candidate_patients": 1993,
     "excluded_reference_overlap": 6,
     "output_dir": "outputs/cluster03_native_reference",
-    "profile_dir": "outputs/cluster03_native_profile",
-    "cache_dir": "outputs/cluster03_native_cache",
+    "profile_dir": "outputs/cluster03_native_profile_v2",
+    "cache_dir": "outputs/cluster03_native_cache_v2",
     "publication": "local_only_pr71_draft_no_merge",
-    "next_action": "Implement and freeze stages, profile actual CPU extraction before 1993-record admission, then label-blind stable clustering and support-label permutation controls."
+    "next_action": "Freeze a successor using the existing canonical lead alias helper, rerun the same actual CPU profile, then admit extraction only if every unchanged gate passes.",
+    "first_profile_failure": "outputs/cluster03_native_profile/failure.json",
+    "execution_amendment": "docs/research/clustering/cluster03-native-reference/execution-v2.md"
   }
 }

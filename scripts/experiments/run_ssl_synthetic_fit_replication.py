@@ -13,7 +13,15 @@ def main() -> None:
     parser.add_argument("--output-root", type=Path, required=True)
     args = parser.parse_args()
     result = run_study(args.output_root)
-    print(json.dumps({key: result[key] for key in ["all_passed", "scientific_passed", "contrasts"]}))
+    print(
+        json.dumps(
+            {
+                "all_passed": result["all_passed"],
+                "scientific_passed": result["aggregate"]["scientific_passed"],
+                "contrasts": result["aggregate"]["contrasts"],
+            }
+        )
+    )
 
 
 if __name__ == "__main__":

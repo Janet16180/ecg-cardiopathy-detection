@@ -1,0 +1,1031 @@
+{
+  "study": "CLUSTER-01",
+  "counts": {
+    "fold1_8_records": 17418,
+    "fold1_8_patients": 15023,
+    "train_records": 13938,
+    "train_patients": 12078,
+    "selected_patients": 2000,
+    "analyzed": 1999,
+    "excluded": 1
+  },
+  "measurement_failures": [],
+  "source_sha256": {
+    "docs/cluster-01-physical-morphology.md": "a09f50548f158db92e0e7f587eca93d963d374463132dd51a57884ba5e99341d",
+    "ecg_experiment/clustering01.py": "45a735dd42de02a8d0fce4faac50a8a0676147fca22d3ecff7c65aaf82101799",
+    "scripts/experiments/run_clustering01.py": "cba110925983362cb7a8b8e92a36b3287a7f1adfa2372b6f71af072f42c4d86c",
+    "ecg_experiment/eda/avance2_features.py": "b88c31643811971a46ce789472bab6d2452250ccfc5d517b559633530fbdd698",
+    "ecg_experiment/eda/signals.py": "f5ab2aafbbd38d16d9e79724887ad4e0909be97c67c7d2b7b447bf65e33fd4d8",
+    "ecg_experiment/eda/ptbxl.py": "9eca8dba73d6134d4c9b863451496c46e52501580f84e66beb73c182f1369415",
+    "ecg_experiment/intervals.py": "b45103664e8c2e063b90c8223b64e7bbe6394e54796e0613538bd0b53dfe99af",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "pyproject.toml": "9df6d56e8f27348d067eb0cf3b6506f5efbbc03154b96b6b3987f4bb4854279e",
+    "uv.lock": "20c6e373cba70e7fe859ba59697f6145c34b42418eddc955f82d29a165d5db7c"
+  },
+  "input_sha256": {
+    "data/raw/ptb-xl/1.0.3/ptbxl_database.csv": "7600de9c1b27d181d850b3c6038a35d7c3ddb6bb33b702e3a20252a6859d216b",
+    "data/raw/ptb-xl/1.0.3/scp_statements.csv": "ad05b0b1fcae83bb1230755ad9cfc7c96f303feddc08a4a9ad5bdc9ca63bac8f"
+  },
+  "waveform_combined_sha256": "4a56e4fd4d8de8bc61e2f2415493ddef0e2d0d55cc757cdeac1bef267be26931",
+  "outputs_sha256": {
+    "outputs/cluster01_physical_morphology/status.json": "467c4542715141111a2dc44398ff2db87cacf3caac30483d6520710e9d42bf62",
+    "outputs/cluster01_physical_morphology/reservation_manifest.json": "efaa51a62f52fc2d10881a58994d2da206ae5683cff08872c09cc5ec08ef253c",
+    "outputs/cluster01_physical_morphology/reservation_policy.json": "028a5ae4e36c29303b37e9d1268ca365090cb600cabe440b9ce0cc672bf78c5d",
+    "outputs/cluster01_physical_morphology/selected_training_patients.csv": "ae8816ec1d601a9daf687741501e45a847aeb0259b16c3afb1bb50388992bd59",
+    "outputs/cluster01_physical_morphology/physical_measurements.csv": "6f2c42617970eb7d45ee0f0e03bef511ae58357395becc62b309b1d5ede71e90",
+    "outputs/cluster01_physical_morphology/analyzed_training_patients.csv": "afed2f97d7b4e9dcbc627a6c3c1c03630f49f6d75632ae3a73df6950facf9952",
+    "outputs/cluster01_physical_morphology/morphology_features.csv": "8d19be5e03e70c354191e5795109251702daab90f21c17dd384a95ac6261c28d",
+    "outputs/cluster01_physical_morphology/unsupervised_progress.json": "a47f8dae505282d85de5ec425f1600e5ddcb2fb7756df420f5efd3cccc8a99d6",
+    "outputs/cluster01_physical_morphology/assignments.csv": "3535bbdfa37f5af817b7474047eaf221393fe370909bae24eb14d47e1d4abc6f",
+    "outputs/cluster01_physical_morphology/enrichment.csv": "94f21e57eb5cdb040bd4cedc0f84c652aa389cfe003a7c4832c88cc04198bf26",
+    "outputs/cluster01_physical_morphology/cluster_stability.png": "c16e8b5fa45bf01b28d1ae275250ae713a55f124e927c1744ec62bad332b9ac3",
+    "outputs/cluster01_physical_morphology/cluster_associations.png": "0d272df766b66d4ee5b5764e7afd714a69a325834a0e4e701dfe080255967463",
+    "outputs/cluster01_physical_morphology/cluster_multilabel_prevalence.png": "d215539efa3a3540532ed95aca6182aec18433804824b812234a1b89379abe2d"
+  },
+  "git_revision": "bc85c76eae3d29478eae34fe1b4750ef9d390631",
+  "environment": {
+    "python": "3.11.13",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "sklearn": "1.9.1",
+    "threads": 2
+  },
+  "feature_names": [
+    "qrs_ms",
+    "qt_ms",
+    "rr_cv",
+    "axis_sin",
+    "axis_cos",
+    "r_amp_I",
+    "r_amp_II",
+    "r_amp_III",
+    "r_amp_aVR",
+    "r_amp_aVL",
+    "r_amp_aVF",
+    "r_amp_V1",
+    "r_amp_V2",
+    "r_amp_V3",
+    "r_amp_V4",
+    "r_amp_V5",
+    "r_amp_V6",
+    "s_amp_I",
+    "s_amp_II",
+    "s_amp_III",
+    "s_amp_aVR",
+    "s_amp_aVL",
+    "s_amp_aVF",
+    "s_amp_V1",
+    "s_amp_V2",
+    "s_amp_V3",
+    "s_amp_V4",
+    "s_amp_V5",
+    "s_amp_V6",
+    "st_I",
+    "st_II",
+    "st_III",
+    "st_aVR",
+    "st_aVL",
+    "st_aVF",
+    "st_V1",
+    "st_V2",
+    "st_V3",
+    "st_V4",
+    "st_V5",
+    "st_V6",
+    "t_amp_I",
+    "t_amp_II",
+    "t_amp_III",
+    "t_amp_aVR",
+    "t_amp_aVL",
+    "t_amp_aVF",
+    "t_amp_V1",
+    "t_amp_V2",
+    "t_amp_V3",
+    "t_amp_V4",
+    "t_amp_V5",
+    "t_amp_V6"
+  ],
+  "missing_feature_fraction": 0.0,
+  "annotations": {
+    "NORM": 891,
+    "MI": 494,
+    "STTC": 474,
+    "CD": 449,
+    "HYP": 254
+  },
+  "multi_abnormal_patients": 434,
+  "results": {
+    "raw:kmeans": {
+      "parameter": 2,
+      "clusters": 2,
+      "assigned_fraction": 1.0,
+      "noise": 0,
+      "sizes": {
+        "0": 1732,
+        "1": 267
+      },
+      "silhouette": 0.34177658452446047,
+      "eligible": true,
+      "stability": {
+        "draws": [
+          {
+            "draw": 0,
+            "ari_assigned": 0.9930413713993091,
+            "ari_all": 0.9930413713993091,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 1,
+            "ari_assigned": 0.9794499982379609,
+            "ari_all": 0.9794499982379609,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 2,
+            "ari_assigned": 0.9343442760190849,
+            "ari_all": 0.9343442760190849,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 3,
+            "ari_assigned": 0.9827057920851753,
+            "ari_all": 0.9827057920851753,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 4,
+            "ari_assigned": 0.814718150224308,
+            "ari_all": 0.814718150224308,
+            "jointly_assigned_fraction": 1.0
+          }
+        ],
+        "valid_draws": 5,
+        "median": 0.9794499982379609,
+        "minimum": 0.814718150224308,
+        "maximum": 0.9930413713993091
+      },
+      "candidates": [
+        {
+          "parameter": 2,
+          "clusters": 2,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 1732,
+            "1": 267
+          },
+          "silhouette": 0.34177658452446047,
+          "eligible": true
+        },
+        {
+          "parameter": 4,
+          "clusters": 4,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 584,
+            "1": 365,
+            "2": 933,
+            "3": 117
+          },
+          "silhouette": 0.08921149260232518,
+          "eligible": true
+        },
+        {
+          "parameter": 8,
+          "clusters": 8,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 78,
+            "1": 312,
+            "2": 59,
+            "3": 445,
+            "4": 41,
+            "5": 215,
+            "6": 165,
+            "7": 684
+          },
+          "silhouette": 0.08655748437978877,
+          "eligible": true
+        }
+      ],
+      "pca_dimensions": 16,
+      "explained_variance": 0.919943443602596,
+      "elapsed_seconds": 0.3378790197893977,
+      "ami": {
+        "device": 0.012931489105852291,
+        "site": -0.0005372279747303711,
+        "quality": 0.010077936604671918,
+        "hr_bpm": 0.011862615655792523,
+        "signal_std": 0.07991855909556576,
+        "baseline_fraction": 0.008833571256272038,
+        "beat_consistency": 0.006414814049085556,
+        "superclass_combination": 0.10822415846288952
+      }
+    },
+    "raw:gmm": {
+      "parameter": 2,
+      "clusters": 2,
+      "assigned_fraction": 1.0,
+      "noise": 0,
+      "sizes": {
+        "0": 1332,
+        "1": 667
+      },
+      "silhouette": 0.2162876826349744,
+      "eligible": true,
+      "stability": {
+        "draws": [
+          {
+            "draw": 0,
+            "ari_assigned": 0.8866988529292845,
+            "ari_all": 0.8866988529292845,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 1,
+            "ari_assigned": 0.9377937175573039,
+            "ari_all": 0.9377937175573039,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 2,
+            "ari_assigned": 0.9106685806168373,
+            "ari_all": 0.9106685806168373,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 3,
+            "ari_assigned": 0.9010383594842764,
+            "ari_all": 0.9010383594842764,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 4,
+            "ari_assigned": 0.8888647146093988,
+            "ari_all": 0.8888647146093988,
+            "jointly_assigned_fraction": 1.0
+          }
+        ],
+        "valid_draws": 5,
+        "median": 0.9010383594842764,
+        "minimum": 0.8866988529292845,
+        "maximum": 0.9377937175573039
+      },
+      "candidates": [
+        {
+          "parameter": 2,
+          "clusters": 2,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 1332,
+            "1": 667
+          },
+          "silhouette": 0.2162876826349744,
+          "eligible": true
+        },
+        {
+          "parameter": 4,
+          "clusters": 4,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 587,
+            "1": 733,
+            "2": 368,
+            "3": 311
+          },
+          "silhouette": -0.00448964676041285,
+          "eligible": true
+        },
+        {
+          "parameter": 8,
+          "clusters": 8,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 188,
+            "1": 149,
+            "2": 203,
+            "3": 185,
+            "4": 466,
+            "5": 39,
+            "6": 300,
+            "7": 469
+          },
+          "silhouette": 0.01895568798579389,
+          "eligible": false
+        }
+      ],
+      "pca_dimensions": 16,
+      "explained_variance": 0.919943443602596,
+      "elapsed_seconds": 0.26272639771923423,
+      "ami": {
+        "device": 0.01597778899095733,
+        "site": 0.0025334402885498816,
+        "quality": 0.014635292126984502,
+        "hr_bpm": 0.0194738256769104,
+        "signal_std": 0.12733201597369792,
+        "baseline_fraction": 0.0066927167649650275,
+        "beat_consistency": 0.023804329771267542,
+        "superclass_combination": 0.12016516114549824
+      }
+    },
+    "raw:spectral": {
+      "parameter": 2,
+      "clusters": 2,
+      "assigned_fraction": 1.0,
+      "noise": 0,
+      "sizes": {
+        "0": 1860,
+        "1": 139
+      },
+      "silhouette": 0.4145534141402949,
+      "eligible": true,
+      "stability": {
+        "draws": [
+          {
+            "draw": 0,
+            "ari_assigned": 0.8483224614702011,
+            "ari_all": 0.8483224614702011,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 1,
+            "ari_assigned": 0.41142882388351665,
+            "ari_all": 0.41142882388351665,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 2,
+            "ari_assigned": 0.6828359112141686,
+            "ari_all": 0.6828359112141686,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 3,
+            "ari_assigned": 0.8933066076172824,
+            "ari_all": 0.8933066076172824,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 4,
+            "ari_assigned": 0.9128701415933242,
+            "ari_all": 0.9128701415933242,
+            "jointly_assigned_fraction": 1.0
+          }
+        ],
+        "valid_draws": 5,
+        "median": 0.8483224614702011,
+        "minimum": 0.41142882388351665,
+        "maximum": 0.9128701415933242
+      },
+      "candidates": [
+        {
+          "parameter": 2,
+          "clusters": 2,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 1860,
+            "1": 139
+          },
+          "silhouette": 0.4145534141402949,
+          "eligible": true
+        },
+        {
+          "parameter": 4,
+          "clusters": 4,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 1140,
+            "1": 470,
+            "2": 92,
+            "3": 297
+          },
+          "silhouette": 0.08712802568922745,
+          "eligible": true
+        },
+        {
+          "parameter": 8,
+          "clusters": 8,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 260,
+            "1": 585,
+            "2": 182,
+            "3": 36,
+            "4": 63,
+            "5": 597,
+            "6": 56,
+            "7": 220
+          },
+          "silhouette": 0.07409573041398625,
+          "eligible": false
+        }
+      ],
+      "pca_dimensions": 16,
+      "explained_variance": 0.919943443602596,
+      "elapsed_seconds": 1.8997174398973584,
+      "ami": {
+        "device": 0.00521805969425014,
+        "site": -0.0019246735853313476,
+        "quality": 0.00721665732614623,
+        "hr_bpm": 0.011290085766420382,
+        "signal_std": 0.07112023130329438,
+        "baseline_fraction": 0.008981338056417081,
+        "beat_consistency": 0.006014674075557961,
+        "superclass_combination": 0.08835446040530784
+      }
+    },
+    "raw:hdbscan": {
+      "parameter": 40,
+      "clusters": 0,
+      "assigned_fraction": 0.0,
+      "noise": 1999,
+      "sizes": {},
+      "silhouette": null,
+      "eligible": false,
+      "stability": {
+        "draws": [
+          {
+            "draw": 0,
+            "ari_assigned": null,
+            "ari_all": 1.0,
+            "jointly_assigned_fraction": 0.0
+          },
+          {
+            "draw": 1,
+            "ari_assigned": null,
+            "ari_all": 1.0,
+            "jointly_assigned_fraction": 0.0
+          },
+          {
+            "draw": 2,
+            "ari_assigned": null,
+            "ari_all": 1.0,
+            "jointly_assigned_fraction": 0.0
+          },
+          {
+            "draw": 3,
+            "ari_assigned": null,
+            "ari_all": 1.0,
+            "jointly_assigned_fraction": 0.0
+          },
+          {
+            "draw": 4,
+            "ari_assigned": null,
+            "ari_all": 1.0,
+            "jointly_assigned_fraction": 0.0
+          }
+        ],
+        "valid_draws": 0,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "candidates": [
+        {
+          "parameter": 40,
+          "clusters": 0,
+          "assigned_fraction": 0.0,
+          "noise": 1999,
+          "sizes": {},
+          "silhouette": null,
+          "eligible": false
+        },
+        {
+          "parameter": 80,
+          "clusters": 0,
+          "assigned_fraction": 0.0,
+          "noise": 1999,
+          "sizes": {},
+          "silhouette": null,
+          "eligible": false
+        }
+      ],
+      "pca_dimensions": 16,
+      "explained_variance": 0.919943443602596,
+      "elapsed_seconds": 0.5522422157227993,
+      "ami": {
+        "device": 0.0,
+        "site": 0.0,
+        "quality": 0.0,
+        "hr_bpm": 0.0,
+        "signal_std": 0.0,
+        "baseline_fraction": 0.0,
+        "beat_consistency": 0.0,
+        "superclass_combination": 0.0
+      }
+    },
+    "residual:kmeans": {
+      "parameter": 2,
+      "clusters": 2,
+      "assigned_fraction": 1.0,
+      "noise": 0,
+      "sizes": {
+        "0": 1150,
+        "1": 849
+      },
+      "silhouette": 0.10805958541919906,
+      "eligible": true,
+      "stability": {
+        "draws": [
+          {
+            "draw": 0,
+            "ari_assigned": 0.18799172086383792,
+            "ari_all": 0.18799172086383792,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 1,
+            "ari_assigned": 0.9238887434206986,
+            "ari_all": 0.9238887434206986,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 2,
+            "ari_assigned": 0.9262832897803139,
+            "ari_all": 0.9262832897803139,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 3,
+            "ari_assigned": 0.9238758758742751,
+            "ari_all": 0.9238758758742751,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 4,
+            "ari_assigned": 0.15270715574778698,
+            "ari_all": 0.15270715574778698,
+            "jointly_assigned_fraction": 1.0
+          }
+        ],
+        "valid_draws": 5,
+        "median": 0.9238758758742751,
+        "minimum": 0.15270715574778698,
+        "maximum": 0.9262832897803139
+      },
+      "candidates": [
+        {
+          "parameter": 2,
+          "clusters": 2,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 1150,
+            "1": 849
+          },
+          "silhouette": 0.10805958541919906,
+          "eligible": true
+        },
+        {
+          "parameter": 4,
+          "clusters": 4,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 674,
+            "1": 382,
+            "2": 105,
+            "3": 838
+          },
+          "silhouette": 0.10291787818777015,
+          "eligible": true
+        },
+        {
+          "parameter": 8,
+          "clusters": 8,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 348,
+            "1": 467,
+            "2": 185,
+            "3": 70,
+            "4": 70,
+            "5": 61,
+            "6": 545,
+            "7": 253
+          },
+          "silhouette": 0.07537647634518951,
+          "eligible": true
+        }
+      ],
+      "pca_dimensions": 16,
+      "explained_variance": 0.9066951006249986,
+      "elapsed_seconds": 0.27420439291745424,
+      "ami": {
+        "device": -0.0008378623659814346,
+        "site": 0.0008551155364347411,
+        "quality": 0.00034617040660201413,
+        "hr_bpm": -0.0002750380504777989,
+        "signal_std": 0.004078871172679471,
+        "baseline_fraction": -3.788692252429343e-06,
+        "beat_consistency": 0.00018463728748127625,
+        "superclass_combination": 0.08826359827371835
+      }
+    },
+    "residual:gmm": {
+      "parameter": 2,
+      "clusters": 2,
+      "assigned_fraction": 1.0,
+      "noise": 0,
+      "sizes": {
+        "0": 657,
+        "1": 1342
+      },
+      "silhouette": 0.18326025890146183,
+      "eligible": true,
+      "stability": {
+        "draws": [
+          {
+            "draw": 0,
+            "ari_assigned": 0.9083519325724497,
+            "ari_all": 0.9083519325724497,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 1,
+            "ari_assigned": 0.9255473771921702,
+            "ari_all": 0.9255473771921702,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 2,
+            "ari_assigned": 0.9079470175120344,
+            "ari_all": 0.9079470175120344,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 3,
+            "ari_assigned": 0.9157044467029132,
+            "ari_all": 0.9157044467029132,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 4,
+            "ari_assigned": 0.9250946498193321,
+            "ari_all": 0.9250946498193321,
+            "jointly_assigned_fraction": 1.0
+          }
+        ],
+        "valid_draws": 5,
+        "median": 0.9157044467029132,
+        "minimum": 0.9079470175120344,
+        "maximum": 0.9255473771921702
+      },
+      "candidates": [
+        {
+          "parameter": 2,
+          "clusters": 2,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 657,
+            "1": 1342
+          },
+          "silhouette": 0.18326025890146183,
+          "eligible": true
+        },
+        {
+          "parameter": 4,
+          "clusters": 4,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 691,
+            "1": 271,
+            "2": 390,
+            "3": 647
+          },
+          "silhouette": -0.006967911213008338,
+          "eligible": true
+        },
+        {
+          "parameter": 8,
+          "clusters": 8,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 318,
+            "1": 455,
+            "2": 79,
+            "3": 183,
+            "4": 402,
+            "5": 296,
+            "6": 70,
+            "7": 196
+          },
+          "silhouette": -0.018610419896492956,
+          "eligible": true
+        }
+      ],
+      "pca_dimensions": 16,
+      "explained_variance": 0.9066951006249986,
+      "elapsed_seconds": 0.2852124683558941,
+      "ami": {
+        "device": 0.014279452652533615,
+        "site": 0.0016052635090493391,
+        "quality": 0.01852196953854952,
+        "hr_bpm": 0.013317285224318083,
+        "signal_std": 0.1049918160729679,
+        "baseline_fraction": 0.0028707833957021117,
+        "beat_consistency": 0.02037405749579425,
+        "superclass_combination": 0.11040853650317335
+      }
+    },
+    "residual:spectral": {
+      "parameter": 2,
+      "clusters": 2,
+      "assigned_fraction": 1.0,
+      "noise": 0,
+      "sizes": {
+        "0": 1623,
+        "1": 376
+      },
+      "silhouette": 0.20383398201105007,
+      "eligible": true,
+      "stability": {
+        "draws": [
+          {
+            "draw": 0,
+            "ari_assigned": 0.8199097179808836,
+            "ari_all": 0.8199097179808836,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 1,
+            "ari_assigned": 0.8838636856230321,
+            "ari_all": 0.8838636856230321,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 2,
+            "ari_assigned": 0.8912954376369812,
+            "ari_all": 0.8912954376369812,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 3,
+            "ari_assigned": 0.9155195774300768,
+            "ari_all": 0.9155195774300768,
+            "jointly_assigned_fraction": 1.0
+          },
+          {
+            "draw": 4,
+            "ari_assigned": 0.48399384013359803,
+            "ari_all": 0.48399384013359803,
+            "jointly_assigned_fraction": 1.0
+          }
+        ],
+        "valid_draws": 5,
+        "median": 0.8838636856230321,
+        "minimum": 0.48399384013359803,
+        "maximum": 0.9155195774300768
+      },
+      "candidates": [
+        {
+          "parameter": 2,
+          "clusters": 2,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 1623,
+            "1": 376
+          },
+          "silhouette": 0.20383398201105007,
+          "eligible": true
+        },
+        {
+          "parameter": 4,
+          "clusters": 4,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 762,
+            "1": 52,
+            "2": 153,
+            "3": 1032
+          },
+          "silhouette": 0.10321242260392616,
+          "eligible": true
+        },
+        {
+          "parameter": 8,
+          "clusters": 8,
+          "assigned_fraction": 1.0,
+          "noise": 0,
+          "sizes": {
+            "0": 414,
+            "1": 678,
+            "2": 181,
+            "3": 423,
+            "4": 50,
+            "5": 149,
+            "6": 52,
+            "7": 52
+          },
+          "silhouette": 0.07891486860392317,
+          "eligible": true
+        }
+      ],
+      "pca_dimensions": 16,
+      "explained_variance": 0.9066951006249986,
+      "elapsed_seconds": 2.133259521331638,
+      "ami": {
+        "device": 0.0026927436812223624,
+        "site": -0.0030680681694071044,
+        "quality": -0.00045352955802038244,
+        "hr_bpm": 0.0028396578773675555,
+        "signal_std": 0.00998503230006853,
+        "baseline_fraction": -4.4396117209424776e-05,
+        "beat_consistency": 0.0019317293347932717,
+        "superclass_combination": 0.10907071691290114
+      }
+    },
+    "residual:hdbscan": {
+      "parameter": 40,
+      "clusters": 0,
+      "assigned_fraction": 0.0,
+      "noise": 1999,
+      "sizes": {},
+      "silhouette": null,
+      "eligible": false,
+      "stability": {
+        "draws": [
+          {
+            "draw": 0,
+            "ari_assigned": null,
+            "ari_all": 1.0,
+            "jointly_assigned_fraction": 0.0
+          },
+          {
+            "draw": 1,
+            "ari_assigned": null,
+            "ari_all": 1.0,
+            "jointly_assigned_fraction": 0.0
+          },
+          {
+            "draw": 2,
+            "ari_assigned": null,
+            "ari_all": 1.0,
+            "jointly_assigned_fraction": 0.0
+          },
+          {
+            "draw": 3,
+            "ari_assigned": null,
+            "ari_all": 1.0,
+            "jointly_assigned_fraction": 0.0
+          },
+          {
+            "draw": 4,
+            "ari_assigned": null,
+            "ari_all": 1.0,
+            "jointly_assigned_fraction": 0.0
+          }
+        ],
+        "valid_draws": 0,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "candidates": [
+        {
+          "parameter": 40,
+          "clusters": 0,
+          "assigned_fraction": 0.0,
+          "noise": 1999,
+          "sizes": {},
+          "silhouette": null,
+          "eligible": false
+        },
+        {
+          "parameter": 80,
+          "clusters": 0,
+          "assigned_fraction": 0.0,
+          "noise": 1999,
+          "sizes": {},
+          "silhouette": null,
+          "eligible": false
+        }
+      ],
+      "pca_dimensions": 16,
+      "explained_variance": 0.9066951006249986,
+      "elapsed_seconds": 0.4869212326593697,
+      "ami": {
+        "device": 0.0,
+        "site": 0.0,
+        "quality": 0.0,
+        "hr_bpm": 0.0,
+        "signal_std": 0.0,
+        "baseline_fraction": 0.0,
+        "beat_consistency": 0.0,
+        "superclass_combination": 0.0
+      }
+    }
+  },
+  "raw_residual_ari": {
+    "kmeans": 0.03451089285060107,
+    "gmm": 0.7014688778079561,
+    "spectral": 0.3167651353920736,
+    "hdbscan": 1.0
+  },
+  "decision": {
+    "promising": false,
+    "alternative": "residual:spectral",
+    "conditions": {
+      "baseline_eligible": true,
+      "five_valid_stability_draws": true,
+      "stability_median_at_least_0.70": true,
+      "stability_minimum_at_least_0.50": false,
+      "silhouette_gain_at_least_0.02": true,
+      "two_enriched_abnormal_classes": true,
+      "annotation_ami_exceeds_device": true,
+      "annotation_ami_exceeds_rate": true
+    },
+    "enriched_abnormal_classes": [
+      "CD",
+      "MI"
+    ],
+    "conditional_ami_contrast": {
+      "difference": 0.02080711863918279,
+      "ci_low": -0.0038797429118402034,
+      "ci_high": 0.04143503208861799,
+      "draws": 200,
+      "conditional_on_fitted_clusters": true
+    }
+  },
+  "elapsed_seconds": 147.21202594973147,
+  "post_execution_verification": {
+    "source_hash_mismatches": [],
+    "original_output_hash_mismatches": [
+      "outputs/cluster01_physical_morphology/status.json"
+    ],
+    "explanation": "Frozen runner hashed running status before writing completed. Immutable artifacts all match; final status and result hashes below supersede only that mutable status hash. No scores changed.",
+    "all_selected_records_verified_train": true,
+    "one_record_per_patient": true,
+    "row_alignment_verified": true,
+    "final_output_sha256": {
+      "status.json": "9e644bfbd7b95295fb3deb0bcaed1a54e63c63764ce9f8925d536032eb488628",
+      "reservation_manifest.json": "efaa51a62f52fc2d10881a58994d2da206ae5683cff08872c09cc5ec08ef253c",
+      "reservation_policy.json": "028a5ae4e36c29303b37e9d1268ca365090cb600cabe440b9ce0cc672bf78c5d",
+      "selected_training_patients.csv": "ae8816ec1d601a9daf687741501e45a847aeb0259b16c3afb1bb50388992bd59",
+      "physical_measurements.csv": "6f2c42617970eb7d45ee0f0e03bef511ae58357395becc62b309b1d5ede71e90",
+      "analyzed_training_patients.csv": "afed2f97d7b4e9dcbc627a6c3c1c03630f49f6d75632ae3a73df6950facf9952",
+      "morphology_features.csv": "8d19be5e03e70c354191e5795109251702daab90f21c17dd384a95ac6261c28d",
+      "unsupervised_progress.json": "a47f8dae505282d85de5ec425f1600e5ddcb2fb7756df420f5efd3cccc8a99d6",
+      "assignments.csv": "3535bbdfa37f5af817b7474047eaf221393fe370909bae24eb14d47e1d4abc6f",
+      "enrichment.csv": "94f21e57eb5cdb040bd4cedc0f84c652aa389cfe003a7c4832c88cc04198bf26",
+      "cluster_stability.png": "c16e8b5fa45bf01b28d1ae275250ae713a55f124e927c1744ec62bad332b9ac3",
+      "cluster_associations.png": "0d272df766b66d4ee5b5764e7afd714a69a325834a0e4e701dfe080255967463",
+      "cluster_multilabel_prevalence.png": "d215539efa3a3540532ed95aca6182aec18433804824b812234a1b89379abe2d",
+      "result.json": "74f0c82918f158a61368d308acdab5d5e98fe759852c966de76867e5c99bc8e7"
+    }
+  },
+  "posthoc_descriptive_profiles": {
+    "0": {
+      "patients": 1623,
+      "feature_medians": {
+        "qrs_ms": 90.0,
+        "qt_ms": 368.0,
+        "rr_cv": 0.0249572251871907,
+        "r_amp_V1": 0.1414783795494325,
+        "r_amp_V5": 1.311125736905256,
+        "s_amp_V1": 0.8201195498469454,
+        "t_amp_V2": 0.3850111269137175,
+        "st_V2": 0.0997050173084612
+      },
+      "nuisance_medians": {
+        "hr_bpm": 70.4225352112676,
+        "signal_std": 0.1898783549532868,
+        "beat_consistency": 0.9917178919893526,
+        "baseline_fraction": 0.0243066865239677
+      }
+    },
+    "1": {
+      "patients": 376,
+      "feature_medians": {
+        "qrs_ms": 108.0,
+        "qt_ms": 378.0,
+        "rr_cv": 0.02224964841190465,
+        "r_amp_V1": 0.13972225864328564,
+        "r_amp_V5": 0.7900774779039069,
+        "s_amp_V1": 0.6124069525311933,
+        "t_amp_V2": 0.30673782310018827,
+        "st_V2": 0.0981843334444189
+      },
+      "nuisance_medians": {
+        "hr_bpm": 73.17073170731707,
+        "signal_std": 0.1975335761439369,
+        "beat_consistency": 0.9904442658565371,
+        "baseline_fraction": 0.0238632735901836
+      }
+    }
+  }
+}

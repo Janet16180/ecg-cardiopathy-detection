@@ -37,6 +37,12 @@ After each result:
 
 ## Current ranking
 
+CLUSTER-04 has completed conditional bank robustness with a passing gate; CLUSTER-05 has completed
+matched dimension/pooling/scale controls with a failed concordance gate. Their results preserve the
+original CLUSTER-03 failure. New scale/aggregation and regional-covariance follow-ups are ranked below;
+they require their own protocols and are not running. Blinded clinical-review infrastructure is being
+prepared; human evidence annotations remain unavailable.
+
 [CLUSTER-03](research/clustering/cluster03-native-reference/results.md) completed native encoder and
 No Time to Train reference-affinity clustering on 1,993 matched patients. Stable selected groups fail
 cross-view/bank persistence; raw QRS geometry is strongly rate-associated. Matched projection controls
@@ -121,8 +127,8 @@ penalty; one that ranks high earns a protocol like any other.
 | 39 | ecg_independent_expert_evidence | experiment | Obtain an independent finding-specific clinical evidence evaluation | 5 | 0.7 | 4.1 | 2.57 | @independent_expert_annotations, @cardiologist_review |
 | 40 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
 | 41 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
-| 42 | native_reference_support_uncertainty | experiment | Prospective native reference-bank uncertainty and annotation co-occurrence controls | 5 | 0.8 | 3.1 | 2.13 | @prospective_cohort_and_reference_sampling_protocol |
-| 43 | matched_native_projection_controls | experiment | Separate reference-conditioned geometry from dimensional compression and numerical scaling | 5 | 0.8 | 3.2 | 2.10 | @prospective_matched_projection_protocol |
+| 42 | bank_aggregation_scale_interaction | experiment | Prospective bank aggregation under matched scale and fixed configuration | 4 | 0.8 | 2.1 | 2.21 | @prospective_scale_aggregation_protocol |
+| 43 | regional_covariance_projection_control | experiment | Fit matched regional directions with equal-patient regional covariance | 4 | 0.8 | 2.1 | 2.07 | @prospective_regional_projection_protocol |
 | 44 | wave_grounding_context_control | repo | Qualify time-grounding semantics and strong context/option controls | 4 | 0.7 | 2.1 | 1.93 | @prospective_time_grounding_qualification |
 | 45 | physical_finding_reference_benchmark | experiment | Independent physical finding-reference benchmark with sufficient evidence | 5 | 0.7 | 4.5 | 1.65 | ecg_independent_expert_evidence, physical_feature_reliability, @permitted_independent_development_source |
 | 46 | ntt_reference_dictionary_evidence | experiment | Prospective finding dictionary and clinically sufficient reference evidence | 5 | 0.7 | 4.1 | 1.61 | ecg_independent_expert_evidence, @cardiologist_reference_dictionary_review |

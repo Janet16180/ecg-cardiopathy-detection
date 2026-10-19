@@ -1199,7 +1199,7 @@
       "kind": "experiment",
       "title": "Replace CPC GRU context with mLSTM-xLSTM on clean cohorts v3",
       "question": "Does matrix memory improve a matched fresh CPC development readout at 25k, and does a conditional 50k tier help?",
-      "evidence": "Audited full CPC comparison: primary xLSTM minus GRU−0.00897[−0.01840,+0.00094] at25k and−0.00737[−0.01652,+0.00117] at50k; xLSTM scaling+0.00231[−0.00707,+0.01136]. Neither frozen improvement rule passed.",
+      "evidence": "Audited full CPC comparison: primary xLSTM minus GRU\u22120.00897[\u22120.01840,+0.00094] at25k and\u22120.00737[\u22120.01652,+0.00117] at50k; xLSTM scaling+0.00231[\u22120.00707,+0.01136]. Neither frozen improvement rule passed.",
       "value": 3,
       "clarity": 0.6,
       "gpu_hours": 4,
@@ -1482,7 +1482,7 @@
       "kind": "experiment",
       "title": "Same-QRS reference finding discrimination",
       "question": "Can visual references distinguish normal/CRBBB/CLBBB beyond raw morphology when every candidate is QRS?",
-      "evidence": "60 unique targets, three fixed support draws: compact DINO 82.78%, physical full-context references 92.78%. DINO minus strongest baseline −10.00 pp, paired selection-aware 95% interval [−17.73, −2.34]; frozen advancement gate failed.",
+      "evidence": "60 unique targets, three fixed support draws: compact DINO 82.78%, physical full-context references 92.78%. DINO minus strongest baseline \u221210.00 pp, paired selection-aware 95% interval [\u221217.73, \u22122.34]; frozen advancement gate failed.",
       "value": 4,
       "clarity": 0.7,
       "gpu_hours": 0.0,
@@ -1749,18 +1749,16 @@
       "kind": "experiment",
       "title": "Prospective native reference-bank uncertainty and annotation co-occurrence controls",
       "question": "How stable is fixed native QRS matching across patient reference banks without selecting class-specific winners?",
-      "evidence": "NTT-06 native QRS accuracy varies from 81.67% to 96.67% across three fixed draws. Its primary interval conditions on those banks; CRBBB and CLBBB have unequal MI co-occurrence. CLUSTER-03 regional cluster bank ARIs 0.726/0.387/0.584 further show reference dependence despite within-bank stability.",
+      "evidence": "CLUSTER-04 sampled50 three-shot banks from27 fixed supports. Conditional regional robustness passes:50 admissible, pairwiseARI p10=.54848,381/411 stable; ten five-bank means give406/411 stable. Native recognition varies85\u2013100% on the same60 targets.",
       "value": 5,
       "clarity": 0.75,
       "gpu_hours": 0,
-      "cpu_hours": 0.1,
+      "cpu_hours": 0.002802179065377762,
       "build_hours": 3,
-      "blocked_by": [
-        "@prospective_cohort_and_reference_sampling_protocol"
-      ],
-      "status": "open",
-      "authorized": false,
-      "notes": "Reuse the frozen encoder and declared preprocessing. Prospectively handle reference sampling, fixed physical controls and coexisting source labels. No fusion or threshold tuning from observed class winners, and no etiologic or independent-confirmation claim."
+      "blocked_by": [],
+      "status": "done",
+      "authorized": true,
+      "notes": "docs/research/clustering/cluster04-bank-robustness/results.md. All110 fits and50x60 classifier predictions independently reproduced. Sampling is within a finite explored support pool; source co-occurrence, physical-baseline bank uncertainty and independent patient/source confirmation remain unresolved. No clinical localization claim."
     },
     {
       "id": "native_embedding_cluster_geometry",
@@ -1799,18 +1797,16 @@
       "kind": "experiment",
       "title": "Separate reference-conditioned geometry from dimensional compression and numerical scaling",
       "question": "Do NTT affinity groups add reproducible geometry beyond matched-dimensional label-free native projections?",
-      "evidence": "CLUSTER-03 compares capped 16-PC native views with three/nine NTT similarity axes. Native retained variance is 71.99/74.33%; fixed covariance regularization has different relative scale. Reference groups are stable but bank-sensitive.",
+      "evidence": "CLUSTER-05 completed1440 gridfits with matched dimension, regional pooling, deterministic PC signs and fitting-only scalar RMS. Primary native/NTT regional ARI=.15285 fails. Selected NTT raw/scaled partition ARI=.2704; every fixed kmeans raw/RMS fit hasARI1.",
       "value": 5,
       "clarity": 0.75,
       "gpu_hours": 0,
-      "cpu_hours": 0.2,
+      "cpu_hours": 0.012027777777777776,
       "build_hours": 3,
-      "blocked_by": [
-        "@prospective_matched_projection_protocol"
-      ],
-      "status": "open",
-      "authorized": false,
-      "notes": "Reuse the frozen local cache, fit all centering/projections/scaling on fitting patients only and preserve the existing failed gate. Prospectively compare equal dimensions and a declared global scale; never choose by target label separation. No new clinical label definitions or automatic job."
+      "blocked_by": [],
+      "status": "done",
+      "authorized": true,
+      "notes": "docs/research/clustering/cluster05-matched-controls/results.md. Exact receipt runtime and independent audit are recorded in the queue/results once integrated. Conditional reference associations do not establish disease subtypes; equal-patient regional PCA is a separate follow-up."
     },
     {
       "id": "ntt_reference_dictionary_evidence",
@@ -1830,6 +1826,42 @@
       "status": "blocked",
       "authorized": false,
       "notes": "Plan acceptable evidence sets, reference-bank uncertainty and permitted independent-source assessment with the cardiologist. No new label definitions, recruitment, uploads or closed-test use is authorized by this entry."
+    },
+    {
+      "id": "regional_covariance_projection_control",
+      "kind": "experiment",
+      "title": "Fit matched regional directions with equal-patient regional covariance",
+      "question": "Does retaining regional variation rather than average-patient variance change matched native versus NTT regional concordance?",
+      "evidence": "CLUSTER-05 fitting-patient PCA3 captures only10.79% of equal-patient region variance; matched regional concordance remainslow despite dimension/pooling/scale controls.",
+      "value": 4,
+      "clarity": 0.75,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 2,
+      "blocked_by": [
+        "@prospective_regional_projection_protocol"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": "Reuse frozen native cache; compare3regional directions anddeclare signs, patient weighting and scale prospectively. Preserve CLUSTER03/05 failed gates. No target-label model selection, new masks or disease-etiology claim."
+    },
+    {
+      "id": "bank_aggregation_scale_interaction",
+      "kind": "experiment",
+      "title": "Prospective bank aggregation under matched scale and fixed configuration",
+      "question": "Does reference averaging stabilize the scaled NTT partition across independently specified support budgets?",
+      "evidence": "CLUSTER04 five-bank means improve conditional persistence while CLUSTER05 changes the selected NTT partition after scalar RMS conditioning. These studies do not jointly test scale and aggregation.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 2,
+      "blocked_by": [
+        "@prospective_scale_aggregation_protocol"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": "Cache-only follow-up; distinguish fixed configuration from re-selection, nine-shot fullpool from independent banks, and correlated support draws from independent samples. Do not select a favorable bank or claim clinical validation."
     }
   ]
 }

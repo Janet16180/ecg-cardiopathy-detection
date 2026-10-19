@@ -1,0 +1,310 @@
+{
+  "study": "CLUSTER-04",
+  "status": "completed",
+  "result_sha256": "c672be6b2fc9fe6d8c14d974179f04345381b068349df611d1656723e0427baa",
+  "source_commit": "918d513ce885810b02a4945bfff50e30b2a527cd",
+  "counts": {
+    "patients": 1993,
+    "fitting": 1582,
+    "validation_anchors": 411,
+    "banks": 50,
+    "single_bank_fits": 100,
+    "ensemble_fits": 10,
+    "new_encoder_inference": 0,
+    "waveform_reads": 0
+  },
+  "predecessor_reproduction": {
+    "selected_fits": {
+      "native_qrs": {
+        "ari": 1.0,
+        "silhouette_error": 0.0
+      },
+      "native_global": {
+        "ari": 1.0,
+        "silhouette_error": 0.0
+      },
+      "ntt_affinity": {
+        "ari": 1.0,
+        "silhouette_error": 0.0
+      },
+      "ntt_regions": {
+        "ari": 1.0,
+        "silhouette_error": 0.0
+      },
+      "physical": {
+        "ari": 1.0,
+        "silhouette_error": 0.0
+      }
+    },
+    "original_banks_exact": true,
+    "maximum_coordinate_error": 0.0,
+    "native_qrs_predictions": 180,
+    "native_qrs_correct": 165,
+    "native_qrs_maximum_score_error": 0.0
+  },
+  "summaries": {
+    "regional": {
+      "banks": 50,
+      "anchor_denominator": 411,
+      "admissible_banks": 50,
+      "pairwise_comparisons": 1225,
+      "pairwise_anchor_ari": {
+        "minimum": 0.402602201146966,
+        "p10": 0.5484789258611088,
+        "median": 0.7144729738397317,
+        "p90": 0.86448569627274,
+        "maximum": 0.9691331869635499
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.523480670607433,
+        "p10": 0.6272116507965101,
+        "median": 0.8004943293232047,
+        "p90": 0.9228351444998769,
+        "maximum": 0.9676626414335019
+      },
+      "reference_agreement": {
+        "minimum": 0.44,
+        "p10": 0.92,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 381,
+      "fraction_anchors_agreement_at_least_0.80": 0.927007299270073,
+      "modal_cluster_frequency": {
+        "minimum": 0.52,
+        "p10": 0.92,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.4021791902022728,
+        "maximum": 0.9988455359952018
+      },
+      "pairwise_observations_not_independent": true
+    },
+    "record": {
+      "banks": 50,
+      "anchor_denominator": 411,
+      "admissible_banks": 48,
+      "pairwise_comparisons": 1225,
+      "pairwise_anchor_ari": {
+        "minimum": 0.5147458652970863,
+        "p10": 0.6465150207943335,
+        "median": 0.793203949571295,
+        "p90": 0.8650307546653092,
+        "maximum": 0.9414452891098076
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.6219669120466707,
+        "p10": 0.7238783367124095,
+        "median": 0.8402333776994767,
+        "p90": 0.895395224554389,
+        "maximum": 0.9376801828302102
+      },
+      "reference_agreement": {
+        "minimum": 0.22,
+        "p10": 0.74,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 362,
+      "fraction_anchors_agreement_at_least_0.80": 0.8807785888077859,
+      "modal_cluster_frequency": {
+        "minimum": 0.4,
+        "p10": 0.76,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.8554508105601306,
+        "maximum": 1.5690255736436503
+      },
+      "pairwise_observations_not_independent": true
+    },
+    "five_bank_ensembles": {
+      "banks": 10,
+      "anchor_denominator": 411,
+      "admissible_banks": 10,
+      "pairwise_comparisons": 45,
+      "pairwise_anchor_ari": {
+        "minimum": 0.8465139495170718,
+        "p10": 0.8880243544796425,
+        "median": 0.9216487375222846,
+        "p90": 0.9676626414335019,
+        "maximum": 0.9691331869635499
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.8940949660232931,
+        "p10": 0.9056405027019614,
+        "median": 0.9448218139003537,
+        "p90": 0.9713587254992774,
+        "maximum": 1.0
+      },
+      "reference_agreement": {
+        "minimum": 0.4,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 406,
+      "fraction_anchors_agreement_at_least_0.80": 0.9878345498783455,
+      "modal_cluster_frequency": {
+        "minimum": 0.5,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.0,
+        "maximum": 1.0
+      },
+      "pairwise_observations_not_independent": true
+    }
+  },
+  "decision": {
+    "conditions": {
+      "at_least_45_admissible_banks": true,
+      "pairwise_p10_ari_at_least_0.50": true,
+      "at_least_80_percent_anchors_agree_in_80_percent_banks": true
+    },
+    "primary_robustness_gate_passed": true
+  },
+  "classification": {
+    "targets": 60,
+    "targets_per_finding": 20,
+    "balanced_accuracy": {
+      "minimum": 0.85,
+      "p10": 0.9483333333333334,
+      "median": 0.9666666666666667,
+      "p90": 1.0,
+      "maximum": 1.0
+    },
+    "bank_accuracy_values": [
+      0.85,
+      0.9833333333333334,
+      0.9666666666666667,
+      0.9666666666666667,
+      0.9666666666666667,
+      0.9500000000000001,
+      1.0,
+      0.9666666666666667,
+      0.9500000000000001,
+      0.9166666666666666,
+      0.9666666666666667,
+      1.0,
+      0.9666666666666667,
+      0.9833333333333334,
+      0.9833333333333334,
+      0.9333333333333332,
+      0.9666666666666667,
+      1.0,
+      0.9833333333333334,
+      0.9666666666666667,
+      1.0,
+      0.9666666666666667,
+      0.9833333333333334,
+      0.9666666666666667,
+      0.9833333333333334,
+      0.9666666666666667,
+      0.9833333333333334,
+      0.9833333333333334,
+      0.9666666666666667,
+      0.9833333333333334,
+      0.9833333333333334,
+      0.9666666666666667,
+      1.0,
+      0.9666666666666667,
+      0.9333333333333332,
+      0.9833333333333334,
+      0.9833333333333334,
+      0.9666666666666667,
+      0.9833333333333334,
+      0.9833333333333334,
+      1.0,
+      0.9666666666666667,
+      0.9666666666666667,
+      0.9666666666666667,
+      1.0,
+      0.8666666666666667,
+      0.9666666666666667,
+      0.9833333333333334,
+      0.9833333333333334,
+      0.9500000000000001
+    ],
+    "per_finding_recall": {
+      "NORM": {
+        "minimum": 0.95,
+        "p10": 0.95,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "CRBBB": {
+        "minimum": 0.6,
+        "p10": 0.845,
+        "median": 0.95,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "CLBBB": {
+        "minimum": 0.9,
+        "p10": 0.95,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      }
+    },
+    "patient_fraction_correct": {
+      "minimum": 0.44,
+      "p10": 0.9339999999999999,
+      "median": 1.0,
+      "p90": 1.0,
+      "maximum": 1.0
+    },
+    "patients_correct_in_every_bank": 41,
+    "patients_correct_in_no_bank": 0,
+    "physical_original_three_bank_mean_balanced_accuracy": 0.9277777777777778,
+    "physical_bank_uncertainty_not_resampled": true,
+    "new_independent_accuracy_evidence": false
+  },
+  "annotation_ami": {
+    "regional": {
+      "minimum": 0.009971280086883437,
+      "p10": 0.01654514322357561,
+      "median": 0.03489711887845753,
+      "p90": 0.0507460319153067,
+      "maximum": 0.058918910726485585
+    },
+    "record": {
+      "minimum": 0.0663095682685215,
+      "p10": 0.07949961201797946,
+      "median": 0.10422580744758538,
+      "p90": 0.12260537018791026,
+      "maximum": 0.1342652073090077
+    }
+  },
+  "seconds": 10.087844635359943,
+  "geometric_decision_frozen_before_annotation_parse": true,
+  "qualifications": [
+    "Conditional finite development support pool; not an independent clinical test.",
+    "Pairwise bank comparisons are correlated, without independent-sample confidence intervals.",
+    "The secondary five-bank ensembles cannot rescue the primary or CLUSTER-03 decision.",
+    "Physical classifier bank uncertainty was not resampled.",
+    "Cluster persistence does not establish disease categories, localization or etiology."
+  ]
+}

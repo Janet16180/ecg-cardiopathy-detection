@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T17:21:45.392592+00:00",
+  "updated_at_utc": "2026-10-19T21:14:21.448330+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
-  "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
+  "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
   "nlp_25k_study": {
     "requested_at_utc_date": "2026-09-26",
-    "authorization": "User resumed the 25k NLP-inspired architecture studies after EDA on 27 September 2026. Run 011–013 sequentially under fresh GPU profiles and cost gates; no calibration/test.",
+    "authorization": "User resumed the 25k NLP-inspired architecture studies after EDA on 27 September 2026. Run 011\u2013013 sequentially under fresh GPU profiles and cost gates; no calibration/test.",
     "common_protocol": "docs/nlp-inspired-25k-study.md",
     "results_summary": "docs/nlp-inspired-25k-study-results.md",
     "experiments": [
@@ -20,7 +20,7 @@
     "initial_exposures_per_arm": 115359,
     "initial_updates_per_arm": 902,
     "status": "011_012_013_25k_development_screens_complete_audited",
-    "next_action": "Review the completed 011–013 development-only results and decide a separately frozen second-seed replication or new study; no successor GPU queue is scheduled. Calibration/test remain closed.",
+    "next_action": "Review the completed 011\u2013013 development-only results and decide a separately frozen second-seed replication or new study; no successor GPU queue is scheduled. Calibration/test remain closed.",
     "last_profile_attempt": {
       "manifest": "outputs/experiment_queue_nlp25k_011_profile_v1/queue.json",
       "manifest_sha256": "be3bfcc825e6b8ac03a97d1e33a4d9c13f2a55008efc60399a4df93fef94d1f0",
@@ -276,7 +276,7 @@
       "constraints": [
         "Preserve fixed patient splits and train-only fitting.",
         "Distinguish compact CPC from released S4 ECG-CPC and frozen from fine-tuned readouts.",
-        "Do not automatically resume deferred Experiment 010 or displace 011–013.",
+        "Do not automatically resume deferred Experiment 010 or displace 011\u2013013.",
         "One experiment at a time; require complete-path profile and 7200-second gate before GPU training.",
         "No calibration or test access in the evidence-review stage."
       ],
@@ -327,7 +327,7 @@
         "Development-selected blend"
       ],
       "primary_comparison": "Development-selected blend versus both constituents; fixed equal blend as an untuned control.",
-      "cost_estimate": "Initial cache-only screen approximately 1–15 CPU minutes if saved caches/probes verify; inferred, not measured.",
+      "cost_estimate": "Initial cache-only screen approximately 1\u201315 CPU minutes if saved caches/probes verify; inferred, not measured.",
       "cost_estimate_measured": false,
       "next_action": "Completed negative development screen at both label budgets; continue independent Experiment 015.",
       "constraints": [
@@ -460,7 +460,7 @@
         "Probe-initialized short fine-tune"
       ],
       "primary_comparison": "Probe-initialized versus random-head fine-tuning with identical backbone, schedule, sample order and optimizer settings.",
-      "cost_estimate": "Target 30–90 minutes for an initial full-label pilot including extraction; inferred and conditional on actual I/O.",
+      "cost_estimate": "Target 30\u201390 minutes for an initial full-label pilot including extraction; inferred and conditional on actual I/O.",
       "cost_estimate_measured": true,
       "next_action": "The separately frozen v9 moving/frozen encoder intervention completed; retain released probe. No automatic calibration/test or further xECG training.",
       "constraints": [
@@ -2598,5 +2598,51 @@
     "independent_model_reconstruction": "all_753_declared_fits_match",
     "verification": "reports/clustering/cluster03-native-reference/verification.json",
     "independent_annotation_audit": "all_AMIs_and_55_BH_rows_exact"
+  },
+  "cluster04_bank_robustness": {
+    "status": "complete_conditional_bank_robustness_gate_passed",
+    "authorized": true,
+    "protocol": "docs/research/clustering/cluster04-bank-robustness/protocol.md",
+    "protocol_commit": "63d583a",
+    "source_commit": "918d513",
+    "output_dir": "outputs/cluster04_bank_robustness",
+    "scope": "Fifty fixed three-shot reference banks, conditional clustering and classifier sensitivity, ten five-bank ensembles.",
+    "publication": "local_only_pr71_draft_no_merge",
+    "next_action": "Preserve the conditional pass and original CLUSTER03 failure; interpret alongside matched scale controls and prospective clinical review, without new clinical or independent-test claims.",
+    "results": "docs/research/clustering/cluster04-bank-robustness/results.md",
+    "result_sha256": "c672be6b2fc9fe6d8c14d974179f04345381b068349df611d1656723e0427baa",
+    "aggregate_receipt": "reports/clustering/cluster04-bank-robustness/aggregate.json",
+    "verification": "reports/clustering/cluster04-bank-robustness/verification.json",
+    "primary_robustness_gate_passed": true,
+    "admissible_banks": 50,
+    "anchor_stable_patients": 381,
+    "anchor_patients": 411,
+    "pairwise_ari_p10": 0.5484789258611088,
+    "ensemble_stable_patients": 406,
+    "independent_reconstruction": "all_110_models_and_all_summaries_exact",
+    "seconds": 10.087844635359943
+  },
+  "cluster05_matched_controls": {
+    "status": "completed_matched_concordance_gate_failed_audit_underway",
+    "authorized": true,
+    "protocol": "docs/research/clustering/cluster05-matched-controls/protocol.md",
+    "protocol_commit": "24e57f3",
+    "source_commit": "c3cfb88",
+    "output_dir": "outputs/cluster05_matched_controls",
+    "scope": "Matched dimension, regional pooling and global scale controls on existing cached native vectors.",
+    "publication": "local_only_pr71_draft_no_merge",
+    "next_action": "Worker writes the full results and aggregate report; independent reconstruction underway.",
+    "primary_concordance_gate_passed": false,
+    "result_sha256": "cbe2d5af704e6a1ee86ba535ea03e2087bd667b33573ec676952d4e65275f885"
+  },
+  "ntt07_blinded_review": {
+    "status": "protocol_committed_synthetic_validation",
+    "authorized": true,
+    "protocol": "docs/research/localization/ntt07-blinded-review/protocol.md",
+    "output_dir": "outputs/ntt07_blinded_review",
+    "scope": "Thirty identity-selected blinded ECG cases, pending forms and semantic evidence validator; no human labels or clinical endpoint.",
+    "publication": "local_only_pr71_draft_no_merge",
+    "next_action": "Complete source/tests including strict date-time checking, commit before selecting or rendering real cases.",
+    "protocol_commit": "2b517af"
   }
 }

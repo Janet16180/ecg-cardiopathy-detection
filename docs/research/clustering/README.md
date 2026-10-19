@@ -29,3 +29,11 @@ actual No Time to Train record/regional affinities and physical features on 1,99
 patients. All selected partitions are stable under patient subsampling, but cross-view/reference-bank
 persistence fails. Raw QRS clusters are strongly rate-associated; NTT affinities produce mixed,
 reference-informed annotation enrichment rather than independently discovered disease categories.
+
+## Reference uncertainty and matched controls
+
+[CLUSTER-04](cluster04-bank-robustness/results.md) tests fifty support-bank draws within the fixed
+reference pool. Its conditional robustness gate passes, and five-bank coordinate averaging improves
+assignment persistence. This does not reverse CLUSTER-03 or establish clinical disease categories.
+CLUSTER-05 is completing the separately frozen dimension, regional-pooling and scalar-scale comparison;
+its final protocol/results will be linked after integration.

@@ -1,5 +1,12 @@
 # Experiment queue
 
+**19 October saved-map control diagnosis authorized:** The user approved investigating the
+background activations in the released-generator learning run. A new prospective protocol and
+independent checker are being prepared. The diagnostic will use only saved maps and observations
+from the 48 already-spent engineering backgrounds, with no new fit, inference, download or clinical
+data. No new diagnostic score exists yet. Previous learning decisions remain unchanged; PR #67
+stays draft.
+
 **19 October randomized localization learning independently verified:** The released-generator
 background experiment passed all 12 scientific and nine integrity gates. Supervised pooled full-grid
 AP was 0.077538 versus amplitude 0.024522 and permuted targets 0.021353. Frozen pooled gains were

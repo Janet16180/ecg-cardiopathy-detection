@@ -3,10 +3,10 @@
   "updated_at_utc": "2026-10-19T03:10:05.941072+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
-  "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
+  "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
   "nlp_25k_study": {
     "requested_at_utc_date": "2026-09-26",
-    "authorization": "User resumed the 25k NLP-inspired architecture studies after EDA on 27 September 2026. Run 011–013 sequentially under fresh GPU profiles and cost gates; no calibration/test.",
+    "authorization": "User resumed the 25k NLP-inspired architecture studies after EDA on 27 September 2026. Run 011\u2013013 sequentially under fresh GPU profiles and cost gates; no calibration/test.",
     "common_protocol": "docs/nlp-inspired-25k-study.md",
     "results_summary": "docs/nlp-inspired-25k-study-results.md",
     "experiments": [
@@ -20,7 +20,7 @@
     "initial_exposures_per_arm": 115359,
     "initial_updates_per_arm": 902,
     "status": "011_012_013_25k_development_screens_complete_audited",
-    "next_action": "Review the completed 011–013 development-only results and decide a separately frozen second-seed replication or new study; no successor GPU queue is scheduled. Calibration/test remain closed.",
+    "next_action": "Review the completed 011\u2013013 development-only results and decide a separately frozen second-seed replication or new study; no successor GPU queue is scheduled. Calibration/test remain closed.",
     "last_profile_attempt": {
       "manifest": "outputs/experiment_queue_nlp25k_011_profile_v1/queue.json",
       "manifest_sha256": "be3bfcc825e6b8ac03a97d1e33a4d9c13f2a55008efc60399a4df93fef94d1f0",
@@ -276,7 +276,7 @@
       "constraints": [
         "Preserve fixed patient splits and train-only fitting.",
         "Distinguish compact CPC from released S4 ECG-CPC and frozen from fine-tuned readouts.",
-        "Do not automatically resume deferred Experiment 010 or displace 011–013.",
+        "Do not automatically resume deferred Experiment 010 or displace 011\u2013013.",
         "One experiment at a time; require complete-path profile and 7200-second gate before GPU training.",
         "No calibration or test access in the evidence-review stage."
       ],
@@ -327,7 +327,7 @@
         "Development-selected blend"
       ],
       "primary_comparison": "Development-selected blend versus both constituents; fixed equal blend as an untuned control.",
-      "cost_estimate": "Initial cache-only screen approximately 1–15 CPU minutes if saved caches/probes verify; inferred, not measured.",
+      "cost_estimate": "Initial cache-only screen approximately 1\u201315 CPU minutes if saved caches/probes verify; inferred, not measured.",
       "cost_estimate_measured": false,
       "next_action": "Completed negative development screen at both label budgets; continue independent Experiment 015.",
       "constraints": [
@@ -460,7 +460,7 @@
         "Probe-initialized short fine-tune"
       ],
       "primary_comparison": "Probe-initialized versus random-head fine-tuning with identical backbone, schedule, sample order and optimizer settings.",
-      "cost_estimate": "Target 30–90 minutes for an initial full-label pilot including extraction; inferred and conditional on actual I/O.",
+      "cost_estimate": "Target 30\u201390 minutes for an initial full-label pilot including extraction; inferred and conditional on actual I/O.",
       "cost_estimate_measured": true,
       "next_action": "The separately frozen v9 moving/frozen encoder intervention completed; retain released probe. No automatic calibration/test or further xECG training.",
       "constraints": [
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Read the executed continuation/results and live outputs. Rank saved-map background-activation diagnosis, independent training-seed/objective replication and public annotation qualification under separate prospective protocols; no automatic fit, clinical promotion, closed test or fixed-fixture training.",
+    "next_action": "Freeze, review and execute the authorized saved-map generated-background control diagnosis; keep PR67 draft and all historical decisions unchanged.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2714,6 +2714,20 @@
         "build_log": "outputs/ssl_synthetic_localization/continuation_package_build_final_v3.log",
         "current_source_bindings_checked": 64,
         "frozen_source_mismatches": 0
+      },
+      "generated_control_diagnosis": {
+        "status": "prospective_protocol_in_preparation",
+        "authorized": true,
+        "authorization": "User approved recommended saved-map hotspot diagnosis on 19 October 2026.",
+        "protocol": "docs/ssl-synthetic-localization-control-diagnosis-v1.md",
+        "configuration": "configs/ssl_synthetic_control_diagnosis_v1.json",
+        "output_dir": "outputs/ssl_synthetic_localization/generated_control_diagnosis_v1",
+        "new_training": false,
+        "new_model_inference": false,
+        "new_generator_forwards": 0,
+        "patient_data_used": false,
+        "evaluation_scope": "48 already-spent engineering generator seeds; no fresh validation claim",
+        "independent_audit_required": true
       }
     }
   },

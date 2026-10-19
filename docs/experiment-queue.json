@@ -2415,5 +2415,15 @@
     "original_large_large_recipe_executed": false,
     "automatic_followup_scheduled": false,
     "verification": "reports/local_reference_research_verification.json"
+  },
+  "ntt05_native_signal_adapter": {
+    "status": "protocol_written_implementation_pending",
+    "authorized": true,
+    "protocol": "docs/ntt-05-native-signal-adapter.md",
+    "scope": "Native region/token reference adapter and exact predecessor integrity; no learned-native clinical score",
+    "output_dir": "outputs/ntt05_native_signal_adapter",
+    "publication": "local_only_personal_identity",
+    "native_pretrained_weights_available": false,
+    "next_action": "Commit protocol and adapter; execute bounded arithmetic/contract checks and saved prediction replay only."
   }
 }

@@ -1,5 +1,7 @@
 # Experiment queue
 
+**19 October, new user request:** NTT-05 is preparing a native-signal adaptation of reference matching. Scope is engineering contracts and exact saved NTT-04 prediction replay; native pretrained checkpoints are absent locally, so no new learned-native clinical comparison is scheduled. [Prospective protocol](ntt-05-native-signal-adapter.md). Personal identity only; no pushes.
+
 **18 October, local research:** all work uses the personal identity and remains local; no push or publication is authorized. Two worker agents plus the coordinator operate in separate worktrees. The independent clinical localization test and the original paper's large/large configuration remain unrun.
 
 | Study | Executed finding | Report |

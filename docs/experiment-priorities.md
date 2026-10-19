@@ -9,6 +9,16 @@ blocked priority. See [the executed report](ssl-synthetic-localization-counterfa
 Updated 18 October 2026 after the permitted-input audit, real-cache preparation and bounded-generator qualification.
 The original matched SSL pilot completed without meeting advancement; saved-map integrity and counterfactual audits come next.
 Earlier completed-study summaries retain their original dates. Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
+Local CPU continuation (18 October): [041](experiment-041-cpu-screening-results.md) and
+[042](experiment-042-measurement-transfer-results.md) passed their fixed development rules;
+boosting improved matched AUROC by 0.028442 at PTB and 0.040545 at SPH. Independent verification
+passed 462 checks with zero mismatches. [043](experiment-043-lead-grounding-results.md) failed
+its ranking rule because context-only AP was already 0.980097; its failed verdict is preserved.
+Independent 043 verification passed 3,904 checks with zero mismatches.
+Potential membership and time-grounding successors are ranked below, with separate protocols and
+patient roles required. No further fit or final test is scheduled; clinical label changes remain deferred.
+
+Updated 30 September 2026, after the completed Experiment 040 runtime diagnosis. Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
 explains the scoring, shows the current ranking and records what the papers suggest. The backlog is for
 choosing the next study. It does not authorize or schedule anything: the execution queue remains
 [experiment-queue.json](experiment-queue.json), and every study still needs a frozen protocol first.
@@ -101,14 +111,17 @@ penalty; one that ranks high earns a protocol like any other.
 | 37 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
 | 38 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
 | 39 | ssl_synthetic_factorial_mode_diagnostic | experiment | Explain the focal benefit and repeated-edit tradeoff using saved maps | 3 | 0.8 | 1.5 | 2.06 | @prospective_saved_map_diagnostic_protocol |
-| 40 | ssl_synthetic_factorial_seed_replication | experiment | Replicate the fixed paired-loss factorial under independent training randomness | 4 | 0.8 | 3.4 | 1.75 | @prospective_replication_protocol_and_actual_profile, @storage_plan_within_4GiB |
-| 41 | ssl_synthetic_annotation_audit | repo | Technical audit of ECGAD development labels | 4 | 0.8 | 3.5 | 1.71 | @ecgad_development_artifacts |
-| 42 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
-| 43 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
-| 44 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
-| 45 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
-| 46 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
-| 47 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
+| 40 | wave_grounding_context_control | repo | Qualify time-grounding semantics and strong context/option controls | 4 | 0.7 | 2.1 | 1.93 | @prospective_time_grounding_qualification |
+| 41 | ssl_synthetic_factorial_seed_replication | experiment | Replicate the fixed paired-loss factorial under independent training randomness | 4 | 0.8 | 3.4 | 1.75 | @prospective_replication_protocol_and_actual_profile, @storage_plan_within_4GiB |
+| 42 | ssl_synthetic_annotation_audit | repo | Technical audit of ECGAD development labels | 4 | 0.8 | 3.5 | 1.71 | @ecgad_development_artifacts |
+| 43 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
+| 44 | measurement_multisource_training | experiment | Human-read multisource training for the CPU measurement screen | 4 | 0.8 | 4.0 | 1.60 | @prospective_multisource_protocol, @local_challenge_training_manifests |
+| 45 | lead_grounding_membership_followup | experiment | Prospective exact-membership test of frozen lead-grounding models | 3 | 0.6 | 1.6 | 1.45 | @prospective_membership_protocol_and_patient_role |
+| 46 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
+| 47 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
+| 48 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
+| 49 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
+| 50 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
 
 Reruns after Ningbo (`rerun_of` in the backlog): 022 as `ningbo_sph_transfer`, 024 as `rerun_024_multisource`,
 025 as `rerun_025_ningbo`, 026 as `multisource_normal_manifold` and 027 as `multisource_calibration`. 023 is

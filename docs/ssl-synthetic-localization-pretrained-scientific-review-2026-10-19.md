@@ -116,3 +116,23 @@ added once; unavailable older factorial costs remain unknown. This transparent p
 amendment is scientifically appropriate for the authorized bounded generation task. Numerical review,
 committed integration and passing tests remain separate launch conditions; this review creates no
 v2 result and authorizes no training or clinical interpretation.
+
+## Saved-result scientific interpretation review
+
+Read the completed v2 main summary and terminal ledger and inspected all three saved figures without
+new inference or new scoring. The main summary SHA-256 is
+`0067dc16c609a7209cb626e8d31600f6b654d192e3b0803968ca3275db1660b2`. All 15 reported operational gates
+pass, with 128 completed seeds and the exact authorized forward counts. The reported paired activity
+coincidence difference is 0.8094248365473182, seed-bootstrap interval
+[0.8038931804338517, 0.8148564292963815]. This supports the narrow conclusion that high derivative-energy
+activity is aligned between independent generated leads relative to independently shifted controls.
+It is not an expert waveform-boundary score or clinical quality threshold.
+
+The predetermined first-eight gallery visibly contains repeated, aligned sharp events in the native
+signals. The intervention figure shows the fixed temporal windows and changes propagated through the
+five affected limb leads; it does not depict verified disease. The summary and plots are consistent
+with the intended engineering interpretation. Figure inspection is qualitative and adds no clinical
+verdict or sample-selection rule. Numerical verification belongs to the separately executed audit.
+The executing coordinator's results report should retain the v1 profile failure, unknown physical
+calibration, generator provenance limits and the fixed-support shortcut caveat. No further model
+training or claims about real abnormality localization follow from these saved results.

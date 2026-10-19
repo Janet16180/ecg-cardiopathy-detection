@@ -52,6 +52,10 @@ saw model output and whether the annotation is independent of the model and its 
 `reviewed` flag does not by itself make a rule-generated interval an independent expert mask. Preserve
 source revision, annotator pseudonym and annotation time when available. A future blinded evaluation
 must enforce its provenance and patient-role policy explicitly.
+That policy must also reconcile provenance kinds with their independence/blinding flags, require signal
+byte binding and reviewer identity where needed, and assess whether a set containing only context is
+actually sufficient. Those requirements are not enforced by this draft schema. Timestamp format
+validation requires a validator with date-time format checking enabled.
 
 The record and optional patient references are local pseudonyms. A signal hash can bind the annotation
 to local bytes; raw waveforms, identifiers and reviewed exemplars remain local under the existing data

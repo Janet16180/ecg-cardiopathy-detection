@@ -2374,13 +2374,46 @@
     "next_action": "Assess feature/delineation reliability and preserve amplitude-sensitive physiology; no etiologic or independent-source cluster claim."
   },
   "ntt04_same_wave_discrimination": {
-    "status": "protocol_frozen_implementation_in_progress",
+    "status": "complete_same_wave_visual_gain_gate_failed",
     "authorized": true,
     "protocol": "docs/ntt-04-same-wave-finding-discrimination.md",
     "protocol_commit": "8846650",
     "scope": "Automatic fixed QRS region, same V1/V6 view and three finding classes; no supplied QA target windows or lead answers. Exploratory record-finding classification, not specialist localization.",
     "publication": "local_only_personal_identity",
     "branch": "research/ntt04-same-wave",
-    "output_dir": "outputs/ntt04_same_wave"
+    "output_dir": "outputs/ntt04_same_wave",
+    "source_commit": "2431012",
+    "pre_score_amendment": "docs/ntt-04-amendment-context-control.md",
+    "independent_preflight": "passed",
+    "next_action": "Keep physical reference matching as the benchmark. Independent sufficient-evidence annotations and co-occurrence-controlled/source-transfer comparisons remain prospective; no additional run scheduled.",
+    "results": "docs/ntt-04-same-wave-finding-discrimination-results.md",
+    "target_patients": 60,
+    "support_patients": 27,
+    "support_draws": 3,
+    "raw_full_context_balanced_accuracy": 0.9277777777777777,
+    "dino_balanced_accuracy": 0.8277777777777776,
+    "primary_difference": -0.1,
+    "primary_interval": [
+      -0.1772543632837751,
+      -0.02341770266770257
+    ],
+    "advancement": false,
+    "independent_artifact_review": "passed"
+  },
+  "local_research_closeout_2026_10_18": {
+    "status": "completed_bounded_development_studies",
+    "summary": "docs/reference-localization-findings-2026-10-18.md",
+    "identity": "Janet16180",
+    "email": "clarajanet16180@outlook.com",
+    "publication": "local_only_no_further_push",
+    "integrated_tests_passed": 1304,
+    "integrated_tests_skipped": 6,
+    "integrated_test_seconds": 72.99,
+    "ruff_passed": true,
+    "clinical_localization_validated": false,
+    "etiology_identified": false,
+    "original_large_large_recipe_executed": false,
+    "automatic_followup_scheduled": false,
+    "verification": "reports/local_reference_research_verification.json"
   }
 }

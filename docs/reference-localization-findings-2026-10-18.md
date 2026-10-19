@@ -32,12 +32,28 @@ proposal overlapped none of the three nominated intervals. Another recurring bea
 same finding, so zero overlap with one nominated answer does not establish clinical incorrectness.
 The frozen engineering gate failed without subsequent tuning.
 
-The next frozen comparison, [NTT-04](ntt-04-same-wave-finding-discrimination.md), gives every class the
-same automatically detected QRS region and canonical V1/V6 view. It compares normal, complete right
-bundle-branch block and complete left bundle-branch block source findings with patient-disjoint
-reference banks and raw-morphology/scalar controls. This removes the easy wave-type distinction.
-It remains record-finding discrimination with a programmed region, not an independently adjudicated
-pathology mask. Results will be added only after execution and artifact review.
+[NTT-04](ntt-04-same-wave-finding-discrimination-results.md) then gave every class the same automatic
+QRS region and canonical V1/V6 view. Sixty target patients, twenty per finding, were separate from
+27 reference patients across three fixed support draws. Physical full-beat reference matching reached
+**92.78% balanced accuracy**, versus **82.78%** for compact DINO QRS-pooled features. The primary visual
+minus strongest-baseline difference was **−10.00 percentage points**, paired whole-patient 95% interval
+**[−17.73, −2.34]**. The strongest baseline was reselected in every bootstrap draw. Raw QRS-only matching
+reached 88.33%; the combined duration/amplitude/energy comparator reached 72.22%. The visual advancement
+gate failed. The run took 55.98 seconds on CPU, with no selected-record replacement or weight training.
+
+This removes the supplied wave-type-choice shortcut and gives a concrete priority: preserve physical
+reference matching as the benchmark before adding the visual representation. It does not prove that the
+original large/large paper fails on ECGs. DINO tokens remain globally contextual even when pooled inside
+QRS; the prospectively added full-beat physical baseline addresses that input-context difference. Both
+methods classify source record findings with a programmed region, without independently marked pathology.
+The confidence interval conditions on the fixed support banks. Source annotations also co-occurred:
+12/20 right-bundle-block targets had MI codes versus 2/20 left-bundle-block targets. The comparison does
+not isolate causal BBB morphology. No class-specific fusion or further tuning was performed afterward.
+
+DINO had higher left-bundle-block recall in this small cohort (95.00% versus 88.33% for physical full-beat
+matching), while physical matching had higher normal and right-bundle-block recall. The overall result
+is not uniform superiority in every class. These descriptive differences are hypotheses for a new
+prospective study, not a basis for selecting a combined model on these same targets.
 
 ## Annotation scarcity includes a mismatch in what the labels mean
 
@@ -112,13 +128,16 @@ evaluated in this study.
 ## Reviewable artifacts and remaining decisions
 
 Every study has a prospective protocol, committed implementation, completed local receipt, tests and a
-results report. The NTT-03 integrated suite passed 1,266 tests with six skipped before the later studies
-were integrated. Subsequent focused checks passed; final union verification will be recorded after NTT-04.
+results report. The final integrated CPU suite passed **1,304 tests with six skipped in 72.99 seconds**;
+repository-wide Ruff passed. Independent artifact reconstruction reproduced NTT-04's 180 patient-draw predictions, all nine
+methods and the 2,000-draw primary interval without model inference or waveform reads.
 No original pinned dependency file, frozen historical method, clinical label definition or closed test
-was changed. No full GPU training run was started.
+was changed. No full GPU training run was started. The [verification receipt](../reports/local_reference_research_verification.json)
+records 464 matching frozen-source hash comparisons across all seven studies, test results, schema
+structural checks and personal-identity scope.
 
 The [queue](experiment-queue.md) records execution status; the [ranked backlog](experiment-priorities.md)
-records follow-ups without scheduling them. The main next decision is whether same-wave reference
-recognition adds useful morphology information beyond physical baselines. A clinical highlighting claim
-also requires independent annotation of acceptable finding evidence, rather than treating every
-unselected beat as normal.
+records follow-ups without scheduling them. The next research decision is how physical reference matching
+and clinically sufficient evidence transfer to another permitted cohort, with coexisting annotations and
+support uncertainty addressed prospectively. A clinical highlighting claim also requires independent
+annotation of acceptable finding evidence, rather than treating every unselected beat as normal.

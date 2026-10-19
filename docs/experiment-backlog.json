@@ -1482,16 +1482,16 @@
       "kind": "experiment",
       "title": "Same-QRS reference finding discrimination",
       "question": "Can visual references distinguish normal/CRBBB/CLBBB beyond raw morphology when every candidate is QRS?",
-      "evidence": "NTT-03 phase comparator already selects every nominated answer. Frozen NTT-04 uses the same automatic leads/ROI and 60 balanced targets, with three support draws and strong raw/scalar baselines.",
+      "evidence": "60 unique targets, three fixed support draws: compact DINO 82.78%, physical full-context references 92.78%. DINO minus strongest baseline \u221210.00 pp, paired selection-aware 95% interval [\u221217.73, \u22122.34]; frozen advancement gate failed.",
       "value": 4,
       "clarity": 0.7,
       "gpu_hours": 0.0,
-      "cpu_hours": 0.167,
+      "cpu_hours": 0.015550759721857805,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "in_progress",
+      "status": "done",
       "authorized": true,
-      "notes": "docs/ntt-04-same-wave-finding-discrimination.md. Initial protocol8846650 before scores, with pre-score full-context raw baseline and contextual-token clarification. Record findings, not pathological mask validation. Cached DINO CPU only, <=10min."
+      "notes": "docs/ntt-04-same-wave-finding-discrimination-results.md. 55.98s CPU, 27 support patients, no weight training or supplied QA windows/leads. Exact independent reconstruction passed; confidence interval conditions on support banks. Findings have coexisting annotations (MI12/20 CRBBB versus2/20 CLBBB); no isolated-pathology/localization/causal claim."
     },
     {
       "id": "ecg_acceptable_evidence_contract",
@@ -1580,6 +1580,26 @@
       "status": "blocked",
       "authorized": false,
       "notes": "Requires a declared nonclosed cohort, compatible units/leads, permitted patientpartition and reliable features before any scoring. No SPHtraining, closed Challenge or EchoNext test."
+    },
+    {
+      "id": "physical_finding_reference_benchmark",
+      "kind": "experiment",
+      "title": "Independent physical finding-reference benchmark with sufficient evidence",
+      "question": "Does the frozen physical reference baseline retain its advantage across permitted cohorts and coexisting findings?",
+      "evidence": "NTT-04 physical full-beat references outperform compact visual QRS-pooled features by 10 percentage points on 60 development patients; source finding classes have unequal annotation co-occurrence. This is not an independent clinical localization result.",
+      "value": 5,
+      "clarity": 0.7,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.5,
+      "build_hours": 4.0,
+      "blocked_by": [
+        "ecg_independent_expert_evidence",
+        "physical_feature_reliability",
+        "@permitted_independent_development_source"
+      ],
+      "status": "blocked",
+      "authorized": false,
+      "notes": "Freeze patient/source roles, annotation co-occurrence handling, support uncertainty and acceptable-evidence endpoints prospectively. Preserve same-wave and raw/full-context controls. Do not tune, fuse class-specific winners or change prior scores after observing NTT-04. No automatic data download or new evaluation."
     }
   ]
 }

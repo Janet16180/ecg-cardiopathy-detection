@@ -10,9 +10,11 @@
 | CLUSTER-01 | 1,999 patients / 53 physical features; selected spectral partition misses worst-refit stability gate | [Morphology](cluster-01-physical-morphology-results.md) |
 | CLUSTER-02 | 36 configurations, stable mixtures and consensus; amplitude-normalized shape disagrees with other views, so robustness gate failed | [Stability selection](cluster-02-stability-selection-results.md) |
 | SHAP-01 | Exact linear grouped explanations; reference population changes leading absolute group for 175/400 patients despite identical predictions | [Background audit](shap-01-linear-background-sensitivity-results.md) |
-| NTT-04 | Protocol frozen; implementing three-way same-QRS finding discrimination without QA answer windows or lead answers; no score yet | [Protocol](ntt-04-same-wave-finding-discrimination.md) |
+| NTT-04 | 60 patients: physical full-beat references 92.78% versus compact DINO 82.78%; difference −10.00 pp [−17.73, −2.34]; visual-gain gate failed | [Same-wave results](ntt-04-same-wave-finding-discrimination-results.md) |
 
 New waveform/reference/model scoring uses only PR67's training role. NTT-02's predecessor-integrity replay also reparsed reserved-role aggregate annotations before the gate; its report explicitly discloses this limitation. No reserved waveform entered new fitting or scoring. Other beats may provide acceptable evidence even when they do not overlap one nominated silver interval. No cluster, source annotation or attribution establishes the cause of heart disease.
+
+[Combined findings](reference-localization-findings-2026-10-18.md) and the [draft specialist evidence contract](ecg-evidence-annotation-guide.md) summarize the resulting direction. Final integrated verification passed 1,304 tests with six skipped in 72.99 seconds; Ruff passed. All seven bounded studies are complete. No further study or publication is automatically scheduled.
 
 The [research plan](ecg-reference-localization-plan.md) preserves PR61 studies through 073, its spent ECGAD holdout and separate PR67 patient reservations. Read live receipts under `outputs/` and the results reports before reporting progress; a protocol or smoke test is not a clinical result.
 

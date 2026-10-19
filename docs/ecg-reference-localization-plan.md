@@ -7,9 +7,10 @@ review; it does not redefine them or introduce age-subgroup analyses.
 
 The annotation audit, native reference study, compact visual pilot, two morphology clustering studies
 and exact grouped explanation audit are complete. Their linked results in the [live queue](experiment-queue.md)
-separate executed evidence from the initial plan. NTT-04 now removes generic wave-phase alternatives
-through a prospectively frozen same-QRS finding comparison. The original large/large paper recipe and
-an independent clinical localization evaluation remain unrun. All further work is local under the
+separate executed evidence from the initial plan. NTT-04 removed generic wave-phase alternatives
+through a prospectively frozen same-QRS finding comparison; physical references outperformed the compact
+visual variant. See the [combined executed findings](reference-localization-findings-2026-10-18.md).
+The original large/large paper recipe and an independent clinical localization evaluation remain unrun. All further work is local under the
 personal identity `Janet16180` / `clarajanet16180@outlook.com`; no push is authorized.
 
 ## What existing work changes
@@ -40,7 +41,7 @@ agents active; only one process owns a new scored study. Use worktrees if worker
 | --- | --- | --- |
 | 1, completed | Provenance, schema, split and shortcut audit | Use the new annotations as silver evidence only |
 | 2, numeric adapter executed | Typed reference examples and coordinate adapter; full ordinal/absent/equivalent-evidence contract remains | Preserve source case, patient, finding, lead, coordinate type, units, polarity and provenance; quarantine reserved patients |
-| 3, NTT-02/03 executed; NTT-04 ongoing | Native and compact visual reference comparisons; original large/large recipe unrun | Freeze supports, controls, prediction area, abstention and development endpoint before inference |
+| 3, NTT-02/03 executed; NTT-04 executed | Native and compact visual reference comparisons; original large/large recipe unrun | Freeze supports, controls, prediction area, abstention and development endpoint before inference |
 | 4 | Independent diagnostic-evidence evaluation | A genuinely new annotated population; existing spent holdout cannot establish confirmation |
 | 5, initial studies executed | CLUSTER-01/02 and SHAP-01; independent-source and clinical-map comparisons remain | Explain recurring morphology and model dependence without claiming etiology |
 

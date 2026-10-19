@@ -1,5 +1,13 @@
 # Experiment queue
 
+**19 October released generator executed:** The standalone public Pulse2Pulse probe and its independent
+saved-output audit pass. Six forwards produced four fixed-seed ECGs plus exact replay;34bindings
+and every technical gate verified with zero mismatches. See [results](ssl-synthetic-localization-pretrained-generator-standalone-v1-results.md)
+and [independent report](ssl-synthetic-localization-pretrained-generator-independent-audit-v1-results.md).
+Terminal new-machine main+audit CPU1.671499seconds, zeroGPU. The separately frozen128seed
+quality/support study has eight passing artificialtests and scientific sourceGO; its actual GPU
+profile remains a gate. No physical calibration, clinical normality or disease masks are established.
+
 **19 October synthetic-generation continuation:** Main is integrated while preserving both histories.
 Two RTX3090s and actual PyTorch CUDA access passed outside the restricted device namespace;
 see local `outputs/ssl_synthetic_localization/continuation_inventory_v1.json`. Historical localization

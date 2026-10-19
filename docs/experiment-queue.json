@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Execute reviewed standalone public Pulse2Pulse probe, independently verify saved outputs, then profile and qualify128fixed-seed CUDA backgrounds under the separately frozen generation-quality protocol. Historical mode diagnosis waits for its original payloads; no classification substitution or clinical claims.",
+    "next_action": "Profile and execute the128fixed-seed generated-quality/support qualification on GPU under its committed protocol and shared lock, then independently verify savedarrays. No learning/disease validation claimed.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2596,10 +2596,11 @@
         "latest cumulative-cost ledger",
         "final integrated source review",
         "local dependency and hardware inventory"
-      ]
+      ],
+      "historical_protocol_status": "unexecuted_missing_parent_receipts; superseded_for_this_host_by_separate_standalone_probe"
     },
     "continuation_2026_10_19": {
-      "status": "standalone_probe_admitted_before_execution",
+      "status": "standalone_probe_and_independent_audit_passed_quality_source_frozen",
       "historical_payloads_present": false,
       "history_preserved": true,
       "gpu_access_verified": true,
@@ -2616,7 +2617,13 @@
       "standalone_output": "outputs/ssl_synthetic_localization/pretrained_generator_standalone_v1",
       "follow_on_protocol": "docs/ssl-synthetic-localization-generated-quality-v1.md",
       "keep_pr_draft": true,
-      "historical_costs_locally_verified": false
+      "historical_costs_locally_verified": false,
+      "standalone_results": "docs/ssl-synthetic-localization-pretrained-generator-standalone-v1-results.md",
+      "standalone_audit_report": "docs/ssl-synthetic-localization-pretrained-generator-independent-audit-v1-results.md",
+      "quality_source_commit": "be9ea5f",
+      "quality_execution": "awaiting_final_numerical_source_review_and_actual_path_profile",
+      "verified_current_machine_cpu_seconds": 1.6714985129999997,
+      "verified_current_machine_gpu_wall_seconds": 0.0
     }
   },
   "experiment_041_cpu_screening": {

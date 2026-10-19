@@ -1,0 +1,97 @@
+{
+  "study_id": "generated_paired_suppression_v1",
+  "amendment_scope": "identity_accounting_and_actual_path_persistence_clarification_only",
+  "frozen_protocol_sha256": "86f602cb95c74edba597bc46bc55a94a928f9f4e808e525fd8131ea74ce00c0d",
+  "frozen_config_sha256": "12732cb09c545cf09d1f8f133acd5ec48f96b2eb48aefc9be691ad2d3654b083",
+  "fixed_parent_bindings_verified": 45,
+  "replication": {
+    "root": "outputs/ssl_synthetic_localization/generated_fit_replication_v1",
+    "sha256": {
+      "summary.json": "04bab13e3967a3724a63f41d9f164a4315a661c94dda86e0049c72e27b7fdde8",
+      "prospective_ledger.json": "41743e6cc82a76e7bc2f529033401429f89a0858f921b19e975029b9043f32f9",
+      "independent_audit_v1/summary.json": "a9f9daca25273f23f10dc46faca019bd680eefe24c1c6cc951f33e3fcb46282e",
+      "independent_audit_v1/prospective_ledger.json": "f17f0c112a3eeed8b5f46be389c2a06ff8dcb8c2dd6169b1833a398f20a0d264",
+      "fresh_cases.jsonl": "4dbfdcd4bf0f6f68b74528311c1c66c1a20b7053fb39a8f56cef27608a3b07c4",
+      "fresh_observed.npy": "fce3e6945f5ff17583cf9d9accbb7879caf0dc5ee62fba40fba50a57ca255d53",
+      "fit_1/initial_state.pt": "42bcdf97788aa6554c2263fa7000c725107df8ceb6bb5c03fd331c478a9850f9",
+      "fit_1/training_schedule.npy": "8ff6c9b17706977104a6205bfd9f697170b7738911a9ced1463ae7fe2087bfed",
+      "fit_1/background_schedule.npy": "a09ec5b6ce63e1c8fcc0cb2d87b0bad7dba554cbaec96085a85b852b1d846e14",
+      "fit_1/supervised/initial_state.pt": "42bcdf97788aa6554c2263fa7000c725107df8ceb6bb5c03fd331c478a9850f9",
+      "fit_1/supervised/final_state.pt": "cb372ec97ce55df7244bb312e85ba01fda5a94ebbdd4cbc7e13ebb38cfeb4a76",
+      "fit_1/supervised/optimizer.pt": "45b46848c6303b5d274b0ff94b43c82d0480bc2b15ad772a70329cf0137e38d1",
+      "fit_1/supervised/losses.npy": "a70003747dd53ab1e512716ee69243b3188e39ae1d1cbd8c3f1949209452c164",
+      "fit_1/supervised/fresh_metrics.json": "17c6832f9c2092b94772b7d4d6a19a77f1191e9d098b005ac8638b030d2bac39",
+      "fit_1/permuted/fresh_metrics.json": "ee2eacdbe1bd4fb869808cd74002e81a98c9d8c42a403aacfb5c34cb33b4b0a7",
+      "fit_2/initial_state.pt": "afecb43acdce78a400464052bbad1c72e4bf86a2077e60ffded36bf9f00381e1",
+      "fit_2/training_schedule.npy": "12c898ed05b57916a360b4508dd45d9ee301d8620c0efc2528bd7dc9528fb2cc",
+      "fit_2/background_schedule.npy": "a7369583fb093c421fe1801d80f1200ad92ebf367560df31d17ba5c4e7189014",
+      "fit_2/supervised/initial_state.pt": "afecb43acdce78a400464052bbad1c72e4bf86a2077e60ffded36bf9f00381e1",
+      "fit_2/supervised/final_state.pt": "5c72347736f43bc001e30429eac993b01bc883ea1b9310aeed8369c84b8141de",
+      "fit_2/supervised/optimizer.pt": "fe62ad091414161fada9aa4de12de6a7779176ba07f8fc0b4ed3306e13438142",
+      "fit_2/supervised/losses.npy": "3d7f5fdff5f43824c3d0a19bc8cadb76ea5dc5b920895ca53da01e047d75ff29",
+      "fit_2/supervised/fresh_metrics.json": "1c97d6cfab9b8be0d936ef3ec0198ecb27a1542a76d37990a87806dc070bb6e9",
+      "fit_2/permuted/fresh_metrics.json": "d0fa6cf91ec945d785c420384884211582abbcecd34d201544a78874a6138458",
+      "fit_3/initial_state.pt": "b7bb4527b150c9977bba8617557d2c37c5e6f723921bba33a43a07707069e989",
+      "fit_3/training_schedule.npy": "cc3b76da80f18f35da69d9c0edfa56599534deed9804bb03c6dbcde8baf18cb6",
+      "fit_3/background_schedule.npy": "8841c807ee97d3e6a4f4b7bc25a2fb8ae5f3d24be77bb4067d02bb36d673ac5e",
+      "fit_3/supervised/initial_state.pt": "b7bb4527b150c9977bba8617557d2c37c5e6f723921bba33a43a07707069e989",
+      "fit_3/supervised/final_state.pt": "8ccc1ae7e88762e0f5d87703f17a4b8dbfd047d9c6ae0d5f6767ea8b046a62e5",
+      "fit_3/supervised/optimizer.pt": "7c9572d9e8cfe296f90ed4cedd1044b3d3ae57a5cfc02011457dd1e742cecbad",
+      "fit_3/supervised/losses.npy": "afa40e6cd02c50a83f8d405b4dcd3269a307653db15453c540c21a750d19cc30",
+      "fit_3/supervised/fresh_metrics.json": "eab36d49fff00dcf9ba5607a3d127e1eef40e62dfb33cbdf3410853ba09bef82",
+      "fit_3/permuted/fresh_metrics.json": "fff312abfb7dfb187e2f662b700d3fd9eede82262a71f9bbf3375c9cbdee7790"
+    }
+  },
+  "prior_ledger": {
+    "path": "outputs/ssl_synthetic_localization/generated_fit_replication_v1/independent_audit_v1/prospective_ledger.json",
+    "sha256": "f17f0c112a3eeed8b5f46be389c2a06ff8dcb8c2dd6169b1833a398f20a0d264",
+    "current_machine_cumulative_cpu_seconds": 190.681380118,
+    "current_machine_cumulative_gpu_wall_seconds": 178.56192114995793
+  },
+  "profile_persistence_clarification": {
+    "recurrent_update_timing_includes": "batch construction, forward, complete declared objective, backward, Adam update, loss and component persistence write and flush, and CUDA synchronization",
+    "same_profile_and_main_persistence_path_required": true,
+    "applies_to_all_arms": [
+      "B",
+      "P",
+      "K",
+      "PK"
+    ],
+    "original_steps_used": [
+      2,
+      3
+    ],
+    "additional_optimizer_updates": 0,
+    "scientific_or_budget_changes": false
+  },
+  "historical_costs_verified": false,
+  "objective_arithmetic_evidence": {
+    "path_template": "fit_1/profile/{arm}/step1_logits.npy",
+    "logits_dtype": "float32",
+    "logits_shape": [
+      8,
+      12,
+      5000
+    ],
+    "case_indices_path_template": "fit_1/profile/{arm}/step1_case_indices.npy",
+    "case_indices_dtype": "int64",
+    "case_indices_shape": [
+      8
+    ],
+    "case_indices_equal": "fit_1/training_schedule.npy[0]",
+    "arms": [
+      "B",
+      "P",
+      "K",
+      "PK"
+    ],
+    "capture": "first_original_profile_forward_logits_before_optimizer_update",
+    "additional_model_forwards": 0,
+    "additional_optimizer_updates": 0,
+    "forecast_additional_bytes": 8388608,
+    "capture_and_write_charged_as_cold_profile_work": true,
+    "independent_float64_component_and_total_absolute_tolerance": 1e-06,
+    "remaining_metric_metadata_absolute_tolerance": 1e-12,
+    "scope": "first_profile_objective_arithmetic_only; complete_training_execution_remains_source_bound"
+  }
+}

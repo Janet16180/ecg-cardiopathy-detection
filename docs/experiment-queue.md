@@ -1,5 +1,18 @@
 # Experiment queue
 
+**19 October randomized localization learning independently verified:** The released-generator
+background experiment passed all 12 scientific and nine integrity gates. Supervised pooled full-grid
+AP was 0.077538 versus amplitude 0.024522 and permuted targets 0.021353. Frozen pooled gains were
++0.053016 [0.027369, 0.083052] and +0.056185 [0.031928, 0.083607]. Independent verification
+reconstructed cases, masks, schedules, states, recovery and metrics with zero mismatches.
+Read [results](ssl-synthetic-localization-randomized-learning-v1-results.md) and
+[independent audit](ssl-synthetic-localization-randomized-localization-independent-audit-v1-results.md).
+Absolute AP remains modest: supervised maximum output exceeded 0.5 on 23/48 sham and 25/48 nuisance
+controls. These uncalibrated outputs are not clinical false-positive rates. All eight new-machine
+stages total 32.489216 CPU / 38.433311 GPU-lock seconds, including failed attempts once; missing
+history was not reconstructed. No further fit is running. PR #67 stays draft. Start with the
+[current continuation](ssl-synthetic-localization-continuation-2026-10-19.md).
+
 **19 October randomized learning source frozen:** The [new protocol](ssl-synthetic-localization-randomized-learning-v1.md)
 uses80training/48held-out generatorseeds, variedlead/time/sign/width/amplitude, observed-onlydense
 localization and matched400-update supervised/permuted-target arms. Fixedoldfixtures nevertrain.

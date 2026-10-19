@@ -1643,17 +1643,67 @@
       "kind": "experiment",
       "title": "Learn randomized introduced-change support on public generated backgrounds",
       "question": "Can a signal-only localizer trained with correct varied masks outperform permuted supervision and amplitude on held-out generator seeds?",
-      "evidence": "ReleasedPulse2Pulse bank exists, exactmask mechanism verified; priorfixedtimes/lead cannot establish learning. Newprospective randomized lead/time/sign/width/amplitude protocol in preparation.",
+      "evidence": "Executedmatched400updatearms on80TRAIN/48EVALgeneratedbackgrounds. All12scientific+9integritygatespass; independent saved-output/state audit0mismatches. DirectpooledAP.077538; gainsamp+.053016[.027369,.083052],permuted+.056185[.031928,.083607]. docs/ssl-synthetic-localization-randomized-learning-v1-results.md.",
       "value": 5,
       "clarity": 0.9,
       "gpu_hours": 0.33,
       "cpu_hours": 0.5,
       "build_hours": 2,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Sameinputs/init/schedule, variedsupports and exactstep2/3Adamrecovery. LowabsoluteAPanduncalibratedcontrols23/48sham25/48nuisance>.5remain. Onefit/editfamily only; no realdisease/SSLclaim. Main+audit20.432098CPU/24.868681GPU; earlierprofiles/costspreserved. Eval48seedsnowspentengineeringdata."
+    },
+    {
+      "id": "ssl_synthetic_generated_control_diagnosis",
+      "kind": "experiment",
+      "title": "Diagnose background activations in saved generated-ECG localization maps",
+      "question": "Do concentrated supervised control activations align with native derivative events, edited leads or learned spatial priors?",
+      "evidence": "Randomizedlearningpasses12gatesbutcontrolmax>.5occurs23/48sham25/48nuisance andAPis.077538; savedpairedmaps/observations/masks exist.",
+      "value": 5,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 1.5,
       "blocked_by": [
-        "@prospective_randomized_protocol_source_and_actual_training_profile"
+        "@prospective_saved_map_control_protocol"
       ],
       "status": "proposed",
-      "notes": "No fixedfixture training, no clinicalorrealdata labels. Sameinputs/init/updatebudget across supervised/permutedarms. Reportfocal/repeatedandcontrols,seedconditionalintervals,allfailures."
+      "notes": "No refit/newinference orclinicalfalsepositiveclaim. Keepfocal/repeatedseparate, frozenmetricpolicy, independentcheck and additivecosts."
+    },
+    {
+      "id": "ssl_synthetic_generated_seed_replication",
+      "kind": "experiment",
+      "title": "Replicate varied-support learning on generated ECGs with independent fit randomness",
+      "question": "Does the small pooled AP gain and control-activation tradeoff persist beyond one initialization and schedule?",
+      "evidence": "Prospectiveonefitconjunctionpasses, but amplitudepooledgain.053016barelyexceeds.05pointmargin andintervalsconditiononefit.",
+      "value": 5,
+      "clarity": 0.8,
+      "gpu_hours": 0.33,
+      "cpu_hours": 0.2,
+      "build_hours": 2.5,
+      "blocked_by": [
+        "ssl_synthetic_generated_control_diagnosis",
+        "@prospective_replication_and_actual_training_profile"
+      ],
+      "status": "proposed",
+      "notes": "No hyperparametertuning onspent48evaluationseeds. Newseed/holdoutpolicy beforeanyfits; allmodes/controls retained. Existingclinicalpipelineunchanged."
+    },
+    {
+      "id": "ssl_synthetic_public_annotation_qualification",
+      "kind": "repo",
+      "title": "Qualify public expert wave annotations for timing-anchor checks",
+      "question": "Can LUDB or selected QTDB annotations support independently measured wave-boundary alignment without clinician recruitment?",
+      "evidence": "Publicannotationcapabilitiesreviewed in docs/ssl-synthetic-localization-pretrained-scientific-review-2026-10-19.md; localLUDBrawdirectoryempty.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.2,
+      "build_hours": 2.5,
+      "blocked_by": [
+        "@prospective_public_annotation_download_and_overlap_policy"
+      ],
+      "status": "proposed",
+      "notes": "ExpertP/QRS/Tboundariesarewaveannotations, notdiseaseregionmasks. No download/read/clinical-labelchange performed. Respectsourceoverlapandclosedsets."
     }
   ]
 }

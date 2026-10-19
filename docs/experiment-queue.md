@@ -1,5 +1,15 @@
 # Experiment queue
 
+**18 October machine handoff:** The user will start a new Codex session on a local computer with
+two RTX 3090 GPUs. Read the [continuation handoff](ssl-synthetic-localization-machine-handoff.md)
+for completed findings, pending tasks, evidence transfer and startup commands. PR #67 remains draft.
+Git carries code/reports; local arrays, checkpoints and receipts need a separate local transfer.
+The mode diagnostic and independent checker are committed/source-reviewed but unexecuted. The
+Pulse2Pulse adapter passed nine artificial tests, but needs a prospective asset/protocol/accounting
+amendment and final review before any download or inference. No scientific run was started during
+handoff. The user superseded the earlier no-push instruction; historical paragraphs below retain
+their original execution context. Hardware inventory, transfer and new-machine profiles are pending.
+
 **Resource constraint clarified:** The user reiterated that cardiologist access is unavailable;
 recruiting or asking one is not a next step. Continue with existing information, public annotations
 and released research models, preserving current clinical label definitions. The user is architecture-agnostic: GAN, diffusion and VAE approaches are eligible. Published generator

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-18T23:55:52.225893+00:00",
+  "updated_at_utc": "2026-10-19T00:52:40.717139+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Completed saved-map diagnosis, no further scoring or fits. Seven SSL nuisance flags persist on unchanged ECGs and one new flag appears; many unflagged maxima also shift, so no nuisance-invariance claim. R has strong phase-aligned pre-edit outputs and little introduced response, not a proven internal mechanism. Preserve all failed parent gates. Rank a prospective R/S by BCE/paired-loss factorial with edited-AP/probability-response/control guards, fresh validation patients and actual profile. Clinical annotation recovery remains separate. All local/no pushes.",
+    "next_action": "Machine handoff prepared for local dual-RTX-3090 computer. Read docs/ssl-synthetic-localization-machine-handoff.md. Transfer local evidence separately from Git; verify hardware, exact receipts and allowed bindings. Saved-map mode diagnostic and independent audit are source-complete but unexecuted. Pulse2Pulse feasibility adapter is artificially tested but unexecuted and requires prospective public_assets/protocol/accounting amendment plus final review. Keep PR 67 draft; no automatic training, closed tests or clinical claims.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2358,7 +2358,7 @@
     "real_background_clarifications": "docs/ssl-synthetic-localization-real-background-clarifications.md",
     "real_background_configuration": "configs/ssl_synthetic_real_background_v1.json",
     "real_background_scored": true,
-    "remote_updates_paused_by_user": true,
+    "remote_updates_paused_by_user": false,
     "missing_required_scope": "Historical setup-only readiness receipt; later actual profile/training/evaluation are recorded separately.",
     "real_background_qualification_receipt": "outputs/ssl_synthetic_localization/real_background_v1/preparation/summary.json",
     "real_background_qualification_receipt_sha256": "32b387379d3fc8d11e52d2bd9e022f9cadc6b69b4e58f1f00f06de7286921b7b",
@@ -2498,7 +2498,7 @@
       "performance_scored": true,
       "closed_test_authorized": false,
       "primary_endpoint": "Initialization-averaged paired-loss effect on direct edited-map AP; secondary interaction and AP-response effects.",
-      "next_action": "Important engineering finding complete: paired loss improves directAP pooled, SSL+paired best; all12gates independently pass. Random repeated-edit AP worsens, so no uniform-mode claim. Rank a separately frozen seed replication and saved-map mode diagnostic; neither launched. Clinical annotation recovery remains blocked. No additional fits, thresholds, closed tests, pushes or PR updates scheduled.",
+      "next_action": "Completed and independently audited; see current machine handoff for source-ready unexecuted mode diagnosis and generator feasibility, then prospective seed replication. Preserve repeated-edit regression and all closed tests. PR 67 must remain draft.",
       "protocol_commit": "8beb272",
       "data_source_commit": "019c974",
       "training_evaluation_source_commit": "cfd50db",
@@ -2559,6 +2559,44 @@
       "clinical_truth_strategy": "Use and audit already published human annotations and author-provided validation where available. Direct specialist participation is not a project prerequisite. Preserve existing clinical label definitions and distinguish introduced-change truth from native disease truth.",
       "pretrained_generator_strategy": "Assess released ECG GAN checkpoints as reusable baselines before training a new generator; check input/output control, training-cohort overlap, local compatibility and whether regional labels are actually supplied. No download or new experiment has run in this assessment.",
       "generative_architecture": "User clarified that GAN is an initial idea, not a requirement. Compare reusable GAN, diffusion and VAE generators by controllability, available weights, local feasibility and downstream benefit. No superiority assumed from architecture age."
+    },
+    "machine_handoff": {
+      "document": "docs/ssl-synthetic-localization-machine-handoff.md",
+      "target_hardware_user_report": "two RTX 3090 GPUs; local access only",
+      "target_inventory_verified": false,
+      "pull_request": 67,
+      "keep_draft": true,
+      "local_artifact_transfer_completed": false,
+      "runs_started_during_handoff": false
+    },
+    "factorial_mode_diagnostic": {
+      "status": "protocol_and_source_ready_unexecuted",
+      "protocol": "docs/ssl-synthetic-localization-factorial-mode-diagnostic.md",
+      "configuration": "configs/ssl_synthetic_factorial_mode_diagnostic_v1.json",
+      "runner": "scripts/reports/diagnose_ssl_synthetic_factorial_modes.py",
+      "independent_checker": "scripts/validation/audit_ssl_synthetic_factorial_modes.py",
+      "output_dir": "outputs/ssl_synthetic_localization/counterfactual_factorial_v1/mode_diagnostic_v1",
+      "artificial_tests_passed": 16,
+      "performance_scored": false,
+      "source_review_passed": true,
+      "execution_hold": true
+    },
+    "pretrained_generator_feasibility": {
+      "status": "adapter_tested_unexecuted_asset_amendment_required",
+      "protocol": "docs/ssl-synthetic-localization-pretrained-generator-feasibility.md",
+      "configuration": "configs/ssl_synthetic_pretrained_generator_feasibility_v1.json",
+      "assessment": "docs/ssl-synthetic-localization-pretrained-generator-assessment.md",
+      "runner": "scripts/validation/probe_ssl_synthetic_pretrained_generator.py",
+      "artificial_tests_passed": 9,
+      "weights_downloaded": false,
+      "model_inference_performed": false,
+      "execution_hold": true,
+      "missing_before_execution": [
+        "prospective public_assets and MIT AST protocol amendment",
+        "latest cumulative-cost ledger",
+        "final integrated source review",
+        "local dependency and hardware inventory"
+      ]
     }
   }
 }

@@ -1,5 +1,15 @@
 # Experiment queue
 
+**19 October autonomous continuation authorized:** The user requested several hours of autonomous
+synthetic-generation/localization work, including recommended steps after independent-fit replication.
+The next protocol is in preparation: three new matched fit pairs, exact original training replay,
+64 fresh generated evaluation backgrounds, and the spent 48-background panel as secondary only.
+Both RTX 3090s again passed actual host PyTorch operations under the shared lock; restricted-shell
+visibility is not a GPU failure. No new generator forward, fit or score has started. Actual-path
+profiles, committed protocols, independent review and additive budgets gate each new experiment.
+A later background-suppression comparison will have its own protocol and fresh evaluation policy;
+clinical labels and closed tests remain unchanged. PR #67 stays draft.
+
 **19 October saved-map hotspot diagnosis independently verified:** The
 [executed diagnostic](ssl-synthetic-localization-control-diagnosis-v1-results.md) reproduced all
 predecessor metrics exactly. Supervised native-minus-shifted derivative-activity overlap is 0.200347

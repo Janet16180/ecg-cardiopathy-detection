@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T17:31:05.751980+00:00",
+  "updated_at_utc": "2026-10-19T18:12:11.380920+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Read audited generated-background diagnosis; rank independent fit-randomness replication with a new prospective evaluation policy, then a paired-background objective comparison and public wave-annotation qualification. No new fit, closed test, clinical promotion or merge is scheduled.",
+    "next_action": "Freeze and review independent-fit replication with fresh synthetic evaluation backgrounds, execute admitted GPU paths, independently verify, then continue the next useful prospectively defined generator/localization experiment under measured resources.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2801,6 +2801,30 @@
           "independent_core_bindings_checked": 6,
           "frozen_source_mismatches": 0
         }
+      },
+      "autonomous_continuation": {
+        "authorized": true,
+        "authorization": "User requests autonomous continuation for several hours on 19 October 2026, including recommended follow-up steps after replication.",
+        "clinical_or_closed_test_authorized": false,
+        "hardware_inventory": "outputs/ssl_synthetic_localization/replication_hardware_inventory_v1.json",
+        "planned_sequence": [
+          "independent_fit_randomness_replication_with_fresh_synthetic_panel",
+          "prospective_paired_background_suppression_comparison_if_technically_admitted",
+          "rank_next_generation_and_annotation_experiment_from_executed_results"
+        ],
+        "current_stage": "replication_protocol_in_preparation"
+      },
+      "generated_seed_replication": {
+        "status": "prospective_protocol_in_preparation",
+        "new_fit_pairs": 3,
+        "unchanged_train_backgrounds": 80,
+        "spent_secondary_backgrounds": 48,
+        "fresh_primary_backgrounds": 64,
+        "old_training_pair_exact_replay_required": true,
+        "scores_computed": false,
+        "patient_data_used": false,
+        "gpu_profile_required_before_training": true,
+        "independent_audit_required": true
       }
     }
   },

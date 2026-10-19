@@ -53,11 +53,15 @@ def test_preprocessing_preserves_physical_amplitude_and_measured_lead_order():
     np.testing.assert_allclose(jepa.preprocess_signal(signal * 3), result * 3, atol=1e-5)
 
 
-def test_preprocessing_is_fft_resampling_and_discards_no_requested_time():
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+def test_preprocessing_is_fft_resampling_and_discards_no_requested_time(dtype):
     rng = np.random.default_rng(2026)
-    signal = rng.normal(size=(12, 5000)).astype(np.float32)
-    expected = resample(signal[list(jepa.INPUT_LEAD_INDICES)], 2500, axis=-1)
+    signal = rng.normal(size=(12, 5000)).astype(dtype)
+    expected = resample(signal[list(jepa.INPUT_LEAD_INDICES)], 2500, axis=-1).astype(np.float32)
     np.testing.assert_array_equal(jepa.preprocess_signal(signal), expected)
+    if dtype == np.float64:
+        premature_cast = resample(signal[list(jepa.INPUT_LEAD_INDICES)].astype(np.float32), 2500, axis=-1)
+        assert not np.array_equal(expected, premature_cast)
     altered = signal.copy()
     altered[2:6] = 1e6
     np.testing.assert_array_equal(jepa.preprocess_signal(altered), expected)
@@ -144,16 +148,18 @@ def test_official_imports_do_not_replace_existing_modules_or_paths(tmp_path, mon
         "pos_encoding.py": b"MARKER = 'verified-private-positional'\n",
         "ecg_jepa.py": (
             b"from pos_encoding import MARKER\nimport torch\n"
-            b"class ecg_jepa:\n"
-            b"    def __init__(self, **kwargs):\n"
-            b"        self.encoder = torch.nn.Linear(2, 3)\n"
-            b"        self.encoder.import_marker = MARKER\n"
-            b"        self.encoder.official_parameters = kwargs\n"
+            b"def ecg_jepa(**kwargs):\n"
+            b"    raise RuntimeError('Do not construct unused teacher or predictor')\n"
+            b"def MaskTransformer(**kwargs):\n"
+            b"    encoder = torch.nn.Linear(2, 3)\n"
+            b"    encoder.import_marker = MARKER\n"
+            b"    encoder.official_parameters = kwargs\n"
+            b"    return encoder\n"
         ),
     }
     encoder = jepa._instantiate_encoder(tmp_path, sources)
     assert encoder.import_marker == "verified-private-positional"
-    assert encoder.official_parameters == jepa.ENCODER_PARAMETERS
+    assert encoder.official_parameters == jepa.DENSE_ENCODER_PARAMETERS
     assert sys.modules["pos_encoding"] is positional_collision
     assert sys.modules["ecg_jepa"] is jepa_collision
     assert sys.path == original_path

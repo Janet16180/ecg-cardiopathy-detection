@@ -38,9 +38,21 @@ ENCODER_PARAMETERS = {
     "mask_scale": (0, 0),
     "leads": list(range(8)),
 }
+DENSE_ENCODER_PARAMETERS = {
+    "embed_dim": ENCODER_PARAMETERS["encoder_embed_dim"],
+    "depth": ENCODER_PARAMETERS["encoder_depth"],
+    "num_heads": ENCODER_PARAMETERS["encoder_num_heads"],
+    "c": ENCODER_PARAMETERS["c"],
+    "pos_type": ENCODER_PARAMETERS["pos_type"],
+    "mask_scale": ENCODER_PARAMETERS["mask_scale"],
+    "leads": ENCODER_PARAMETERS["leads"],
+    "p": 50,
+    "t": 50,
+}
 PREPROCESSING = (
     "canonical 12-lead physical mV input [12,5000] at 500 Hz; select I,II,V1,V2,V3,V4,V5,V6; "
-    "float32 scipy.signal.resample FFT along time to 2500 samples at 250 Hz; "
+    "preserve selected input precision through scipy.signal.resample FFT along time to 2500 samples "
+    "at 250 Hz, then cast to float32; "
     "no amplitude normalization, filtering, cropping, padding or derived leads"
 )
 CONTEXT_SCOPE = (
@@ -97,7 +109,11 @@ def _execute_source(name: str, path: Path, source: bytes, module_builtins: dict[
 
 
 def _instantiate_encoder(source_dir: Path, sources: dict[str, bytes]) -> torch.nn.Module:
-    """Construct the architecture with the exact official models.py parameters."""
+    """Construct the official encoder directly without the unused teacher or predictor.
+
+    The pinned ``ecg_jepa.__init__`` forwards these arguments into ``MaskTransformer``.
+    Its other encoder arguments have identical defaults in both official constructors.
+    """
     positional = _execute_source(
         "_ecg_jepa_native_positional",
         source_dir / "pos_encoding.py",
@@ -108,7 +124,7 @@ def _instantiate_encoder(source_dir: Path, sources: dict[str, bytes]) -> torch.n
     official = _execute_source(
         "_ecg_jepa_native_official", source_dir / "ecg_jepa.py", sources["ecg_jepa.py"], private_builtins
     )
-    return official.ecg_jepa(**ENCODER_PARAMETERS).encoder
+    return official.MaskTransformer(**DENSE_ENCODER_PARAMETERS)
 
 
 def load_encoder(source_dir: Path, checkpoint: Path) -> torch.nn.Module:
@@ -170,10 +186,11 @@ def preprocess_signal(signal: np.ndarray) -> np.ndarray:
     signal = np.asarray(signal)
     if signal.shape != (12, 5000) or np.iscomplexobj(signal) or not np.isfinite(signal).all():
         raise ValueError("Expected real finite canonical [12,5000] physical-mV signal at 500 Hz")
-    selected = signal[list(INPUT_LEAD_INDICES)].astype(np.float32)
-    if not np.isfinite(selected).all():
-        raise ValueError("Physical-mV signal cannot be represented as float32")
-    return np.ascontiguousarray(resample(selected, 2500, axis=-1), dtype=np.float32)
+    selected = signal[list(INPUT_LEAD_INDICES)]
+    result = np.ascontiguousarray(resample(selected, 2500, axis=-1), dtype=np.float32)
+    if not np.isfinite(result).all():
+        raise ValueError("Resampled physical-mV signal cannot be represented as finite float32")
+    return result
 
 
 def encode_signal(encoder: torch.nn.Module, signal: np.ndarray, record_frame: str) -> NativeTokens:

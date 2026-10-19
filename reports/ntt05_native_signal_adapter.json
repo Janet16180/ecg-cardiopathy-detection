@@ -1,0 +1,62 @@
+{
+  "study": "NTT-05",
+  "status": "completed_engineering_replay_only",
+  "source_sha256": {
+    "ecg_experiment/native_reference_ntt05.py": "66f9b70d21dac90cb7db1bc5c6e59b6a956222c7737ac9867b94115669693a9e",
+    "scripts/reports/native_reference_ntt05.py": "a718fdf118bd0cdfb285eb83c19b7416cc7ef94635b8b6dce25e3937db2e7ba5",
+    "tests/test_native_reference_ntt05.py": "f4c04dc99586afde10a672e62e0a7a741d34521cb04e14cb437853abe7d1fc7e",
+    "docs/ntt-05-native-signal-adapter.md": "e805999311891c6a23a4bf193c4d4c41f1bd708c5543a56d92a0149c25424747",
+    "ecg_experiment/eda/signals.py": "f5ab2aafbbd38d16d9e79724887ad4e0909be97c67c7d2b7b447bf65e33fd4d8",
+    "ecg_experiment/files.py": "d418732520e883994d3b72b064c03174184f606cfea4e166800bf8a096ef985b",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "ecg_experiment/__init__.py": "cca26ce1124d553e877ed33383ffaba3af13f89bd6628e7a1b9ca2cc5c1c6a35",
+    "pyproject.toml": "9df6d56e8f27348d067eb0cf3b6506f5efbbc03154b96b6b3987f4bb4854279e",
+    "uv.lock": "20c6e373cba70e7fe859ba59697f6145c34b42418eddc955f82d29a165d5db7c"
+  },
+  "input_sha256": {
+    "outputs/ntt04_same_wave/result.json": "79cfa5130ccc8d275e398ddb15b056a1affe1beb812fa32c52e12a8c2211e789",
+    "outputs/ntt04_same_wave/reservation_manifest_local.json": "efaa51a62f52fc2d10881a58994d2da206ae5683cff08872c09cc5ec08ef253c",
+    "outputs/ntt04_same_wave/selection_local.json": "31f8722e28885470bcdf140726a258d399fc8b1f11799fa49efcd94118659289",
+    "outputs/ntt04_same_wave/features_local.json": "5aa6138ece6db405ea900622d2f631b7c841c59b5db35fa6512d83b681ef594e",
+    "outputs/ntt04_same_wave/predictions_local.json": "e9decc3d72b37ad33006386354a30e553cc5de5f452930f4ec753f080089db57",
+    "outputs/ntt05_native_signal_adapter_preflight/receipt.json": "8cca672a1ff051612430795d523a399d9d5893e2f2bdd11accde2fee466d2f77",
+    "outputs/ntt05_native_signal_adapter_preflight/invariants.xml": "a020606aa7b6de411e0b7f9c45c39816f81950082cb17e1490a47c86f9f087b9"
+  },
+  "predecessor_reproduction": {
+    "patients": 60,
+    "support_patients": 27,
+    "patient_draw_predictions": 180,
+    "support_draws": 3,
+    "choices_exact": true,
+    "correct_patient_draw_predictions": 167,
+    "predecessor_balanced_accuracy": 0.9277777777777778,
+    "maximum_score_absolute_error": 5.551115123125783e-16,
+    "embedding_space_enforced": "ntt04_frozen_physical_full_median_beat_v1",
+    "new_clinical_result": false
+  },
+  "engineering_replay_gate_passed": true,
+  "invariant_suite": {
+    "tests": 26,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 26,
+    "seconds": 1.78
+  },
+  "engineering_invariant_gate_passed": true,
+  "engineering_combined_gate_passed": true,
+  "learned_native_model_executed": false,
+  "clinical_localization_evaluated": false,
+  "waveform_reads": 0,
+  "weight_training": false,
+  "gpu_used": false,
+  "downloads": false,
+  "seconds": 0.25863927276805043,
+  "numpy_version": "2.4.6",
+  "thread_environment": {
+    "OMP_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2"
+  },
+  "git_commit": "52a1badc0990f81552466e46e9c9c5cc27035e77"
+}

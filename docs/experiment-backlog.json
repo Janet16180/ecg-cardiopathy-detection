@@ -1376,7 +1376,7 @@
       ],
       "status": "open",
       "authorized": false,
-      "notes": "Engineering components now executed under separate frozen NTT-02/03 protocols. NTT-04 removes wave-phase alternatives. This entry retains independent clinical localization and original-recipe evaluation, requiring source/compute and new expert-evidence gates; no post-hoc adjustment of prior gates."
+      "notes": "Engineering components now executed under separate frozen NTT-02/03 protocols. NTT-04 removes wave-phase alternatives. This entry retains independent clinical localization and original-recipe evaluation, requiring source/compute and new expert-evidence gates; no post-hoc adjustment of prior gates. NTT-05 subsequently verified native lead/time token contracts, class-reference matching and temporal decay; no learned-native model or clinical mask score was run."
     },
     {
       "id": "grouped_shap_localization_audit",
@@ -1600,6 +1600,42 @@
       "status": "blocked",
       "authorized": false,
       "notes": "Freeze patient/source roles, annotation co-occurrence handling, support uncertainty and acceptable-evidence endpoints prospectively. Preserve same-wave and raw/full-context controls. Do not tune, fuse class-specific winners or change prior scores after observing NTT-04. No automatic data download or new evaluation."
+    },
+    {
+      "id": "ntt05_native_signal_adapter",
+      "kind": "repo",
+      "title": "Native signal regions and reference matching without rendered images",
+      "question": "Can explicit native token anchors, balanced references and semantic temporal matching preserve engineering integrity?",
+      "evidence": "26 invariant tests passed; all 180 saved NTT-04 physical choices reproduced, maximum cosine error 5.55e-16. This is engineering verification only; native trained weights and dense caches absent.",
+      "value": 5,
+      "clarity": 1.0,
+      "gpu_hours": 0.0,
+      "cpu_hours": 7.184424243556957e-05,
+      "build_hours": 2.0,
+      "blocked_by": [],
+      "status": "done",
+      "authorized": true,
+      "notes": "docs/ntt-05-native-signal-adapter-results.md. Source52a1bad, protocol2e04fc6. Space/checkpoint/preprocessing and target coordinate-frame identity enforced. No waveform/model/download/clinical score; build hours approximate, measured execution stage excludes imports."
+    },
+    {
+      "id": "ntt_native_encoder_reference_evaluation",
+      "kind": "experiment",
+      "title": "Frozen native ECG encoder reference matching on automatic signal regions",
+      "question": "Do learned native region vectors improve finding recognition and acceptable evidence over physical and visual baselines?",
+      "evidence": "NTT-05 provides verified engineering contracts and source/loader audit. ECG-JEPA exposes lead/time anchors but full context and coarse 200ms patches; xECG/CPC mix leads. Existing checkpoints/caches are not local. Native SimDINO064 normal-bank failure does not test abnormal finding prototypes.",
+      "value": 5,
+      "clarity": 0.65,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.5,
+      "build_hours": 4.0,
+      "blocked_by": [
+        "@verified_native_checkpoint_and_preprocessing",
+        "@real_cpu_inference_profile",
+        "@prospective_patient_and_reference_protocol"
+      ],
+      "status": "blocked",
+      "authorized": false,
+      "notes": "Planning estimates only. Recover exact source/weights/normalization and verify pretraining membership and geometry. New protocol before any new model score; fixed support/proposal budgets, physical full-context and same-wave controls. Clinical localization additionally needs independent expert evidence. No new download/inference auto-scheduled."
     }
   ]
 }

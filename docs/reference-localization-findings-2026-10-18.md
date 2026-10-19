@@ -125,6 +125,16 @@ be interpreted as the anatomical disease site or specialist evidence. Waveform-l
 attributions, correlated-lead handling, replacement validity and independent expert overlap were not
 evaluated in this study.
 
+## Native-signal follow-up
+
+After the initial seven studies, the user requested adapting the reference method to signals.
+[NTT-05](ntt-05-native-signal-adapter-results.md) implements lead/time token pooling, patient-balanced
+finding banks, compatible embedding-space checks, explicit abstention and same-record temporal redundancy
+decay. All 26 engineering invariants and 180 saved predecessor choices reproduced. This adds a concrete
+image-free adapter, not a new clinical result: native trained checkpoints and prior dense caches are absent
+locally. The latest integrated suite passed 1,331 tests with six skipped in 73.10 seconds; Ruff passed.
+The original seven-study verification below remains a historical snapshot rather than a rewritten receipt.
+
 ## Reviewable artifacts and remaining decisions
 
 Every study has a prospective protocol, committed implementation, completed local receipt, tests and a

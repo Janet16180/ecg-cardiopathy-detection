@@ -13,6 +13,10 @@ visual variant. See the [combined executed findings](reference-localization-find
 The original large/large paper recipe and an independent clinical localization evaluation remain unrun. All further work is local under the
 personal identity `Janet16180` / `clarajanet16180@outlook.com`; no push is authorized.
 
+A later user request produced [NTT-05](ntt-05-native-signal-adapter-results.md): native signal token/region
+contracts and reference matching passed engineering checks, with no rendered image. Native trained weights
+are absent locally; learned-native recognition and clinical localization remain pending a separate study.
+
 ## What existing work changes
 
 [PR61](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/61), revision

@@ -2417,13 +2417,28 @@
     "verification": "reports/local_reference_research_verification.json"
   },
   "ntt05_native_signal_adapter": {
-    "status": "protocol_written_implementation_pending",
+    "status": "complete_engineering_adapter_learned_native_evaluation_unrun",
     "authorized": true,
     "protocol": "docs/ntt-05-native-signal-adapter.md",
     "scope": "Native region/token reference adapter and exact predecessor integrity; no learned-native clinical score",
     "output_dir": "outputs/ntt05_native_signal_adapter",
     "publication": "local_only_personal_identity",
     "native_pretrained_weights_available": false,
-    "next_action": "Commit protocol and adapter; execute bounded arithmetic/contract checks and saved prediction replay only."
+    "next_action": "Recover verified compatible native encoder weights/source/normalization and profile before a separate prospective comparison. Engineering verification does not admit clinical highlighting or prove a learned-native gain; no automatic follow-up scheduled.",
+    "protocol_commit": "2e04fc6",
+    "source_commit": "52a1bad",
+    "results": "docs/ntt-05-native-signal-adapter-results.md",
+    "aggregate_receipt": "reports/ntt05_native_signal_adapter.json",
+    "encoder_inventory": "reports/ntt05_native_encoder_inventory.json",
+    "engineering_invariant_tests_passed": 26,
+    "predecessor_predictions_exact": 180,
+    "predecessor_correct_predictions": 167,
+    "new_clinical_score": false,
+    "learned_native_model_executed": false,
+    "engineering_combined_gate_passed": true,
+    "integrated_cpu_tests_passed": 1331,
+    "integrated_cpu_tests_skipped": 6,
+    "integrated_test_seconds": 73.1,
+    "ruff_passed": true
   }
 }

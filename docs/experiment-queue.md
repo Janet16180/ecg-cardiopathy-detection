@@ -1,6 +1,6 @@
 # Experiment queue
 
-**19 October, new user request:** NTT-05 is preparing a native-signal adaptation of reference matching. Scope is engineering contracts and exact saved NTT-04 prediction replay; native pretrained checkpoints are absent locally, so no new learned-native clinical comparison is scheduled. [Prospective protocol](ntt-05-native-signal-adapter.md). Personal identity only; no pushes.
+**19 October UTC / 18 October locally, native adaptation:** [NTT-05 completed](ntt-05-native-signal-adapter-results.md) its native lead/time feature adapter, explicit reference banks, abstention and temporal redundancy handling. All 26 engineering invariants and 180 frozen predecessor choices reproduced; integrated CPU suite 1,331 passed / six skipped, Ruff passed. The old 92.78% physical score is integrity replay only. Native pretrained checkpoints/caches remain absent, so no learned-native recognition or specialist localization result is claimed. The [inventory](../reports/ntt05_native_encoder_inventory.json) records interfaces/missing artifacts. Personal identity only; no push or automatic follow-up.
 
 **18 October, local research:** all work uses the personal identity and remains local; no push or publication is authorized. Two worker agents plus the coordinator operate in separate worktrees. The independent clinical localization test and the original paper's large/large configuration remain unrun.
 

@@ -103,4 +103,3 @@ see the [profile results](ssl-synthetic-localization-paired-background-profile-r
 [prospective study](ssl-synthetic-localization-paired-background-study.md) freezes the later primary
 response comparison and all advancement gates. No training-loss difference establishes an SSL
 benefit, native pathology localization or screening utility.
-

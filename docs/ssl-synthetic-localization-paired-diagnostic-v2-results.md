@@ -255,4 +255,3 @@ verdicts remain failed, with no new fitting or relaxed rule.
 Paths are under `outputs/ssl_synthetic_localization/paired_background_v1/`. Local per-case rows,
 masks, maps and identifiers remain untracked; only this aggregate report enters Git. Work remains
 local without pushes or PR updates. No new fit follows automatically from this diagnostic.
-

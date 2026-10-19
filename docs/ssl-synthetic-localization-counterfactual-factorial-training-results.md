@@ -103,4 +103,3 @@ The [profile report](ssl-synthetic-localization-counterfactual-factorial-profile
 [prospective study](ssl-synthetic-localization-counterfactual-factorial.md) define the separate
 resource and evaluation gates. All patient IDs, arrays, masks, weights and per-case parameters
 remain local and untracked.
-

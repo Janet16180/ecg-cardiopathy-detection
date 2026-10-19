@@ -65,4 +65,3 @@ passed, with 768 exact replays, 384 matched baselines and zero failures. Native 
 unknown, and controlled pulses are not expert clinical annotations. The [prospective
 factorial](ssl-synthetic-localization-counterfactual-factorial.md) and all earlier failed decisions
 are unchanged.
-

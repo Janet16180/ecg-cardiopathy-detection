@@ -67,4 +67,3 @@ Qualification receipt SHA-256: `38a9c533be62157d0696c14468da9f4d908338069b54c6fe
 No failed profile attempt occurred. Recovery tensors, patient arrays and parameters remain local and
 untracked. This report does not change the [prospective
 study](ssl-synthetic-localization-paired-background-study.md) or its later decision rule.
-

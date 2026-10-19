@@ -703,7 +703,7 @@ def self_test() -> None:  # noqa: C901
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--self-test", action="store_true")
-    parser.add_argument("--root", type=Path, default=Path("/tmp/ecg-wt-ssl-synthetic"))
+    parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--main-sha")
     parser.add_argument("--script-sha")
     arguments = parser.parse_args()

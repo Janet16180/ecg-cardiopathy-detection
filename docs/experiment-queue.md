@@ -1,5 +1,14 @@
 # Experiment queue
 
+**19 October synthetic-generation continuation:** Main is integrated while preserving both histories.
+Two RTX3090s and actual PyTorch CUDA access passed outside the restricted device namespace;
+see local `outputs/ssl_synthetic_localization/continuation_inventory_v1.json`. Historical localization
+arrays/receipts are absent here and were not recovered from the other checkout. The separately
+committed [standalone probe](ssl-synthetic-localization-pretrained-generator-standalone-v1.md)
+has scientific and independent source approval before its first download/inference. Its ledger
+is prospective and does not certify old reported costs. The [128-seed quality/support protocol](ssl-synthetic-localization-generated-quality-v1.md)
+is frozen before scores; execution requires probe PASS and its actual CUDA profile. PR67 stays draft.
+
 **18 October machine handoff:** The user will start a new Codex session on a local computer with
 two RTX 3090 GPUs. Read the [continuation handoff](ssl-synthetic-localization-machine-handoff.md)
 for completed findings, pending tasks, evidence transfer and startup commands. PR #67 remains draft.

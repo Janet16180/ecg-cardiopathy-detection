@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Machine handoff prepared for local dual-RTX-3090 computer. Read docs/ssl-synthetic-localization-machine-handoff.md. Transfer local evidence separately from Git; verify hardware, exact receipts and allowed bindings. Saved-map mode diagnostic and independent audit are source-complete but unexecuted. Pulse2Pulse feasibility adapter is artificially tested but unexecuted and requires prospective public_assets/protocol/accounting amendment plus final review. Keep PR 67 draft; no automatic training, closed tests or clinical claims.",
+    "next_action": "Execute reviewed standalone public Pulse2Pulse probe, independently verify saved outputs, then profile and qualify128fixed-seed CUDA backgrounds under the separately frozen generation-quality protocol. Historical mode diagnosis waits for its original payloads; no classification substitution or clinical claims.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2597,6 +2597,26 @@
         "final integrated source review",
         "local dependency and hardware inventory"
       ]
+    },
+    "continuation_2026_10_19": {
+      "status": "standalone_probe_admitted_before_execution",
+      "historical_payloads_present": false,
+      "history_preserved": true,
+      "gpu_access_verified": true,
+      "gpu_models": [
+        "RTX 3090",
+        "RTX 3090"
+      ],
+      "sandbox_device_nodes_exposed": false,
+      "host_cuda_operation_passed": true,
+      "inventory": "outputs/ssl_synthetic_localization/continuation_inventory_v1.json",
+      "standalone_protocol": "docs/ssl-synthetic-localization-pretrained-generator-standalone-v1.md",
+      "standalone_configuration": "configs/ssl_synthetic_pretrained_generator_standalone_v1.json",
+      "source_review": "docs/ssl-synthetic-localization-pretrained-scientific-review-2026-10-19.md",
+      "standalone_output": "outputs/ssl_synthetic_localization/pretrained_generator_standalone_v1",
+      "follow_on_protocol": "docs/ssl-synthetic-localization-generated-quality-v1.md",
+      "keep_pr_draft": true,
+      "historical_costs_locally_verified": false
     }
   },
   "experiment_041_cpu_screening": {

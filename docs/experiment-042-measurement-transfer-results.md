@@ -44,8 +44,8 @@ score. Logistic threshold was 0.7130950117578835; boosting threshold 0.782123683
 | Positive ECGs missed | 1,568 | 1,189 |
 | Target-negative ECGs referred | 323 | 333 |
 
-The paired sensitivity difference was +0.105748 [0.093659, 0.118539]. Boosting caught 379
-additional label-positive ECGs while referring 10 additional target-negative ECGs under these
+The paired sensitivity difference was +0.105748 [0.093659, 0.118539]. Boosting caught a net 379
+additional label-positive ECGs while referring a net 10 additional target-negative ECGs under these
 two independently calibrated rules. Both contrasts used 2,000 whole-patient draws, seed 20261018,
 with zero skipped draws; fitted classifiers and thresholds stayed fixed. This interval does not
 include uncertainty from retraining or selecting a different calibration sample.

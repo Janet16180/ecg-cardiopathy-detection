@@ -2324,9 +2324,9 @@
       },
       "ruff": "passed",
       "package_build": "passed; outputs/measurement_screening_build_release.log",
-      "github": "Checking final review head before handoff."
+      "github": "See the live checks on PR #70 for the current review head."
     },
     "data_policy": "All models/raw data/features/private predictions remain local and ignored.",
-    "next_action": "Finish validation and hand over the review; no automatic experiment or final test."
+    "next_action": "Research studies and reports are complete. Preserve local artifacts and the failed grounding ranking verdict; review PR #70. No experiment, closed test or automatic merge is scheduled."
   }
 }

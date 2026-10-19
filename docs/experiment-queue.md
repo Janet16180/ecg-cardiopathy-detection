@@ -28,7 +28,7 @@ closed Challenge/EchoNext tests stayed closed, and no clinical localization clai
 Protocols, results and artifact paths are in the JSON catalog; follow-ups are ranked separately.
 Code and aggregate reports are in [PR #70](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/70),
 targeting `main`. Local release checks passed 1,328 tests (six skips), Ruff and package build;
-GitHub checks on the final review head are being verified.
+Use the PR's live checks and mergeability status for delivery verification.
 
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 

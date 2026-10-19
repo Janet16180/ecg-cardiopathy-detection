@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-30",
+  "updated": "2026-10-18",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -227,17 +227,18 @@
       "title": "Source-controlled clustering of multi-source embeddings",
       "question": "Are there diagnosis-enriched clusters that span several hospitals?",
       "evidence": "Earlier HDBSCAN found only normal versus abnormal regions; sources are highly identifiable.",
-      "value": 1,
-      "clarity": 0.4,
+      "value": 4,
+      "clarity": 0.5,
       "gpu_hours": 1,
       "cpu_hours": 1,
       "build_hours": 5,
       "blocked_by": [
         "e024_geometry",
-        "cohorts_v2"
+        "cohorts_v2",
+        "ntt_reference_contract"
       ],
       "status": "open",
-      "notes": "024: k-means clusters align with device (AMI 0.22-0.23) and heart rate more than diagnosis (0.06-0.09); only worth doing on a supervised projection with device and heart-rate controls. 024b ran the source-AMI step: pooled k-means clusters follow the label more than the hospital, but no cluster is a pure diagnosis."
+      "notes": "024: k-means clusters align with device (AMI 0.22-0.23) and heart rate more than diagnosis (0.06-0.09); only worth doing on a supervised projection with device and heart-rate controls. 024b ran the source-AMI step: pooled k-means clusters follow the label more than the hospital, but no cluster is a pure diagnosis. 18October pivot: future staged comparison of HDBSCAN, Gaussian mixtures, graph/spectral and consensus methods with patient stability, source/device/quality controls and multilabel enrichment; compare024/024b. Clusters characterize morphology, not causes or mutually exclusive diseases. No execution scheduled."
     },
     {
       "id": "core_lead_masking",
@@ -1324,6 +1325,79 @@
       "status": "open",
       "authorized": false,
       "notes": "Forward implementation only; new source identity, protocol and validation receipts required. Never edit pinned039/040/diagnostic sources or weaken integrity checks. Measure cold/warm validation, latecell gate and checkpoint costs; preserve all18fits/three seeds/exposures/coefficient. Full training allocation remains separate. Hours are planning estimates. Day closeout: user chose to merge completed work and leave the 18 full fits unrun today; no follow-up is scheduled automatically."
+    },
+    {
+      "id": "ntt01_reference_label_audit",
+      "kind": "repo",
+      "title": "Audit public reasoning references before ECG localization transfer",
+      "question": "Do released public PTB reasoning annotations provide new expert masks or supplementary structured silver evidence?",
+      "evidence": "NTT-01 executed:2499safe cases/2322ECGs/2174patients;4854wave answers=4813timestamps+41QRSordinal spans. Independent count audit passed. Original SAM2/DINOv2 was not run.",
+      "value": 5,
+      "clarity": 1.0,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.0004228668293863949,
+      "build_hours": 1.0,
+      "blocked_by": [],
+      "status": "done",
+      "authorized": true,
+      "notes": "docs/ntt-01-reference-label-audit-results.md. CPU time measured; build/review time approximate. Source9089031; no waveform or clinical-model score. Prior label counts reproduced exactly using existing helpers and direct implementation; old localization metrics not reproducible without missing marks/tables."
+    },
+    {
+      "id": "ntt_reference_contract",
+      "kind": "repo",
+      "title": "Preserve finding and coordinate semantics in public silver references",
+      "question": "Can selected timestamps, QRS-index spans, leads, measurements and absent findings become typed references without inventing dense negatives?",
+      "evidence": "NTT-01 found 41valid symbolic intervals that a timestamp-only adapter cannot handle; selected QA answers are not exhaustive masks. PR61 holds existing gold but spent holdout; PR67 owns separate evaluation backgrounds.",
+      "value": 5,
+      "clarity": 0.85,
+      "gpu_hours": 0.0,
+      "cpu_hours": 0.1,
+      "build_hours": 2.0,
+      "blocked_by": [
+        "@shared_patient_partition_reconciliation"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": "Plan only; preserve case/patient/finding/provenance and source disagreements. Quarantine every reserved evaluation patient before fitting. No clinical relabeling or credentialed MIMIC labels."
+    },
+    {
+      "id": "ntt_masked_abnormal_reference_transfer",
+      "kind": "experiment",
+      "title": "Test abnormal masked references against diagnosis and QRS priors",
+      "question": "Does semantic transfer from abnormal reference supports add patient-specific evidence beyond normal-distance and region priors?",
+      "evidence": "Official No Time to Train uses annotated object supports; existing native SimDINO064 used a normal anomaly bank and failed localization. These are distinct comparisons.",
+      "value": 5,
+      "clarity": 0.55,
+      "gpu_hours": 0.5,
+      "cpu_hours": 0.5,
+      "build_hours": 4.0,
+      "blocked_by": [
+        "ntt_reference_contract",
+        "@working_gpu_profile",
+        "@independent_localization_reference"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": "Separate prospective protocol required. Literal SAM2/DINOv2 and ECG-native adaptations reported separately. Fixed support draws, shuffled classes, wrong-wave supports, matched area, abstention, noise/rendering controls and proposal-oracle coverage. No new confirmation on spent ECGAD holdout."
+    },
+    {
+      "id": "grouped_shap_localization_audit",
+      "kind": "experiment",
+      "title": "Compare grouped SHAP with expert evidence and existing replacement controls",
+      "question": "Do lead/physiological-interval attributions remain stable across backgrounds and add localization information beyond region priors?",
+      "evidence": "PR61 Experiment070 reports disagreement between replacement faithfulness and expert map quality; attribution cannot serve as new annotation truth.",
+      "value": 4,
+      "clarity": 0.5,
+      "gpu_hours": 0.0,
+      "cpu_hours": 1.0,
+      "build_hours": 3.0,
+      "blocked_by": [
+        "ntt_reference_contract",
+        "@independent_localization_reference"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": "Future research idea after reference phase. Declare grouping, background, correlated-lead treatment and replacement mechanism. Compare occlusion, parameter/label randomization and nuisance controls; no etiologic claim."
     }
   ]
 }

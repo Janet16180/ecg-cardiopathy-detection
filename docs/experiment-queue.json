@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-01T02:05:54.148912+00:00",
+  "updated_at_utc": "2026-10-18T23:59:24.541555+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2270,11 +2270,23 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ntt01_reference_label_audit": {
-    "status": "protocol_frozen_pending_implementation",
+    "status": "complete_information_audit",
     "authorized": true,
     "protocol": "docs/ntt-01-reference-label-audit.md",
     "output_dir": "outputs/ntt01_reference_label_audit",
     "scope": "Public PTB reasoning annotations and local metadata only; no model, waveform or closed-test scoring",
-    "next_action": "Implement and verify audit, freeze sources, execute once, report measured findings."
+    "next_action": "Supplementary silver-reference schema and patient quarantine reconciliation before any model inference. Original SAM2/DINOv2 and independent clinical localization evaluation remain unrun; no automatic training or clustering job scheduled.",
+    "protocol_commit": "288dad1",
+    "source_commit": "9089031",
+    "results": "docs/ntt-01-reference-label-audit-results.md",
+    "plan": "docs/ecg-reference-localization-plan.md",
+    "aggregate_receipt": "reports/ntt01_reference_label_audit.json",
+    "independent_review": "reports/ntt01_independent_review.json",
+    "safe_reasoning_cases": 2499,
+    "safe_unique_ecgs": 2322,
+    "safe_unique_patients": 2174,
+    "original_paper_inference_executed": false,
+    "closed_data_read": false,
+    "historical_metric_reproduction": false
   }
 }

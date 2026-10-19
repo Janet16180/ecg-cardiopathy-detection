@@ -1,0 +1,224 @@
+{
+  "created_at_utc": "2026-10-18T23:55:34.948440+00:00",
+  "status": "complete_information_audit",
+  "git_commit": "9089031cf4f27b86798b6094ff4fdd06dc804b6e",
+  "upstream_commit": "90a53f107023c7c196cbf08de183b871b2a5798c",
+  "upstream_git_blob": "da62062c76828d53297e76f00ff02153e5713246",
+  "source_sha256": {
+    "ecg_experiment/reference_label_audit.py": "672684806294627875801063bdb5d60134df2ca41843f6a0498e6053bba7035f",
+    "scripts/reports/audit_reference_labels.py": "66ca9882561ad40f188a24b9eabd4928499a6f383169bc7ddad8480223c23af2",
+    "tests/test_reference_label_audit.py": "d2ee5f354966fd9cc20ca8040ee017b9fa55ffafc4c6cb58b80a4e0b164811e8",
+    "ecg_experiment/eda/ptbxl.py": "9eca8dba73d6134d4c9b863451496c46e52501580f84e66beb73c182f1369415",
+    "ecg_experiment/eda/signals.py": "f5ab2aafbbd38d16d9e79724887ad4e0909be97c67c7d2b7b447bf65e33fd4d8",
+    "ecg_experiment/files.py": "d418732520e883994d3b72b064c03174184f606cfea4e166800bf8a096ef985b",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "ecg_experiment/__init__.py": "cca26ce1124d553e877ed33383ffaba3af13f89bd6628e7a1b9ca2cc5c1c6a35",
+    "pyproject.toml": "9df6d56e8f27348d067eb0cf3b6506f5efbbc03154b96b6b3987f4bb4854279e",
+    "uv.lock": "20c6e373cba70e7fe859ba59697f6145c34b42418eddc955f82d29a165d5db7c",
+    "docs/ntt-01-reference-label-audit.md": "2a77ad90a785505df9d97a6a0dddbb58436998dc6be80a7490a68321e31c63bc",
+    "docs/ntt-01-amendment-safe-grounding.md": "744d7b06ef268adca32c71c066637019bf5816d5cb67c151bb498921bedf4bfe"
+  },
+  "input_sha256": {
+    "data/raw/ecg-reasoning-benchmark/90a53f1/ptbxl.jsonl": "353ddc413b68c751a0e2c5c44a11a182de4519e278c5ae49fe0bf089c674b39b",
+    "data/raw/ptb-xl/1.0.3/ptbxl_database.csv": "7600de9c1b27d181d850b3c6038a35d7c3ddb6bb33b702e3a20252a6859d216b",
+    "data/raw/ptb-xl/1.0.3/scp_statements.csv": "ad05b0b1fcae83bb1230755ad9cfc7c96f303feddc08a4a9ad5bdc9ca63bac8f"
+  },
+  "versions": {
+    "numpy": "2.4.6",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "wfdb": "4.3.1"
+  },
+  "local_labels": {
+    "folds": "1-8",
+    "records": 17418,
+    "patients": 15023,
+    "label_integrity_exact": true,
+    "standard_labels": {
+      "positive": 9841,
+      "negative": 7243,
+      "undefined": 334
+    },
+    "strict_project_labels": {
+      "positive": 9488,
+      "negative": 5872,
+      "undefined": 2058
+    },
+    "sr_total": 13404,
+    "sr_with_diagnostic_abnormal": 7135,
+    "norm_total": 7596,
+    "norm_with_diagnostic_abnormal": 353,
+    "norm_with_extra_codes": 1724,
+    "multiple_abnormal_superclasses": 3779
+  },
+  "reasoning_annotations": {
+    "total_cases_identifiers_only": 3084,
+    "invalid_case_identifiers": 0,
+    "invalid_ecg_identifiers": 0,
+    "duplicate_case_ids": 0,
+    "unknown_ecg_cases": 0,
+    "unique_ecgs_identifiers_only": 2871,
+    "unique_patients_identifiers_only": 2698,
+    "cases_by_fold_identifiers_only": {
+      "1": 316,
+      "2": 333,
+      "3": 282,
+      "4": 330,
+      "5": 325,
+      "6": 315,
+      "7": 296,
+      "8": 302,
+      "9": 305,
+      "10": 280
+    },
+    "quarantined_cases": 585,
+    "safe_cases": 2499,
+    "safe_unique_ecgs": 2322,
+    "safe_unique_patients": 2174,
+    "safe_repeat_cases_beyond_unique_ecg": 177,
+    "safe_max_cases_per_ecg": 4,
+    "safe_diagnosis_cases": {
+      "anterior_ischemia": 158,
+      "anterior_myocardial_infarction": 151,
+      "complete_left_bundle_branch_block": 157,
+      "complete_right_bundle_branch_block": 157,
+      "first_degree_av_block": 160,
+      "inferior_ischemia": 170,
+      "inferior_myocardial_infarction": 163,
+      "lateral_ischemia": 168,
+      "lateral_myocardial_infarction": 171,
+      "left_anterior_fascicular_block": 176,
+      "left_posterior_fascicular_block": 102,
+      "left_ventricular_hypertrophy": 168,
+      "premature_atrial_complex": 154,
+      "premature_ventricular_complex": 161,
+      "right_ventricular_hypertrophy": 119,
+      "second_degree_av_block": 79,
+      "third_degree_av_block": 85
+    },
+    "safe_diagnosis_polarities": {
+      "true": 1129,
+      "false": 1370
+    },
+    "safe_question_types": {
+      "criterion_selection": 5659,
+      "diagnostic_decision": 5659,
+      "finding_identification": 5659,
+      "initial_diagnostic_question": 2499,
+      "lead_grounding": 1271,
+      "measurement_grounding": 2202,
+      "wave_grounding": 4854
+    },
+    "safe_cases_without_grounding": 172,
+    "safe_grounding": {
+      "lead_grounding": {
+        "questions": 1271,
+        "invalid_answer_schema": 0,
+        "empty_answers": 0,
+        "multiple_answers": 1016,
+        "single_answers": 255,
+        "option_counts": {
+          "5": 1103,
+          "2": 168
+        },
+        "answer_positions_single_only": {
+          "4": 16,
+          "3": 20,
+          "2": 19,
+          "1": 36,
+          "0": 164
+        },
+        "option_zero_correct": 164,
+        "option_zero_exact_accuracy": 0.6431372549019608,
+        "uniform_position_expectation": 0.3976470588235293,
+        "shortcut_flag": true,
+        "invalid_selected_time_ranges": 0,
+        "selected_time_ranges": 0,
+        "width_seconds_percentiles": [],
+        "endpoints_on_10ms_grid": 0,
+        "endpoints": 0
+      },
+      "measurement_grounding": {
+        "questions": 2202,
+        "invalid_answer_schema": 0,
+        "empty_answers": 0,
+        "multiple_answers": 0,
+        "single_answers": 2202,
+        "option_counts": {
+          "5": 807,
+          "4": 1234,
+          "3": 161
+        },
+        "answer_positions_single_only": {
+          "3": 478,
+          "4": 170,
+          "2": 606,
+          "1": 553,
+          "0": 395
+        },
+        "option_zero_correct": 395,
+        "option_zero_exact_accuracy": 0.17938237965485923,
+        "uniform_position_expectation": 0.2377686951256422,
+        "shortcut_flag": false,
+        "invalid_selected_time_ranges": 0,
+        "selected_time_ranges": 0,
+        "width_seconds_percentiles": [],
+        "endpoints_on_10ms_grid": 0,
+        "endpoints": 0
+      },
+      "wave_grounding": {
+        "questions": 4854,
+        "invalid_answer_schema": 0,
+        "empty_answers": 0,
+        "multiple_answers": 0,
+        "single_answers": 4854,
+        "option_counts": {
+          "4": 4445,
+          "5": 409
+        },
+        "answer_positions_single_only": {
+          "1": 1379,
+          "0": 1138,
+          "3": 1062,
+          "2": 1218,
+          "4": 57
+        },
+        "option_zero_correct": 1138,
+        "option_zero_exact_accuracy": 0.23444581788215904,
+        "uniform_position_expectation": 0.24578697981046727,
+        "shortcut_flag": false,
+        "invalid_selected_time_ranges": 41,
+        "selected_time_ranges": 4813,
+        "width_seconds_percentiles": [
+          0.06999999999999984,
+          0.10000000000000053,
+          0.1200000000000001,
+          0.1499999999999999,
+          0.42
+        ],
+        "endpoints_on_10ms_grid": 9626,
+        "endpoints": 9626
+      }
+    }
+  },
+  "clinical_or_model_score_computed": false,
+  "waveforms_read": false,
+  "closed_or_spent_evaluation_content_interpreted": false,
+  "historical_localization_metrics_reproduced": false,
+  "historical_reproduction_limit": "Original ECGAD marks and score tables are unavailable here",
+  "seconds": 1.5223205857910216,
+  "command": [
+    "python",
+    "-m",
+    "scripts.reports.audit_reference_labels",
+    "--annotations",
+    "data/raw/ecg-reasoning-benchmark/90a53f1/ptbxl.jsonl",
+    "--output",
+    "outputs/ntt01_reference_label_audit"
+  ],
+  "thread_environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2"
+  }
+}

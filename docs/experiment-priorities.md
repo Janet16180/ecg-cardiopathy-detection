@@ -1,6 +1,6 @@
 # Experiment priorities
 
-Updated 30 September 2026, after the completed Experiment 040 runtime diagnosis. Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
+Updated 18 October 2026, after NTT-01 completed its public reference-label audit. Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
 explains the scoring, shows the current ranking and records what the papers suggest. The backlog is for
 choosing the next study. It does not authorize or schedule anything: the execution queue remains
 [experiment-queue.json](experiment-queue.json), and every study still needs a frozen protocol first.
@@ -36,6 +36,8 @@ After each result:
 4. Add new candidates the result suggests.
 
 ## Current ranking
+
+[NTT-01](ntt-01-reference-label-audit-results.md) adds supplementary silver grounding, not a new expert localization test. The [reference plan](ecg-reference-localization-plan.md) preserves PR61 history and the separate PR67 patient reservations. Masked-reference transfer, later clustering and grouped SHAP now have explicit data/evaluation gates; ranking does not schedule them.
 
 Experiment 040 passed all six real profiles but stopped at the shared time gate before any full fit
 or score. Its original entry remains blocked; a separately authorized prospective resource plan is
@@ -86,18 +88,21 @@ penalty; one that ranks high earns a protocol like any other.
 | 30 | tsfm_transfer | wild | Frozen general time-series or audio foundation models as ECG encoders | 2 | 0.4 | 8.0 | 0.28 | - |
 | 31 | vcg_rotation_ssl | wild | Heart-axis rotation augmentation via VCG projection | 3 | 0.3 | 16.0 | 0.22 | - |
 | 32 | core_lead_masking | experiment | CoRe-style lead-drop masking in CPC pretraining | 2 | 0.4 | 14.0 | 0.21 | - |
-| 33 | clustering_multisource | experiment | Source-controlled clustering of multi-source embeddings | 1 | 0.4 | 7.0 | 0.15 | - |
-| 34 | report_alignment | experiment | ECG-report alignment with PTB-XL cardiologist reports | 2 | 0.3 | 25.0 | 0.12 | - |
+| 33 | report_alignment | experiment | ECG-report alignment with PTB-XL cardiologist reports | 2 | 0.3 | 25.0 | 0.12 | - |
+| 34 | ntt_reference_contract | repo | Preserve finding and coordinate semantics in public silver references | 5 | 0.8 | 2.1 | 4.69 | @shared_patient_partition_reconciliation |
 | 35 | cpc_simdino_resource_plan040 | repo | Prospective resource plan for the fixed Transformer objective factorial | 3 | 0.9 | 0.6 | 3.49 | @fresh_compute_budget_authorization |
 | 36 | final_frozen_test | experiment | One-time confirmatory test of the frozen pipeline on untouched data | 5 | 0.9 | 3.0 | 3.12 | @user_freeze_decision |
 | 37 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
 | 38 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
 | 39 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
-| 40 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
-| 41 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
-| 42 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
-| 43 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
-| 44 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
+| 40 | ntt_masked_abnormal_reference_transfer | experiment | Test abnormal masked references against diagnosis and QRS priors | 5 | 0.6 | 5.0 | 1.23 | ntt_reference_contract, @working_gpu_profile, @independent_localization_reference |
+| 41 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
+| 42 | grouped_shap_localization_audit | experiment | Compare grouped SHAP with expert evidence and existing replacement controls | 4 | 0.5 | 4.0 | 1.00 | ntt_reference_contract, @independent_localization_reference |
+| 43 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
+| 44 | clustering_multisource | experiment | Source-controlled clustering of multi-source embeddings | 4 | 0.5 | 7.0 | 0.76 | ntt_reference_contract |
+| 45 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
+| 46 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
+| 47 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
 
 Reruns after Ningbo (`rerun_of` in the backlog): 022 as `ningbo_sph_transfer`, 024 as `rerun_024_multisource`,
 025 as `rerun_025_ningbo`, 026 as `multisource_normal_manifold` and 027 as `multisource_calibration`. 023 is

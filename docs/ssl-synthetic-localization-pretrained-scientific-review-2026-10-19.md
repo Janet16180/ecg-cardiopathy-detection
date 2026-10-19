@@ -170,3 +170,30 @@ one fitted randomness and generated-background evaluation. A PASS would not esta
 localization, physiological perturbation validity, self-supervised advantage or an untouched patient
 test. No such claims are encoded in the source verdict. Independent numerical review, committed
 integration and required tests remain separate launch conditions.
+
+## Learning result interpretation review
+
+Read the executed learning summary, profile and saved control metrics, and inspected both first-eight
+mode figures plus learning diagnostics without new inference or scoring. Main summary SHA-256:
+`fc4bf8934c95456d35cff5cc697b8b8f9b7563d79018fbc940fd68feda72064f`. Its twelve scientific and nine
+integrity gates pass. The supervised pooled direct-AP gain is 0.053016083946753285 versus amplitude,
+95% interval [0.02736853182550996, 0.08305224283469469], and 0.05618453026201692 versus permuted
+targets, [0.031927902910476966, 0.0836068382567016]. Both mode-specific gains also have positive lower
+bounds, as do paired AP response and selectivity. This is evidence of learned correspondence to the
+introduced smooth offsets under this fixed recipe.
+
+The positive advancement rule is narrower than practical localization adequacy. The amplitude gain
+only slightly exceeds the prespecified0.05 point-estimate margin, and the study uses one fitted
+randomness. Fixed plots show diffuse background activation rather than clean target-only maps.
+Supervised sham and nuisance record maxima exceed the descriptive0.5 cutoff in23/48 and25/48 cases,
+respectively, compared with0/48 in the permuted arm. These are engineering control responses, not
+calibrated clinical false-positive rates. Supervised control means are lower than the permuted arm's
+means, so the concern is concentrated non-target responses rather than uniform probability inflation.
+
+The result report should show absolute AP and mode-specific values beside gains, retain the high
+control-maxima counts, and identify the seed-bootstrap intervals as conditional on one fit. Calling
+this an accurate or clinically useful abnormality localizer would overstate the evidence. A bounded
+saved-map diagnosis of control activations and a separately frozen objective/fit-seed replication
+belong in the backlog; no extra fit is required to establish the present result or authorized by
+this review. Numerical training/checkpoint and metric verification remains the independent audit's
+responsibility, rather than an implied independent re-execution of optimization here.

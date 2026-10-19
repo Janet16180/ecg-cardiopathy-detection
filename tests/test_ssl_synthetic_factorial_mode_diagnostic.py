@@ -235,3 +235,46 @@ def test_late_failure_keeps_completed_row_count(monkeypatch: pytest.MonkeyPatch)
             context, {"global_case_offset": 2000, "area_fractions": []}, guard, progress
         )
     assert progress["rows"] == 1
+
+
+def test_complete_aggregation_and_paired_direction(masks: tuple) -> None:
+    """Every field/phase is retained and P minus B preserves identical patient pairing."""
+    config = {
+        "evaluation_patients": 2,
+        "bootstrap_draws": 20,
+        "bootstrap_seed": 20261028,
+        "arms": ["RB", "SB", "RP", "SP"],
+        "modes": ["focal", "repeated"],
+    }
+    geometry = diagnostic.mask_geometry(*masks, [0.01, 0.05, 0.1])
+    rows = []
+    for arm_index, arm in enumerate(config["arms"]):
+        for mode in config["modes"]:
+            for subject in range(2):
+                value = float(arm_index * 10 + subject)
+                rows.append(
+                    {
+                        "arm": arm,
+                        "subject": subject,
+                        "mode": mode,
+                        "geometry": geometry,
+                        "baseline": dict.fromkeys(diagnostic.METRICS, value),
+                        "edited": dict.fromkeys(diagnostic.METRICS, value + 1),
+                        "change": dict.fromkeys(diagnostic.METRICS, 1.0),
+                    }
+                )
+    summary = diagnostic.summarize(rows, config, lambda: None)
+    for arm in config["arms"]:
+        for mode in config["modes"]:
+            for phase in diagnostic.PHASES:
+                assert set(summary["statistics"][arm][mode][phase]) == set(diagnostic.METRICS)
+    for initialization in ("R", "S"):
+        for mode in config["modes"]:
+            contrast = summary["paired_loss_contrasts"][initialization][mode]
+            assert contrast["edited"]["full_grid_ap"]["difference"] == 20.0
+            assert contrast["baseline"]["lead_ap"]["ci_low"] == 20.0
+            assert contrast["change"]["temporal_ap"]["ci_high"] == 0.0
+    assert summary["geometry"]["focal"]["patients"] == 2
+    rows[0]["subject"] = 1
+    with pytest.raises(ValueError, match="alignment"):
+        diagnostic.summarize(rows, config, lambda: None)

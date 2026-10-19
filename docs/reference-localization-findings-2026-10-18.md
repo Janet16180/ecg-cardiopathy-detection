@@ -63,7 +63,9 @@ remain reserved. All new reference and feature-model scoring uses only its train
 A useful clinical annotation contract should accept multiple equivalent beats, distinguish absent
 findings from unmarked evidence, and record the named finding, leads, time or beat coordinates,
 measurement and provenance. Independent specialist agreement remains necessary to evaluate clinical
-highlighting. Neither clustering nor SHAP creates that ground truth.
+highlighting. Neither clustering nor SHAP creates that ground truth. The [draft review contract](ecg-evidence-annotation-guide.md)
+and machine-readable schema make these requirements concrete; they contain no clinical labels and still
+require semantic adapter checks and cardiologist review.
 
 ## Stable morphology clusters need not define stable disease groups
 

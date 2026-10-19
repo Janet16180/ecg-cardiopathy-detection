@@ -1,5 +1,11 @@
 # Experiment queue
 
+**Resource constraint clarified:** The user reiterated that cardiologist access is unavailable;
+recruiting or asking one is not a next step. Continue with existing information, public annotations
+and released research models, preserving current clinical label definitions. Published generator
+checkpoints are candidates for reuse; their condition controls and regional-label capabilities must
+be checked separately from waveform generation. No new download, fit or score follows automatically.
+
 **18 October counterfactual-loss finding verified:** The [four-arm factorial](ssl-synthetic-localization-counterfactual-factorial.md)
 completed with an initialization-averaged direct edited-AP gain of **0.060490 [0.045504,0.075278]**.
 All twelve prospectively frozen gates pass. Independent verification passed 154,715 checks with zero

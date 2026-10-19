@@ -75,8 +75,8 @@ local. Preserve Challenge/EchoNext closed-test and final-freeze restrictions.
 
 ## Delivery validation
 
-Final local CPU suite:1,793 passed,6 skipped in72.57s. The six skips require unavailable optional
-local model assets; no scientific result is a skipped test. Repository-wide Ruff passes. Source and
+Final local CPU suite: 1,793 passed, six skipped in 72.57 s. These are repository test skips,
+not experimental results. Repository-wide Ruff passes. Source and
 wheel builds pass, and their contents exclude raw datasets, outputs, weights, arrays and environments.
 All64 main/failure source bindings still match after assembly; no frozen scientific source changed.
 Logs are `outputs/ssl_synthetic_localization/continuation_cpu_tests_final_v3.log` and

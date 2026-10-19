@@ -1,0 +1,54 @@
+{
+  "status": "passed",
+  "study": "CLUSTER-03",
+  "created_at_utc": "2026-10-19T17:23:09.181651+00:00",
+  "analysis_source_commit": "efbb81bd2757262a80c0f2d55c3cd31010dcbd1b",
+  "cache_result_sha256": "6758aee6b8d90b12e0772e28a1f877bd275e17779c062c1386cbbd0f93033fb3",
+  "analysis_result_sha256": "64949f3472efdc309792d4ea8ca0d6bdd0c017383796bc60246b9536882e67f9",
+  "full_cpu_tests": {
+    "passed": 1528,
+    "skipped": 6,
+    "seconds": 65.16
+  },
+  "focused_clustering_tests": {
+    "passed": 33,
+    "seconds": 3.53
+  },
+  "ruff": "passed",
+  "offline_package_build": "passed; all three clustering module wheel bytes equal final source",
+  "all_33_analysis_source_hashes_unchanged": true,
+  "cache_patients_and_qrs_regions_verified": {
+    "patients": 1993,
+    "regions": 22156
+  },
+  "independent_model_fit_reconstruction": {
+    "reference_and_subsample": 720,
+    "individual_bank": 3,
+    "support_label_permutation": 20,
+    "density": 10,
+    "all_partitions_and_conditions_reproduced": true,
+    "maximum_silhouette_error": 1.1102230246251565e-16,
+    "ntt_affinity_error": 0,
+    "density_coordinates_unchanged": true
+  },
+  "annotation_audit": "All target annotation/nuisance AMIs, 55 Fisher/BH rows and 20 permutation AMIs independently reproduced exactly after the unsupervised decision was frozen.",
+  "aggregate_privacy_check": "Allowlisted shared fields match local results; no per-patient identities, feature vectors, raw ECGs or private predictions in aggregate export.",
+  "aggregate_figures_visually_checked": true,
+  "primary_persistence_gate_passed": false,
+  "clinical_disease_subtypes_validated": false,
+  "etiology_identified": false,
+  "private_verification_artifact_sha256": {
+    "outputs/cluster03_native_reference_verification/full_tests.log": "d90636aad25853e69be9ef4c8631860d4c1aa49266e4c6fe3cbdbaac458e3e67",
+    "outputs/cluster03_native_reference_verification/focused_tests.log": "2ff4d4ba59daf3a646ff2758064767cee9e67f6f9f26cab7501eab2dbf7f77c7",
+    "outputs/cluster03_native_reference_verification/package_build.log": "27962bf4361132c098cb684ea17be80865629a45d4f19767ed37076166e1871a",
+    "outputs/cluster03_native_reference_verification/profile_audit.json": "001e7742876ae1c5a6de30215f4a276962eed5048354243bbc1f37f77b4662f5",
+    "outputs/cluster03_native_reference_verification/code_preflight.json": "0cac4aeecde4f0917966255f95306f7fc970ffec973fb8f163390caa78614f03",
+    "outputs/cluster03_native_reference_verification/final_full_tests.log": "a05ed78b3e5988fa78fe93072fff2c311fb5b2c5861918f1c5754295a4056358",
+    "outputs/cluster03_native_reference_verification/final_focused_tests.log": "b946e2ac8d6808f38f573fd295e746873d9d479e9b7fd03ac5c9a7f2df01a398",
+    "outputs/cluster03_native_reference_verification/final_package_build.log": "dca41d933a968cb69c0c9d7b9fb036b7d33596812631c09de60306189532f12d",
+    "outputs/cluster03_native_reference_verification/independent_output_audit.json": "bfc462eb385f387d7fa005058dba2c0ecca0a5d610a2fab0a8b5b0b519778f5e"
+  },
+  "publication": "Local only; PR #71 remains draft, no push or merge.",
+  "local_research_links_checked": 35,
+  "backlog_validation": "5 targeted tests passed; saved ranking equals current backlog"
+}

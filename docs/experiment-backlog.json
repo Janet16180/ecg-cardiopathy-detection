@@ -1551,7 +1551,7 @@
       "kind": "experiment",
       "title": "Audit heuristic morphology features and beat-consistency measurements",
       "question": "Which cluster organizations persist after checking measurement reliability?",
-      "evidence": "CLUSTER-02 most stable shape GMM: annotation AMI 0.039 versus quality 0.080 and consistency 0.091; cross-view partitions disagree.",
+      "evidence": "CLUSTER-02 most stable shape GMM: annotation AMI 0.039 versus quality 0.080 and consistency 0.091; cross-view partitions disagree. CLUSTER-03 raw native QRS clusters associate with heart-rate quartiles (AMI 0.396) more than annotations (0.053); heart rate may be physiological and must not be removed by assumption.",
       "value": 4,
       "clarity": 0.8,
       "gpu_hours": 0.0,
@@ -1749,7 +1749,7 @@
       "kind": "experiment",
       "title": "Prospective native reference-bank uncertainty and annotation co-occurrence controls",
       "question": "How stable is fixed native QRS matching across patient reference banks without selecting class-specific winners?",
-      "evidence": "NTT-06 native QRS accuracy varies from 81.67% to 96.67% across three fixed draws. Its primary interval conditions on those banks; CRBBB and CLBBB have unequal MI co-occurrence.",
+      "evidence": "NTT-06 native QRS accuracy varies from 81.67% to 96.67% across three fixed draws. Its primary interval conditions on those banks; CRBBB and CLBBB have unequal MI co-occurrence. CLUSTER-03 regional cluster bank ARIs 0.726/0.387/0.584 further show reference dependence despite within-bank stability.",
       "value": 5,
       "clarity": 0.75,
       "gpu_hours": 0,
@@ -1767,19 +1767,69 @@
       "kind": "experiment",
       "title": "Matched native embedding and physical morphology clustering",
       "question": "Do native QRS/full-context vectors form stable patient clusters beyond quality and acquisition patterns on a matched permitted cohort?",
-      "evidence": "NTT-06 saves dense 400 by 768 tokens and four patient vectors with exact embedding identity. Its selected 87-record cohort cannot establish disease clusters; CLUSTER-01/02 physical partitions failed prior robustness gates.",
+      "evidence": "CLUSTER-03 completed 1,993 matched patients and 80 configurations. Native QRS groups are stable but strongly heart-rate-associated (AMI 0.396 versus annotation 0.053). NTT regional groups are stable within bank geometry but fail cross-view/reference-bank persistence.",
       "value": 5,
       "clarity": 0.65,
       "gpu_hours": 0,
-      "cpu_hours": 0.5,
+      "cpu_hours": 0.2702264173445292,
       "build_hours": 4,
+      "blocked_by": [],
+      "status": "done",
+      "authorized": true,
+      "notes": "docs/research/clustering/cluster03-native-reference/results.md. All patients retained, all 753 declared fits independently reconstructed. CPU hours are measured stage wall time including first profile stop, excluding tests/audit. Clinical disease categories and causes remain unestablished."
+    },
+    {
+      "id": "cluster03_native_reference",
+      "kind": "experiment",
+      "title": "Cluster native encoder and NTT reference geometry on matched patients",
+      "question": "Do stable native and NTT regional partitions persist across representation and reference-bank choices?",
+      "evidence": "Executed on 1,993 patients: stable eligible winners, native/NTT ARI 0.103, minimum bank ARI 0.387; primary persistence gate failed. Secondary NTT record group has CD annotations in 22/28 validation patients.",
+      "value": 5,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.2702264173445292,
+      "build_hours": 4,
+      "blocked_by": [],
+      "status": "done",
+      "authorized": true,
+      "notes": "docs/research/clustering/cluster03-native-reference/results.md. 720 model fits plus 3 bank, 20 permutation and 10 density fits; all independently reconstructed. Build hours approximate; no clinical localization or etiologic claim."
+    },
+    {
+      "id": "matched_native_projection_controls",
+      "kind": "experiment",
+      "title": "Separate reference-conditioned geometry from dimensional compression and numerical scaling",
+      "question": "Do NTT affinity groups add reproducible geometry beyond matched-dimensional label-free native projections?",
+      "evidence": "CLUSTER-03 compares capped 16-PC native views with three/nine NTT similarity axes. Native retained variance is 71.99/74.33%; fixed covariance regularization has different relative scale. Reference groups are stable but bank-sensitive.",
+      "value": 5,
+      "clarity": 0.75,
+      "gpu_hours": 0,
+      "cpu_hours": 0.2,
+      "build_hours": 3,
       "blocked_by": [
-        "physical_feature_reliability",
-        "@prospective_matched_clustering_cohort_protocol"
+        "@prospective_matched_projection_protocol"
       ],
       "status": "open",
       "authorized": false,
-      "notes": "Prospectively freeze a matched train-only cohort and representation, role and quality handling. Compare QRS and contextual vectors with physical features; refit all transforms within stability samples and preserve multilabel enrichment. Do not select embeddings by label separation or infer causes. Profile before larger extraction; no job scheduled."
+      "notes": "Reuse the frozen local cache, fit all centering/projections/scaling on fitting patients only and preserve the existing failed gate. Prospectively compare equal dimensions and a declared global scale; never choose by target label separation. No new clinical label definitions or automatic job."
+    },
+    {
+      "id": "ntt_reference_dictionary_evidence",
+      "kind": "experiment",
+      "title": "Prospective finding dictionary and clinically sufficient reference evidence",
+      "question": "Which expert-supported reference findings transfer beyond the current normal/complete-BBB directions?",
+      "evidence": "CLUSTER-03 broad MI/STTC/CD/HYP cohort is projected through only NORM/CRBBB/CLBBB support directions. Reference-affinity enrichment does not make an exhaustive disease taxonomy; independent expert interval evidence remains unavailable.",
+      "value": 5,
+      "clarity": 0.65,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 4,
+      "blocked_by": [
+        "ecg_independent_expert_evidence",
+        "@cardiologist_reference_dictionary_review"
+      ],
+      "status": "blocked",
+      "authorized": false,
+      "notes": "Plan acceptable evidence sets, reference-bank uncertainty and permitted independent-source assessment with the cardiologist. No new label definitions, recruitment, uploads or closed-test use is authorized by this entry."
     }
   ]
 }

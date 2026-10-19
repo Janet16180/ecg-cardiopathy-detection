@@ -33,3 +33,7 @@ connect the native adapter to frozen ECG-JEPA and return scored original-time re
 inputs. Native QRS finding discrimination reaches 91.67% versus physical references 92.78%; the
 primary gate fails. Its shifted-window control reaches 83.33%, while specialist localization agreement
 remains unmeasured. Private dense/pooled vectors are available for a separate clustering protocol.
+
+[CLUSTER-03](../clustering/cluster03-native-reference/results.md) now clusters both the raw native
+vectors and No Time to Train affinity outputs on a broader matched cohort. Stable partitions depend
+on representation/reference choices; the failed persistence gate and phenotype limits are retained.

@@ -20,3 +20,12 @@ Use their results and available live receipts to establish which findings can ac
 Clustering describes similarity and associations; it does not establish disease causes.
 
 Follow the [shared directory guide](../README.md) for new code, commands and aggregate reports.
+
+## Native signal and reference-conditioned geometry
+
+[CLUSTER-03 protocol](cluster03-native-reference/protocol.md), [profile results](cluster03-native-reference/profile-results.md)
+and [results](cluster03-native-reference/results.md) compare native QRS/global ECG-JEPA vectors, the
+actual No Time to Train record/regional affinities and physical features on 1,993 matched development
+patients. All selected partitions are stable under patient subsampling, but cross-view/reference-bank
+persistence fails. Raw QRS clusters are strongly rate-associated; NTT affinities produce mixed,
+reference-informed annotation enrichment rather than independently discovered disease categories.

@@ -5,9 +5,12 @@ ECG finding and highlight the leads, intervals and measurements supporting it. A
 the underlying cause of heart disease. This plan preserves the existing screening labels until clinical
 review; it does not redefine them or introduce age-subgroup analyses.
 
-The first phase is complete: [NTT-01](ntt-01-reference-label-audit-results.md) audited the paper, prior work
-and a new annotation source. It found a usable supplementary source of structured grounding, but no new
-independent expert localization test. No original-paper SAM2/DINOv2 inference has run.
+The annotation audit, native reference study, compact visual pilot, two morphology clustering studies
+and exact grouped explanation audit are complete. Their linked results in the [live queue](experiment-queue.md)
+separate executed evidence from the initial plan. NTT-04 now removes generic wave-phase alternatives
+through a prospectively frozen same-QRS finding comparison. The original large/large paper recipe and
+an independent clinical localization evaluation remain unrun. All further work is local under the
+personal identity `Janet16180` / `clarajanet16180@outlook.com`; no push is authorized.
 
 ## What existing work changes
 
@@ -36,10 +39,10 @@ agents active; only one process owns a new scored study. Use worktrees if worker
 | Phase | Deliverable | Gate |
 | --- | --- | --- |
 | 1, completed | Provenance, schema, split and shortcut audit | Use the new annotations as silver evidence only |
-| 2 | Typed reference examples and coordinate adapter | Preserve source case, patient, finding, lead, coordinate type, units, polarity and provenance; quarantine reserved patients |
-| 3 | Bounded comparison of masked-reference transfer | Freeze supports, controls, prediction area, abstention and development endpoint before inference |
+| 2, numeric adapter executed | Typed reference examples and coordinate adapter; full ordinal/absent/equivalent-evidence contract remains | Preserve source case, patient, finding, lead, coordinate type, units, polarity and provenance; quarantine reserved patients |
+| 3, NTT-02/03 executed; NTT-04 ongoing | Native and compact visual reference comparisons; original large/large recipe unrun | Freeze supports, controls, prediction area, abstention and development endpoint before inference |
 | 4 | Independent diagnostic-evidence evaluation | A genuinely new annotated population; existing spent holdout cannot establish confirmation |
-| 5 | Source-controlled clustering and grouped SHAP | Explain recurring morphology and model dependence without claiming etiology |
+| 5, initial studies executed | CLUSTER-01/02 and SHAP-01; independent-source and clinical-map comparisons remain | Explain recurring morphology and model dependence without claiming etiology |
 
 ## How to test No Time to Train
 
@@ -69,11 +72,11 @@ Then compare an ECG-native masked-reference method with a literal image method, 
 - Measure proposal-oracle coverage before semantic matching. A missed proposal and a wrong class match
   need different remedies. Test grid, text and rendering changes as nuisance controls.
 
-Only then commit the executable protocol: exact permitted patients, support/calibration/development split,
+For each successor, commit its executable protocol before scoring: exact permitted patients, support/calibration/development split,
 predecessor reproduction, primary patient-macro lead/time overlap, lead accuracy, within-QRS ranking,
 false evidence on negatives, uncertainty and stopping rule. Record the source/weight hashes and profile
-the actual hardware before admitting full work. No working GPU driver or paper-model weights were found
-in this session. A synthetic figure or natural-image example can verify implementation but cannot establish
+the actual hardware before admitting full work. No working GPU driver was available. Public DINOv2-S and SAM2-Tiny weights were subsequently
+cached and profiled on CPU for NTT-03; these compact components differ from the original large/large recipe. A synthetic figure or natural-image example can verify implementation but cannot establish
 clinical localization.
 
 ## Clustering and SHAP after the reference phase

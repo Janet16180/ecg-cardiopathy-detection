@@ -1,8 +1,20 @@
 # Experiment queue
 
-**18 October, local continuation:** NTT-02 native reference matching and CLUSTER-01 physical-morphology clustering are running/completing in isolated worktrees; [NTT-03](ntt-03-visual-reference-pilot.md) freezes a separate compact visual-model pilot before any real-ECG inference. All work uses the personal identity and remains local. Reserved PR67 patients stay excluded.
+**18 October, local research:** all work uses the personal identity and remains local; no push or publication is authorized. Two worker agents plus the coordinator operate in separate worktrees. The independent clinical localization test and the original paper's large/large configuration remain unrun.
 
-**18 October, reference-label audit completed:** [NTT-01 results](ntt-01-reference-label-audit-results.md) verify 2,499 public PTB reasoning cases from 2,322 ECGs / 2,174 patients in permitted folds. Their 4,854 selected wave answers comprise 4,813 timestamps and 41 symbolic QRS-index intervals; these are supplementary silver evidence, not exhaustive expert masks. The single-answer lead option-zero baseline flags a narrow V5/V6 content imbalance. Independent aggregate verification passed. No original-paper SAM2/DINOv2 inference or clinical/model score was run. [The research plan](ecg-reference-localization-plan.md) incorporates PR61 studies through 073, its spent ECGAD holdout and the separate PR67 SSL/synthetic programme. New model inference, clustering and SHAP remain future studies; no automatic job is scheduled.
+| Study | Executed finding | Report |
+| --- | --- | --- |
+| NTT-01 | 2,499 public PTB reasoning cases in folds 1–8; supplementary silver grounding, not exhaustive expert masks | [Label audit](ntt-01-reference-label-audit-results.md) |
+| NTT-02 | 1,507 candidate questions / 769 train-role patients; morphology beats duration but loses to QRS phase; gate failed | [Native transfer](ntt-02-native-reference-transfer-results.md) |
+| NTT-03 | Six compact DINO targets: matching 6/6 versus wrong-window 0/6, with a contextual phase ceiling; SAM nominated-interval oracle 1/3; gate failed | [Visual pilot](ntt-03-visual-reference-pilot-results.md) |
+| CLUSTER-01 | 1,999 patients / 53 physical features; selected spectral partition misses worst-refit stability gate | [Morphology](cluster-01-physical-morphology-results.md) |
+| CLUSTER-02 | 36 configurations, stable mixtures and consensus; amplitude-normalized shape disagrees with other views, so robustness gate failed | [Stability selection](cluster-02-stability-selection-results.md) |
+| SHAP-01 | Exact linear grouped explanations; reference population changes leading absolute group for 175/400 patients despite identical predictions | [Background audit](shap-01-linear-background-sensitivity-results.md) |
+| NTT-04 | Protocol frozen; implementing three-way same-QRS finding discrimination without QA answer windows or lead answers; no score yet | [Protocol](ntt-04-same-wave-finding-discrimination.md) |
+
+New waveform/reference/model scoring uses only PR67's training role. NTT-02's predecessor-integrity replay also reparsed reserved-role aggregate annotations before the gate; its report explicitly discloses this limitation. No reserved waveform entered new fitting or scoring. Other beats may provide acceptable evidence even when they do not overlap one nominated silver interval. No cluster, source annotation or attribution establishes the cause of heart disease.
+
+The [research plan](ecg-reference-localization-plan.md) preserves PR61 studies through 073, its spent ECGAD holdout and separate PR67 patient reservations. Read live receipts under `outputs/` and the results reports before reporting progress; a protocol or smoke test is not a clinical result.
 
 **Updated:** 18 October 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 

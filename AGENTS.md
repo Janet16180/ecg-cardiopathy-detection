@@ -18,6 +18,8 @@ history belongs in Git and the queue documents, not here.
 
 ## Git
 
+- Use only the personal Git/GitHub identity `Janet16180` and `clarajanet16180@outlook.com` in this repository.
+  Keep work local; do not push or publish until the user authorizes it again.
 - Work on a branch; open every PR against `main`, never stacked on another branch. Before handing a PR over,
   merge `origin/main` into it and check GitHub reports it mergeable. Merge only after `gh pr checks` passes.
 - Stage files by path; never `git add -A`. Commit messages are short and plain, with no Co-Authored-By line.

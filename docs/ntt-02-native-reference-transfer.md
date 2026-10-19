@@ -44,6 +44,10 @@ Compare on identical target questions with option-zero; uniform-choice expectati
 energy peaks); physical RMS-amplitude matching; derivative-energy matching; wrong-window reference
 (first unselected support option); and shuffled-class reference (next eligible class in lexical order,
 independently drawn out of fold). Controls use the same reference budget and target options.
+Scalar support descriptors are averaged within patients and their patient values are combined by a
+median; duration is represented as log seconds. Thus repeat instances do not increase a patient's weight.
+The independent identity-only eligibility implementation must exactly match the shared PR67 train-ECG
+manifest before any new content or waveform access. Retain a local copy and its SHA256 in the receipt.
 
 ## Endpoint and decision
 

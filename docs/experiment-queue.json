@@ -2288,5 +2288,13 @@
     "original_paper_inference_executed": false,
     "closed_data_read": false,
     "historical_metric_reproduction": false
+  },
+  "ntt03_visual_reference_pilot": {
+    "status": "protocol_frozen_pending_implementation",
+    "authorized": true,
+    "protocol": "docs/ntt-03-visual-reference-pilot.md",
+    "scope": "Compact CPU DINOv2-S/SAM2-Tiny engineering variant on permitted NTT02 development cohort; no original-paper benchmark claim",
+    "publication": "local_only_personal_identity",
+    "next_action": "Freeze implementation and run once with resource receipts."
   }
 }

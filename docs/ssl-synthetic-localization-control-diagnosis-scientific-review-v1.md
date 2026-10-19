@@ -37,3 +37,36 @@ boundaries, disease, healthy status or a causal explanation of the model. Stable
 produce apparent location preferences; lead allocation and prior overlap must be read alongside it.
 The fixed-fit, spent-generator-seed intervals do not represent patient or training-seed uncertainty.
 No prior learning verdict changes, and no new fit or threshold tuning follows from this review.
+
+## Executed-result interpretation review
+
+Read the completed main summary/terminal ledger and viewed both fixed figures. Reviewed summary:
+`8c5c4615ae3a478b322eabd2006f0ed8dafc7750228f65a034623054a525365f`. The exact predecessor closure
+completed before the diagnostic. No new inference or metric computation was performed by this review.
+
+Supervised native-minus-shifted control activity overlap is 0.2003472222, 95% seed interval
+[0.1184361979, 0.2718663194]. The permuted estimate is 0.0170833333, interval
+[-0.0417782118, 0.0719283854]; their paired difference is 0.1832638889, interval
+[0.0946367187, 0.2737387153]. This supports greater alignment of supervised top-ranked control cells
+with this derivative-energy proxy under the fixed reference. Native supervised overlap is about
+30.5–30.8%, so most hotspots remain outside the activity mask. The result does not establish that
+these are expert-defined waves or that the proxy explains all background activations.
+
+The 87.8% sham/nuisance hotspot persistence and 88.9%/77.0% positive/nuisance persistence support
+substantial background ranking stability under these particular variants. Only 4.1%/13.5% of
+supervised focal/repeated hotspots intersect introduced support. These ranked-area quantities differ
+from full-grid AP and the earlier uncalibrated >0.5 control-maxima counts. Their limitations can
+coexist with the prior supervised-versus-control learning gains; neither prior verdict changes.
+
+The fixed TRAIN-prior hotspot overlap is below its shifted reference, which supplies no positive
+alignment evidence for those exact ranked prior coordinates. It does not rule out broad lead or
+position preferences. Prior ties are material: 164 of the 600 selected cells come from a 796-cell
+cutoff tie. The supervised V1 concentration and permuted III concentration are descriptive channel
+preferences, not causes identified by this analysis. The fixed gallery is consistent with these
+cautious conclusions; its minor title overlap does not change the numerical evidence and is retained.
+
+The coordinator's complete main result report was reviewed and is scientifically acceptable. It
+correctly distinguishes descriptive completion from a new scientific PASS, conditional seed intervals
+from patient/fit uncertainty, and pending independent verification from completed checks. Subsequent
+independent saved-output verification should be recorded separately. No new fit, threshold tuning,
+clinical label change or claim of physiological localization is justified by this diagnostic alone.

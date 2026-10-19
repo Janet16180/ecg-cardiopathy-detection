@@ -1,0 +1,95 @@
+{
+  "study": "NTT-07",
+  "status": "completed",
+  "source_commit": "35b28a391b1fdd18b6f7d326b579ba146edb6b03",
+  "runtime": {
+    "threads": 2,
+    "device": "cpu",
+    "png_dpi": 120,
+    "python": "3.11.13",
+    "packages": {
+      "numpy": "2.4.6",
+      "matplotlib": "3.11.2",
+      "jsonschema": "4.26.0",
+      "wfdb": "4.3.1",
+      "Pillow": "12.3.0"
+    },
+    "thread_environment": {
+      "OMP_NUM_THREADS": "2",
+      "OPENBLAS_NUM_THREADS": "2",
+      "MKL_NUM_THREADS": "2"
+    }
+  },
+  "rendered_cases": 30,
+  "pending_forms": 30,
+  "clinical_annotations": 0,
+  "clinical_accuracy_evaluated": false,
+  "rubric_approved": false,
+  "technical_readiness_passed": true,
+  "readiness_checks": {
+    "exactly_30_rendered_cases": true,
+    "exactly_30_pending_forms": true,
+    "zero_fabricated_annotations": true,
+    "patient_roles_verified": true,
+    "support_disjoint": true,
+    "unique_patients": true,
+    "same_identity_only_selection": true,
+    "seven_original_signals_reproduced": true,
+    "original_attempt_unchanged": true,
+    "physical_coordinate_audit": true,
+    "reviewer_privacy_audit": true,
+    "source_and_signal_bytes_bound": true,
+    "wall_budget_passed": true
+  },
+  "seconds": 213.5013925228268,
+  "waveform_reads": 30,
+  "encoder_forwards": 0,
+  "gpu_used": false,
+  "training": false,
+  "limitations": [
+    "Original +/-4 mV technical stage failed and remains preserved.",
+    "Human rubric approval and independent specialist review remain pending.",
+    "Technical validation cannot certify clinical truth or evidence sufficiency.",
+    "Trusted reviewer bindings do not authenticate expertise or adjudication lineage.",
+    "These are explored development anchors, not an independent clinical test.",
+    "The packet was neither delivered nor uploaded."
+  ],
+  "local_result_sha256": "e6b98f43a915363cec1591a0f1565687aa9800fd6d10d046b5dbeea506550c01",
+  "predecessor_integrity": {
+    "records": 1993,
+    "regions": 22156,
+    "coordinate_bounds_passed": true,
+    "fitting_patients": 1582,
+    "validation_anchors": 411,
+    "nine_patient_split_hashes_reproduced": true
+  },
+  "source_sha256": {
+    "docs/research/localization/ntt07-blinded-review/protocol.md": "47134a6bbcad03a7a1deca6025a6302e5f2466c4c039fee61eaf558085bcd947",
+    "docs/research/localization/ntt07-blinded-review/execution-layout.md": "647bf3df6c87c13b3272c23f8afca972a67c4b075cc13009dc018e798fcb7b33",
+    "ecg_experiment/localization/blinded_packet.py": "deb36523aef120fbba292dac246e27bcb413a40830c9b2849207dac3b304368e",
+    "ecg_experiment/localization/evidence_validation.py": "1db08ed799c89f9dafc6e06661c96599776e41f6d0eebffc4e78502764a1aba5",
+    "ecg_experiment/localization/review_forms.py": "fa028bbfd2c46c07ba73720ed905906f3f5a73d33e4dbbd0510fb9bb6bfdf669",
+    "scripts/experiments/localization/run_ntt07.py": "a27443d22b27cf30b499f7c0421840752eaf04ff4c21a4eb61e60e1597fde22c",
+    "scripts/experiments/localization/validate_evidence.py": "6f370cdf94f91ec699df733133e899e61c960a5e9e769d000e4889eefb51841e",
+    "tests/localization/test_evidence_validation.py": "52906fb2ba0ab959ab62e03705a51bb63b6e8db3d8f7ac553bb70fa0309642c0",
+    "tests/localization/test_blinded_packet.py": "5ac73429b0e7402b3bd5683c8507ff50713c54ca1a0d0db7865b56b64490eaac",
+    "schemas/localization/pending-review-form-v1.schema.json": "cb35b240fa193edf9a07da8faf5078b0185fb377d8d09b9b5764fa874e970b13",
+    "schemas/ecg-evidence-annotation-v1.schema.json": "6dca026eb85b8fab33d845098c0f53a7bad9a841ce1f6b756a8bd2cf1af618ac",
+    "schemas/ecg-evidence-synthetic-example.json": "903ba4509fe77096d8a77a438688b2d2adfc7b1947bb85a9695556fb611de0e6",
+    "docs/research/localization/ntt07-blinded-review/rendering-repair.md": "56455a298341ca476fa78b3773974e51b1558b5057f032c2ccabc216e73b1b08",
+    "ecg_experiment/localization/blinded_packet_v2.py": "547539194e752ada458a3901a3c4eec302cb2e0d414c4af47d3ac8c4e3f13a7a",
+    "scripts/experiments/localization/run_ntt07_v2.py": "0d9560d2c4c7b3b3c90e7783900a48469a11bca56225525fcbfaa81967ed05c3",
+    "tests/localization/test_blinded_packet_v2.py": "cd0d0f54cf41ae234c0df6ee20d1d5eb4d379dbcfd36d23a67594591c51c227a"
+  },
+  "stage": "physical_layout_v2",
+  "pdf_pages": 180,
+  "png_files": 180,
+  "total_waveform_read_operations": 37,
+  "unique_selected_patients": 30,
+  "original_attempt": {
+    "technical_readiness_passed": false,
+    "completed_cases": 6,
+    "waveform_reads": 7,
+    "seconds": 27.89858017768711
+  }
+}

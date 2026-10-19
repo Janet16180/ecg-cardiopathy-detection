@@ -2,7 +2,7 @@
 
 **Resource constraint clarified:** The user reiterated that cardiologist access is unavailable;
 recruiting or asking one is not a next step. Continue with existing information, public annotations
-and released research models, preserving current clinical label definitions. Published generator
+and released research models, preserving current clinical label definitions. The user is architecture-agnostic: GAN, diffusion and VAE approaches are eligible. Published generator
 checkpoints are candidates for reuse; their condition controls and regional-label capabilities must
 be checked separately from waveform generation. No new download, fit or score follows automatically.
 

@@ -2557,7 +2557,8 @@
       "cardiologist_access": false,
       "user_instruction": "User reiterated that recruiting or asking cardiologists is not an option; continue using available information, existing datasets and released models.",
       "clinical_truth_strategy": "Use and audit already published human annotations and author-provided validation where available. Direct specialist participation is not a project prerequisite. Preserve existing clinical label definitions and distinguish introduced-change truth from native disease truth.",
-      "pretrained_generator_strategy": "Assess released ECG GAN checkpoints as reusable baselines before training a new generator; check input/output control, training-cohort overlap, local compatibility and whether regional labels are actually supplied. No download or new experiment has run in this assessment."
+      "pretrained_generator_strategy": "Assess released ECG GAN checkpoints as reusable baselines before training a new generator; check input/output control, training-cohort overlap, local compatibility and whether regional labels are actually supplied. No download or new experiment has run in this assessment.",
+      "generative_architecture": "User clarified that GAN is an initial idea, not a requirement. Compare reusable GAN, diffusion and VAE generators by controllability, available weights, local feasibility and downstream benefit. No superiority assumed from architecture age."
     }
   }
 }

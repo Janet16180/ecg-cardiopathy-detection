@@ -583,7 +583,7 @@ def _run(output: Path, protocol: Path, threads: int) -> dict[str, Any]:
     missingness = {
         "fit": feature_missingness(fit, train_values, raw),
         "development": feature_missingness(development, dev_values, raw),
-        "unused_fold8": "raw features not read or modeled",
+        "unused_fold8": "raw features not selected for fitting or inference",
     }
     write_json_atomic(output / "missingness.json", missingness)
     models, fit_seconds = fit_models(train_values, y, weights)

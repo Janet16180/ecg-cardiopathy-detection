@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T02:49:16.266775+00:00",
+  "updated_at_utc": "2026-10-19T03:07:53.279554+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2270,33 +2270,43 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "experiment_041_cpu_screening": {
-    "status": "completed_pending_independent_artifact_audit",
+    "status": "complete_audited",
     "authorized": true,
     "authorization": "User requested autonomous multi-agent progress using existing data without cardiologist access.",
     "protocol": "docs/experiment-041-cpu-screening.md",
     "output_dir": "outputs/experiment041_cpu_screening_v2",
-    "next_action": "Write output-derived report and independently audit saved predictions; no further fit.",
+    "next_action": "Completed; preserve saved models/receipts. No refit or final test authorized.",
     "failed_attempt": "outputs/experiment041_cpu_screening_v1/failure.json",
     "execution_amendment": "docs/experiment-041-cpu-screening-execution-v2.md",
     "results": "outputs/experiment041_cpu_screening_v2/result.json",
-    "decision": "advance_development"
+    "decision": "advance_development",
+    "report": "docs/experiment-041-cpu-screening-results.md",
+    "audit": "outputs/measurement_screening_arithmetic_audit_v1/audit.json"
   },
   "experiment_042_measurement_transfer": {
-    "status": "preparing_after_passed_qualification_and_profile",
+    "status": "complete_audited",
     "authorized": true,
     "protocol": "docs/experiment-042-measurement-transfer.md",
     "output_dir": "outputs/experiment042_measurement_transfer_v1",
     "predecessor": "experiment_041_cpu_screening",
-    "next_action": "Prepare model-independent SPH features within passed profile budget; then one frozen external comparison.",
+    "next_action": "Completed external development comparison; retain local-normal calibration requirement and frozen artifacts.",
     "qualification": "outputs/experiment042_measurement_transfer_v1/qualification/completion.json",
-    "profile": "outputs/experiment042_measurement_transfer_v1/profile/completion.json"
+    "profile": "outputs/experiment042_measurement_transfer_v1/profile/completion.json",
+    "preparation": "outputs/experiment042_measurement_transfer_v1/preparation/completion.json",
+    "results": "outputs/experiment042_measurement_transfer_v1/evaluation/results.json",
+    "report": "docs/experiment-042-measurement-transfer-results.md",
+    "audit": "outputs/measurement_screening_arithmetic_audit_v1/audit.json",
+    "decision": "support_external_development"
   },
   "experiment_043_lead_grounding": {
-    "status": "protocol_frozen_pending_implementation",
+    "status": "completed_pending_independent_artifact_audit",
     "authorized": true,
     "protocol": "docs/experiment-043-lead-grounding.md",
     "output_dir": "outputs/experiment043_lead_grounding_v1",
-    "next_action": "Implement/review fixed waveform-versus-context HGB comparison on corrected public finding-conditioned benchmark; no grounding fit or performance yet.",
-    "scope": "Conditional sparse benchmark answers, not native clinical disease masks or explanation of041."
+    "next_action": "Complete independent saved-output audit; preserve failed ranking criterion and unread fold-8 performance. No refit or alternative endpoint scheduled.",
+    "scope": "Conditional sparse benchmark answers, not native clinical disease masks or explanation of041.",
+    "results": "outputs/experiment043_lead_grounding_v1/result.json",
+    "report": "docs/experiment-043-lead-grounding-results.md",
+    "decision": "do_not_advance_grounding"
   }
 }

@@ -1,34 +1,31 @@
 # Experiment queue
 
-**18 October finding-grounding successor frozen:** The existing public PTB reasoning file matches
-the authored corrected0.0.2release exactly. Read-only role/task qualification found97development
-patients, including56with variable training answers for the same context and offered leads.
-[Experiment043](experiment-043-lead-grounding.md) freezes a two-fit test of waveform information
-against matched context/offer-only HGB, with a fixed lookup guard. No grounding fit or performance
-score has been produced. This is a conditional benchmark task with generated annotations.
+**18 October local CPU continuation:** The GPU driver is unavailable in `baseline`. The user
+requested autonomous multi-agent progress using existing data without cardiologist access.
+Three prospective studies are now executed; no further fit or final test is scheduled.
 
-**18 October executed CPU comparison:** 041v2 reproduced the saved historical probabilities exactly,
-then completed the frozen two-arm fit. HGB AUROC 0.946512 versus logistic 0.918070, paired difference
-+0.028442 [0.021141,0.036076]; sensitivity at separate normal-only 5% thresholds 0.781656 versus
-0.670455, HGB normal referral 4.7046%. All four development gates pass. Saved-output independent
-audit is pending. 042 qualified its extractor on 32 PTB records with zero serialized difference;
-the real 64-record SPH profile passed (conservative preparation forecast2,292seconds). Full local
-preparation is running; no SPH comparison score exists yet.
+- [041 screening result](experiment-041-cpu-screening-results.md): boosting AUROC 0.946512 versus
+  matched logistic 0.918070 on reused PTB fold 9; paired gain 0.028442 [0.021141, 0.036076].
+  All four development gates pass. Historical baseline probabilities reproduced exactly. The first
+  cohort-validation stop remains preserved; the separately frozen v2 corrected its historical
+  flat-lead exclusion without changing scientific settings.
+- [042 hospital transfer](experiment-042-measurement-transfer-results.md): frozen PTB-trained
+  boosting AUROC 0.907938 versus logistic 0.867394 on SPH; paired gain 0.040545 [0.035482, 0.045825].
+  Sensitivity was 0.668248 versus 0.562500 at local-normal referral rates 4.86% versus 4.72%.
+  All external development gates pass. The source port reproduced 32 PTB records exactly, then
+  prepared all 25,770 SPH records. Independent 041/042 arithmetic verification passed 462 checks
+  with zero mismatches, without fits, inference or waveform reads.
+- [043 lead-grounding result](experiment-043-lead-grounding-results.md): the corrected public PTB
+  benchmark passed release/task qualification, but context/offer-only HGB already reached AP
+  0.980097; measurements reached 0.989691. Primary gain 0.009593 [−0.003293, 0.024628] fails the
+  frozen ranking rule. Preserve `do_not_advance_grounding`; secondary exact-set observations do
+  not rescue it. Independent saved-output verification is being completed. Fold 8 was not used
+  for fitting or inference; its performance remains unread.
 
-**18 October CPU screening continuation:** The user authorized autonomous multi-agent work with
-existing data and no cardiologist. The GPU driver is unavailable in this checkout.
-[Experiment 041](experiment-041-cpu-screening.md) freezes a raw-measurement HGB/logistic comparison
-on PTB-XL (fit1–7, normal-only calibration8, reused development9), preserving the Avance superclass
-label. [Experiment 042](experiment-042-measurement-transfer.md) freezes transfer of those fixed
-models to SPH with separate local-normal calibration, after extractor qualification and an actual
-CPU profile. 041 passed independent source review and 39 checks, then stopped before any fit at the cohort
-check: the implementation overlooked one historical flat-lead exclusion. The v1 failure remains
-unchanged. A [forward v2 correction](experiment-041-cpu-screening-execution-v2.md) preserves every
-scientific setting, passed independent source review and 30 artificial checks, and is running.
-042 remains under implementation; it will
-bind the completed v2 predecessor. No new comparison score has been produced.
-The original protocol freezes are d4d7dc0/96739d5 on the retained research branch; their bytes are
-preserved here on a branch based directly on main. Closed tests remain closed.
+All models, features and private predictions stay in ignored local outputs. Read their live
+receipts before resuming work. Existing labels were preserved, SPH never trained a classifier,
+closed Challenge/EchoNext tests stayed closed, and no clinical localization claim is supported.
+Protocols, results and artifact paths are in the JSON catalog; follow-ups are ranked separately.
 
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 

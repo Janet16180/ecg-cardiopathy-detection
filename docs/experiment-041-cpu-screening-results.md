@@ -67,7 +67,11 @@ boosting completed its fixed 200 iterations. The complete successful run took 15
 at most four numerical threads, no GPU, no download and no new waveform access. Its fit stages
 took 0.383 and 0.643 seconds respectively. Thirty artificial tests and independent implementation
 review passed before v2 launch; integrated checks including the transfer and shared helpers passed
-66 tests. Saved-output independent arithmetic verification is pending.
+66 tests. The subsequent independent saved-output audit of 041 and 042 passed 462 checks with zero
+mismatches in 26.992 seconds. It independently reproduced thresholds, arm/paired metrics and
+intervals, gates, overlapping misses and identity bindings without inference, fitting or waveform
+access. Audit SHA-256: `965a3b9ba742a19c723ddfaee79a1204c81dbf7b8a16e177df7bba49eb4e46dc`.
+It verifies saved-output arithmetic, not clinical annotation truth or independent training replay.
 
 ## Scope and next step
 

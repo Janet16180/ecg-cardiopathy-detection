@@ -1337,7 +1337,7 @@
       "build_hours": 1.0,
       "blocked_by": [],
       "status": "done",
-      "notes": "Executed: AUROC0.946512 vs0.918070; paired difference+.028442[.021141,.036076], all4development gatespass. Historical probabilities reproduced exactly; failed v1 cohort attempt preserved. Independent saved-output audit pending. docs/experiment-041-cpu-screening-results.md."
+      "notes": "Completed and audited: AUROC 0.946512 vs 0.918070; paired gain 0.028442 [0.021141, 0.036076], all four development gates pass. Historical probabilities match exactly. Successful run 15.202 wall seconds; first cohort stop preserved. Shared saved-output audit passed 462 checks. See docs/experiment-041-cpu-screening-results.md."
     },
     {
       "id": "cpu_measurement_transfer042",
@@ -1347,11 +1347,75 @@
       "value": 5,
       "clarity": 0.9,
       "gpu_hours": 0,
-      "cpu_hours": 0.65,
+      "cpu_hours": 0.34314925853098327,
       "build_hours": 1.0,
       "blocked_by": [],
-      "status": "running",
-      "notes": "Full SPH feature preparation running; no external model fit or score yet. Reused development hospital, not final test. docs/experiment-042-measurement-transfer.md."
+      "status": "done",
+      "notes": "Completed and audited: SPH AUROC 0.907938 vs 0.867394; paired gain 0.040545 [0.035482, 0.045825], all four external development gates pass. CPU-only measured stages 1,235.337 wall seconds; shared arithmetic audit 26.992 seconds. SPH never fitted classifiers. See docs/experiment-042-measurement-transfer-results.md."
+    },
+    {
+      "id": "lead_grounding_context_control043",
+      "title": "Waveform information beyond context in public lead grounding",
+      "question": "Do raw ECG measurements improve patient-macro query AP over matched context/offer-only HGB?",
+      "evidence": "Corrected public benchmark passed identity and patient-role qualification; frozen Experiment 043.",
+      "value": 4,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.0025121835561003536,
+      "build_hours": 0.75,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Executed: context AP 0.980097, waveform AP 0.989691; gain 0.009593 [-0.003293, 0.024628]. Fails the frozen 0.05 gain and positive lower-bound gates. Preserve negative ranking verdict; independent arithmetic audit pending. See docs/experiment-043-lead-grounding-results.md."
+    },
+    {
+      "id": "measurement_multisource_training",
+      "title": "Human-read multisource training for the CPU measurement screen",
+      "question": "Does the 042 screen improve when its classifier sees curated Challenge training groups, while SPH remains evaluation-only?",
+      "evidence": "041/042 establish a strong CPU baseline; earlier encoder readouts benefited from multisource training, but this measurement model has not been tested.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 1.0,
+      "build_hours": 3.0,
+      "blocked_by": [
+        "@prospective_multisource_protocol",
+        "@local_challenge_training_manifests"
+      ],
+      "status": "proposed",
+      "notes": "No run scheduled. Reconstruct only frozen permitted training/calibration identities; never read Challenge test groups. Needs compatible measurements and a new prospective comparison; preserve current label definitions."
+    },
+    {
+      "id": "lead_grounding_membership_followup",
+      "title": "Prospective exact-membership test of frozen lead-grounding models",
+      "question": "Does the descriptive exact-set advantage in 043 replicate on a separately frozen, performance-unread patient role?",
+      "evidence": "043 exact-set accuracy was 0.788660 with measurements vs 0.654639 from context, while its primary ranking criterion failed.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.05,
+      "build_hours": 1.5,
+      "blocked_by": [
+        "@prospective_membership_protocol_and_patient_role"
+      ],
+      "status": "proposed",
+      "notes": "Do not alter 043 verdict or reuse its evaluation as confirmation. Fold 8 has not been inferred/scored in 043; preserve it until a separate protocol fixes an appropriate membership endpoint and controls. Conditional benchmark finding recovery only."
+    },
+    {
+      "id": "wave_grounding_context_control",
+      "title": "Qualify time-grounding semantics and strong context/option controls",
+      "question": "Can existing time-choice annotations support waveform-dependent timing evaluation after context-only shortcut controls?",
+      "evidence": "Public PTB reasoning payload includes 5,938 wave-grounding questions, with 53 selected answers needing semantic interpretation. 043 demonstrates the importance of context-only controls.",
+      "kind": "repo",
+      "value": 4,
+      "clarity": 0.7,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 2.0,
+      "blocked_by": [
+        "@prospective_time_grounding_qualification"
+      ],
+      "status": "proposed",
+      "notes": "No scores or fit scheduled. Preserve native sparse-choice semantics; verify timing/lead alignment, annotation provenance and patient roles before any metric. Do not convert choices to clinical disease masks."
     }
   ]
 }

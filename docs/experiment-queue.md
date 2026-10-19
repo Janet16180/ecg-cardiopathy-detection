@@ -1,5 +1,15 @@
 # Experiment queue
 
+**18 October CPU screening continuation:** The user authorized autonomous multi-agent work with
+existing data and no cardiologist. The GPU driver is unavailable in this checkout.
+[Experiment 041](experiment-041-cpu-screening.md) freezes a raw-measurement HGB/logistic comparison
+on PTB-XL (fit1–7, normal-only calibration8, reused development9), preserving the Avance superclass
+label. [Experiment 042](experiment-042-measurement-transfer.md) freezes transfer of those fixed
+models to SPH with separate local-normal calibration, after extractor qualification and an actual
+CPU profile. Both implementations are under review; no new scientific scores have been produced.
+The original protocol freezes are d4d7dc0/96739d5 on the retained research branch; their bytes are
+preserved here on a branch based directly on main. Closed tests remain closed.
+
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
 **30 September day closed:** The user chose to close out today's completed work and merge it

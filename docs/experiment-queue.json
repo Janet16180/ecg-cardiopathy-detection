@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T17:25:09.741666+00:00",
+  "updated_at_utc": "2026-10-19T17:31:05.751980+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "public_generator_and_randomized_localization_completed_independently_audited",
+    "status": "public_generator_randomized_localization_and_control_diagnosis_independently_audited",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Freeze, review and execute the authorized saved-map generated-background control diagnosis; keep PR67 draft and all historical decisions unchanged.",
+    "next_action": "Read audited generated-background diagnosis; rank independent fit-randomness replication with a new prospective evaluation policy, then a paired-background objective comparison and public wave-annotation qualification. No new fit, closed test, clinical promotion or merge is scheduled.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2622,7 +2622,7 @@
       "standalone_audit_report": "docs/ssl-synthetic-localization-pretrained-generator-independent-audit-v1-results.md",
       "quality_source_commit": "be9ea5f",
       "quality_execution": "awaiting_final_numerical_source_review_and_actual_path_profile",
-      "verified_current_machine_cpu_seconds": 32.489216225,
+      "verified_current_machine_cpu_seconds": 44.99976453399999,
       "verified_current_machine_gpu_wall_seconds": 38.433311437256634,
       "quality_v1_output": "outputs/ssl_synthetic_localization/generated_quality_v1",
       "quality_v1_profile_verdict": "failed_wall_forecast1550.645226>1200; no bank generated",
@@ -2633,10 +2633,11 @@
       "quality_v1_bank_samples": 0,
       "quality_v2_change": "prospectively raise wall/GPU-lock1800seconds; keep all128seeds/endpoints/controls/memory/storage/profilefactor2 unchanged",
       "local_cpu_suite": {
-        "passed": 1793,
+        "passed": 1813,
         "skipped": 6,
-        "seconds": 72.57,
-        "log": "outputs/ssl_synthetic_localization/continuation_cpu_tests_final_v3.log"
+        "warnings": 2,
+        "seconds": 81.44,
+        "log": "outputs/ssl_synthetic_localization/continuation_control_diagnosis_cpu_tests_v1.log"
       },
       "quality_v2_output": "outputs/ssl_synthetic_localization/generated_quality_v2",
       "quality_v2_main_receipt_sha256": "0067dc16c609a7209cb626e8d31600f6b654d192e3b0803968ca3275db1660b2",
@@ -2716,7 +2717,7 @@
         "frozen_source_mismatches": 0
       },
       "generated_control_diagnosis": {
-        "status": "main_completed_independent_audit_pending",
+        "status": "complete_independently_audited",
         "authorized": true,
         "authorization": "User approved recommended saved-map hotspot diagnosis on 19 October 2026.",
         "protocol": "docs/ssl-synthetic-localization-control-diagnosis-v1.md",
@@ -2738,7 +2739,68 @@
         "main_terminal_wall_seconds": 12.40926283877343,
         "main_gpu_seconds": 0,
         "predecessor_metrics_exact": true,
-        "scientific_advancement_decision": "none_descriptive_diagnostic"
+        "scientific_advancement_decision": "none_descriptive_diagnostic",
+        "results_report": "docs/ssl-synthetic-localization-control-diagnosis-v1-results.md",
+        "independent_report": "docs/ssl-synthetic-localization-control-diagnosis-independent-audit-v1-results.md",
+        "independent_receipt_sha256": "19311a2f6675071945ee058d93f4b222119e474bedff4c1ea3d434ebcc57bf3a",
+        "independent_terminal_ledger_sha256": "a2e2c31b6eda8a5aaed2498e69f6ee2bed97bd90d6b8b3d133e6c15a0f617f77",
+        "independent_mismatches": 0,
+        "independent_diagnostic_scalar_checks": 19735,
+        "independent_csv_scalar_checks": 22656,
+        "independent_predecessor_scalar_checks": 2701,
+        "independent_bindings": 52,
+        "primary": {
+          "supervised": {
+            "mean": 0.20034722222222223,
+            "ci_low": 0.11843619791666668,
+            "ci_high": 0.2718663194444444,
+            "draws": 2000,
+            "seed": 2026103701,
+            "skipped_draws": 0,
+            "unit": "generator_seed"
+          },
+          "permuted": {
+            "mean": 0.01708333333333333,
+            "ci_low": -0.041778211805555555,
+            "ci_high": 0.07192838541666664,
+            "draws": 2000,
+            "seed": 2026103701,
+            "skipped_draws": 0,
+            "unit": "generator_seed"
+          },
+          "supervised_minus_permuted": {
+            "mean": 0.1832638888888889,
+            "ci_low": 0.09463671874999999,
+            "ci_high": 0.27373871527777777,
+            "draws": 2000,
+            "seed": 2026103701,
+            "skipped_draws": 0,
+            "unit": "generator_seed"
+          }
+        },
+        "supervised_control_hotspot_persistence": 0.8781597222222223,
+        "independent_terminal_cpu_seconds": 4.152410182000001,
+        "independent_terminal_wall_seconds": 4.50616858759895,
+        "main_plus_audit_cpu_seconds": 12.510548309,
+        "bytes_main_plus_audit": 1075845,
+        "further_fit_scheduled": false,
+        "validation": {
+          "cpu_suite": {
+            "passed": 1813,
+            "skipped": 6,
+            "warnings": 2,
+            "seconds": 81.44,
+            "log": "outputs/ssl_synthetic_localization/continuation_control_diagnosis_cpu_tests_v1.log"
+          },
+          "focused_main_tests": 7,
+          "focused_audit_tests": 11,
+          "ruff": "repository-wide passed, including conftest.py",
+          "source_and_wheel_build": "passed; archives inspected, raw/output/weight/prediction artifacts absent",
+          "build_log": "outputs/ssl_synthetic_localization/continuation_control_diagnosis_build_v1.log",
+          "main_failure_source_bindings_checked": 76,
+          "independent_core_bindings_checked": 6,
+          "frozen_source_mismatches": 0
+        }
       }
     }
   },

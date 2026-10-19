@@ -1,19 +1,17 @@
 # Experiment queue
 
-**19 October saved-map diagnosis executed, independent audit pending:** Exact predecessor
-metrics and control summaries closed before new arithmetic. Supervised control top-600 cells have
-native-minus-shifted derivative-activity overlap 0.200347 [0.118436, 0.271866], versus 0.017083
-[-0.041778, 0.071928] for permuted supervision; their paired difference is 0.183264
-[0.094637, 0.273739]. Supervised sham/nuisance hotspot persistence is 0.878160. These are conditional
-engineering diagnostics, with no new scientific PASS or clinical interpretation. The single CPU
-run used 8.358138 CPU / 12.409263 wall seconds and zero GPU; verification is next.
-
-**19 October saved-map control diagnosis authorized:** The user approved investigating the
-background activations in the released-generator learning run. The [prospective protocol](ssl-synthetic-localization-control-diagnosis-v1.md) is committed;
-implementation and the independent checker are under review. The diagnostic will use only saved maps and observations
-from the 48 already-spent engineering backgrounds, with no new fit, inference, download or clinical
-data. No new diagnostic score exists yet. Previous learning decisions remain unchanged; PR #67
-stays draft.
+**19 October saved-map hotspot diagnosis independently verified:** The
+[executed diagnostic](ssl-synthetic-localization-control-diagnosis-v1-results.md) reproduced all
+predecessor metrics exactly. Supervised native-minus-shifted derivative-activity overlap is 0.200347
+[0.118436, 0.271866]; paired excess over permuted supervision is 0.183264 [0.094637, 0.273739].
+Sham/nuisance hotspot persistence is 87.8%, while positive hotspot support precision is only
+4.1% focal / 13.5% repeated. This supports persistent background ranking alongside learned edit
+response, not physiological or disease localization. The [independent audit](ssl-synthetic-localization-control-diagnosis-independent-audit-v1-results.md)
+passed 19,735 diagnostic / 22,656 CSV / 2,701 predecessor scalar checks and 52 bindings with zero
+mismatches. Main+audit used 12.510548 CPU seconds, zero GPU; all ten new-machine stages total
+44.999765 CPU / 38.433311 GPU-lock seconds, including retained failures once. Ranked follow-ups are
+independent fit replication and a later controlled background-suppression objective, each requiring
+a fresh protocol/evaluation policy. No further fit is running; PR #67 stays draft.
 
 **19 October randomized localization learning independently verified:** The released-generator
 background experiment passed all 12 scientific and nine integrity gates. Supervised pooled full-grid

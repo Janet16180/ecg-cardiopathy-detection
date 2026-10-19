@@ -1658,24 +1658,22 @@
       "kind": "experiment",
       "title": "Diagnose background activations in saved generated-ECG localization maps",
       "question": "Do concentrated supervised control activations align with native derivative events, edited leads or learned spatial priors?",
-      "evidence": "Randomizedlearningpasses12gatesbutcontrolmax>.5occurs23/48sham25/48nuisance andAPis.077538; savedpairedmaps/observations/masks exist.",
+      "evidence": "Executed saved-map diagnosis and independent audit: zero mismatches across 19,735 diagnostic / 22,656 CSV / 2,701 predecessor scalars and 52 bindings. Supervised control activity alignment excess 0.200347 [0.118436,0.271866], sham/nuisance hotspot persistence 0.878160. docs/ssl-synthetic-localization-control-diagnosis-v1-results.md.",
       "value": 5,
       "clarity": 0.9,
       "gpu_hours": 0,
       "cpu_hours": 0.1,
       "build_hours": 1.5,
-      "blocked_by": [
-        "@prospective_saved_map_control_protocol"
-      ],
-      "status": "proposed",
-      "notes": "No refit/newinference orclinicalfalsepositiveclaim. Keepfocal/repeatedseparate, frozenmetricpolicy, independentcheck and additivecosts."
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Main+audit terminal CPU 12.510548309 s, GPU zero; setup/review not clocked. Positive hotspot support precision 0.041146 focal / 0.134826 repeated; most ranked area remains outside added support. No new scientific PASS or clinical claim; 48 seeds remain spent engineering development data."
     },
     {
       "id": "ssl_synthetic_generated_seed_replication",
       "kind": "experiment",
       "title": "Replicate varied-support learning on generated ECGs with independent fit randomness",
       "question": "Does the small pooled AP gain and control-activation tradeoff persist beyond one initialization and schedule?",
-      "evidence": "Prospectiveonefitconjunctionpasses, but amplitudepooledgain.053016barelyexceeds.05pointmargin andintervalsconditiononefit.",
+      "evidence": "One-fit learning passes narrowly; audited saved-map diagnosis shows persistent background ranking and derivative-activity association. Existing 48 evaluation backgrounds are spent; independent fitted randomness and a prospectively fixed evaluation policy are needed before an objective comparison.",
       "value": 5,
       "clarity": 0.8,
       "gpu_hours": 0.33,
@@ -1686,7 +1684,7 @@
         "@prospective_replication_and_actual_training_profile"
       ],
       "status": "proposed",
-      "notes": "No hyperparametertuning onspent48evaluationseeds. Newseed/holdoutpolicy beforeanyfits; allmodes/controls retained. Existingclinicalpipelineunchanged."
+      "notes": "No tuning on spent 48 seeds. Replicate unchanged architecture/objective with independent initialization/schedule; prospectively declare fresh evaluation/held-fixed panel policy, varied supports, all modes/controls, and actual-path GPU profile before fits. Clinical pipeline unchanged."
     },
     {
       "id": "ssl_synthetic_public_annotation_qualification",
@@ -1704,6 +1702,24 @@
       ],
       "status": "proposed",
       "notes": "ExpertP/QRS/Tboundariesarewaveannotations, notdiseaseregionmasks. No download/read/clinical-labelchange performed. Respectsourceoverlapandclosedsets."
+    },
+    {
+      "id": "ssl_synthetic_generated_paired_suppression",
+      "kind": "experiment",
+      "title": "Test paired-background suppression on generated ECG introduced-change localization",
+      "question": "Can a matched-control objective reduce persistent background ranking without sacrificing focal or repeated support learning?",
+      "evidence": "Audited saved-map diagnosis finds 87.8% supervised sham/nuisance hotspot persistence and only 4.1%/13.5% positive hotspot support precision. This motivates a later controlled comparison, not a demonstrated remedy.",
+      "value": 4,
+      "clarity": 0.7,
+      "gpu_hours": 0.33,
+      "cpu_hours": 0.2,
+      "build_hours": 3,
+      "blocked_by": [
+        "ssl_synthetic_generated_seed_replication",
+        "@prospective_generated_objective_comparison_and_fresh_evaluation_policy"
+      ],
+      "status": "proposed",
+      "notes": "Preserve BCE comparator, matched randomness/budgets, both edit modes, independent generated backgrounds and control-activation guards. Never tune on the spent 48 evaluation seeds or import missing historical artifacts. No automatic fit."
     }
   ]
 }

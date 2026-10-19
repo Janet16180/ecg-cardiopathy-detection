@@ -1,5 +1,6 @@
 """Artificial independent-audit checks; no production predictions are opened."""
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -131,6 +132,26 @@ def test_stage_hash_verification_ignores_qualification_waveform_map(tmp_path, mo
     checks = []
     audit.check_stage(stage, checks)
     assert any(not check["passed"] for check in checks)
+
+
+def test_declared_public_sph_pdf_documents_are_hashed_without_waveform_access(tmp_path, monkeypatch):
+    monkeypatch.setattr(audit, "ROOT", tmp_path)
+    small_files = {}
+    for name in ("19738468/rule.pdf", "17914088/example-code.pdf"):
+        relative = f"data/raw/sph/sph/{name}"
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        content = b"%PDF artificial public documentation\n"
+        path.write_bytes(content)
+        small_files[name] = hashlib.md5(content).hexdigest()
+        assert audit.declared_file(relative) == path
+    checks = []
+    audit.check_stage_inputs(tmp_path / "profile", {"small_files_md5": small_files}, checks)
+    assert len(checks) == 2
+    assert all(check["passed"] for check in checks)
+    for name in ("record.dat", "record.h5"):
+        with pytest.raises(ValueError, match="non-waveform artifact"):
+            audit.declared_file(f"data/raw/sph/sph/{name}")
 
 
 def test_auditor_never_imports_production_experiments_or_unpickles_models():

@@ -30,6 +30,9 @@
 
 ## Experiments and findings
 
+Browse the [research areas](research/README.md) for localization, clustering and explainability.
+New studies use topic/study subdirectories; historical frozen paths remain unchanged.
+
 Start with the [experiment queue](experiment-queue.md) and
 [JSON catalog](experiment-queue.json). They link every active, deferred, completed,
 and proposed experiment to its protocol and evidence. The 25 September CPC

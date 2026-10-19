@@ -15,6 +15,7 @@ history belongs in Git and the queue documents, not here.
 - Summaries: `docs/findings-2026-09-28.md` and the later results reports; the cardiologist meeting guide is
   `docs/cardiologist-meeting-prep.md`.
 - Read the live files under `outputs/` before reporting progress. PIDs and Markdown summaries are snapshots.
+- New research uses topic subdirectories; see `docs/research/README.md`. Keep frozen files at their recorded paths.
 
 ## Git
 
@@ -86,6 +87,9 @@ history belongs in Git and the queue documents, not here.
 
 ## Style
 
+- Write all new or edited file content in English, including comments, docstrings, protocols and reports.
+- Put new domain code in `ecg_experiment/<area>/`, mirror tests under `tests/<area>/`, and group each new
+  study under `docs/research/<area>/<study>/`. Use topic subdirectories for new commands and aggregate reports.
 - Follow the user's global CLAUDE.md: simple flat functions, type hints, NumPy docstrings, minimal comments,
   let errors raise, no emojis, plain English, little bold.
 - EDA: plain Python modules first, notebook last. Results first, then text: every sentence must be backed by

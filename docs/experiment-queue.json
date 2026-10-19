@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T03:32:04.949398+00:00",
+  "updated_at_utc": "2026-10-19T14:42:33.599526+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2502,13 +2502,24 @@
     "next_action": "Research studies and reports are complete. Preserve local artifacts and the failed grounding ranking verdict; review PR #70. No experiment, closed test or automatic merge is scheduled."
   },
   "reference_research_delivery": {
-    "status": "authorized_push_and_merge_pending_checks",
+    "status": "draft_no_merge_without_renewed_authorization",
     "branch": "research/ecg-reference-localization",
     "base": "main",
-    "authorization": "User explicitly requested push and merge; supersedes the earlier local-only delivery restriction for this branch.",
+    "authorization": "Push of prior completed branch was authorized and completed; user then requested draft status and revoked merge authorization.",
     "identity": "Janet16180 <clarajanet16180@outlook.com>",
     "scope": "Completed NTT01-05, CLUSTER01-02, SHAP01 code, protocols, aggregate reports, evidence schema and topic indexes.",
     "data_policy": "Raw ECGs, weights, patient-level data and private outputs remain local.",
-    "research_followup": "No additional experiment or closed-test evaluation is scheduled."
+    "research_followup": "No additional experiment or closed-test evaluation is scheduled.",
+    "pull_request": "https://github.com/Janet16180/ecg-cardiopathy-detection/pull/71"
+  },
+  "ntt06_native_encoder": {
+    "status": "protocol_frozen_implementation_pending",
+    "authorized": true,
+    "protocol": "docs/research/localization/ntt06-native-encoder/protocol.md",
+    "scope": "Native frozen ECG-JEPA lead/time reference matching, matched controls and exploratory native region output; no images as model input.",
+    "primary": "native_qrs balanced accuracy minus strongest frozen physical baseline; gain >=0.05 and patient-bootstrap lower bound >0.",
+    "output_dir": "outputs/ntt06_native_encoder",
+    "publication": "local_only_pr71_draft_no_merge",
+    "next_action": "Restore verified official source/checkpoint; implement, test and freeze source, then profile real pretrained CPU inference before the bounded development comparison."
   }
 }

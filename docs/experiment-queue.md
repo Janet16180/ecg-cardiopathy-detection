@@ -1,6 +1,8 @@
 # Experiment queue
 
-User has now authorized pushing and merging `research/ecg-reference-localization` into personal-repository `main`, after integration checks. This supersedes the earlier local-only delivery restriction below; the dated study summaries retain their original context. No further experiment or closed-test evaluation is scheduled.
+PR #71 is a draft after the user revoked merge authorization. Earlier work was pushed under the personal account; do not merge or publish further implementation without renewed authorization. The dated summaries below retain their original delivery context.
+
+**19 October, native signal implementation:** the user authorized [NTT-06](research/localization/ntt06-native-encoder/protocol.md): connect the verified native adapter to frozen ECG-JEPA, profile CPU inference, then compare finding references against physical and contextual controls on the unchanged NTT-04 development patients. No clinical native score has run. Closed tests remain closed.
 
 **19 October UTC / 18 October locally, native adaptation:** [NTT-05 completed](ntt-05-native-signal-adapter-results.md) its native lead/time feature adapter, explicit reference banks, abstention and temporal redundancy handling. All 26 engineering invariants and 180 frozen predecessor choices reproduced; integrated CPU suite 1,331 passed / six skipped, Ruff passed. The old 92.78% physical score is integrity replay only. Native pretrained checkpoints/caches remain absent, so no learned-native recognition or specialist localization result is claimed. The [inventory](../reports/ntt05_native_encoder_inventory.json) records interfaces/missing artifacts. Personal identity only; no push or automatic follow-up.
 

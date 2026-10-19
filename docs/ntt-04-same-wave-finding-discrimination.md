@@ -60,6 +60,8 @@ inside [+0.25,+0.55] seconds, while targets retain QRS pooling. It is a phase-mi
 can carry correlated finding information and are not known clinical negatives. Shuffled-label control:
 cyclically rotate the QRS support-bank labels (NORM -> CRBBB -> CLBBB -> NORM), target labels unchanged.
 No alternative masking/draw/permutation is tried after scores.
+The frozen DINO tokens are globally contextual, so late-region pooling also does not guarantee removal
+of QRS information from its representation. Neither programmed ROI constitutes an expert evidence mask.
 
 ## Primary comparison and stopping rule
 

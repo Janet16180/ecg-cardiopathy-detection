@@ -2,7 +2,8 @@
 
 **19 October autonomous continuation authorized:** The user requested several hours of autonomous
 synthetic-generation/localization work, including recommended steps after independent-fit replication.
-The next protocol is in preparation: three new matched fit pairs, exact original training replay,
+The [replication protocol](ssl-synthetic-localization-fit-replication-v1.md) is committed; final
+source review and artificial tests are in progress. It fixes three new matched fit pairs, exact original training replay,
 64 fresh generated evaluation backgrounds, and the spent 48-background panel as secondary only.
 Both RTX 3090s again passed actual host PyTorch operations under the shared lock; restricted-shell
 visibility is not a GPU failure. No new generator forward, fit or score has started. Actual-path

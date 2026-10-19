@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T18:12:11.380920+00:00",
+  "updated_at_utc": "2026-10-19T21:13:43.702391+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2812,10 +2812,10 @@
           "prospective_paired_background_suppression_comparison_if_technically_admitted",
           "rank_next_generation_and_annotation_experiment_from_executed_results"
         ],
-        "current_stage": "replication_protocol_in_preparation"
+        "current_stage": "replication_final_source_review"
       },
       "generated_seed_replication": {
-        "status": "prospective_protocol_in_preparation",
+        "status": "protocol_frozen_final_source_review",
         "new_fit_pairs": 3,
         "unchanged_train_backgrounds": 80,
         "spent_secondary_backgrounds": 48,
@@ -2824,7 +2824,20 @@
         "scores_computed": false,
         "patient_data_used": false,
         "gpu_profile_required_before_training": true,
-        "independent_audit_required": true
+        "independent_audit_required": true,
+        "protocol": "docs/ssl-synthetic-localization-fit-replication-v1.md",
+        "configuration": "configs/ssl_synthetic_fit_replication_v1.json",
+        "protocol_commit": "30f03c8",
+        "independent_protocol": "docs/ssl-synthetic-localization-fit-replication-independent-audit-v1.md",
+        "output_dir": "outputs/ssl_synthetic_localization/generated_fit_replication_v1",
+        "parent_file_bindings_verified": 49,
+        "scientific_gates": 18,
+        "scientific_updates_planned": 3200,
+        "profile_updates_planned": 10,
+        "scientific_inference_batches_planned": 400,
+        "profile_inference_batches_planned": 2,
+        "new_generator_gpu_forwards_planned": 68,
+        "predecessor_cpu_generator_forwards_planned": 4
       }
     }
   },

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T17:18:00Z",
+  "updated_at_utc": "2026-10-19T17:25:09.741666+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2716,7 +2716,7 @@
         "frozen_source_mismatches": 0
       },
       "generated_control_diagnosis": {
-        "status": "protocol_frozen_implementation_under_review",
+        "status": "main_completed_independent_audit_pending",
         "authorized": true,
         "authorization": "User approved recommended saved-map hotspot diagnosis on 19 October 2026.",
         "protocol": "docs/ssl-synthetic-localization-control-diagnosis-v1.md",
@@ -2729,7 +2729,16 @@
         "evaluation_scope": "48 already-spent engineering generator seeds; no fresh validation claim",
         "independent_audit_required": true,
         "protocol_commit": "8d1c4f8",
-        "scores_computed": false
+        "scores_computed": true,
+        "source_commit": "359e352",
+        "main_receipt": "outputs/ssl_synthetic_localization/generated_control_diagnosis_v1/summary.json",
+        "main_receipt_sha256": "8c5c4615ae3a478b322eabd2006f0ed8dafc7750228f65a034623054a525365f",
+        "main_terminal_ledger_sha256": "e0628d5b8f0ee6ec0d0879ee41121c62fc1aff87a9b6e0d576b6e534b3caf51b",
+        "main_terminal_cpu_seconds": 8.358138127,
+        "main_terminal_wall_seconds": 12.40926283877343,
+        "main_gpu_seconds": 0,
+        "predecessor_metrics_exact": true,
+        "scientific_advancement_decision": "none_descriptive_diagnostic"
       }
     }
   },

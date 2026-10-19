@@ -1,5 +1,13 @@
 # Experiment queue
 
+**19 October saved-map diagnosis executed, independent audit pending:** Exact predecessor
+metrics and control summaries closed before new arithmetic. Supervised control top-600 cells have
+native-minus-shifted derivative-activity overlap 0.200347 [0.118436, 0.271866], versus 0.017083
+[-0.041778, 0.071928] for permuted supervision; their paired difference is 0.183264
+[0.094637, 0.273739]. Supervised sham/nuisance hotspot persistence is 0.878160. These are conditional
+engineering diagnostics, with no new scientific PASS or clinical interpretation. The single CPU
+run used 8.358138 CPU / 12.409263 wall seconds and zero GPU; verification is next.
+
 **19 October saved-map control diagnosis authorized:** The user approved investigating the
 background activations in the released-generator learning run. The [prospective protocol](ssl-synthetic-localization-control-diagnosis-v1.md) is committed;
 implementation and the independent checker are under review. The diagnostic will use only saved maps and observations

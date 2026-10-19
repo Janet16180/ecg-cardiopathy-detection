@@ -93,3 +93,26 @@ disabled; the same actual path is profiled before the 128-member bank. The separ
 amendment binds the immediate predecessor and its audit and reserves additive saved-output audit
 resources. Source review therefore finds no remaining scientific blocker for this exact bounded
 study after committed integration and the coordinator's required test/numerical-review checks.
+
+## Runtime-only v2 amendment review
+
+Read the actual v1 `profile.json`, `failure.json` and terminal ledger. The attempt correctly stopped
+before generating the bank: four predecessor CPU forwards and one GPU profile completed, with zero
+bank or replay forwards. Its conservative wall forecast was 1,550.6452264455147 seconds against a
+1,200-second limit. The terminal ledger retains 0.772192178 CPU seconds and 6.083721050992608 GPU-lock
+seconds. That is a resource-profile failure, not an unfavorable primary quality comparison.
+
+Scientific GO applies to the new v2 protocol/config and successor controller SHA-256
+`fed0c9a93a87c69b25005aa7781322beda3c6091e22d50c42d404035e529f0b8`, reviewed with its four new
+artificial tests. Only wall/GPU-lock limits increase to 1,800 seconds. CPU, memory, storage, profile
+multiplier, fixed seeds, numerical operations, primary comparison and operational gate definitions
+stay unchanged. The controller explicitly rejects other configuration differences and directly
+reuses the frozen numerical/GPU functions. A new actual profile must still pass. The failed attempt
+is bound and preserved, with no endpoint reclassification or favorable seed/device selection.
+
+The additive ledger uses four distinct stages' own costs: standalone main, standalone audit, failed
+v1 and its narrow failure-metadata audit. It does not sum their cumulative totals. New v2 costs are
+added once; unavailable older factorial costs remain unknown. This transparent prospective resource
+amendment is scientifically appropriate for the authorized bounded generation task. Numerical review,
+committed integration and passing tests remain separate launch conditions; this review creates no
+v2 result and authorizes no training or clinical interpretation.

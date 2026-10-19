@@ -183,10 +183,10 @@ bounds, as do paired AP response and selectivity. This is evidence of learned co
 introduced smooth offsets under this fixed recipe.
 
 The positive advancement rule is narrower than practical localization adequacy. The amplitude gain
-only slightly exceeds the prespecified0.05 point-estimate margin, and the study uses one fitted
+only slightly exceeds the prespecified 0.05 point-estimate margin, and the study uses one fitted
 randomness. Fixed plots show diffuse background activation rather than clean target-only maps.
-Supervised sham and nuisance record maxima exceed the descriptive0.5 cutoff in23/48 and25/48 cases,
-respectively, compared with0/48 in the permuted arm. These are engineering control responses, not
+Supervised sham and nuisance record maxima exceed the descriptive 0.5 cutoff in 23/48 and 25/48 cases,
+respectively, compared with 0/48 in the permuted arm. These are engineering control responses, not
 calibrated clinical false-positive rates. Supervised control means are lower than the permuted arm's
 means, so the concern is concentrated non-target responses rather than uniform probability inflation.
 

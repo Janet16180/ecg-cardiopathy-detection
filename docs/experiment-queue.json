@@ -2655,7 +2655,25 @@
         "interpretation": "independent-lead derivative activity timing vs circular shifts; not physiological validation"
       },
       "quality_v2_execution": "completed_with_independent_saved_output_audit",
-      "randomized_learning": "separate_protocol_in_preparation; do not use fixed fixtures for training"
+      "randomized_learning": {
+        "status": "protocol_and_source_frozen_awaiting_numerical_GO_and_actual_path_profile",
+        "protocol": "docs/ssl-synthetic-localization-randomized-learning-v1.md",
+        "configuration": "configs/ssl_synthetic_randomized_localization_v1.json",
+        "source_commit": "0f4b155",
+        "output_dir": "outputs/ssl_synthetic_localization/randomized_localization_v1",
+        "train_generator_seeds": 80,
+        "evaluation_generator_seeds": 48,
+        "model_arms": [
+          "supervised",
+          "permuted"
+        ],
+        "updates_per_arm": 400,
+        "patient_data_used": false,
+        "old_fixed_fixtures_used_for_training": false,
+        "fitting_started": false,
+        "scientific_source_review_passed": true,
+        "gpu_profile_required_before_fitting": true
+      }
     }
   },
   "experiment_041_cpu_screening": {

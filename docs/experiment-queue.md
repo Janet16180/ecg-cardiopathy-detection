@@ -1,5 +1,11 @@
 # Experiment queue
 
+**19 October randomized learning source frozen:** The [new protocol](ssl-synthetic-localization-randomized-learning-v1.md)
+uses80training/48held-out generatorseeds, variedlead/time/sign/width/amplitude, observed-onlydense
+localization and matched400-update supervised/permuted-target arms. Fixedoldfixtures nevertrain.
+Source0f4b155is committed; actual-pathGPUprofile and exactstep2/3model+Adamrecovery gate anyfit.
+No learnedlocalization result exists yet; clinical labels and closedtests remain unchanged.
+
 **19 October actual released-generator bank verified:** Pulse2Pulse generated all128fixedseeds
 and512canonicalvariants. All15operationalgates pass; the independent audit passed18,190scalar
 and126bindingchecks with zero mismatches and exact variant/mask reconstruction.

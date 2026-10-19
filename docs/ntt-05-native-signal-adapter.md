@@ -1,6 +1,6 @@
 # NTT-05: native signal reference adapter, engineering protocol
 
-19 October 2026. User requested adapting No Time to Train to signals rather than rendered ECG images.
+19 October 2026 UTC (18 October locally). User requested adapting No Time to Train to signals rather than rendered ECG images.
 The original method uses a frozen image encoder, proposed masks, instance/class reference aggregation,
 cosine matching and semantic-aware soft merging. This successor preserves that structure while changing
 both the representation and the proposal domain. It is an adaptation, not a reproduction of the paper.
@@ -23,8 +23,8 @@ comparison. Leave learned-native recognition/localization explicitly unexecuted.
 | Soft merging | Temporal redundancy score decay for overlapping candidates with the same finding and lead set |
 
 A reference is a named finding on a specified region, with source provenance; a whole-record label alone
-does not become a specialist region mark. Candidate generators must not use target answers. A missing
-reference class or low similarity can cause abstention. Similarity/margin thresholds require a separate
+does not become a specialist region mark. Candidate generators must not use target answers. Missing required references are a configuration error; low similarity or an ambiguous match
+can cause abstention. Similarity/margin thresholds require a separate
 prospective training-role calibration before interpreting them clinically. No numeric cutoff is claimed
 clinically validated in this engineering study.
 
@@ -34,6 +34,11 @@ information by selecting an index. Reject a request that slices such a token's l
 JEPA tokens can be pooled by their anchors, but their attention sees other times/leads. Store contextual
 scope explicitly; an anchor or pooling mask is not a proven causal receptive field or pathology mask.
 Do not invent a uniform sample/token mapping for an encoder without verifying its actual geometry.
+
+Every support, token grid, reference bank and match retains an explicit embedding-space contract ID;
+encoder/checkpoint/preprocessing/tokenization identities must agree even for equal-dimensional vectors.
+Reference annotation provenance is retained separately. Matches also retain patient and record/coordinate-frame
+identity; temporal suppression cannot combine different records or crop origins. Reject incompatible contracts before matching.
 
 The adapter accepts already computed token arrays and exact interval anchors; it does not load visual
 models, read waveforms, download weights or silently infer an encoder geometry. A separate lead/time

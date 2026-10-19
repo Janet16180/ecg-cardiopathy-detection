@@ -1,0 +1,41 @@
+{
+  "analysis": "Posthoc descriptive original-cluster persistence; no new fits or labels.",
+  "result_sha256": "c672be6b2fc9fe6d8c14d974179f04345381b068349df611d1656723e0427baa",
+  "threshold_fraction_of_banks": 0.8,
+  "primary_decision_unchanged": true,
+  "clusters_are_not_disease_categories": true,
+  "rows": [
+    {
+      "original_cluster": 0,
+      "anchors": 368,
+      "regional": {
+        "stable_anchors": 356,
+        "fraction_stable": 0.967391304347826,
+        "minimum_reference_agreement": 0.44,
+        "median_reference_agreement": 1.0
+      },
+      "ensemble": {
+        "stable_anchors": 365,
+        "fraction_stable": 0.9918478260869565,
+        "minimum_reference_agreement": 0.4,
+        "median_reference_agreement": 1.0
+      }
+    },
+    {
+      "original_cluster": 1,
+      "anchors": 43,
+      "regional": {
+        "stable_anchors": 25,
+        "fraction_stable": 0.5813953488372093,
+        "minimum_reference_agreement": 0.44,
+        "median_reference_agreement": 0.92
+      },
+      "ensemble": {
+        "stable_anchors": 41,
+        "fraction_stable": 0.9534883720930233,
+        "minimum_reference_agreement": 0.5,
+        "median_reference_agreement": 1.0
+      }
+    }
+  ]
+}

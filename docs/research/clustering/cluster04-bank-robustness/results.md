@@ -40,6 +40,20 @@ anchor was removed. Median aligned entropy was zero, with maximum 0.99885 bits.
 
 ![Conditional stability distributions](../../../../reports/clustering/cluster04-bank-robustness/bank_stability.png)
 
+## Posthoc check by original cluster
+
+The global persistence percentage conceals uneven sensitivity. After the primary result was frozen,
+a descriptive check stratified the saved agreement values by the original regional clusters, without
+new fitting or diagnostic labels. The larger group had 356/368 stable anchors (96.74%) with single
+banks, versus 365/368 (99.18%) with five-bank means. The smaller group had only 25/43 (58.14%) stable
+anchors with single banks, versus 41/43 (95.35%) with five-bank means. This strengthens the practical
+case for examining averaging, while qualifying any claim of uniformly robust single-bank groups.
+
+This was not a prespecified subgroup success criterion and cannot change the primary decision.
+The groups are algorithmic partitions, not disease categories. The aggregate-only
+[posthoc table](../../../../reports/clustering/cluster04-bank-robustness/posthoc_cluster_persistence.json)
+retains denominators and the unchanged-decision qualification.
+
 ## Secondary record geometry and recognition
 
 The fixed three-axis record-affinity full-GMM k=3 configuration was admissible in 48/50 banks. Both

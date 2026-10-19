@@ -96,6 +96,36 @@ def figure_distributions(result: dict, arrays: dict, output: Path) -> None:
     plt.close(fig)
 
 
+def cluster_persistence(result: dict, arrays: dict) -> dict:
+    """Describe original-cluster persistence after the frozen primary, without new fits."""
+    name = "outputs/cluster03_native_reference/assignments_local.npz"
+    if sha256_file(ROOT / name) != result["input_sha256"][name]:
+        raise ValueError("Original reference partition changed")
+    with np.load(ROOT / name, allow_pickle=False) as archive:
+        reference = archive["ntt_regions:gmm:tied:2|anchor"]
+    rows = []
+    for cluster in np.unique(reference):
+        selected = reference == cluster
+        row = {"original_cluster": int(cluster), "anchors": int(selected.sum())}
+        for prefix in ("regional", "ensemble"):
+            agreement = arrays[prefix + "_reference_agreement"][selected]
+            row[prefix] = {
+                "stable_anchors": int(np.sum(agreement >= 0.8)),
+                "fraction_stable": float(np.mean(agreement >= 0.8)),
+                "minimum_reference_agreement": float(agreement.min()),
+                "median_reference_agreement": float(np.median(agreement)),
+            }
+        rows.append(row)
+    return {
+        "analysis": "Posthoc descriptive original-cluster persistence; no new fits or labels.",
+        "result_sha256": sha256_file(ROOT / "outputs/cluster04_bank_robustness/result.json"),
+        "threshold_fraction_of_banks": 0.8,
+        "primary_decision_unchanged": True,
+        "clusters_are_not_disease_categories": True,
+        "rows": rows,
+    }
+
+
 def main() -> None:
     """Verify local receipt bindings before rendering safe aggregate artifacts."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -118,6 +148,7 @@ def main() -> None:
     output.mkdir(parents=True, exist_ok=True)
     write_json_atomic(output / "aggregate.json", aggregate(result, digest))
     figure_distributions(result, arrays, output)
+    write_json_atomic(output / "posthoc_cluster_persistence.json", cluster_persistence(result, arrays))
 
 
 if __name__ == "__main__":

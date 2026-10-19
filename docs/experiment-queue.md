@@ -6,7 +6,11 @@ existing data and no cardiologist. The GPU driver is unavailable in this checkou
 on PTB-XL (fit1–7, normal-only calibration8, reused development9), preserving the Avance superclass
 label. [Experiment 042](experiment-042-measurement-transfer.md) freezes transfer of those fixed
 models to SPH with separate local-normal calibration, after extractor qualification and an actual
-CPU profile. Both implementations are under review; no new scientific scores have been produced.
+CPU profile. 041 passed independent source review and 39 checks, then stopped before any fit at the cohort
+check: the implementation overlooked one historical flat-lead exclusion. The v1 failure remains
+unchanged. A [forward v2 correction](experiment-041-cpu-screening-execution-v2.md) preserves every
+scientific setting and is under implementation/review. 042 remains under implementation; it will
+bind the completed v2 predecessor. No new comparison score has been produced.
 The original protocol freezes are d4d7dc0/96739d5 on the retained research branch; their bytes are
 preserved here on a branch based directly on main. Closed tests remain closed.
 

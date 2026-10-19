@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T02:25:50.008897+00:00",
+  "updated_at_utc": "2026-10-19T02:27:50.536810+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2270,12 +2270,14 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "experiment_041_cpu_screening": {
-    "status": "protocol_frozen_pending_implementation",
+    "status": "stopped_input_cohort_validation_pending_forward_v2",
     "authorized": true,
     "authorization": "User requested autonomous multi-agent progress using existing data without cardiologist access.",
     "protocol": "docs/experiment-041-cpu-screening.md",
-    "output_dir": "outputs/experiment041_cpu_screening_v1",
-    "next_action": "Implement and independently review fixed CPU comparison; pass historical baseline integrity before new fitting/scoring. No closed test reads."
+    "output_dir": "outputs/experiment041_cpu_screening_v2",
+    "next_action": "Review forward correction for historical flat-lead exclusion; preserve v1 stop; no new fits or comparison scores produced.",
+    "failed_attempt": "outputs/experiment041_cpu_screening_v1/failure.json",
+    "execution_amendment": "docs/experiment-041-cpu-screening-execution-v2.md"
   },
   "experiment_042_measurement_transfer": {
     "status": "protocol_frozen_pending_implementation",

@@ -62,3 +62,34 @@ then design a small LUDB anchor validation with prespecified patient/source-over
 separate varied-support learned-localization comparison is justified only after these input/truth
 checks and actual-path training profiling. Access to public expert annotations makes that route
 possible without adding a clinician recruitment requirement.
+
+## Quality implementation source review
+
+Before any quality-study GPU profile or score, reviewed the complete transformation/metric helper,
+CUDA orchestration, command wrapper, seven artificial tests, original protocol/config and separate
+predecessor admission amendment. Scientific GO applies to these reviewed helper/runner digests:
+
+- `ecg_experiment/ssl_synthetic_generated_quality.py`:
+  `3de5105471558685f532da2df5bc3d70e86874d30168074820c52e3a2f9a1cb4`.
+- `ecg_experiment/ssl_synthetic_generated_quality_run.py`:
+  `534cfa134efc339a75bbb78edbccb1c03715a931a4b5c158e00613610fe5a96b`.
+- `tests/test_ssl_synthetic_generated_quality.py`:
+  `5e9072ab288d0bfa623862b8fd4f9b6f89c4e60237fdddb6ff94aa05a7c90e7a`.
+
+Pre-execution review caught a missing aVL cell group in the affected-lead hull, failure-path GPU cost
+loss, missing consumed-predecessor array bindings, and delayed persistence of completed signals.
+The reviewed version fixes all four: independent-II edits propagate to canonical indices 1–5;
+GPU-lock cost is updated in a finally block; predecessor assets and saved outputs are checked against
+literal admission anchors and rechecked at completion; and each generated raw array is flushed before
+quality processing, with replay saved before device metadata collection. Attempted and completed
+forwards are recorded separately. Fixed noise is saved before profiling. No scientific samples or
+metric values informed those corrections.
+
+The helper implements the frozen float64 quantiles, dimensionless float32 transforms, derivative
+activity/Jaccard comparison, paired seed bootstrap, half-open periodogram bands and final-array
+intervention supports. The gate list excludes clinical quality and includes the constructed limb
+algebra, exact replay/sham closure and numerical support checks. CUDA is deterministic with TF32
+disabled; the same actual path is profiled before the 128-member bank. The separate admission
+amendment binds the immediate predecessor and its audit and reserves additive saved-output audit
+resources. Source review therefore finds no remaining scientific blocker for this exact bounded
+study after committed integration and the coordinator's required test/numerical-review checks.

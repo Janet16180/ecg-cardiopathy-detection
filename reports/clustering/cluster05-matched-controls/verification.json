@@ -1,0 +1,138 @@
+{
+  "study": "CLUSTER05",
+  "passed": true,
+  "result_sha256": "cbe2d5af704e6a1ee86ba535ea03e2087bd667b33573ec676952d4e65275f885",
+  "source_commit": "c3cfb88626e6b39bcbd054b173727a604d1e3ffe",
+  "source_files_verified": 37,
+  "input_files_verified": 44,
+  "artifact_files_verified": 7,
+  "role_and_frozen_decision_gates_verified_before_payloads": true,
+  "patients": 1993,
+  "fitting": 1582,
+  "anchors": 411,
+  "sample_hashes_exact": true,
+  "all_PCA_signs_centers_components_RMS_and_equal_patient_region_variance_reproduced": true,
+  "maximum_coordinate_difference": 0.0,
+  "candidate_fits_reconstructed": 1440,
+  "all_saved_reference_refit_partitions_ARI_one": true,
+  "all_convergence_iterations_occupancy_stability_eligibility_reproduced": true,
+  "maximum_silhouette_difference": 0.0,
+  "selected_rankings_exact": true,
+  "kmeans_raw_RMS_reference_refit_anchor_comparisons": 180,
+  "all_kmeans_comparisons_ARI_one": true,
+  "single_bank_controls_reconstructed": 3,
+  "support_label_controls_reconstructed": 20,
+  "primary_decision_exact": true,
+  "decision": {
+    "primary_matched_geometric_concordance_passed": false,
+    "conditions": {
+      "native_region9_rms_eligible": true,
+      "ntt_region9_rms_eligible": true,
+      "anchor_ari_at_least_0.50": false
+    },
+    "primary_anchor_ari": 0.15285448552857783,
+    "all_selected_pairwise_anchor_ari": {
+      "native_region9_raw:native_region9_rms": 1.0,
+      "native_region9_raw:ntt_region9_raw": 0.09054423610329003,
+      "native_region9_raw:ntt_region9_rms": 0.15285448552857783,
+      "native_region9_raw:native_patient3_raw": 0.8954746125381913,
+      "native_region9_raw:native_patient3_rms": 0.7621534438394438,
+      "native_region9_raw:ntt_record3_raw": 0.09181626563595952,
+      "native_region9_raw:ntt_record3_rms": 0.0878165765893174,
+      "native_region9_raw:native_patient9_raw": 0.9140710201077635,
+      "native_region9_raw:native_patient9_rms": 0.9140710201077635,
+      "native_region9_rms:ntt_region9_raw": 0.09054423610329003,
+      "native_region9_rms:ntt_region9_rms": 0.15285448552857783,
+      "native_region9_rms:native_patient3_raw": 0.8954746125381913,
+      "native_region9_rms:native_patient3_rms": 0.7621534438394438,
+      "native_region9_rms:ntt_record3_raw": 0.09181626563595952,
+      "native_region9_rms:ntt_record3_rms": 0.0878165765893174,
+      "native_region9_rms:native_patient9_raw": 0.9140710201077635,
+      "native_region9_rms:native_patient9_rms": 0.9140710201077635,
+      "ntt_region9_raw:ntt_region9_rms": 0.2703560649159769,
+      "ntt_region9_raw:native_patient3_raw": 0.11264993483984787,
+      "ntt_region9_raw:native_patient3_rms": 0.14203355822895355,
+      "ntt_region9_raw:ntt_record3_raw": 0.5493943617120127,
+      "ntt_region9_raw:ntt_record3_rms": 0.9228351444998769,
+      "ntt_region9_raw:native_patient9_raw": 0.09767517856148818,
+      "ntt_region9_raw:native_patient9_rms": 0.09767517856148818,
+      "ntt_region9_rms:native_patient3_raw": 0.19676955434684198,
+      "ntt_region9_rms:native_patient3_rms": 0.2373778009567797,
+      "ntt_region9_rms:ntt_record3_raw": 0.5022259341028403,
+      "ntt_region9_rms:ntt_record3_rms": 0.29134763092599203,
+      "ntt_region9_rms:native_patient9_raw": 0.18066843178099704,
+      "ntt_region9_rms:native_patient9_rms": 0.18066843178099704,
+      "native_patient3_raw:native_patient3_rms": 0.8587587193207478,
+      "native_patient3_raw:ntt_record3_raw": 0.11837153357366287,
+      "native_patient3_raw:ntt_record3_rms": 0.10976867123253696,
+      "native_patient3_raw:native_patient9_raw": 0.9422635678274307,
+      "native_patient3_raw:native_patient9_rms": 0.9422635678274307,
+      "native_patient3_rms:ntt_record3_raw": 0.1636656154542739,
+      "native_patient3_rms:ntt_record3_rms": 0.13887578415296217,
+      "native_patient3_rms:native_patient9_raw": 0.8229899628035099,
+      "native_patient3_rms:native_patient9_rms": 0.8229899628035099,
+      "ntt_record3_raw:ntt_record3_rms": 0.5637468066614978,
+      "ntt_record3_raw:native_patient9_raw": 0.10033295585352875,
+      "ntt_record3_raw:native_patient9_rms": 0.10033295585352875,
+      "ntt_record3_rms:native_patient9_raw": 0.09489028904700252,
+      "ntt_record3_rms:native_patient9_rms": 0.09489028904700252,
+      "native_patient9_raw:native_patient9_rms": 1.0
+    },
+    "cluster03_negative_primary_unchanged": true
+  },
+  "scaled_unscaled_NTT_regional_selection": {
+    "raw_key": "ntt_region9_raw:gmm:tied:2",
+    "rms_key": "ntt_region9_rms:gmm:diag:2",
+    "selected_anchor_ARI": 0.2703560649159769,
+    "raw_sizes": {
+      "0": 368,
+      "1": 43
+    },
+    "rms_sizes": {
+      "0": 281,
+      "1": 130
+    }
+  },
+  "annotation_nuisance_and_control_AMIs_exact": true,
+  "diagnostic_payloads_parsed": 1993,
+  "out_of_cohort_payloads_parsed": 0,
+  "seconds": 42.20696109579876,
+  "waveform_reads": false,
+  "model_loaded": false,
+  "new_encoder_inference": false,
+  "new_scientific_settings": false,
+  "interpretation": "Matched9D/RMS primary remains negative. Different GMM outcomes under global scalar conditioning expose regularization/selection sensitivity, while fixed kmeans geometry is unchanged. No new population or disease truth; previous CLUSTER03 primary remains negative.",
+  "posthoc_saved_assignment_scale_diagnostics": {
+    "new_fits": false,
+    "descriptive_not_prespecified_gate": true,
+    "comparisons": {
+      "ntt_region9:tied:2": {
+        "anchor_ARI": 0.9366639569584673,
+        "both_eligible": true
+      },
+      "ntt_region9:diag:2": {
+        "anchor_ARI": 0.4695430258077897,
+        "both_eligible": true
+      },
+      "ntt_record3:full:3": {
+        "anchor_ARI": 0.5735400330765983,
+        "both_eligible": true
+      }
+    },
+    "relative_covariance_floor": {
+      "ntt_region9": {
+        "raw_ridge_to_average_axis_variance": 0.38723023363295306,
+        "RMS_ridge_to_average_axis_variance": 0.001
+      },
+      "ntt_record3": {
+        "raw_ridge_to_average_axis_variance": 0.14363909566099092,
+        "RMS_ridge_to_average_axis_variance": 0.001
+      }
+    }
+  },
+  "aggregate_audit": {
+    "shared_result_fields_match": true,
+    "identifying_or_transform_payload_keys_absent": true,
+    "figures_visually_inspected": false
+  }
+}

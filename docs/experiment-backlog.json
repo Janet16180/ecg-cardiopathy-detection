@@ -1365,7 +1365,7 @@
       "build_hours": 0.75,
       "blocked_by": [],
       "status": "done",
-      "notes": "Executed: context AP 0.980097, waveform AP 0.989691; gain 0.009593 [-0.003293, 0.024628]. Fails the frozen 0.05 gain and positive lower-bound gates. Preserve negative ranking verdict; independent arithmetic audit pending. See docs/experiment-043-lead-grounding-results.md."
+      "notes": "Completed negative ranking study: context AP 0.980097, waveform AP 0.989691; gain 0.009593 [-0.003293, 0.024628]. Failed the frozen 0.05 gain and positive lower-bound gates. Successful run: 9.044 wall seconds; independent saved-output audit: 3,904 checks, zero mismatches in 0.304 seconds. Preserve the failed verdict and unread fold 8. See docs/experiment-043-lead-grounding-results.md."
     },
     {
       "id": "measurement_multisource_training",

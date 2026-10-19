@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T03:07:53.279554+00:00",
+  "updated_at_utc": "2026-10-19T03:10:05.941072+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2299,14 +2299,34 @@
     "decision": "support_external_development"
   },
   "experiment_043_lead_grounding": {
-    "status": "completed_pending_independent_artifact_audit",
+    "status": "complete_audited",
     "authorized": true,
     "protocol": "docs/experiment-043-lead-grounding.md",
     "output_dir": "outputs/experiment043_lead_grounding_v1",
-    "next_action": "Complete independent saved-output audit; preserve failed ranking criterion and unread fold-8 performance. No refit or alternative endpoint scheduled.",
+    "next_action": "Completed negative ranking study; audit passed 3,904 checks with zero mismatches. Preserve the failed ranking criterion and performance-unread fold 8. No fit or alternative endpoint is scheduled.",
     "scope": "Conditional sparse benchmark answers, not native clinical disease masks or explanation of041.",
     "results": "outputs/experiment043_lead_grounding_v1/result.json",
     "report": "docs/experiment-043-lead-grounding-results.md",
-    "decision": "do_not_advance_grounding"
+    "decision": "do_not_advance_grounding",
+    "audit": "outputs/experiment043_lead_grounding_audit_v1/audit.json"
+  },
+  "measurement_screening_delivery": {
+    "branch": "research/measurement-screening",
+    "pull_request": "https://github.com/Janet16180/ecg-cardiopathy-detection/pull/70",
+    "author": "Janet16180 <clarajanet16180@outlook.com>",
+    "scope": "Three development studies; two screening advances and one negative lead-grounding ranking result.",
+    "tests_and_build": {
+      "local_cpu_tests": {
+        "passed": 1328,
+        "skipped": 6,
+        "seconds": 74.83,
+        "log": "outputs/measurement_screening_cpu_tests_release.log"
+      },
+      "ruff": "passed",
+      "package_build": "passed; outputs/measurement_screening_build_release.log",
+      "github": "Checking final review head before handoff."
+    },
+    "data_policy": "All models/raw data/features/private predictions remain local and ignored.",
+    "next_action": "Finish validation and hand over the review; no automatic experiment or final test."
   }
 }

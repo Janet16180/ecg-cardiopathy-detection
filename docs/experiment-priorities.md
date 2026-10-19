@@ -5,6 +5,7 @@ Local CPU continuation (18 October): [041](experiment-041-cpu-screening-results.
 boosting improved matched AUROC by 0.028442 at PTB and 0.040545 at SPH. Independent verification
 passed 462 checks with zero mismatches. [043](experiment-043-lead-grounding-results.md) failed
 its ranking rule because context-only AP was already 0.980097; its failed verdict is preserved.
+Independent 043 verification passed 3,904 checks with zero mismatches.
 Potential membership and time-grounding successors are ranked below, with separate protocols and
 patient roles required. No further fit or final test is scheduled; clinical label changes remain deferred.
 

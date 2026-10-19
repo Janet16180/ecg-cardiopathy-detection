@@ -80,7 +80,7 @@ bytes before the separate audit. There were no GPU runs, classifier updates, dat
 failed 042 stages. The independent audit added 26.992 seconds for both experiments.
 
 Fifteen artificial transfer tests, exact notebook-arithmetic comparison and independent source
-review passed before execution. The integrated repository suite subsequently passed 1,274 tests,
+review passed before execution. The final integrated repository suite passed 1,328 tests,
 with six skips, after restoring the upstream source already pinned by CI. A further focused audit
 regression passed; Ruff and package build passed. The initial broad test attempt's missing-source
 failures are preserved in local logs; no frozen experiment source was changed to repair them.

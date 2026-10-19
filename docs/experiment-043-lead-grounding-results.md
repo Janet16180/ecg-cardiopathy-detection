@@ -93,7 +93,11 @@ The successful run took 9.044 seconds with at most four numerical threads. The c
 fixed real fits were run. Artificial-data fit/inference profiling, 25 scientific tests, Ruff and
 independent programming/scientific source review passed before launch. No failed 043 attempt,
 GPU use, new waveform access or data download occurred. Independent saved-output verification
-is pending; it will check arithmetic without new fits or inference.
+passed 3,904 checks with zero mismatches in 0.304 seconds, reproducing offered-only query metrics,
+patient means, context summaries, all paired intervals and the failed decision at absolute
+tolerance 1e-12. It verified unknown-mask semantics, counts, frozen settings and artifact identities.
+It used no fitting, inference, model unpickling or waveform access. Target/mask truth remains
+conditional on the saved payload and reviewed source; annotations were not independently regenerated.
 
 ## Consequence for the project
 
@@ -123,6 +127,9 @@ feature order, versions, categorical state, lookup state and query/patient summa
 | `qualification.json` | `7321ada5689804eb1b5cf134338c79747233e7d3066aefccc394c96a06e54528` |
 | `missingness.json` | `741c041a193743f3957df29a955487df04724804012e5e7c7983426acb9de243` |
 | `patient_means.npz` | `e70517ca643cadb5dab753763351d263087c23f53d1a20ef07b8ca2bc59c750c` |
+
+Independent audit: `outputs/experiment043_lead_grounding_audit_v1/audit.json`, SHA-256
+`3ffa73218bdb1cafa662929cd0ce3dcf35d8f8bce0d54e3779e9e653a5675dbd`.
 
 Patient/record identities and payloads stay local and untracked. Reproduction must specify a new
 exclusive output directory, preserving this run:

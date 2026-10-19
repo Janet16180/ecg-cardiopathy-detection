@@ -19,13 +19,16 @@ Three prospective studies are now executed; no further fit or final test is sche
   benchmark passed release/task qualification, but context/offer-only HGB already reached AP
   0.980097; measurements reached 0.989691. Primary gain 0.009593 [−0.003293, 0.024628] fails the
   frozen ranking rule. Preserve `do_not_advance_grounding`; secondary exact-set observations do
-  not rescue it. Independent saved-output verification is being completed. Fold 8 was not used
+  not rescue it. Independent verification passed 3,904 checks with zero mismatches. Fold 8 was not used
   for fitting or inference; its performance remains unread.
 
 All models, features and private predictions stay in ignored local outputs. Read their live
 receipts before resuming work. Existing labels were preserved, SPH never trained a classifier,
 closed Challenge/EchoNext tests stayed closed, and no clinical localization claim is supported.
 Protocols, results and artifact paths are in the JSON catalog; follow-ups are ranked separately.
+Code and aggregate reports are in [PR #70](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/70),
+targeting `main`. Local release checks passed 1,328 tests (six skips), Ruff and package build;
+GitHub checks on the final review head are being verified.
 
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 

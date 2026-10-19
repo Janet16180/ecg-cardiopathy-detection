@@ -1,8 +1,8 @@
 # Experiment queue
 
 **19 October saved-map control diagnosis authorized:** The user approved investigating the
-background activations in the released-generator learning run. A new prospective protocol and
-independent checker are being prepared. The diagnostic will use only saved maps and observations
+background activations in the released-generator learning run. The [prospective protocol](ssl-synthetic-localization-control-diagnosis-v1.md) is committed;
+implementation and the independent checker are under review. The diagnostic will use only saved maps and observations
 from the 48 already-spent engineering backgrounds, with no new fit, inference, download or clinical
 data. No new diagnostic score exists yet. Previous learning decisions remain unchanged; PR #67
 stays draft.

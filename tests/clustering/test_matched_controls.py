@@ -51,13 +51,15 @@ def test_center_and_rms_do_not_adapt_to_validation_anchors():
 
 def test_region_variance_weights_patients_equally_and_uses_fitting_rows_only():
     cache = {
-        "region_vectors": np.array([[0.0, 0]] * 3 + [[2.0, 2]] * 6 + [[1e7, 0]] * 3),
+        "region_vectors": np.array(
+            [[-1.0, 0], [0, 0], [1, 0]] + [[0, -2.0], [0, 0], [0, 2]] * 2 + [[1e7, 0]] * 3
+        ),
         "region_offsets": np.array([0, 3, 9, 12]),
     }
     actual = region_variance(cache, np.array([0, 1]), np.array([[1.0, 0]]))
-    assert actual == 0.5
+    assert actual == 0.2
     duplicated = {
-        "region_vectors": np.array([[0.0, 0]] * 3 + [[2.0, 2]] * 12),
+        "region_vectors": np.array([[-1.0, 0], [0, 0], [1, 0]] + [[0, -2.0], [0, 0], [0, 2]] * 4),
         "region_offsets": np.array([0, 3, 15]),
     }
     assert region_variance(duplicated, np.array([0, 1]), np.array([[1.0, 0]])) == actual

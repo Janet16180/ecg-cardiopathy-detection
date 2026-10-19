@@ -11,8 +11,8 @@ mismatches. Read [results](ssl-synthetic-localization-fit-replication-v1-results
 145.681616 CPU /140.128610 GPU-lock seconds; cumulative12stage costs are190.681380 CPU /
 178.561921 GPU-lock seconds. Whole-wall actual241.489s exceeded forecast167.774s, within hard caps.
 The four-arm paired/background-suppression [successor](ssl-synthetic-localization-paired-suppression-v1.md)
-was scientifically frozen before these outcomes; identity admission, implementation/review and
-actual-path profiles remain gates. No clinical or closed-test claim; PR67 stays draft.
+was scientifically frozen before these outcomes. Identity admission and source review are complete;
+14 artificial tests pass. Actual-path profiles remain gates before its first scientific fit. No clinical or closed-test claim; PR67 stays draft.
 
 **19 October autonomous continuation authorized:** The user requested several hours of autonomous
 synthetic-generation/localization work, including recommended steps after independent-fit replication.

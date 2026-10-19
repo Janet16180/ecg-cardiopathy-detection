@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T23:38:46.896212+00:00",
+  "updated_at_utc": "2026-10-19T23:51:00.404122+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2875,7 +2875,7 @@
         }
       },
       "generated_paired_suppression": {
-        "status": "scientific_protocol_frozen_before_replication_outcomes",
+        "status": "source_reviewed_ready_for_actual_profile",
         "protocol": "docs/ssl-synthetic-localization-paired-suppression-v1.md",
         "configuration": "configs/ssl_synthetic_paired_suppression_v1.json",
         "protocol_commit": "4500999",
@@ -2890,9 +2890,20 @@
         "primary": "combined PK versus unchanged BCE B",
         "scientific_parameters_selected_from_replication_scores": false,
         "scores_computed": false,
-        "identity_admission_pending": true,
+        "identity_admission_pending": false,
         "actual_path_profile_required": true,
-        "independent_audit_required": true
+        "independent_audit_required": true,
+        "admission": "docs/ssl-synthetic-localization-paired-suppression-admission-v1.md",
+        "admission_configuration": "configs/ssl_synthetic_paired_suppression_admission_v1.json",
+        "source_commit": "25fd1b8",
+        "source_core_sha256": "d402cf3758cad75f00eb54e378e3545b916b0d3842622458a18092f38bb0c384",
+        "source_runtime_sha256": "3845cec36eb733f47853f1c1acc9b3cfd9e3a80b6a13680694a2cea4035367cd",
+        "focused_artificial_tests_passed": 14,
+        "scientific_source_review_passed": true,
+        "numerical_source_review_passed": true,
+        "declared_parent_bindings_verified": 78,
+        "profile_R_includes_component_persistence": true,
+        "profile_E_excludes_map_persistence": true
       }
     }
   },

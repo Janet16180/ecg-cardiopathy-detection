@@ -34,7 +34,8 @@ other repository experiments retain their existing authorization and deferred st
 ## What training on real backgrounds means
 
 A background is an actual PTB-XL ECG. We introduce a controlled voltage perturbation into selected
-lead-time cells and keep an exact support mask of the final numerical difference. A matched
+lead-time cells and keep an exact support mask where the final numerical difference is strictly
+greater than 0.005 mV. A matched
 unedited version provides the control. The model sees the observed ECG alone; the exact mask and
 matched version are used for supervision or evaluation under the protocol.
 
@@ -148,9 +149,13 @@ CUDA_VISIBLE_DEVICES='' PYTHONPATH="$PWD" \
 Destination: `outputs/ssl_synthetic_localization/counterfactual_factorial_v1/mode_diagnostic_v1`.
 It must not exist before a first attempt. Do not delete failed attempts to retry. Read actual outputs
 and write the executed report. Freeze the independent script's exact bytes and the completed main
-summary SHA, then run the checker with explicit `--root`, `--main-sha` and `--script-sha`.
-Its intended destination is `mode_diagnostic_v1/independent_audit_v1`. Verify the checker contract
-before execution; it has a separate 120-second CPU/wall allowance, as does main.
+summary SHA. After main completes, create the fresh directory
+`mode_diagnostic_v1/independent_audit_v1` and copy the committed checker there as `audit_script.py`.
+Execute that exact copy with explicit `--root`, `--main-sha` and `--script-sha`; executing the
+repository-path checker on real inputs fails its location guard. The current checker SHA is
+`2d99271356a2282de4a048090533dc938ffc45edc0d8a6eed58265ddadf302aa`.
+Verify the checker contract before execution; it has a separate 120-second CPU/wall allowance,
+as does main.
 
 ### 2 Check one released generator without claiming clinical validity
 
@@ -290,8 +295,10 @@ side effect; do not edit that pinned auditor to fix thread-setting errors.
 
 Inventory both GPUs, drivers, available memory, CPU/RAM and free SSD space. A 3090 normally provides
 24 GiB per GPU; two cards do not automatically give one process a 48 GiB allocation. Start with one
-GPU and the shared lock in `ecg_experiment/gpu.py`. Before concurrent jobs, review whether the lock
-and receipt design supports per-device ownership; do not bypass a process-wide lock. Independent
+GPU and the shared host-wide lock in `ecg_experiment/gpu.py`. The current helper locks only the
+literal device string `cuda`; `cuda:0` and `cuda:1` bypass that lock. Select the visible GPU with
+`CUDA_VISIBLE_DEVICES` and pass `cuda` to the helper. Before concurrent jobs, review whether the
+lock and receipt design supports per-device ownership; do not bypass the host-wide lock. Independent
 replicates may later use separate GPUs under an explicit scheduling plan. Every new training path
 needs an actual GPU profile, storage/runtime forecast and replay gate on this machine.
 

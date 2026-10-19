@@ -1,5 +1,35 @@
 # Experiment queue
 
+**18 October local CPU continuation:** The GPU driver is unavailable in `baseline`. The user
+requested autonomous multi-agent progress using existing data without cardiologist access.
+Three prospective studies are now executed; no further fit or final test is scheduled.
+
+- [041 screening result](experiment-041-cpu-screening-results.md): boosting AUROC 0.946512 versus
+  matched logistic 0.918070 on reused PTB fold 9; paired gain 0.028442 [0.021141, 0.036076].
+  All four development gates pass. Historical baseline probabilities reproduced exactly. The first
+  cohort-validation stop remains preserved; the separately frozen v2 corrected its historical
+  flat-lead exclusion without changing scientific settings.
+- [042 hospital transfer](experiment-042-measurement-transfer-results.md): frozen PTB-trained
+  boosting AUROC 0.907938 versus logistic 0.867394 on SPH; paired gain 0.040545 [0.035482, 0.045825].
+  Sensitivity was 0.668248 versus 0.562500 at local-normal referral rates 4.86% versus 4.72%.
+  All external development gates pass. The source port reproduced 32 PTB records exactly, then
+  prepared all 25,770 SPH records. Independent 041/042 arithmetic verification passed 462 checks
+  with zero mismatches, without fits, inference or waveform reads.
+- [043 lead-grounding result](experiment-043-lead-grounding-results.md): the corrected public PTB
+  benchmark passed release/task qualification, but context/offer-only HGB already reached AP
+  0.980097; measurements reached 0.989691. Primary gain 0.009593 [−0.003293, 0.024628] fails the
+  frozen ranking rule. Preserve `do_not_advance_grounding`; secondary exact-set observations do
+  not rescue it. Independent verification passed 3,904 checks with zero mismatches. Fold 8 was not used
+  for fitting or inference; its performance remains unread.
+
+All models, features and private predictions stay in ignored local outputs. Read their live
+receipts before resuming work. Existing labels were preserved, SPH never trained a classifier,
+closed Challenge/EchoNext tests stayed closed, and no clinical localization claim is supported.
+Protocols, results and artifact paths are in the JSON catalog; follow-ups are ranked separately.
+Code and aggregate reports are in [PR #70](https://github.com/Janet16180/ecg-cardiopathy-detection/pull/70),
+targeting `main`. Local release checks passed 1,328 tests (six skips), Ruff and package build;
+Use the PR's live checks and mergeability status for delivery verification.
+
 **Updated:** 30 September 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 
 **30 September day closed:** The user chose to close out today's completed work and merge it

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-18",
+  "updated": "2026-10-19",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -1514,7 +1514,7 @@
       "kind": "experiment",
       "title": "Obtain an independent finding-specific clinical evidence evaluation",
       "question": "Do highlights agree with specialists on clinically sufficient lead/time/measurement evidence?",
-      "evidence": "The existing ECGAD holdout is spent. Public PTB QA provides sparse rule-generated silver references with expert review, not independent dense masks. Current studies cannot certify clinical highlighting.",
+      "evidence": "The existing ECGAD holdout is spent. Public PTB QA provides sparse rule-generated silver references with expert review, not independent dense masks. Current studies cannot certify clinical highlighting. NTT-06 generates original-time signal candidates, but no specialist evidence agreement is measured.",
       "value": 5,
       "clarity": 0.65,
       "gpu_hours": 0.0,
@@ -1622,20 +1622,19 @@
       "kind": "experiment",
       "title": "Frozen native ECG encoder reference matching on automatic signal regions",
       "question": "Do learned native region vectors improve finding recognition and acceptable evidence over physical and visual baselines?",
-      "evidence": "NTT-05 provides verified engineering contracts and source/loader audit. ECG-JEPA exposes lead/time anchors but full context and coarse 200ms patches; xECG/CPC mix leads. Existing checkpoints/caches are not local. Native SimDINO064 normal-bank failure does not test abnormal finding prototypes.",
+      "evidence": "NTT-06 executed real frozen ECG-JEPA: native QRS 91.67% versus physical 92.78%; primary gain -1.11 points [-5.98, +4.31], gate failed. Shifted native windows reach 83.33%; independent source and expert-evidence requirements remain.",
       "value": 5,
       "clarity": 0.65,
       "gpu_hours": 0.0,
       "cpu_hours": 0.5,
       "build_hours": 4.0,
       "blocked_by": [
-        "@verified_native_checkpoint_and_preprocessing",
-        "@real_cpu_inference_profile",
-        "@prospective_patient_and_reference_protocol"
+        "ecg_independent_expert_evidence",
+        "@prospective_independent_source_and_support_uncertainty_protocol"
       ],
       "status": "blocked",
       "authorized": false,
-      "notes": "Planning estimates only. Recover exact source/weights/normalization and verify pretraining membership and geometry. New protocol before any new model score; fixed support/proposal budgets, physical full-context and same-wave controls. Clinical localization additionally needs independent expert evidence. No new download/inference auto-scheduled."
+      "notes": "The bounded record-finding integration and original-time region output are complete as NTT-06; this broader independent clinical-evidence comparison remains prospective. No new weight training or closed data. No automatic follow-up."
     },
     {
       "id": "cpu_measurement_screening041",
@@ -1728,6 +1727,59 @@
       ],
       "status": "proposed",
       "notes": "No scores or fit scheduled. Preserve native sparse-choice semantics; verify timing/lead alignment, annotation provenance and patient roles before any metric. Do not convert choices to clinical disease masks."
+    },
+    {
+      "id": "ntt06_native_encoder",
+      "kind": "experiment",
+      "title": "Frozen native ECG-JEPA signal reference comparison",
+      "question": "Does native QRS reference matching improve record-finding accuracy over physical references, and does token pooling location matter?",
+      "evidence": "Executed on 60 targets and 27 supports: native QRS 91.67% versus physical 92.78%; gain -1.11 points [-5.98, +4.31], primary gate failed. QRS minus shifted windows +8.33 points [3.67, 13.01]; no expert localization score.",
+      "value": 5,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.023319854331461505,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "done",
+      "authorized": true,
+      "notes": "docs/research/localization/ntt06-native-encoder/results.md. Source 7078768, protocol 6c29873; execution stages measured, build hours approximate. Checkpoint verified and real CPU profile passed. PR #71 stays draft; no merge."
+    },
+    {
+      "id": "native_reference_support_uncertainty",
+      "kind": "experiment",
+      "title": "Prospective native reference-bank uncertainty and annotation co-occurrence controls",
+      "question": "How stable is fixed native QRS matching across patient reference banks without selecting class-specific winners?",
+      "evidence": "NTT-06 native QRS accuracy varies from 81.67% to 96.67% across three fixed draws. Its primary interval conditions on those banks; CRBBB and CLBBB have unequal MI co-occurrence.",
+      "value": 5,
+      "clarity": 0.75,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 3,
+      "blocked_by": [
+        "@prospective_cohort_and_reference_sampling_protocol"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": "Reuse the frozen encoder and declared preprocessing. Prospectively handle reference sampling, fixed physical controls and coexisting source labels. No fusion or threshold tuning from observed class winners, and no etiologic or independent-confirmation claim."
+    },
+    {
+      "id": "native_embedding_cluster_geometry",
+      "kind": "experiment",
+      "title": "Matched native embedding and physical morphology clustering",
+      "question": "Do native QRS/full-context vectors form stable patient clusters beyond quality and acquisition patterns on a matched permitted cohort?",
+      "evidence": "NTT-06 saves dense 400 by 768 tokens and four patient vectors with exact embedding identity. Its selected 87-record cohort cannot establish disease clusters; CLUSTER-01/02 physical partitions failed prior robustness gates.",
+      "value": 5,
+      "clarity": 0.65,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 4,
+      "blocked_by": [
+        "physical_feature_reliability",
+        "@prospective_matched_clustering_cohort_protocol"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": "Prospectively freeze a matched train-only cohort and representation, role and quality handling. Compare QRS and contextual vectors with physical features; refit all transforms within stability samples and preserve multilabel enrichment. Do not select embeddings by label separation or infer causes. Profile before larger extraction; no job scheduled."
     }
   ]
 }

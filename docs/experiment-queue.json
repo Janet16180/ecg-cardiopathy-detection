@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T14:42:33.599526+00:00",
+  "updated_at_utc": "2026-10-19T15:29:06.987701+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2513,13 +2513,41 @@
     "pull_request": "https://github.com/Janet16180/ecg-cardiopathy-detection/pull/71"
   },
   "ntt06_native_encoder": {
-    "status": "protocol_frozen_implementation_pending",
+    "status": "complete_native_signal_comparison_primary_gate_failed",
     "authorized": true,
     "protocol": "docs/research/localization/ntt06-native-encoder/protocol.md",
     "scope": "Native frozen ECG-JEPA lead/time reference matching, matched controls and exploratory native region output; no images as model input.",
-    "primary": "native_qrs balanced accuracy minus strongest frozen physical baseline; gain >=0.05 and patient-bootstrap lower bound >0.",
+    "primary": {
+      "difference": -0.011111111111111112,
+      "ci_low": -0.05981802675881615,
+      "ci_high": 0.04313788335847166,
+      "draws": 2000,
+      "skipped_draws": 0,
+      "seed": 20261018,
+      "baseline_maximum_recomputed_each_draw": true
+    },
     "output_dir": "outputs/ntt06_native_encoder",
     "publication": "local_only_pr71_draft_no_merge",
-    "next_action": "Restore verified official source/checkpoint; implement, test and freeze source, then profile real pretrained CPU inference before the bounded development comparison."
+    "next_action": "Preserve the negative primary gate and contextual qualification. Native regional scores are now executed, but clinical evidence agreement and reference-bank/source robustness need separate prospective studies. No automatic follow-up, push or merge.",
+    "source_commit": "7078768a642407cf02f804e5a2807a3e3a533809",
+    "protocol_commit": "6c29873",
+    "results": "docs/research/localization/ntt06-native-encoder/results.md",
+    "profile": "outputs/ntt06_native_encoder_profile/result.json",
+    "aggregate_receipt": "reports/localization/ntt06-native-encoder/aggregate.json",
+    "targets": 60,
+    "support_patients": 27,
+    "unique_waveforms": 87,
+    "native_qrs_balanced_accuracy": 0.9166666666666665,
+    "strongest_physical_balanced_accuracy": 0.9277777777777777,
+    "advance_gate_passed": false,
+    "region_assignments": 14802,
+    "clinical_localization_accuracy": null,
+    "verification": "reports/localization/ntt06-native-encoder/verification.json",
+    "independent_audit": "passed",
+    "integrated_cpu_tests_passed": 1491,
+    "integrated_cpu_tests_skipped": 6,
+    "integrated_test_seconds": 76.43,
+    "ruff_passed": true,
+    "package_build_passed": true
   }
 }

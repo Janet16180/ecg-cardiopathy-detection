@@ -25,3 +25,11 @@ its original location. Its engineering checks do not establish learned-native re
 highlighting. Read the results and live output receipts before reporting progress.
 
 Follow the [shared directory guide](../README.md) for new code, commands, schemas and aggregate reports.
+
+## Native pretrained signal execution
+
+[NTT-06 protocol](ntt06-native-encoder/protocol.md) and [results](ntt06-native-encoder/results.md)
+connect the native adapter to frozen ECG-JEPA and return scored original-time regions without image
+inputs. Native QRS finding discrimination reaches 91.67% versus physical references 92.78%; the
+primary gate fails. Its shifted-window control reaches 83.33%, while specialist localization agreement
+remains unmeasured. Private dense/pooled vectors are available for a separate clustering protocol.

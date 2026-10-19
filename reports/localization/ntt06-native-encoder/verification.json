@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "study": "NTT-06",
+  "source_commit": "7078768",
+  "created_at_utc": "2026-10-19T15:38:33.914747+00:00",
+  "source_hashes_verified": 24,
+  "input_hashes_verified": 8,
+  "artifact_hashes_verified": 7,
+  "independent_native_and_historical_scores_exact": true,
+  "independent_bootstrap_intervals_exact": true,
+  "independent_region_assignments_verified": 14802,
+  "independent_audit_read_waveforms": false,
+  "waveform_hash_verification": "Runner verified 174 header/data files before reading; reviewer cross-bound their claims to predecessor without rereading waveforms.",
+  "full_cpu_tests": {
+    "passed": 1491,
+    "skipped": 6,
+    "seconds": 76.43
+  },
+  "focused_tests": {
+    "passed": 75,
+    "seconds": 2.57
+  },
+  "ruff": "passed",
+  "package_build": "passed offline; new native modules equal wheel bytes",
+  "new_research_links_checked": 24,
+  "private_verification_artifact_sha256": {
+    "outputs/ntt06_native_encoder_verification/full_tests.log": "f39111eee08f526610c5df46116254f021bc322c37e37033f9b8ade44863b151",
+    "outputs/ntt06_native_encoder_verification/focused_tests.log": "acb9d872a8b55771073b8ecdd95d4c3360f2c29bc59fce1f6400232688534d74",
+    "outputs/ntt06_native_encoder_verification/package_build.log": "076b2a97c6febd273776c95393b2afb61ad1edb0634bb0c406108b936320b2ee",
+    "outputs/ntt06_native_encoder_verification/independent_audit.json": "dbc6c47f3b2dafdfaac7fbf2f3fd12e207c66ecb73853a058d600a401a6a5847"
+  },
+  "clinical_localization_validated": false,
+  "primary_advancement_gate_passed": false,
+  "publication": "Local only; PR #71 remains draft and no merge is authorized."
+}

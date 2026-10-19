@@ -1,5 +1,13 @@
 # Experiment queue
 
+**18 October executed CPU comparison:** 041v2 reproduced the saved historical probabilities exactly,
+then completed the frozen two-arm fit. HGB AUROC 0.946512 versus logistic 0.918070, paired difference
++0.028442 [0.021141,0.036076]; sensitivity at separate normal-only 5% thresholds 0.781656 versus
+0.670455, HGB normal referral 4.7046%. All four development gates pass. Saved-output independent
+audit is pending. 042 qualified its extractor on 32 PTB records with zero serialized difference;
+the real 64-record SPH profile passed (conservative preparation forecast2,292seconds). Full local
+preparation is running; no SPH comparison score exists yet.
+
 **18 October CPU screening continuation:** The user authorized autonomous multi-agent work with
 existing data and no cardiologist. The GPU driver is unavailable in this checkout.
 [Experiment 041](experiment-041-cpu-screening.md) freezes a raw-measurement HGB/logistic comparison
@@ -9,7 +17,8 @@ models to SPH with separate local-normal calibration, after extractor qualificat
 CPU profile. 041 passed independent source review and 39 checks, then stopped before any fit at the cohort
 check: the implementation overlooked one historical flat-lead exclusion. The v1 failure remains
 unchanged. A [forward v2 correction](experiment-041-cpu-screening-execution-v2.md) preserves every
-scientific setting and is under implementation/review. 042 remains under implementation; it will
+scientific setting, passed independent source review and 30 artificial checks, and is running.
+042 remains under implementation; it will
 bind the completed v2 predecessor. No new comparison score has been produced.
 The original protocol freezes are d4d7dc0/96739d5 on the retained research branch; their bytes are
 preserved here on a branch based directly on main. Closed tests remain closed.

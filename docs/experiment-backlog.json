@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-30",
+  "updated": "2026-10-18",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -1198,7 +1198,7 @@
       "kind": "experiment",
       "title": "Replace CPC GRU context with mLSTM-xLSTM on clean cohorts v3",
       "question": "Does matrix memory improve a matched fresh CPC development readout at 25k, and does a conditional 50k tier help?",
-      "evidence": "Audited full CPC comparison: primary xLSTM minus GRU\u22120.00897[\u22120.01840,+0.00094] at25k and\u22120.00737[\u22120.01652,+0.00117] at50k; xLSTM scaling+0.00231[\u22120.00707,+0.01136]. Neither frozen improvement rule passed.",
+      "evidence": "Audited full CPC comparison: primary xLSTM minus GRU−0.00897[−0.01840,+0.00094] at25k and−0.00737[−0.01652,+0.00117] at50k; xLSTM scaling+0.00231[−0.00707,+0.01136]. Neither frozen improvement rule passed.",
       "value": 3,
       "clarity": 0.6,
       "gpu_hours": 4,
@@ -1324,6 +1324,34 @@
       "status": "open",
       "authorized": false,
       "notes": "Forward implementation only; new source identity, protocol and validation receipts required. Never edit pinned039/040/diagnostic sources or weaken integrity checks. Measure cold/warm validation, latecell gate and checkpoint costs; preserve all18fits/three seeds/exposures/coefficient. Full training allocation remains separate. Hours are planning estimates. Day closeout: user chose to merge completed work and leave the 18 full fits unrun today; no follow-up is scheduled automatically."
+    },
+    {
+      "id": "cpu_measurement_screening041",
+      "title": "Calibrated nonlinear CPU screen on raw ECG measurements",
+      "question": "Does fixed histogram boosting improve annotation screening over matched logistic with separate normal-only calibration?",
+      "evidence": "Local Avance measurements and historical nonlinear result; prospective041 and execution-v2 amendment.",
+      "value": 4,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.004222831559212257,
+      "build_hours": 1.0,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Executed: AUROC0.946512 vs0.918070; paired difference+.028442[.021141,.036076], all4development gatespass. Historical probabilities reproduced exactly; failed v1 cohort attempt preserved. Independent saved-output audit pending. docs/experiment-041-cpu-screening-results.md."
+    },
+    {
+      "id": "cpu_measurement_transfer042",
+      "title": "SPH external development of frozen CPU measurement models",
+      "question": "Does041 boosting advantage transfer to SPH under patient-separated local-normal calibration?",
+      "evidence": "041 matched development gain; prospectively frozen042 before041 scores. Compatible extractor exactly reproduced32PTB records;64SPH profilepassed.",
+      "value": 5,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.65,
+      "build_hours": 1.0,
+      "blocked_by": [],
+      "status": "running",
+      "notes": "Full SPH feature preparation running; no external model fit or score yet. Reused development hospital, not final test. docs/experiment-042-measurement-transfer.md."
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T02:27:50.536810+00:00",
+  "updated_at_utc": "2026-10-19T02:32:03.785977+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2270,21 +2270,25 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "experiment_041_cpu_screening": {
-    "status": "stopped_input_cohort_validation_pending_forward_v2",
+    "status": "completed_pending_independent_artifact_audit",
     "authorized": true,
     "authorization": "User requested autonomous multi-agent progress using existing data without cardiologist access.",
     "protocol": "docs/experiment-041-cpu-screening.md",
     "output_dir": "outputs/experiment041_cpu_screening_v2",
-    "next_action": "Review forward correction for historical flat-lead exclusion; preserve v1 stop; no new fits or comparison scores produced.",
+    "next_action": "Write output-derived report and independently audit saved predictions; no further fit.",
     "failed_attempt": "outputs/experiment041_cpu_screening_v1/failure.json",
-    "execution_amendment": "docs/experiment-041-cpu-screening-execution-v2.md"
+    "execution_amendment": "docs/experiment-041-cpu-screening-execution-v2.md",
+    "results": "outputs/experiment041_cpu_screening_v2/result.json",
+    "decision": "advance_development"
   },
   "experiment_042_measurement_transfer": {
-    "status": "protocol_frozen_pending_implementation",
+    "status": "preparing_after_passed_qualification_and_profile",
     "authorized": true,
     "protocol": "docs/experiment-042-measurement-transfer.md",
     "output_dir": "outputs/experiment042_measurement_transfer_v1",
     "predecessor": "experiment_041_cpu_screening",
-    "next_action": "Review compatible extractor and external evaluator; qualify cache identity and profile actual CPU path before any full extraction or score."
+    "next_action": "Prepare model-independent SPH features within passed profile budget; then one frozen external comparison.",
+    "qualification": "outputs/experiment042_measurement_transfer_v1/qualification/completion.json",
+    "profile": "outputs/experiment042_measurement_transfer_v1/profile/completion.json"
   }
 }

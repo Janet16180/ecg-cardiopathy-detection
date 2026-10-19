@@ -2600,7 +2600,7 @@
       "historical_protocol_status": "unexecuted_missing_parent_receipts; superseded_for_this_host_by_separate_standalone_probe"
     },
     "continuation_2026_10_19": {
-      "status": "standalone_probe_and_independent_audit_passed_quality_source_frozen",
+      "status": "quality_v1_profile_stopped_before_bank_v2_resource_amendment_in_preparation",
       "historical_payloads_present": false,
       "history_preserved": true,
       "gpu_access_verified": true,
@@ -2623,7 +2623,21 @@
       "quality_source_commit": "be9ea5f",
       "quality_execution": "awaiting_final_numerical_source_review_and_actual_path_profile",
       "verified_current_machine_cpu_seconds": 1.6714985129999997,
-      "verified_current_machine_gpu_wall_seconds": 0.0
+      "verified_current_machine_gpu_wall_seconds": 0.0,
+      "quality_v1_output": "outputs/ssl_synthetic_localization/generated_quality_v1",
+      "quality_v1_profile_verdict": "failed_wall_forecast1550.645226>1200; no bank generated",
+      "quality_v1_failure": "outputs/ssl_synthetic_localization/generated_quality_v1/failure.json",
+      "quality_v1_profile": "outputs/ssl_synthetic_localization/generated_quality_v1/profile.json",
+      "quality_v1_terminal_cpu_seconds": 0.7721921779999998,
+      "quality_v1_gpu_lock_wall_seconds": 6.083721050992608,
+      "quality_v1_bank_samples": 0,
+      "quality_v2_change": "prospectively raise wall/GPU-lock1800seconds; keep all128seeds/endpoints/controls/memory/storage/profilefactor2 unchanged",
+      "local_cpu_suite": {
+        "passed": 1751,
+        "skipped": 6,
+        "seconds": 87.87,
+        "log": "outputs/ssl_synthetic_localization/continuation_cpu_tests_v1.log"
+      }
     }
   },
   "experiment_041_cpu_screening": {

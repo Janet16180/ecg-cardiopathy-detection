@@ -1,5 +1,12 @@
 # Experiment queue
 
+**19 October actual GPU profile retained:** Qualityv1 completed four exact CPU predecessor
+replays and one CUDA profile, then stopped before the bank: full-path wall5.822870seconds
+forecast1,550.645226seconds exceeded the frozen1,200second cap. Peak CUDA allocation45,372,928bytes
+passed memory admission. Terminal failed-stageCPU0.772192seconds/GPU-lock6.083721seconds are retained
+and charged once. A separately committed1,800second resource successor is in preparation with
+all128seeds/endpoints/controls unchanged; this is no scientific PASS or completed bank.
+
 **19 October released generator executed:** The standalone public Pulse2Pulse probe and its independent
 saved-output audit pass. Six forwards produced four fixed-seed ECGs plus exact replay;34bindings
 and every technical gate verified with zero mismatches. See [results](ssl-synthetic-localization-pretrained-generator-standalone-v1-results.md)

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-18",
+  "updated": "2026-10-19",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -1607,6 +1607,38 @@
       ],
       "status": "proposed",
       "notes": "No scores or fit scheduled. Preserve native sparse-choice semantics; verify timing/lead alignment, annotation provenance and patient roles before any metric. Do not convert choices to clinical disease masks."
+    },
+    {
+      "id": "ssl_synthetic_public_pretrained_probe",
+      "kind": "experiment",
+      "title": "Execute public Pulse2Pulse checkpoint under a strict local loader",
+      "question": "Does the released checkpoint run reproducibly with exact technical geometry and identity?",
+      "evidence": "Executed six CPU forwards and independent saved-output audit; all seven technical gates pass,34bindings/zero mismatches. Report docs/ssl-synthetic-localization-pretrained-generator-standalone-v1-results.md.",
+      "value": 5,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.0004643051425,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Actual ECG arrays and weights local; amplitude calibration, disease conditioning and real pathology masks unverified. Historical output tree absent; old costs unknown locally."
+    },
+    {
+      "id": "ssl_synthetic_generated_quality",
+      "kind": "experiment",
+      "title": "Qualify a larger released-generator bank and exact intervention supports",
+      "question": "Do fixed generated signals show aligned cross-lead activity and support numerically exact focal/repeated interventions?",
+      "evidence": "V1 actual GPU profile stops beforebank on wallforecast1550.645>1200seconds, while2GiB memory gate passes. Failed outputs/costs retained. V2 resource amendment to1800seconds in preparation, without endpoint changes.",
+      "value": 5,
+      "clarity": 0.9,
+      "gpu_hours": 0.5,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [
+        "@prospective_v2_resource_amendment_and_source_review"
+      ],
+      "status": "proposed",
+      "notes": "Same128seeds,controls,metrics and profilefactor2. Fixed-position masks only qualify introduced numerical support; no model training or disease mask claim."
     }
   ]
 }

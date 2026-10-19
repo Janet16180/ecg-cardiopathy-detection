@@ -20,8 +20,13 @@ Original historical ECGAD localization metrics still cannot be reproduced withou
 
 New scoring was restricted to PR67 train patients. An independent identity-only implementation matched
 all 13,938 train ECGs / 12,078 train patients in the shared manifest exactly. Whole patients touching
-folds 9/10 were excluded. Reserved validation/engineering-test content and signals were skipped before
-interpretation. The shared manifest SHA256 is
+folds 9/10 were excluded. In the new feature/reference/scoring path, reserved validation/engineering-test
+content and signals were skipped before interpretation. The preceding full NTT-01 integrity replay did
+reparse aggregate labels for 3,480 reserved-role records and reasoning for 517 reserved-role cases in
+folds 1–8; it fitted/scored no model and used none of them as references. These previously inspected
+development annotations therefore were not untouched. An independent audit reconstructed this distinction;
+future studies should verify saved predecessor hashes rather than repeat that broad label replay.
+The shared manifest SHA256 is
 `efaa51a62f52fc2d10881a58994d2da206ae5683cff08872c09cc5ec08ef253c`.
 
 | Selection stage | Executed count |

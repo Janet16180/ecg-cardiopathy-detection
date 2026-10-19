@@ -1,5 +1,19 @@
 # Experiment queue
 
+**19 October independent-fit replication executed and audited:** Three new matched fit pairs on
+64 fresh generated backgrounds pass all18 scientific and11 integrity gates. Mean supervised AP is
+0.114598; gains versus amplitude/permuted targets are +0.090876 [0.054197,0.134239] and
++0.096733 [0.058458,0.140852]. All individual pooled gains are positive, but modest absolute AP,
+persistent background hotspots and exploratory three-fit uncertainty remain. Both old400-step arms
+reproduced every loss, final model and Adam state exactly. Independent verification reports zero
+mismatches. Read [results](ssl-synthetic-localization-fit-replication-v1-results.md) and
+[audit](ssl-synthetic-localization-fit-replication-independent-audit-v1-results.md). Main+audit used
+145.681616 CPU /140.128610 GPU-lock seconds; cumulative12stage costs are190.681380 CPU /
+178.561921 GPU-lock seconds. Whole-wall actual241.489s exceeded forecast167.774s, within hard caps.
+The four-arm paired/background-suppression [successor](ssl-synthetic-localization-paired-suppression-v1.md)
+was scientifically frozen before these outcomes; identity admission, implementation/review and
+actual-path profiles remain gates. No clinical or closed-test claim; PR67 stays draft.
+
 **19 October autonomous continuation authorized:** The user requested several hours of autonomous
 synthetic-generation/localization work, including recommended steps after independent-fit replication.
 The [replication protocol](ssl-synthetic-localization-fit-replication-v1.md) is committed; final

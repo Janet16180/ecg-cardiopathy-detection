@@ -116,23 +116,22 @@ penalty; one that ranks high earns a protocol like any other.
 | 34 | report_alignment | experiment | ECG-report alignment with PTB-XL cardiologist reports | 2 | 0.3 | 25.0 | 0.12 | - |
 | 35 | cpc_simdino_resource_plan040 | repo | Prospective resource plan for the fixed Transformer objective factorial | 3 | 0.9 | 0.6 | 3.49 | @fresh_compute_budget_authorization |
 | 36 | final_frozen_test | experiment | One-time confirmatory test of the frozen pipeline on untouched data | 5 | 0.9 | 3.0 | 3.12 | @user_freeze_decision |
-| 37 | ssl_synthetic_generated_seed_replication | experiment | Replicate varied-support learning on generated ECGs with independent fit randomness | 5 | 0.8 | 3.0 | 2.76 | @prospective_replication_and_actual_training_profile |
-| 38 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
-| 39 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
-| 40 | ssl_synthetic_factorial_mode_diagnostic | experiment | Explain the focal benefit and repeated-edit tradeoff using saved maps | 3 | 0.8 | 1.5 | 2.06 | @prospective_saved_map_diagnostic_protocol |
-| 41 | ssl_synthetic_public_annotation_qualification | repo | Qualify public expert wave annotations for timing-anchor checks | 4 | 0.8 | 2.7 | 1.95 | @prospective_public_annotation_download_and_overlap_policy |
-| 42 | wave_grounding_context_control | repo | Qualify time-grounding semantics and strong context/option controls | 4 | 0.7 | 2.1 | 1.93 | @prospective_time_grounding_qualification |
-| 43 | ssl_synthetic_factorial_seed_replication | experiment | Replicate the fixed paired-loss factorial under independent training randomness | 4 | 0.8 | 3.4 | 1.75 | @prospective_replication_protocol_and_actual_profile, @storage_plan_within_4GiB |
-| 44 | ssl_synthetic_annotation_audit | repo | Technical audit of ECGAD development labels | 4 | 0.8 | 3.5 | 1.71 | @ecgad_development_artifacts |
+| 37 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
+| 38 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
+| 39 | ssl_synthetic_factorial_mode_diagnostic | experiment | Explain the focal benefit and repeated-edit tradeoff using saved maps | 3 | 0.8 | 1.5 | 2.06 | @prospective_saved_map_diagnostic_protocol |
+| 40 | ssl_synthetic_public_annotation_qualification | repo | Qualify public expert wave annotations for timing-anchor checks | 4 | 0.8 | 2.7 | 1.95 | @prospective_public_annotation_download_and_overlap_policy |
+| 41 | wave_grounding_context_control | repo | Qualify time-grounding semantics and strong context/option controls | 4 | 0.7 | 2.1 | 1.93 | @prospective_time_grounding_qualification |
+| 42 | ssl_synthetic_factorial_seed_replication | experiment | Replicate the fixed paired-loss factorial under independent training randomness | 4 | 0.8 | 3.4 | 1.75 | @prospective_replication_protocol_and_actual_profile, @storage_plan_within_4GiB |
+| 43 | ssl_synthetic_annotation_audit | repo | Technical audit of ECGAD development labels | 4 | 0.8 | 3.5 | 1.71 | @ecgad_development_artifacts |
+| 44 | ssl_synthetic_generated_paired_suppression | experiment | Attribute paired learning and background suppression in generated ECG localization | 4 | 0.8 | 3.5 | 1.70 | @paired_suppression_identity_admission_source_review_and_actual_profile |
 | 45 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
 | 46 | measurement_multisource_training | experiment | Human-read multisource training for the CPU measurement screen | 4 | 0.8 | 4.0 | 1.60 | @prospective_multisource_protocol, @local_challenge_training_manifests |
-| 47 | ssl_synthetic_generated_paired_suppression | experiment | Test paired-background suppression on generated ECG introduced-change localization | 4 | 0.7 | 3.5 | 1.49 | ssl_synthetic_generated_seed_replication, @prospective_generated_objective_comparison_and_fresh_evaluation_policy |
-| 48 | lead_grounding_membership_followup | experiment | Prospective exact-membership test of frozen lead-grounding models | 3 | 0.6 | 1.6 | 1.45 | @prospective_membership_protocol_and_patient_role |
-| 49 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
-| 50 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
-| 51 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
-| 52 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
-| 53 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
+| 47 | lead_grounding_membership_followup | experiment | Prospective exact-membership test of frozen lead-grounding models | 3 | 0.6 | 1.6 | 1.45 | @prospective_membership_protocol_and_patient_role |
+| 48 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
+| 49 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
+| 50 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
+| 51 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
+| 52 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
 
 Reruns after Ningbo (`rerun_of` in the backlog): 022 as `ningbo_sph_transfer`, 024 as `rerun_024_multisource`,
 025 as `rerun_025_ningbo`, 026 as `multisource_normal_manifold` and 027 as `multisource_calibration`. 023 is

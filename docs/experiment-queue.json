@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T21:13:43.702391+00:00",
+  "updated_at_utc": "2026-10-19T23:38:46.896212+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2622,8 +2622,8 @@
       "standalone_audit_report": "docs/ssl-synthetic-localization-pretrained-generator-independent-audit-v1-results.md",
       "quality_source_commit": "be9ea5f",
       "quality_execution": "awaiting_final_numerical_source_review_and_actual_path_profile",
-      "verified_current_machine_cpu_seconds": 44.99976453399999,
-      "verified_current_machine_gpu_wall_seconds": 38.433311437256634,
+      "verified_current_machine_cpu_seconds": 190.681380118,
+      "verified_current_machine_gpu_wall_seconds": 178.56192114995793,
       "quality_v1_output": "outputs/ssl_synthetic_localization/generated_quality_v1",
       "quality_v1_profile_verdict": "failed_wall_forecast1550.645226>1200; no bank generated",
       "quality_v1_failure": "outputs/ssl_synthetic_localization/generated_quality_v1/failure.json",
@@ -2812,16 +2812,16 @@
           "prospective_paired_background_suppression_comparison_if_technically_admitted",
           "rank_next_generation_and_annotation_experiment_from_executed_results"
         ],
-        "current_stage": "replication_final_source_review"
+        "current_stage": "paired_suppression_source_and_admission_preparation"
       },
       "generated_seed_replication": {
-        "status": "protocol_frozen_final_source_review",
+        "status": "complete_independently_audited",
         "new_fit_pairs": 3,
         "unchanged_train_backgrounds": 80,
         "spent_secondary_backgrounds": 48,
         "fresh_primary_backgrounds": 64,
         "old_training_pair_exact_replay_required": true,
-        "scores_computed": false,
+        "scores_computed": true,
         "patient_data_used": false,
         "gpu_profile_required_before_training": true,
         "independent_audit_required": true,
@@ -2837,7 +2837,62 @@
         "scientific_inference_batches_planned": 400,
         "profile_inference_batches_planned": 2,
         "new_generator_gpu_forwards_planned": 68,
-        "predecessor_cpu_generator_forwards_planned": 4
+        "predecessor_cpu_generator_forwards_planned": 4,
+        "scientific_gates_passed": 18,
+        "integrity_gates_passed": 11,
+        "source_commit": "057cdee",
+        "results_report": "docs/ssl-synthetic-localization-fit-replication-v1-results.md",
+        "independent_report": "docs/ssl-synthetic-localization-fit-replication-independent-audit-v1-results.md",
+        "main_receipt_sha256": "04bab13e3967a3724a63f41d9f164a4315a661c94dda86e0049c72e27b7fdde8",
+        "main_ledger_sha256": "41743e6cc82a76e7bc2f529033401429f89a0858f921b19e975029b9043f32f9",
+        "independent_receipt_sha256": "a9f9daca25273f23f10dc46faca019bd680eefe24c1c6cc951f33e3fcb46282e",
+        "independent_terminal_ledger_sha256": "f17f0c112a3eeed8b5f46be389c2a06ff8dcb8c2dd6169b1833a398f20a0d264",
+        "independent_mismatches": 0,
+        "main_terminal_cpu_seconds": 110.563450169,
+        "main_terminal_wall_seconds": 241.48855727212504,
+        "main_gpu_lock_wall_seconds": 140.1286097127013,
+        "audit_terminal_cpu_seconds": 35.118165415,
+        "audit_terminal_wall_seconds": 38.68927047774196,
+        "main_plus_audit_cpu_seconds": 145.681615584,
+        "final_main_bytes": 891702434,
+        "final_audit_bytes": 74542,
+        "whole_wall_forecast_seconds": 167.77376635419205,
+        "whole_wall_forecast_exceeded": true,
+        "resource_caps_passed": true,
+        "fresh_panel_now_spent_engineering_data": true,
+        "validation": {
+          "cpu_suite": {
+            "passed": 1844,
+            "skipped": 6,
+            "warnings": 2,
+            "seconds": 104.51,
+            "log": "outputs/ssl_synthetic_localization/fit_replication_full_cpu_tests_v1.log"
+          },
+          "ruff": "passed repository-wide including conftest.py",
+          "source_and_wheel_build": "passed; private artifacts excluded",
+          "source_bindings_checked": 94,
+          "source_mismatches": 0
+        }
+      },
+      "generated_paired_suppression": {
+        "status": "scientific_protocol_frozen_before_replication_outcomes",
+        "protocol": "docs/ssl-synthetic-localization-paired-suppression-v1.md",
+        "configuration": "configs/ssl_synthetic_paired_suppression_v1.json",
+        "protocol_commit": "4500999",
+        "arms": [
+          "B",
+          "P",
+          "K",
+          "PK"
+        ],
+        "new_fresh_backgrounds": 64,
+        "fit_randomness_pairs": 3,
+        "primary": "combined PK versus unchanged BCE B",
+        "scientific_parameters_selected_from_replication_scores": false,
+        "scores_computed": false,
+        "identity_admission_pending": true,
+        "actual_path_profile_required": true,
+        "independent_audit_required": true
       }
     }
   },

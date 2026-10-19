@@ -1673,18 +1673,15 @@
       "kind": "experiment",
       "title": "Replicate varied-support learning on generated ECGs with independent fit randomness",
       "question": "Does the small pooled AP gain and control-activation tradeoff persist beyond one initialization and schedule?",
-      "evidence": "One-fit learning passes narrowly; audited saved-map diagnosis shows persistent background ranking and derivative-activity association. Existing 48 evaluation backgrounds are spent; independent fitted randomness and a prospectively fixed evaluation policy are needed before an objective comparison.",
+      "evidence": "Three independent new matched400-update pairs on64fresh generated backgrounds pass18scientific+11integritygates; audited0mismatches. Mean supervisedAP0.114598, gains amplitude0.090876[0.054197,0.134239],permuted0.096733[0.058458,0.140852]. docs/ssl-synthetic-localization-fit-replication-v1-results.md.",
       "value": 5,
       "clarity": 0.8,
       "gpu_hours": 0.33,
       "cpu_hours": 0.2,
       "build_hours": 2.5,
-      "blocked_by": [
-        "ssl_synthetic_generated_control_diagnosis",
-        "@prospective_replication_and_actual_training_profile"
-      ],
-      "status": "proposed",
-      "notes": "No tuning on spent 48 seeds. Replicate unchanged architecture/objective with independent initialization/schedule; prospectively declare fresh evaluation/held-fixed panel policy, varied supports, all modes/controls, and actual-path GPU profile before fits. Clinical pipeline unchanged."
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Exactoldpair800-update/fullmodel+Adam+lossreplay; fresh64nowspent. Main+audit145.681615584CPUseconds/GPU140.128609713; actualwall241.489>forecast167.774within1800cap. Threeseedcrossedintervalsexploratory; lowabsoluteAPandpersistentbackgroundresponsesremain."
     },
     {
       "id": "ssl_synthetic_public_annotation_qualification",
@@ -1706,20 +1703,19 @@
     {
       "id": "ssl_synthetic_generated_paired_suppression",
       "kind": "experiment",
-      "title": "Test paired-background suppression on generated ECG introduced-change localization",
-      "question": "Can a matched-control objective reduce persistent background ranking without sacrificing focal or repeated support learning?",
-      "evidence": "Audited saved-map diagnosis finds 87.8% supervised sham/nuisance hotspot persistence and only 4.1%/13.5% positive hotspot support precision. This motivates a later controlled comparison, not a demonstrated remedy.",
+      "title": "Attribute paired learning and background suppression in generated ECG localization",
+      "question": "Can the fixed paired/suppression package improve direct support ranking and suppress control peaks, and which factor contributes?",
+      "evidence": "Audited replication confirms added-change learning across3fits/fresh64, while controls persist87–92% and highuncalibratedmaxima remain. Fourarm P×K protocol4500999 committedbefore coordinatorreadreplicationoutcomes.",
       "value": 4,
-      "clarity": 0.7,
+      "clarity": 0.8,
       "gpu_hours": 0.33,
       "cpu_hours": 0.2,
       "build_hours": 3,
       "blocked_by": [
-        "ssl_synthetic_generated_seed_replication",
-        "@prospective_generated_objective_comparison_and_fresh_evaluation_policy"
+        "@paired_suppression_identity_admission_source_review_and_actual_profile"
       ],
-      "status": "proposed",
-      "notes": "Preserve BCE comparator, matched randomness/budgets, both edit modes, independent generated backgrounds and control-activation guards. Never tune on the spent 48 evaluation seeds or import missing historical artifacts. No automatic fit."
+      "status": "protocol_frozen",
+      "notes": "B/P/K/PK,3fixedseedpairs, future64panel,15primaryPKvsBgates plusprespecifiedfactorialsecondaries. No tuning/bestarmselection ornewclinicalmask. Actual recurrentprofile mustinclude matchedperupdateloss/component persistence. Allcapsfixed; scientificcodeintheforward-onlysuccessor."
     }
   ]
 }

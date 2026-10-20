@@ -1,40 +1,40 @@
 # Temporal/lead diagnosis v1 stopped at a strict floating-point range check
 
-19 October2026. This attempt is a retained technical failure, not a completed localization result.
-All1536fixed case rows were saved, but aggregation stopped at the strict AP range check. No complete
+19 October 2026. This attempt is a retained technical failure, not a completed localization result.
+All 1,536 fixed case rows were saved, but aggregation stopped at the strict AP range check. No complete
 summary, PK-minus-B contrast, bootstrap or figure was produced. The independent narrow cause/cost
-audit passed with zero mismatches across42source/snapshotbindings; it did not recalculate AP or
+audit passed with zero mismatches across 42 source/snapshot bindings; it did not recalculate AP or
 validate the new diagnostic endpoints against maps.
 
 The [protocol](ssl-synthetic-localization-temporal-diagnosis-v1.md) was committed as `ec86255`
-before the coordinator read the paired-suppression outcomes. Exact29-file identity admission
+before the coordinator read the paired-suppression outcomes. Exact 29-file identity admission
 `7642810` and reviewed source `ddea85a` preceded execution. Sixteen artificial tests passed.
-Before new endpoint calculations, all1536full-grid APs and the complete B aggregate reproduced
+Before new endpoint calculations, all 1,536 full-grid APs and the complete B aggregate reproduced
 exactly. All final source/input bytes stayed unchanged through that recorded closure.
 
-The strict aggregation guard encountered fit1/P/index2004/focal temporal AP
-`1.0000000000000002` (`0x1.0000000000001p+0`), exactly one float64ULP above1. Its sole active
-canonical lead8 had the same raw AP. Saved probabilities were not out of range; this is a rounding
-excursion in accumulated average precision. All1536ordered identities were unique and all endpoint
+The strict aggregation guard encountered fit 1/P/index 2004/focal temporal AP
+`1.0000000000000002` (`0x1.0000000000001p+0`), exactly one float64 ULP above 1. Its sole active
+canonical lead 8 had the same raw AP. Saved probabilities were not out of range; this is a rounding
+excursion in accumulated average precision. All 1,536 ordered identities were unique and all endpoint
 values finite. No case was removed, replaced or clipped.
 
-The narrow audit also reported all five individual-lead AP excursions: the same lead8 above;
-fit1/P/index2046/focal leads0and4 at1+1ULP and lead2 at1+2ULP; fit2/PK/index2028/focal lead0
-at1+1ULP. Only the first is also a case-endpoint violation. The fixed eight-epsilon recovery
+The narrow audit also reported all five individual-lead AP excursions: the same lead 8 above;
+fit 1/P/index 2046/focal leads 0 and 4 at 1+1 ULP and lead 2 at 1+2 ULP; fit 2/PK/index 2028/focal lead 0
+at 1+1 ULP. Only the first is also a case-endpoint violation. The fixed eight-epsilon recovery
 admission includes every raw per-lead and endpoint value; it is not a one-outlier-only rule.
 
-The failure receipt's last-current-case is fit3/PK/index2063/repeated, because every row was already
+The failure receipt's last-current-case is fit 3/PK/index 2063/repeated, because every row was already
 saved before aggregation. This context is not the actual offending row. V1 builds transient B-arm
 means before reaching the P guard; those were not inspected, and no complete summary or paired
 contrast was persisted. The [prospective clarification](ssl-synthetic-localization-temporal-diagnosis-v2-clarification.md)
 records this precise execution boundary without changing the frozen source.
 
-Main terminal CPU was20.793865505s, wall36.820030403s, GPUzero, finalstorage715891bytes, all within
-the original180CPU/240wallseconds/16MiB limits. The independently committed
-[narrow audit](ssl-synthetic-localization-temporal-failure-audit-v1.md) used0.024243717CPU/
-0.087784491wallseconds and zero GPU, within60/60seconds/8MiB. Main plus failure audit charged
-20.818109222CPU seconds once. Sixteen current-machine stages now total410.97305985599996CPU/
-447.98139213304967GPU-lockseconds. Unknown older costs stay unknown; terminal assembly/serialization
+Main terminal CPU was 20.793865505 s, wall 36.820030403 s, GPU zero, final storage 715,891 bytes, all within
+the original 180 CPU/240 wall seconds/16 MiB limits. The independently committed
+[narrow audit](ssl-synthetic-localization-temporal-failure-audit-v1.md) used 0.024243717 CPU/
+0.087784491 wall seconds and zero GPU, within 60/60 seconds/8 MiB. Main plus failure audit charged
+20.818109222 CPU seconds once. Sixteen current-machine stages now total 410.97305985599996 CPU/
+447.98139213304967 GPU-lock seconds. Unknown older costs stay unknown; terminal assembly/serialization
 is the disclosed reserved bookkeeping tail after receipt hash/byte enumeration.
 
 | Local evidence | SHA-256 |
@@ -50,9 +50,9 @@ All artifacts stay under `outputs/ssl_synthetic_localization/generated_temporal_
 The independent full-v1 checker is preserved as committed, source-tested but unexecuted. Its
 success-path analysis is not evidence for this failed attempt. No model forward, optimizer update,
 GPU operation, new waveform read, download or external API call occurred in either attempted
-analysis or narrow audit. The full parent B scientificFAIL remains unchanged.
+analysis or narrow audit. The full parent B scientific FAIL remains unchanged.
 
 The separately committed [v2 recovery](ssl-synthetic-localization-temporal-diagnosis-v2.md) retains
 all raw rows byte-identically, uses unchanged comparisons/draws and only admits machine-roundoff
 range excursions. It needs its own reviewed source, identity admission and independent map-derived
-audit. This report makes no physiological, clinical or real-disease localization claim. PR67 stays draft.
+audit. This report makes no physiological, clinical or real-disease localization claim. PR #67 stays draft.

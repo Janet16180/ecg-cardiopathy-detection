@@ -1686,9 +1686,9 @@
     {
       "id": "ssl_synthetic_public_annotation_qualification",
       "kind": "repo",
-      "title": "Qualify public expert wave annotations for timing-anchor checks",
-      "question": "Can LUDB or selected QTDB annotations support independently measured wave-boundary alignment without clinician recruitment?",
-      "evidence": "Publicannotationcapabilitiesreviewed in docs/ssl-synthetic-localization-pretrained-scientific-review-2026-10-19.md; localLUDBrawdirectoryempty.",
+      "title": "Qualify LUDB public wave annotations for ECG timing measurements",
+      "question": "Can a fixed QRS-like timing proxy be verified against released manual12-lead wave boundaries before interpreting generated ECG timing?",
+      "evidence": "Post-replication/paired-suppression review prioritizes human timing truth over another generator. PhysioNet LUDB1.0.1 documents200ten-second12-lead records with expertP/QRS/T markings; publicmetadata only read. Existing localLUDB was previouslyempty; verifybeforeuse.",
       "value": 4,
       "clarity": 0.8,
       "gpu_hours": 0,
@@ -1698,7 +1698,7 @@
         "@prospective_public_annotation_download_and_overlap_policy"
       ],
       "status": "proposed",
-      "notes": "ExpertP/QRS/Tboundariesarewaveannotations, notdiseaseregionmasks. No download/read/clinical-labelchange performed. Respectsourceoverlapandclosedsets."
+      "notes": "First futuretask: prospective record-level roles/parsercoverage/lead-alignment then fixed scale-free timing-proxycheck, no training/diagnosislabels. Releasedwaveboundaries are not disease masks. QTDB secondarylater because2leads/sparsemanualbeats/automaticannotationdistinction. No download/waveformread executed here. Sources https://physionet.org/content/ludb/1.0.1/ and https://physionet.org/content/qtdb/1.0.0/."
     },
     {
       "id": "ssl_synthetic_generated_paired_suppression",

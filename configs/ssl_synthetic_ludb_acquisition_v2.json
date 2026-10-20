@@ -18,7 +18,8 @@
     "required_content_range": "bytes 6291456-14474483/14474484",
     "allow_200_fallback": false,
     "overwrite_source": false,
-    "copy_prefix_before_request": true
+    "copy_prefix_before_request": true,
+    "content_length_policy": "if_present_must_equal_8183028_exact_body_length_always_required"
   },
   "checksum_manifest": {
     "file": "SHA256SUMS.txt",
@@ -28,13 +29,6 @@
     "new_manifest_request": false
   },
   "source_summary_sha256": "f59fc938a23930ecbd30043c15f28a49499a1a8135f7ac35ead68016526de78b",
-  "prior_ledger": {
-    "path": "outputs/ssl_synthetic_localization/ludb_acquisition_v1/prospective_ledger.json",
-    "sha256": "e505549b8110b2e4e7dadeca285209b115ffc6e50121d9c6088cbced054130f6",
-    "current_machine_stages": 19,
-    "current_machine_cumulative_cpu_seconds": 429.64397165699995,
-    "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967
-  },
   "url": "https://physionet.org/static/published-projects/ludb/lobachevsky-university-electrocardiography-database-1.0.1.zip",
   "resources": {
     "wall_seconds": 3600,
@@ -50,5 +44,19 @@
     "gpu_seconds": 0
   },
   "scientific_changes": false,
-  "data_root_override": "outputs/ssl_synthetic_localization/ludb_acquisition_v2/data"
+  "data_root_override": "outputs/ssl_synthetic_localization/ludb_acquisition_v2/data",
+  "source_predecessor_ledger": {
+    "path": "outputs/ssl_synthetic_localization/ludb_acquisition_v1/prospective_ledger.json",
+    "sha256": "e505549b8110b2e4e7dadeca285209b115ffc6e50121d9c6088cbced054130f6",
+    "current_machine_stages": 19,
+    "current_machine_cumulative_cpu_seconds": 429.64397165699995,
+    "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967
+  },
+  "prior_ledger_policy": {
+    "identity_admission_pins": "latest_narrow_failure_audit_terminal_ledger",
+    "required_prior_stage_count": 20,
+    "required_direct_source_predecessor_stage_count": 19,
+    "required_lineage": "source_predecessor_ledger_then_actual_narrow_failure_audit_cost_once",
+    "reset_or_skip_audit_cost_allowed": false
+  }
 }

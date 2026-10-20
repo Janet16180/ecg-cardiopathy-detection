@@ -31,7 +31,8 @@ Never append to, rename or remove v1files. Record and recheck their hashes after
 The new HTTPGET sends `Range: bytes=6291456-` and `If-Range` with the declared archive ETag
 `6006e8e6-dcdcf4` using proper HTTPquoted ETag syntax. The response must be206 and exactly
 `Content-Range: bytes 6291456-14474483/14474484`. Require exactly8,183,028received archive payload
-bytes and final file size14,474,484bytes. A200response, incorrect range/total, short/overlong body,
+bytes and final file size14,474,484bytes. If Content-Length is present, it must equal8,183,028;
+a missing header does not waive exact bounded body-length checking. A200response, incorrect range/total, short/overlong body,
 changed source bytes, timeout or server error stops the attempt. No200full-download fallback, second
 GET, new checksum request or automatic retry. Stream accepted response chunks to the copied prefix.
 If the request fails, retain every v2partial byte and charge the stage; a future transport strategy
@@ -52,8 +53,12 @@ The copied prefix does not count as newly received network bytes; it does count 
 outputs. Reserve two seconds and16KiB for terminal receipt/ledger serialization; use live wall/CPU/
 byte guards and report RSS. Hide CUDA, no GPU/training or numerical waveform work. Measure from
 before prefix/manifest verification and copying through completed source/input hashes, retained-byte
-enumeration and receipt hashing; disclose the bounded ledger-assembly tail. Append costs once to
-the exact v1terminal ledger. Acquisition fails on transport/identity/resource violation even if
+enumeration and receipt hashing; disclose the bounded ledger-assembly tail. Preserve the exact
+v1terminal ledger as fixed source predecessor. Before v2, a separately admitted narrow failure
+audit appends its actual CPU/wall and zeroGPU cost once as stage20. The v2identity-only admission
+then pins that latest verified audit terminal ledger, its SHA and actual additive totals. Require
+its direct v1lineage and equality to the stage19base plus that audit cost; never reset costs to
+v1or omit the audit. Append v2costs once to this verified stage20ledger. Acquisition fails on transport/identity/resource violation even if
 some files have already been retained. Preserve all such files and failure receipts locally.
 
 Freeze new acquisition source, tests and identity-only admission before this request. Independently

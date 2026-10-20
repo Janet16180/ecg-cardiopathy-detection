@@ -20,7 +20,7 @@ def annotation_events(payload: bytes) -> list[tuple[int, str]]:
     """Decode MIT annotation timing words without reading auxiliary text fields."""
     position, sample = 0, 0
     events = []
-    while position < len(payload):  # noqa: C901
+    while position < len(payload):
         if position + 2 > len(payload):
             raise ValueError("Truncated annotation word")
         word = int.from_bytes(payload[position : position + 2], "little")
@@ -37,6 +37,7 @@ def annotation_events(payload: bytes) -> list[tuple[int, str]]:
             if position > len(payload):
                 raise ValueError("Truncated annotation auxiliary field")
         elif code in (60, 61, 62):
+            _field_valid(code, delta)
             continue
         else:
             if code not in SYMBOLS:
@@ -44,6 +45,12 @@ def annotation_events(payload: bytes) -> list[tuple[int, str]]:
             sample += delta
             events.append((sample, SYMBOLS[code]))
     raise ValueError("Annotation EOF missing")
+
+
+def _field_valid(code: int, value: int) -> None:
+    """Require canonical channel range without interpreting unused annotation metadata."""
+    if code == 62 and not 0 <= value < 12:
+        raise ValueError("Annotation channel outside canonical range")
 
 
 def _skip(payload: bytes, sample: int, position: int, delta: int) -> tuple[int, int]:
@@ -96,9 +103,13 @@ def waveform(record: Path) -> tuple[np.ndarray, dict[str, Any]]:
     baseline = np.asarray([spec["baseline"] for spec in specs])
     values = (raw.reshape(5000, 12).astype(np.float64) - baseline) / gains
     output = values[:, [names.index(lead) for lead in LEADS]].T
+    order = [names.index(lead) for lead in LEADS]
+    units = [spec["units"] for spec in specs]
     metadata = {"fs": 500, "samples": 5000, "source_lead_order": names,
-                "canonical_lead_order": list(LEADS), "units": [spec["units"] for spec in specs],
-                "adc_gain": gains.tolist(), "baseline": baseline.tolist()}
+                "canonical_lead_order": list(LEADS), "source_units": units,
+                "source_adc_gain": gains.tolist(), "source_baseline": baseline.tolist(),
+                "canonical_units": [units[index] for index in order],
+                "canonical_adc_gain": gains[order].tolist(), "canonical_baseline": baseline[order].tolist()}
     return output, metadata
 
 
@@ -148,24 +159,40 @@ def coverage_row(values: np.ndarray, waves: list[dict[str, Any]]) -> tuple[dict[
     if not 0 < target.sum() < len(target):
         raise ValueError("Coverage requires both QRS and non-QRS samples")
     return {"start": first, "end_exclusive": stop, "coverage_samples": stop - first,
+            "coverage_fraction": (stop - first) / 5000,
             "qrs_samples": int(target.sum()), "prevalence": float(target.mean()), "wave_counts": counts,
-            "flat_signal": bool(np.ptp(samples) == 0)}, target
+            }, target
+
+
+def activity(values: np.ndarray) -> np.ndarray:
+    """Independently construct the frozen full-record activity score without annotations."""
+    samples = np.asarray(values, dtype=np.float64)
+    difference = np.r_[0., samples[1:] - samples[:-1]]
+    energy = np.convolve(difference * difference, np.full(20, .05), mode="same")
+    if energy.max() > 0:
+        energy /= energy.max()
+    if not np.isfinite(energy).all():
+        raise ValueError("Nonfinite activity score")
+    return energy
 
 
 def lead_row(values: np.ndarray, waves: list[dict[str, Any]]) -> dict[str, Any]:
     """Independently reconstruct fixed derivative score, coverage targets and all controls."""
     metadata, target = coverage_row(values, waves)
     samples = np.asarray(values, dtype=np.float64)
-    difference = np.r_[0., samples[1:] - samples[:-1]]
-    energy = np.convolve(difference * difference, np.full(20, .05), mode="same")
-    if energy.max() > 0:
-        energy /= energy.max()
+    energy = activity(samples)
     score = energy[metadata["start"] : metadata["end_exclusive"]]
     offsets = [int(len(score) * fraction) for fraction in FRACTIONS]
+    if len(set(offsets)) != 6 or not all(0 < offset < len(score) for offset in offsets):
+        raise ValueError("Invalid fixed control offsets")
     controls = [average_precision(target, np.roll(score, offset)) for offset in offsets]
     observed, shifted = average_precision(target, score), float(np.mean(controls))
+    epsilon = 8 * np.finfo(np.float64).eps
+    if not all(np.isfinite(value) and -epsilon <= value <= 1 + epsilon for value in [observed, *controls]):
+        raise ValueError("AP outside prospective roundoff admission")
     return {**metadata, "AP": observed, "shift_AP": controls, "shift_samples": offsets,
-            "mean_shift_AP": shifted, "gain": observed - shifted}
+            "mean_shift_AP": shifted, "gain": observed - shifted,
+            "flat_signal": bool(np.ptp(samples) == 0), "constant_score": bool(np.ptp(score) == 0)}
 
 
 def record_row(record: Path) -> dict[str, Any]:
@@ -181,8 +208,11 @@ def record_row(record: Path) -> dict[str, Any]:
         rows.append({"lead": lead, **metrics, "waves": waves})
     result = {"record_id": number, "role": role, "metadata": metadata, "leads": rows}
     if role == "measurement":
+        shifts = np.asarray([row["shift_AP"] for row in rows]).mean(axis=0)
         result.update({key: float(np.mean([row[key] for row in rows]))
-                       for key in ("AP", "mean_shift_AP", "gain")})
+                       for key in ("AP", "prevalence")})
+        result.update(shift_AP=shifts.tolist(), mean_shift_AP=float(shifts.mean()))
+        result["gain"] = result["AP"] - result["mean_shift_AP"]
     return result
 
 
@@ -197,9 +227,13 @@ def summary(rows: list[dict[str, Any]], draws: int = 2000, seed: int = 202610610
     boot = [float(gains[patient_resample(groups, random)].mean()) for _ in range(draws)]
     lower, upper = np.percentile(boot, [2.5, 97.5], method="linear")
     point = float(gains.mean())
-    return {"measurement_records": 160, "parser_qualification_records": 40, "measurement_leads": 1920,
+    return {"bootstrap_gains": boot, "measurement_records": 160, "parser_qualification_records": 40,
+            "measurement_leads": 1920,
+            "constant_score_leads": sum(lead["constant_score"] for row in selected for lead in row["leads"]),
             "AP": float(np.mean([row["AP"] for row in selected])),
             "mean_shift_AP": float(np.mean([row["mean_shift_AP"] for row in selected])),
+            "shift_AP": np.asarray([row["shift_AP"] for row in selected]).mean(axis=0).tolist(),
+            "prevalence": float(np.mean([row["prevalence"] for row in selected])),
             "gain": point, "gain_interval": [float(lower), float(upper)], "bootstrap_draws": draws,
             "bootstrap_seed": seed, "skipped_draws": 0,
             "scientific_passed": bool(lower > 0 and point >= .05),

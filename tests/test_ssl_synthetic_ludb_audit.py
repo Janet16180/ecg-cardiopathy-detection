@@ -1,3 +1,4 @@
+import json
 import struct
 
 import numpy as np
@@ -15,6 +16,7 @@ from ecg_experiment.ssl_synthetic_ludb_audit import (
     wave_triples,
     waveform,
 )
+from scripts.validation import audit_ssl_synthetic_ludb_qualification as checker
 
 
 def word(code, delta):
@@ -44,7 +46,8 @@ def test_binary_annotation_skip_auxiliary_and_persistent_fields():
 
 
 @pytest.mark.parametrize("payload", [b"\x01", word(2, 1) + b"\0\0", word(39, 2),
-                                    word(59, 0) + b"\0\0", word(63, 5) + b"a"])
+                                    word(59, 0) + b"\0\0", word(63, 5) + b"a",
+                                    word(62, 12) + b"\0\0"])
 def test_invalid_binary_annotation_rejected(payload):
     with pytest.raises(ValueError, match="Annotation|annotation|Unexpected|wave|AP|timing"
     ):
@@ -75,7 +78,7 @@ def test_independent_waveform_scaling_and_lead_mapping(tmp_path):
     assert values.shape == (12, 5000)
     np.testing.assert_array_equal(values[0], (raw[:, 11] - 10) / 1000)
     assert metadata["source_lead_order"] == list(names)
-    assert metadata["baseline"] == [10] * 12
+    assert metadata["source_baseline"] == [10] * 12
     assert "CLINICAL" not in str(metadata)
 
 
@@ -123,10 +126,65 @@ def test_parser_records_have_no_scores(tmp_path):
 def test_whole_record_bootstrap_and_decision():
     rows = []
     for number in range(1, 201):
-        metric = {"AP": .5, "mean_shift_AP": .3, "gain": .2, "prevalence": .1}
+        metric = {"AP": .5, "mean_shift_AP": .3, "gain": .2, "prevalence": .1,
+                  "shift_AP": [.3] * 6, "constant_score": False}
         rows.append({"record_id": number, **metric, "leads": [metric.copy() for _ in LEADS]})
     result = summary(rows)
     assert result["scientific_passed"]
     assert result["measurement_records"] == 160
     assert result["bootstrap_draws"] == 2000
     assert result["gain_interval"] == pytest.approx([.2, .2])
+
+
+def cost_fixture(tmp_path, monkeypatch):
+    def save(path, value):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(value))
+        return checker.file_sha256(path)
+
+    temporal = tmp_path / "outputs/ssl_synthetic_localization/generated_temporal_diagnosis_v2"
+    base = {"current_machine_cumulative_cpu_seconds": 429.49696094999996,
+            "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967}
+    prior_hash = save(temporal / "independent_audit_v1/prospective_ledger.json", base)
+    monkeypatch.setattr(checker, "PRIOR_SHA", prior_hash)
+    parent = tmp_path / "outputs/ssl_synthetic_localization/ludb_acquisition_v1"
+    for path, stage, cpu in ((parent / "prospective_ledger.json", 19, .1),
+                             (parent / "independent_failure_audit_v1/prospective_ledger.json", 20, .02),
+                             (tmp_path / "recovery/prospective_ledger.json", 21, .3)):
+        base = {"current_machine_stages": stage, "prior_ledger_sha256": prior_hash,
+                "cpu_seconds": cpu, "gpu_wall_seconds": 0.,
+                "current_machine_cumulative_cpu_seconds": (
+                    base["current_machine_cumulative_cpu_seconds"] + cpu),
+                "current_machine_cumulative_gpu_wall_seconds": (
+                    base["current_machine_cumulative_gpu_wall_seconds"])}
+        prior_hash = save(path, base)
+    admission = {"prior_ledger": {"path": "recovery/prospective_ledger.json", "sha256": prior_hash,
+                                  **{key: value for key, value in base.items()
+                                     if key.startswith("current_machine_cumulative_")}}}
+    study = tmp_path / "study"
+    main = {"cpu_seconds_before_summary": .2, "wall_seconds_before_summary": .3}
+    receipt_hash = save(study / "summary.json", main)
+    ledger = {"receipt": "summary.json", "receipt_sha256": receipt_hash,
+              "prior_ledger_sha256": prior_hash, "cpu_seconds": .4, "wall_seconds": .5,
+              "gpu_wall_seconds": 0., "peak_rss_bytes": 200000,
+              "prior_accounting_verified": True, "resource_gates": {"cpu": True},
+              "current_machine_cumulative_cpu_seconds": base["current_machine_cumulative_cpu_seconds"] + .4,
+              "current_machine_cumulative_gpu_wall_seconds": (
+                    base["current_machine_cumulative_gpu_wall_seconds"])}
+    save(study / "prospective_ledger.json", ledger)
+    return study, main, admission, ledger
+
+
+def test_full_failed_recovery_cost_lineage(tmp_path, monkeypatch):
+    study, main, admission, _ = cost_fixture(tmp_path, monkeypatch)
+    costs = checker.accounting(tmp_path, study, main, admission)
+    assert costs["stages_through_main"] == 22
+    assert costs["main_cpu_seconds"] == .4
+
+
+def test_full_audit_rejects_duplicated_main_cost(tmp_path, monkeypatch):
+    study, main, admission, ledger = cost_fixture(tmp_path, monkeypatch)
+    ledger["current_machine_cumulative_cpu_seconds"] += .4
+    (study / "prospective_ledger.json").write_text(json.dumps(ledger))
+    with pytest.raises(ValueError, match="once"):
+        checker.accounting(tmp_path, study, main, admission)

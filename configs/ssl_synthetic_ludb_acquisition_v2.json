@@ -1,0 +1,54 @@
+{
+  "study": "ssl_synthetic_ludb_acquisition_v2",
+  "amendment": "docs/ssl-synthetic-localization-ludb-acquisition-v2.md",
+  "unchanged_scientific_protocol": "docs/ssl-synthetic-localization-ludb-qualification-v1.md",
+  "unchanged_scientific_protocol_sha256": "b10965364936ccf8229590b35ce49aaf536266e13e3f19e6d5280a608647f5b1",
+  "unchanged_scientific_config": "configs/ssl_synthetic_ludb_qualification_v1.json",
+  "unchanged_scientific_config_sha256": "d71fa85460e929653d1a26716fc464dc993a1a2b25557e685b2da23f2fbcded3",
+  "source_directory": "outputs/ssl_synthetic_localization/ludb_acquisition_v1",
+  "output_directory": "outputs/ssl_synthetic_localization/ludb_acquisition_v2",
+  "resume": {
+    "prefix_file": "release.zip.partial",
+    "prefix_bytes": 6291456,
+    "prefix_sha256": "1bf23aa1ac52cd6ec1205baca4b819c9e2c90842ecd0314c80dd4a48c1b4158f",
+    "expected_complete_bytes": 14474484,
+    "range_header": "bytes=6291456-",
+    "if_range_etag": "6006e8e6-dcdcf4",
+    "required_http_status": 206,
+    "required_content_range": "bytes 6291456-14474483/14474484",
+    "allow_200_fallback": false,
+    "overwrite_source": false,
+    "copy_prefix_before_request": true
+  },
+  "checksum_manifest": {
+    "file": "SHA256SUMS.txt",
+    "bytes": 215460,
+    "sha256": "cccef1f3529519db8f26a333c97a6872a7d0e3e5c64a1448b76b161fd87fb75f",
+    "reuse_local": true,
+    "new_manifest_request": false
+  },
+  "source_summary_sha256": "f59fc938a23930ecbd30043c15f28a49499a1a8135f7ac35ead68016526de78b",
+  "prior_ledger": {
+    "path": "outputs/ssl_synthetic_localization/ludb_acquisition_v1/prospective_ledger.json",
+    "sha256": "e505549b8110b2e4e7dadeca285209b115ffc6e50121d9c6088cbced054130f6",
+    "current_machine_stages": 19,
+    "current_machine_cumulative_cpu_seconds": 429.64397165699995,
+    "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967
+  },
+  "url": "https://physionet.org/static/published-projects/ludb/lobachevsky-university-electrocardiography-database-1.0.1.zip",
+  "resources": {
+    "wall_seconds": 3600,
+    "cpu_seconds": 60,
+    "rss_bytes": 2147483648,
+    "received_payload_bytes": 67108864,
+    "selective_extract_bytes": 67108864,
+    "new_output_bytes": 134217728,
+    "http_get_requests": 1,
+    "attempts": 1,
+    "retries": 0,
+    "connections": 1,
+    "gpu_seconds": 0
+  },
+  "scientific_changes": false,
+  "data_root_override": "outputs/ssl_synthetic_localization/ludb_acquisition_v2/data"
+}

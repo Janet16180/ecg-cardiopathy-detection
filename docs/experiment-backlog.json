@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-19",
+  "updated": "2026-10-20",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -1838,12 +1838,10 @@
       "gpu_hours": 0,
       "cpu_hours": 0.1,
       "build_hours": 2,
-      "blocked_by": [
-        "@prospective_regional_projection_protocol"
-      ],
-      "status": "open",
-      "authorized": false,
-      "notes": "Reuse frozen native cache; compare3regional directions anddeclare signs, patient weighting and scale prospectively. Preserve CLUSTER03/05 failed gates. No target-label model selection, new masks or disease-etiology claim."
+      "blocked_by": [],
+      "status": "running",
+      "authorized": true,
+      "notes": "Reuse frozen native cache; compare3regional directions anddeclare signs, patient weighting and scale prospectively. Preserve CLUSTER03/05 failed gates. No target-label model selection, new masks or disease-etiology claim. User authorized 20 October autonomous continuation without a cardiologist; prospective protocol committed before new scores."
     },
     {
       "id": "bank_aggregation_scale_interaction",
@@ -1856,12 +1854,10 @@
       "gpu_hours": 0,
       "cpu_hours": 0.1,
       "build_hours": 2,
-      "blocked_by": [
-        "@prospective_scale_aggregation_protocol"
-      ],
-      "status": "open",
-      "authorized": false,
-      "notes": "Cache-only follow-up; distinguish fixed configuration from re-selection, nine-shot fullpool from independent banks, and correlated support draws from independent samples. Do not select a favorable bank or claim clinical validation."
+      "blocked_by": [],
+      "status": "running",
+      "authorized": true,
+      "notes": "Cache-only follow-up; distinguish fixed configuration from re-selection, nine-shot fullpool from independent banks, and correlated support draws from independent samples. Do not select a favorable bank or claim clinical validation. User authorized 20 October autonomous continuation without a cardiologist; prospective protocol committed before new scores."
     },
     {
       "id": "blinded_evidence_packet_readiness",
@@ -1878,6 +1874,22 @@
       "status": "done",
       "authorized": true,
       "notes": "docs/research/localization/ntt07-blinded-review/results.md. CPUcost includes rounded first-attempt27.90s plus exact repairedwall; excludes tests/audits/build. Technical readiness is not clinical rubric approval or evidence accuracy. Activepacket staysprivate underoutputs/ntt07_blinded_review/layout_v2/reviewer/."
+    },
+    {
+      "id": "contextual_margin_decomposition",
+      "kind": "experiment",
+      "title": "Audit exact contextual beat and token contributions without clinical labels",
+      "question": "Can the unchanged native classifier margin be reconstructed exactly and its support-bank/representation-deletion behavior quantified?",
+      "evidence": "NTT06 retains original dense contextual tokens, automatic QRS coordinates and patient-separated reference banks. Exact algebra can explain downstream score behavior without inventing clinical truth.",
+      "value": 4,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "running",
+      "authorized": true,
+      "notes": "NTT08 protocol915a960 and prospective edge-case clarificationcbec053. Engineering gate only; no pathology localization or causal diagnosis claim."
     }
   ]
 }

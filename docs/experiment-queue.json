@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T23:55:58.340366+00:00",
+  "updated_at_utc": "2026-10-20T19:49:12.213764+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2705,5 +2705,35 @@
     ],
     "package_build_passed": true,
     "integration_verification": "reports/verification/2026-10-19-autonomous.json"
+  },
+  "cluster06_bank_scale": {
+    "status": "protocol_frozen_implementation_in_progress",
+    "authorized": true,
+    "protocol": "docs/research/clustering/cluster06-bank-scale/protocol.md",
+    "output_dir": "outputs/cluster06_bank_scale",
+    "authorization": "User requested autonomous continuation on 20 October 2026, explicitly without cardiologist access.",
+    "publication": "local_only_no_push_no_merge",
+    "clinical_validation": false,
+    "next_action": "Execute only after scientific review and committed implementation, then independently audit and report."
+  },
+  "cluster07_regional_projection": {
+    "status": "protocol_frozen_implementation_in_progress",
+    "authorized": true,
+    "protocol": "docs/research/clustering/cluster07-regional-projection/protocol.md",
+    "output_dir": "outputs/cluster07_regional_projection",
+    "authorization": "User requested autonomous continuation on 20 October 2026, explicitly without cardiologist access.",
+    "publication": "local_only_no_push_no_merge",
+    "clinical_validation": false,
+    "next_action": "Execute only after scientific review and committed implementation, then independently audit and report."
+  },
+  "ntt08_contextual_contributions": {
+    "status": "protocol_frozen_implementation_in_progress",
+    "authorized": true,
+    "protocol": "docs/research/localization/ntt08-contextual-contributions/protocol.md",
+    "output_dir": "outputs/ntt08_contextual_contributions",
+    "authorization": "User requested autonomous continuation on 20 October 2026, explicitly without cardiologist access.",
+    "publication": "local_only_no_push_no_merge",
+    "clinical_validation": false,
+    "next_action": "Execute only after scientific review and committed implementation, then independently audit and report."
   }
 }

@@ -195,7 +195,7 @@ def reverify(config: dict[str, Any], old: dict[str, str], sources: dict[str, str
 
 
 def finish(root: Path, config: dict[str, Any], admission: dict[str, Any], summary: dict[str, Any],
-           clock: dict[str, float], verified: bool, retained_bytes: int) -> None:
+           clock: dict[str, float], verified: bool, retained_bytes: int | None) -> None:
     """Charge measured work after one guarded byte enumeration and a bounded bookkeeping tail."""
     limits = config["resources"]
     summary.update(cpu_seconds=time.process_time() - clock["cpu"],
@@ -206,13 +206,15 @@ def finish(root: Path, config: dict[str, Any], admission: dict[str, Any], summar
              "cpu": summary["cpu_seconds"] < limits["cpu_seconds"],
              "wall": summary["wall_seconds"] < limits["wall_seconds"],
              "rss": summary["peak_rss_bytes"] < limits["rss_bytes"],
-             "output": retained_bytes + 1024**2 < limits["new_output_bytes"]}
+             "output": retained_bytes is not None
+             and retained_bytes + 1024**2 < limits["new_output_bytes"]}
     summary["resource_gates"] = gates
     if not all(gates.values()):
         summary["status"] = "FAIL"
     transport.write_new(root / "summary.json", summary)
     digest = sha256_file(root / "summary.json")
-    retained_bytes += (root / "summary.json").stat().st_size
+    if retained_bytes is not None:
+        retained_bytes += (root / "summary.json").stat().st_size
     cpu, wall = time.process_time() - clock["cpu"], time.monotonic() - clock["wall"]
     gates.update(cpu=cpu < limits["cpu_seconds"], wall=wall < limits["wall_seconds"])
     prior = admission["prior_ledger"]
@@ -291,9 +293,24 @@ def acquire(admission_name: str, start_clock: dict[str, float] | None = None) ->
     except Exception as error:
         summary.update(status="FAIL", error_type=type(error).__name__, error=str(error))
     finally:
-        retained_bytes = transport.directory_bytes(root)
+        retained_bytes = final_enumeration(root, summary, timers)
+    finish(root, config, admission, summary, clock, verified, retained_bytes)
+    return summary
+
+
+def final_enumeration(root: Path, summary: dict[str, Any], timers: dict[int, Any]) -> int | None:
+    """Retain a failure ledger even if a live deadline interrupts the single final byte enumeration."""
+    try:
+        retained = transport.directory_bytes(root)
+        summary["retained_byte_count_exact"] = True
+        return retained
+    except Exception as error:
+        summary.update(status="FAIL", terminal_enumeration_error_type=type(error).__name__,
+                       terminal_enumeration_error=str(error), retained_byte_count_exact=False,
+                       retained_output_upper_bound_bytes=summary.get("storage_bound", {}).get(
+                           "conservative_final_bytes"))
+        return None
+    finally:
         for timer, (signum, previous) in timers.items():
             signal.setitimer(timer, 0)
             signal.signal(signum, previous)
-    finish(root, config, admission, summary, clock, verified, retained_bytes)
-    return summary

@@ -90,3 +90,31 @@ def test_terminal_accounting_does_not_repeat_directory_walk(tmp_path, monkeypatc
     assert ledger["current_machine_stages"] == 22
     assert ledger["current_machine_cumulative_cpu_seconds"] == 10 + ledger["cpu_seconds"]
     assert all(ledger["resource_gates"].values())
+
+
+def test_interrupted_final_enumeration_retains_actual_cost_ledger(tmp_path, monkeypatch):
+    def interrupted_count(root):
+        raise TimeoutError("Artificial final-enumeration deadline")
+
+    monkeypatch.setattr(acquisition.transport, "directory_bytes", interrupted_count)
+    monkeypatch.setattr(acquisition, "to_stored", lambda path: path.name)
+    summary = {"status": "PASS", "received_payload_bytes": 3,
+               "storage_bound": {"conservative_final_bytes": 1000000}}
+    retained = acquisition.final_enumeration(tmp_path, summary, {})
+    assert retained is None
+    assert summary["status"] == "FAIL"
+    assert not summary["retained_byte_count_exact"]
+    assert summary["retained_output_upper_bound_bytes"] == 1000000
+    config = {"resources": {"cpu_seconds": 60, "wall_seconds": 3600, "rss_bytes": 2**40,
+                            "new_output_bytes": 128 * 1024**2, "received_payload_bytes": 64 * 1024**2}}
+    admission = {"prior_ledger": {"current_machine_stages": 21, "sha256": "old",
+                                 "current_machine_cumulative_cpu_seconds": 10.,
+                                 "current_machine_cumulative_gpu_wall_seconds": 20.}}
+    clock = {"cpu": time.process_time(), "wall": time.monotonic()}
+    with pytest.raises(RuntimeError, match="failure"):
+        acquisition.finish(tmp_path, config, admission, summary, clock, True, retained)
+    ledger = json.loads((tmp_path / "prospective_ledger.json").read_text())
+    assert ledger["current_machine_stages"] == 22
+    assert ledger["current_machine_cumulative_cpu_seconds"] == 10 + ledger["cpu_seconds"]
+    assert not ledger["resource_gates"]["output"]
+    assert ledger["output_bytes_before_terminal_ledger"] is None

@@ -1,5 +1,11 @@
 # Experiment queue
 
+20 October: public LUDB qualification protocol/config committed before acquisition or scores.
+The fixed study reserves40parser-only and160measurement records, six phase controls and
+whole-subject bootstrap; independent binary reconstruction is planned. Acquisition is running
+under a separate bounded local-only budget. No LUDB scientific result or new training yet.
+Read [protocol](ssl-synthetic-localization-ludb-qualification-v1.md). PR67 stays draft.
+
 **19 October temporal/lead diagnosis completed and independently verified:** Combined PK versus
 B improves oracle-conditioned temporal AP by0.103622[0.069175,0.140407] and lead-presence AP by
 0.087197[0.052253,0.128440]. Every mode/fit point gain is positive. These are descriptive ranking

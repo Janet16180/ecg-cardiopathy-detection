@@ -1526,7 +1526,7 @@
       ],
       "status": "blocked",
       "authorized": false,
-      "notes": "NTT07 prepared a local30-case blinded development packet and30blankforms, with independent technical audits. There are zero actual clinician annotations and no rubric approval. Actual patient-disjoint expert/adjudication evaluation remains blocked. No recruitment, contact, uploads, data sharing or closed-set access is authorized by this entry."
+      "notes": "NTT07 prepared a local30-case blinded development packet and30blankforms, with independent technical audits. There are zero actual clinician annotations and no rubric approval. Actual patient-disjoint expert/adjudication evaluation remains blocked. No recruitment, contact, uploads, data sharing or closed-set access is authorized by this entry. User confirms20October that no cardiologist is available. Keep independent expert validation unavailable; it does not block bounded score-algebra, reference-uncertainty or public-silver engineering studies."
     },
     {
       "id": "ecg_native_proposal_coverage",
@@ -1836,12 +1836,12 @@
       "value": 4,
       "clarity": 0.75,
       "gpu_hours": 0,
-      "cpu_hours": 0.1,
+      "cpu_hours": 0.02196874432770225,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "running",
+      "status": "done",
       "authorized": true,
-      "notes": "Reuse frozen native cache; compare3regional directions anddeclare signs, patient weighting and scale prospectively. Preserve CLUSTER03/05 failed gates. No target-label model selection, new masks or disease-etiology claim. User authorized 20 October autonomous continuation without a cardiologist; prospective protocol committed before new scores."
+      "notes": "CLUSTER-07 completed; all 432 new fits and nine projections independently reproduced. Primary concordance failed (ARI 0.153181). Regional variance retention rose from 10.79% to 14.41%, but its partition stayed close to patient PCA (ARI 0.94230); heart-rate AMI was 0.40193 versus annotation AMI 0.04781. Greater retained variance does not establish clinical validity."
     },
     {
       "id": "bank_aggregation_scale_interaction",
@@ -1852,12 +1852,12 @@
       "value": 4,
       "clarity": 0.8,
       "gpu_hours": 0,
-      "cpu_hours": 0.1,
+      "cpu_hours": 0.007411493783066463,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "running",
+      "status": "done",
       "authorized": true,
-      "notes": "Cache-only follow-up; distinguish fixed configuration from re-selection, nine-shot fullpool from independent banks, and correlated support draws from independent samples. Do not select a favorable bank or claim clinical validation. User authorized 20 October autonomous continuation without a cardiologist; prospective protocol committed before new scores."
+      "notes": "CLUSTER-06 completed; an independent audit reproduced all 549 fits and 183 equivalence controls. Primary regional tied-GMM RMS p10 ARI rose from 0.587342 to 0.841567 (+0.254224). Transformed covariance floors reproduce raw geometry. Secondary record RMS p10 worsened from 0.486084 to 0.385814. These are conditional finite-pool findings; original negative concordance and clinical limits remain."
     },
     {
       "id": "blinded_evidence_packet_readiness",
@@ -1884,12 +1884,64 @@
       "value": 4,
       "clarity": 0.9,
       "gpu_hours": 0,
-      "cpu_hours": 0.1,
+      "cpu_hours": 0.0016159334068652242,
       "build_hours": 3,
+      "blocked_by": [],
+      "status": "done",
+      "authorized": true,
+      "notes": "NTT-08 completed; all 180 decompositions and 54,000 random deletions independently reconstructed. Engineering gate passed. Median effective beat fraction was 0.9662; same-contrast bank pairs had patient-first median top-quarter Jaccard 0.3333. This explains contextual scores without clinical interval truth."
+    },
+    {
+      "id": "reference_contribution_averaging",
+      "kind": "experiment",
+      "title": "Test reference averaging for fixed-contrast contribution ranking stability",
+      "question": "Does averaging references improve agreement of contextual beat contributions when the finding contrast is fixed?",
+      "evidence": "NTT-08 exact contributions are diffuse and reference-sensitive even for the same finding contrast. CLUSTER-06 improves regional clustering stability, but has not evaluated contribution rankings.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 2,
       "blocked_by": [],
       "status": "running",
       "authorized": true,
-      "notes": "NTT08 protocol915a960 and prospective edge-case clarificationcbec053. Engineering gate only; no pathology localization or causal diagnosis claim."
+      "notes": "NTT-09 protocol preparation follows NTT-08 audit. Freeze the full nine-support contrast; require pair coverage separately in every patient. No scores before reviewed protocol and source commits."
+    },
+    {
+      "id": "regional_nuisance_sensitivity",
+      "kind": "experiment",
+      "title": "Characterize rate-associated geometry with label-blind conditional controls",
+      "question": "Which geometric associations remain after an explicitly bounded conditional nuisance sensitivity analysis?",
+      "evidence": "CLUSTER-07 regional covariance groups retain heart-rate AMI 0.40193 and annotation AMI 0.04781 despite greater regional variance retention.",
+      "value": 3,
+      "clarity": 0.65,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 2,
+      "blocked_by": [
+        "@prospective_nuisance_protocol"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": "Do not infer causal rate confounding or recommend removing clinically useful rate information. A new protocol and source commit are required; this has not run."
+    },
+    {
+      "id": "fixed_budget_ensemble_size",
+      "kind": "experiment",
+      "title": "Compare ensemble sizes under a fixed reference-computation budget",
+      "question": "How does support averaging trade stability against reference-evaluation cost?",
+      "evidence": "CLUSTER-06 averaging improves the primary regional condition but worsens lower-tail agreement for the record RMS condition.",
+      "value": 3,
+      "clarity": 0.7,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 2,
+      "blocked_by": [
+        "@prospective_fixed_budget_protocol"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": "Keep finite-pool dependence, distinct support patients and equal computation budgets explicit. No new experiment is automatically scheduled."
     }
   ]
 }

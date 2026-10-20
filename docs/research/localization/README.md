@@ -46,3 +46,7 @@ failure and the exact same selected patients. The [semantic guide](ntt07-blinded
 and [forward strict import policy](ntt07-blinded-review/strict-import-policy.md) preserve signal,
 coordinate, provenance and alternative-evidence semantics. No human annotations or clinical
 localization score exist; clinician rubric approval and actual review remain pending.
+
+## Explanations without new clinical annotations
+
+[NTT-08](ntt08-contextual-contributions/results.md) independently reconstructs exact signed contextual beat and unique-token contributions to all 180 original classifier margins. Contributions are distributed across beats and their rankings vary with the reference bank even for the same finding contrast. Cached representation deletion tests model response, without clinical interval truth or a waveform intervention. The user confirms that a cardiologist is unavailable; clinical review remains pending rather than assumed.

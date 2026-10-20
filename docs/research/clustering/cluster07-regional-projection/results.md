@@ -141,3 +141,5 @@ omit those payloads from tracked aggregates. The coordinator owns queue/backlog 
 separately frozen follow-up is a label-blind conditional nuisance-sensitivity control that explicitly
 preserves the distinction between rate association and disease information; this report does not
 authorize it or recommend removing heart-rate signals from a clinical model.
+
+An independent agent subsequently reconstructed all nine weighted projection transforms and all 432 new fits. Basis and coordinate error was zero; variance-retention error was at most 9.72e-17. Labels, model diagnostics, selection, primary decision and all three selected annotation/nuisance tables reproduced exactly. The unchanged predecessor replay was checked against the previously independently audited CLUSTER05 receipt; its 1,440 old models were not refitted again by this auditor. The aggregate-safe [verification receipt](../../../../reports/clustering/cluster07-regional-projection/verification.json) records these checks.

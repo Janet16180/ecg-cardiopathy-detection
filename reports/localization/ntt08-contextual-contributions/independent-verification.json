@@ -1,0 +1,50 @@
+{
+  "study": "NTT-08",
+  "status": "passed",
+  "independent_implementation": true,
+  "counts": {
+    "records": 87,
+    "descriptors": 348,
+    "target_bank_evaluations": 180,
+    "random_subsets": 54000,
+    "selected_subsets": 540,
+    "bank_pairs": 180
+  },
+  "verification": {
+    "all_bound_source_input_artifact_hashes_verified": true,
+    "repository_source_commit_and_external_source_bindings_verified": true,
+    "whole_patient_training_roles_and_fold_exclusion_verified_before_dense_payload": true,
+    "all_four_original_descriptors_reconstructed": true,
+    "all_six_native_score_methods_and_choices_reconstructed": true,
+    "historical_predictions_and_summary_reproduced": true,
+    "saved_native_bootstrap_summary_reproduced_exactly": true,
+    "all_unique_token_coordinates_and_occupancy_weights_verified": true,
+    "all_region_and_aggregate_normalizers_verified": true,
+    "signed_beat_and_unique_token_decompositions_reconstructed": true,
+    "all_single_selected_and_random_deletions_reconstructed": true,
+    "bank_eligibility_and_patient_first_summaries_reconstructed": true,
+    "public_fields_selected_explicitly": true,
+    "waveform_reads": 0,
+    "new_encoder_inferences": 0
+  },
+  "maximum_absolute_errors": {
+    "original_descriptors": 2.220446049250313e-16,
+    "original_native_scores": 4.440892098500626e-16,
+    "independent_native_summary": 2.7755575615628914e-17,
+    "original_coordinates": 0,
+    "decomposition_arrays": 4.440892098500626e-16,
+    "beat_sum_to_margin": 9.992007221626409e-16,
+    "unique_token_sum_to_margin": 9.43689570931383e-16,
+    "aggregate_normalizer": 1.7763568394002505e-15,
+    "all_intervention_values": 3.885780586188048e-16,
+    "bank_consistency": 0,
+    "patient_first_aggregate": 2.1316282072803006e-14
+  },
+  "limits": [
+    "Historical replay and bootstrap summary reuse frozen predecessor helpers.",
+    "Exact score algebra does not validate pathology localization or independent clinical evidence."
+  ],
+  "result_sha256": "0d137e4f8618a99f2d6994179b9ff5b1b3de0d82e309fd6ab4d915d5a3001058",
+  "source_commit": "9cb711e19d8e7567d23175bbc94b0a93fcf3e339",
+  "private_audit_sha256": "6de315167060d4f5cd889c246d31a17fcfda33792390d87890a1f04c21a1ff7a"
+}

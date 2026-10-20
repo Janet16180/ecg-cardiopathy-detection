@@ -38,3 +38,7 @@ assignment persistence. This does not reverse CLUSTER-03 or establish clinical d
 [CLUSTER-05](cluster05-matched-controls/results.md) completes the separately frozen dimension,
 regional-pooling and scalar-scale comparison. Its matched concordance gate fails, and fixed-GMM
 posthoc checks expose numerical-scale dependence. Neither result supplies clinical evidence masks.
+
+## Averaging and projection controls
+
+[CLUSTER-06](cluster06-bank-scale/results.md) confirms a conditional averaging benefit for the fixed regional configuration and reconstructs raw fits under the correctly transformed covariance floor. Its secondary record condition worsens after averaging. [CLUSTER-07](cluster07-regional-projection/results.md) fits directions to equal-patient regional covariance, retaining more regional variance while failing the same native-versus-NTT concordance gate. Both studies are independently reconstructed; neither establishes disease categories.

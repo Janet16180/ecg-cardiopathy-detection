@@ -64,5 +64,14 @@
     "reset_or_skip_prior_cost_allowed": false
   },
   "required_narrow_failure_audit_ledger_sha256": "2fe1c2a450d72c42223af87a4014fdde20064fd5b6474dbd215cb65fad59bb03",
-  "required_v1_failure_ledger_sha256": "e505549b8110b2e4e7dadeca285209b115ffc6e50121d9c6088cbced054130f6"
+  "required_v1_failure_ledger_sha256": "e505549b8110b2e4e7dadeca285209b115ffc6e50121d9c6088cbced054130f6",
+  "read_only_data_alias": {
+    "logical_data_root": "data/raw/ludb/1.0.1/data",
+    "actual_output_target": "outputs/ssl_synthetic_localization/ludb_acquisition_v3/data",
+    "isolated_worktree_equivalent_allowed": true,
+    "preserve_pointer_directories": true,
+    "stage_symlink": false,
+    "write_through_alias": false,
+    "identity_only_main_admission_override": true
+  }
 }

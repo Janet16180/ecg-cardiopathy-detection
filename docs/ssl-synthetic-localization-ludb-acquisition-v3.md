@@ -71,6 +71,12 @@ The eventual qualification identity-only admission may use verified v3data and a
 with the explicit source-pointer override of earlier transport amendments. Its immediate prior is
 the latest completed acquisition audit ledger. This changes only transport provenance/accounting,
 not records, labels, scientific scores, main/audit budgets or closed-test restrictions. All data,
-archive bytes and receipts remain local under baseline outputs; any raw-data symlink is untracked
-and created beside tracked pointers. The other checkout remains read-only except for its permitted
+archive bytes and receipts remain local under baseline outputs. After asset verification, permit
+the read-only-use alias `baseline/data/raw/ludb/1.0.1/data` pointing to
+`baseline/outputs/ssl_synthetic_localization/ludb_acquisition_v3/data`, and an equivalent source-
+subfolder alias in the isolated worktree. Preserve all pointer-containing parent directories and
+never stage raw-data symlinks. The qualification identity-only admission may set logical
+`data_root=data/raw/ludb/1.0.1/data` while explicitly binding its actual output target and each
+asset hash. This is an identity-only raw-source alias, not a scientific config change; never write
+through it or modify its source during analysis. The other checkout remains read-only except for its permitted
 shared raw paths, and no write there is authorized.

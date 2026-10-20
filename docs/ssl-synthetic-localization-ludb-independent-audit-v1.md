@@ -27,10 +27,12 @@ not independent observations. Check exact finite 12-by-5000 geometry at 500 Hz.
 
 Reconstruct the frozen float64 activity score: prepend-first difference, square, twenty-sample
 uniform convolution in numpy same mode over the full record, divide by maximum if positive,
-then crop to the annotation envelope. Compute AP independently by descending equal-score
+then crop to the annotation envelope. Parser-role records receive coverage/structural checks
+only, with no AP or shifted-control score. Compute measurement AP independently by descending equal-score
 tie groups. Shift the cropped score circularly by floor(length*f) at fixed fractions .17,.31,
 .43,.59,.71,.83 and average the six APs. Compare every observed/control AP, mean and gain,
-wave count, offset and role. Use absolute 1e-12 numeric tolerance, exact identity/count/order
+wave count, offset and role: 2,400 structural/coverage rows and 1,920 scored measurement rows.
+Use absolute 1e-12 numeric tolerance, exact identity/count/order
 checks, finite values and an eight-float64-epsilon AP admission envelope without clipping.
 
 Average twelve leads equally within record and 160 measurement records equally. Reconstruct
@@ -49,7 +51,7 @@ Raw download/setup and development costs must be separately disclosed if not in 
 accounting; they cannot silently vanish or be presented as scientific operation time.
 
 One CPU numerical thread, hidden CUDA, no GPU or network during audit. Independent caps:
-900 CPU seconds, 1200 wall seconds, 256 MiB new audit artifacts; source/read-only raw assets
+600 CPU seconds, 1200 wall seconds, 2 GiB peak RSS, 128 MiB new audit artifacts; source/read-only raw assets
 and existing main outputs are excluded from new-artifact storage. Report peak RSS separately.
 Reserve five CPU/wall seconds and 2 MiB for terminal success/failure receipts and ledger.
 Stop with an immutable failure receipt on unexpected exception or cap breach; no unrecorded

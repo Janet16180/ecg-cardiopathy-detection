@@ -1,0 +1,170 @@
+{
+  "study": "ssl_synthetic_ludb_qualification_v1",
+  "protocol": "docs/ssl-synthetic-localization-ludb-qualification-v1.md",
+  "dataset": {
+    "name": "LUDB",
+    "version": "1.0.1",
+    "metadata_url": "https://physionet.org/content/ludb/1.0.1/",
+    "file_base_url": "https://physionet.org/files/ludb/1.0.1/",
+    "record_ids": {
+      "first": 1,
+      "last_inclusive": 200
+    },
+    "parser_role": "record_id % 5 == 0",
+    "measurement_role": "record_id % 5 != 0",
+    "parser_records": 40,
+    "measurement_records": 160,
+    "sample_rate_hz": 500,
+    "samples": 5000,
+    "leads": [
+      "I",
+      "II",
+      "III",
+      "aVR",
+      "aVL",
+      "aVF",
+      "V1",
+      "V2",
+      "V3",
+      "V4",
+      "V5",
+      "V6"
+    ],
+    "annotation_extensions": [
+      "i",
+      "ii",
+      "iii",
+      "avr",
+      "avl",
+      "avf",
+      "v1",
+      "v2",
+      "v3",
+      "v4",
+      "v5",
+      "v6"
+    ],
+    "parse_diagnosis_comments": false,
+    "parse_ludb_csv": false,
+    "coverage": "first_parsed_wave_onset_through_last_parsed_wave_offset_inclusive",
+    "qrs_mask": "onset_through_offset_inclusive",
+    "permitted_peak_symbols": [
+      "p",
+      "N",
+      "t"
+    ],
+    "omissions_allowed": 0,
+    "archive_url": "https://physionet.org/static/published-projects/ludb/lobachevsky-university-electrocardiography-database-1.0.1.zip",
+    "crosswave_overlap": "next_onset_greater_than_or_equal_previous_offset_shared_endpoint_allowed"
+  },
+  "proxy": {
+    "dtype": "float64",
+    "difference": "np.diff(x, prepend=x[:1])",
+    "energy": "squared_difference",
+    "smoothing_samples": 20,
+    "kernel": "uniform_1_over_20",
+    "convolution": "numpy_same_zero_extension",
+    "normalization": "divide_by_full_record_positive_max_else_all_zero",
+    "annotations_affect_proxy": false
+  },
+  "controls": {
+    "type": "np.roll_within_lead_specific_coverage",
+    "fractions": [
+      0.17,
+      0.31,
+      0.43,
+      0.59,
+      0.71,
+      0.83
+    ],
+    "offset_rule": "floor(coverage_length * fraction)",
+    "aggregate": "mean_of_six_AP_values"
+  },
+  "endpoint": {
+    "metric": "tie_grouped_step_average_precision",
+    "ap_admission_float64_epsilon_units": 8,
+    "clip": false,
+    "lead_weighting": "equal_12",
+    "subject_weighting": "equal_160",
+    "primary": "mean_subject_original_AP_minus_mean_six_shifted_AP",
+    "bootstrap_draws": 2000,
+    "bootstrap_seed": 2026106101,
+    "bootstrap_unit": "whole_released_subject_record",
+    "bootstrap_helpers": [
+      "ecg_experiment.intervals.patient_groups",
+      "ecg_experiment.intervals.patient_resample"
+    ],
+    "percentiles": [
+      2.5,
+      97.5
+    ],
+    "percentile_method": "linear",
+    "minimum_primary_gain": 0.05,
+    "primary_lower_bound_strictly_greater_than": 0.0,
+    "technical_pass_required": true
+  },
+  "predecessor": {
+    "directory": "outputs/ssl_synthetic_localization/generated_temporal_diagnosis_v2",
+    "summary_sha256": "e6897dacd5f4a784ea5a5110af8ce71d2de248f9de1bdf715b36963194fbc3b7",
+    "independent_summary_sha256": "d256bb1290a7edca693492d4f24620ed3513c3b210d03d95588664a9412a11d9",
+    "latest_ledger_sha256": "a5e28f417f3d4d4ea445176149e2812a5efa48f0b7680a4a515cd94d7b518daf",
+    "exact_case_row_contrast_closure": true,
+    "bootstrap_draws": 2000,
+    "bootstrap_seed": 2026105601,
+    "prior_cpu_seconds": 429.49696094999996,
+    "prior_gpu_lock_seconds": 447.98139213304967,
+    "prior_stages": 18
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "gpu_allowed": false,
+    "training_allowed": false,
+    "acquisition": {
+      "download_bytes": 67108864,
+      "wall_seconds": 600,
+      "cpu_seconds": 60,
+      "rss_bytes": 2147483648,
+      "extracted_bytes": 67108864,
+      "connections": 1,
+      "maximum_attempts": 1,
+      "overwrite": false,
+      "maximum_requests": 2,
+      "checksum_manifest_max_bytes": 1048576,
+      "request_policy": "one_official_checksum_manifest_and_one_archive_no_retries"
+    },
+    "main": {
+      "wall_seconds": 1200,
+      "cpu_seconds": 600,
+      "rss_bytes": 2147483648,
+      "new_output_bytes": 268435456
+    },
+    "independent_audit": {
+      "wall_seconds": 1200,
+      "cpu_seconds": 600,
+      "rss_bytes": 2147483648,
+      "new_output_bytes": 134217728
+    }
+  },
+  "figures": {
+    "fixed_overlay_record_ids": [
+      5,
+      10,
+      15,
+      20
+    ],
+    "fixed_overlay_leads": [
+      "II",
+      "V2"
+    ],
+    "selected_by_outcome": false
+  },
+  "output_directory": "outputs/ssl_synthetic_localization/ludb_qualification_v1",
+  "claims": {
+    "public_wave_timing_qualification": true,
+    "disease_region_mask": false,
+    "clinical_validation": false,
+    "generator_physiology_validation": false,
+    "ssl_benefit": false
+  },
+  "acquisition_directory": "outputs/ssl_synthetic_localization/ludb_acquisition_v1"
+}

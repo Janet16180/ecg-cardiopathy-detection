@@ -73,5 +73,23 @@
     "stage_symlink": false,
     "write_through_alias": false,
     "identity_only_main_admission_override": true
+  },
+  "preserved_bindings": {
+    "outputs/ssl_synthetic_localization/ludb_acquisition_v1/summary.json": "f59fc938a23930ecbd30043c15f28a49499a1a8135f7ac35ead68016526de78b",
+    "outputs/ssl_synthetic_localization/ludb_acquisition_v1/prospective_ledger.json": "e505549b8110b2e4e7dadeca285209b115ffc6e50121d9c6088cbced054130f6",
+    "outputs/ssl_synthetic_localization/ludb_acquisition_v1/release.zip.partial": "1bf23aa1ac52cd6ec1205baca4b819c9e2c90842ecd0314c80dd4a48c1b4158f",
+    "outputs/ssl_synthetic_localization/ludb_acquisition_v1/SHA256SUMS.txt": "cccef1f3529519db8f26a333c97a6872a7d0e3e5c64a1448b76b161fd87fb75f",
+    "outputs/ssl_synthetic_localization/ludb_acquisition_v1/independent_failure_audit_v1/summary.json": "b00896ee50f5fc385766990564034774d9d3b0fd0d43f684b8147df2fe169732",
+    "outputs/ssl_synthetic_localization/ludb_acquisition_v1/independent_failure_audit_v1/prospective_ledger.json": "2fe1c2a450d72c42223af87a4014fdde20064fd5b6474dbd215cb65fad59bb03"
+  },
+  "retained_byte_forecast": {
+    "base_bytes": "one_enumeration_after_verified_prefix_and_source_copy",
+    "remaining_archive_bytes": 3857652,
+    "maximum_selective_extract_bytes": 67108864,
+    "receipt_reserve_bytes": 1048576,
+    "must_be_strictly_below_new_output_bytes": true,
+    "terminal_exact_enumerations": 1,
+    "terminal_bookkeeping_reserve_seconds": 2,
+    "terminal_bookkeeping_reserve_bytes": 16384
   }
 }

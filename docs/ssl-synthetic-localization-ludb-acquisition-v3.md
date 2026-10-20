@@ -53,8 +53,13 @@ only hashes/copies opaque bytes; scientific signal decoding waits for its own co
 One connection/GET, no redirects/retries. V3ceilings remain3600wall/60CPU seconds,2GiB peak RSS,
 64MiB newly received network payload,64MiB selectively extracted files and128MiB new retained
 outputs. The copied10,616,832-byte prefix counts toward retained outputs, not new network payload.
-Reserve two seconds and16KiB for terminal ledger assembly; guard streaming, extraction and final
-byte enumeration/hash work. Single numerical thread, CUDA hidden, zero GPU/training/downloaded-model
+Use live CPU/wall/RSS guards and exact transfer/member byte counters without repeatedly walking
+the growing extracted tree. After source/prefix copying, enumerate base bytes once and require
+base+3,857,652remaining archive bytes+64MiB maximum extraction+1MiB receipt reserve<128MiB.
+This conservative bound guards storage during streaming. Enumerate exact retained bytes once at
+completion with process timers still active, including source/input hashing and main receipt work;
+then reserve only two seconds and16KiB for final ledger assembly/serialization. Avoiding repeated
+NFS directory scans changes transport implementation efficiency, not a scientific endpoint. Single numerical thread, CUDA hidden, zero GPU/training/downloaded-model
 work. Measure from source/prefix verification and copying through receipt hashing/retained-byte
 enumeration, disclosing only the bounded final ledger-serialization tail. Preserve partial outputs
 and emit success/failure and additive terminal receipts without overwriting.

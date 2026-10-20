@@ -22,7 +22,10 @@ allows one such request; it does not silently retry or increase the old budget.
 
 ## Exact one-request plan
 
-Use the same official archive URL frozen in the original protocol. New output root is
+Preserve the original official archive URL as source provenance. Send the sole networkGET directly
+to its previously observed frozen final URL `https://physionet.org/content/ludb/get-zip/1.0.1/`.
+Disable automatic redirects and fail on any redirect response, so the oneGET budget counts actual
+wire requests rather than a redirect chain. No newHEAD request. New output root is
 `outputs/ssl_synthetic_localization/ludb_acquisition_v2/`, created exclusively. Before network access,
 verify the complete v1summary, ledger, partial archive and official checksum-manifest bytes against
 this config. Copy the v1prefix and checksum manifest byte-identically into the new root; read v1only.

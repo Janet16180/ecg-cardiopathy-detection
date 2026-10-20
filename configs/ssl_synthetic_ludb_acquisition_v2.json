@@ -58,5 +58,8 @@
     "required_direct_source_predecessor_stage_count": 19,
     "required_lineage": "source_predecessor_ledger_then_actual_narrow_failure_audit_cost_once",
     "reset_or_skip_audit_cost_allowed": false
-  }
+  },
+  "request_url": "https://physionet.org/content/ludb/get-zip/1.0.1/",
+  "allow_redirects": false,
+  "new_head_requests": 0
 }

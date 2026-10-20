@@ -1,10 +1,12 @@
 # Experiment queue
 
-20 October: public LUDB qualification protocol/config committed before acquisition or scores.
-The fixed study reserves40parser-only and160measurement records, six phase controls and
-whole-subject bootstrap; independent binary reconstruction is planned. Acquisition is running
-under a separate bounded local-only budget. No LUDB scientific result or new training yet.
-Read [protocol](ssl-synthetic-localization-ludb-qualification-v1.md). PR67 stays draft.
+20 October: first LUDB acquisition failed its598-second reserved transfer deadline;
+6,291,456archive-prefix bytes and the complete215,460byte official checksum manifest remain local.
+No ECG or annotation content was decoded and no LUDB score exists. Source/protocol were committed
+before this attempt. Independent failure verification and a separately frozen bounded range-resume
+transport successor are being prepared; scientific record roles and endpoints remain unchanged.
+Read [protocol](ssl-synthetic-localization-ludb-qualification-v1.md) and
+[retained acquisition failure](ssl-synthetic-localization-ludb-acquisition-v1-results.md). PR67 stays draft.
 
 **19 October temporal/lead diagnosis completed and independently verified:** Combined PK versus
 B improves oracle-conditioned temporal AP by0.103622[0.069175,0.140407] and lead-presence AP by

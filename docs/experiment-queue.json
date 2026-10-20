@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "public_ludb_prospective_qualification_acquiring",
+    "status": "public_ludb_acquisition_v1_failed_transport_successor_preparing",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Run committed LUDB acquisition and fixed timing qualification with independent reconstruction; retain all failures. No new training, disease-mask claim or closed-test access; PR67 draft.",
+    "next_action": "Preserve LUDB v1 timeout and charge independent cause audit, then commit bounded v2 range-resume transport amendment before its one GET; scientific protocol unchanged and no LUDB scores yet.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2999,7 +2999,7 @@
         "raw_rows_changed": false
       },
       "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md",
-      "next_action": "Run committed LUDB acquisition and fixed timing qualification with independent reconstruction; retain all failures. No new training, disease-mask claim or closed-test access; PR67 draft.",
+      "next_action": "Preserve LUDB v1 timeout and charge independent cause audit, then commit bounded v2 range-resume transport amendment before its one GET; scientific protocol unchanged and no LUDB scores yet.",
       "final_repository_validation": {
         "record_type": "repository_setup_validation_not_scientific_cost",
         "created_at_utc": "2026-10-20T00:40:10.292925+00:00",
@@ -3033,7 +3033,7 @@
     },
     "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md",
     "ludb_public_annotation_qualification_v1": {
-      "status": "protocol_committed_acquisition_running",
+      "status": "v1_acquisition_transport_timeout_no_scores",
       "protocol": "docs/ssl-synthetic-localization-ludb-qualification-v1.md",
       "config": "configs/ssl_synthetic_ludb_qualification_v1.json",
       "protocol_commit": "8214287",
@@ -3043,7 +3043,10 @@
       "training_allowed": false,
       "gpu_allowed": false,
       "clinical_claim": false,
-      "closed_test_access": false
+      "closed_test_access": false,
+      "acquisition_failure_receipt": "outputs/ssl_synthetic_localization/ludb_acquisition_v1/summary.json",
+      "acquisition_failure_receipt_sha256": "f59fc938a23930ecbd30043c15f28a49499a1a8135f7ac35ead68016526de78b",
+      "acquisition_failure_ledger_sha256": "e505549b8110b2e4e7dadeca285209b115ffc6e50121d9c6088cbced054130f6"
     }
   },
   "experiment_041_cpu_screening": {

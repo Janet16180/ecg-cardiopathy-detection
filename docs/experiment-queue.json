@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-20T00:07:57.469878+00:00",
+  "updated_at_utc": "2026-10-20T00:39:37.036570+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2600,7 +2600,7 @@
       "historical_protocol_status": "unexecuted_missing_parent_receipts; superseded_for_this_host_by_separate_standalone_probe"
     },
     "continuation_2026_10_19": {
-      "status": "completed_generation_quality_and_randomized_learning_audited",
+      "status": "complete_generation_localization_and_saved_map_diagnoses_audited",
       "historical_payloads_present": false,
       "history_preserved": true,
       "gpu_access_verified": true,
@@ -2622,7 +2622,7 @@
       "standalone_audit_report": "docs/ssl-synthetic-localization-pretrained-generator-independent-audit-v1-results.md",
       "quality_source_commit": "be9ea5f",
       "quality_execution": "awaiting_final_numerical_source_review_and_actual_path_profile",
-      "verified_current_machine_cpu_seconds": 410.97305985599996,
+      "verified_current_machine_cpu_seconds": 429.49696094999996,
       "verified_current_machine_gpu_wall_seconds": 447.98139213304967,
       "quality_v1_output": "outputs/ssl_synthetic_localization/generated_quality_v1",
       "quality_v1_profile_verdict": "failed_wall_forecast1550.645226>1200; no bank generated",
@@ -2812,7 +2812,7 @@
           "prospective_paired_background_suppression_comparison_if_technically_admitted",
           "rank_next_generation_and_annotation_experiment_from_executed_results"
         ],
-        "current_stage": "prospective_roundoff_recovery_and_failure_verification"
+        "current_stage": "complete_audited_ready_to_publish_draft_pr"
       },
       "generated_seed_replication": {
         "status": "complete_independently_audited",
@@ -2958,7 +2958,7 @@
         "case_endpoint_roundoff_excursions": 1
       },
       "generated_temporal_recovery": {
-        "status": "admission_frozen_source_review",
+        "status": "complete_descriptive_independently_verified",
         "protocol": "docs/ssl-synthetic-localization-temporal-diagnosis-v2.md",
         "configuration": "configs/ssl_synthetic_temporal_diagnosis_v2.json",
         "protocol_commit": "611171d",
@@ -2968,10 +2968,66 @@
         "new_neural_operations": 0,
         "range_tolerance_float64_eps": 8,
         "contrast_definitions_unchanged": true,
-        "scores_computed": false,
+        "scores_computed": true,
         "admission_commit": "ebe4124",
         "admission": "configs/ssl_synthetic_temporal_diagnosis_admission_v2.json",
-        "clarification_commit": "1ab7bc2"
+        "clarification_commit": "1ab7bc2",
+        "technical_gates_passed": 7,
+        "scientific_decision_rule": null,
+        "results_report": "docs/ssl-synthetic-localization-temporal-diagnosis-v2-results.md",
+        "independent_report": "docs/ssl-synthetic-localization-temporal-recovery-independent-audit-v2-results.md",
+        "main_sha256": "e6897dacd5f4a784ea5a5110af8ce71d2de248f9de1bdf715b36963194fbc3b7",
+        "independent_sha256": "d256bb1290a7edca693492d4f24620ed3513c3b210d03d95588664a9412a11d9",
+        "latest_ledger_sha256": "a5e28f417f3d4d4ea445176149e2812a5efa48f0b7680a4a515cd94d7b518daf",
+        "independent_mismatches": 0,
+        "independent_bindings": 129,
+        "independent_scalar_checks": 16758,
+        "main_cpu_seconds": 7.534621212,
+        "audit_cpu_seconds": 10.989279882000002,
+        "gpu_seconds": 0,
+        "oracle_temporal_gain": {
+          "mean": 0.10362229773855484,
+          "ci_low": 0.0691745501918467,
+          "ci_high": 0.1404072442010002
+        },
+        "lead_presence_gain": {
+          "mean": 0.08719738305675806,
+          "ci_low": 0.052252821180555555,
+          "ci_high": 0.12844041935350528
+        },
+        "parent_scientific_failure_preserved": true,
+        "raw_rows_changed": false
+      },
+      "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md",
+      "next_action": "Prospectively qualify public LUDB waveform annotations and a fixed timing measurement before generator expansion. Larger GPU training additionally needs improved whole-stage/persistence profile coverage. No active scientific job; preserve B scientific FAIL, closed tests and draft PR67.",
+      "final_repository_validation": {
+        "record_type": "repository_setup_validation_not_scientific_cost",
+        "created_at_utc": "2026-10-20T00:40:10.292925+00:00",
+        "cpu_tests": {
+          "passed": 1919,
+          "skipped": 6,
+          "warnings": 2,
+          "elapsed_seconds": 136.03,
+          "log": "outputs/ssl_synthetic_localization/autonomous_final_cpu_tests_v1.log"
+        },
+        "ruff": "passed repository-wide ecg_experiment scripts tests conftest.py",
+        "offline_source_and_wheel_build": "passed",
+        "package_inspection": {
+          "sdist_entries": 687,
+          "wheel_entries": 239,
+          "private_artifacts": 0,
+          "new_research_modules_included": true
+        },
+        "frozen_source_checks": {
+          "obligations": 223,
+          "unique_paths": 95,
+          "mismatches": 0,
+          "scope": "source_sha256/core_sha256 path dictionaries in current-machine main/failure receipts"
+        },
+        "original_instruction_md_unchanged": true,
+        "autonomous_final_cpu_tests_v1.log_sha256": "b1eb69613489a9cc63de2881f3a6a513e6fcad18838685ba7bb0db60ad2f4572",
+        "autonomous_package_build_v1.log_sha256": "a0c7f20eb912e23816c215859b095e8f300a775b4c7ea2238b573b6dd1c4b5c9",
+        "data_weight_prediction_artifacts_uploaded": false
       }
     }
   },

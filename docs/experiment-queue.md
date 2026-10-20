@@ -1,5 +1,20 @@
 # Experiment queue
 
+**19 October temporal/lead diagnosis completed and independently verified:** Combined PK versus
+B improves oracle-conditioned temporal AP by0.103622[0.069175,0.140407] and lead-presence AP by
+0.087197[0.052253,0.128440]. Every mode/fit point gain is positive. These are descriptive ranking
+views on spent synthetic backgrounds; true edited leads are provided only to temporal scoring.
+The full parent15-gate rule still FAILS (14passed). Independent reconstruction verifies129bindings,
+16758metric scalars and1536rows with zero mismatches, including fresh full-grid predecessor closure.
+The first diagnostic attempt failed a strict range guard; its costs and all raw values are preserved.
+The separately committed recovery changes only floating-point range admission, with identical rows,
+comparisons and2000crossed draws. Read [results](ssl-synthetic-localization-temporal-diagnosis-v2-results.md),
+[audit](ssl-synthetic-localization-temporal-recovery-independent-audit-v2-results.md) and
+[current handoff](ssl-synthetic-localization-autonomous-handoff-2026-10-19.md).
+All18current-machine stages total429.496961CPU/447.981392GPU-lockseconds. No scientific job in this stream remains
+running. Next priority is prospective public-wave annotation/timing qualification; no clinical or
+real-disease localization is established. PR67 stays draft.
+
 **19 October paired/background suppression executed and audited:** The fixed four-arm, three-fit
 comparison passed9technicalchecks and independent verification (402bindings, zero mismatches),
 but failed its scientific rule:14of15gates passed. PK−B pooledAPgain is0.041908
@@ -12,11 +27,9 @@ Both whole-wall and GPU-lock forecasts underestimated execution; hard caps passe
 current-machine stages total390.154951CPU/447.981392GPU-lock seconds, counting failures once.
 
 The [saved-map temporal/lead diagnosis](ssl-synthetic-localization-temporal-diagnosis-v1.md) was
-committed before reading these outcomes. Its29inputidentityadmission and reviewed source were frozen. The attempted diagnosis saved all1536
-rows but stopped before complete aggregation: one raw sklearn AP is1.0000000000000002, exceeding the strict
-upper bound by one float64ULP. Failure and20.793866CPU seconds are retained; no new GPU work.
-A separately committed roundoff-recovery protocol and failure verification are being prepared.
-No new training, inference or clinical data.
+committed before reading these outcomes. Its first attempt stopped after1536rows at a one-ULP case-AP range excursion. The failed source,
+raw rows and costs are preserved; independent cause verification and separate recovery are now
+complete as recorded above. No new training, inference or clinical data.
 It has no scientific PASS rule and cannot change the preceding failed verdict. PR67 stays draft.
 
 **19 October independent-fit replication executed and audited:** Three new matched fit pairs on

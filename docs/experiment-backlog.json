@@ -1720,17 +1720,32 @@
       "kind": "experiment",
       "title": "Separate temporal ranking from lead selection in saved generated ECG maps",
       "question": "Does PK versus B improve within-lead temporal ranking conditional on known edited leads, and lead-presence ranking?",
-      "evidence": "Protocol ec86255 frozen before B outcomes; identity-only admission7642810 binds29audited saved files. B14/15scientificFAIL preserved.",
+      "evidence": "C1 strict-range failure preserved; prospectively frozen C2 raw-row recovery independently verified0mismatches. Oracle temporal PK−B+.103622[.069175,.140407], leadpresence+.087197[.052253,.128440]; no scientificPASS or BFAILrescue. docs/ssl-synthetic-localization-temporal-diagnosis-v2-results.md.",
       "value": 4,
       "clarity": 0.9,
       "gpu_hours": 0,
-      "cpu_hours": 0.1,
+      "cpu_hours": 0.010928336198888888,
       "build_hours": 1,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "All4arms/3fits/64spentbackgrounds and6fixeddescriptivecontrasts reported. All1536rawrows byte-identical, onecaseendpoint/fiveleadAP roundoff excursions unchanged. Main+audit+failedattempt+causeaudit39.342010316CPU/GPU0; implementationtime estimated, not measured. Oracle true-lead scoring and dependent canonicalleads; no onset/offset or realdiseasevalidation."
+    },
+    {
+      "id": "ssl_synthetic_profile_wall_coverage",
+      "kind": "repo",
+      "title": "Measure omitted persistence and whole-stage overhead before larger generated ECG training",
+      "question": "Can a conservative actual-path estimate cover map persistence, receipt hashing and whole-stage overhead as well as optimizer updates?",
+      "evidence": "Both A whole-wall and B whole-wall/GPU-lock estimates were optimistic despite matching per-update persistence in B. Hard caps passed; Bactual388.866525wholewall/269.419471GPU-lock versus forecasts203.665759/190.159490seconds.",
+      "value": 4,
+      "clarity": 0.9,
+      "gpu_hours": 0.03,
+      "cpu_hours": 0.03,
+      "build_hours": 1.5,
       "blocked_by": [
-        "@temporal_diagnosis_source_review_and_independent_checker"
+        "@prospective_profile_coverage_protocol_before_any_larger_fit"
       ],
-      "status": "protocol_frozen",
-      "notes": "Descriptive six crossed contrasts; no newPASS, inference, fitting, clinicalrecords or coefficientsearch. Oracle active-lead scoring is not deployableperformance; derivedleads dependent."
+      "status": "proposed",
+      "notes": "Use new files only; preserve frozen profiles/forecastmisses. Include mapflush and all recurring I/O/bookkeeping plus a conservative overhead term, retain livecaps and sharedGPUlock. This supports the generator/localization objective; no new classification benchmark."
     }
   ]
 }

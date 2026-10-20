@@ -1,12 +1,18 @@
 # Experiment priorities
 
-19 October synthetic-generation continuation: the public Pulse2Pulse bank and randomized-support
-learning are executed and independently verified. Correct supervision improves introduced-change
-AP, with modest absolute ranking and concentrated control activations. Read the [current handoff](ssl-synthetic-localization-continuation-2026-10-19.md).
-Saved-map diagnosis is now independently verified: persistent background ranking accompanies the
-learning gain; see the [diagnostic report](ssl-synthetic-localization-control-diagnosis-v1-results.md).
-Independent fit replication, a later paired-background objective comparison and public annotation
-qualification are ranked below. No further fit is running and no clinical localization is established.
+19 October autonomous synthetic-generation/localization continuation is executed and independently
+audited. Three new fit pairs replicate learning; the paired/suppression four-arm comparison exposes
+an AP/control-peak tradeoff and fails its complete15-gate rule (14passed). Saved-map diagnosis finds
+both oracle-conditioned temporal and lead-ranking improvements without changing that failed verdict.
+The first diagnostic's roundoff failure and separate recovery remain fully preserved. Read the
+[current handoff](ssl-synthetic-localization-autonomous-handoff-2026-10-19.md) and
+[latest results](ssl-synthetic-localization-temporal-diagnosis-v2-results.md).
+
+Next scientific priority is public LUDB waveform-annotation/timing qualification before expanding
+the generator family. Those released wave annotations do not label regional disease. Larger GPU
+training additionally needs prospective coverage of map persistence and whole-stage overhead after
+optimistic wall forecasts. Both are ranked below; no new scientific job is scheduled. Clinical
+labels and closed tests remain unchanged; PR67 stays draft.
 
 Latest localization finding (18 October 2026): the audited paired-loss factorial improved direct
 edited AP by 0.06049, with all twelve engineering guards passing. Gains are concentrated in focal
@@ -116,14 +122,14 @@ penalty; one that ranks high earns a protocol like any other.
 | 34 | report_alignment | experiment | ECG-report alignment with PTB-XL cardiologist reports | 2 | 0.3 | 25.0 | 0.12 | - |
 | 35 | cpc_simdino_resource_plan040 | repo | Prospective resource plan for the fixed Transformer objective factorial | 3 | 0.9 | 0.6 | 3.49 | @fresh_compute_budget_authorization |
 | 36 | final_frozen_test | experiment | One-time confirmatory test of the frozen pipeline on untouched data | 5 | 0.9 | 3.0 | 3.12 | @user_freeze_decision |
-| 37 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
-| 38 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
-| 39 | ssl_synthetic_factorial_mode_diagnostic | experiment | Explain the focal benefit and repeated-edit tradeoff using saved maps | 3 | 0.8 | 1.5 | 2.06 | @prospective_saved_map_diagnostic_protocol |
-| 40 | ssl_synthetic_public_annotation_qualification | repo | Qualify public expert wave annotations for timing-anchor checks | 4 | 0.8 | 2.7 | 1.95 | @prospective_public_annotation_download_and_overlap_policy |
-| 41 | wave_grounding_context_control | repo | Qualify time-grounding semantics and strong context/option controls | 4 | 0.7 | 2.1 | 1.93 | @prospective_time_grounding_qualification |
-| 42 | ssl_synthetic_factorial_seed_replication | experiment | Replicate the fixed paired-loss factorial under independent training randomness | 4 | 0.8 | 3.4 | 1.75 | @prospective_replication_protocol_and_actual_profile, @storage_plan_within_4GiB |
-| 43 | ssl_synthetic_annotation_audit | repo | Technical audit of ECGAD development labels | 4 | 0.8 | 3.5 | 1.71 | @ecgad_development_artifacts |
-| 44 | ssl_synthetic_generated_paired_suppression | experiment | Attribute paired learning and background suppression in generated ECG localization | 4 | 0.8 | 3.5 | 1.70 | @paired_suppression_identity_admission_source_review_and_actual_profile |
+| 37 | ssl_synthetic_profile_wall_coverage | repo | Measure omitted persistence and whole-stage overhead before larger generated ECG training | 4 | 0.9 | 1.6 | 2.88 | @prospective_profile_coverage_protocol_before_any_larger_fit |
+| 38 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
+| 39 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
+| 40 | ssl_synthetic_factorial_mode_diagnostic | experiment | Explain the focal benefit and repeated-edit tradeoff using saved maps | 3 | 0.8 | 1.5 | 2.06 | @prospective_saved_map_diagnostic_protocol |
+| 41 | ssl_synthetic_public_annotation_qualification | repo | Qualify LUDB public wave annotations for ECG timing measurements | 4 | 0.8 | 2.7 | 1.95 | @prospective_public_annotation_download_and_overlap_policy |
+| 42 | wave_grounding_context_control | repo | Qualify time-grounding semantics and strong context/option controls | 4 | 0.7 | 2.1 | 1.93 | @prospective_time_grounding_qualification |
+| 43 | ssl_synthetic_factorial_seed_replication | experiment | Replicate the fixed paired-loss factorial under independent training randomness | 4 | 0.8 | 3.4 | 1.75 | @prospective_replication_protocol_and_actual_profile, @storage_plan_within_4GiB |
+| 44 | ssl_synthetic_annotation_audit | repo | Technical audit of ECGAD development labels | 4 | 0.8 | 3.5 | 1.71 | @ecgad_development_artifacts |
 | 45 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
 | 46 | measurement_multisource_training | experiment | Human-read multisource training for the CPU measurement screen | 4 | 0.8 | 4.0 | 1.60 | @prospective_multisource_protocol, @local_challenge_training_manifests |
 | 47 | lead_grounding_membership_followup | experiment | Prospective exact-membership test of frozen lead-grounding models | 3 | 0.6 | 1.6 | 1.45 | @prospective_membership_protocol_and_patient_role |
@@ -132,84 +138,6 @@ penalty; one that ranks high earns a protocol like any other.
 | 50 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
 | 51 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
 | 52 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
-
-Reruns after Ningbo (`rerun_of` in the backlog): 022 as `ningbo_sph_transfer`, 024 as `rerun_024_multisource`,
-025 as `rerun_025_ningbo`, 026 as `multisource_normal_manifold` and 027 as `multisource_calibration`. 023 is
-not affected (echo labels). Both blockers (`ningbo_eda`, `challenge_label_mapping`) were closed by PR #20 on 29 September 2026.
-`multisource_calibration` is done as [Experiment 027b](experiment-027b-multisource-calibration-results.md): pooling
-hospitals for calibration did not restore 95% sensitivity at SPH, which leaves `site_recalibration` first.
-`multisource_normal_manifold` is done as [Experiment 026b](experiment-026b-multisource-normal-manifold-results.md):
-fitting the distance from normal on several hospitals' normals raised SPH AUROC (xECG 0.858 to 0.878) but closed
-only about a third of the gap to the supervised probe.
-`ningbo_sph_transfer` and `multisource_lso` are done together as
-[Experiment 022b](experiment-022b-multisource-readout-results.md): the readout fitted on PTB-XL plus the
-Challenge training groups raised SPH AUROC (xECG 0.915 to 0.939), with Ningbo carrying about half of it, but
-its threshold calibrated on the same hospitals did not transfer.
-`rerun_025_ningbo` is done as [Experiment 025b](experiment-025b-label-efficiency-multisource-results.md):
-pooled PTB-XL and Challenge label draws raise SPH AUROC by about 0.02 at every budget, but the xECG draws
-miss the 90% rule at 250 and 1,000 labels, so the decision is `mixed`; the encoder ranking holds. Its
-home-site cost on the hard added subset is the new candidate `label_harmonization_hard_subset`.
-Later reruns reuse the frozen [Challenge record split](challenge-splits-v1.md).
-`rerun_024_multisource` is done as [Experiment 024b](experiment-024b-multisource-geometry-results.md): with four
-hospitals, JEPA and xECG clusters follow diagnosis more than hospital, though a probe still names the hospital
-(AUROC 0.93-0.95); 024's device-over-diagnosis pattern was CPC-specific, so `device_control` lost value.
-`site_recalibration` and `local_normal_manifold` are done as
-[Experiment 029](experiment-029-local-adaptation-results.md): a guaranteed 95% sensitivity at a new site needs at
-least 45 local positives and then refers about half or more of normals, and local normals add almost nothing to
-the normal reference. `stable_threshold` is dropped as superseded by 029.
-`referral_budget_operating_point` is done as [Experiment 030](experiment-030-referral-budget-results.md): a
-threshold at a fixed share of local normals catches about 78% of abnormal SPH ECGs at a 5% budget (91
-referrals per 1,000 at 5% prevalence), and about 1,000 local normals hold the budget within ±1 point in 9 of
-10 pilots; other hospitals' normals miss it by a factor of up to four. `hybrid_screening_score` should be judged
-at these budgets; the distance score alone trails the readout by 0.19 sensitivity at 5%.
-`cohorts_v4_echonext` is done as [cohorts v4](clean-cohorts-v4.md): the 71,823 usable EchoNext training ECGs
-enter after the curated sources, so 25k and 50k equal v3 and the 100k and 200k tiers hold no MIMIC.
-`cohorts_v3_cpc_caches` and `pretraining_scaling_curve_v3` now carry a note on the choice between v3 and v4.
-`echonext_rows_v2` is done as [clean EchoNext v2](clean-echonext-v2.md): it adds `most_recent_ecg` and a
-separate `use_evaluation` that keeps the 60 noise-dominated ECGs, and its cohort entry gate passed.
-
-New on 29 September 2026, after 029:
-- `referral_budget_operating_point` (first): set the threshold by a referral budget, fitted on local normals
-  only, which a mostly healthy student pilot can supply.
-- `hybrid_screening_score` raised in value, to be judged at the same budgets.
-- `rhythm_findings_detector`: the rhythm findings the athlete criteria call abnormal and our label ignores.
-- `normal_manifold_novelty_search` and `challenge_data_quality_note`: checks before claiming the two candidate
-  paper findings.
-- `final_frozen_test`: one confirmatory run on the untouched PTB-XL test and Challenge test groups, after the
-  operating-point rule is chosen.
-- Waiting on the cardiologist: `student_criteria_label`, `young_subgroup_readout`; waiting on clinic ECGs:
-  `enriched_positive_sensitivity`.
-
-After 030 and the novelty search (29 September 2026): `referral_budget_operating_point` is done as
-[Experiment 030](experiment-030-referral-budget-results.md). A 5% referral budget with 200 local normals catches
-77.5% of abnormal SPH ECGs, conduction findings are most misses, and the rate itself needs 1,000-2,000 local
-normals to hold within one point. `normal_manifold_novelty_search` is done
-([search](normal-manifold-novelty-search.md), verdict partly new) and added six baselines a reviewer would ask
-for, led by `one_class_embedding_baselines`.
-
-After 031, 032 and the code review (29 September 2026): `hybrid_screening_score` is done as
-[Experiment 031](experiment-031-hybrid-screening-score-results.md), negative overall but helpful on held-out
-conditions, which gives `hybrid_rare_conditions`. `rhythm_findings_detector` is done as
-[Experiment 032](experiment-032-rhythm-findings-results.md): the finding heads transfer to SPH, and the binary
-screen misses many PVC and WPW ECGs, which gives `screen_with_finding_heads`. The
-[code review](code-quality-review-2026-09-29.md) adds `shared_intervals_module` and `shared_readout_module`.
-
-After 033-035 (30 September 2026): [033](experiment-033-finding-heads-screen-results.md) adopts the combined
-binary plus PVC/WPW screen; [034](experiment-034-one-class-baselines-results.md) keeps Mahalanobis as the
-normal reference; [035](experiment-035-hard-subset-results.md) explains the hard-subset loss as a normal-label
-mismatch and fixes it by reweighting. `pipeline_v2_rethreshold` recomputes 030 and 033 on the fixed readout and
-defines the candidate for `final_frozen_test`.
-
-Done on 28 September 2026: `e022_sph` (Experiment 022), `label_efficiency` (Experiment 025),
-`fulldev_encoders` (inside 022), `snomed_equivalence` (PR #5), `e024_geometry` (Experiment 024) `calibrated_threshold_sph` (Experiment 027), `e023_echonext` (Experiment 023) and
-`normal_manifold` (Experiment 026) and `echo_label_efficiency` (Experiment 028). Summary: [findings of 28 September](findings-2026-09-28.md).
-
-Dropped: `beat_tokens` (already tested in Experiment 006; the paper's gain is 0.004) and
-`synthetic_references` (training on synthetic PTB-XL ECGs loses about 0.09 AUROC; see the literature review).
-
-The leaders share a pattern. They are cheap, mostly reuse cached features or fix known pipeline gaps, and test
-whether our existing numbers mean what we think. Architecture candidates rank lower because our experiments
-and the papers both find small architecture effects on PTB-XL.
 
 ## Evidence behind the estimates
 

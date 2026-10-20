@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-20T00:39:37.036570+00:00",
+  "updated_at_utc": "2026-10-20T00:43:38.770578+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "public_generator_randomized_localization_and_control_diagnosis_independently_audited",
+    "status": "released_generator_quality_replication_factorial_and_temporal_diagnoses_independently_audited",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Freeze and review independent-fit replication with fresh synthetic evaluation backgrounds, execute admitted GPU paths, independently verify, then continue the next useful prospectively defined generator/localization experiment under measured resources.",
+    "next_action": "Prospectively qualify public LUDB waveform annotations and a fixed timing measurement before generator expansion. Larger GPU training additionally needs improved whole-stage/persistence profile coverage. No active scientific job; preserve B scientific FAIL, closed tests and draft PR67.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2621,7 +2621,7 @@
       "standalone_results": "docs/ssl-synthetic-localization-pretrained-generator-standalone-v1-results.md",
       "standalone_audit_report": "docs/ssl-synthetic-localization-pretrained-generator-independent-audit-v1-results.md",
       "quality_source_commit": "be9ea5f",
-      "quality_execution": "awaiting_final_numerical_source_review_and_actual_path_profile",
+      "quality_execution": "quality_v1_profile_failed_and_retained_quality_v2_completed_independently_audited",
       "verified_current_machine_cpu_seconds": 429.49696094999996,
       "verified_current_machine_gpu_wall_seconds": 447.98139213304967,
       "quality_v1_output": "outputs/ssl_synthetic_localization/generated_quality_v1",
@@ -2812,7 +2812,7 @@
           "prospective_paired_background_suppression_comparison_if_technically_admitted",
           "rank_next_generation_and_annotation_experiment_from_executed_results"
         ],
-        "current_stage": "complete_audited_ready_to_publish_draft_pr"
+        "current_stage": "complete_audited_published_draft_pr"
       },
       "generated_seed_replication": {
         "status": "complete_independently_audited",
@@ -3028,8 +3028,10 @@
         "autonomous_final_cpu_tests_v1.log_sha256": "b1eb69613489a9cc63de2881f3a6a513e6fcad18838685ba7bb0db60ad2f4572",
         "autonomous_package_build_v1.log_sha256": "a0c7f20eb912e23816c215859b095e8f300a775b4c7ea2238b573b6dd1c4b5c9",
         "data_weight_prediction_artifacts_uploaded": false
-      }
-    }
+      },
+      "quality_execution_historical_planning_snapshot": "awaiting_final_numerical_source_review_and_actual_path_profile"
+    },
+    "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md"
   },
   "experiment_041_cpu_screening": {
     "status": "complete_audited",

@@ -12,8 +12,11 @@ Both whole-wall and GPU-lock forecasts underestimated execution; hard caps passe
 current-machine stages total390.154951CPU/447.981392GPU-lock seconds, counting failures once.
 
 The [saved-map temporal/lead diagnosis](ssl-synthetic-localization-temporal-diagnosis-v1.md) was
-committed before reading these outcomes. Its29inputidentityadmission is frozen; source review
-and independent checker preparation continue. No new training, inference or clinical data.
+committed before reading these outcomes. Its29inputidentityadmission and reviewed source were frozen. The attempted diagnosis saved all1536
+rows but stopped before aggregation: one raw sklearn AP is1.0000000000000002, exceeding the strict
+upper bound by one float64ULP. Failure and20.793866CPU seconds are retained; no new GPU work.
+A separately committed roundoff-recovery protocol and failure verification are being prepared.
+No new training, inference or clinical data.
 It has no scientific PASS rule and cannot change the preceding failed verdict. PR67 stays draft.
 
 **19 October independent-fit replication executed and audited:** Three new matched fit pairs on

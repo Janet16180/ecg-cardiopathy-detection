@@ -1,0 +1,31 @@
+{
+  "frozen_config_sha256": "2c0a18e1390ed0e0acdec939f963d826358ba0b3550b14ee1fb02904aaa20b30",
+  "frozen_protocol_sha256": "724b8e3815d19d0d73bb9a105412004dce4ee5a866eac0dd1bbd560ffd3085dc",
+  "source_sha256": {
+    "configs/ssl_synthetic_ludb_acquisition_v3.json": "2c0a18e1390ed0e0acdec939f963d826358ba0b3550b14ee1fb02904aaa20b30",
+    "docs/ssl-synthetic-localization-ludb-acquisition-v3.md": "724b8e3815d19d0d73bb9a105412004dce4ee5a866eac0dd1bbd560ffd3085dc",
+    "ecg_experiment/ssl_synthetic_ludb_acquisition_v3.py": "108b8e3b11b9ae6570315cad9f7755b973954f12e97de907e96a9e5cccb3ec37",
+    "scripts/data/acquire_ssl_synthetic_ludb_v3.py": "8120aecacdcf494babd79fc2e296673e18b323d257d03eb36a40383c749e1f06",
+    "tests/test_ssl_synthetic_ludb_acquisition_v3.py": "f2f0d3d2ee179971936904d1a342ea51fed5536c8f57e27a2465441ade3dae8c",
+    "ecg_experiment/ssl_synthetic_ludb_acquisition_v2.py": "88a788bb873ed91d218e59472b53bd1db9bac17595e1712077e4e7c5e25d4f97",
+    "scripts/data/acquire_ssl_synthetic_ludb_v2.py": "ee409bfa424a3914fb1d6de7230f9a3ab732699093dc690ddaedbdc5a4b0299f",
+    "tests/test_ssl_synthetic_ludb_acquisition_v2.py": "00aa5f2fd1403c11568c2ca8d48b1566dfb09d7bb5dcb14aa78115d07695738c",
+    "ecg_experiment/ssl_synthetic_ludb_acquisition.py": "08870490568fd6988edd2a7a58b1db67dbbf775a349aba613baca9b7bf6ca2ec",
+    "scripts/data/acquire_ssl_synthetic_ludb.py": "0662fd4dddb6f0a80a679c6ffe23db64fa668e04b61ff797481b0ec9c0a481f1",
+    "tests/test_ssl_synthetic_ludb_acquisition.py": "8887af2e6183e6f240ff07af448a82fae6ed3170eeb3d9a17be87aea24f8dc78",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "ecg_experiment/files.py": "d418732520e883994d3b72b064c03174184f606cfea4e166800bf8a096ef985b",
+    "ecg_experiment/__init__.py": "cca26ce1124d553e877ed33383ffaba3af13f89bd6628e7a1b9ca2cc5c1c6a35",
+    "pyproject.toml": "9df6d56e8f27348d067eb0cf3b6506f5efbbc03154b96b6b3987f4bb4854279e",
+    "uv.lock": "20c6e373cba70e7fe859ba59697f6145c34b42418eddc955f82d29a165d5db7c",
+    "docs/ssl-synthetic-localization-ludb-qualification-v1.md": "b10965364936ccf8229590b35ce49aaf536266e13e3f19e6d5280a608647f5b1",
+    "configs/ssl_synthetic_ludb_qualification_v1.json": "d71fa85460e929653d1a26716fc464dc993a1a2b25557e685b2da23f2fbcded3"
+  },
+  "prior_ledger": {
+    "path": "outputs/ssl_synthetic_localization/ludb_acquisition_v2/prospective_ledger.json",
+    "sha256": "9114b01b9e68d1ced6cf9c152014bbfcf4523d437dcff59fed53bcd11a38c833",
+    "current_machine_stages": 21,
+    "current_machine_cumulative_cpu_seconds": 429.84679126699996,
+    "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967
+  }
+}

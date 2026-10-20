@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-19T23:51:00.404122+00:00",
+  "updated_at_utc": "2026-10-20T00:07:57.469878+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2622,8 +2622,8 @@
       "standalone_audit_report": "docs/ssl-synthetic-localization-pretrained-generator-independent-audit-v1-results.md",
       "quality_source_commit": "be9ea5f",
       "quality_execution": "awaiting_final_numerical_source_review_and_actual_path_profile",
-      "verified_current_machine_cpu_seconds": 190.681380118,
-      "verified_current_machine_gpu_wall_seconds": 178.56192114995793,
+      "verified_current_machine_cpu_seconds": 390.154950634,
+      "verified_current_machine_gpu_wall_seconds": 447.98139213304967,
       "quality_v1_output": "outputs/ssl_synthetic_localization/generated_quality_v1",
       "quality_v1_profile_verdict": "failed_wall_forecast1550.645226>1200; no bank generated",
       "quality_v1_failure": "outputs/ssl_synthetic_localization/generated_quality_v1/failure.json",
@@ -2812,7 +2812,7 @@
           "prospective_paired_background_suppression_comparison_if_technically_admitted",
           "rank_next_generation_and_annotation_experiment_from_executed_results"
         ],
-        "current_stage": "paired_suppression_source_and_admission_preparation"
+        "current_stage": "temporal_diagnosis_source_review"
       },
       "generated_seed_replication": {
         "status": "complete_independently_audited",
@@ -2875,7 +2875,7 @@
         }
       },
       "generated_paired_suppression": {
-        "status": "source_reviewed_ready_for_actual_profile",
+        "status": "complete_audited_scientific_rule_failed",
         "protocol": "docs/ssl-synthetic-localization-paired-suppression-v1.md",
         "configuration": "configs/ssl_synthetic_paired_suppression_v1.json",
         "protocol_commit": "4500999",
@@ -2889,7 +2889,7 @@
         "fit_randomness_pairs": 3,
         "primary": "combined PK versus unchanged BCE B",
         "scientific_parameters_selected_from_replication_scores": false,
-        "scores_computed": false,
+        "scores_computed": true,
         "identity_admission_pending": false,
         "actual_path_profile_required": true,
         "independent_audit_required": true,
@@ -2903,7 +2903,42 @@
         "numerical_source_review_passed": true,
         "declared_parent_bindings_verified": 78,
         "profile_R_includes_component_persistence": true,
-        "profile_E_excludes_map_persistence": true
+        "profile_E_excludes_map_persistence": true,
+        "actual_path_profile_passed": true,
+        "scientific_gates_passed": 14,
+        "scientific_gates_total": 15,
+        "failed_gate": "PK_minus_B_direct_AP_repeated_guard",
+        "technical_gates_passed": 9,
+        "independent_mismatches": 0,
+        "independent_bindings": 402,
+        "independent_metric_scalar_checks": 33671,
+        "results_report": "docs/ssl-synthetic-localization-paired-suppression-v1-results.md",
+        "independent_report": "docs/ssl-synthetic-localization-paired-suppression-independent-audit-v1-results.md",
+        "main_sha256": "8850ab4119e9d964aa6177ed33edc93559b810dd96038304da6d364685360111",
+        "independent_sha256": "07f8a0d5a50c57d4355576ee2d24fc552b390ab99be5aed211c83f2f5fedb4bd",
+        "terminal_ledger_sha256": "705cc964022f4f1d78d08d7d1eff75a665f02c150e311dacf2e1c4503ede5496",
+        "main_cpu_seconds": 163.66549794300002,
+        "audit_cpu_seconds": 35.808072573000004,
+        "gpu_lock_wall_seconds": 269.41947098309174,
+        "whole_wall_forecast_underestimated": true,
+        "gpu_lock_forecast_underestimated": true,
+        "clinical_claim": false
+      },
+      "generated_temporal_diagnosis": {
+        "status": "protocol_and_identity_admission_frozen_source_review",
+        "protocol": "docs/ssl-synthetic-localization-temporal-diagnosis-v1.md",
+        "configuration": "configs/ssl_synthetic_temporal_diagnosis_v1.json",
+        "protocol_commit": "ec86255",
+        "admission_commit": "7642810",
+        "admission": "configs/ssl_synthetic_temporal_diagnosis_admission_v1.json",
+        "independent_protocol": "docs/ssl-synthetic-localization-temporal-diagnosis-independent-audit-v1.md",
+        "output_dir": "outputs/ssl_synthetic_localization/generated_temporal_diagnosis_v1",
+        "scores_computed": false,
+        "new_neural_operations": 0,
+        "parent_files": 29,
+        "scientific_decision_rule": null,
+        "primary": "PK minus B temporal AP conditional on true active leads",
+        "no_clinical_claim": true
       }
     }
   },

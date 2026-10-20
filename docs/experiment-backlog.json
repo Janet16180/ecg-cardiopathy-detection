@@ -1705,17 +1705,32 @@
       "kind": "experiment",
       "title": "Attribute paired learning and background suppression in generated ECG localization",
       "question": "Can the fixed paired/suppression package improve direct support ranking and suppress control peaks, and which factor contributes?",
-      "evidence": "Audited replication confirms added-change learning across3fits/fresh64, while controls persist87–92% and highuncalibratedmaxima remain. Fourarm P×K protocol4500999 committedbefore coordinatorreadreplicationoutcomes.",
+      "evidence": "Executed and independently audited;14/15scientificgates=>FAIL. PK−BAPpooled+.041908[.005981,.080065], controlreduction.276235; repeatedguardLB−.011608 fails>−.01. docs/ssl-synthetic-localization-paired-suppression-v1-results.md.",
       "value": 4,
       "clarity": 0.8,
-      "gpu_hours": 0.33,
-      "cpu_hours": 0.2,
+      "gpu_hours": 0.07483874193974771,
+      "cpu_hours": 0.055409325143333334,
       "build_hours": 3,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "All4arms/3fits/42factorialsecondaries retained. Paired learning improves AP but raises control peaks; suppression lowers peaks with AP tradeoff. No arm selection/retuning. Both wallforecasts underestimated actual despite caps pass. Implementation time estimated, not measured."
+    },
+    {
+      "id": "ssl_synthetic_generated_temporal_diagnosis",
+      "kind": "experiment",
+      "title": "Separate temporal ranking from lead selection in saved generated ECG maps",
+      "question": "Does PK versus B improve within-lead temporal ranking conditional on known edited leads, and lead-presence ranking?",
+      "evidence": "Protocol ec86255 frozen before B outcomes; identity-only admission7642810 binds29audited saved files. B14/15scientificFAIL preserved.",
+      "value": 4,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 1,
       "blocked_by": [
-        "@paired_suppression_identity_admission_source_review_and_actual_profile"
+        "@temporal_diagnosis_source_review_and_independent_checker"
       ],
       "status": "protocol_frozen",
-      "notes": "B/P/K/PK,3fixedseedpairs, future64panel,15primaryPKvsBgates plusprespecifiedfactorialsecondaries. No tuning/bestarmselection ornewclinicalmask. Actual recurrentprofile mustinclude matchedperupdateloss/component persistence. Allcapsfixed; scientificcodeintheforward-onlysuccessor."
+      "notes": "Descriptive six crossed contrasts; no newPASS, inference, fitting, clinicalrecords or coefficientsearch. Oracle active-lead scoring is not deployableperformance; derivedleads dependent."
     }
   ]
 }

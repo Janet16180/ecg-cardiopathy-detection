@@ -1,29 +1,32 @@
 # Experiment queue
 
-**19 October independent-fit replication executed and audited:** Three new matched fit pairs on
-64 fresh generated backgrounds pass all18 scientific and11 integrity gates. Mean supervised AP is
-0.114598; gains versus amplitude/permuted targets are +0.090876 [0.054197,0.134239] and
-+0.096733 [0.058458,0.140852]. All individual pooled gains are positive, but modest absolute AP,
-persistent background hotspots and exploratory three-fit uncertainty remain. Both old400-step arms
-reproduced every loss, final model and Adam state exactly. Independent verification reports zero
-mismatches. Read [results](ssl-synthetic-localization-fit-replication-v1-results.md) and
-[audit](ssl-synthetic-localization-fit-replication-independent-audit-v1-results.md). Main+audit used
-145.681616 CPU /140.128610 GPU-lock seconds; cumulative12stage costs are190.681380 CPU /
-178.561921 GPU-lock seconds. Whole-wall actual241.489s exceeded forecast167.774s, within hard caps.
-The four-arm paired/background-suppression [successor](ssl-synthetic-localization-paired-suppression-v1.md)
-was scientifically frozen before these outcomes. Identity admission and source review are complete;
-14 artificial tests pass. Actual-path profiles remain gates before its first scientific fit. No clinical or closed-test claim; PR67 stays draft.
+**19 October paired/background suppression executed and audited:** The fixed four-arm, three-fit
+comparison passed9technicalchecks and independent verification (402bindings, zero mismatches),
+but failed its scientific rule:14of15gates passed. PK−B pooledAPgain is0.041908
+[0.005981,0.080065]; controltop600reduction is0.276235[0.213717,0.352266].
+Repeated-edit AP lower bound−0.011608 fails the frozen−0.01guard. P improves localization
+but worsens peaks; K suppresses peaks with an AP tradeoff. No arm selection or retuning.
+Read [executed results](ssl-synthetic-localization-paired-suppression-v1-results.md) and
+[independent audit](ssl-synthetic-localization-paired-suppression-independent-audit-v1-results.md).
+Both whole-wall and GPU-lock forecasts underestimated execution; hard caps passed. Fourteen
+current-machine stages total390.154951CPU/447.981392GPU-lock seconds, counting failures once.
 
-**19 October autonomous continuation authorized:** The user requested several hours of autonomous
-synthetic-generation/localization work, including recommended steps after independent-fit replication.
-The [replication protocol](ssl-synthetic-localization-fit-replication-v1.md) is committed; final
-source review and artificial tests are in progress. It fixes three new matched fit pairs, exact original training replay,
-64 fresh generated evaluation backgrounds, and the spent 48-background panel as secondary only.
-Both RTX 3090s again passed actual host PyTorch operations under the shared lock; restricted-shell
-visibility is not a GPU failure. No new generator forward, fit or score has started. Actual-path
-profiles, committed protocols, independent review and additive budgets gate each new experiment.
-A later background-suppression comparison will have its own protocol and fresh evaluation policy;
-clinical labels and closed tests remain unchanged. PR #67 stays draft.
+The [saved-map temporal/lead diagnosis](ssl-synthetic-localization-temporal-diagnosis-v1.md) was
+committed before reading these outcomes. Its29inputidentityadmission is frozen; source review
+and independent checker preparation continue. No new training, inference or clinical data.
+It has no scientific PASS rule and cannot change the preceding failed verdict. PR67 stays draft.
+
+**19 October independent-fit replication executed and audited:** Three new matched fit pairs on
+64fresh generated backgrounds pass18scientific and11integritygates. Mean supervised AP0.114598;
+gains against amplitude/permuted targets +0.090876[0.054197,0.134239] and
++0.096733[0.058458,0.140852]. Exact400-step replay and independent audit pass.
+Read [results](ssl-synthetic-localization-fit-replication-v1-results.md). Persistent control
+hotspots and modest absolute localization remain; this is not real disease localization.
+
+**19 October autonomous continuation authorized:** User requested several hours including useful
+recommended successors. Both RTX3090s passed actual host PyTorch operations under the shared
+lock; restricted-shell visibility is not GPU failure. Protocols precede scores, actual profiles
+gate GPU training and every attempt remains local. Clinical labels and closed tests are unchanged.
 
 **19 October saved-map hotspot diagnosis independently verified:** The
 [executed diagnostic](ssl-synthetic-localization-control-diagnosis-v1-results.md) reproduced all

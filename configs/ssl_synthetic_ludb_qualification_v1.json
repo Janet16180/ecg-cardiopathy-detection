@@ -55,7 +55,10 @@
     ],
     "omissions_allowed": 0,
     "archive_url": "https://physionet.org/static/published-projects/ludb/lobachevsky-university-electrocardiography-database-1.0.1.zip",
-    "crosswave_overlap": "next_onset_greater_than_or_equal_previous_offset_shared_endpoint_allowed"
+    "crosswave_overlap": "next_onset_greater_than_or_equal_previous_offset_shared_endpoint_allowed",
+    "wfdb_format": "16",
+    "dat_bytes_per_record": 120000,
+    "optional_header_date_time_tokens": "permitted_but_not_logged_or_analyzed"
   },
   "proxy": {
     "dtype": "float64",
@@ -101,7 +104,8 @@
     "percentile_method": "linear",
     "minimum_primary_gain": 0.05,
     "primary_lower_bound_strictly_greater_than": 0.0,
-    "technical_pass_required": true
+    "technical_pass_required": true,
+    "parser_role_ap_allowed": false
   },
   "predecessor": {
     "directory": "outputs/ssl_synthetic_localization/generated_temporal_diagnosis_v2",
@@ -156,7 +160,8 @@
       "II",
       "V2"
     ],
-    "selected_by_outcome": false
+    "selected_by_outcome": false,
+    "parser_proxy_overlay_timing": "after_measurement_numerical_results_complete_no_parser_AP_or_controls"
   },
   "output_directory": "outputs/ssl_synthetic_localization/ludb_qualification_v1",
   "claims": {

@@ -67,7 +67,10 @@ Read only the WFDB structural header prefix: first line plus exactly twelve sign
 parse, return, log or save demographic/diagnostic comment lines. If WFDB requires a header, create
 a sanitized local structural-only header and use that for decoding. Hashing complete source bytes
 for provenance is permitted and is not diagnosis parsing. Verify500Hz,5000samples,12channels,
-correct data length/gain/baseline and finite physical signals. This study is scale-free; it does not
+the first four header tokens (record ID,12,500,5000), format16 signed little-endian interleaved
+12channel digital samples,120,000-byte `.dat`, finite positive gains/finite baselines and finite
+physical signals. Permit optional WFDB date/time tokens after the first four structural tokens,
+without analysis or logging them. This study is scale-free; it does not
 establish physical calibration of the generator. The canonical order is
 `I,II,III,aVR,aVL,aVF,V1,V2,V3,V4,V5,V6`; map case-insensitively by unique signal name, and pair
 with extension `i,ii,iii,avr,avl,avf,v1,v2,v3,v4,v5,v6` respectively. Never assume file-order agreement
@@ -148,7 +151,8 @@ Read predecessor points/contrasts from admitted saved case rows and reproduce al
 2000draw bounds exactly with seed2026105601, preserving unchanged eight-epsilon convention.
 Do not reopen historical clinical artifacts, another checkout's outputs, waveforms or models.
 The new independent verifier uses separate arithmetic against LUDB digital samples and annotation
-streams, recomputes2400coverage/score-control lead rows and the160-record primary/bootstrap,
+streams, recomputes2400coverage/structural rows (including480parser-role rows),1920measurement
+score/control rows and the160-record primary/bootstrap,
 checks figures/source bindings and additive accounting, and reports every mismatch. Its code and
 budget must be committed before execution. Independent audit includes neither training nor GPU.
 
@@ -171,7 +175,8 @@ release-file identity manifest, exact role IDs, parser/coverage counts, complete
 rows, six control APs,2000bootstrap gains, point/intervals, gate verdicts, resource measurements and
 hash-bound ledgers. Fixed figures: all12lead point comparisons/coverage summaries and waveform/
 annotation/proxy overlays for parser IDs5,10,15,20, leadsII andV2, within their admitted coverage.
-No figure-selection by outcome and no patient identifier beyond public release record ID in local
+Compute these eight parser-role proxy overlays only after primary numerical results are complete;
+never compute parser-role AP or shifted controls. No figure-selection by outcome and no patient identifier beyond public release record ID in local
 artifacts. Git receives only source, protocols, small aggregate reports and audit reports; raw data,
 per-record rows, arrays, figures, predictions and receipts remain local. Runner's results report
 must be written from saved outputs and distinguish measurement qualification from the synthetic

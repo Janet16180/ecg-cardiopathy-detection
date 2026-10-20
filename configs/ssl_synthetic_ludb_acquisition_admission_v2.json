@@ -1,0 +1,32 @@
+{
+  "frozen_config_sha256": "01081a11c44873c3709c762520ea81b230ed913fb5074683a21949d5abc9053f",
+  "frozen_protocol_sha256": "eef42ccf3119d245eacd3b21d162c6328194fcc3a47c3c0a965bf709cb6ba6e3",
+  "source_sha256": {
+    "configs/ssl_synthetic_ludb_acquisition_v2.json": "01081a11c44873c3709c762520ea81b230ed913fb5074683a21949d5abc9053f",
+    "docs/ssl-synthetic-localization-ludb-acquisition-v2.md": "eef42ccf3119d245eacd3b21d162c6328194fcc3a47c3c0a965bf709cb6ba6e3",
+    "ecg_experiment/ssl_synthetic_ludb_acquisition_v2.py": "88a788bb873ed91d218e59472b53bd1db9bac17595e1712077e4e7c5e25d4f97",
+    "scripts/data/acquire_ssl_synthetic_ludb_v2.py": "ee409bfa424a3914fb1d6de7230f9a3ab732699093dc690ddaedbdc5a4b0299f",
+    "tests/test_ssl_synthetic_ludb_acquisition_v2.py": "00aa5f2fd1403c11568c2ca8d48b1566dfb09d7bb5dcb14aa78115d07695738c",
+    "ecg_experiment/ssl_synthetic_ludb_acquisition.py": "08870490568fd6988edd2a7a58b1db67dbbf775a349aba613baca9b7bf6ca2ec",
+    "scripts/data/acquire_ssl_synthetic_ludb.py": "0662fd4dddb6f0a80a679c6ffe23db64fa668e04b61ff797481b0ec9c0a481f1",
+    "tests/test_ssl_synthetic_ludb_acquisition.py": "8887af2e6183e6f240ff07af448a82fae6ed3170eeb3d9a17be87aea24f8dc78",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "ecg_experiment/files.py": "d418732520e883994d3b72b064c03174184f606cfea4e166800bf8a096ef985b",
+    "ecg_experiment/__init__.py": "cca26ce1124d553e877ed33383ffaba3af13f89bd6628e7a1b9ca2cc5c1c6a35",
+    "pyproject.toml": "9df6d56e8f27348d067eb0cf3b6506f5efbbc03154b96b6b3987f4bb4854279e",
+    "uv.lock": "20c6e373cba70e7fe859ba59697f6145c34b42418eddc955f82d29a165d5db7c",
+    "configs/ssl_synthetic_ludb_qualification_v1.json": "d71fa85460e929653d1a26716fc464dc993a1a2b25557e685b2da23f2fbcded3",
+    "docs/ssl-synthetic-localization-ludb-qualification-v1.md": "b10965364936ccf8229590b35ce49aaf536266e13e3f19e6d5280a608647f5b1"
+  },
+  "failure_audit_summary": {
+    "path": "outputs/ssl_synthetic_localization/ludb_acquisition_v1/independent_failure_audit_v1/summary.json",
+    "sha256": "b00896ee50f5fc385766990564034774d9d3b0fd0d43f684b8147df2fe169732"
+  },
+  "prior_ledger": {
+    "path": "outputs/ssl_synthetic_localization/ludb_acquisition_v1/independent_failure_audit_v1/prospective_ledger.json",
+    "sha256": "2fe1c2a450d72c42223af87a4014fdde20064fd5b6474dbd215cb65fad59bb03",
+    "current_machine_stages": 20,
+    "current_machine_cumulative_cpu_seconds": 429.65143504499997,
+    "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967
+  }
+}

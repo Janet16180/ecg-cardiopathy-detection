@@ -26,6 +26,7 @@ from ecg_experiment.synthetic_audit_io import compare_values, file_sha256, read_
 STUDY = "outputs/ssl_synthetic_localization/ludb_qualification_v1"
 CONFIG = "configs/ssl_synthetic_ludb_qualification_v1.json"
 PRIOR_SHA = "a5e28f417f3d4d4ea445176149e2812a5efa48f0b7680a4a515cd94d7b518daf"
+FAILURE_AUDIT_SHA = "2fe1c2a450d72c42223af87a4014fdde20064fd5b6474dbd215cb65fad59bb03"
 OWN_HASHES = dict(zip(
     (
         'ecg_experiment/ssl_synthetic_ludb_audit.py',
@@ -39,6 +40,7 @@ OWN_HASHES = dict(zip(
         'tests/test_ssl_synthetic_ludb_audit.py',
         'docs/ssl-synthetic-localization-ludb-independent-audit-v1.md',
         'docs/ssl-synthetic-localization-ludb-independent-audit-transport-clarification-v1.md',
+        'docs/ssl-synthetic-localization-ludb-independent-audit-chain-amendment-v1.md',
     ),
     (
         '03b6646553b74d2e9a31f5c6f62cd904594962422aeb131b0d5b980cb8d41c46',
@@ -49,9 +51,10 @@ OWN_HASHES = dict(zip(
         '650eb6463bfe48aef307c86ee36145fa302dc3563da373ebff2abedffcef7c09',
         'f74e46cf6d9e1a2a172e3ea218d2e0b2a85f134d0f69b547a48839234d3054fd',
         '14d095ae8e54bf18da09d8b455d06a43f1fe740d7f3b2d3e7f701851cd89d1e6',
-        'a2d0c97f7e651e56fc276cc38808ca248204951a250b9068eb23e4090d0dc5e0',
+        '1741014275504c8412b2c3c46b4f7a0ac722b1e3829fd9292d727c8a6d7bceb7',
         '84a93c194c7a9e77a7f2b95da89d1e3a61ced19d4d42fca12aa6d3ecf9e124e6',
         'd6125806b87692a9512dc612a9388708f8ff90da69b662ef1669ee5dfb85b9f2',
+        '63f9159c8ed4f32beba03c2f79cd287b858e1dfb008f917b182647cbea109d8a',
     ),
     strict=True,
 ))
@@ -70,12 +73,54 @@ def output_bytes(destination: Path) -> int:
                if path.is_file() and not path.is_symlink())
 
 
+def transport_chain(root: Path, admission: dict[str, Any], base: dict[str, Any], base_sha: str) -> int:
+    """Verify every explicitly admitted failed, audited and successful transport stage in order."""
+    chain = admission["transport_chain"]
+    require(isinstance(chain, list) and len(chain) >= 3, "explicit complete transport chain required")
+    previous, previous_sha = base, base_sha
+    for offset, binding in enumerate(chain):
+        version = 1 if offset == 0 else offset
+        relative = f"outputs/ssl_synthetic_localization/ludb_acquisition_v{version}/prospective_ledger.json"
+        if offset == 1:
+            relative = ("outputs/ssl_synthetic_localization/ludb_acquisition_v1/"
+                        "independent_failure_audit_v1/prospective_ledger.json")
+        require(binding["path"] == relative, "exact sequential transport ledger path")
+        path = relative_file(root, relative)
+        require(file_sha256(path) == binding["sha256"], "identity-admitted transport ledger")
+        if offset == 1:
+            require(binding["sha256"] == FAILURE_AUDIT_SHA, "literal executed failure-audit identity")
+        current = read_json(path)
+        require(current["current_machine_stages"] == 19 + offset, "sequential transport stage count")
+        require(current["prior_ledger_sha256"] == previous_sha, "unbroken admitted transport lineage")
+        for suffix in ("cpu_seconds", "gpu_wall_seconds"):
+            field = "current_machine_cumulative_" + suffix
+            require(bool(np.isfinite(current[suffix])) and current[suffix] >= 0,
+                    "finite transport self costs")
+            require(current[field] == previous[field] + current[suffix], "once-only transport accounting")
+        require(current["gpu_wall_seconds"] == 0, "transport has no GPU operation")
+        receipt = read_json(path.parent / "summary.json")
+        require(file_sha256(path.parent / "summary.json") == current["sha256"], "transport receipt binding")
+        if offset == 1:
+            require(receipt["all_passed"] and receipt["mismatch_count"] == 0, "retained narrow audit PASS")
+        else:
+            status = "PASS" if offset == len(chain) - 1 else "FAIL"
+            require(receipt["status"] == status, "preserved failure or final completed release")
+        previous, previous_sha = current, binding["sha256"]
+    require(chain[-1]["path"] == admission["prior_ledger"]["path"]
+            and chain[-1]["sha256"] == admission["prior_ledger"]["sha256"],
+            "main begins after latest fully admitted transport")
+    return len(chain)
+
+
 def accounting(root: Path, study: Path, main: dict[str, Any], admission: dict[str, Any]) -> dict[str, Any]:
     """Verify main and acquisition accounting against the audited temporal predecessor."""
     ledger = read_json(study / "prospective_ledger.json")
     require(ledger["receipt"] == "summary.json", "successful main terminal receipt")
     require(ledger["receipt_sha256"] == file_sha256(study / "summary.json"), "main receipt identity")
     prior_binding = admission["prior_ledger"]
+    require(admission["acquisition_ledger"]["path"] == prior_binding["path"]
+            and admission["acquisition_ledger"]["sha256"] == prior_binding["sha256"],
+            "latest acquisition is the direct main cost predecessor")
     prior_path = relative_file(root, prior_binding["path"])
     require(file_sha256(prior_path) == prior_binding["sha256"] == ledger["prior_ledger_sha256"],
             "main accounting uses admitted acquisition ledger")
@@ -88,20 +133,7 @@ def accounting(root: Path, study: Path, main: dict[str, Any], admission: dict[st
             "literal original current-machine CPU base")
     require(base["current_machine_cumulative_gpu_wall_seconds"] == 447.98139213304967,
             "literal original current-machine GPU base")
-    failed = root / "outputs/ssl_synthetic_localization/ludb_acquisition_v1"
-    previous_base = base
-    previous_hash = PRIOR_SHA
-    for path, stage in ((failed / "prospective_ledger.json", 19),
-                        (failed / "independent_failure_audit_v1/prospective_ledger.json", 20),
-                        (prior_path, 21)):
-        current = read_json(path)
-        require(current["current_machine_stages"] == stage, "ordered failed/audit/recovery stage count")
-        require(current["prior_ledger_sha256"] == previous_hash, "unbroken transport cost lineage")
-        for suffix in ("cpu_seconds", "gpu_wall_seconds"):
-            field = "current_machine_cumulative_" + suffix
-            require(current[field] == previous_base[field] + current[suffix],
-                    "transport stage charged exactly once")
-        previous_base, previous_hash = current, file_sha256(path)
+    chain_count = transport_chain(root, admission, base, PRIOR_SHA)
     for suffix in ("cpu_seconds", "gpu_wall_seconds"):
         field = "current_machine_cumulative_" + suffix
         require(ledger[field] == previous[field] + ledger[suffix], "main charged exactly once")
@@ -119,7 +151,7 @@ def accounting(root: Path, study: Path, main: dict[str, Any], admission: dict[st
             "main_ledger_sha256": file_sha256(study / "prospective_ledger.json"),
             "cpu_through_main": ledger["current_machine_cumulative_cpu_seconds"],
             "gpu_through_main": ledger["current_machine_cumulative_gpu_wall_seconds"],
-            "stages_through_main": 22}
+            "stages_through_main": 19 + chain_count}
 
 
 def acquisition(root: Path, source: Path, admission: dict[str, Any], guard: Any) -> dict[str, Any]:
@@ -131,10 +163,12 @@ def acquisition(root: Path, source: Path, admission: dict[str, Any], guard: Any)
     require(receipt["status"] == "PASS" and receipt["record_files"] == 2800,
             "complete successful acquisition")
     require(receipt["requests"] == 1 and all(receipt["resource_gates"].values()), "bounded acquisition")
-    require(receipt["study"] == "ssl_synthetic_ludb_acquisition_v2", "prospective transport successor")
-    require(receipt["received_payload_bytes"] == 8183028, "exact recovered suffix length")
+    transport_config = read_json(source / "configs" / (receipt["study"] + ".json"))
+    resume = transport_config["resume"]
+    expected_new = resume["expected_complete_bytes"] - resume["prefix_bytes"]
+    require(receipt["received_payload_bytes"] == expected_new, "exact recovered suffix length")
     require(receipt["response"]["status"] == 206 and receipt["response"]["content_range"]
-            == "bytes 6291456-14474483/14474484", "exact prospective partial response")
+            == resume["required_content_range"], "exact prospective partial response")
     for name, digest in receipt["source_sha256"].items():
         require(file_sha256(relative_file(source, name), guard) == digest, "transport committed source")
         snapshot = directory / "source_snapshot" / name
@@ -142,7 +176,8 @@ def acquisition(root: Path, source: Path, admission: dict[str, Any], guard: Any)
             snapshot = directory / "admission_snapshot.json"
         require(file_sha256(snapshot, guard) == digest, "transport source snapshot")
     manifest_path = directory / "SHA256SUMS.txt"
-    require(file_sha256(manifest_path, guard) == receipt["v1_input_sha256"]["SHA256SUMS.txt"],
+    require(file_sha256(manifest_path, guard)
+            == "cccef1f3529519db8f26a333c97a6872a7d0e3e5c64a1448b76b161fd87fb75f",
             "official downloaded checksum manifest identity")
     checksums = {}
     for line in manifest_path.read_text().splitlines():
@@ -163,9 +198,11 @@ def acquisition(root: Path, source: Path, admission: dict[str, Any], guard: Any)
     require(archive_path.stat().st_size == receipt["archive"]["bytes"] == 14474484, "archive declared bytes")
     with archive_path.open("rb") as stream:
         prefix = hashlib.sha256(stream.read(6291456)).hexdigest()
-    require(prefix == receipt["v1_input_sha256"]["release.zip.partial"]
-            == "1bf23aa1ac52cd6ec1205baca4b819c9e2c90842ecd0314c80dd4a48c1b4158f",
+    require(prefix == "1bf23aa1ac52cd6ec1205baca4b819c9e2c90842ecd0314c80dd4a48c1b4158f",
             "completed archive preserves immutable v1prefix")
+    with archive_path.open("rb") as stream:
+        resumed_prefix = hashlib.sha256(stream.read(resume["prefix_bytes"])).hexdigest()
+    require(resumed_prefix == resume["prefix_sha256"], "complete admitted copied prefix unchanged")
     selected, seen = set(), set()
     with zipfile.ZipFile(archive_path) as archive:
         for member in archive.infolist():
@@ -188,6 +225,12 @@ def bindings(root: Path, source: Path, study: Path, main: dict[str, Any],
              admission: dict[str, Any], guard: Any) -> int:
     """Verify all main source snapshots, admitted identities and complete output catalog."""
     checks = 0
+    require(main["source_sha256"][CONFIG]
+            == "d71fa85460e929653d1a26716fc464dc993a1a2b25557e685b2da23f2fbcded3",
+            "unchanged original scientific config")
+    require(main["source_sha256"]["docs/ssl-synthetic-localization-ludb-qualification-v1.md"]
+            == "b10965364936ccf8229590b35ce49aaf536266e13e3f19e6d5280a608647f5b1",
+            "unchanged original scientific protocol")
     for name, digest in main["source_sha256"].items():
         require(file_sha256(relative_file(source, name), guard) == digest, "main current source binding")
         snapshot = study / "source_snapshot" / name
@@ -364,6 +407,12 @@ def run(root: Path, source: Path, admission_name: str, main_sha: str, script_sha
                 "main technical-only admission status")
         require(main["clinical_claim"] is False and main["runtime"]["gpu_used"] is False,
                 "no clinical validity or GPU claim")
+        require(main["runtime"]["training_updates"] == 0, "no training updates")
+        expected_environment = dict.fromkeys(
+            ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"), "1")
+        expected_environment["CUDA_VISIBLE_DEVICES"] = ""
+        compare_values(expected_environment, main["runtime"]["environment"],
+                       "main numerical resource environment")
         size = sum(path.stat().st_size for path in study.rglob("*") if path.is_file()
                    and not path.is_symlink() and "independent_audit_v1" not in path.parts)
         require(size < 256 * 1024**2, "actual complete main artifact ceiling")

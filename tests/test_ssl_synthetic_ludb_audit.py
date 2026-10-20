@@ -136,7 +136,7 @@ def test_whole_record_bootstrap_and_decision():
     assert result["gain_interval"] == pytest.approx([.2, .2])
 
 
-def cost_fixture(tmp_path, monkeypatch):
+def cost_fixture(tmp_path, monkeypatch, transfers=2):
     def save(path, value):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(value))
@@ -147,18 +147,31 @@ def cost_fixture(tmp_path, monkeypatch):
             "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967}
     prior_hash = save(temporal / "independent_audit_v1/prospective_ledger.json", base)
     monkeypatch.setattr(checker, "PRIOR_SHA", prior_hash)
-    parent = tmp_path / "outputs/ssl_synthetic_localization/ludb_acquisition_v1"
-    for path, stage, cpu in ((parent / "prospective_ledger.json", 19, .1),
-                             (parent / "independent_failure_audit_v1/prospective_ledger.json", 20, .02),
-                             (tmp_path / "recovery/prospective_ledger.json", 21, .3)):
+    prefix = tmp_path / "outputs/ssl_synthetic_localization"
+    parent = prefix / "ludb_acquisition_v1"
+    steps = [(parent / "prospective_ledger.json", 19, .1),
+             (parent / "independent_failure_audit_v1/prospective_ledger.json", 20, .02)]
+    steps.extend((prefix / f"ludb_acquisition_v{version}/prospective_ledger.json", 19 + version, .3)
+                 for version in range(2, transfers + 1))
+    chain = []
+    for path, stage, cpu in steps:
+        receipt = {"status": "PASS" if stage == steps[-1][1] else "FAIL"}
+        if stage == 20:
+            receipt = {"all_passed": True, "mismatch_count": 0}
+        receipt_sha = save(path.parent / "summary.json", receipt)
         base = {"current_machine_stages": stage, "prior_ledger_sha256": prior_hash,
-                "cpu_seconds": cpu, "gpu_wall_seconds": 0.,
+                "cpu_seconds": cpu, "gpu_wall_seconds": 0., "sha256": receipt_sha,
                 "current_machine_cumulative_cpu_seconds": (
                     base["current_machine_cumulative_cpu_seconds"] + cpu),
                 "current_machine_cumulative_gpu_wall_seconds": (
                     base["current_machine_cumulative_gpu_wall_seconds"])}
         prior_hash = save(path, base)
-    admission = {"prior_ledger": {"path": "recovery/prospective_ledger.json", "sha256": prior_hash,
+        chain.append({"path": path.relative_to(tmp_path).as_posix(), "sha256": prior_hash})
+        if stage == 20:
+            monkeypatch.setattr(checker, "FAILURE_AUDIT_SHA", prior_hash)
+    admission = {"transport_chain": chain,
+                 "acquisition_ledger": {"path": chain[-1]["path"], "sha256": prior_hash},
+                 "prior_ledger": {"path": chain[-1]["path"], "sha256": prior_hash,
                                   **{key: value for key, value in base.items()
                                      if key.startswith("current_machine_cumulative_")}}}
     study = tmp_path / "study"
@@ -187,4 +200,18 @@ def test_full_audit_rejects_duplicated_main_cost(tmp_path, monkeypatch):
     ledger["current_machine_cumulative_cpu_seconds"] += .4
     (study / "prospective_ledger.json").write_text(json.dumps(ledger))
     with pytest.raises(ValueError, match="once"):
+        checker.accounting(tmp_path, study, main, admission)
+
+
+def test_second_failed_transfer_is_charged_without_reset(tmp_path, monkeypatch):
+    study, main, admission, _ = cost_fixture(tmp_path, monkeypatch, transfers=3)
+    costs = checker.accounting(tmp_path, study, main, admission)
+    assert costs["stages_through_main"] == 23
+    assert len(admission["transport_chain"]) == 4
+
+
+def test_omitted_failed_transfer_is_rejected(tmp_path, monkeypatch):
+    study, main, admission, _ = cost_fixture(tmp_path, monkeypatch, transfers=3)
+    admission["transport_chain"].pop(2)
+    with pytest.raises(ValueError, match="sequential"):
         checker.accounting(tmp_path, study, main, admission)

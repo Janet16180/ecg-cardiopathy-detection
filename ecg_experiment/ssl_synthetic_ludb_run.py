@@ -302,13 +302,13 @@ def run_study(root: Path, admission_name: str, start_clock: dict[str, float] | N
     (destination / "scores").mkdir()
     budgets, timers, verified = config["resources"]["main"], {}, False
 
-    def guard() -> None:
+    def guard(check_output: bool = True) -> None:
         if (time.process_time() - clock["cpu"] + 2 >= budgets["cpu_seconds"]
                 or time.perf_counter() - clock["wall"] + 2 >= budgets["wall_seconds"]):
             raise TimeoutError("Main CPU/wall reserve reached")
         if resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024 >= budgets["rss_bytes"]:
             raise MemoryError("Main RSS limit reached")
-        if directory_bytes(destination) + 1024**2 >= budgets["new_output_bytes"]:
+        if check_output and directory_bytes(destination) + 1024**2 >= budgets["new_output_bytes"]:
             raise ValueError("Main output receipt reserve reached")
 
     def interrupted(signum: int, frame: Any) -> None:
@@ -331,7 +331,8 @@ def run_study(root: Path, admission_name: str, start_clock: dict[str, float] | N
         coverage = coverage_summary(rows)
         figures.point_figure(destination, statistics, rows)
         figures.overlay_figure(destination, cases)
-        reverify(data, admission, sources, guard)
+        guard()
+        reverify(data, admission, sources, lambda: guard(False))
         guard()
         result = make_summary(destination, config, statistics, coverage, closure, sources,
                               admission_name, environment, clock)

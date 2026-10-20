@@ -141,7 +141,10 @@ fixed figures, source/admission snapshots, technical gates and measured summary/
 Do not copy raw waveforms/weights/prediction maps unnecessarily. Independent code must be committed
 before execution, reconstruct the descriptor from original generator raw and LUDB signal bytes
 with separate arithmetic, reproduce every row/bootstrap/control/figure-identity and additive costs,
-and report every mismatch. A separate full acquisition audit precedes any actual qualification.
+and report every mismatch. Before qualification, acquisition receives independent source/receipt/
+asset-identity review; its complete numerical acquisition audit may be combined with the full
+qualification audit after main. The bridge requires that completed combined audit to pass first,
+without inventing an extra acquisition-audit stage.
 Coordinator writes the output-derived results; update both queues/backlog and keep PR67draft. Any
 new localization fit or diverse-editor transfer still requires its own prospective protocol and
 actual-path GPU resource profile including map persistence/whole-stage overhead.

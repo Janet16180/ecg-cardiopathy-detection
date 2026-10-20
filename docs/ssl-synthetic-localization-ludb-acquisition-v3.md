@@ -66,15 +66,19 @@ and emit success/failure and additive terminal receipts without overwriting.
 
 The immediate accounting prior is the exact v2failure stage21ledger pinned by config/admission.
 Do not run or invent another narrow failure-audit stage before v3. Independent source/receipt review
-occurs before the request; a separately committed full acquisition audit after success checks both
-failed attempts, the existing stage20audit, every admitted file and the complete cost chain. V3is
+occurs before the request. After successful acquisition, independent source/receipt/asset-identity
+review precedes qualification; its separately committed full independent audit may combine
+acquisition verification and qualification numerics after the main run. That combined audit
+checks both failed attempts, the existing stage20audit, every admitted file and the complete
+cost chain. No extra numerical audit stage is required before main qualification. V3is
 stage22if its verified prior chain is unchanged; any later audit/main stage appends its actual cost
 and count, never assuming the old qualification counter values. Unknown historical costs remain
 unknown. No source or report may reset to the older429CPU baseline or omit a failed attempt.
 
 The eventual qualification identity-only admission may use verified v3data and acquisition receipts,
 with the explicit source-pointer override of earlier transport amendments. Its immediate prior is
-the latest completed acquisition audit ledger. This changes only transport provenance/accounting,
+the latest verified completed acquisition terminal ledger (v3stage22if no separate stage runs).
+The later combined independent audit appends after the actual qualification main stage. This changes only transport provenance/accounting,
 not records, labels, scientific scores, main/audit budgets or closed-test restrictions. All data,
 archive bytes and receipts remain local under baseline outputs. After asset verification, permit
 the read-only-use alias `baseline/data/raw/ludb/1.0.1/data` pointing to

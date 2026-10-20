@@ -1688,7 +1688,7 @@
       "kind": "repo",
       "title": "Qualify LUDB public wave annotations for ECG timing measurements",
       "question": "Can a fixed QRS-like timing proxy be verified against released manual12-lead wave boundaries before interpreting generated ECG timing?",
-      "evidence": "Frozen LUDB timing protocol8214287; source6e2d485/artificial15tests pass. First acquisition90e3c1a hit598s reserved wall boundary; no LUDB scores or decoded records. Retained6MiBprefix and officialmanifest. Prospective bounded range-resume successor being prepared; independent failure audit pending.",
+      "evidence": "Two retained transport failures, no LUDB scores: first598s wall boundary, second30s socket idle timeout after correct206response. Preserved10,616,832byteprefix. Scientific protocol unchanged; v3 exact-suffix transport amendment is committed before its one request.",
       "value": 4,
       "clarity": 0.8,
       "gpu_hours": 0,
@@ -1696,7 +1696,7 @@
       "build_hours": 2.5,
       "blocked_by": [],
       "status": "in_progress",
-      "notes": "Continue exact200record/40parser/160measurement roles, fixed20sampleproxy/sixphasecontrols/2000subjectbootstrap, no tuning or training. Public wave masks remain distinct from disease masks. V1failureCPU0.147010707/wall598.0104395500384 fullycharged; partialbytes preserved."
+      "notes": "Fixed40parser/160measurement records; no waveform/annotation decoded. Independentv1failureauditPASS. Current21stage cumulativeCPU429.846791267/GPU447.981392133 includes all attempts once. Continue v3 bounded transport and exact official2800file checksums before scientific execution."
     },
     {
       "id": "ssl_synthetic_generated_paired_suppression",

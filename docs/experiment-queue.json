@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "public_ludb_acquisition_v1_failed_transport_successor_preparing",
+    "status": "public_ludb_two_transport_failures_v3_recovery_preparing",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Preserve LUDB v1 timeout and charge independent cause audit, then commit bounded v2 range-resume transport amendment before its one GET; scientific protocol unchanged and no LUDB scores yet.",
+    "next_action": "Preserve v1 wall-timeout and v2 socket-timeout attempts, then execute separately frozen v3 exact-suffix acquisition with180s idle timeout; no LUDB scores or decoded records yet.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2999,7 +2999,7 @@
         "raw_rows_changed": false
       },
       "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md",
-      "next_action": "Preserve LUDB v1 timeout and charge independent cause audit, then commit bounded v2 range-resume transport amendment before its one GET; scientific protocol unchanged and no LUDB scores yet.",
+      "next_action": "Preserve v1 wall-timeout and v2 socket-timeout attempts, then execute separately frozen v3 exact-suffix acquisition with180s idle timeout; no LUDB scores or decoded records yet.",
       "final_repository_validation": {
         "record_type": "repository_setup_validation_not_scientific_cost",
         "created_at_utc": "2026-10-20T00:40:10.292925+00:00",
@@ -3033,7 +3033,7 @@
     },
     "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md",
     "ludb_public_annotation_qualification_v1": {
-      "status": "v1_acquisition_transport_timeout_no_scores",
+      "status": "v2_socket_timeout_v3_prospective_recovery",
       "protocol": "docs/ssl-synthetic-localization-ludb-qualification-v1.md",
       "config": "configs/ssl_synthetic_ludb_qualification_v1.json",
       "protocol_commit": "8214287",
@@ -3046,7 +3046,10 @@
       "closed_test_access": false,
       "acquisition_failure_receipt": "outputs/ssl_synthetic_localization/ludb_acquisition_v1/summary.json",
       "acquisition_failure_receipt_sha256": "f59fc938a23930ecbd30043c15f28a49499a1a8135f7ac35ead68016526de78b",
-      "acquisition_failure_ledger_sha256": "e505549b8110b2e4e7dadeca285209b115ffc6e50121d9c6088cbced054130f6"
+      "acquisition_failure_ledger_sha256": "e505549b8110b2e4e7dadeca285209b115ffc6e50121d9c6088cbced054130f6",
+      "second_acquisition_failure": "outputs/ssl_synthetic_localization/ludb_acquisition_v2/summary.json",
+      "second_acquisition_failure_sha256": "ffe2b782929f97d8ee61bd28988b5ea9570e36483bea1a66d8e8944ff351ab94",
+      "latest_transport_ledger_sha256": "9114b01b9e68d1ced6cf9c152014bbfcf4523d437dcff59fed53bcd11a38c833"
     }
   },
   "experiment_041_cpu_screening": {

@@ -1,12 +1,14 @@
 # Experiment queue
 
-20 October: first LUDB acquisition failed its598-second reserved transfer deadline;
-6,291,456archive-prefix bytes and the complete215,460byte official checksum manifest remain local.
-No ECG or annotation content was decoded and no LUDB score exists. Source/protocol were committed
-before this attempt. Independent failure verification and a separately frozen bounded range-resume
-transport successor are being prepared; scientific record roles and endpoints remain unchanged.
-Read [protocol](ssl-synthetic-localization-ludb-qualification-v1.md) and
-[retained acquisition failure](ssl-synthetic-localization-ludb-acquisition-v1-results.md). PR67 stays draft.
+20 October: LUDB acquisition retains two transport failures, with no decoded records or scores.
+V1 stopped at its598-second wall reserve; independent failure verification passed. V2 received
+the exact206range response but hit a30-second socket idle timeout after4,325,376new bytes.
+Its10,616,832-byte prefix remains local. A separately frozen v3suffix request permits180-second
+idle timeout; all scientific choices remain unchanged. Current21stage totals are429.846791CPU/
+447.981392GPU-lockseconds. Read [scientific protocol](ssl-synthetic-localization-ludb-qualification-v1.md),
+[first failure](ssl-synthetic-localization-ludb-acquisition-v1-results.md),
+[independent cause audit](ssl-synthetic-localization-ludb-acquisition-failure-audit-v1-results.md) and
+[second failure](ssl-synthetic-localization-ludb-acquisition-v2-results.md). PR67 stays draft.
 
 **19 October temporal/lead diagnosis completed and independently verified:** Combined PK versus
 B improves oracle-conditioned temporal AP by0.103622[0.069175,0.140407] and lead-presence AP by

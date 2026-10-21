@@ -51,7 +51,9 @@ annotation-I/O design must be included in any future parser successor before mea
 Retain all12streams in canonical order, including successful streams and decoder errors. Preserve
 original byte/event order; never sort, drop, merge, infer or repair events. Save complete local event
 tables of sample, symbol, numeric label code, subtype, channel and num. Record raw control-word
-counts, offsets and auxiliary byte lengths without auxiliary text or diagnostic interpretation.
+counts, offsets and auxiliary byte lengths without emitting auxiliary text or interpreting diagnoses.
+WFDB may internally decode AUX strings as part of its standard format reader; the caller uses only
+lengths, never their text. Do not mask or alter raw annotation bytes to prevent that internal step.
 Independent decoding follows MIT event semantics, including signed PDP-11 SKIP intervals, NUM and
 CHN persistence, SUB's current-event scope, AUX padding and EOF. Standard label codes are syntax;
 N is a QRS marker here and is not a clinical healthy label. Unknown codes and decoder errors are

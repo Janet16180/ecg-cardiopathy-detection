@@ -1,5 +1,18 @@
 # Experiment queue
 
+21 October latest local continuation COMPLETE: [matched background/editor transfer](ssl-synthetic-localization-background-editor-transfer-v1-results.md)
+passes all six prospective fixedB real/held-out numerical-transfer checks. Independent36 checks
+815829new numerical scalars,1536model-background rows,96CPU replays and2000×352draw entries,
+zero mismatches. MeanAP0.032520; gaps+nuisance0.021489,+amplitude0.010529,+donor0.019137,
+all conditional lower bounds positive; amplitude lower bound only0.000416452. Modest introduced-
+change transfer, not disease localization. All arms perform worse on real backgrounds and on the
+held-out editor descriptively; prior14/15FAIL/high control responses remain. Fixed target-lead
+figures are separately retained in render37. All37scientific/presentation stages total
+1076.776316196CPU/524.199369754GPU-lock seconds; setup/tests/builds/historical unknowns separate.
+Next proposed is patient-separated mixed-background LOCALIZER training, before GAN fine-tuning,
+under a new protocol/training profile. No new training or closed test scheduled. User requests
+NO PUSH/GitHub runner use; finished changes stay in local commits, PR67 draft/unmerged.
+
 21 October transfer main35 completed: all resource checks and the six prospective fixedB
 real/held-out numerical-transfer checks pass provisionally. DirectAP0.032520; gains against
 nuisance-siteAP0.021489, observed-amplitudeAP0.010529 and donor-maskAP0.019137. Independent36

@@ -3031,7 +3031,7 @@
       },
       "quality_execution_historical_planning_snapshot": "awaiting_final_numerical_source_review_and_actual_path_profile"
     },
-    "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-21.md",
+    "current_handoff": "docs/ssl-synthetic-localization-local-transfer-handoff-2026-10-21.md",
     "ludb_public_annotation_qualification_v1": {
       "status": "annotation_diagnosis_complete_dense_interval_contract_failed",
       "protocol": "docs/ssl-synthetic-localization-ludb-qualification-v1.md",
@@ -3224,7 +3224,7 @@
       ]
     },
     "background_editor_transfer_v1": {
-      "status": "main_complete_independent_audit_running",
+      "status": "complete_independently_verified_numerical_transfer_only",
       "protocol": "docs/ssl-synthetic-localization-background-editor-transfer-v1.md",
       "configuration": "configs/ssl_synthetic_background_editor_transfer_v1.json",
       "protocol_commit": "6d6c65a",
@@ -3237,17 +3237,50 @@
       "new_generator_forwards": 0,
       "scientific_scores_computed": true,
       "push_authorized": false,
-      "next_action": "Complete independent actual36 reconstruction before confirming result; no training or push.",
+      "next_action": "Preserve positive but modest numerical transfer and older failures. Next proposed: matched generated-only versus mixed real/generated localizer training with verified real-patient separation, held-out editor and actual-path training profile. No training or push scheduled.",
       "main_stage": 35,
       "main_summary_sha256": "c3ea28105ef99659b0f8854fd32430169ecb48f456b02b8b709fec306da93ba7",
       "main_ledger_sha256": "8cf80790df2ef3ce3a5c0d2cf539b1e6311697a01a4394e672c7f6b1d819e304",
       "main_six_gates_passed": true,
-      "independently_verified": false,
+      "independently_verified": true,
       "main_cpu_seconds": 211.44608792399998,
       "main_gpu_lock_seconds": 51.14985655294731,
       "audit_admission": "configs/ssl_synthetic_background_editor_transfer_audit_admission_v2.json",
       "unused_audit_admission": "configs/ssl_synthetic_background_editor_transfer_audit_admission_v1.json",
-      "unused_admission_reason": "Metadata-only preflight found a missing imported independent parameter helper; no numerical audit executed under v1."
+      "unused_admission_reason": "Metadata-only preflight found a missing imported independent parameter helper; no numerical audit executed under v1.",
+      "independent_stage": 36,
+      "independent_summary_sha256": "e4f60657ab5c19007bdf91a53b4d27b58408d51dd732ebbc7b7ac3aa9c03afd6",
+      "independent_ledger_sha256": "d64d6ee087dd5547ae02f02a3adc58e141be0d53b9f1d2474a4f2f01aaef1b12",
+      "independent_mismatches": 0,
+      "numerical_scalar_checks": 815829,
+      "cpu_functional_replays": 96,
+      "primary_direct_ap": 0.032520172625431776,
+      "primary_gains": {
+        "response_ap": {
+          "mean": 0.021488700642619016,
+          "ci_low": 0.011647258428483458,
+          "ci_high": 0.03428949917984318
+        },
+        "amplitude_gain": {
+          "mean": 0.010528918200430597,
+          "ci_low": 0.0004164524580701302,
+          "ci_high": 0.02333145772677582
+        },
+        "donor_gain": {
+          "mean": 0.019137361415622132,
+          "ci_low": 0.006767302942968626,
+          "ci_high": 0.033732479913369334
+        }
+      },
+      "results_report": "docs/ssl-synthetic-localization-background-editor-transfer-v1-results.md",
+      "independent_report": "docs/ssl-synthetic-localization-background-editor-transfer-independent-audit-v1-results.md",
+      "science_review": "docs/ssl-synthetic-localization-background-editor-transfer-output-science-review-v1.md",
+      "figure_stage": 37,
+      "figure_root": "outputs/ssl_synthetic_localization/background_editor_transfer_figures_v1",
+      "latest_ledger_sha256": "73758dc5c2f8b20543a63549d61fc6ce669286cd988c2dd135c6453e1a024d4f",
+      "current_machine_stages": 37,
+      "current_machine_cumulative_cpu_seconds": 1076.7763161960002,
+      "current_machine_cumulative_gpu_wall_seconds": 524.1993697541766
     }
   },
   "experiment_041_cpu_screening": {

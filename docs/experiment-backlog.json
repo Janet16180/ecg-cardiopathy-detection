@@ -1784,17 +1784,30 @@
       "kind": "experiment",
       "title": "Test held-out edit families on matched real and generated backgrounds",
       "question": "Does introduced-change localization transfer across editor families and background sources under matched controls?",
-      "evidence": "Verified synthetic learning/3-fit replication, preserved14/15failure, LUDBproxy/coherence and independently verified negative B N-attraction diagnostic on160realrecords; source\u00d7editor transfer is the direct next localization question.",
+      "evidence": "Completed64real/64generated\u00d7original/held-out editors, all12fixedstates. FixedBreal/biphasic passes6checks; independent36zero mismatches/815829numericalscalars/96CPUreplays. MeanAP0.032520; nuisance/amplitude/donorAPgains0.021489/0.010529/0.019137 with positiveconditional lowerbounds.",
       "value": 4,
       "clarity": 0.9,
       "gpu_hours": 0.2,
       "cpu_hours": 0.5,
       "build_hours": 5.0,
-      "blocked_by": [
-        "ssl_synthetic_profile_wall_coverage"
-      ],
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Report docs/ssl-synthetic-localization-background-editor-transfer-v1-results.md. Modest transfer of numerical edits only, not disease localization; amplitude lower bound0.00041645, allarms loseAPonreal/heldoutdescriptively. Preserve14/15FAIL, highuncalibratedcontrolresponses, spentdevelopment/unknowngeneratorcohortlimits. Threeactualstages35/36/37 completedwithinmeasuredgates; NO PUSH peruser."
+    },
+    {
+      "id": "ssl_synthetic_mixed_background_localizer_training",
+      "kind": "experiment",
+      "title": "Test mixed real and generated backgrounds in localization training",
+      "question": "Does a fixed mixed-background localizer improve introduced-change transfer beyond generated-only training under matched budgets and held-out editors?",
+      "evidence": "Verified matchedsource/editor study passes narrowrealheldoutBconjunction, but realAP0.032520vs generated0.073252 and high realcontrolresponses remain. Bothsource andedit-related gaps suggest a directlocalizer-background training comparison beforeadaptingtheGAN.",
+      "value": 4,
+      "clarity": 0.9,
+      "gpu_hours": 0.25,
+      "cpu_hours": 0.25,
+      "build_hours": 3.0,
+      "blocked_by": [],
       "status": "proposed",
-      "notes": "Prospective source/record/editor partition, matched budgets and known mathematical support only. Full actual-path GPU profile, persistence, shared lock and resource gates before training. No disease-region or physiological truth from numerical editors. Prioritize matched real/generated backgrounds\u00d7original/held-out numerical editor families, all frozen fits/arms and sham/nuisance controls, honest postprocessing support, new protocol/profile/resources before scores. Do not tune N windows from the negative point test. No training or new study scheduled by this backlog edit."
+      "notes": "Freeze a new protocol/cohort/primarydecision before scores; sameobjective/architecture/initializations/updates/presentationbudget, generated-only vs mixedreal/generated. Verify real TRAIN/EVAL patient separation and exclude every currentevaluationrecord from fitting; generator-cohortmembershipunknown, so onlylocalizer seed/arraydisjointness can be verified forsynthetics. Use permittedtrainingcohorts, neverSPHtraining/closedtests/MIMIClabels. Hold numericaleditorfamilyout, retain nuisance/donorcontrols/allfits/modes, profile actualGPUtrainingpath/sharedlock/resources. No GAN fine-tuning ortraining scheduledbythisentry. Keep outputs local; do notpush."
     }
   ]
 }

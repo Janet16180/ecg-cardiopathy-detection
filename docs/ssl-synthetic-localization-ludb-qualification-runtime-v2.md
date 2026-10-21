@@ -83,6 +83,13 @@ no original failed receipt asserted this count or verified that base. No new aud
 stage is created merely by writing reconciliation metadata. Its creation is setup; v2's measured
 CPU clock includes complete verification of it. Unavailable historical costs remain unknown.
 
+The actual reconciliation is
+`outputs/ssl_synthetic_localization/ludb_qualification_reconciliation_v1/reconciled_prior.json`,
+SHA-256 `8ff30f48c3d92057be2c641dd3a168a2d009a9f23fc4206bd5ce24612fff2a24`,
+with derived prior23 CPU432.15087192899995 and GPU447.98139213304967. Pin those exact bytes and
+values in the runtime identity admission. The scientific config remains identical apart from the
+two declared identities; reconciliation provenance belongs to this runtime amendment/admission.
+
 Independently review the hashes, failure timing/empty output state, unchanged original receipts,
 source/admission omission and exact finite additive arithmetic before execution. The v2 prospective
 admission pins this reconciliation and its derived prior23 fields; avoid circular self-hashes by
@@ -102,3 +109,15 @@ this reconciled cost path, while preserving all original scientific checks and o
 versions. It reconstructs the full acquired-file chain and QRS analysis after main. The separate
 conditional coherence bridge remains unexecuted and gated on the complete qualified/audited
 conjunction; no runtime amendment can turn a scientific FAIL into PASS.
+
+
+## Conditional bridge source pointer
+
+The separately committed, still-unexecuted coherence bridge may prospectively bind the actually
+qualified and independently audited `outputs/ssl_synthetic_localization/ludb_qualification_v2/`
+main/audit artifacts instead of the v1 directory containing only the retained source-guard failure.
+Its identity-only admission pins that directory and actual latest audit ledger, unchanged scientific
+config/protocol, all required closures and the same technical/scientific conjunction. This is a
+runtime output-pointer correction before any real score exists, not selection among scored runs.
+No bridge endpoint, cohort, control, seed, threshold, budget or clinical interpretation changes.
+The v1 failure and reconciliation remain part of its verified accounting lineage once.

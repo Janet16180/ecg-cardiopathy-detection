@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Preserve the pre-data source-admission failure and null original cumulative fields; verify explicit prior23 reconciliation, preflight complete runtime-v2 sources, then run unchanged LUDB timing study and combined independent audit. No LUDB scores yet.",
+    "next_action": "Diagnose strict parser failure using only parser record95 annotation streams; preserve stage24 and commit any justified parser successor before measurement160; no LUDB scores exist.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2999,7 +2999,7 @@
         "raw_rows_changed": false
       },
       "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md",
-      "next_action": "Preserve the pre-data source-admission failure and null original cumulative fields; verify explicit prior23 reconciliation, preflight complete runtime-v2 sources, then run unchanged LUDB timing study and combined independent audit. No LUDB scores yet.",
+      "next_action": "Diagnose strict parser failure using only parser record95 annotation streams; preserve stage24 and commit any justified parser successor before measurement160; no LUDB scores exist.",
       "final_repository_validation": {
         "record_type": "repository_setup_validation_not_scientific_cost",
         "created_at_utc": "2026-10-20T00:40:10.292925+00:00",
@@ -3033,7 +3033,7 @@
     },
     "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md",
     "ludb_public_annotation_qualification_v1": {
-      "status": "verified_acquisition_complete_v1_source_admission_failed_before_data",
+      "status": "runtime_v2_strict_parser_failure_before_measurement",
       "protocol": "docs/ssl-synthetic-localization-ludb-qualification-v1.md",
       "config": "configs/ssl_synthetic_ludb_qualification_v1.json",
       "protocol_commit": "8214287",
@@ -3063,7 +3063,15 @@
       "fourth_acquisition_ledger_sha256": "6d487bd152daf1275ecc2c704d874cc25d640264156d1c65aba9bd12dd1120ca",
       "main_v1_failure": "outputs/ssl_synthetic_localization/ludb_qualification_v1/failure.json",
       "main_v1_failure_report": "docs/ssl-synthetic-localization-ludb-qualification-v1-results.md",
-      "runtime_v2_protocol": "docs/ssl-synthetic-localization-ludb-qualification-runtime-v2.md"
+      "runtime_v2_protocol": "docs/ssl-synthetic-localization-ludb-qualification-runtime-v2.md",
+      "runtime_v2_failure": "outputs/ssl_synthetic_localization/ludb_qualification_v2/failure.json",
+      "runtime_v2_failure_sha256": "2dadca6b253ecf8ee0cb8e74e35b34491a5cbf40d90bcd0228faadb3f8cb48ab",
+      "runtime_v2_ledger_sha256": "9d97c0578fba75ba459fdab5796dd4fc81d735c9147c874d16c2d5f466995a0f",
+      "runtime_v2_report": "docs/ssl-synthetic-localization-ludb-qualification-v2-results.md",
+      "parser_rows_completed": 18,
+      "measurement_records_read": 0,
+      "current_machine_stages": 24,
+      "current_machine_cumulative_cpu_seconds": 435.4966687269999
     }
   },
   "experiment_041_cpu_screening": {

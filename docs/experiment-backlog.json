@@ -1696,7 +1696,8 @@
       "build_hours": 2.5,
       "blocked_by": [],
       "status": "in_progress",
-      "notes": "Retain bothtransportfailures and one pre-data sourcefailure; v3noexecution/stage. Originalfailedv1 cumulativefieldsnull preserved; explicitreviewed metadatareconciliation derivesprior23 CPU432.150871929/GPU447.981392133 from knownacquisition22+actualfailedCPUonce. Next actual V2 followedby combinedindependentaudit."
+      "notes": "Retain bothtransportfailures and one pre-data sourcefailure; v3noexecution/stage. Originalfailedv1 cumulativefieldsnull preserved; explicitreviewed metadatareconciliation derivesprior23 CPU432.150871929/GPU447.981392133 from knownacquisition22+actualfailedCPUonce. Next actual V2 followedby combinedindependentaudit.",
+      "latest_status": "Strict parser qualification stopped at parser-only record95; no160measurement reads or AP. Bounded annotation-only diagnosis then prospective successor; original FAIL preserved."
     },
     {
       "id": "ssl_synthetic_generated_paired_suppression",

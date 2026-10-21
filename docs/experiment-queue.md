@@ -1,15 +1,14 @@
 # Experiment queue
 
-20 October: LUDB1.0.1 is completely acquired; all200record groups/2800officialfile hashes
-passed. The two actual transport failures remain; v3never executed. The first timing run then
-stopped at source admission BEFORE any record/annotation read or score because one required
-helper was omitted. Its1.177479012CPU cost and original unverified/null cumulative ledger remain
-unchanged. Explicit reviewed reconciliation derives prior23 CPU432.150871929/GPU447.981392133.
-Runtime-v2 retains every scientific choice and adds complete source preflight before actual data.
-Read [verified acquisition](ssl-synthetic-localization-ludb-acquisition-v4-results.md),
-[admission failure](ssl-synthetic-localization-ludb-qualification-v1-results.md) and
-[runtime amendment](ssl-synthetic-localization-ludb-qualification-runtime-v2.md). No LUDB scores
-yet; no training or closed test. PR67 stays draft.
+20 October: verified LUDB acquisition is complete (200records/2800official file hashes).
+After the preserved source-admission failure, runtime-v2 reproduced all150 predecessor scalars
+exactly, then stopped at parser-only record95 under the strict consecutive-triplet guard.
+Eighteen parser records completed; no160-record measurement data or LUDB AP was read/computed.
+The actual stage24 cumulative cost is435.496668727CPU/447.981392133GPU-lock seconds.
+Read [runtime-v2 failure](ssl-synthetic-localization-ludb-qualification-v2-results.md).
+Next is a bounded annotation-only diagnosis and independently reviewed prospective parser successor;
+never silently sort/drop events or turn this technical failure into a scientific result.
+The conditional generation-quality bridge remains gated. PR67 stays draft.
 
 **19 October temporal/lead diagnosis completed and independently verified:** Combined PK versus
 B improves oracle-conditioned temporal AP by0.103622[0.069175,0.140407] and lead-presence AP by

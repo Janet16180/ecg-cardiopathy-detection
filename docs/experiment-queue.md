@@ -1,14 +1,13 @@
 # Experiment queue
 
-20 October: verified LUDB acquisition is complete (200records/2800official file hashes).
-After the preserved source-admission failure, runtime-v2 reproduced all150 predecessor scalars
-exactly, then stopped at parser-only record95 under the strict consecutive-triplet guard.
-Eighteen parser records completed; no160-record measurement data or LUDB AP was read/computed.
-The actual stage24 cumulative cost is435.496668727CPU/447.981392133GPU-lock seconds.
-Read [runtime-v2 failure](ssl-synthetic-localization-ludb-qualification-v2-results.md).
-Next is a bounded annotation-only diagnosis and independently reviewed prospective parser successor;
-never silently sort/drop events or turn this technical failure into a scientific result.
-The conditional generation-quality bridge remains gated. PR67 stays draft.
+20 October: [annotation-only diagnosis](ssl-synthetic-localization-ludb-annotation-diagnosis-v1-results.md)
+completed and independently verified. Both decoders agree: parser record95 contains35QRS
+peak/end pairs missing an explicit onset across9leads. The strict dense-interval V1/V2 study
+retains technical FAIL; never infer missing boundaries or call uncertain spans negative.
+No160measurement record or LUDB timing score has been read/computed. Next is a separately
+prospective explicit-landmark timing study, with unchanged proxy and no disease-mask claim.
+All25actual stages total435.788647910CPU/447.981392133GPU-lock seconds, failures included once.
+The conditional generation bridge remains gated; PR67 stays draft.
 
 **19 October temporal/lead diagnosis completed and independently verified:** Combined PK versus
 B improves oracle-conditioned temporal AP by0.103622[0.069175,0.140407] and lead-presence AP by

@@ -1,0 +1,25 @@
+{
+  "study_id": "ludb_frozen_localizer_v1",
+  "amends": "configs/ssl_synthetic_ludb_localizer_v1.json",
+  "protocol": "docs/ssl-synthetic-localization-ludb-localizer-profile-v1.md",
+  "scientific_fields_changed": false,
+  "hard_caps_changed": false,
+  "safety_factor": 2,
+  "repeated_batch_multiplier": 20,
+  "cpu_wall_overhead_reserve_seconds": 180,
+  "gpu_overhead_reserve_seconds": 30,
+  "forecast": "actual_elapsed_setup_plus_2_times_fixed_profile_cost_plus_2_times_20_times_repeated_batch_cost_plus_endpoint_reserve",
+  "fixed_operations": [
+    "cuda_initialization_and_small_operation",
+    "all_twelve_checkpoint_loads_and_state_hashes",
+    "all_twelve_synthetic_replay_forwards",
+    "fixed_profile_figure"
+  ],
+  "repeated_operations": [
+    "eight_real_records_structural_read_and_preparation",
+    "all_twelve_model_batch_eight_forwards",
+    "all_twelve_map_persistence_and_hashing"
+  ],
+  "profile_outcome_scores": false,
+  "interpretation": "Measure fixed and repeated paths separately; include every measured operation once in actual accounting; no change to primary, controls, cohorts, replay tolerances or hard caps."
+}

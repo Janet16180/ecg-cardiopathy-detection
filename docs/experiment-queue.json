@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Complete and independently review peak_timing_v1 executable admission, then run fixed160-record N-landmark rank study and independent audit; conditional coherence_bridge_v2 requires its actual PASS. Dense-span FAIL remains.",
+    "next_action": "Main26 N-landmark gain0.450519 passes prospectively, but remains provisional: independent27 failed legacy metadata before numerics. Preserve costs/nulls and execute separately committed audit28 recovery before any conditional bridge.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2999,7 +2999,7 @@
         "raw_rows_changed": false
       },
       "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md",
-      "next_action": "Complete and independently review peak_timing_v1 executable admission, then run fixed160-record N-landmark rank study and independent audit; conditional coherence_bridge_v2 requires its actual PASS. Dense-span FAIL remains.",
+      "next_action": "Main26 N-landmark gain0.450519 passes prospectively, but remains provisional: independent27 failed legacy metadata before numerics. Preserve costs/nulls and execute separately committed audit28 recovery before any conditional bridge.",
       "final_repository_validation": {
         "record_type": "repository_setup_validation_not_scientific_cost",
         "created_at_utc": "2026-10-20T00:40:10.292925+00:00",
@@ -3080,21 +3080,34 @@
       "record95_affected_leads": 9
     },
     "ludb_released_N_peak_timing_v1": {
-      "status": "protocol_committed_source_and_independent_checker_preparing",
+      "status": "main_complete_provisional_independent27_legacy_metadata_failure",
       "protocol": "docs/ssl-synthetic-localization-ludb-peak-timing-v1.md",
       "config": "configs/ssl_synthetic_ludb_peak_timing_v1.json",
       "protocol_commit": "55177cc",
       "exact_prior_config_commit": "583d317",
       "output_directory": "outputs/ssl_synthetic_localization/ludb_peak_timing_v1",
-      "measurement_records_read": 0,
-      "scientific_scores_computed": false,
+      "measurement_records_read": 160,
+      "scientific_scores_computed": true,
       "prior_stages": 25,
       "main_stage": 26,
       "independent_audit_stage": 27,
       "endpoint": "concentration_at_released_N_landmarks_empirical_midrank_not_dense_masks_or_AP",
       "conditional_followup_protocol": "docs/ssl-synthetic-localization-ludb-coherence-bridge-v2.md",
       "conditional_followup_config": "configs/ssl_synthetic_ludb_coherence_bridge_v2.json",
-      "conditional_followup_executed": false
+      "conditional_followup_executed": false,
+      "main_summary_sha256": "2e48b4e06512f126bb0eddf12306b54c462da1e300fa2624c0effed1c1bc8c29",
+      "main_ledger_sha256": "8bb1bc5625ec53a1ab009c35a87c6098a438ddcca2db149efc6f00d251739494",
+      "main_report": "docs/ssl-synthetic-localization-ludb-peak-timing-v1-results.md",
+      "main_gain": 0.45051863972904727,
+      "main_gain_interval": [
+        0.4389598383639518,
+        0.4625890507482116
+      ],
+      "independent_audit_failed_summary_sha256": "2c08acf7e8e8ff324c473811c579f614091a90671790b697bba350613e0dd070",
+      "independent_audit_failed_ledger_sha256": "9ea0b22a57d596a4e99e64aecb844155b44d05cbb8e3fe6278b10e7f7eddd282",
+      "recovery_audit_stage": 28,
+      "reconciliation_path": "outputs/ssl_synthetic_localization/ludb_landmark_audit_reconciliation_v1/reconciled_prior.json",
+      "reconciliation_sha256": "27cdc3ceddc4a36e7be6ba2805caad98c094fcd5bb85e80d1d2c9b469d5b99dd"
     }
   },
   "experiment_041_cpu_screening": {

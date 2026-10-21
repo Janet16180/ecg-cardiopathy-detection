@@ -1,5 +1,12 @@
 # Experiment queue
 
+21 October local continuation: user requests GPU acceleration and NO PUSH to avoid GitHub runner
+use. [Matched source/editor transfer](ssl-synthetic-localization-background-editor-transfer-v1.md)
+is prospectively committed at6d6c65a:64real LUDB/64generated development backgrounds, six variants
+and all12existing models. No new training, generator forwards or disease labels. Source review,
+identity admission and actual CUDA inference/persistence/scoring profile precede full execution.
+No new results yet; earlier14/15FAIL and independently verified landmark diagnostic remain.
+
 21 October completed and independently verified: the frozen-localizer LUDB diagnostic covers
 all160measurementrecords and12existingmodels. Fixed B released-N rank gain is−0.048132
 [−0.080440,−0.017969]; PK−B secondary−0.069564[−0.099420,−0.042413]. The positive exact-landmark

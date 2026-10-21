@@ -3222,6 +3222,22 @@
           "error": "audit metadata must be an object"
         }
       ]
+    },
+    "background_editor_transfer_v1": {
+      "status": "protocol_committed_implementation_in_progress",
+      "protocol": "docs/ssl-synthetic-localization-background-editor-transfer-v1.md",
+      "configuration": "configs/ssl_synthetic_background_editor_transfer_v1.json",
+      "protocol_commit": "6d6c65a",
+      "output_directory": "outputs/ssl_synthetic_localization/background_editor_transfer_v1",
+      "real_records": 64,
+      "generated_backgrounds": 64,
+      "model_count": 12,
+      "variants": 6,
+      "optimizer_updates": 0,
+      "new_generator_forwards": 0,
+      "scientific_scores_computed": false,
+      "push_authorized": false,
+      "next_action": "Review and admit immutable sources/inputs; run actual CUDA full-path profile before bounded factorial inference."
     }
   },
   "experiment_041_cpu_screening": {
@@ -3284,5 +3300,5 @@
     "data_policy": "All models/raw data/features/private predictions remain local and ignored.",
     "next_action": "Research studies and reports are complete. Preserve local artifacts and the failed grounding ranking verdict; review PR #70. No experiment, closed test or automatic merge is scheduled."
   },
-  "current_user_priority": "Continue PR67 public-pretrained synthetic ECG generation and localization research; PR70 screening work is complementary and does not replace this objective. Keep PR67 draft."
+  "current_user_priority": "Continue PR67 synthetic generation/localization research locally using GPUs under shared gates; user explicitly requests no push to avoid GitHub runner resources. Keep PR67 draft."
 }

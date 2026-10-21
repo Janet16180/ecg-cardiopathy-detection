@@ -199,7 +199,7 @@
     "path": "outputs/ssl_synthetic_localization/ludb_annotation_diagnosis_v1/prospective_ledger.json",
     "sha256": "cb86ee511b4740ab7b84a589fc81448556df3d5561907b4bd07e2f4748a020ba",
     "current_machine_stages": 25,
-    "current_machine_cumulative_cpu_seconds": 435.78864791,
+    "current_machine_cumulative_cpu_seconds": 435.78864790999995,
     "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967,
     "main_stage": 26,
     "independent_audit_stage": 27

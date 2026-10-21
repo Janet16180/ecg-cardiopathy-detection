@@ -1,5 +1,10 @@
 # Experiment queue
 
+21 October active update: localizer main attempt is starting after committed160-source/58-input/
+400-asset admission and both metadata preflights. Nineteen artificial checks pass. The runtime-only
+independent audit successor preserves originalv1source, which never executed. Actual CUDA replay
+and full-path resource profile gate every new diagnostic score; no result is reported yet.
+
 21 October: user authorized continued unattended synthetic-localization research in English,
 with finished work pushed to draft PR67. The [frozen-localizer diagnostic](ssl-synthetic-localization-ludb-localizer-v1.md)
 is prospectively defined: all twelve existing B/P/K/PK checkpoints,160LUDBdevelopmentrecords,

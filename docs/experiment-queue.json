@@ -3162,7 +3162,7 @@
       "local_evidence_directory": "outputs/ssl_synthetic_localization/ludb_repository_validation_v1"
     },
     "ludb_frozen_localizer_v1": {
-      "status": "protocol_committed_pending_source_asset_admission_and_actual_path_profile",
+      "status": "running_main_after_source_and_independent_metadata_preflight",
       "protocol": "docs/ssl-synthetic-localization-ludb-localizer-v1.md",
       "configuration": "configs/ssl_synthetic_ludb_localizer_v1.json",
       "output_directory": "outputs/ssl_synthetic_localization/ludb_localizer_v1",
@@ -3171,7 +3171,13 @@
       "primary": "B_N_midrank_gain_vs_six_within_span_rolls",
       "scientific_pass_flag_defined": false,
       "optimizer_updates": 0,
-      "clinical_claim": false
+      "clinical_claim": false,
+      "admission": "configs/ssl_synthetic_ludb_localizer_admission_v2.json",
+      "source_files": 160,
+      "declared_input_files": 58,
+      "declared_release_assets": 400,
+      "independent_runtime": "v2_original_v1_unexecuted",
+      "artificial_tests_passed": 19
     }
   },
   "experiment_041_cpu_screening": {

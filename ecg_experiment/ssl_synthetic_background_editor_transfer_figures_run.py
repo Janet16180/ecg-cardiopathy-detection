@@ -120,7 +120,7 @@ def verify_inputs(admission: dict[str, Any], guard: Any) -> None:
         or audit["main_summary_sha256"] != admission["input_sha256"][MAIN_ROOT + "/summary.json"]
         or not ledger["technical_passed"]
         or not all(ledger["resource_gates"].values())
-        or ledger["receipt_sha256"] != admission["input_sha256"][audit_path]
+        or ledger["sha256"] != admission["input_sha256"][audit_path]
     ):
         raise ValueError("Required independent audit or actual resource receipt did not pass")
 

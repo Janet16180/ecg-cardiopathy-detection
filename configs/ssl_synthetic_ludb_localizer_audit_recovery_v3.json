@@ -1,0 +1,35 @@
+{
+  "study": "ludb_localizer_independent_audit_recovery_v3",
+  "main_admission": {
+    "path": "configs/ssl_synthetic_ludb_localizer_admission_v2.json",
+    "sha256": "85a3f6c3c334144cdb9d50aada3e2e55a01b08771ea43772ed02ebf2255ba70b"
+  },
+  "main_summary_sha256": "e25e7be0b12774c485b56b5bff1664b5718d7efc25b18135eb67f45fd9ffd4fc",
+  "main_ledger_sha256": "50e558091eb1930e2a25b4b966f51879dcd385bef11ff0671436e856006292a8",
+  "failed_audit": {
+    "directory": "outputs/ssl_synthetic_localization/ludb_localizer_v1/independent_audit_v2",
+    "summary_sha256": "db56f79efc8641dad71546821293a80febf92287b491cf71d02bd265f9a732b6",
+    "ledger_sha256": "8e00e2e18182f38f81c4e7f9eb2112b6fe97f94b8b5e65c86bda8097a5c80218",
+    "error_type": "ValueError",
+    "error": "Require all200 original records",
+    "cpu_seconds": 37.394049274000004
+  },
+  "prior_ledger": {
+    "path": "outputs/ssl_synthetic_localization/ludb_localizer_v1/independent_audit_v2/prospective_ledger.json",
+    "sha256": "8e00e2e18182f38f81c4e7f9eb2112b6fe97f94b8b5e65c86bda8097a5c80218",
+    "current_machine_stages": 32,
+    "current_machine_cumulative_cpu_seconds": 641.839774805,
+    "current_machine_cumulative_gpu_wall_seconds": 473.0495132012293
+  },
+  "output_directory": "independent_audit_v3",
+  "next_stage": 33,
+  "method_change": false,
+  "only_order_normalization": "sort200savedrecordobjects_by_record_id_before_frozen_timing_aggregate_no_event_changes",
+  "resources": {
+    "cpu_seconds": 900,
+    "wall_seconds": 1200,
+    "peak_rss_bytes": 2147483648,
+    "output_bytes": 134217728,
+    "gpu_seconds": 0
+  }
+}

@@ -43,3 +43,9 @@ annotation reads. Our code did not analyze diagnosis comments, use diagnosis lab
 this is a possible library-level parsing deviation, not a clinical analysis. The new diagnosis and
 any successor must use annotation links beside structural-only sanitized headers, so the fallback
 cannot read original comments. Preserve the frozen source and this limitation.
+
+Independent verification subsequently checked the retained metadata:18parser-only rows/216lead
+entries, no AP/control/gain fields, empty score directory,19sanitized headers, all receipt/prior
+hashes, exact additive stage24 accounting and all four saved C2 input identities agree. This was
+a read-only metadata/source review, not a newly executed full numerical LUDB audit or another
+charged experimental stage. No additional raw record was read by the reviewer.

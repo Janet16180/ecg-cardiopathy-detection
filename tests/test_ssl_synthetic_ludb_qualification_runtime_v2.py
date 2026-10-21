@@ -56,3 +56,39 @@ def test_missing_helper_preflight_stops_before_hashing_or_creating_outputs(tmp_p
     with pytest.raises(ValueError, match="ssl_synthetic_pretrained_saved_audit.py"):
         runtime.preflight("configs/artificial_admission.json")
     assert not (tmp_path / "outputs").exists()
+
+
+def reconciliation_inputs():
+    record = {"retained_failed_main_receipt": {"sha256": "failure"},
+              "verified_acquisition_ledger": {"sha256": "acquisition"}, "current_machine_stages": 23,
+              "current_machine_cumulative_cpu_seconds": 11.,
+              "current_machine_cumulative_gpu_wall_seconds": 20., "failed_stage_cpu_seconds_counted_once": 1.,
+              "failed_stage_wall_seconds": 2., "scientific_scores_computed": False, "decoded_LUDB_records": 0}
+    acquisition = {"current_machine_stages": 22, "current_machine_cumulative_cpu_seconds": 10.,
+                   "current_machine_cumulative_gpu_wall_seconds": 20., "resource_gates": {"cpu": True}}
+    failed = {"receipt": "failure.json", "receipt_sha256": "failure", "cpu_seconds": 1.,
+              "wall_seconds": 2., "gpu_wall_seconds": 0, "resource_gates": {"cpu": True},
+              "prior_accounting_verified": False, "prior_ledger_sha256": None,
+              "current_machine_cumulative_cpu_seconds": None,
+              "current_machine_cumulative_gpu_wall_seconds": None}
+    failure = {"error_type": "ValueError",
+               "error": "Source admission omits required scientific or runtime sources",
+               "scientific_result_valid": False}
+    sources = dict.fromkeys(runtime.BASE_REQUIRED, "fixed")
+    del sources["ecg_experiment/ssl_synthetic_pretrained_saved_audit.py"]
+    old_admission = {"source_sha256": sources, "prior_ledger": {"sha256": "acquisition"}}
+    return record, acquisition, failed, failure, old_admission
+
+
+def test_reconciliation_rejects_double_counted_failure_and_changed_nulls():
+    record, acquisition, failed, failure, old_admission = reconciliation_inputs()
+    runtime.validate_reconciliation(record, acquisition, failed, failure, old_admission)
+    changed = {**record, "current_machine_cumulative_cpu_seconds": 12.}
+    with pytest.raises(ValueError, match="exactly once"):
+        runtime.validate_reconciliation(changed, acquisition, failed, failure, old_admission)
+    changed = {**failed, "current_machine_cumulative_cpu_seconds": 11.}
+    with pytest.raises(ValueError, match="null/unverified"):
+        runtime.validate_reconciliation(record, acquisition, changed, failure, old_admission)
+    changed = {**failed, "receipt_sha256": "tampered"}
+    with pytest.raises(ValueError, match="receipt"):
+        runtime.validate_reconciliation(record, acquisition, changed, failure, old_admission)

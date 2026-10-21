@@ -70,6 +70,63 @@ def preflight(admission_name: str) -> tuple[dict[str, Any], dict[str, Any]]:
     return config, admission
 
 
+
+def validate_reconciliation(record: dict[str, Any], acquisition: dict[str, Any], failed: dict[str, Any],
+                            failure: dict[str, Any], old_admission: dict[str, Any]) -> None:
+    """Reconstruct the retained pre-data failure cost without changing its original null accounting."""
+    missing = set(BASE_REQUIRED) - old_admission["source_sha256"].keys()
+    if (missing != {"ecg_experiment/ssl_synthetic_pretrained_saved_audit.py"}
+            or failure["error_type"] != "ValueError"
+            or failure["error"] != "Source admission omits required scientific or runtime sources"
+            or failure["scientific_result_valid"] is not False):
+        raise ValueError("Retained failure must be exactly the original pre-data missing-helper guard")
+    if (failed["prior_accounting_verified"] is not False or failed["prior_ledger_sha256"] is not None
+            or any(failed[key] is not None for key in ["current_machine_cumulative_cpu_seconds",
+                                                       "current_machine_cumulative_gpu_wall_seconds"])):
+        raise ValueError("Original failed ledger null/unverified fields must remain preserved")
+    if (failed["receipt"] != "failure.json"
+            or failed["receipt_sha256"] != record["retained_failed_main_receipt"]["sha256"]
+            or not np.isfinite(failed["cpu_seconds"]) or failed["cpu_seconds"] < 0
+            or failed["gpu_wall_seconds"] != 0 or not all(failed["resource_gates"].values())):
+        raise ValueError("Retained failed receipt or measured resource identity differs")
+    if (acquisition["current_machine_stages"] != 22 or not all(acquisition["resource_gates"].values())
+            or old_admission["prior_ledger"]["sha256"] != record["verified_acquisition_ledger"]["sha256"]):
+        raise ValueError("Reconciliation must start at the verified acquisition22")
+    if (record["current_machine_stages"] != 23
+            or record["current_machine_cumulative_cpu_seconds"]
+            != acquisition["current_machine_cumulative_cpu_seconds"] + failed["cpu_seconds"]
+            or record["current_machine_cumulative_gpu_wall_seconds"]
+            != acquisition["current_machine_cumulative_gpu_wall_seconds"]
+            or record["failed_stage_cpu_seconds_counted_once"] != failed["cpu_seconds"]
+            or record["failed_stage_wall_seconds"] != failed["wall_seconds"]
+            or record["scientific_scores_computed"] is not False or record["decoded_LUDB_records"] != 0):
+        raise ValueError("Derived prior23 must include the actual failed CPU exactly once, without scores")
+
+
+def verify_reconciled_prior(root: Path, admission: dict[str, Any]) -> None:
+    """Hash bound original receipts and verify their additive derivation inside measured runtime."""
+    prior = admission["prior_ledger"]
+    if (prior["path"] != "outputs/ssl_synthetic_localization/ludb_qualification_reconciliation_v1/"
+            "reconciled_prior.json"
+            or prior["sha256"] != "8ff30f48c3d92057be2c641dd3a168a2d009a9f23fc4206bd5ce24612fff2a24"
+            or prior["current_machine_stages"] != 23):
+        raise ValueError("Runtime amendment reconciliation identity differs")
+    original.verify_prior(root, admission)
+    record = original.read_json(original.confined(root, prior["path"]))
+    names = ["verified_acquisition_ledger", "retained_failed_main_ledger", "retained_failed_main_receipt",
+             "failed_main_admission"]
+    inputs = []
+    for name in names:
+        binding = record[name]
+        path = original.confined(root, binding["path"])
+        if sha256_file(path) != binding["sha256"]:
+            raise ValueError("Bound original reconciliation input changed: " + name)
+        inputs.append(original.read_json(path))
+    validate_reconciliation(record, *inputs)
+    old_runtime = "ecg_experiment/ssl_synthetic_ludb_run.py"
+    if inputs[3]["source_sha256"][old_runtime] != admission["source_sha256"][old_runtime]:
+        raise ValueError("Frozen original failure guard source identity changed")
+
 def numerical_stage(root: Path, destination: Path, config: dict[str, Any], admission: dict[str, Any],
                     admission_name: str, sources: dict[str, str], clock: dict[str, float],
                     environment: dict[str, Any], guard: Any) -> dict[str, Any]:
@@ -164,7 +221,7 @@ def run_study(root: Path, admission_name: str, clock: dict[str, float]) -> dict[
         environment = original.runtime_environment()
         original.setup_timers(limits, clock, interrupted, timers)
         sources = original.bind_sources(destination, admission, admission_name)
-        original.verify_prior(root, admission)
+        verify_reconciled_prior(root, admission)
         verified = True
         result = numerical_stage(root, destination, config, admission, admission_name, sources, clock,
                                  environment, guard)

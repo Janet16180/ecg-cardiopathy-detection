@@ -1,14 +1,16 @@
 # Experiment queue
 
-20 October: LUDB acquisition retains two transport failures, with no decoded records or scores.
-V1 stopped at its598-second wall reserve; independent failure verification passed. V2 received
-the exact206range response but hit a30-second socket idle timeout after4,325,376new bytes.
-Its10,616,832-byte prefix remains local. A separately frozen v3suffix request permits180-second
-idle timeout; all scientific choices remain unchanged. Current21stage totals are429.846791CPU/
-447.981392GPU-lockseconds. Read [scientific protocol](ssl-synthetic-localization-ludb-qualification-v1.md),
+20 October: the single transparent v4curl suffix transfer is running after offline preparation
+PASS and committed admission06fb9dd. The prior two executed transport failures remain preserved;
+v3never started because automatic approval review timed out, so it has no fabricated cost stage.
+V4 uses separately metered prepare/curl/finish phases and excludes approval waiting explicitly.
+No waveform or annotation has been decoded and no LUDB score exists. Next: official2800file
+checksums, fixed40parser/160measurement timing evaluation, then combined independent reconstruction.
+Read [scientific protocol](ssl-synthetic-localization-ludb-qualification-v1.md),
 [first failure](ssl-synthetic-localization-ludb-acquisition-v1-results.md),
-[independent cause audit](ssl-synthetic-localization-ludb-acquisition-failure-audit-v1-results.md) and
-[second failure](ssl-synthetic-localization-ludb-acquisition-v2-results.md). PR67 stays draft.
+[independent cause audit](ssl-synthetic-localization-ludb-acquisition-failure-audit-v1-results.md),
+[second failure](ssl-synthetic-localization-ludb-acquisition-v2-results.md), and
+[transparent transfer](ssl-synthetic-localization-ludb-acquisition-v4.md). PR67 stays draft.
 
 **19 October temporal/lead diagnosis completed and independently verified:** Combined PK versus
 B improves oracle-conditioned temporal AP by0.103622[0.069175,0.140407] and lead-presence AP by

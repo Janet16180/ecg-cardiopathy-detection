@@ -1,0 +1,108 @@
+{
+  "study": "ssl_synthetic_ludb_annotation_diagnosis_v1",
+  "protocol": "docs/ssl-synthetic-localization-ludb-annotation-diagnosis-v1.md",
+  "record_id": 95,
+  "role": "parser_qualification_only",
+  "logical_data_root": "data/raw/ludb/1.0.1/data",
+  "actual_data_target": "outputs/ssl_synthetic_localization/ludb_acquisition_v4/data",
+  "annotation_extensions": [
+    "i",
+    "ii",
+    "iii",
+    "avr",
+    "avl",
+    "avf",
+    "v1",
+    "v2",
+    "v3",
+    "v4",
+    "v5",
+    "v6"
+  ],
+  "asset_sha256": {
+    "95.hea": "474e87668ae8ece807eaad816b3f219ef27edbe3f9aad90c98078e3b6aee37d4",
+    "95.i": "cbfb0f3c4408f8a005d9b64556333c5223f532ae08a4f635f30150ace2190acc",
+    "95.ii": "ef31bd6ec63754fe4c320b33b8247c957e714b78e014756034b254c533a83c2b",
+    "95.iii": "2d5742d121b3e2f1515f654902af9b302cec87d5f8bdec62b599f35a140979a4",
+    "95.avr": "5eea7baede3adb79525f2a76090f77e331f02701780b597561f9549cb13251c5",
+    "95.avl": "aa9d55cf6fd22bebd6207f73ce392fb12dbd2aabed22a6dd497031abf2ae4d96",
+    "95.avf": "60c8e29418ae1e54a77cf0aa21ff32586bbefa86413153bd4f1647903c03ffe5",
+    "95.v1": "4965d4a443fd3c56eb20574d1923220e7b225360ffc475b738cba32a49071bfc",
+    "95.v2": "386ee15137e6be5829f2d9fd08d8140906d9a72a40c536a0e02c7361e4185b1c",
+    "95.v3": "4b92cd48b20fe3b7c52c4f0efa1bd774f163634480fec5db1ecdf340ef446d2d",
+    "95.v4": "697f15390b9d18da1dd8774ee9a9429c67737f996e2af8e42b0d267d4b27cdd4",
+    "95.v5": "f999ab3aef8dc640832825dccd54640e5942c76597143eed6df29b8d10d8a5ef",
+    "95.v6": "6cd01d5db21f3108c449d2d21519352145590c96f2fff4304f61b0ac923bb372"
+  },
+  "header": {
+    "permitted_structural_lines": 13,
+    "parse_comment_lines": false,
+    "sanitize_before_wfdb_rdann": true,
+    "rdann_original_record_path_allowed": false,
+    "scratch_annotation_links_read_only": true,
+    "dat_link_or_read_allowed": false
+  },
+  "event_fields": [
+    "sample",
+    "symbol",
+    "label_store",
+    "subtype",
+    "chan",
+    "num"
+  ],
+  "auxiliary_payload": "lengths_only_no_text_or_clinical_interpretation",
+  "independent_decoder": "MIT_WFDB_raw_event_semantics_not_strict_wave_triples",
+  "preserve_source_order": true,
+  "sort_or_repair_events": false,
+  "read_measurement_records": false,
+  "waveform_reads": 0,
+  "AP_computations": 0,
+  "stream_diagnostics": [
+    "empty",
+    "event_count_modulo_3",
+    "decreasing_sample_indices",
+    "sample_bounds",
+    "duplicate_sample_code_counts",
+    "triplet_symbol_and_position_violations",
+    "unknown_codes",
+    "control_word_counts",
+    "decoder_errors"
+  ],
+  "fixed_neighborhoods": {
+    "radius_events": 3,
+    "save_all_offending_indices": true,
+    "display_max_neighborhoods_per_stream": 20,
+    "count_issue_first_events": 6,
+    "count_issue_last_events": 6,
+    "save_complete_event_tables": true
+  },
+  "prior_ledger": {
+    "path": "outputs/ssl_synthetic_localization/ludb_qualification_v2/prospective_ledger.json",
+    "sha256": "9d97c0578fba75ba459fdab5796dd4fc81d735c9147c874d16c2d5f466995a0f",
+    "current_machine_stages": 24,
+    "current_machine_cumulative_cpu_seconds": 435.4966687269999,
+    "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967
+  },
+  "failed_receipt": {
+    "path": "outputs/ssl_synthetic_localization/ludb_qualification_v2/failure.json",
+    "sha256": "2dadca6b253ecf8ee0cb8e74e35b34491a5cbf40d90bcd0228faadb3f8cb48ab"
+  },
+  "prior_row_file_usage": "hash_byte_count_line_count_only_no_other_record_annotation_content",
+  "resources": {
+    "cpu_seconds": 60,
+    "wall_seconds": 120,
+    "rss_bytes": 536870912,
+    "new_output_bytes": 16777216,
+    "cpu_threads": 1,
+    "gpu_allowed": false,
+    "downloads": 0,
+    "terminal_bookkeeping_reserve_seconds": 2,
+    "terminal_bookkeeping_reserve_bytes": 16384
+  },
+  "technical_pass": "all_12_dual_decoded_event_fields_agree_and_scope_identity_resources_pass",
+  "scientific_pass_threshold": null,
+  "independent_verification": "peer_reviewed_independent_decoder_same_single_charged_run_then_read_only_setup_review",
+  "output_directory": "outputs/ssl_synthetic_localization/ludb_annotation_diagnosis_v1",
+  "possible_prior_protocol_deviation": "wfdb_rdann_may_have_parsed_original_header_comments_internally_never_used_logged_or_scored",
+  "future_parser_amendment_required_before_160_measurement_reads": true
+}

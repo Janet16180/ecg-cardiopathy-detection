@@ -24,6 +24,7 @@ def fixture_predecessor(tmp_path, monkeypatch):
     parent.mkdir()
     output.mkdir()
     (parent / "independent_audit_v1").mkdir()
+    (parent / "independent_audit_v2").mkdir()
     (parent / "record_rows.jsonl").write_text("\n".join(json.dumps(row) for row in rows) + "\n")
     statistics = runtime.peak.aggregate(rows)
     np.save(parent / "bootstrap_gains.npy", np.asarray(statistics.pop("bootstrap_gains")))
@@ -36,32 +37,66 @@ def fixture_predecessor(tmp_path, monkeypatch):
                               for name in ["record_rows.jsonl", "bootstrap_gains.npy",
                                            "release_file_identities.json"]}}
     runtime.shared.write_new(parent / "summary.json", main)
-    runtime.shared.write_new(parent / "independent_audit_v1/summary.json",
+    runtime.shared.write_new(parent / "independent_audit_v2/summary.json",
                              {"all_passed": True, "mismatch_count": 0, "scientific_passed": True})
-    for name, stage in [("prospective_ledger.json", 26),
-                        ("independent_audit_v1/prospective_ledger.json", 27)]:
-        ledger = {"current_machine_stages": stage, "cpu_seconds": 1, "gpu_wall_seconds": 0,
-                  "current_machine_cumulative_cpu_seconds": 100 + stage - 26,
-                  "current_machine_cumulative_gpu_wall_seconds": 10,
-                  "resource_gates": dict.fromkeys(["cpu", "wall", "rss", "output"], True)}
-        if stage == 26:
-            ledger["receipt_sha256"] = sha256_file(parent / "summary.json")
-        else:
-            ledger["sha256"] = sha256_file(parent / "independent_audit_v1/summary.json")
-            ledger["prior_ledger_sha256"] = sha256_file(parent / "prospective_ledger.json")
-        runtime.shared.write_new(parent / name, ledger)
-    spec = {"directory": "qualification"}
-    for name, key in [("summary.json", "summary_sha256"), ("prospective_ledger.json", "ledger_sha256"),
-                      ("independent_audit_v1/summary.json", "audit_summary_sha256"),
-                      ("independent_audit_v1/prospective_ledger.json", "audit_ledger_sha256")]:
-        spec[key] = sha256_file(parent / name)
+    runtime.shared.write_new(parent / "independent_audit_v1/summary.json",
+                             {"all_passed": False, "error_type": "KeyError",
+                              "error": "'current_machine_stages'"})
+    failed = {"cpu_seconds": 1, "gpu_wall_seconds": 0,
+              "sha256": sha256_file(parent / "independent_audit_v1/summary.json"),
+              "resource_gates": dict.fromkeys(["cpu", "wall", "rss", "output"], True),
+              **dict.fromkeys(["prior_ledger_sha256", "current_machine_stages",
+                              "current_machine_cumulative_cpu_seconds",
+                              "current_machine_cumulative_gpu_wall_seconds"])}
+    runtime.shared.write_new(parent / "independent_audit_v1/prospective_ledger.json", failed)
     monkeypatch.setattr(runtime, "from_stored", lambda name: tmp_path / name)
-    return {"qualification": spec, "asset_sha256": assets}, parent, output
+    admission, config = rebind_chain(parent)
+    admission["asset_sha256"] = assets
+    return admission, parent, output, config
+
+
+def rebind_chain(parent):
+    """Bind the artificial main26, retained failed27, setup27 and successor28 chain."""
+    main_ledger = {"current_machine_stages": 26, "cpu_seconds": 1, "gpu_wall_seconds": 0,
+                   "current_machine_cumulative_cpu_seconds": 100,
+                   "current_machine_cumulative_gpu_wall_seconds": 10,
+                   "resource_gates": dict.fromkeys(["cpu", "wall", "rss", "output"], True),
+                   "receipt_sha256": sha256_file(parent / "summary.json")}
+    ledger_path = parent / "prospective_ledger.json"
+    ledger_path.write_text(json.dumps(main_ledger))
+    record = {"current_machine_stages": 27, "current_machine_cumulative_cpu_seconds": 101,
+              "current_machine_cumulative_gpu_wall_seconds": 10, "failed_stage_cpu_seconds_counted_once": 1,
+              "creation_is_setup": True, "new_cost_stage_created": False,
+              "original_failed_audit_nulls_preserved": True}
+    for key, name in [("verified_main_accounting_ledger", "prospective_ledger.json"),
+                      ("retained_main_summary", "summary.json"),
+                      ("retained_failed_audit_ledger", "independent_audit_v1/prospective_ledger.json"),
+                      ("retained_failed_audit_receipt", "independent_audit_v1/summary.json")]:
+        record[key] = {"path": "qualification/" + name, "sha256": sha256_file(parent / name)}
+    reconciliation = parent / "reconciled_prior.json"
+    reconciliation.write_text(json.dumps(record))
+    binding = {"path": "qualification/reconciled_prior.json", "sha256": sha256_file(reconciliation)}
+    audit_ledger = {**main_ledger, "current_machine_stages": 28,
+                    "current_machine_cumulative_cpu_seconds": 102,
+                    "sha256": sha256_file(parent / "independent_audit_v2/summary.json"),
+                    "prior_ledger_sha256": binding["sha256"]}
+    (parent / "independent_audit_v2/prospective_ledger.json").write_text(json.dumps(audit_ledger))
+    spec = {"directory": "qualification", "failed_audit_reconciliation": binding}
+    for name, key in [("summary.json", "summary_sha256"), ("prospective_ledger.json", "ledger_sha256"),
+                      ("independent_audit_v2/summary.json", "audit_summary_sha256"),
+                      ("independent_audit_v2/prospective_ledger.json", "audit_ledger_sha256")]:
+        spec[key] = sha256_file(parent / name)
+    config = {"conditional_admission": {"qualification_audit_directory": "independent_audit_v2",
+               "qualification_main_stage": 26, "qualification_audit_stage": 28,
+               "accounting_reconciliation": {**binding, **{key: record[key] for key in [
+                   "current_machine_stages", "current_machine_cumulative_cpu_seconds",
+                   "current_machine_cumulative_gpu_wall_seconds"]}}}}
+    return {"qualification": spec}, config
 
 
 def test_marker_prerequisite_reproduces_all_rows_controls_and_draws(tmp_path, monkeypatch):
-    admission, _, output = fixture_predecessor(tmp_path, monkeypatch)
-    closure = runtime.landmark_closure(admission, output)
+    admission, _, output, config = fixture_predecessor(tmp_path, monkeypatch)
+    closure = runtime.landmark_closure(admission, output, config)
     assert closure["all_exact"]
     assert closure["bootstrap_draws"] == 2000
     np.testing.assert_allclose(closure["statistics"]["shift_N_mean_midrank"], [.4] * 6, atol=1e-14)
@@ -69,17 +104,17 @@ def test_marker_prerequisite_reproduces_all_rows_controls_and_draws(tmp_path, mo
 
 
 def test_false_audit_gate_blocks_before_signal_reads(tmp_path, monkeypatch):
-    admission, parent, output = fixture_predecessor(tmp_path, monkeypatch)
-    path = parent / "independent_audit_v1/summary.json"
+    admission, parent, output, config = fixture_predecessor(tmp_path, monkeypatch)
+    path = parent / "independent_audit_v2/summary.json"
     path.write_text(json.dumps({"all_passed": False, "mismatch_count": 1, "scientific_passed": True}))
     admission["qualification"]["audit_summary_sha256"] = sha256_file(path)
     with pytest.raises(ValueError, match="full audited"):
-        runtime.landmark_closure(admission, output)
+        runtime.landmark_closure(admission, output, config)
     assert not list(output.iterdir())
 
 
 def test_changed_saved_bootstrap_cannot_be_admitted_as_exact_closure(tmp_path, monkeypatch):
-    admission, parent, output = fixture_predecessor(tmp_path, monkeypatch)
+    admission, parent, output, config = fixture_predecessor(tmp_path, monkeypatch)
     draws = np.load(parent / "bootstrap_gains.npy")
     draws[0] += .001
     np.save(parent / "bootstrap_gains.npy", draws)
@@ -88,24 +123,31 @@ def test_changed_saved_bootstrap_cannot_be_admitted_as_exact_closure(tmp_path, m
     main["output_sha256"]["bootstrap_gains.npy"] = sha256_file(parent / "bootstrap_gains.npy")
     main_path.write_text(json.dumps(main))
     admission["qualification"]["summary_sha256"] = sha256_file(main_path)
-    ledger_path = parent / "prospective_ledger.json"
-    ledger = json.loads(ledger_path.read_text())
-    ledger["receipt_sha256"] = admission["qualification"]["summary_sha256"]
-    ledger_path.write_text(json.dumps(ledger))
-    admission["qualification"]["ledger_sha256"] = sha256_file(ledger_path)
-    audit_path = parent / "independent_audit_v1/prospective_ledger.json"
-    audit = json.loads(audit_path.read_text())
-    audit["prior_ledger_sha256"] = admission["qualification"]["ledger_sha256"]
-    audit_path.write_text(json.dumps(audit))
-    admission["qualification"]["audit_ledger_sha256"] = sha256_file(audit_path)
+    assets = admission["asset_sha256"]
+    admission, config = rebind_chain(parent)
+    admission["asset_sha256"] = assets
     with pytest.raises(ValueError, match="2000draw closure"):
-        runtime.landmark_closure(admission, output)
+        runtime.landmark_closure(admission, output, config)
     assert not list(output.iterdir())
 
 
 def test_bridge_rejects_different_asset_admission_before_signal_reads(tmp_path, monkeypatch):
-    admission, _, output = fixture_predecessor(tmp_path, monkeypatch)
+    admission, _, output, config = fixture_predecessor(tmp_path, monkeypatch)
     admission["asset_sha256"]["1.dat"] = "different_release"
     with pytest.raises(ValueError, match="differ from the qualified"):
-        runtime.landmark_closure(admission, output)
+        runtime.landmark_closure(admission, output, config)
     assert not list(output.iterdir())
+
+
+def test_double_counted_failed_audit_cpu_is_rejected():
+    record = {"current_machine_stages": 27, "failed_stage_cpu_seconds_counted_once": 1,
+              "creation_is_setup": True, "new_cost_stage_created": False,
+              "original_failed_audit_nulls_preserved": True,
+              "current_machine_cumulative_cpu_seconds": 102,
+              "current_machine_cumulative_gpu_wall_seconds": 10}
+    previous = {"current_machine_stages": 26, "current_machine_cumulative_cpu_seconds": 100,
+                "current_machine_cumulative_gpu_wall_seconds": 10}
+    failed = {"cpu_seconds": 1, "gpu_wall_seconds": 0,
+              "resource_gates": dict.fromkeys(["cpu", "wall", "rss", "output"], True)}
+    with pytest.raises(ValueError, match="counted more than once"):
+        runtime.validate_reconciled_costs(record, previous, failed)

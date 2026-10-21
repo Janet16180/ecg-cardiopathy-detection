@@ -51,16 +51,19 @@ improves conditional contribution-ranking consistency while using more distinct 
 The four completed studies were independently reconstructed; see the
 [combined findings](research/findings-2026-10-20.md).
 
-NTT-10 is preparing the user-authorized matched-union control: keep the unique support patients
-identical while changing aggregation weights and prototype normalization. Protocol review and
-commits precede any score. This preparation is not a result. Independent clinical labels and
-rubric approval remain unavailable. Nothing is scheduled by the ranking itself.
+[NTT-10](research/localization/ntt10-matched-union/results.md) completed the matched-union control.
+With exactly the same unique support people, equal-patient weighting gives mean Jaccard 0.7708
+versus 0.6559 for normalized-bank averaging (A-minus-B -0.11498). Independent reconstruction passed.
+The fixed uniform full-nine contrast shares method B's weighting convention; clinical labels remain
+unavailable and the result is conditional. The new pool/contrast transport candidate is a ranked idea,
+not an authorized or scheduled run. GitHub runners are paused at the user's request; local verification
+continues and pushes must skip CI. PR #71 remains draft, with no merge authorization.
 
 [NTT-06](research/localization/ntt06-native-encoder/results.md) used the real frozen ECG-JEPA
 checkpoint directly on signals: QRS 91.67% versus physical 92.78%, with its primary gate failed.
 The later contribution studies explain that existing classifier within fixed QRS/V1/V6 pooling;
 they do not establish independent selection among P, QRS, ST and T evidence. PR #71 remains draft
-by instruction; no push or PR merge is authorized.
+by instruction; safe aggregate/source pushes are authorized, with CI skipped; no PR merge is authorized.
 
 [041](experiment-041-cpu-screening-results.md) and [042](experiment-042-measurement-transfer-results.md) screening advances and the negative [043](experiment-043-lead-grounding-results.md) lead-grounding result are retained from merged PR #70.
 
@@ -139,13 +142,13 @@ penalty; one that ranks high earns a protocol like any other.
 | 39 | ecg_independent_expert_evidence | experiment | Obtain an independent finding-specific clinical evidence evaluation | 5 | 0.7 | 4.1 | 2.57 | @independent_expert_annotations, @cardiologist_review |
 | 40 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
 | 41 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
-| 42 | matched_union_contribution_control | experiment | Separate unique-support exposure from prototype aggregation | 4 | 0.8 | 2.1 | 2.21 | @prospective_matched_union_protocol |
-| 43 | wave_grounding_context_control | repo | Qualify time-grounding semantics and strong context/option controls | 4 | 0.7 | 2.1 | 1.93 | @prospective_time_grounding_qualification |
-| 44 | physical_finding_reference_benchmark | experiment | Independent physical finding-reference benchmark with sufficient evidence | 5 | 0.7 | 4.5 | 1.65 | ecg_independent_expert_evidence, physical_feature_reliability, @permitted_independent_development_source |
-| 45 | ntt_reference_dictionary_evidence | experiment | Prospective finding dictionary and clinically sufficient reference evidence | 5 | 0.7 | 4.1 | 1.61 | ecg_independent_expert_evidence, @cardiologist_reference_dictionary_review |
-| 46 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
-| 47 | measurement_multisource_training | experiment | Human-read multisource training for the CPU measurement screen | 4 | 0.8 | 4.0 | 1.60 | @prospective_multisource_protocol, @local_challenge_training_manifests |
-| 48 | ntt_native_encoder_reference_evaluation | experiment | Frozen native ECG encoder reference matching on automatic signal regions | 5 | 0.7 | 4.5 | 1.53 | ecg_independent_expert_evidence, @prospective_independent_source_and_support_uncertainty_protocol |
+| 42 | wave_grounding_context_control | repo | Qualify time-grounding semantics and strong context/option controls | 4 | 0.7 | 2.1 | 1.93 | @prospective_time_grounding_qualification |
+| 43 | physical_finding_reference_benchmark | experiment | Independent physical finding-reference benchmark with sufficient evidence | 5 | 0.7 | 4.5 | 1.65 | ecg_independent_expert_evidence, physical_feature_reliability, @permitted_independent_development_source |
+| 44 | ntt_reference_dictionary_evidence | experiment | Prospective finding dictionary and clinically sufficient reference evidence | 5 | 0.7 | 4.1 | 1.61 | ecg_independent_expert_evidence, @cardiologist_reference_dictionary_review |
+| 45 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
+| 46 | measurement_multisource_training | experiment | Human-read multisource training for the CPU measurement screen | 4 | 0.8 | 4.0 | 1.60 | @prospective_multisource_protocol, @local_challenge_training_manifests |
+| 47 | ntt_native_encoder_reference_evaluation | experiment | Frozen native ECG encoder reference matching on automatic signal regions | 5 | 0.7 | 4.5 | 1.53 | ecg_independent_expert_evidence, @prospective_independent_source_and_support_uncertainty_protocol |
+| 48 | reference_weighting_contrast_transport | experiment | Test equal-patient weighting across reference pools and contrasts | 4 | 0.7 | 3.2 | 1.45 | @prospective_pool_contrast_transport_protocol |
 | 49 | fixed_budget_ensemble_size | experiment | Compare ensemble sizes under a fixed reference-computation budget | 3 | 0.7 | 2.1 | 1.45 | @prospective_fixed_budget_protocol |
 | 50 | lead_grounding_membership_followup | experiment | Prospective exact-membership test of frozen lead-grounding models | 3 | 0.6 | 1.6 | 1.45 | @prospective_membership_protocol_and_patient_role |
 | 51 | regional_nuisance_sensitivity | experiment | Characterize rate-associated geometry with label-blind conditional controls | 3 | 0.7 | 2.1 | 1.35 | @prospective_nuisance_protocol |

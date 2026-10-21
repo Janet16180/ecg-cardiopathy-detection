@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-21T17:43:07.952192+00:00",
+  "updated_at_utc": "2026-10-21T19:45:14.254552+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2805,7 +2805,7 @@
     "integration_verification": "reports/verification/2026-10-20-autonomous.json"
   },
   "ntt10_matched_union_control": {
-    "status": "protocol_frozen_source_preflight_in_progress",
+    "status": "completed",
     "authorized": true,
     "authorization": "User requested continuation of the recommended control on 21 October 2026.",
     "protocol": "docs/research/localization/ntt10-matched-union/protocol.md",
@@ -2813,17 +2813,42 @@
     "scope": "Hold the exact union of unique reference patients fixed while comparing uniform-patient, occurrence-weighted and normalized-bank aggregation. No new clinical endpoint.",
     "publication": "draft_pr71_code_and_aggregate_reports_only_no_merge",
     "continuation_record": "docs/research/continuation-2026-10-21.md",
-    "next_action": "Commit reviewed source/tests after final preflight, then reproduce predecessor and execute. Private data and maps remain local.",
-    "protocol_commit": "694acbc"
+    "next_action": "Completed and independently reconstructed. Preserve fixed-contrast and finite-pool limitations; no further experiment or closed test scheduled.",
+    "protocol_commit": "694acbc",
+    "results": "docs/research/localization/ntt10-matched-union/results.md",
+    "aggregate": "reports/localization/ntt10-matched-union/aggregate.json",
+    "verification": "reports/localization/ntt10-matched-union/verification.json",
+    "source_commit": "99db6759d1805054f1fbe9b1f7537c2b0cac18f1",
+    "integrated_source_commit": "87edabd",
+    "result_sha256": "8e9e72a44d293de2b93c10563e9706eaecfb4219d7313f9e91380b05ee96a38a",
+    "decision": "B_material_conditional_consistency_advantage",
+    "mean_jaccard": {
+      "A": 0.6559,
+      "B": 0.7708,
+      "C": 0.6545
+    },
+    "primary_A_minus_B": -0.11497883597883599
   },
   "research_delivery_2026_10_21": {
-    "status": "authorized_push_preparation",
+    "status": "local_checks_complete_site_published_ci_skipped_push_prepared",
     "pr": 71,
     "url": "https://github.com/Janet16180/ecg-cardiopathy-detection/pull/71",
     "draft_required": true,
     "merge_authorized": false,
     "personal_account": "Janet16180",
     "scope": "Completed source, protocols, tests and safe aggregate reports; no private data, identities, feature arrays, maps or checkpoints.",
-    "note": "User renewed push authorization on 21 October; earlier local-only publication fields record the authorization at the time those studies ran."
+    "note": "User renewed push authorization on 21 October; earlier local-only publication fields record the authorization at the time those studies ran.",
+    "github_runners": "paused_at_user_request_2026_10_21",
+    "ci_skip_required": true,
+    "latest_local_tests": {
+      "passed": 1730,
+      "skipped": 6,
+      "seconds": 111.42
+    },
+    "previous_remote_failure": "Two PDF tests failed because pdftotext was absent. A poppler-utils workflow step is prepared for future use, not remotely executed.",
+    "advisor_brief": "docs/research/advisor-meeting-2026-10-21.md",
+    "advisor_site": "reports/verification/2026-10-21-advisor-site.json",
+    "site_status": "published_private",
+    "previous_pushed_snapshot": "6acae20d2c08fb072f3db0b2129a067601b97e56"
   }
 }

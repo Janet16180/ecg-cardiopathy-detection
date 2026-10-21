@@ -1952,14 +1952,30 @@
       "value": 4,
       "clarity": 0.8,
       "gpu_hours": 0,
-      "cpu_hours": 0.1,
+      "cpu_hours": 0.0067649149983966105,
       "build_hours": 2,
-      "blocked_by": [
-        "@prospective_matched_union_protocol"
-      ],
-      "status": "running",
+      "blocked_by": [],
+      "status": "done",
       "authorized": true,
-      "notes": "User authorized this next control on 21 October. NTT-10 design/protocol preparation is in progress; no new score before reviewed protocol and source commits. Hold exact unique support unions fixed and preserve full-pool contrasts, finite-pool coverage and fixed-QRS limitations. Equal unique patients do not imply equal computation cost."
+      "notes": "NTT-10 completed on 21 October. Scored runtime 24.35 s; measured audit 3.78 s; development/integration overhead is not included in those timings. Same unique support people: B equal-patient Jaccard 0.7708 versus A bank averaging 0.6559; A-B -0.11498. 42 material B advantages, four material A advantages, fourteen within +/-0.05. All 1,800 new decompositions, 600 analytic identities, 8,100 pairs and 1,800 matched comparisons independently reproduce. Uniform full-nine contrast shares B weighting; finite development pool, diffuse contextual maps, unequal computation and no clinical labels qualify result. Protocol/source/results: docs/research/localization/ntt10-matched-union/."
+    },
+    {
+      "id": "reference_weighting_contrast_transport",
+      "kind": "experiment",
+      "title": "Test equal-patient weighting across reference pools and contrasts",
+      "question": "Does the NTT-10 equal-person consistency advantage persist across prospectively fixed alternative contrast anchors and independent development support pools?",
+      "evidence": "NTT-10 holds unique supports fixed and favors B by 0.11498 Jaccard, but its fixed uniform-full-nine contrast shares B weighting. Four patients materially favor A.",
+      "value": 4,
+      "clarity": 0.65,
+      "gpu_hours": 0,
+      "cpu_hours": 0.2,
+      "build_hours": 3,
+      "blocked_by": [
+        "@prospective_pool_contrast_transport_protocol"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": "A follow-up idea, not an authorized or scheduled run. Define roles, contrasts, coverage and patient heterogeneity before scores. No clinical-localization or disease-cause claim; retain physical baseline and explored-cohort limitations."
     }
   ]
 }

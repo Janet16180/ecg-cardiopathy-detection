@@ -11,6 +11,8 @@ Execution state remains in the [queue](../experiment-queue.md) and its [JSON cat
 Follow-up ranking remains in the [priorities](../experiment-priorities.md) and [backlog](../experiment-backlog.json).
 A directory or index entry does not schedule a study.
 
+[Advisor meeting brief, 21 October](advisor-meeting-2026-10-21.md) compares image and raw-signal approaches and summarizes all 18 completed reference/clustering/SHAP studies.
+
 ## Layout for new work
 
 | Content | Location |

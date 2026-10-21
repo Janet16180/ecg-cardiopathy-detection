@@ -52,3 +52,10 @@ localization score exist; clinician rubric approval and actual review remain pen
 [NTT-08](ntt08-contextual-contributions/results.md) independently reconstructs exact signed contextual beat and unique-token contributions to all 180 original classifier margins. Contributions are distributed across beats and their rankings vary with the reference bank even for the same finding contrast. Cached representation deletion tests model response, without clinical interval truth or a waveform intervention. The user confirms that a cardiologist is unavailable; clinical review remains pending rather than assumed.
 
 [NTT-09](ntt09-reference-contribution-stability/results.md) fixes each patient's full-pool finding contrast and tests reference averaging directly. Mean patient top-positive-quarter overlap rises from 0.4418 to 0.6559; all 3,600 decompositions and 76,200 bank pairs independently reproduce. Larger support exposure and diffuse contributions qualify the conditional pass. The [20 October findings](../findings-2026-10-20.md) summarize the research phase without assuming cardiologist access.
+
+
+[NTT-10](ntt10-matched-union/results.md) holds unique support patients fixed. Equal-patient weighting
+improves conditional beat-set consistency over normalized-bank averaging (0.7708 vs 0.6559;
+A-minus-B -0.11498). Its uniform contrast anchor shares B's convention; this is not clinical validation.
+The [advisor brief](../advisor-meeting-2026-10-21.md) distinguishes compact images, physical waveform
+matching and learned native ECG-JEPA execution, preserving both failed recognition-gain gates.

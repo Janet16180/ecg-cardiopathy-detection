@@ -59,6 +59,26 @@ NTT-08 result SHA256:
 `0d137e4f8618a99f2d6994179b9ff5b1b3de0d82e309fd6ab4d915d5a3001058`.
 Read live receipts under `outputs/` before reporting progress.
 
+## Completed continuation and advisor delivery
+
+NTT-10 has now run and passed independent reconstruction. Equal-patient weighting B achieves mean
+Jaccard 0.7708 versus bank averaging A 0.6559, with identical unique reference people. A-minus-B is
+-0.11498; 42 patients materially favor B, four favor A, fourteen are within +/-0.05. The uniform
+full-nine contrast shares B's convention, so this is conditional consistency, not clinical evidence.
+Protocol/source/results are in [the study folder](localization/ntt10-matched-union/results.md).
+The main-checkout suite passes 1,730 tests, six skipped; lint, four new files' formatting and offline
+build pass. Original execution source 99db675 integrates as 87edabd; source bytes are unchanged.
+
+The user requested a detailed advisor-meeting website, especially both the image and raw ECG
+approaches. [The meeting brief](advisor-meeting-2026-10-21.md) preserves the explanation and links
+all study reports. Site publication contains only safe prose/aggregate artifacts. The private hosted presentation is
+verified by [its publication receipt](../../reports/verification/2026-10-21-advisor-site.json).
+
+The user subsequently requested no GitHub-runner execution for now. No branch run was active when
+checked. Do not rerun or dispatch CI; pushes use a CI-skip head commit. A preceding remote run failed
+two blinded-packet tests because pdftotext was missing. A poppler-utils workflow repair is prepared
+for future runner use; it is not remotely verified. Draft PR #71 must remain unmerged.
+
 ## Persistent constraints
 
 - Personal Git identity only: Janet16180, clarajanet16180@outlook.com. No work account.

@@ -236,8 +236,6 @@ def positive_vectors(indexed: dict) -> dict[str, np.ndarray]:
     ----------
     indexed : dict
         Complete fixed model/source/slot metric rows.
-    vectors : dict, optional
-        Existing fixed positive endpoint vectors.
 
     Returns
     -------
@@ -278,9 +276,7 @@ def factorial_vectors(vectors: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
 
     Parameters
     ----------
-    indexed : dict
-        Complete fixed model/source/slot metric rows.
-    vectors : dict, optional
+    vectors : dict
         Existing fixed positive endpoint vectors.
 
     Returns
@@ -333,8 +329,6 @@ def control_vectors(indexed: dict) -> dict[str, np.ndarray]:
     ----------
     indexed : dict
         Complete fixed model/source/slot metric rows.
-    vectors : dict, optional
-        Existing fixed positive endpoint vectors.
 
     Returns
     -------

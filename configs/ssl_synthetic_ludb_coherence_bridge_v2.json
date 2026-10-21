@@ -5,7 +5,7 @@
     "qualification_study": "ssl_synthetic_ludb_peak_timing_v1",
     "qualification_directory": "outputs/ssl_synthetic_localization/ludb_peak_timing_v1",
     "qualification_config": "configs/ssl_synthetic_ludb_peak_timing_v1.json",
-    "qualification_config_sha256": "ffc6012afce4b24b282f567e520e0726b37f7cab5b996c3748f95d56051102b0",
+    "qualification_config_sha256": "bf4828d3b36a62235633d97dbef4cf5d2a6e741bc160968eaed00f6aa98739ea",
     "qualification_protocol": "docs/ssl-synthetic-localization-ludb-peak-timing-v1.md",
     "qualification_protocol_sha256": "f98baa77a9f68690ae48a01d8e7b32ce47e6bcfb01c6b88428f1ff06565828eb",
     "require_ludb_technical_pass": true,

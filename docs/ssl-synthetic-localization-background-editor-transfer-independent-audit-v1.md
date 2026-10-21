@@ -34,13 +34,17 @@ No original LUDB annotation stream, clinical comment, external data or closed te
 From all saved float32 maps, independently reconstruct complete full-grid tie-aware noninterpolated
 AP for each original/held-out focal/repeated edit and the nuisance map evaluated at that exact same
 final-input support. Reconstruct the absolute-final-observed-input AP comparator at the same mask.
-Keep direct AP, nuisance AP, amplitude AP and both paired gaps visible; any response-map AP is a
+Keep direct AP, nuisance AP, amplitude AP and both paired gaps visible. Also compare each edited
+map with the same-source, same-family/mode final support from slot(slot+1)%64, without overlap
+filtering/retries; retain donor AP/prevalence and edited-minus-donor AP. This fixed nonself
+permutation preserves cohort support-count distributions, not a universal null. Any response-map AP is a
 separate secondary metric. Validate controls with artificial static-map and constant-map cases so a
 rank-only or prevalence artifact cannot become positive evidence. Preserve raw probability-change
 and control summaries declared by the main protocol; do not infer clinical false-positive rates.
 
 The primary is fixedB, real background, held-out family, equal mode/three-fixed-fit/64-slot weighting.
-Its two paired gaps each require a positive point estimate and positive95% lower bound (four gates).
+Its nuisance, amplitude and donor paired gaps each require a positive point estimate and positive95%
+lower bound (six gates).
 All other source/family/arm contrasts are exploratory and retain their prospective names/order.
 Reconstruct every model/source/slot row, summary and gate. Use shared patient_groups/patient_resample
 helpers for2000 shared whole-slot draws, RNG2026106601, linear2.5/97.5 percentiles. Average fixed fits

@@ -101,3 +101,14 @@ def test_unknown_child_runtime_retains_known_cpu_without_fabricating_total(tmp_p
     assert ledger["current_machine_cumulative_cpu_seconds"] is None
     assert ledger["known_current_machine_cumulative_cpu_seconds"] >= 10.2
     assert not ledger["resource_gates"]["total_cpu"]
+
+
+def test_unrelated_duplicate_headers_allowed_but_range_identity_is_unique(tmp_path):
+    path = tmp_path / "headers.txt"
+    path.write_text("HTTP/1.1 206 Partial Content\nSet-Cookie: first=1\nSet-Cookie: second=2\n"
+                    "Content-Range: bytes 3-5/6\n\n")
+    result = acquisition.response_headers(path)
+    assert result["headers"]["set-cookie"] == "first=1, second=2"
+    path.write_text("HTTP/1.1 206 Partial Content\nETag: fixed\nETag: changed\n\n")
+    with pytest.raises(ValueError, match="identity header"):
+        acquisition.response_headers(path)

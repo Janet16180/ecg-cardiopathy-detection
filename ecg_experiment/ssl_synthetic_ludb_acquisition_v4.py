@@ -67,9 +67,9 @@ def response_headers(path: Path) -> dict[str, Any]:
         for line in lines[1:]:
             key, value = line.split(":", 1)
             key = key.lower().strip()
-            if key in headers:
-                raise ValueError("Duplicate response header")
-            headers[key] = value.strip()
+            if key in headers and key in ["content-range", "content-length", "etag"]:
+                raise ValueError("Duplicate response identity header")
+            headers[key] = headers[key] + ", " + value.strip() if key in headers else value.strip()
         parsed.append({"status": int(match[1]), "reason": match[2] or "", "headers": headers})
     final = [block for block in parsed if block["status"] >= 200]
     if not final or any(

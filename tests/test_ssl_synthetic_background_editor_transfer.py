@@ -113,3 +113,60 @@ def test_shared_record_bootstrap_preserves_fixed_fits_and_complete_roster() -> N
         core.summarize(rows[:-1], config)
     with pytest.raises(ValueError, match="exactly once"):
         core.summarize(rows + [rows[0]], config)
+
+
+def test_donor_failure_cannot_be_rescued_by_other_primary_components() -> None:
+    """The fixed conjunction retains an unfavorable alignment-control result."""
+    rows = artificial_rows()
+    for row in rows:
+        if row["source"] == "real" and row["arm"] == "B":
+            for variant in ["biphasic_focal", "biphasic_repeated"]:
+                row["positives"][variant]["donor_gain"] = -0.01
+    statistics, _ = core.summarize(rows, {"bootstrap": {"seed": 2026106601, "draws": 2000}})
+    assert not statistics["scientific_passed"]
+    assert len(statistics["scientific_gates"]) == 6
+    assert sum(statistics["scientific_gates"].values()) == 4
+    assert len(statistics["per_fit_mode"]) == 96
+
+
+def test_runtime_preflight_rejects_missing_rosters_before_any_array_read(tmp_path, monkeypatch) -> None:
+    """Incomplete source admissions stop at metadata rather than spending a failed ECG run."""
+    import json
+
+    from ecg_experiment import ssl_synthetic_background_editor_transfer_run as execution
+
+    config = {"sources": list(core.SOURCES), "variants": list(core.VARIANTS), "prior_ledger": "prior.json"}
+    (tmp_path / "config.json").write_text(json.dumps(config))
+    (tmp_path / "admission.json").write_text(json.dumps({"source_sha256": {}, "input_sha256": {}}))
+    monkeypatch.setattr(
+        execution,
+        "from_stored",
+        lambda name: tmp_path / ("config.json" if name == execution.CONFIG else name),
+    )
+    with pytest.raises(ValueError, match="roster incomplete"):
+        execution.preflight("admission.json")
+
+
+def test_cumulative_gpu_guard_charges_previous_and_active_intervals() -> None:
+    """Separate profile/full lock phases cannot reset the shared GPU allowance."""
+    import time
+
+    from ecg_experiment import ssl_synthetic_background_editor_transfer_run as execution
+
+    clock = {
+        "cpu": time.process_time(),
+        "wall": time.perf_counter(),
+        "gpu_cost": 297.0,
+        "active_gpu_start": time.perf_counter() - 2,
+    }
+    config = {
+        "resources": {
+            "cpu_seconds": 1800,
+            "wall_seconds": 2400,
+            "rss_bytes": 2**40,
+            "output_bytes": 2**40,
+            "gpu_lock_seconds": 300,
+        }
+    }
+    with pytest.raises(TimeoutError, match="cumulative GPU-lock"):
+        execution.resource_guard(config, clock)

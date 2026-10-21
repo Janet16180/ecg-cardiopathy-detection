@@ -357,6 +357,41 @@ def control_vectors(indexed: dict) -> dict[str, np.ndarray]:
     return vectors
 
 
+def fit_mode_points(indexed: dict) -> list[dict[str, Any]]:
+    """Retain every fixed-fit and edit-mode point without selecting favorable cells.
+
+    Parameters
+    ----------
+    indexed : dict
+        All complete fixed model/source/slot rows.
+
+    Returns
+    -------
+    list
+        Every source, arm, fit and positive variant with equal64-record endpoint means.
+    """
+    return [
+        {
+            "source": source,
+            "arm": arm,
+            "fit_id": fit,
+            "variant": variant,
+            "points": {
+                metric: float(
+                    np.mean(
+                        [indexed[source, slot, fit, arm]["positives"][variant][metric] for slot in range(64)]
+                    )
+                )
+                for metric in indexed[source, 0, fit, arm]["positives"][variant]
+            },
+        }
+        for source in SOURCES
+        for arm in ARMS
+        for fit in FITS
+        for variant in POSITIVES
+    ]
+
+
 def summarize(rows: list[dict[str, Any]], config: dict[str, Any]) -> tuple[dict[str, Any], np.ndarray]:
     """Use shared whole-slot draws with fixed fits and six conjunctive engineering checks.
 
@@ -405,6 +440,7 @@ def summarize(rows: list[dict[str, Any]], config: dict[str, Any]) -> tuple[dict[
         for field in ("mean", "ci_low")
     }
     return {
+        "per_fit_mode": fit_mode_points(indexed),
         "endpoint_order": names,
         "endpoints": statistics,
         "primary": primary,

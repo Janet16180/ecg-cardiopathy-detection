@@ -547,9 +547,9 @@ def gpu_inference(
     started = runtime.new_clock()
     phase = {}
     states = {}
-    with gpu_lock("cuda", blocking=False):
-        clock["active_gpu_start"] = time.perf_counter()
-        try:
+    try:
+        with gpu_lock("cuda", blocking=False):
+            clock["active_gpu_start"] = time.perf_counter()
             if not torch.cuda.is_available():
                 raise RuntimeError("Actual CUDA access unavailable; no CPU inference fallback")
             free, total = torch.cuda.mem_get_info(0)
@@ -600,14 +600,14 @@ def gpu_inference(
                 peak_reserved_bytes=torch.cuda.max_memory_reserved(0),
             )
             del inputs
-        finally:
-            occupied = time.perf_counter() - clock.pop("active_gpu_start")
-            clock["gpu_cost"] = clock.get("gpu_cost", 0) + occupied
-            phase["gpu_lock_seconds"] = occupied
-            phase["actual_phase"] = runtime.elapsed(started)
-            shared.write_new(
-                destination / ("profile/gpu_phase.json" if profile else "full_gpu_phase.json"), phase
-            )
+    finally:
+        occupied = time.perf_counter() - clock.pop("active_gpu_start") if "active_gpu_start" in clock else 0.0
+        clock["gpu_cost"] = clock.get("gpu_cost", 0) + occupied
+        phase["gpu_lock_seconds"] = occupied
+        phase["actual_phase"] = runtime.elapsed(started)
+        shared.write_new(
+            destination / ("profile/gpu_phase.json" if profile else "full_gpu_phase.json"), phase
+        )
     return models, phase
 
 

@@ -62,8 +62,11 @@ Read live receipts under `outputs/` before reporting progress.
 ## Persistent constraints
 
 - Personal Git identity only: Janet16180, clarajanet16180@outlook.com. No work account.
-- No push, publication, PR merge, clinician contact, data upload or closed-test access.
-- New files, comments and reports in English; explanations to the user may be in Spanish.
+- On 21 October the user renewed authorization to push completed source, protocols, tests and safe
+  aggregate reports to existing draft PR #71. Keep it draft; no PR merge. Private data, identities
+  and maps remain local. No clinician contact, raw-data upload or closed-test access.
+- New files, comments and reports are in English. The user also requested English conversation
+  on 21 October.
 - Use a small agent team with isolated copies, two CPU threads per process, existing local caches,
   and `PYTHONPATH` pointing at the relevant copy. No GPU or downloads are needed for this control.
 - Use `uv run --no-sync` with `UV_CACHE_DIR=/tmp/ecg-uv-cache`. The default home cache is read-only.

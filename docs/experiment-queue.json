@@ -2805,14 +2805,25 @@
     "integration_verification": "reports/verification/2026-10-20-autonomous.json"
   },
   "ntt10_matched_union_control": {
-    "status": "design_and_protocol_in_progress",
+    "status": "protocol_frozen_source_preflight_in_progress",
     "authorized": true,
     "authorization": "User requested continuation of the recommended control on 21 October 2026.",
     "protocol": "docs/research/localization/ntt10-matched-union/protocol.md",
     "output_dir": "outputs/ntt10_matched_union",
     "scope": "Hold the exact union of unique reference patients fixed while comparing uniform-patient, occurrence-weighted and normalized-bank aggregation. No new clinical endpoint.",
-    "publication": "local_only_no_push_no_pr_merge",
+    "publication": "draft_pr71_code_and_aggregate_reports_only_no_merge",
     "continuation_record": "docs/research/continuation-2026-10-21.md",
-    "next_action": "Scientific design review and prospective protocol commit before any score; then committed source/tests, exact predecessor replay, execution and independent audit."
+    "next_action": "Commit reviewed source/tests after final preflight, then reproduce predecessor and execute. Private data and maps remain local.",
+    "protocol_commit": "694acbc"
+  },
+  "research_delivery_2026_10_21": {
+    "status": "authorized_push_preparation",
+    "pr": 71,
+    "url": "https://github.com/Janet16180/ecg-cardiopathy-detection/pull/71",
+    "draft_required": true,
+    "merge_authorized": false,
+    "personal_account": "Janet16180",
+    "scope": "Completed source, protocols, tests and safe aggregate reports; no private data, identities, feature arrays, maps or checkpoints.",
+    "note": "User renewed push authorization on 21 October; earlier local-only publication fields record the authorization at the time those studies ran."
   }
 }

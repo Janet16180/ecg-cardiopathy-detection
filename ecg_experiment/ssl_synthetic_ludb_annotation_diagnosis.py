@@ -232,13 +232,15 @@ def finish(destination: Path, config: dict[str, Any], summary: dict[str, Any], c
     if receipt == "finalization_failure.json":
         write_new(destination / receipt, summary)
         digest = sha256_file(destination / receipt)
+    rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024
     cpu, wall = time.process_time() - clock["cpu"], time.perf_counter() - clock["wall"]
     gates = {"cpu": cpu < limits["cpu_seconds"], "wall": wall < limits["wall_seconds"],
-             "rss": summary["peak_rss_bytes"] < limits["rss_bytes"],
+             "rss": rss < limits["rss_bytes"],
              "output": size is not None and size + 16384 < limits["new_output_bytes"]}
     passed = summary["status"] == "PASS" and all(gates.values()) and summary["all_12_dual_decoders_agree"]
     write_new(destination / "prospective_ledger.json", {"stage": config["study"], "receipt": receipt,
         "receipt_sha256": digest, "cpu_seconds": cpu, "wall_seconds": wall, "gpu_wall_seconds": 0,
+        "peak_rss_bytes": rss,
         "resource_gates": gates, "technical_passed": passed,
         "current_machine_stages": 25 if verified else None,
         "prior_ledger_sha256": prior["sha256"] if verified else None,

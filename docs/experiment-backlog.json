@@ -1695,7 +1695,7 @@
       "cpu_hours": 0.2,
       "build_hours": 2.5,
       "blocked_by": [],
-      "status": "complete",
+      "status": "done",
       "notes": "Retain bothtransportfailures and one pre-data sourcefailure; v3noexecution/stage. Originalfailedv1 cumulativefieldsnull preserved; explicitreviewed metadatareconciliation derivesprior23 CPU432.150871929/GPU447.981392133 from knownacquisition22+actualfailedCPUonce. Next actual V2 followedby combinedindependentaudit.",
       "latest_status": "Main26/recovery28PASSzeromismatches;gain0.450519[0.438960,0.462589]atNlandmarks,nodense/diseaseclaim.Failed27preservedonce.Conditionaldescriptivecoherencebridgev2next."
     },
@@ -1745,6 +1745,26 @@
       ],
       "status": "proposed",
       "notes": "Use new files only; preserve frozen profiles/forecastmisses. Include mapflush and all recurring I/O/bookkeeping plus a conservative overhead term, retain livecaps and sharedGPUlock. This supports the generator/localization objective; no new classification benchmark."
+    },
+    {
+      "id": "ssl_synthetic_real_generated_coherence",
+      "kind": "experiment",
+      "title": "Compare fixed activity synchrony in released-generator ECGs and public LUDB recordings",
+      "question": "Does the original128-seed generator bank have a different fixed native-minus-shifted activity-coherence distribution from200public real recordings?",
+      "evidence": [
+        "docs/ssl-synthetic-localization-ludb-peak-timing-v1-results.md",
+        "docs/ssl-synthetic-localization-ludb-coherence-bridge-v2.md"
+      ],
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.2,
+      "build_hours": 1.5,
+      "blocked_by": [
+        "ssl_synthetic_public_annotation_qualification"
+      ],
+      "status": "in_progress",
+      "notes": "User-authorized CPU-only descriptive continuation after audited N-landmark PASS. Frozen128/200 cohorts/seeds/method; no physiological/disease/clinical threshold. Await complete independent source/admission before main29/audit30."
     }
   ]
 }

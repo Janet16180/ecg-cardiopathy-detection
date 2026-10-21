@@ -49,7 +49,10 @@ All other source/family/arm contrasts are exploratory and retain their prospecti
 Reconstruct every model/source/slot row, summary and gate. Use shared patient_groups/patient_resample
 helpers for2000 shared whole-slot draws, RNG2026106601, linear2.5/97.5 percentiles. Average fixed fits
 before resampling; do not resample fits, cells or clinical patients. Slots couple operator geometry,
-not biological patient pairing. Compare every saved bootstrap draw and its column order.
+not biological patient pairing. Donor assignments/target masks stay fixed under these draws; the
+interval is not a new-patient or permutation-null claim. Compare every saved bootstrap draw and its
+column order. New independent AP/endpoints/draws use absolute1e-12 comparison tolerance without
+clipping or changing a gate. Inputs/masks/counts/identities and frozen predecessor closures are exact.
 
 Verify exact predecessor closure of the complete original synthetic aggregate and main31/audit34
 identities/primary summaries with source-derived integrity checks. Preserve the original main160-

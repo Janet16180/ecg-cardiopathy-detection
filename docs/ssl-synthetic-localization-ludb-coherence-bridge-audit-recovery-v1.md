@@ -26,3 +26,11 @@ The prerequisite main26→failed27→successful28 accounting chain must be verif
 with the setup reconciliation explicitly marked as metadata, not a scored
 experiment. Audit28 must retain and verify all original main66 source bindings.
 No main rerun or modification of its outputs is authorized by this amendment.
+
+The independently checked actual setup binding is
+`outputs/ssl_synthetic_localization/ludb_landmark_audit_reconciliation_v1/reconciled_prior.json`,
+SHA256 `27cdc3ceddc4a36e7be6ba2805caad98c094fcd5bb85e80d1d2c9b469d5b99dd`.
+Its derived27 cumulative CPU is449.557301953 (=447.84000429099996+1.717297662),
+with GPU-lock447.98139213304967. Audit28 must append this setup prior, not
+directly append main26 and omit failed27. This is an exact identity/accounting
+binding; the comparison method and scientific eligibility rule are unchanged.

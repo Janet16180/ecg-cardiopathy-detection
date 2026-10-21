@@ -21,7 +21,14 @@
     "original_AP_gated_bridge_v1_status": "unexecuted_not_rescued",
     "no_gate_substitution_after_reading_coherence_scores": true,
     "qualification_audit_directory": "independent_audit_v2",
-    "failed_independent_audit_v1_preserved": true
+    "failed_independent_audit_v1_preserved": true,
+    "accounting_reconciliation": {
+      "path": "outputs/ssl_synthetic_localization/ludb_landmark_audit_reconciliation_v1/reconciled_prior.json",
+      "sha256": "27cdc3ceddc4a36e7be6ba2805caad98c094fcd5bb85e80d1d2c9b469d5b99dd",
+      "current_machine_stages": 27,
+      "current_machine_cumulative_cpu_seconds": 449.557301953,
+      "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967
+    }
   },
   "generated": {
     "directory": "outputs/ssl_synthetic_localization/generated_quality_v2",

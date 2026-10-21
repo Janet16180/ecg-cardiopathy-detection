@@ -1,0 +1,221 @@
+{
+  "study": "ssl_synthetic_ludb_peak_timing_v1",
+  "protocol": "docs/ssl-synthetic-localization-ludb-peak-timing-v1.md",
+  "dataset": {
+    "name": "LUDB",
+    "version": "1.0.1",
+    "metadata_url": "https://physionet.org/content/ludb/1.0.1/",
+    "file_base_url": "https://physionet.org/files/ludb/1.0.1/",
+    "record_ids": {
+      "first": 1,
+      "last_inclusive": 200
+    },
+    "parser_role": "record_id % 5 == 0",
+    "measurement_role": "record_id % 5 != 0",
+    "parser_records": 40,
+    "measurement_records": 160,
+    "sample_rate_hz": 500,
+    "samples": 5000,
+    "leads": [
+      "I",
+      "II",
+      "III",
+      "aVR",
+      "aVL",
+      "aVF",
+      "V1",
+      "V2",
+      "V3",
+      "V4",
+      "V5",
+      "V6"
+    ],
+    "annotation_extensions": [
+      "i",
+      "ii",
+      "iii",
+      "avr",
+      "avl",
+      "avf",
+      "v1",
+      "v2",
+      "v3",
+      "v4",
+      "v5",
+      "v6"
+    ],
+    "parse_diagnosis_comments": false,
+    "parse_ludb_csv": false,
+    "coverage": "first_decoded_timed_event_through_last_decoded_timed_event_inclusive_unlabeled_reference",
+    "omissions_allowed": 0,
+    "archive_url": "https://physionet.org/static/published-projects/ludb/lobachevsky-university-electrocardiography-database-1.0.1.zip",
+    "wfdb_format": "16",
+    "dat_bytes_per_record": 120000,
+    "optional_header_date_time_tokens": "permitted_but_not_logged_or_analyzed",
+    "event_contract": {
+      "preserve_source_order": true,
+      "samples": "integer_0_through_4999_nondecreasing",
+      "preserve_all_decoded_timed_events": true,
+      "sort_drop_deduplicate_repair_impute": false,
+      "landmark_numeric_code": 1,
+      "landmark_symbol": "N",
+      "landmark_multiplicity": "all_released_events_equal_weight_within_lead",
+      "minimum_landmarks_per_lead": 1,
+      "other_event_codes": "retain_and_count_not_an_exclusion",
+      "symbol_lookup_unknown": "retain_numeric_code_and_lookup_status_not_corruption",
+      "exact_wave_triplets_required": false,
+      "boundary_completeness": "descriptive_only_no_guessed_onsets_or_dense_masks",
+      "auxiliary_payload": "length_only_no_text_output_or_interpretation"
+    }
+  },
+  "proxy": {
+    "dtype": "float64",
+    "difference": "np.diff(x, prepend=x[:1])",
+    "energy": "squared_difference",
+    "smoothing_samples": 20,
+    "kernel": "uniform_1_over_20",
+    "convolution": "numpy_same_zero_extension",
+    "normalization": "divide_by_full_record_positive_max_else_all_zero",
+    "annotations_affect_proxy": false
+  },
+  "controls": {
+    "type": "np.roll_within_lead_specific_unlabeled_reference_span",
+    "fractions": [
+      0.17,
+      0.31,
+      0.43,
+      0.59,
+      0.71,
+      0.83
+    ],
+    "offset_rule": "floor(coverage_length * fraction)",
+    "aggregate": "mean_of_six_N_landmark_mean_percentile_ranks",
+    "offset_admission": "six_distinct_nonzero_offsets_less_than_reference_length"
+  },
+  "endpoint": {
+    "metric": "released_N_landmark_empirical_midrank_percentile",
+    "rank_formula": "(count_reference_scores_strictly_lower + 0.5*count_reference_scores_equal)/reference_length",
+    "rank_implementation": "(searchsorted_left+searchsorted_right)/(2*reference_length)",
+    "constant_score_rank": 0.5,
+    "reference_samples_are_negative_labels": false,
+    "boundary_mask_defined": false,
+    "lead_landmark_weighting": "equal_all_N_events_including_duplicate_multiplicity",
+    "lead_weighting": "equal_12",
+    "subject_weighting": "equal_160",
+    "primary": "mean_subject_original_mean_rank_minus_mean_six_shifted_mean_ranks",
+    "bootstrap_draws": 2000,
+    "bootstrap_seed": 2026106101,
+    "bootstrap_unit": "whole_released_subject_record",
+    "bootstrap_helpers": [
+      "ecg_experiment.intervals.patient_groups",
+      "ecg_experiment.intervals.patient_resample"
+    ],
+    "percentiles": [
+      2.5,
+      97.5
+    ],
+    "percentile_method": "linear",
+    "skipped_draws": 0,
+    "minimum_primary_gain": 0.05,
+    "primary_lower_bound_strictly_greater_than": 0.0,
+    "technical_pass_required": true,
+    "independent_audit_pass_required": true,
+    "parser_role_metrics_allowed": false,
+    "secondary_scientific_endpoints": []
+  },
+  "predecessor": {
+    "directory": "outputs/ssl_synthetic_localization/generated_temporal_diagnosis_v2",
+    "summary_sha256": "e6897dacd5f4a784ea5a5110af8ce71d2de248f9de1bdf715b36963194fbc3b7",
+    "independent_summary_sha256": "d256bb1290a7edca693492d4f24620ed3513c3b210d03d95588664a9412a11d9",
+    "latest_ledger_sha256": "a5e28f417f3d4d4ea445176149e2812a5efa48f0b7680a4a515cd94d7b518daf",
+    "exact_case_row_contrast_closure": true,
+    "bootstrap_draws": 2000,
+    "bootstrap_seed": 2026105601,
+    "prior_cpu_seconds": 429.49696094999996,
+    "prior_gpu_lock_seconds": 447.98139213304967,
+    "prior_stages": 18
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "gpu_allowed": false,
+    "training_allowed": false,
+    "main": {
+      "wall_seconds": 1200,
+      "cpu_seconds": 600,
+      "rss_bytes": 2147483648,
+      "new_output_bytes": 268435456
+    },
+    "independent_audit": {
+      "wall_seconds": 1200,
+      "cpu_seconds": 600,
+      "rss_bytes": 2147483648,
+      "new_output_bytes": 134217728
+    },
+    "downloads": 0,
+    "terminal_bookkeeping_reserve_seconds": 2,
+    "terminal_bookkeeping_reserve_bytes": 16384
+  },
+  "figures": {
+    "fixed_overlay_record_ids": [
+      5,
+      10,
+      15,
+      20
+    ],
+    "fixed_overlay_leads": [
+      "II",
+      "V2"
+    ],
+    "selected_by_outcome": false,
+    "parser_proxy_overlay_timing": "after_all_measurement_numerical_results_complete_no_parser_ranks_or_controls",
+    "aggregate": "all_12_lead_original_and_control_landmark_ranks_and_reference_span_extent"
+  },
+  "output_directory": "outputs/ssl_synthetic_localization/ludb_peak_timing_v1",
+  "claims": {
+    "concentration_at_released_N_landmarks": true,
+    "same_fixed_activity_proxy_as_synthetic_hotspot_diagnosis": true,
+    "independently_validated_physiological_peaks": false,
+    "learned_model_real_ECG_transfer": false,
+    "dense_QRS_span_qualification": false,
+    "onset_offset_accuracy": false,
+    "disease_region_mask": false,
+    "clinical_validation": false,
+    "generator_physiology_validation": false,
+    "ssl_benefit": false
+  },
+  "acquisition_directory": "outputs/ssl_synthetic_localization/ludb_acquisition_v4",
+  "logical_data_root": "data/raw/ludb/1.0.1/data",
+  "actual_data_target": "outputs/ssl_synthetic_localization/ludb_acquisition_v4/data",
+  "annotation_io": {
+    "permitted_structural_header_lines": 13,
+    "sanitize_before_wfdb_rdann": true,
+    "rdann_original_record_path_allowed": false,
+    "scratch_annotation_links_read_only": true,
+    "parse_header_comments": false,
+    "independent_decoder_agreement": "sample_code_subtype_channel_num_aux_length_with_known_symbol_lookup_checked",
+    "channel_field": "retain_as_metadata_not_physical_lead_identity"
+  },
+  "prior_ledger": {
+    "path": "outputs/ssl_synthetic_localization/ludb_annotation_diagnosis_v1/prospective_ledger.json",
+    "sha256": "cb86ee511b4740ab7b84a589fc81448556df3d5561907b4bd07e2f4748a020ba",
+    "current_machine_stages": 25,
+    "current_machine_cumulative_cpu_seconds": 435.78864791,
+    "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967,
+    "main_stage": 26,
+    "independent_audit_stage": 27
+  },
+  "diagnostic_closure": {
+    "directory": "outputs/ssl_synthetic_localization/ludb_annotation_diagnosis_v1",
+    "record_id": 95,
+    "all_12_saved_event_tables_exact": true,
+    "total_events": 571,
+    "released_N_events": 107,
+    "complete_QRS_triplets": 72,
+    "N_offset_pairs_missing_onset": 35,
+    "complete_T_triplets": 95,
+    "other_residual_events": 0,
+    "before_measurement_records": true
+  },
+  "history": "Preserve strict dense-span v1 input-guard failure, v2 record95 incomplete-onset failure, possible prior rdann header-comment parsing deviation, and every actual receipt/cost.",
+  "bridge_gate": "Original AP-gated coherence bridge remains unexecuted; any use of this N-landmark gate requires a new explicit prospective bridge amendment before comparison scores."
+}

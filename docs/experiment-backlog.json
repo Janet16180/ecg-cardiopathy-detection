@@ -1687,8 +1687,8 @@
       "id": "ssl_synthetic_public_annotation_qualification",
       "kind": "repo",
       "title": "Qualify LUDB public wave annotations for ECG timing measurements",
-      "question": "Can a fixed QRS-like timing proxy be verified against released manual12-lead wave boundaries before interpreting generated ECG timing?",
-      "evidence": "LUDB fully acquired:200recordgroups/2800officialhashesPASS. First timingrun source guard failed before data/score because coordinator omittedone requiredhelper. Runtime-v2complete-source preflight and unchanged scientificconfig prospectivelycommitted; no LUDBscoresyet.",
+      "question": "Can the fixed activity proxy concentrate at released QRS landmarks without inventing missing interval boundaries?",
+      "evidence": "Executed docs/ssl-synthetic-localization-ludb-peak-timing-v1-results.md and independent-audit-v2-results:160records/1920measurementleads, rankgain0.450519[0.438960,0.462589],zeroauditmismatches. Originaldense-spancontractFAILpreserved.",
       "value": 4,
       "clarity": 0.8,
       "gpu_hours": 0,
@@ -1696,7 +1696,7 @@
       "build_hours": 2.5,
       "blocked_by": [],
       "status": "done",
-      "notes": "Retain bothtransportfailures and one pre-data sourcefailure; v3noexecution/stage. Originalfailedv1 cumulativefieldsnull preserved; explicitreviewed metadatareconciliation derivesprior23 CPU432.150871929/GPU447.981392133 from knownacquisition22+actualfailedCPUonce. Next actual V2 followedby combinedindependentaudit.",
+      "notes": "All200records/2400streamsretained;35missingQRSonsetsdiagnosedinreserved95. Newlandmarkestimandcommittedbefore160reads. Acquisition/manifest/parser/independentauditfailuresandnullfieldsretained;actual28costincludesfailed27once. No96percentaccuracy/densemask/physiology/diseaselocalizationclaim.",
       "latest_status": "Main26/recovery28PASSzeromismatches;gain0.450519[0.438960,0.462589]atNlandmarks,nodense/diseaseclaim.Failed27preservedonce.Conditionaldescriptivecoherencebridgev2next."
     },
     {
@@ -1751,10 +1751,7 @@
       "kind": "experiment",
       "title": "Compare fixed activity synchrony in released-generator ECGs and public LUDB recordings",
       "question": "Does the original128-seed generator bank have a different fixed native-minus-shifted activity-coherence distribution from200public real recordings?",
-      "evidence": [
-        "docs/ssl-synthetic-localization-ludb-peak-timing-v1-results.md",
-        "docs/ssl-synthetic-localization-ludb-coherence-bridge-v2.md"
-      ],
+      "evidence": "docs/ssl-synthetic-localization-ludb-peak-timing-v1-results.md; docs/ssl-synthetic-localization-ludb-coherence-bridge-v2.md",
       "value": 4,
       "clarity": 0.8,
       "gpu_hours": 0,

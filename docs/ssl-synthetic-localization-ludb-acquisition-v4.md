@@ -71,7 +71,11 @@ Use live offline CPU/wall/RSS checks, strict streamed byte counters and conserva
 After preparation, bound base bytes + remaining suffix file + remaining suffix appended to prefix +
 64 MiB extraction + 1 MiB receipts below 128 MiB. Do not repeatedly scan the growing extracted tree.
 Exactly enumerate retained bytes once at completion with offline timers active; disclose the final
-2-second / 16 KiB ledger assembly reserve. Include source hashes, time-log/header verification,
+2-second / 16 KiB ledger assembly reserve for each offline phase. Preparation measurement ends
+after its preparation-receipt hash, before serializing `prepare_costs.json`; final measurement
+ends after final receipt hashing, before the terminal ledger. Both small serialization tails are
+explicitly disclosed rather than assigned invented CPU time. GNU time child clocks retain their
+printed precision; they are not nanosecond measurements. Include source hashes, time-log/header verification,
 assembly/extraction, file checks and receipt hashing in measured phase work. If preparation already
 ran but transfer cannot start, retain that real work and finish with an explicit failure; never
 reset or fabricate it. Missing child measurements after an uncertain launch remain unknown and fail

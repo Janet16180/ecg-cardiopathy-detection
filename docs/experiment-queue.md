@@ -1,16 +1,15 @@
 # Experiment queue
 
-20 October: the single transparent v4curl suffix transfer is running after offline preparation
-PASS and committed admission06fb9dd. The prior two executed transport failures remain preserved;
-v3never started because automatic approval review timed out, so it has no fabricated cost stage.
-V4 uses separately metered prepare/curl/finish phases and excludes approval waiting explicitly.
-No waveform or annotation has been decoded and no LUDB score exists. Next: official2800file
-checksums, fixed40parser/160measurement timing evaluation, then combined independent reconstruction.
-Read [scientific protocol](ssl-synthetic-localization-ludb-qualification-v1.md),
-[first failure](ssl-synthetic-localization-ludb-acquisition-v1-results.md),
-[independent cause audit](ssl-synthetic-localization-ludb-acquisition-failure-audit-v1-results.md),
-[second failure](ssl-synthetic-localization-ludb-acquisition-v2-results.md), and
-[transparent transfer](ssl-synthetic-localization-ludb-acquisition-v4.md). PR67 stays draft.
+20 October: LUDB1.0.1 is completely acquired; all200record groups/2800officialfile hashes
+passed. The two actual transport failures remain; v3never executed. The first timing run then
+stopped at source admission BEFORE any record/annotation read or score because one required
+helper was omitted. Its1.177479012CPU cost and original unverified/null cumulative ledger remain
+unchanged. Explicit reviewed reconciliation derives prior23 CPU432.150871929/GPU447.981392133.
+Runtime-v2 retains every scientific choice and adds complete source preflight before actual data.
+Read [verified acquisition](ssl-synthetic-localization-ludb-acquisition-v4-results.md),
+[admission failure](ssl-synthetic-localization-ludb-qualification-v1-results.md) and
+[runtime amendment](ssl-synthetic-localization-ludb-qualification-runtime-v2.md). No LUDB scores
+yet; no training or closed test. PR67 stays draft.
 
 **19 October temporal/lead diagnosis completed and independently verified:** Combined PK versus
 B improves oracle-conditioned temporal AP by0.103622[0.069175,0.140407] and lead-presence AP by

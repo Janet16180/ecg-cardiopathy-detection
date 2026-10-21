@@ -2270,7 +2270,7 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "public_ludb_transparent_suffix_transfer_running",
+    "status": "public_ludb_acquired_v1_admission_failure_runtime_v2_preparing",
     "authorized": true,
     "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
     "branch": "research/ssl-synthetic-localization",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Finish the one approved v4 curl suffix GET, run committed offline checksum verification, then admit and execute fixed40parser/160measurement LUDB timing study and combined independent audit. No LUDB scores yet; v3 never executed.",
+    "next_action": "Preserve the pre-data source-admission failure and null original cumulative fields; verify explicit prior23 reconciliation, preflight complete runtime-v2 sources, then run unchanged LUDB timing study and combined independent audit. No LUDB scores yet.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2999,7 +2999,7 @@
         "raw_rows_changed": false
       },
       "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md",
-      "next_action": "Finish the one approved v4 curl suffix GET, run committed offline checksum verification, then admit and execute fixed40parser/160measurement LUDB timing study and combined independent audit. No LUDB scores yet; v3 never executed.",
+      "next_action": "Preserve the pre-data source-admission failure and null original cumulative fields; verify explicit prior23 reconciliation, preflight complete runtime-v2 sources, then run unchanged LUDB timing study and combined independent audit. No LUDB scores yet.",
       "final_repository_validation": {
         "record_type": "repository_setup_validation_not_scientific_cost",
         "created_at_utc": "2026-10-20T00:40:10.292925+00:00",
@@ -3033,7 +3033,7 @@
     },
     "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md",
     "ludb_public_annotation_qualification_v1": {
-      "status": "v4_external_transfer_running_after_preparation_pass",
+      "status": "verified_acquisition_complete_v1_source_admission_failed_before_data",
       "protocol": "docs/ssl-synthetic-localization-ludb-qualification-v1.md",
       "config": "configs/ssl_synthetic_ludb_qualification_v1.json",
       "protocol_commit": "8214287",
@@ -3057,7 +3057,13 @@
       "fourth_acquisition_admission_commit": "06fb9dd",
       "fourth_preparation_receipt": "outputs/ssl_synthetic_localization/ludb_acquisition_v4/prepare.json",
       "fourth_preparation_cpu_seconds": 0.054258664000000005,
-      "scientific_scores_computed": false
+      "scientific_scores_computed": false,
+      "fourth_acquisition_summary": "outputs/ssl_synthetic_localization/ludb_acquisition_v4/summary.json",
+      "fourth_acquisition_summary_sha256": "a7b9c74060d0e13debdc336a2fad958b3e4847e8d8ff13dc06d28059decef99c",
+      "fourth_acquisition_ledger_sha256": "6d487bd152daf1275ecc2c704d874cc25d640264156d1c65aba9bd12dd1120ca",
+      "main_v1_failure": "outputs/ssl_synthetic_localization/ludb_qualification_v1/failure.json",
+      "main_v1_failure_report": "docs/ssl-synthetic-localization-ludb-qualification-v1-results.md",
+      "runtime_v2_protocol": "docs/ssl-synthetic-localization-ludb-qualification-runtime-v2.md"
     }
   },
   "experiment_041_cpu_screening": {

@@ -1688,7 +1688,7 @@
       "kind": "repo",
       "title": "Qualify LUDB public wave annotations for ECG timing measurements",
       "question": "Can a fixed QRS-like timing proxy be verified against released manual12-lead wave boundaries before interpreting generated ECG timing?",
-      "evidence": "Fixed LUDB protocol committed before all assets/scores. V1wall andv2socket failures preserved; v3didnotexecute due approval-review timeout. Transparentv4 offlinepreparationPASS and onecurlsuffixGET running after admission06fb9dd; no decoded ECGs/annotations or LUDB scores yet.",
+      "evidence": "LUDB fully acquired:200recordgroups/2800officialhashesPASS. First timingrun source guard failed before data/score because coordinator omittedone requiredhelper. Runtime-v2complete-source preflight and unchanged scientificconfig prospectivelycommitted; no LUDBscoresyet.",
       "value": 4,
       "clarity": 0.8,
       "gpu_hours": 0,
@@ -1696,7 +1696,7 @@
       "build_hours": 2.5,
       "blocked_by": [],
       "status": "in_progress",
-      "notes": "Current finalized accounting through21stages CPU429.846791267/GPU447.981392133; v4preparation actualCPU0.054258664 is retained pending one final composite acquisition ledger. No double counting, no fabricatedv3stage. Complete official2800asset checks before fixed40parser/160measurement scoring and combined independent audit."
+      "notes": "Retain bothtransportfailures and one pre-data sourcefailure; v3noexecution/stage. Originalfailedv1 cumulativefieldsnull preserved; explicitreviewed metadatareconciliation derivesprior23 CPU432.150871929/GPU447.981392133 from knownacquisition22+actualfailedCPUonce. Next actual V2 followedby combinedindependentaudit."
     },
     {
       "id": "ssl_synthetic_generated_paired_suppression",

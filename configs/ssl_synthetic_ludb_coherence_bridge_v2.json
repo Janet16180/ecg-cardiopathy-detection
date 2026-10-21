@@ -15,11 +15,13 @@
     "source_admission_before_new_real_reads": true,
     "exact_predecessor_primary_bootstrap_closure": true,
     "qualification_main_stage": 26,
-    "qualification_audit_stage": 27,
+    "qualification_audit_stage": 28,
     "qualification_interpretation": "concentration_at_released_N_timestamps_only_not_dense_QRS_or_validated_physiological_peaks",
     "original_dense_AP_failures_preserved": true,
     "original_AP_gated_bridge_v1_status": "unexecuted_not_rescued",
-    "no_gate_substitution_after_reading_coherence_scores": true
+    "no_gate_substitution_after_reading_coherence_scores": true,
+    "qualification_audit_directory": "independent_audit_v2",
+    "failed_independent_audit_v1_preserved": true
   },
   "generated": {
     "directory": "outputs/ssl_synthetic_localization/generated_quality_v2",
@@ -173,12 +175,12 @@
     "terminal_bookkeeping_reserve_bytes": 16384
   },
   "accounting": {
-    "immediate_prior": "completed_ludb_peak_timing_v1_independent_audit_terminal_ledger_stage27",
+    "immediate_prior": "completed_ludb_peak_timing_v1_independent_audit_v2_terminal_ledger_stage28_including_failed_audit27_once",
     "actual_identity_and_cumulative_totals": "prospective_identity_only_admission",
     "preserve_all_transport_failures_and_intervening_stage_costs_once": true,
     "reset_to_old_generator_or_429_cpu_baseline": false,
-    "expected_main_stage": 28,
-    "expected_independent_audit_stage": 29
+    "expected_main_stage": 29,
+    "expected_independent_audit_stage": 30
   },
   "output_directory": "outputs/ssl_synthetic_localization/ludb_coherence_bridge_v2",
   "scientific_pass_flag_allowed": false,
@@ -204,5 +206,6 @@
     ],
     "scientific_change": "prerequisite_only_from_failed_dense_AP_to_new_audited_released_N_landmark_qualification",
     "no_method_threshold_cohort_seed_or_descriptor_changes": true
-  }
+  },
+  "audit_recovery_amendment": "docs/ssl-synthetic-localization-ludb-coherence-bridge-audit-recovery-v1.md"
 }

@@ -16,7 +16,7 @@ interpretation, study/output identity and immediate accounting pointer below.
 No other mathematical, eligibility, threshold or output-selection change.
 
 The required predecessor is `ssl_synthetic_ludb_peak_timing_v1`, with main26
-and completed independent audit27, all identity/technical/resource gates,
+and completed independent audit28 in `independent_audit_v2`, all identity/technical/resource gates,
 zero audit mismatches and its prospective scientific conjunction: mean
 released-N rank gain >= 0.05 and lower 95% bootstrap bound > 0. Admission must
 pin its actual main/audit receipts, output manifests, source/config identities
@@ -48,10 +48,13 @@ Higher synchrony may reflect shared activity or shared artifacts. The
 landmark gate does not validate coherence or generated physiology/disease.
 
 Destination is `outputs/ssl_synthetic_localization/ludb_coherence_bridge_v2`.
-Main28 appends the actually completed audit27 cost once; audit29 appends main28.
-Admit actual hashes/totals only after audit27 exists. Preserve all failed
+Main29 appends the actually completed audit28 cost once; audit30 appends main29.
+Admit actual hashes/totals only after audit28 exists. Preserve all failed
 transport, guard, parser and diagnosis costs; never reset to the older bank
-or acquisition ledger. No invented historical receipts or extra audit stage.
+or acquisition ledger. No invented historical receipts. The failed metadata-only audit27 and its
+original null accounting fields remain preserved; the verified setup
+reconciliation includes its actual cost once. See the explicit
+[audit recovery amendment](ssl-synthetic-localization-ludb-coherence-bridge-audit-recovery-v1.md).
 Main caps180 CPU/300 wall seconds,2 GiB RSS,128 MiB new outputs; independent
 audit180 CPU/300 wall,2 GiB RSS,64 MiB. One CPU thread, hidden CUDA, no training,
 GPU, generator forwards, downloads, diagnosis parsing or external data transfer.

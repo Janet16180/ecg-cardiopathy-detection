@@ -139,3 +139,5 @@ cached Hatchling backend completed the offline build without installation/networ
 V2 validates the later new audit/plot files and final source/package bindings; read
 its live receipts for exact current counts. Do not substitute GitHub runner checks:
 the user explicitly requests no push. Do not mark the broad clinical objective done.
+
+Final local developer QA: full-source CPU suite before later audit/plot additions passed2124tests/6skips/2existingfixturewarnings(115.61s). After those additions,277targeted scientific/import tests passed with zero skips/warnings(7.54s); repository-wideRuff and offline sdist→wheel builds pass. All13newPythonfiles and6newpackage modules match source bytes; no private artifacts packaged. Source files remain unchanged. V2 verification receipt SHAba3a4a42baa3662202549ee714a92d2a3298d9e8fcbfcda74b08cb8a3499041a. No GitHub runner was used.

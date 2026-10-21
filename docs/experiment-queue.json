@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-21T20:21:05.704692+00:00",
+  "updated_at_utc": "2026-10-21T23:29:58.178089+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -3148,13 +3148,22 @@
       "new_generator_forwards": 0
     },
     "latest_validation": {
-      "cpu_tests_passed": 2109,
-      "skipped": 6,
-      "existing_fixture_warnings": 2,
-      "seconds": 101.27,
+      "full_cpu_tests_passed": 2124,
+      "full_cpu_skipped": 6,
+      "full_cpu_existing_warnings": 2,
+      "full_cpu_seconds": 115.61,
+      "later_new_source_targeted_and_import_tests": 277,
+      "later_targeted_skipped": 0,
+      "later_targeted_warnings": 0,
+      "later_targeted_seconds": 7.54,
       "ruff": "PASS",
       "offline_sdist_and_wheel": "PASS",
-      "local_evidence_directory": "outputs/ssl_synthetic_localization/ludb_localizer_repository_validation_v3"
+      "sdist_new_python_files": 13,
+      "wheel_new_package_modules": 6,
+      "private_artifacts_packaged": 0,
+      "evidence_directory": "outputs/ssl_synthetic_localization/background_editor_transfer_repository_validation_v2",
+      "receipt_sha256": "ba3a4a42baa3662202549ee714a92d2a3298d9e8fcbfcda74b08cb8a3499041a",
+      "github_runner_used": false
     },
     "ludb_frozen_localizer_v1": {
       "status": "complete_independently_verified_descriptive_only",

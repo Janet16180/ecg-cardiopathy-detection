@@ -1900,12 +1900,12 @@
       "value": 4,
       "clarity": 0.8,
       "gpu_hours": 0,
-      "cpu_hours": 0.1,
+      "cpu_hours": 0.007302325715362612,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "running",
+      "status": "done",
       "authorized": true,
-      "notes": "NTT-09 protocol preparation follows NTT-08 audit. Freeze the full nine-support contrast; require pair coverage separately in every patient. No scores before reviewed protocol and source commits."
+      "notes": "NTT-09 completed and independently audited: all 3,600 decompositions and 76,200 bank pairs. Mean patient positive-quarter Jaccard rose from 0.4418 to 0.6559 (+0.2141), all coverage conditions passed. Ensembles use 15 support slots per finding versus three, with median eight distinct supports; diffuse contributions and fixed QRS/V1/V6 priors remain. No clinical or equal-budget effect is established."
     },
     {
       "id": "regional_nuisance_sensitivity",
@@ -1942,6 +1942,24 @@
       "status": "open",
       "authorized": false,
       "notes": "Keep finite-pool dependence, distinct support patients and equal computation budgets explicit. No new experiment is automatically scheduled."
+    },
+    {
+      "id": "matched_union_contribution_control",
+      "kind": "experiment",
+      "title": "Separate unique-support exposure from prototype aggregation",
+      "question": "With identical unique support patients, how do repeated bank weights and prototype normalization affect contextual contribution stability?",
+      "evidence": "NTT-09 improves conditional Jaccard by 0.2141 but compares three support patients per finding with ensembles containing six to nine.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 2,
+      "blocked_by": [
+        "@prospective_matched_union_protocol"
+      ],
+      "status": "open",
+      "authorized": false,
+      "notes": "Hold unique patients fixed; freeze weights, normalization and contrasts before scores. Keep the finite-pool and fixed-QRS limits. This control was not run or automatically scheduled."
     }
   ]
 }

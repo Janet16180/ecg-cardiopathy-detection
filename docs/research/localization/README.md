@@ -50,3 +50,5 @@ localization score exist; clinician rubric approval and actual review remain pen
 ## Explanations without new clinical annotations
 
 [NTT-08](ntt08-contextual-contributions/results.md) independently reconstructs exact signed contextual beat and unique-token contributions to all 180 original classifier margins. Contributions are distributed across beats and their rankings vary with the reference bank even for the same finding contrast. Cached representation deletion tests model response, without clinical interval truth or a waveform intervention. The user confirms that a cardiologist is unavailable; clinical review remains pending rather than assumed.
+
+[NTT-09](ntt09-reference-contribution-stability/results.md) fixes each patient's full-pool finding contrast and tests reference averaging directly. Mean patient top-positive-quarter overlap rises from 0.4418 to 0.6559; all 3,600 decompositions and 76,200 bank pairs independently reproduce. Larger support exposure and diffuse contributions qualify the conditional pass. The [20 October findings](../findings-2026-10-20.md) summarize the research phase without assuming cardiologist access.

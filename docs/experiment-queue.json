@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-20T19:49:12.213764+00:00",
+  "updated_at_utc": "2026-10-21T00:23:50.176856+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2725,7 +2725,11 @@
     "primary_passed": true,
     "primary_p10_ari_difference": 0.2542243341351882,
     "numerical_equivalence_passed": true,
-    "new_models_independently_reconstructed": 549
+    "new_models_independently_reconstructed": 549,
+    "integrated_cpu_tests_passed": 1710,
+    "integrated_cpu_tests_skipped": 6,
+    "integrated_test_seconds": 83.38,
+    "integration_verification": "reports/verification/2026-10-20-autonomous.json"
   },
   "cluster07_regional_projection": {
     "status": "completed_and_independently_audited",
@@ -2745,7 +2749,11 @@
     "verification": "reports/clustering/cluster07-regional-projection/verification.json",
     "primary_passed": false,
     "primary_anchor_ari": 0.1531812487323879,
-    "new_models_independently_reconstructed": 432
+    "new_models_independently_reconstructed": 432,
+    "integrated_cpu_tests_passed": 1710,
+    "integrated_cpu_tests_skipped": 6,
+    "integrated_test_seconds": 83.38,
+    "integration_verification": "reports/verification/2026-10-20-autonomous.json"
   },
   "ntt08_contextual_contributions": {
     "status": "completed_and_independently_audited",
@@ -2766,15 +2774,34 @@
     "primary_engineering_gate_passed": true,
     "bank_target_evaluations": 180,
     "clinical_localization_evaluated": false,
-    "new_clinical_annotations": 0
+    "new_clinical_annotations": 0,
+    "integrated_cpu_tests_passed": 1710,
+    "integrated_cpu_tests_skipped": 6,
+    "integrated_test_seconds": 83.38,
+    "integration_verification": "reports/verification/2026-10-20-autonomous.json"
   },
   "ntt09_reference_contribution_stability": {
-    "status": "prospective_design_in_progress",
+    "status": "completed_and_independently_audited",
     "authorized": true,
     "protocol": "docs/research/localization/ntt09-reference-contribution-stability/protocol.md",
     "output_dir": "outputs/ntt09_reference_contribution_stability",
     "scope": "Fixed full-pool contrast and original50banks/tenensembles; conditional contribution-ranking stability, no clinical endpoint.",
     "publication": "local_only_no_push_no_merge",
-    "next_action": "Commit reviewed protocol and source before any new score. NTT08 independent audit prerequisite passed."
+    "next_action": "Preserve the conditional pass and unequal-support-budget qualification; matched-union controls require a new protocol. Clinical evidence remains unmeasured.",
+    "protocol_commit": "d404cc2",
+    "source_commit": "b147090",
+    "result_sha256": "009eacb3c72b0dcfe85e155a9036542cc504e788ddd7179e097860fe4f4e8f64",
+    "seconds": 26.288372575305402,
+    "primary_passed": true,
+    "mean_patient_jaccard_difference": 0.2140787087256179,
+    "results": "docs/research/localization/ntt09-reference-contribution-stability/results.md",
+    "aggregate_receipt": "reports/localization/ntt09-reference-contribution-stability/aggregate.json",
+    "verification": "reports/localization/ntt09-reference-contribution-stability/verification.json",
+    "new_decompositions_independently_reconstructed": 3600,
+    "bank_pairs_independently_reconstructed": 76200,
+    "integrated_cpu_tests_passed": 1710,
+    "integrated_cpu_tests_skipped": 6,
+    "integrated_test_seconds": 83.38,
+    "integration_verification": "reports/verification/2026-10-20-autonomous.json"
   }
 }

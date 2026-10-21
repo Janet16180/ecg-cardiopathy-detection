@@ -61,6 +61,8 @@ resampling and attention. They are locations of pooled contextual representation
 receptive fields. Only V1/V6 tokens receive direct pooling weight in this classifier. The other
 input leads may still influence those contextual vectors. An unselected token is not a normal label.
 
+QRS regions and V1/V6 were fixed pooling priors. These results explain how those contextual vectors support the existing three-finding classifier. Independent selection among P-wave, QRS, ST-segment and T-wave evidence requires a different evaluation; the present beat rankings do not establish that selection.
+
 All population summaries average each patient's three bank values before describing the 60 people.
 The 180 bank-target evaluations are not 180 independent patients. An active token has positive
 original pooling occupancy in at least one automatic QRS region, even if its signed contribution
@@ -116,7 +118,7 @@ margin little; no crisp abnormality boundary follows from the top-quarter select
 
 ## Artifacts, validation and limits
 
-Twenty-two new synthetic invariant/regression cases and four frozen native-study cases passed
+Twenty new synthetic invariant/regression cases and six frozen native-study cases passed
 (26 total, final focused run 32.98 seconds). They cover fractional overlap, both normalizations,
 signed cancellation, active zero-contribution tokens, invalid/mixed-lead inputs, renormalized and
 undefined deletions, fixed original contrast ties, deterministic decimal-fraction seeds, empty

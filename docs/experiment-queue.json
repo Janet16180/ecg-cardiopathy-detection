@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-21T00:23:50.176856+00:00",
+  "updated_at_utc": "2026-10-21T17:43:07.952192+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2803,5 +2803,16 @@
     "integrated_cpu_tests_skipped": 6,
     "integrated_test_seconds": 83.38,
     "integration_verification": "reports/verification/2026-10-20-autonomous.json"
+  },
+  "ntt10_matched_union_control": {
+    "status": "design_and_protocol_in_progress",
+    "authorized": true,
+    "authorization": "User requested continuation of the recommended control on 21 October 2026.",
+    "protocol": "docs/research/localization/ntt10-matched-union/protocol.md",
+    "output_dir": "outputs/ntt10_matched_union",
+    "scope": "Hold the exact union of unique reference patients fixed while comparing uniform-patient, occurrence-weighted and normalized-bank aggregation. No new clinical endpoint.",
+    "publication": "local_only_no_push_no_pr_merge",
+    "continuation_record": "docs/research/continuation-2026-10-21.md",
+    "next_action": "Scientific design review and prospective protocol commit before any score; then committed source/tests, exact predecessor replay, execution and independent audit."
   }
 }

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-20",
+  "updated": "2026-10-21",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -1957,9 +1957,9 @@
       "blocked_by": [
         "@prospective_matched_union_protocol"
       ],
-      "status": "open",
-      "authorized": false,
-      "notes": "Hold unique patients fixed; freeze weights, normalization and contrasts before scores. Keep the finite-pool and fixed-QRS limits. This control was not run or automatically scheduled."
+      "status": "running",
+      "authorized": true,
+      "notes": "User authorized this next control on 21 October. NTT-10 design/protocol preparation is in progress; no new score before reviewed protocol and source commits. Hold exact unique support unions fixed and preserve full-pool contrasts, finite-pool coverage and fixed-QRS limitations. Equal unique patients do not imply equal computation cost."
     }
   ]
 }

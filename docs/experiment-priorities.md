@@ -1,6 +1,6 @@
 # Experiment priorities
 
-Updated 20 October 2026, including audited reference averaging, regional projection and contextual contribution studies. Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
+Updated 21 October 2026, including the authorized matched-union reference control. Candidates live in [experiment-backlog.json](experiment-backlog.json); this page
 explains the scoring, shows the current ranking and records what the papers suggest. The backlog is for
 choosing the next study. It does not authorize or schedule anything: the execution queue remains
 [experiment-queue.json](experiment-queue.json), and every study still needs a frozen protocol first.
@@ -37,18 +37,30 @@ After each result:
 
 ## Current ranking
 
-CLUSTER-04 has completed conditional bank robustness with a passing gate; CLUSTER-05 has completed
-matched dimension/pooling/scale controls with a failed concordance gate. Their results preserve the
-original CLUSTER-03 failure. New scale/aggregation and regional-covariance follow-ups are ranked below;
-they require their own protocols and are not running. Blinded clinical-review infrastructure is complete
-and technically audited; human evidence annotations and clinical rubric approval remain unavailable.
+The central objective is to detect possible ECG alterations and identify the lead/time evidence
+supporting an alert. Reference stability and clustering are supporting controls. The user confirms
+that a cardiologist is unavailable; algorithmic validation must not be presented as clinical truth.
+The [continuation record](research/continuation-2026-10-21.md) preserves the accepted scope and constraints.
 
-[CLUSTER-03](research/clustering/cluster03-native-reference/results.md) completed native encoder and
-No Time to Train reference-affinity clustering on 1,993 matched patients. Stable selected groups fail
-cross-view/bank persistence; raw QRS geometry is strongly rate-associated. Matched projection controls
-and expert-supported reference coverage remain prospective. No follow-up job is scheduled.
+[CLUSTER-06](research/clustering/cluster06-bank-scale/results.md) confirms a configuration-specific
+averaging benefit and exact covariance-scale controls. [CLUSTER-07](research/clustering/cluster07-regional-projection/results.md)
+still fails matched concordance after fitting regional covariance directions. Earlier negative
+CLUSTER-03/05 decisions remain unchanged. [NTT-08](research/localization/ntt08-contextual-contributions/results.md)
+provides exact contextual score contributions; [NTT-09](research/localization/ntt09-reference-contribution-stability/results.md)
+improves conditional contribution-ranking consistency while using more distinct support patients.
+The four completed studies were independently reconstructed; see the
+[combined findings](research/findings-2026-10-20.md).
 
-[NTT-06](research/localization/ntt06-native-encoder/results.md) executed native ECG-JEPA signal matching: QRS 91.67% versus physical 92.78%, primary gate failed; shifted native windows 83.33%. Native original-time candidates and saved vectors now support prospective evidence and clustering research. Reference-bank uncertainty and acceptable specialist evidence remain unresolved. No additional job is scheduled; PR #71 stays draft without merge authorization.
+NTT-10 is preparing the user-authorized matched-union control: keep the unique support patients
+identical while changing aggregation weights and prototype normalization. Protocol review and
+commits precede any score. This preparation is not a result. Independent clinical labels and
+rubric approval remain unavailable. Nothing is scheduled by the ranking itself.
+
+[NTT-06](research/localization/ntt06-native-encoder/results.md) used the real frozen ECG-JEPA
+checkpoint directly on signals: QRS 91.67% versus physical 92.78%, with its primary gate failed.
+The later contribution studies explain that existing classifier within fixed QRS/V1/V6 pooling;
+they do not establish independent selection among P, QRS, ST and T evidence. PR #71 remains draft
+by instruction; no push or PR merge is authorized.
 
 [041](experiment-041-cpu-screening-results.md) and [042](experiment-042-measurement-transfer-results.md) screening advances and the negative [043](experiment-043-lead-grounding-results.md) lead-grounding result are retained from merged PR #70.
 
@@ -60,13 +72,13 @@ localization. [CLUSTER-01](cluster-01-physical-morphology-results.md) and
 prespecified robustness gates. [SHAP-01](shap-01-linear-background-sensitivity-results.md) shows how the
 reference population changes exact explanations of one fixed model. [NTT-04](ntt-04-same-wave-finding-discrimination-results.md) completed the same-QRS comparison:
 physical full-context references 92.78% versus compact DINO 82.78%, with the visual-gain gate failed.
-[NTT-05](ntt-05-native-signal-adapter-results.md) subsequently verified native signal reference contracts;
-trained native checkpoints are absent, so learned-native evaluation remains prospective.
+[NTT-05](ntt-05-native-signal-adapter-results.md) verified native signal reference contracts.
+NTT-06 subsequently executed the frozen native encoder; its recorded negative primary remains.
 Ranking does not authorize additional jobs.
 
-The next research decisions concern equivalent acceptable evidence, measurement reliability and
-independent specialist annotations. Clusters and attributions cannot create those annotations or establish
-etiology. The [reference plan](ecg-reference-localization-plan.md) preserves PR61 history and PR67
+The remaining research questions concern equivalent acceptable evidence, measurement reliability and
+reference robustness. Independent specialist annotations are unavailable. Clusters and attributions
+cannot create those annotations or establish etiology. The [reference plan](ecg-reference-localization-plan.md) preserves PR61 history and PR67
 patient reservations. Earlier delivery produced draft PR #71. The user revoked merge authorization; current implementation remains local and does not schedule further work.
 
 Experiment 040 passed all six real profiles but stopped at the shared time gate before any full fit

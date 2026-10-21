@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Released-N timing main26 and independent recovery28 PASS with zero mismatches. Prepare complete frozen source/admission for conditional descriptive coherence_bridge_v2 main29/audit30; original dense-span FAIL/AP bridgev1 stay unchanged.",
+    "next_action": "LUDB timing and descriptive coherence studies complete with independent zero-mismatch audits. Report this meaningful checkpoint; next proposed work is admitted frozen-localizer N-landmark/energy concentration, then held-out-editor and matched-background localization after actual-path/resource gates. No new fit, closed test or automatic merge.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2999,7 +2999,7 @@
         "raw_rows_changed": false
       },
       "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md",
-      "next_action": "Released-N timing main26 and independent recovery28 PASS with zero mismatches. Prepare complete frozen source/admission for conditional descriptive coherence_bridge_v2 main29/audit30; original dense-span FAIL/AP bridgev1 stay unchanged.",
+      "next_action": "LUDB timing and descriptive coherence studies complete with independent zero-mismatch audits. Report this meaningful checkpoint; next proposed work is admitted frozen-localizer N-landmark/energy concentration, then held-out-editor and matched-background localization after actual-path/resource gates. No new fit, closed test or automatic merge.",
       "final_repository_validation": {
         "record_type": "repository_setup_validation_not_scientific_cost",
         "created_at_utc": "2026-10-20T00:40:10.292925+00:00",
@@ -3031,7 +3031,7 @@
       },
       "quality_execution_historical_planning_snapshot": "awaiting_final_numerical_source_review_and_actual_path_profile"
     },
-    "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md",
+    "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-20.md",
     "ludb_public_annotation_qualification_v1": {
       "status": "annotation_diagnosis_complete_dense_interval_contract_failed",
       "protocol": "docs/ssl-synthetic-localization-ludb-qualification-v1.md",
@@ -3094,7 +3094,7 @@
       "endpoint": "concentration_at_released_N_landmarks_empirical_midrank_not_dense_masks_or_AP",
       "conditional_followup_protocol": "docs/ssl-synthetic-localization-ludb-coherence-bridge-v2.md",
       "conditional_followup_config": "configs/ssl_synthetic_ludb_coherence_bridge_v2.json",
-      "conditional_followup_executed": false,
+      "conditional_followup_executed": true,
       "main_summary_sha256": "2e48b4e06512f126bb0eddf12306b54c462da1e300fa2624c0effed1c1bc8c29",
       "main_ledger_sha256": "8bb1bc5625ec53a1ab009c35a87c6098a438ddcca2db149efc6f00d251739494",
       "main_report": "docs/ssl-synthetic-localization-ludb-peak-timing-v1-results.md",
@@ -3116,6 +3116,50 @@
       "independent_audit_zero_mismatches": true,
       "conditional_followup_expected_main_stage": 29,
       "conditional_followup_expected_audit_stage": 30
+    },
+    "ludb_real_generated_coherence_v2": {
+      "status": "complete_independently_verified_descriptive_only",
+      "protocol": "docs/ssl-synthetic-localization-ludb-coherence-bridge-v2.md",
+      "report": "docs/ssl-synthetic-localization-ludb-coherence-bridge-v2-results.md",
+      "independent_report": "docs/ssl-synthetic-localization-ludb-coherence-independent-audit-v2-results.md",
+      "science_review": "docs/ssl-synthetic-localization-ludb-coherence-science-review-v2.md",
+      "output_directory": "outputs/ssl_synthetic_localization/ludb_coherence_bridge_v2",
+      "generated_count": 128,
+      "real_count": 200,
+      "generated_mean_excess": 0.8094248365473182,
+      "real_mean_excess": 0.7450160124673478,
+      "real_minus_generated_mean": -0.0644088240799704,
+      "interval": [
+        -0.07957746262110091,
+        -0.050221354456894345
+      ],
+      "bootstrap_draws": 2000,
+      "bootstrap_seed": 2026106401,
+      "main_stage": 29,
+      "audit_stage": 30,
+      "main_summary_sha256": "b34fa682898d0cf381518a43dcc12c73afe3577fc6ccf2b959faf19b02254e0b",
+      "independent_summary_sha256": "cfa7faed4ffef1ca68b4c5de6b1e16cd57bce3ce2d8fe051c725697a400eddfc",
+      "latest_ledger_sha256": "a3acf4aae3f27b00d51b18e6e50921c9935267e0d8646433bf486ec3f274e11f",
+      "current_machine_cumulative_cpu_seconds": 460.93105389699997,
+      "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967,
+      "scientific_pass_flag_defined": false,
+      "clinical_quality_claim": false,
+      "independent_zero_mismatches": true,
+      "new_generator_forwards": 0
+    },
+    "latest_validation": {
+      "cpu_tests_passed": 2079,
+      "skipped": 6,
+      "existing_fixture_warnings": 2,
+      "seconds": 121.24,
+      "ruff": "PASS",
+      "offline_sdist_and_wheel": "PASS",
+      "new_python_files_in_sdist": 56,
+      "new_package_modules_in_wheel": 23,
+      "source_obligations_checked": 394,
+      "distinct_source_paths": 161,
+      "source_mismatches": 0,
+      "local_evidence_directory": "outputs/ssl_synthetic_localization/ludb_repository_validation_v1"
     }
   },
   "experiment_041_cpu_screening": {

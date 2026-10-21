@@ -1,19 +1,26 @@
 # Experiment queue
 
-20 October: [released-N timing qualification](ssl-synthetic-localization-ludb-peak-timing-v1-results.md)
-is COMPLETE and independently verified. Main26/recovery28 PASS: mean rank0.963600 vs0.513082,
-paired gain0.450519[0.438960,0.462589]. Independent reconstruction of all200/2400streams,
-1920measurement vectors/17539N landmarks,160score arrays and2000draws has zero mismatches.
-This qualifies concentration of the fixed activity proxy at released N annotations, not dense
-boundaries, physiological truth, learned-model transfer or real-disease localization.
+20 October: two bounded LUDB studies are COMPLETE and independently verified.
+[Released-N timing](ssl-synthetic-localization-ludb-peak-timing-v1-results.md) gives mean rank
+0.963600 versus shifted 0.513082, gain 0.450519 [0.438960,0.462589] on 160 measurement records.
+[Generated/real coherence](ssl-synthetic-localization-ludb-coherence-bridge-v2-results.md) gives
+excess 0.809425 for 128 generated seeds versus 0.745016 for 200 LUDB records; real minus generated
+is −0.064409 [−0.079577,−0.050221]. Both cohorts are strongly aligned; the generated distribution
+is narrower. This is descriptive, without a physiological-quality or disease verdict.
 
-The initial audit27 failed on legacy metadata before numerical work; its null fields and cost
-are preserved. Explicit reviewed setup reconciliation adds it once before recovery28.
-All28actual stages total454.049110851CPU/447.981392133GPU-lockseconds, excluding development/setup.
-The [annotation diagnosis](ssl-synthetic-localization-ludb-annotation-diagnosis-v1-results.md) and
-strict dense-span FAIL remain unchanged. Next is the separately prospective descriptive
-coherence bridgev2 main29/audit30 under the new narrower gate; no comparison score exists yet.
-Original AP-gated bridgev1 stays unexecuted. PR67 stays draft.
+Independent audits reconstruct all timing vectors and all 328 coherence rows, 13.12 million mask
+cells and 2000 draws, with zero mismatches. The strict dense-span FAIL, missing onset evidence,
+failed audit 27/null fields and every earlier failure remain preserved. All 30 current-machine
+numerical stages total 460.931053897 CPU / 447.981392133 GPU-lock seconds; development/setup is
+separate and unavailable historical costs remain unknown. No scientific job remains running.
+
+Final CPU checks: 2079 passed, 6 skipped, 2 existing fixture warnings; Ruff and offline package builds
+pass. Package inspection excludes data/outputs/weights; 394 current-summary source obligations
+across 161 paths match. Read the [current handoff](ssl-synthetic-localization-autonomous-handoff-2026-10-20.md).
+Next proposed work tests frozen-localizer concentration at released N landmarks and fixed energy,
+then held-out editors/matched real and generated backgrounds after actual-path resource gates.
+These results do not establish learned-model transfer, disease masks or SSL benefit. Clinical
+labels and closed tests remain unchanged; PR 67 stays draft and must not merge automatically.
 
 **19 October temporal/lead diagnosis completed and independently verified:** Combined PK versus
 B improves oracle-conditioned temporal AP by0.103622[0.069175,0.140407] and lead-presence AP by

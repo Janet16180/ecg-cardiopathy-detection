@@ -1751,7 +1751,7 @@
       "kind": "experiment",
       "title": "Compare fixed activity synchrony in released-generator ECGs and public LUDB recordings",
       "question": "Does the original128-seed generator bank have a different fixed native-minus-shifted activity-coherence distribution from200public real recordings?",
-      "evidence": "docs/ssl-synthetic-localization-ludb-peak-timing-v1-results.md; docs/ssl-synthetic-localization-ludb-coherence-bridge-v2.md",
+      "evidence": "docs/ssl-synthetic-localization-ludb-coherence-bridge-v2-results.md: real-minus-generatedexcess\u22120.064409[\u22120.079577,\u22120.050221],independentaudit30zeroMismatch.",
       "value": 4,
       "clarity": 0.8,
       "gpu_hours": 0,
@@ -1760,8 +1760,40 @@
       "blocked_by": [
         "ssl_synthetic_public_annotation_qualification"
       ],
-      "status": "in_progress",
-      "notes": "User-authorized CPU-only descriptive continuation after audited N-landmark PASS. Frozen128/200 cohorts/seeds/method; no physiological/disease/clinical threshold. Await complete independent source/admission before main29/audit30."
+      "status": "done",
+      "notes": "Descriptiveonly,all128/200retained,noquality/disease/verdict.Noexisting14/15failurechanged.Generatedbankmorealigned/narrower;causalshortcutunproven."
+    },
+    {
+      "id": "ssl_synthetic_frozen_real_landmark_diagnosis",
+      "kind": "experiment",
+      "title": "Check frozen localizer concentration at public ECG landmarks",
+      "question": "Do existing localizer maps follow released N landmarks and fixed energy on real development ECGs?",
+      "evidence": "Verified LUDB N-rank concentration and generated/real activity-coherence difference; docs/ssl-synthetic-localization-ludb-coherence-bridge-v2-results.md.",
+      "value": 4,
+      "clarity": 0.8,
+      "gpu_hours": 0.05,
+      "cpu_hours": 0.2,
+      "build_hours": 3.0,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "New protocol/checkpoint admission/inference-and-persistence profile before scores; all fixed fits/arms, no winning-arm selection, no training or pathology labels. Use only locally present checkpoints and preserve any missing-artifact blocker."
+    },
+    {
+      "id": "ssl_synthetic_heldout_editor_background_transfer",
+      "kind": "experiment",
+      "title": "Test held-out edit families on matched real and generated backgrounds",
+      "question": "Does introduced-change localization transfer across editor families and background sources under matched controls?",
+      "evidence": "Prior paired/suppression scientific FAIL and verified cohort activity-synchrony difference.",
+      "value": 4,
+      "clarity": 0.7,
+      "gpu_hours": 0.2,
+      "cpu_hours": 0.5,
+      "build_hours": 5.0,
+      "blocked_by": [
+        "ssl_synthetic_profile_wall_coverage"
+      ],
+      "status": "proposed",
+      "notes": "Prospective source/record/editor partition, matched budgets and known mathematical support only. Full actual-path GPU profile, persistence, shared lock and resource gates before training. No disease-region or physiological truth from numerical editors."
     }
   ]
 }

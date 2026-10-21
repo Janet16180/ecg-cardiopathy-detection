@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import resource
 import signal
 import stat
@@ -41,6 +42,8 @@ OWN_HASHES = dict(zip(
         'docs/ssl-synthetic-localization-ludb-independent-audit-v1.md',
         'docs/ssl-synthetic-localization-ludb-independent-audit-transport-clarification-v1.md',
         'docs/ssl-synthetic-localization-ludb-independent-audit-chain-amendment-v1.md',
+        'docs/ssl-synthetic-localization-ludb-independent-audit-unexecuted-versions-v1.md',
+        'docs/ssl-synthetic-localization-ludb-independent-audit-split-transport-v1.md',
     ),
     (
         '03b6646553b74d2e9a31f5c6f62cd904594962422aeb131b0d5b980cb8d41c46',
@@ -51,10 +54,12 @@ OWN_HASHES = dict(zip(
         '650eb6463bfe48aef307c86ee36145fa302dc3563da373ebff2abedffcef7c09',
         'f74e46cf6d9e1a2a172e3ea218d2e0b2a85f134d0f69b547a48839234d3054fd',
         '14d095ae8e54bf18da09d8b455d06a43f1fe740d7f3b2d3e7f701851cd89d1e6',
-        '1741014275504c8412b2c3c46b4f7a0ac722b1e3829fd9292d727c8a6d7bceb7',
+        '06744e0feca8a9fd30837ed621a210e45e44ee2347842c4ebbce13040a19d342',
         '84a93c194c7a9e77a7f2b95da89d1e3a61ced19d4d42fca12aa6d3ecf9e124e6',
         'd6125806b87692a9512dc612a9388708f8ff90da69b662ef1669ee5dfb85b9f2',
         '63f9159c8ed4f32beba03c2f79cd287b858e1dfb008f917b182647cbea109d8a',
+        'fc69fd48ad1e0c5f0abbdcd0a430134a73c87d65e5074ec8a3694f784a6920c0',
+        '049dafdc0c400d630604f018d3858d56f79bf86f35d49f8f6683e9a07f46f828',
     ),
     strict=True,
 ))
@@ -77,15 +82,10 @@ def transport_chain(root: Path, admission: dict[str, Any], base: dict[str, Any],
     """Verify every explicitly admitted failed, audited and successful transport stage in order."""
     chain = admission["transport_chain"]
     require(isinstance(chain, list) and len(chain) >= 3, "explicit complete transport chain required")
+    transport_paths(chain)
     previous, previous_sha = base, base_sha
     for offset, binding in enumerate(chain):
-        version = 1 if offset == 0 else offset
-        relative = f"outputs/ssl_synthetic_localization/ludb_acquisition_v{version}/prospective_ledger.json"
-        if offset == 1:
-            relative = ("outputs/ssl_synthetic_localization/ludb_acquisition_v1/"
-                        "independent_failure_audit_v1/prospective_ledger.json")
-        require(binding["path"] == relative, "exact sequential transport ledger path")
-        path = relative_file(root, relative)
+        path = relative_file(root, binding["path"])
         require(file_sha256(path) == binding["sha256"], "identity-admitted transport ledger")
         if offset == 1:
             require(binding["sha256"] == FAILURE_AUDIT_SHA, "literal executed failure-audit identity")
@@ -110,6 +110,21 @@ def transport_chain(root: Path, admission: dict[str, Any], base: dict[str, Any],
             and chain[-1]["sha256"] == admission["prior_ledger"]["sha256"],
             "main begins after latest fully admitted transport")
     return len(chain)
+
+
+def transport_paths(chain: list[dict[str, Any]]) -> None:
+    """Allow unexecuted version gaps while requiring the two immutable first actual stages."""
+    prefix = "outputs/ssl_synthetic_localization/ludb_acquisition_v"
+    require(chain[0]["path"] == prefix + "1/prospective_ledger.json", "first actual transfer path")
+    require(chain[1]["path"] == prefix + "1/independent_failure_audit_v1/prospective_ledger.json",
+            "actual narrow failure-audit path")
+    previous = 1
+    for binding in chain[2:]:
+        match = re.fullmatch(re.escape(prefix) + r"([1-9][0-9]*)/prospective_ledger\.json", binding["path"])
+        require(match is not None, "identity-admitted transport namespace")
+        version = int(match[1])
+        require(version > previous, "strictly increasing actual transport versions")
+        previous = version
 
 
 def accounting(root: Path, study: Path, main: dict[str, Any], admission: dict[str, Any]) -> dict[str, Any]:
@@ -217,8 +232,106 @@ def acquisition(root: Path, source: Path, admission: dict[str, Any], guard: Any)
     require(selected == expected, "archive all2800selected records")
     require(set(receipt["files"]) <= expected | {"RECORDS", "ANNOTATORS", "LICENSE.txt"},
             "selective metadata whitelist without diagnosis CSV")
+    phases = (split_phase_accounting(directory, receipt, transport_config)
+              if "phase_measurements" in receipt else {})
     return {"official_asset_hashes": 2800, "archive_members_checked": len(seen),
-            "archive_sha256": receipt["archive"]["sha256"], "diagnosis_fields_parsed": 0}
+            "archive_sha256": receipt["archive"]["sha256"], "diagnosis_fields_parsed": 0,
+            "split_transport_accounting": phases}
+
+
+def time_field(text: str, label: str) -> str:
+    """Extract exactly one anchored GNU-time field without importing the transport parser."""
+    matches = re.findall(r"^\s*" + re.escape(label) + r": (.+)$", text, flags=re.MULTILINE)
+    require(len(matches) == 1, "single independent child resource field")
+    return matches[0].strip()
+
+
+def child_measurements(text: str) -> dict[str, Any]:
+    """Independently decode printed child CPU/elapsed/RSS and successful termination evidence."""
+    user = float(time_field(text, "User time (seconds)"))
+    system = float(time_field(text, "System time (seconds)"))
+    pieces = time_field(text, "Elapsed (wall clock) time (h:mm:ss or m:ss)").split(":")
+    require(len(pieces) in (2, 3), "child elapsed minute/hour format")
+    parts = [float(value) for value in pieces]
+    wall = sum(value * 60**power for power, value in enumerate(reversed(parts)))
+    require(all(np.isfinite(value) and value >= 0 for value in [user, system, *parts]),
+            "finite nonnegative printed child resource measurements")
+    status = int(time_field(text, "Exit status"))
+    terminated = "Command terminated by signal" in text
+    require(status == 0 and not terminated, "successful child termination")
+    rss = int(time_field(text, "Maximum resident set size (kbytes)")) * 1024
+    require(rss >= 0, "nonnegative child peak RSS")
+    return {"user_cpu_seconds": user, "system_cpu_seconds": system, "cpu_seconds": user + system,
+            "wall_seconds": wall, "peak_rss_bytes": rss,
+            "exit_status": status, "terminated_by_signal": terminated,
+            "measurement": "GNUtime verbose child clocks; printed precision retained"}
+
+
+def split_response(directory: Path, receipt: dict[str, Any], config: dict[str, Any]) -> None:
+    """Independently verify raw external evidence and final response without the transport parser."""
+    names = {config["curl"][key] for key in ("resource_log", "response_headers", "suffix_file")}
+    require(set(receipt["external_sha256"]) == names, "exact three external evidence files")
+    for name, digest in receipt["external_sha256"].items():
+        require(file_sha256(relative_file(directory, name)) == digest, "external transport byte binding")
+    text = (directory / config["curl"]["response_headers"]).read_text(encoding="iso-8859-1")
+    blocks = [block.strip() for block in text.replace("\r\n", "\n").split("\n\n") if block.strip()]
+    require(bool(blocks), "nonempty raw HTTP response evidence")
+    for block in blocks[:-1]:
+        line = block.splitlines()[0]
+        require(bool(re.fullmatch(r"HTTP/[0-9.]+ 1[0-9]{2}(?: .*)?", line))
+                or line.lower().endswith("200 connection established"), "no followed redirect")
+    lines = blocks[-1].splitlines()
+    require(bool(re.fullmatch(r"HTTP/[0-9.]+ 206(?: .*)?", lines[0])), "raw final206response")
+    pairs = [line.split(":", 1) for line in lines[1:]]
+    keys = [key.lower().strip() for key, _ in pairs]
+    require(all(keys.count(key) <= 1 for key in ("content-range", "content-length", "etag")),
+            "unique raw identity headers")
+    headers = {key.lower().strip(): value.strip() for key, value in pairs}
+    expected_bytes = config["resume"]["expected_complete_bytes"] - config["resume"]["prefix_bytes"]
+    require(headers["content-range"] == config["resume"]["required_content_range"]
+            and headers["etag"] == '"' + config["resume"]["if_range_etag"] + '"', "raw range and ETag")
+    require("content-length" not in headers or headers["content-length"] == str(expected_bytes),
+            "raw exact suffix length declaration")
+    require((directory / config["curl"]["suffix_file"]).stat().st_size == expected_bytes,
+            "actual external suffix byte count")
+
+
+def split_phase_accounting(directory: Path, receipt: dict[str, Any],
+                           config: dict[str, Any]) -> dict[str, Any]:
+    """Reconstruct active-phase accounting directly from child logs and retained Python phase clocks."""
+    split_response(directory, receipt, config)
+    phases = receipt["phase_measurements"]
+    prepare = read_json(directory / "prepare_costs.json")
+    require(file_sha256(directory / "prepare.json") == prepare["prepare_sha256"], "prepare receipt hash")
+    compare_values(prepare, phases["prepare"], "independent preparation phase metadata", tolerance=0)
+    child = child_measurements((directory / config["curl"]["resource_log"]).read_text())
+    compare_values(child, phases["curl"], "independent printed child measurements", tolerance=0)
+    ledger = read_json(directory / "prospective_ledger.json")
+    python_cpu = prepare["cpu_seconds"] + ledger["finish_cpu_seconds"]
+    python_wall = prepare["wall_seconds"] + ledger["finish_wall_seconds"]
+    require(ledger["cpu_seconds"] == python_cpu + child["cpu_seconds"], "exact split terminal CPU addition")
+    require(ledger["wall_seconds"] == python_wall + child["wall_seconds"],
+            "exact summed active wall addition")
+    require(ledger["finish_cpu_seconds"] >= phases["finish_before_receipts"]["cpu_seconds"]
+            and ledger["finish_wall_seconds"] >= phases["finish_before_receipts"]["wall_seconds"],
+            "terminal finish includes receipt hashing")
+    limits = config["resources"]
+    require(python_cpu < limits["offline_prepare_and_finish_combined"]["cpu_seconds"]
+            and python_wall < limits["offline_prepare_and_finish_combined"]["active_wall_seconds"],
+            "actual combined Python phase ceilings")
+    require(child["cpu_seconds"] < limits["external_curl"]["cpu_seconds"]
+            and child["wall_seconds"] < limits["external_curl"]["wall_seconds"],
+            "actual child phase ceilings")
+    require(ledger["cpu_seconds"] < limits["total"]["cpu_seconds"]
+            and ledger["wall_seconds"] < limits["total"]["summed_active_wall_seconds"],
+            "actual total phase ceilings")
+    rss = max(prepare["peak_rss_bytes"], phases["finish_before_receipts"]["peak_rss_bytes"],
+              child["peak_rss_bytes"])
+    require(rss == receipt["peak_rss_bytes"] < limits["total"]["rss_bytes"], "maximum phase RSS ceiling")
+    require(receipt["uninterrupted_whole_wall_claim"] is False, "no uninterrupted elapsed-wall claim")
+    return {"child": child, "python_terminal_cpu_seconds": python_cpu,
+            "python_terminal_active_wall_seconds": python_wall, "summed_cpu_seconds": ledger["cpu_seconds"],
+            "summed_active_wall_seconds": ledger["wall_seconds"], "approval_wait_included": False}
 
 
 def bindings(root: Path, source: Path, study: Path, main: dict[str, Any],

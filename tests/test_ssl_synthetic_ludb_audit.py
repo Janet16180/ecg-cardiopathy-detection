@@ -136,7 +136,7 @@ def test_whole_record_bootstrap_and_decision():
     assert result["gain_interval"] == pytest.approx([.2, .2])
 
 
-def cost_fixture(tmp_path, monkeypatch, transfers=2):
+def cost_fixture(tmp_path, monkeypatch, transfers=2, versions=None):
     def save(path, value):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(value))
@@ -151,8 +151,9 @@ def cost_fixture(tmp_path, monkeypatch, transfers=2):
     parent = prefix / "ludb_acquisition_v1"
     steps = [(parent / "prospective_ledger.json", 19, .1),
              (parent / "independent_failure_audit_v1/prospective_ledger.json", 20, .02)]
-    steps.extend((prefix / f"ludb_acquisition_v{version}/prospective_ledger.json", 19 + version, .3)
-                 for version in range(2, transfers + 1))
+    actual_versions = list(range(2, transfers + 1)) if versions is None else versions
+    steps.extend((prefix / f"ludb_acquisition_v{version}/prospective_ledger.json", 21 + offset, .3)
+                 for offset, version in enumerate(actual_versions))
     chain = []
     for path, stage, cpu in steps:
         receipt = {"status": "PASS" if stage == steps[-1][1] else "FAIL"}
@@ -213,5 +214,80 @@ def test_second_failed_transfer_is_charged_without_reset(tmp_path, monkeypatch):
 def test_omitted_failed_transfer_is_rejected(tmp_path, monkeypatch):
     study, main, admission, _ = cost_fixture(tmp_path, monkeypatch, transfers=3)
     admission["transport_chain"].pop(2)
-    with pytest.raises(ValueError, match="sequential"):
+    with pytest.raises(ValueError, match="sequential|lineage"):
         checker.accounting(tmp_path, study, main, admission)
+
+
+def test_unexecuted_protocol_version_has_no_fabricated_cost_stage(tmp_path, monkeypatch):
+    study, main, admission, _ = cost_fixture(tmp_path, monkeypatch, versions=[2, 4])
+    costs = checker.accounting(tmp_path, study, main, admission)
+    assert costs["stages_through_main"] == 23
+    assert len(admission["transport_chain"]) == 4
+
+
+def split_fixture(tmp_path):
+    text = ("User time (seconds): 0.10\nSystem time (seconds): 0.20\n"
+            "Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.50\n"
+            "Maximum resident set size (kbytes): 2\nExit status: 0\n")
+    (tmp_path / "child.txt").write_text(text)
+    (tmp_path / "headers.txt").write_text('HTTP/1.1 200 Connection established\n\n'
+                                         'HTTP/1.1 206 Partial Content\nContent-Range: bytes 3-5/6\n'
+                                         'Content-Length: 3\nETag: "fixed"\n\n')
+    (tmp_path / "suffix").write_bytes(b"def")
+    (tmp_path / "prepare.json").write_text('{"status":"PASS"}')
+    prepare = {"cpu_seconds": .25, "wall_seconds": .5, "peak_rss_bytes": 1000,
+               "prepare_sha256": checker.file_sha256(tmp_path / "prepare.json")}
+    (tmp_path / "prepare_costs.json").write_text(json.dumps(prepare))
+    child = checker.child_measurements(text)
+    receipt = {"phase_measurements": {"prepare": prepare, "curl": child,
+                                      "finish_before_receipts": {"cpu_seconds": .7, "wall_seconds": 1.8,
+                                                                 "peak_rss_bytes": 1500}},
+               "peak_rss_bytes": 2048, "uninterrupted_whole_wall_claim": False,
+               "external_sha256": {name: checker.file_sha256(tmp_path / name)
+                                   for name in ("child.txt", "headers.txt", "suffix")}}
+    ledger = {"finish_cpu_seconds": .75, "finish_wall_seconds": 2.,
+              "cpu_seconds": (.25 + .75) + (.1 + .2), "wall_seconds": (.5 + 2.) + 3.5}
+    (tmp_path / "prospective_ledger.json").write_text(json.dumps(ledger))
+    config = {"curl": {"resource_log": "child.txt", "response_headers": "headers.txt",
+                       "suffix_file": "suffix"},
+              "resume": {"expected_complete_bytes": 6, "prefix_bytes": 3,
+                         "required_content_range": "bytes 3-5/6", "if_range_etag": "fixed"},
+              "resources": {"offline_prepare_and_finish_combined": {"cpu_seconds": 60,
+                              "active_wall_seconds": 600},
+                            "external_curl": {"cpu_seconds": 60, "wall_seconds": 3600},
+                            "total": {"cpu_seconds": 120, "summed_active_wall_seconds": 4200,
+                                      "rss_bytes": 2 * 1024**3}}}
+    return receipt, config, ledger
+
+
+def test_split_transfer_sums_actual_phases_without_approval_wait(tmp_path):
+    receipt, config, _ = split_fixture(tmp_path)
+    result = checker.split_phase_accounting(tmp_path, receipt, config)
+    assert result["summed_cpu_seconds"] == 1.3
+    assert result["summed_active_wall_seconds"] == 6.
+    assert result["approval_wait_included"] is False
+
+
+def test_split_transfer_rejects_fabricated_total_cpu(tmp_path):
+    receipt, config, ledger = split_fixture(tmp_path)
+    ledger["cpu_seconds"] = 1.
+    (tmp_path / "prospective_ledger.json").write_text(json.dumps(ledger))
+    with pytest.raises(ValueError, match="terminal CPU"):
+        checker.split_phase_accounting(tmp_path, receipt, config)
+
+
+def test_split_transfer_rejects_unbound_child_log(tmp_path):
+    receipt, config, _ = split_fixture(tmp_path)
+    with (tmp_path / "child.txt").open("a") as stream:
+        stream.write("modified\n")
+    with pytest.raises(ValueError, match="binding"):
+        checker.split_phase_accounting(tmp_path, receipt, config)
+
+
+def test_split_transfer_rejects_duplicate_identity_header(tmp_path):
+    receipt, config, _ = split_fixture(tmp_path)
+    path = tmp_path / "headers.txt"
+    path.write_text(path.read_text().replace('ETag: "fixed"', 'ETag: "fixed"\nETag: "changed"'))
+    receipt["external_sha256"]["headers.txt"] = checker.file_sha256(path)
+    with pytest.raises(ValueError, match="identity headers"):
+        checker.split_phase_accounting(tmp_path, receipt, config)

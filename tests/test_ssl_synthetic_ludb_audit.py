@@ -312,3 +312,66 @@ def test_independent_c2_closure_is_bit_identical_on_complete_heterogeneous_fixtu
     rows[100].update(active_leads=[8], active_lead_AP=[value], active_lead_temporal_AP=value)
     assert len(rows) == 1536
     assert diagnostic_summary(rows) == frozen_recovery_summary(rows)
+
+
+def reconciled_fixture(tmp_path, monkeypatch):
+    study, main, admission, ledger = cost_fixture(tmp_path, monkeypatch, versions=[2, 4])
+    acquired = json.loads((tmp_path / admission["acquisition_ledger"]["path"]).read_text())
+    failed_root = tmp_path / "failed_main"
+    failed_root.mkdir()
+    failure = {"error": "Source admission omits required scientific or runtime sources",
+               "scientific_result_valid": False}
+    (failed_root / "failure.json").write_text(json.dumps(failure))
+    failed = {"receipt": "failure.json", "receipt_sha256": checker.file_sha256(failed_root / "failure.json"),
+              "cpu_seconds": .6, "wall_seconds": .7, "gpu_wall_seconds": 0.,
+              "prior_accounting_verified": False, "current_machine_cumulative_cpu_seconds": None,
+              "current_machine_cumulative_gpu_wall_seconds": None, "resource_gates": {"cpu": True}}
+    (failed_root / "prospective_ledger.json").write_text(json.dumps(failed))
+    (tmp_path / "old_admission.json").write_text('{"source_sha256":{}}')
+    bindings = {kind: {"path": path.relative_to(tmp_path).as_posix(), "sha256": checker.file_sha256(path)}
+                for kind, path in (("ledger", failed_root / "prospective_ledger.json"),
+                                   ("failure", failed_root / "failure.json"),
+                                   ("admission", tmp_path / "old_admission.json"))}
+    cpu = acquired["current_machine_cumulative_cpu_seconds"] + failed["cpu_seconds"]
+    gpu = acquired["current_machine_cumulative_gpu_wall_seconds"]
+    kind = "explicit_accounting_reconciliation_of_actual_failed_stage_not_new_experiment"
+    reconciled = {"record_type": kind,
+                  "verified_acquisition_ledger": admission["acquisition_ledger"],
+                  "retained_failed_main_ledger": bindings["ledger"],
+                  "retained_failed_main_receipt": bindings["failure"],
+                  "failed_main_admission": bindings["admission"],
+                  "failed_stage_cpu_seconds_counted_once": .6, "current_machine_stages": 23,
+                  "current_machine_cumulative_cpu_seconds": cpu,
+                  "current_machine_cumulative_gpu_wall_seconds": gpu}
+    path = tmp_path / "reconciled.json"
+    path.write_text(json.dumps(reconciled))
+    admission.update(failed_main_accounting=bindings, prior_ledger={
+        "path": "reconciled.json", "sha256": checker.file_sha256(path),
+        "current_machine_cumulative_cpu_seconds": cpu, "current_machine_cumulative_gpu_wall_seconds": gpu})
+    ledger.update(prior_ledger_sha256=checker.file_sha256(path), current_machine_stages=24,
+                  current_machine_cumulative_cpu_seconds=cpu + ledger["cpu_seconds"])
+    (study / "prospective_ledger.json").write_text(json.dumps(ledger))
+    return study, main, admission, failed_root
+
+
+def test_reconciliation_adds_actual_failed_cost_without_rewriting_nulls(tmp_path, monkeypatch):
+    study, main, admission, failed_root = reconciled_fixture(tmp_path, monkeypatch)
+    costs = checker.accounting(tmp_path, study, main, admission)
+    assert costs["stages_through_main"] == 24
+    assert costs["intervening_failed_main_cpu_seconds"] == .6
+    assert json.loads((failed_root / "prospective_ledger.json").read_text())[
+        "current_machine_cumulative_cpu_seconds"] is None
+
+
+def test_reconciliation_cannot_double_count_failed_stage(tmp_path, monkeypatch):
+    study, main, admission, _ = reconciled_fixture(tmp_path, monkeypatch)
+    path = tmp_path / "reconciled.json"
+    saved = json.loads(path.read_text())
+    saved["current_machine_cumulative_cpu_seconds"] += .6
+    path.write_text(json.dumps(saved))
+    admission["prior_ledger"]["sha256"] = checker.file_sha256(path)
+    ledger = json.loads((study / "prospective_ledger.json").read_text())
+    ledger["prior_ledger_sha256"] = checker.file_sha256(path)
+    (study / "prospective_ledger.json").write_text(json.dumps(ledger))
+    with pytest.raises(ValueError, match="one actual failed stage"):
+        checker.accounting(tmp_path, study, main, admission)

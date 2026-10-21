@@ -44,6 +44,7 @@ OWN_HASHES = dict(zip(
         'docs/ssl-synthetic-localization-ludb-independent-audit-chain-amendment-v1.md',
         'docs/ssl-synthetic-localization-ludb-independent-audit-unexecuted-versions-v1.md',
         'docs/ssl-synthetic-localization-ludb-independent-audit-split-transport-v1.md',
+        'docs/ssl-synthetic-localization-ludb-independent-audit-runtime-v2.md',
     ),
     (
         '03b6646553b74d2e9a31f5c6f62cd904594962422aeb131b0d5b980cb8d41c46',
@@ -54,12 +55,13 @@ OWN_HASHES = dict(zip(
         '650eb6463bfe48aef307c86ee36145fa302dc3563da373ebff2abedffcef7c09',
         'f74e46cf6d9e1a2a172e3ea218d2e0b2a85f134d0f69b547a48839234d3054fd',
         '14d095ae8e54bf18da09d8b455d06a43f1fe740d7f3b2d3e7f701851cd89d1e6',
-        '0cc651c4653b4c9cc460162014aa10295258d852f2db0f10fdc7da80f7685205',
+        'b5bca26a81d1de243c711870c6ae9432aee02f44dab13fc393a4b26945ff57e6',
         '84a93c194c7a9e77a7f2b95da89d1e3a61ced19d4d42fca12aa6d3ecf9e124e6',
         'd6125806b87692a9512dc612a9388708f8ff90da69b662ef1669ee5dfb85b9f2',
         '63f9159c8ed4f32beba03c2f79cd287b858e1dfb008f917b182647cbea109d8a',
         'fc69fd48ad1e0c5f0abbdcd0a430134a73c87d65e5074ec8a3694f784a6920c0',
         '049dafdc0c400d630604f018d3858d56f79bf86f35d49f8f6683e9a07f46f828',
+        '1497b2b86651c2d4776801f703e0b2449c9646fad807ddc529d09a8e320187a5',
     ),
     strict=True,
 ))
@@ -106,9 +108,9 @@ def transport_chain(root: Path, admission: dict[str, Any], base: dict[str, Any],
             status = "PASS" if offset == len(chain) - 1 else "FAIL"
             require(receipt["status"] == status, "preserved failure or final completed release")
         previous, previous_sha = current, binding["sha256"]
-    require(chain[-1]["path"] == admission["prior_ledger"]["path"]
-            and chain[-1]["sha256"] == admission["prior_ledger"]["sha256"],
-            "main begins after latest fully admitted transport")
+    require(chain[-1]["path"] == admission["acquisition_ledger"]["path"]
+            and chain[-1]["sha256"] == admission["acquisition_ledger"]["sha256"],
+            "chain ends at latest fully admitted transport")
     return len(chain)
 
 
@@ -127,15 +129,13 @@ def transport_paths(chain: list[dict[str, Any]]) -> None:
         previous = version
 
 
-def accounting(root: Path, study: Path, main: dict[str, Any], admission: dict[str, Any]) -> dict[str, Any]:
+def accounting(root: Path, study: Path, main: dict[str, Any], admission: dict[str, Any],
+               source: Path | None = None) -> dict[str, Any]:
     """Verify main and acquisition accounting against the audited temporal predecessor."""
     ledger = read_json(study / "prospective_ledger.json")
     require(ledger["receipt"] == "summary.json", "successful main terminal receipt")
     require(ledger["receipt_sha256"] == file_sha256(study / "summary.json"), "main receipt identity")
     prior_binding = admission["prior_ledger"]
-    require(admission["acquisition_ledger"]["path"] == prior_binding["path"]
-            and admission["acquisition_ledger"]["sha256"] == prior_binding["sha256"],
-            "latest acquisition is the direct main cost predecessor")
     prior_path = relative_file(root, prior_binding["path"])
     require(file_sha256(prior_path) == prior_binding["sha256"] == ledger["prior_ledger_sha256"],
             "main accounting uses admitted acquisition ledger")
@@ -149,11 +149,13 @@ def accounting(root: Path, study: Path, main: dict[str, Any], admission: dict[st
     require(base["current_machine_cumulative_gpu_wall_seconds"] == 447.98139213304967,
             "literal original current-machine GPU base")
     chain_count = transport_chain(root, admission, base, PRIOR_SHA)
+    acquisition_ledger = read_json(relative_file(root, admission["acquisition_ledger"]["path"]))
+    failed_cost = failed_main_reconciliation(root, source or root, admission, acquisition_ledger)
     for suffix in ("cpu_seconds", "gpu_wall_seconds"):
         field = "current_machine_cumulative_" + suffix
         require(ledger[field] == previous[field] + ledger[suffix], "main charged exactly once")
         require(prior_binding[field] == previous[field], "literal prospective acquisition costs")
-    require(ledger["gpu_wall_seconds"] == previous["gpu_wall_seconds"] == 0, "CPU-only new stages")
+    require(ledger["gpu_wall_seconds"] == 0, "CPU-only new stages")
     require(ledger["prior_accounting_verified"] is True, "main prior accounting verified")
     require(all(ledger["resource_gates"].values()), "terminal main resource gates")
     require(0 <= main["cpu_seconds_before_summary"] <= ledger["cpu_seconds"] < 600,
@@ -161,12 +163,61 @@ def accounting(root: Path, study: Path, main: dict[str, Any], admission: dict[st
     require(0 <= main["wall_seconds_before_summary"] <= ledger["wall_seconds"] < 1200,
             "actual main wall ceiling")
     require(ledger["peak_rss_bytes"] < 2 * 1024**3, "actual main RSS ceiling")
+    stages = 19 + chain_count + int("failed_main_accounting" in admission)
+    require(ledger.get("current_machine_stages", stages) == stages, "actual main stage count")
     return {"main_cpu_seconds": ledger["cpu_seconds"], "main_wall_seconds": ledger["wall_seconds"],
-            "acquisition_cpu_seconds": previous["cpu_seconds"],
+            "acquisition_cpu_seconds": acquisition_ledger["cpu_seconds"],
+            "intervening_failed_main_cpu_seconds": failed_cost,
             "main_ledger_sha256": file_sha256(study / "prospective_ledger.json"),
             "cpu_through_main": ledger["current_machine_cumulative_cpu_seconds"],
             "gpu_through_main": ledger["current_machine_cumulative_gpu_wall_seconds"],
-            "stages_through_main": 19 + chain_count}
+            "stages_through_main": stages}
+
+
+def failed_main_reconciliation(root: Path, source: Path, admission: dict[str, Any],
+                                acquisition_ledger: dict[str, Any]) -> float:
+    """Derive the one retained pre-data failure cost while preserving its original null ledger."""
+    if "failed_main_accounting" not in admission:
+        require(admission["prior_ledger"]["path"] == admission["acquisition_ledger"]["path"]
+                and admission["prior_ledger"]["sha256"] == admission["acquisition_ledger"]["sha256"],
+                "direct transport predecessor without omitted failed stage")
+        return 0.
+    bindings = admission["failed_main_accounting"]
+    require(set(bindings) == {"ledger", "failure", "admission"}, "exact failed-main reconciliation allowlist")
+    for kind, binding in bindings.items():
+        directory = source if kind == "admission" else root
+        require(file_sha256(relative_file(directory, binding["path"])) == binding["sha256"],
+                "retained failed-main identity binding")
+    failed = read_json(relative_file(root, bindings["ledger"]["path"]))
+    failure = read_json(relative_file(root, bindings["failure"]["path"]))
+    prior = read_json(relative_file(root, admission["prior_ledger"]["path"]))
+    require(failed["prior_accounting_verified"] is False
+            and failed["current_machine_cumulative_cpu_seconds"] is None
+            and failed["current_machine_cumulative_gpu_wall_seconds"] is None,
+            "original failed-main null accounting preserved")
+    require(failed["receipt"] == "failure.json" and failed["receipt_sha256"] == bindings["failure"]["sha256"]
+            and failure["scientific_result_valid"] is False
+            and failure["error"] == "Source admission omits required scientific or runtime sources",
+            "retained pre-snapshot source-guard failure")
+    require(all(failed["resource_gates"].values()) and failed["gpu_wall_seconds"] == 0
+            and 0 <= failed["cpu_seconds"] < 600 and 0 <= failed["wall_seconds"] < 1200,
+            "actual bounded failed self-cost")
+    kind = "explicit_accounting_reconciliation_of_actual_failed_stage_not_new_experiment"
+    require(prior["record_type"] == kind,
+            "reconciliation metadata is not another experiment")
+    require(prior["verified_acquisition_ledger"] == admission["acquisition_ledger"]
+            and prior["retained_failed_main_ledger"] == bindings["ledger"]
+            and prior["retained_failed_main_receipt"] == bindings["failure"]
+            and prior["failed_main_admission"] == bindings["admission"], "complete reconciliation inputs")
+    require(prior["current_machine_cumulative_cpu_seconds"]
+            == acquisition_ledger["current_machine_cumulative_cpu_seconds"] + failed["cpu_seconds"]
+            and prior["current_machine_cumulative_gpu_wall_seconds"]
+            == acquisition_ledger["current_machine_cumulative_gpu_wall_seconds"]
+            and prior["current_machine_stages"] == acquisition_ledger["current_machine_stages"] + 1,
+            "one actual failed stage added once to verified acquisition")
+    require(prior["failed_stage_cpu_seconds_counted_once"] == failed["cpu_seconds"],
+            "literal failed-stage cost rather than fabricated reconciliation work")
+    return failed["cpu_seconds"]
 
 
 def acquisition(root: Path, source: Path, admission: dict[str, Any], guard: Any) -> dict[str, Any]:
@@ -471,10 +522,11 @@ def terminal(destination: Path, clock: tuple[float, float], costs: dict[str, Any
     require(all(gates.values()), "audit terminal resource ceilings")
 
 
-def run(root: Path, source: Path, admission_name: str, main_sha: str, script_sha: str) -> dict[str, Any]:
+def run(root: Path, source: Path, admission_name: str, main_sha: str, script_sha: str,
+        study_root: str = STUDY) -> dict[str, Any]:
     """Execute exactly one copied, source-admitted independent audit with retained failure evidence."""
     clock = time.process_time(), time.perf_counter()
-    study = root / STUDY
+    study = relative_file(root, study_root)
     destination = study / "independent_audit_v1"
     destination.mkdir(exist_ok=False)
     costs: dict[str, Any] = {}
@@ -507,9 +559,11 @@ def run(root: Path, source: Path, admission_name: str, main_sha: str, script_sha
         require(file_sha256(study / "summary.json", guard) == main_sha, "explicit admitted main summary")
         main = read_json(study / "summary.json")
         admission = read_json(relative_file(source, admission_name))
+        require(admission.get("study_root", STUDY) == study_root,
+                "explicit runtime-only study-root admission")
         require(file_sha256(source / admission_name) == main["admission_sha256"],
                 "main identity-only admission")
-        costs = accounting(root, study, main, admission)
+        costs = accounting(root, study, main, admission, source)
         release = acquisition(root, source, admission, guard)
         source_checks = bindings(root, source, study, main, admission, guard)
         old_checks = predecessor(root, study, main)
@@ -560,9 +614,10 @@ def main() -> None:
     parser.add_argument("--admission", required=True)
     parser.add_argument("--main-sha", required=True)
     parser.add_argument("--script-sha", required=True)
+    parser.add_argument("--study-root", default=STUDY)
     arguments = parser.parse_args()
     result = run(arguments.root, arguments.source_root, arguments.admission,
-                 arguments.main_sha, arguments.script_sha)
+                 arguments.main_sha, arguments.script_sha, arguments.study_root)
     print(json.dumps({key: result[key] for key in ("all_passed", "mismatch_count", "scientific_passed")}))
 
 

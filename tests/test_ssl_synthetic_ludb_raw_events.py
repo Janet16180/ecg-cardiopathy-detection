@@ -50,9 +50,9 @@ def test_padded_or_missing_eof_is_visible():
 
 
 def test_invalid_channel_is_retained_and_flagged():
-    result = decode(event(1, 10) + event(62, 19) + b"\0\0")
-    assert result["events"][0]["channel"] == 19
-    assert result["errors"][0]["kind"] == "channel_outside_12_leads"
+    result = decode(event(1, 10) + event(62, 256) + b"\0\0")
+    assert result["events"][0]["channel"] == 256
+    assert result["errors"][0]["kind"] == "channel_outside_WFDB_byte_range"
 
 
 def test_numeric_num_inherits_and_subtype_resets_between_events():
@@ -60,4 +60,11 @@ def test_numeric_num_inherits_and_subtype_resets_between_events():
     result = decode(payload)
     assert [row["num"] for row in result["events"]] == [-1, -1]
     assert [row["subtype"] for row in result["events"]] == [-2, 0]
+    assert result["errors"] == []
+
+
+def test_valid_arbitrary_channel_metadata_does_not_drop_later_events():
+    result = decode(event(39, 10) + event(62, 19) + event(1, 5) + event(40, 5) + b"\0\0")
+    assert [row["channel"] for row in result["events"]] == [19, 19, 19]
+    assert [row["sample"] for row in result["events"]] == [10, 15, 20]
     assert result["errors"] == []

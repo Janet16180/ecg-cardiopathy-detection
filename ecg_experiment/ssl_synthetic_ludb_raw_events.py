@@ -34,8 +34,8 @@ def extra(
     elif code == 62:
         state["channel"] = value
         current["channel"] = value
-        if not 0 <= value < 12:
-            raise ValueError("channel_outside_12_leads")
+        if not 0 <= value <= 255:
+            raise ValueError("channel_outside_WFDB_byte_range")
     elif code == 63:
         current["aux_length"] = value
         end = position + value + value % 2

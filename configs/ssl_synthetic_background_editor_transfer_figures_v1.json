@@ -1,0 +1,19 @@
+{
+  "study_id": "ssl_synthetic_background_editor_transfer_figures_v1",
+  "protocol": "docs/ssl-synthetic-localization-background-editor-transfer-figures-v1.md",
+  "main_root": "outputs/ssl_synthetic_localization/background_editor_transfer_v1",
+  "output_root": "outputs/ssl_synthetic_localization/background_editor_transfer_figures_v1",
+  "slot": 0,
+  "fit": 1,
+  "sources": ["generated", "real"],
+  "variants": [2, 3, 4, 5],
+  "arms": ["B", "P", "K", "PK"],
+  "probability_limits": [0.0, 1.0],
+  "cpu_seconds": 60.0,
+  "wall_seconds": 120.0,
+  "rss_bytes": 2147483648,
+  "output_bytes": 33554432,
+  "gpu_forwards": 0,
+  "new_scores": 0,
+  "push_authorized": false
+}

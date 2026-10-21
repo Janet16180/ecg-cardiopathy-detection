@@ -1,0 +1,447 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "ecg-evidence-1.0-draft"
+    },
+    "record_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "patient_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "signal_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sampling_rate_hz": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "n_samples": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "lead_order": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "I",
+          "II",
+          "III",
+          "aVR",
+          "aVL",
+          "aVF",
+          "V1",
+          "V2",
+          "V3",
+          "V4",
+          "V5",
+          "V6"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 12,
+      "uniqueItems": true
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "enum": [
+            "present",
+            "absent",
+            "uncertain"
+          ]
+        },
+        "source_label_retained": {
+          "type": "boolean"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "state",
+        "source_label_retained"
+      ]
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+    "acceptable_evidence_sets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence_set"
+      }
+    },
+    "unlocalized_reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "exhaustive_abnormality_annotation": {
+      "const": false
+    },
+    "unmarked_samples": {
+      "const": "unknown"
+    },
+    "review_status": {
+      "enum": [
+        "draft",
+        "reviewed",
+        "adjudicated"
+      ]
+    },
+    "review_note": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "record_ref",
+    "sampling_rate_hz",
+    "n_samples",
+    "lead_order",
+    "finding",
+    "provenance",
+    "acceptable_evidence_sets",
+    "exhaustive_abnormality_annotation",
+    "unmarked_samples",
+    "review_status"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ecg-evidence:1.0-draft",
+  "title": "Finding-specific ECG evidence, draft contract",
+  "description": "Alternative sets may each be sufficient evidence. Regions within a set are jointly reviewed. Unmarked samples remain unknown. Structural validity is not clinical adjudication.",
+  "$defs": {
+    "region": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "region_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "leads": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "I",
+              "II",
+              "III",
+              "aVR",
+              "aVL",
+              "aVF",
+              "V1",
+              "V2",
+              "V3",
+              "V4",
+              "V5",
+              "V6"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 12,
+          "uniqueItems": true
+        },
+        "coordinates": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/seconds"
+            },
+            {
+              "$ref": "#/$defs/samples"
+            },
+            {
+              "$ref": "#/$defs/beats"
+            },
+            {
+              "$ref": "#/$defs/whole_record"
+            }
+          ]
+        },
+        "role": {
+          "enum": [
+            "support",
+            "comparison",
+            "context"
+          ]
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "region_id",
+        "leads",
+        "coordinates",
+        "role"
+      ]
+    },
+    "evidence_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "set_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "regions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/region"
+          }
+        },
+        "measurements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/measurement"
+          }
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "set_id",
+        "regions",
+        "rationale"
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "independent_expert",
+            "expert_adjudication",
+            "source_record_label",
+            "rule_generated_silver",
+            "model_prediction",
+            "synthetic_example"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "annotator_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "annotation_timestamp_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "independent_of_model": {
+          "type": "boolean"
+        },
+        "independent_of_support_bank": {
+          "type": "boolean"
+        },
+        "model_output_visible": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind",
+        "source",
+        "source_revision",
+        "independent_of_model",
+        "independent_of_support_bank",
+        "model_output_visible"
+      ]
+    },
+    "measurement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "leads": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "I",
+              "II",
+              "III",
+              "aVR",
+              "aVL",
+              "aVF",
+              "V1",
+              "V2",
+              "V3",
+              "V4",
+              "V5",
+              "V6"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 12,
+          "uniqueItems": true
+        },
+        "region_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "method": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reference_rule": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "unit",
+        "leads",
+        "method"
+      ]
+    },
+    "seconds": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "seconds"
+        },
+        "start": {
+          "type": "number",
+          "minimum": 0
+        },
+        "stop": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "kind",
+        "start",
+        "stop"
+      ]
+    },
+    "samples": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "samples"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stop": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "kind",
+        "start",
+        "stop"
+      ]
+    },
+    "beats": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "beat_ordinals"
+        },
+        "first": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "last": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "kind",
+        "first",
+        "last"
+      ]
+    },
+    "whole_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "whole_record"
+        }
+      },
+      "required": [
+        "kind"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "finding": {
+            "properties": {
+              "state": {
+                "const": "present"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "anyOf": [
+          {
+            "properties": {
+              "acceptable_evidence_sets": {
+                "minItems": 1
+              }
+            }
+          },
+          {
+            "required": [
+              "unlocalized_reason"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

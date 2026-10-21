@@ -1,0 +1,543 @@
+{
+  "study": "NTT-04",
+  "status": "complete_same_wave_finding_discrimination",
+  "git_commit": "2431012c6d34b3e545a60fb3d71d8beed2418673",
+  "reservation_integrity": {
+    "all_train_ecg_identities_exact": true,
+    "train_ecgs": 13938,
+    "train_patients": 12078,
+    "patient_first_record_rule": "lowest train ECG ID before label parsing"
+  },
+  "cohort_counts": {
+    "outside_three_finding_task": 7219,
+    "eligible": 4859,
+    "NORM": 4307,
+    "CRBBB": 291,
+    "CLBBB": 261
+  },
+  "finding_inventory": [
+    {
+      "finding": "NORM",
+      "support_pool": 2149,
+      "target_pool": 2158
+    },
+    {
+      "finding": "CRBBB",
+      "support_pool": 143,
+      "target_pool": 148
+    },
+    {
+      "finding": "CLBBB",
+      "support_pool": 135,
+      "target_pool": 126
+    }
+  ],
+  "targets": 60,
+  "target_patients": 60,
+  "unique_selected_waveforms": 87,
+  "unique_support_patients": 27,
+  "selected_quality": {
+    "complete_beats_min_median_max": [
+      7.0,
+      11.0,
+      20.0
+    ],
+    "consistency_min_median_max": [
+      0.6888572149596176,
+      0.9934704011610571,
+      0.999547289782796
+    ],
+    "clipped_fraction_max": 0.022105263157894735
+  },
+  "annotation_cooccurrence": {
+    "NORM": {
+      "NORM": 20
+    },
+    "CRBBB": {
+      "CD": 20,
+      "MI": 12,
+      "STTC": 1,
+      "HYP": 3
+    },
+    "CLBBB": {
+      "CD": 20,
+      "MI": 2,
+      "HYP": 3,
+      "STTC": 1
+    }
+  },
+  "summary": {
+    "balanced_accuracy": {
+      "dino": 0.8277777777777776,
+      "raw": 0.8833333333333333,
+      "raw_full_context": 0.9277777777777777,
+      "duration": 0.6777777777777777,
+      "amplitude": 0.5166666666666666,
+      "energy": 0.5777777777777778,
+      "combined_scalars": 0.7222222222222222,
+      "late_reference": 0.5722222222222222,
+      "shuffled_labels": 0.09444444444444444
+    },
+    "best_baseline": "raw_full_context",
+    "primary": {
+      "difference": -0.1,
+      "ci_low": -0.1772543632837751,
+      "ci_high": -0.02341770266770257,
+      "draws": 2000,
+      "skipped_draws": 0,
+      "seed": 20261018,
+      "baseline_maximum_recomputed_each_draw": true
+    },
+    "advance_gate_passed": false,
+    "point_gate_uses_exact_rational_accuracy": true,
+    "confusions": {
+      "dino": {
+        "counts": [
+          [
+            49,
+            6,
+            5
+          ],
+          [
+            11,
+            43,
+            6
+          ],
+          [
+            2,
+            1,
+            57
+          ]
+        ],
+        "row_normalized": [
+          [
+            0.8166666666666667,
+            0.1,
+            0.08333333333333333
+          ],
+          [
+            0.18333333333333332,
+            0.7166666666666667,
+            0.1
+          ],
+          [
+            0.03333333333333333,
+            0.016666666666666666,
+            0.95
+          ]
+        ]
+      },
+      "raw": {
+        "counts": [
+          [
+            59,
+            1,
+            0
+          ],
+          [
+            5,
+            55,
+            0
+          ],
+          [
+            14,
+            1,
+            45
+          ]
+        ],
+        "row_normalized": [
+          [
+            0.9833333333333333,
+            0.016666666666666666,
+            0.0
+          ],
+          [
+            0.08333333333333333,
+            0.9166666666666666,
+            0.0
+          ],
+          [
+            0.23333333333333334,
+            0.016666666666666666,
+            0.75
+          ]
+        ]
+      },
+      "raw_full_context": {
+        "counts": [
+          [
+            59,
+            1,
+            0
+          ],
+          [
+            5,
+            55,
+            0
+          ],
+          [
+            7,
+            0,
+            53
+          ]
+        ],
+        "row_normalized": [
+          [
+            0.9833333333333333,
+            0.016666666666666666,
+            0.0
+          ],
+          [
+            0.08333333333333333,
+            0.9166666666666666,
+            0.0
+          ],
+          [
+            0.11666666666666667,
+            0.0,
+            0.8833333333333333
+          ]
+        ]
+      },
+      "duration": {
+        "counts": [
+          [
+            60,
+            0,
+            0
+          ],
+          [
+            4,
+            36,
+            20
+          ],
+          [
+            0,
+            34,
+            26
+          ]
+        ],
+        "row_normalized": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.06666666666666667,
+            0.6,
+            0.3333333333333333
+          ],
+          [
+            0.0,
+            0.5666666666666667,
+            0.43333333333333335
+          ]
+        ]
+      },
+      "amplitude": {
+        "counts": [
+          [
+            25,
+            28,
+            7
+          ],
+          [
+            25,
+            24,
+            11
+          ],
+          [
+            14,
+            2,
+            44
+          ]
+        ],
+        "row_normalized": [
+          [
+            0.4166666666666667,
+            0.4666666666666667,
+            0.11666666666666667
+          ],
+          [
+            0.4166666666666667,
+            0.4,
+            0.18333333333333332
+          ],
+          [
+            0.23333333333333334,
+            0.03333333333333333,
+            0.7333333333333333
+          ]
+        ]
+      },
+      "energy": {
+        "counts": [
+          [
+            34,
+            18,
+            8
+          ],
+          [
+            23,
+            28,
+            9
+          ],
+          [
+            11,
+            7,
+            42
+          ]
+        ],
+        "row_normalized": [
+          [
+            0.5666666666666667,
+            0.3,
+            0.13333333333333333
+          ],
+          [
+            0.38333333333333336,
+            0.4666666666666667,
+            0.15
+          ],
+          [
+            0.18333333333333332,
+            0.11666666666666667,
+            0.7
+          ]
+        ]
+      },
+      "combined_scalars": {
+        "counts": [
+          [
+            47,
+            12,
+            1
+          ],
+          [
+            14,
+            35,
+            11
+          ],
+          [
+            5,
+            7,
+            48
+          ]
+        ],
+        "row_normalized": [
+          [
+            0.7833333333333333,
+            0.2,
+            0.016666666666666666
+          ],
+          [
+            0.23333333333333334,
+            0.5833333333333334,
+            0.18333333333333332
+          ],
+          [
+            0.08333333333333333,
+            0.11666666666666667,
+            0.8
+          ]
+        ]
+      },
+      "late_reference": {
+        "counts": [
+          [
+            30,
+            3,
+            27
+          ],
+          [
+            10,
+            13,
+            37
+          ],
+          [
+            0,
+            0,
+            60
+          ]
+        ],
+        "row_normalized": [
+          [
+            0.5,
+            0.05,
+            0.45
+          ],
+          [
+            0.16666666666666666,
+            0.21666666666666667,
+            0.6166666666666667
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "shuffled_labels": {
+        "counts": [
+          [
+            5,
+            49,
+            6
+          ],
+          [
+            6,
+            11,
+            43
+          ],
+          [
+            57,
+            2,
+            1
+          ]
+        ],
+        "row_normalized": [
+          [
+            0.08333333333333333,
+            0.8166666666666667,
+            0.1
+          ],
+          [
+            0.1,
+            0.18333333333333332,
+            0.7166666666666667
+          ],
+          [
+            0.95,
+            0.03333333333333333,
+            0.016666666666666666
+          ]
+        ]
+      }
+    },
+    "by_draw": {
+      "20261018": {
+        "dino": 0.85,
+        "raw": 0.9166666666666666,
+        "raw_full_context": 0.9166666666666666,
+        "duration": 0.5,
+        "amplitude": 0.5666666666666667,
+        "energy": 0.6166666666666667,
+        "combined_scalars": 0.7666666666666667,
+        "late_reference": 0.6166666666666667,
+        "shuffled_labels": 0.11666666666666667
+      },
+      "20261019": {
+        "dino": 0.8333333333333334,
+        "raw": 0.7833333333333333,
+        "raw_full_context": 0.8833333333333333,
+        "duration": 0.7166666666666667,
+        "amplitude": 0.48333333333333334,
+        "energy": 0.5666666666666667,
+        "combined_scalars": 0.6833333333333333,
+        "late_reference": 0.5333333333333333,
+        "shuffled_labels": 0.08333333333333333
+      },
+      "20261020": {
+        "dino": 0.8,
+        "raw": 0.95,
+        "raw_full_context": 0.9833333333333333,
+        "duration": 0.8166666666666667,
+        "amplitude": 0.5,
+        "energy": 0.55,
+        "combined_scalars": 0.7166666666666667,
+        "late_reference": 0.5666666666666667,
+        "shuffled_labels": 0.08333333333333333
+      }
+    },
+    "by_finding": {
+      "NORM": {
+        "dino": 0.8166666666666667,
+        "raw": 0.9833333333333333,
+        "raw_full_context": 0.9833333333333333,
+        "duration": 1.0,
+        "amplitude": 0.4166666666666667,
+        "energy": 0.5666666666666667,
+        "combined_scalars": 0.7833333333333333,
+        "late_reference": 0.5,
+        "shuffled_labels": 0.08333333333333333
+      },
+      "CRBBB": {
+        "dino": 0.7166666666666667,
+        "raw": 0.9166666666666666,
+        "raw_full_context": 0.9166666666666666,
+        "duration": 0.6,
+        "amplitude": 0.4,
+        "energy": 0.4666666666666667,
+        "combined_scalars": 0.5833333333333334,
+        "late_reference": 0.21666666666666667,
+        "shuffled_labels": 0.18333333333333332
+      },
+      "CLBBB": {
+        "dino": 0.95,
+        "raw": 0.75,
+        "raw_full_context": 0.8833333333333333,
+        "duration": 0.43333333333333335,
+        "amplitude": 0.7333333333333333,
+        "energy": 0.7,
+        "combined_scalars": 0.8,
+        "late_reference": 1.0,
+        "shuffled_labels": 0.016666666666666666
+      }
+    }
+  },
+  "gpu_used": false,
+  "weight_training": false,
+  "provided_qa_windows_or_leads_used": false,
+  "clinical_localization_accuracy": null,
+  "model": "frozen DINOv2-S14; full median-beat context, programmed QRS-ink pooling",
+  "versions": {
+    "torch": "2.6.0+cu124",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "wfdb": "4.3.1",
+    "pillow": "12.3.0"
+  },
+  "seconds": 55.9827349986881,
+  "result_sha256": "79cfa5130ccc8d275e398ddb15b056a1affe1beb812fa32c52e12a8c2211e789",
+  "source_sha256": {
+    "ecg_experiment/same_wave_ntt04.py": "580b0aa424cb476bb6564b13343d8c2fee1d3a2c4931478d1b9e09077bc59666",
+    "scripts/reports/same_wave_ntt04.py": "2865b992ca064ac34e51ec4480a585b259ca15c6b887866953d5a266222d7c9a",
+    "tests/test_same_wave_ntt04.py": "429decac423e1dd0b1224b09e4530aa3cd578203f834633a04ea62010adaa41c",
+    "docs/ntt-04-same-wave-finding-discrimination.md": "f56b5cd583223bcd9347a3fb3888a9eb297c63f8fdd968bbcfe50f1bd50dd3c1",
+    "docs/ntt-04-amendment-context-control.md": "3ac69c834742ce38af73155b028b726434871aa61b6f1c02ddbec0e22c39f59c",
+    "ecg_experiment/visual_reference_ntt03.py": "e3894b34d0e4bf352f062f88b7aff463cbda70f0797502e6c0b98a64c50513ee",
+    "ecg_experiment/reference_transfer_ntt02.py": "ced07c41a8a0c1ee057dbe0d01927a31b0cf66de18e41e33b5b8c4e5ca040d1a",
+    "ecg_experiment/clustering01.py": "45a735dd42de02a8d0fce4faac50a8a0676147fca22d3ecff7c65aaf82101799",
+    "ecg_experiment/eda/avance2_features.py": "b88c31643811971a46ce789472bab6d2452250ccfc5d517b559633530fbdd698",
+    "ecg_experiment/eda/ptbxl.py": "9eca8dba73d6134d4c9b863451496c46e52501580f84e66beb73c182f1369415",
+    "ecg_experiment/eda/signals.py": "f5ab2aafbbd38d16d9e79724887ad4e0909be97c67c7d2b7b447bf65e33fd4d8",
+    "ecg_experiment/files.py": "d418732520e883994d3b72b064c03174184f606cfea4e166800bf8a096ef985b",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "ecg_experiment/intervals.py": "b45103664e8c2e063b90c8223b64e7bbe6394e54796e0613538bd0b53dfe99af",
+    "ecg_experiment/__init__.py": "cca26ce1124d553e877ed33383ffaba3af13f89bd6628e7a1b9ca2cc5c1c6a35",
+    "pyproject.toml": "9df6d56e8f27348d067eb0cf3b6506f5efbbc03154b96b6b3987f4bb4854279e",
+    "uv.lock": "20c6e373cba70e7fe859ba59697f6145c34b42418eddc955f82d29a165d5db7c"
+  },
+  "public_checkpoint_sha256": {
+    "DINOv2-S14": "b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9"
+  },
+  "predecessor_counts_reproduced": {
+    "full": [
+      6,
+      2
+    ],
+    "crop": [
+      6,
+      0
+    ]
+  },
+  "limits": [
+    "60 unique target patients, 180 patient-draw predictions",
+    "Intervals condition on the three fixed support banks",
+    "Record-finding source annotations and diagnostic co-occurrences, not disease causes",
+    "Globally contextual full median-beat DINO tokens, not isolated QRS evidence",
+    "Programmed ROIs and record labels cannot validate clinical highlighting"
+  ]
+}

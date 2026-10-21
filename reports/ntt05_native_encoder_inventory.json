@@ -1,0 +1,203 @@
+{
+  "audit_date": "2026-10-18",
+  "scope": "Read-only native encoder and saved-results audit; no waveform reads, inference, scoring, training, download, credentials, repository edits, Git config, commits, or publication.",
+  "availability": {
+    "native_pretrained_ready": false,
+    "reason": "No native checkpoint or native frozen feature array exists in the requested local artifact roots. Historical documents describe artifacts absent from this checkout.",
+    "artifact_inventory": [
+      "outputs/cluster02_stability_selection/assignments_local.npz",
+      "third_party/ntt_vision/checkpoints/dinov2_vits14_pretrain.pth",
+      "third_party/ntt_vision/checkpoints/sam2_hiera_tiny.pt"
+    ],
+    "missing_expected_paths": {
+      "third_party/checkpoints/xecg/config.json": true,
+      "third_party/checkpoints/xecg/xECG.py": true,
+      "third_party/checkpoints/xecg/model.safetensors": true,
+      "third_party/xecg-deps": true,
+      "third_party/ECG_JEPA": true,
+      "third_party/checkpoints/ecg-jepa/multiblock_epoch100.pth": true,
+      "third_party/ecg-fm-benchmarking": true,
+      "third_party/checkpoints/ecg-cpc/ECG-CPC Checkpoint/last_11597276.ckpt": true,
+      "outputs/experiment004_cpc_40k/cpc_ssl/encoder.pt": true,
+      "outputs/experiment004_cpc_40k/normalization.json": true,
+      "outputs/experiment064_dino_knn_v1/model.pt": true,
+      "data/processed/ptbxl/features_jepa_multiblock_union_seeds42_43_44/features.npy": true
+    }
+  },
+  "recommended_adapter": {
+    "name": "ECG-JEPA dense lead-time features, conditional on restoring verified weights and compatible official source",
+    "why": "Only audited published native encoder here exposes an explicit lead and time token coordinate axis.",
+    "execution_now": "blocked_missing_weights_and_official_source",
+    "evidence": [
+      "scripts/features/extract_jepa.py",
+      "third_party/bench-xecg/bench_xecg/models/ecg_jepa/ecg_jepa.py",
+      "third_party/bench-xecg/bench_xecg/models/ecg_jepa/models.py",
+      "docs/jepa-notes.md"
+    ]
+  },
+  "models": {
+    "xecg": {
+      "existing_reusable_imports": [
+        "ecg_experiment.xecg.load_xecg",
+        "ecg_experiment.xecg.preprocess_xecg"
+      ],
+      "input": "[B,1000,12], 100 Hz, physical mV, official FFT resample from [12,5000] 500 Hz",
+      "output": "(pooled [B,1024], temporal [B,40,1024]) expected from released config and vendored compatible architecture; actual forward unverified because weights/config absent",
+      "coordinates": "token j nominal [25*j,25*(j+1)) samples at100Hz = [0.25*j,0.25*(j+1)) seconds",
+      "context": "All 12 leads mixed in first patch convolution; alternating recurrent directions spread context over full record. No lead-local axis. Final spatial orientation must be asserted with actual pinned release source/config; current documented nine blocks produce eight flips.",
+      "pretrained_load": "third_party/checkpoints/xecg/{config.json,xECG.py,model.safetensors}; loader SHA256 verifies all three and strictly loads state; requires xLSTM2.0.4 (fallback third_party/xecg-deps); CPU vanilla converts CUDA recurrent storage exactly via library methods.",
+      "pitfalls": [
+        "call eval and requires_grad_(False) explicitly after load_xecg",
+        "all-zero samples treated as padding at each patch first sample by vendored architecture",
+        "masked pooling does not exclude out-of-region information",
+        "lead-specific candidate scores require an intervention or different encoder; broadcasting time tokens across leads fabricates lead resolution"
+      ],
+      "evidence": [
+        "ecg_experiment/xecg.py",
+        "third_party/bench-xecg/xecg/xECG.py"
+      ]
+    },
+    "ecg_jepa": {
+      "existing_loader": "scripts/features/extract_jepa.py::load_encoder and preprocess are script functions, not reusable imports under repository rules. New reusable loader needed; do not change frozen script.",
+      "input": "[B,8,2500],250Hz,mV; I,II,V1,V2,V3,V4,V5,V6 selected from canonical12 then Fourier resampled",
+      "output": "encoder.representation(x) [B,768] global; representation(x,return_features=True) [B,400,768] in locally vendored architecture",
+      "coordinates": "lead-major index l*50+p; patch p covers [50*p,50*(p+1)) at250Hz,200ms; canonical leads [0,1,6,7,8,9,10,11]",
+      "context": "Cross-shaped attention connects all times on same lead and all leads at same time; through multiple layers can carry full eight-lead/full-record context. Token coordinates do not imply receptive-field locality.",
+      "pretrained_load": "Missing official third_party/ECG_JEPA source + third_party/checkpoints/ecg-jepa/multiblock_epoch100.pth,341551405bytes,SHA25661334869f905a7d6de32bc573c60024eaf6efba7c35c0e45fc2ea7d52b6ff66e; historical dimensions85374720params,width768.",
+      "pitfalls": [
+        "vendored bench-xecg loader API differs from missing official loader, requires config and returns downstream wrapper",
+        "vendored loader uses torch.load without CPU map_location and strict=False while dropping pos_embed: new safe adapter must hash verify and explicitly audit all missing/unexpected keys",
+        "four derived leads III,aVR,aVL,aVF absent; cannot claim complete twelve-lead localization",
+        "full-record 200ms token grid coarse for70-160ms silver windows; use exact occupancy weights and report effective resolution",
+        "global features.npy historical cache cannot reconstruct dense token maps"
+      ],
+      "evidence": [
+        "scripts/features/extract_jepa.py",
+        "third_party/bench-xecg/bench_xecg/models/ecg_jepa/ecg_jepa.py",
+        "third_party/bench-xecg/bench_xecg/models/ecg_jepa/models.py",
+        "docs/jepa-notes.md"
+      ]
+    },
+    "compact_cpc": {
+      "existing_reusable_imports": [
+        "ecg_experiment.cpc.CPCEncoder",
+        "ecg_experiment.cpc_encoder_variants039.create_model",
+        "ecg_experiment.cpc_simdino040.create_model"
+      ],
+      "input": "[B,12,2500]250Hz; train-derived frozen perlead mean/std required; all normalization artifacts absent",
+      "output": "(CNN/frontend tokens,context tokens),both[B,2,79,256]; pooled[B,512]",
+      "coordinates": "independent1250sample halves; token j ends at16*j,64ms stride; raw CNN support [16*j-32,16*j]inclusive;039 patch same33samples;040 localTransformer support[16*j-48,16*j]inclusive49samples196ms. Add1250*h for half h.",
+      "context": "frontend local; GRU/mLSTM context causal from half start to token endpoint. No information crosses half boundary; all12leads mixed into each token.",
+      "pitfalls": [
+        "factory creates random initial model unless verified trained state loaded; never call this pretrained by itself",
+        "pooled_features helper hardcodes CUDA and old normalization; inappropriate CPU dense-token adapter",
+        "040 SimDINO is project-trained native causal transformer, unrelated to image DINOv2; teacher and student must be specified",
+        "no explicit lead axis; only temporal candidate matching supportable without interventions"
+      ],
+      "evidence": [
+        "ecg_experiment/cpc.py",
+        "ecg_experiment/cpc_encoder_variants039.py",
+        "ecg_experiment/cpc_simdino040.py",
+        "ecg_experiment/ptb_cpc_features.py",
+        "ecg_experiment/simdino_study040.py"
+      ]
+    },
+    "released_s4_cpc": {
+      "loader": "scripts/features/extract_ecg_cpc.py::ReleasedCPC (script-only,frozen;cannot import into reusable code)",
+      "input": "[B,12,600]2.5second views at240Hz,mV",
+      "output": "predictor(**encoder(seq=views))[\"seq\"] is[B,300,512];forward returns mean[B,512]",
+      "context": "all-lead convolution and causal S4 contextual tokens; exact encoder coordinate alignment requires original missing clinical_ts source, not inferred from pooled features",
+      "pretrained_load": "third_party/ecg-fm-benchmarking and third_party/checkpoints/ecg-cpc/ECG-CPC Checkpoint/last_11597276.ckpt absent; SHA256bc253edc6ac279ce2caec86d3c3a21b740e43735ca03be1dc7c50e630b0ad4cf",
+      "evidence": [
+        "scripts/features/extract_ecg_cpc.py"
+      ]
+    }
+  },
+  "cpu_profile": {
+    "status": "No pretrained profile possible with absent weights. No random/synthetic inference run in this audit.",
+    "next_gate": "Once restored, hash verify source/weights, freeze API, use eval+inference_mode and torch.set_num_threads(2), profile a single fully synthetic input plus bounded batches before permitting clinical feature extraction; record model load time, elapsed inference, memory, tensor finite/shape and coordinate mapping.",
+    "no_gpu_training_admission": "A CPU inference result cannot admit full GPU training; separate real GPU profile required."
+  },
+  "history": {
+    "ntt02_ntt04_live": {
+      "ntt02_native_reference_transfer": {
+        "path": "outputs/ntt02_native_reference_transfer/result.json",
+        "sha256": "5e7f4052b60d3bfb3ae589bb6cc482c32c7af49d6858d8cc5ae37e6cb044047b",
+        "status": "complete_candidate_selection_feasibility",
+        "seconds": 68.82248416822404,
+        "gate": false,
+        "patients": 769,
+        "questions": 1507,
+        "primary": {
+          "difference": 0.16446322785724604,
+          "ci_low": 0.1330663921398642,
+          "ci_high": 0.19524239116973185,
+          "draws": 2000,
+          "seed": 20261018,
+          "patients": 769
+        }
+      },
+      "ntt04_same_wave": {
+        "path": "outputs/ntt04_same_wave/result.json",
+        "sha256": "79cfa5130ccc8d275e398ddb15b056a1affe1beb812fa32c52e12a8c2211e789",
+        "status": "complete_same_wave_finding_discrimination",
+        "seconds": 55.9827349986881,
+        "gate": false,
+        "patients": 60,
+        "balanced_accuracy": {
+          "dino": 0.8277777777777776,
+          "raw": 0.8833333333333333,
+          "raw_full_context": 0.9277777777777777,
+          "duration": 0.6777777777777777,
+          "amplitude": 0.5166666666666666,
+          "energy": 0.5777777777777778,
+          "combined_scalars": 0.7222222222222222,
+          "late_reference": 0.5722222222222222,
+          "shuffled_labels": 0.09444444444444444
+        },
+        "primary": {
+          "difference": -0.1,
+          "ci_low": -0.1772543632837751,
+          "ci_high": -0.02341770266770257,
+          "draws": 2000,
+          "skipped_draws": 0,
+          "seed": 20261018,
+          "baseline_maximum_recomputed_each_draw": true
+        }
+      }
+    },
+    "pr61": {
+      "revision": "8902c1306d090e6fd8d338a47bab5d45965ef52d",
+      "source": "git show revision:docs/experiment-064-dino-patch-knn-results.md",
+      "access": "Report/protocol/code available locally as Git objects; scores,marks,checkpoint absent; no closed records opened.",
+      "already_tried": "064 trained 4.75M backbone lead x40ms beat patches with SimDINO/iBOT, used normal-only samelead/phase kNN bank; distinct from abnormal-support maskedprototype transfer.",
+      "report_only_results": {
+        "dino_z_A2": 0.6703,
+        "qrs_prior_A2": 0.7419,
+        "paired_difference": -0.0716,
+        "paired_ci": [
+          -0.1191,
+          -0.0267
+        ],
+        "dino_z_vs_raw_z_A2": 0.0092,
+        "dino_z_vs_raw_z_ci": [
+          -0.0184,
+          0.0389
+        ],
+        "dino_z_record_detection_AUROC": 0.8608
+      },
+      "interpretation": "Failed localization gate despite strong record detection; reuse cannot be presented as novel untested native retrieval; spent holdout remains spent."
+    }
+  },
+  "new_method_contract": [
+    "native candidate lead/time intervals with absolute sample units, not fabricated image masks",
+    "pool frozen dense features under abnormal-reference occupancy masks; normalize instance,average perpatient then perclass and renormalize",
+    "cosine candidate ranking with prospectively fixed class softmax/softmerging and calibration-only abstention; no postscore thresholds",
+    "keep exact input-token mapping and distinguish mask support from global/context receptive field",
+    "patient-disjoint support/calibration/targets inside PR67 authorized train; allpatients touchingfold9/10 excluded",
+    "raw physical QRS and full-context controls mandatory after NTT04; QRSphase,duration/amplitude/energy,diagnosisprior,normalbank,wrongwave/swappedclass controls",
+    "generated selectedQA windows are silver examples and unselected windows unknown; no exact linkedlead claim from same-step lead answer",
+    "clinical localization and negative/abstention performance require appropriate independent annotations; reference classification or synthetic smoke tests cannot establish it"
+  ],
+  "results_audit_limit": "Saved result aggregates and byte hashes inspected; no re-scoring/re-computation of bootstrap, features, source-label content or waveforms was performed."
+}

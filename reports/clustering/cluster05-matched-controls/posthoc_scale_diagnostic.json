@@ -1,0 +1,74 @@
+{
+  "study": "CLUSTER-05",
+  "posthoc_descriptive_saved_assignment_comparison": true,
+  "new_fits": 0,
+  "result_sha256": "cbe2d5af704e6a1ee86ba535ea03e2087bd667b33573ec676952d4e65275f885",
+  "comparisons": [
+    {
+      "base": "ntt_region9",
+      "covariance": "tied",
+      "clusters": 2,
+      "raw_average_fitting_coordinate_variance": 0.0025824429839016077,
+      "raw_reg_covar_to_average_variance": 0.38723023363295306,
+      "rms_reg_covar_to_average_variance": 0.001,
+      "anchor_ari": 0.9366639569584673,
+      "all_ari": 0.8375095103473705,
+      "refit_anchor_ari": [
+        0.8872847608185478,
+        0.9203940800743213,
+        0.8327461260095853,
+        0.8853610353925123,
+        0.8033246490849079,
+        0.8891007184483649,
+        0.8487127296798231,
+        0.8002814896318292
+      ],
+      "raw_eligible": true,
+      "rms_eligible": true
+    },
+    {
+      "base": "ntt_region9",
+      "covariance": "diag",
+      "clusters": 2,
+      "raw_average_fitting_coordinate_variance": 0.0025824429839016077,
+      "raw_reg_covar_to_average_variance": 0.38723023363295306,
+      "rms_reg_covar_to_average_variance": 0.001,
+      "anchor_ari": 0.4695430258077897,
+      "all_ari": 0.4778047131095436,
+      "refit_anchor_ari": [
+        0.4353112318258992,
+        0.46054544734867664,
+        0.4603301678216148,
+        0.4760284917528847,
+        0.4931226346543806,
+        0.45252903996390104,
+        0.45252903996390104,
+        0.4603301678216148
+      ],
+      "raw_eligible": true,
+      "rms_eligible": true
+    },
+    {
+      "base": "ntt_record3",
+      "covariance": "full",
+      "clusters": 3,
+      "raw_average_fitting_coordinate_variance": 0.006961892898296609,
+      "raw_reg_covar_to_average_variance": 0.14363909566099092,
+      "rms_reg_covar_to_average_variance": 0.001,
+      "anchor_ari": 0.5735400330765983,
+      "all_ari": 0.5888460832239822,
+      "refit_anchor_ari": [
+        0.546556853541321,
+        0.5723632232872332,
+        0.56882247825839,
+        0.556578992202971,
+        0.5631211213073941,
+        0.6323093020914732,
+        0.600902360461234,
+        0.6593092835938548
+      ],
+      "raw_eligible": true,
+      "rms_eligible": true
+    }
+  ]
+}

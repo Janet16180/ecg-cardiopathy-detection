@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ecg-pending-review:1.0",
+  "title": "Pending review form, not a clinical annotation",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "ecg-pending-review-1.0"
+    },
+    "status": {
+      "const": "pending"
+    },
+    "round": {
+      "const": 1
+    },
+    "rubric_status": {
+      "const": "awaiting_clinician_approval"
+    },
+    "reviewer_ref": {
+      "const": null
+    },
+    "review_timestamp_utc": {
+      "const": null
+    },
+    "model_output_shown": {
+      "const": false
+    },
+    "source_labels_shown": {
+      "const": false
+    },
+    "note": {
+      "const": null
+    },
+    "case_ref": {
+      "type": "string",
+      "pattern": "^case-[0-9]{3}$"
+    },
+    "review_prompts": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "enum": [
+              "Sinus rhythm",
+              "Complete right bundle branch block",
+              "Complete left bundle branch block",
+              "Other finding"
+            ]
+          },
+          "state": {
+            "type": "null"
+          },
+          "evidence_annotation": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "name",
+          "state",
+          "evidence_annotation"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "status",
+    "round",
+    "rubric_status",
+    "reviewer_ref",
+    "review_timestamp_utc",
+    "model_output_shown",
+    "source_labels_shown",
+    "note",
+    "case_ref",
+    "review_prompts"
+  ]
+}

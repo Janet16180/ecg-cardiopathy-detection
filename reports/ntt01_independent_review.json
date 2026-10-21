@@ -1,0 +1,40 @@
+{
+  "independent_stdlib_verification": true,
+  "filter": "Extract ECG identifier from text; join fold; skip folds9/10 before json.loads or any nonidentifier annotation access",
+  "counts": {
+    "all_case_identifiers": 3084,
+    "safe_cases": 2499,
+    "wave_grounding": 4854,
+    "numeric_wave_intervals": 4813,
+    "measurement_grounding": 2202,
+    "quarantined_case_identifiers": 585,
+    "qrs_ordinal_intervals": 41,
+    "lead_grounding": 1271,
+    "single_lead_questions": 255,
+    "option0_correct": 164,
+    "v5_v6_questions": 168,
+    "v5_correct": 144,
+    "safe_unique_ecgs": 2322,
+    "safe_unique_patients": 2174
+  },
+  "annotation_sha256": "353ddc413b68c751a0e2c5c44a11a182de4519e278c5ae49fe0bf089c674b39b",
+  "expected_count_checks": {
+    "safe_cases": true,
+    "safe_unique_ecgs": true,
+    "safe_unique_patients": true,
+    "wave_grounding": true,
+    "numeric_wave_intervals": true,
+    "qrs_ordinal_intervals": true,
+    "single_lead_questions": true,
+    "option0_correct": true,
+    "v5_v6_questions": true,
+    "v5_correct": true
+  },
+  "interpretation": {
+    "wave_coordinates": "All 4,854 wave questions contain one selected answer: 4,813 valid numeric time intervals and 41 recognizable QRS-ordinal intervals. The latter are valid symbolic spans. The frozen invalid_selected_time_ranges counter records a timestamp-parser coverage limitation, not 41 clinically invalid labels.",
+    "lead_question": "Every V5-versus-V6 question asks which lead shows the larger R amplitude. All occur within the LVH criterion combining S amplitude in V1 with R amplitude in V5/V6 above 3.5 mV. The lead-question text itself does not specify a current beat or assert that the selected lead is diseased.",
+    "shortcut_scope": "The 64.3137% option-zero result is dominated by 144/168 answers favoring V5 within the fixed [V5,V6] options. For the other 87 single-answer lead questions, option zero is correct 20/87=22.99%, versus uniform 20%. This is signal-free predictability from an imbalanced answer content plus fixed ordering; it does not establish randomization corruption, incorrect labels, broad localization competence, or exploitation by a published model.",
+    "report_wording": "Stored-order lead answers showed a narrow content/position imbalance driven by V5-versus-V6 R-amplitude comparisons. This does not validate clinical lead localization. Shuffling option order would remove a positional shortcut but would not remove the always-choose-V5 content prior.",
+    "nonclinical": "No waveform, diagnosis predictor, neural model, or original No Time To Train inference was run. Verification is confined to safe folds1\u20138 annotation structure and all-fold identifier counts."
+  }
+}

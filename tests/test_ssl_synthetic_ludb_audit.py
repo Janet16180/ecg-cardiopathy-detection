@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 from sklearn.metrics import average_precision_score
 
+from ecg_experiment.ssl_synthetic_lead_time_recovery import summarize as frozen_recovery_summary
 from ecg_experiment.ssl_synthetic_ludb_audit import (
     LEADS,
     annotation_events,
@@ -16,6 +17,7 @@ from ecg_experiment.ssl_synthetic_ludb_audit import (
     wave_triples,
     waveform,
 )
+from ecg_experiment.ssl_synthetic_temporal_saved_audit import diagnostic_summary
 from scripts.validation import audit_ssl_synthetic_ludb_qualification as checker
 
 
@@ -291,3 +293,22 @@ def test_split_transfer_rejects_duplicate_identity_header(tmp_path):
     receipt["external_sha256"]["headers.txt"] = checker.file_sha256(path)
     with pytest.raises(ValueError, match="identity headers"):
         checker.split_phase_accounting(tmp_path, receipt, config)
+
+
+def test_independent_c2_closure_is_bit_identical_on_complete_heterogeneous_fixture():
+    rng = np.random.default_rng(2026107001)
+    rows = []
+    for fit in (1, 2, 3):
+        for arm in ("B", "P", "K", "PK"):
+            for index in range(2000, 2064):
+                for mode in ("focal", "repeated"):
+                    values = rng.uniform(.01, .99, size=3)
+                    rows.append({"fit_id": fit, "arm": arm, "index": index,
+                                 "seed": 2026103000 + index, "mode": mode, "active_leads": [0, 2, 8],
+                                 "active_lead_AP": values.tolist(),
+                                 "active_lead_temporal_AP": float(values.mean()),
+                                 "lead_presence_AP": float(rng.uniform(.05, .95))})
+    value = float.fromhex("0x1.0000000000001p+0")
+    rows[100].update(active_leads=[8], active_lead_AP=[value], active_lead_temporal_AP=value)
+    assert len(rows) == 1536
+    assert diagnostic_summary(rows) == frozen_recovery_summary(rows)

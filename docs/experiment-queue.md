@@ -9,6 +9,14 @@ prospective explicit-landmark timing study, with unchanged proxy and no disease-
 All25actual stages total435.788647910CPU/447.981392133GPU-lock seconds, failures included once.
 The conditional generation bridge remains gated; PR67 stays draft.
 
+The [new released-N protocol](ssl-synthetic-localization-ludb-peak-timing-v1.md) is committed
+(55177cc, exact-prior config583d317) before any160-record measurement read. It uses the unchanged
+activity proxy, empirical ranks at explicit code1 timestamps, six fixed phase controls and2000
+whole-subject draws. Every reference sample stays unlabeled. Executable/source and independent
+checker review are in progress; no timing result exists. The separately committed
+[descriptive coherence bridgev2](ssl-synthetic-localization-ludb-coherence-bridge-v2.md) remains
+conditional on genuine main26/audit27 PASS; original AP-gated bridgev1 remains unexecuted.
+
 **19 October temporal/lead diagnosis completed and independently verified:** Combined PK versus
 B improves oracle-conditioned temporal AP by0.103622[0.069175,0.140407] and lead-presence AP by
 0.087197[0.052253,0.128440]. Every mode/fit point gain is positive. These are descriptive ranking

@@ -1744,7 +1744,7 @@
         "@prospective_profile_coverage_protocol_before_any_larger_fit"
       ],
       "status": "proposed",
-      "notes": "Use new files only; preserve frozen profiles/forecastmisses. Include mapflush and all recurring I/O/bookkeeping plus a conservative overhead term, retain livecaps and sharedGPUlock. This supports the generator/localization objective; no new classification benchmark."
+      "notes": "Use new files only; preserve frozen profiles/forecastmisses. Include mapflush and all recurring I/O/bookkeeping plus a conservative overhead term, retain livecaps and sharedGPUlock. This supports the generator/localization objective; no new classification benchmark.21Oct inference-only profile now includes identical memmap flush and separates fixed/repeated costs: forecasts passed and exceeded actual143.515CPU/174.659wall/25.068GPU-lockseconds. This does not qualify any future full training path."
     },
     {
       "id": "ssl_synthetic_real_generated_coherence",
@@ -1768,25 +1768,25 @@
       "kind": "experiment",
       "title": "Check frozen localizer concentration at public ECG landmarks",
       "question": "Do existing localizer maps follow released N landmarks and fixed energy on real development ECGs?",
-      "evidence": "Verified LUDB N-rank concentration and generated/real activity-coherence difference; docs/ssl-synthetic-localization-ludb-coherence-bridge-v2-results.md.",
+      "evidence": "Executed21Oct main31 and successful independent34; docs/ssl-synthetic-localization-ludb-localizer-v1-results.md and independent-results-v4.md. FixedB N-rankgain\u22120.048132[\u22120.080440,\u22120.017969]; all12models/160records/1978070newscalars,zeroactualsuccessful-auditmismatches.",
       "value": 4,
       "clarity": 0.8,
       "gpu_hours": 0.05,
       "cpu_hours": 0.2,
       "build_hours": 3.0,
       "blocked_by": [],
-      "status": "in_progress",
-      "notes": "New protocol/checkpoint admission/inference-and-persistence profile before scores; all fixed fits/arms, no winning-arm selection, no training or pathology labels. Use only locally present checkpoints and preserve any missing-artifact blocker. User clarified target: suspicious time segments and leads on ECG, not anatomical lesion localization. English reports and draftPR67 push authorized.",
-      "latest_status": "Protocol/config prospectively frozen21Oct before new outcomes; all12states verified by byte inventory; source/admission/profile gates pending."
+      "status": "done",
+      "notes": "New protocol/checkpoint admission/inference-and-persistence profile before scores; all fixed fits/arms, no winning-arm selection, no training or pathology labels. Use only locally present checkpoints and preserve any missing-artifact blocker. User clarified target: suspicious time segments and leads on ECG, not anatomical lesion localization. English reports and draftPR67 push authorized. Negative exact-N concentration does not prove specificity/blanket beat avoidance; B near-null Spearman and modest positive q90 tail overlap remain distinct. No clinical labels/test changes.",
+      "latest_status": "Complete descriptive diagnostic, no scientific/clinical PASS flag. Failed32and33auditI/Oattempts retained and charged once; all34costs759.933CPU/473.050GPU-lockseconds."
     },
     {
       "id": "ssl_synthetic_heldout_editor_background_transfer",
       "kind": "experiment",
       "title": "Test held-out edit families on matched real and generated backgrounds",
       "question": "Does introduced-change localization transfer across editor families and background sources under matched controls?",
-      "evidence": "Prior paired/suppression scientific FAIL and verified cohort activity-synchrony difference.",
+      "evidence": "Verified synthetic learning/3-fit replication, preserved14/15failure, LUDBproxy/coherence and independently verified negative B N-attraction diagnostic on160realrecords; source\u00d7editor transfer is the direct next localization question.",
       "value": 4,
-      "clarity": 0.7,
+      "clarity": 0.9,
       "gpu_hours": 0.2,
       "cpu_hours": 0.5,
       "build_hours": 5.0,
@@ -1794,7 +1794,7 @@
         "ssl_synthetic_profile_wall_coverage"
       ],
       "status": "proposed",
-      "notes": "Prospective source/record/editor partition, matched budgets and known mathematical support only. Full actual-path GPU profile, persistence, shared lock and resource gates before training. No disease-region or physiological truth from numerical editors."
+      "notes": "Prospective source/record/editor partition, matched budgets and known mathematical support only. Full actual-path GPU profile, persistence, shared lock and resource gates before training. No disease-region or physiological truth from numerical editors. Prioritize matched real/generated backgrounds\u00d7original/held-out numerical editor families, all frozen fits/arms and sham/nuisance controls, honest postprocessing support, new protocol/profile/resources before scores. Do not tune N windows from the negative point test. No training or new study scheduled by this backlog edit."
     }
   ]
 }

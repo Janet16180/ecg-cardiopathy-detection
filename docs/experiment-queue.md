@@ -1,5 +1,21 @@
 # Experiment queue
 
+21 October completed and independently verified: the frozen-localizer LUDB diagnostic covers
+all160measurementrecords and12existingmodels. Fixed B released-N rank gain is−0.048132
+[−0.080440,−0.017969]; PK−B secondary−0.069564[−0.099420,−0.042413]. The positive exact-landmark
+attraction hypothesis is not supported for B under these controls. Near-zero B energy correlation
+and modest q90 tail overlap coexist; neither disease specificity nor blanket beat avoidance follows.
+Independent34 verifies1,978,070new metric scalars/1920model-record rows/15360native lead rows,
+all2000draws and24CPU functional replays, zero mismatches. MainCUDA replay is exact for all12states.
+All resource gates pass; failed32ordering and33JSON-container attempts remain and are charged once.
+All34actual numerical stages total759.933143906CPU/473.049513201GPU-lock seconds; historical costs
+and setup remain separate. Read the [main result](ssl-synthetic-localization-ludb-localizer-v1-results.md),
+[independent result](ssl-synthetic-localization-ludb-localizer-independent-results-v4.md) and
+[scientific review](ssl-synthetic-localization-ludb-localizer-output-science-review-v1.md).
+Final source validation:2109passed/6skipped/2existingfixturewarnings,101.27seconds; Ruff/offline
+buildsPASS. Next is a separately prospective matched-background/held-out-editor test, not wider
+post-hoc N windows or unprofiled retraining. PR67 stays draft; no clinical labels or closed tests change.
+
 21 October latest: main31 completed every technical/resource gate on160realECGs/all12states,
 with exact old-map CUDA replay. Independent attempt32 stopped at the old parser-first record
 ordering guard before any new real-map scoring/CPU replay. Its failure and37.394049274CPU seconds

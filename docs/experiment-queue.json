@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-21",
+  "updated_at_utc": "2026-10-21T20:21:05.704692+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Execute admitted frozen-localizer landmark/activity diagnostic on160LUDBdevelopmentrecords and12frozenstates after committedsource and actual-pathresourceprofile. Independently verify, report and push to draftPR67; no auto-merge.",
+    "next_action": "Verified real-landmark diagnostic complete. Next scientific proposal: prospectively matched real/generated-background and held-out-editor localization with fixed models, actual-path/resource gates and exact numerical support; no new training, clinical masks, closed final test or auto-merge. Advisor website uses plain-language general results with optional technical appendix.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -3148,21 +3148,16 @@
       "new_generator_forwards": 0
     },
     "latest_validation": {
-      "cpu_tests_passed": 2079,
+      "cpu_tests_passed": 2109,
       "skipped": 6,
       "existing_fixture_warnings": 2,
-      "seconds": 121.24,
+      "seconds": 101.27,
       "ruff": "PASS",
       "offline_sdist_and_wheel": "PASS",
-      "new_python_files_in_sdist": 56,
-      "new_package_modules_in_wheel": 23,
-      "source_obligations_checked": 394,
-      "distinct_source_paths": 161,
-      "source_mismatches": 0,
-      "local_evidence_directory": "outputs/ssl_synthetic_localization/ludb_repository_validation_v1"
+      "local_evidence_directory": "outputs/ssl_synthetic_localization/ludb_localizer_repository_validation_v3"
     },
     "ludb_frozen_localizer_v1": {
-      "status": "main_complete_audit32_failed_order_guard_recovery33_in_preparation",
+      "status": "complete_independently_verified_descriptive_only",
       "protocol": "docs/ssl-synthetic-localization-ludb-localizer-v1.md",
       "configuration": "configs/ssl_synthetic_ludb_localizer_v1.json",
       "output_directory": "outputs/ssl_synthetic_localization/ludb_localizer_v1",
@@ -3181,15 +3176,52 @@
       "main_stage": 31,
       "main_summary_sha256": "e25e7be0b12774c485b56b5bff1664b5718d7efc25b18135eb67f45fd9ffd4fc",
       "main_primary_gain": -0.04813152337635353,
-      "independently_verified": false,
+      "independently_verified": true,
       "failed_independent_stage": 32,
       "failed_independent_error": "Require all200 original records",
       "failed_independent_report": "docs/ssl-synthetic-localization-ludb-localizer-independent-failure-v2.md",
-      "actual_ledger_sha256": "8e00e2e18182f38f81c4e7f9eb2112b6fe97f94b8b5e65c86bda8097a5c80218",
-      "current_machine_stages": 32,
-      "current_machine_cumulative_cpu_seconds": 641.839774805,
+      "actual_ledger_sha256": "ccac6c1b21691705592cd6425107a2647aec7fcbcd7e082a4fac692eabaa864b",
+      "current_machine_stages": 34,
+      "current_machine_cumulative_cpu_seconds": 759.933143906,
       "current_machine_cumulative_gpu_wall_seconds": 473.0495132012293,
-      "recovery_protocol": "docs/ssl-synthetic-localization-ludb-localizer-independent-audit-v3.md"
+      "recovery_protocol": "docs/ssl-synthetic-localization-ludb-localizer-independent-audit-v3.md",
+      "primary_gain": -0.04813152337635353,
+      "primary_interval": [
+        -0.08043986863626744,
+        -0.01796850935554083
+      ],
+      "PK_minus_B_gain": -0.06956443116899283,
+      "PK_minus_B_interval": [
+        -0.09942025090541526,
+        -0.042412938219429944
+      ],
+      "results_report": "docs/ssl-synthetic-localization-ludb-localizer-v1-results.md",
+      "independent_report": "docs/ssl-synthetic-localization-ludb-localizer-independent-results-v4.md",
+      "science_review": "docs/ssl-synthetic-localization-ludb-localizer-output-science-review-v1.md",
+      "independent_stage": 34,
+      "independent_summary_sha256": "e229edb9f0b410531e91ea2ad9170d38b10bde40f32f5bd3eb542edb53a5f942",
+      "independent_mismatch_count": 0,
+      "independent_numerical_scalar_checks": 1978070,
+      "independent_predecessor_scalar_checks": 36884,
+      "independent_identity_checks": 2072,
+      "model_record_rows": 1920,
+      "native_lead_rows": 15360,
+      "CPU_functional_model_record_replays": 24,
+      "maximum_CPU_CUDA_absolute_difference": 8.344650268554688e-07,
+      "failed_independent_attempts": [
+        {
+          "stage": 32,
+          "report": "docs/ssl-synthetic-localization-ludb-localizer-independent-failure-v2.md",
+          "cpu_seconds": 37.394049274000004,
+          "error": "Require all200 original records"
+        },
+        {
+          "stage": 33,
+          "report": "docs/ssl-synthetic-localization-ludb-localizer-independent-failure-v3.md",
+          "cpu_seconds": 36.38738272,
+          "error": "audit metadata must be an object"
+        }
+      ]
     }
   },
   "experiment_041_cpu_screening": {

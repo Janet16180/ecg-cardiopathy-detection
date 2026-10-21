@@ -3,9 +3,9 @@
 20 October2026. Actual main26 completed the prospectively frozen N-landmark study on all160
 measurement recordings/1920leads, after40parser-only records/480leads passed structure and dual
 annotation decoding. The fixed activity measure ranks highly at released QRS timestamps. The
-main passes the engineering decision, but its result remains PROVISIONAL pending successful
-independent reconstruction: audit27 stopped on legacy accounting metadata before any new raw
-asset or numerical reconstruction. Its failure, null accounting fields and cost remain preserved.
+main and recovery audit28 PASS the prospective engineering conjunction. Independent reconstruction
+has zero mismatches. The first audit27 stopped on legacy accounting metadata before any new raw
+asset or numerical reconstruction; its failure, null fields and measured cost remain preserved.
 
 | Fixed primary measurement | Executed value |
 |---|---:|
@@ -58,6 +58,21 @@ and `fixed_N_marker_proxy_overlays.png`. The coordinator inspected the aggregate
 waveform overlays remain local. Main summary SHA2e48b4e06512f126bb0eddf12306b54c462da1e300fa2624c0effed1c1bc8c29;
 ledger SHA8bb1bc5625ec53a1ab009c35a87c6098a438ddcca2db149efc6f00d251739494.
 
-The conditional descriptive real/generated coherence comparison remains gated off until an
-independent recovery actually passes. No real disease-mask, healthy/diseased generator label,
-clinical diagnosis or closed-test read is established. PR67 remains draft.
+Independent recovery28 reconstructed all200records/2400streams,1920measurement lead-rank/control
+vectors,17539N landmarks,160full twelve-lead score arrays and all2000draws. It passed1668474
+scalar comparisons,6742identity checks and253predecessor checks with zero mismatches and identical
+primary/interval. Its unchanged mathematics uses independent unique-frequency/cumulative-count
+ranks against main's searchsorted arithmetic, independent physical decoding and MIT-byte events
+against saved WFDB rows. Figures were checked by signature/layout, not independently rerendered.
+
+Audit28 used4.4918088979999995CPU/11.832718590740114wall seconds, peakRSS681332736bytes, zeroGPU;
+all four caps pass. Its summary SHAd603ccd664a80f3c74ca6a657b6da38c7828d9b3ce69dee72309a55c313e1571;
+ledger SHA94afb161731e62568198f42ccf03d1e15e6a833f2b7c491172abb70688d1d400. Actual28 cumulative
+CPU454.04911085099997/GPU-lock447.98139213304967seconds includes the failed27 cost exactly once,
+through setup reconciliation27cdc3ceddc4a36e7be6ba2805caad98c094fcd5bb85e80d1d2c9b469d5b99dd.
+No original receipt or any of the66executed main source bindings was rewritten.
+
+The separately prospective descriptive real/generated coherence bridge can now pass its narrower
+landmark prerequisite; it has not yet been executed and requires complete source/admission review.
+This does not reopen the failed dense-span or original AP-gated bridge. No real disease-mask,
+healthy/diseased generator label, clinical diagnosis or closed-test read is established. PR67 stays draft.

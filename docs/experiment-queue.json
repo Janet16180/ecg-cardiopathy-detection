@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Main26 N-landmark gain0.450519 passes prospectively, but remains provisional: independent27 failed legacy metadata before numerics. Preserve costs/nulls and execute separately committed audit28 recovery before any conditional bridge.",
+    "next_action": "Released-N timing main26 and independent recovery28 PASS with zero mismatches. Prepare complete frozen source/admission for conditional descriptive coherence_bridge_v2 main29/audit30; original dense-span FAIL/AP bridgev1 stay unchanged.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2999,7 +2999,7 @@
         "raw_rows_changed": false
       },
       "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md",
-      "next_action": "Main26 N-landmark gain0.450519 passes prospectively, but remains provisional: independent27 failed legacy metadata before numerics. Preserve costs/nulls and execute separately committed audit28 recovery before any conditional bridge.",
+      "next_action": "Released-N timing main26 and independent recovery28 PASS with zero mismatches. Prepare complete frozen source/admission for conditional descriptive coherence_bridge_v2 main29/audit30; original dense-span FAIL/AP bridgev1 stay unchanged.",
       "final_repository_validation": {
         "record_type": "repository_setup_validation_not_scientific_cost",
         "created_at_utc": "2026-10-20T00:40:10.292925+00:00",
@@ -3080,7 +3080,7 @@
       "record95_affected_leads": 9
     },
     "ludb_released_N_peak_timing_v1": {
-      "status": "main_complete_provisional_independent27_legacy_metadata_failure",
+      "status": "complete_independently_audited_landmark_only_pass",
       "protocol": "docs/ssl-synthetic-localization-ludb-peak-timing-v1.md",
       "config": "configs/ssl_synthetic_ludb_peak_timing_v1.json",
       "protocol_commit": "55177cc",
@@ -3107,7 +3107,15 @@
       "independent_audit_failed_ledger_sha256": "9ea0b22a57d596a4e99e64aecb844155b44d05cbb8e3fe6278b10e7f7eddd282",
       "recovery_audit_stage": 28,
       "reconciliation_path": "outputs/ssl_synthetic_localization/ludb_landmark_audit_reconciliation_v1/reconciled_prior.json",
-      "reconciliation_sha256": "27cdc3ceddc4a36e7be6ba2805caad98c094fcd5bb85e80d1d2c9b469d5b99dd"
+      "reconciliation_sha256": "27cdc3ceddc4a36e7be6ba2805caad98c094fcd5bb85e80d1d2c9b469d5b99dd",
+      "independent_audit_recovery_summary_sha256": "d603ccd664a80f3c74ca6a657b6da38c7828d9b3ce69dee72309a55c313e1571",
+      "independent_audit_recovery_ledger_sha256": "94afb161731e62568198f42ccf03d1e15e6a833f2b7c491172abb70688d1d400",
+      "current_machine_stages": 28,
+      "current_machine_cumulative_cpu_seconds": 454.04911085099997,
+      "scientific_decision": "PASS_released_N_concentration_only",
+      "independent_audit_zero_mismatches": true,
+      "conditional_followup_expected_main_stage": 29,
+      "conditional_followup_expected_audit_stage": 30
     }
   },
   "experiment_041_cpu_screening": {

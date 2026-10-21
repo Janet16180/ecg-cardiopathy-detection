@@ -1,18 +1,19 @@
 # Experiment queue
 
-20 October: the [released-N timing study](ssl-synthetic-localization-ludb-peak-timing-v1-results.md)
-completed main26 on160measurement records after40parser records: mean rank0.963600 versus
-shifted0.513082, gain0.450519[0.438960,0.462589]. All main gates pass, but this remains PROVISIONAL:
-independent audit27 stopped on a legacy stage18 receipt schema before assets or numerical work.
-Its1.717297662CPU cost and original null fields are preserved. A separately reviewed setup
-reconciliation derives prior27CPU449.557301953/GPU447.981392133; recovery audit28 must pass before
-any conditional bridge. No main rerun, endpoint change or old dense-span rescue.
+20 October: [released-N timing qualification](ssl-synthetic-localization-ludb-peak-timing-v1-results.md)
+is COMPLETE and independently verified. Main26/recovery28 PASS: mean rank0.963600 vs0.513082,
+paired gain0.450519[0.438960,0.462589]. Independent reconstruction of all200/2400streams,
+1920measurement vectors/17539N landmarks,160score arrays and2000draws has zero mismatches.
+This qualifies concentration of the fixed activity proxy at released N annotations, not dense
+boundaries, physiological truth, learned-model transfer or real-disease localization.
 
-The [annotation-only diagnosis](ssl-synthetic-localization-ludb-annotation-diagnosis-v1-results.md)
-remains verified:35QRSonsets absent in parser95; all original events are retained. The new rank
-endpoint uses only explicit released N timestamps and unlabeled reference spans. It does not
-establish physiology, real-disease localization or learned-model transfer. Original AP-gated
-bridgev1 stays unexecuted; the new descriptive bridgev2 remains blocked. PR67 stays draft.
+The initial audit27 failed on legacy metadata before numerical work; its null fields and cost
+are preserved. Explicit reviewed setup reconciliation adds it once before recovery28.
+All28actual stages total454.049110851CPU/447.981392133GPU-lockseconds, excluding development/setup.
+The [annotation diagnosis](ssl-synthetic-localization-ludb-annotation-diagnosis-v1-results.md) and
+strict dense-span FAIL remain unchanged. Next is the separately prospective descriptive
+coherence bridgev2 main29/audit30 under the new narrower gate; no comparison score exists yet.
+Original AP-gated bridgev1 stays unexecuted. PR67 stays draft.
 
 **19 October temporal/lead diagnosis completed and independently verified:** Combined PK versus
 B improves oracle-conditioned temporal AP by0.103622[0.069175,0.140407] and lead-presence AP by

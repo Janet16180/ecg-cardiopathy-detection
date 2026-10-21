@@ -1,5 +1,12 @@
 # Experiment queue
 
+21 October latest: main31 completed every technical/resource gate on160realECGs/all12states,
+with exact old-map CUDA replay. Independent attempt32 stopped at the old parser-first record
+ordering guard before any new real-map scoring/CPU replay. Its failure and37.394049274CPU seconds
+remain; actual cumulative32 is641.839774805CPU/473.049513201GPU-lock seconds. A separately frozen
+record-order recovery is being prepared. Main outputs stay immutable and are not yet independently
+verified; no diagnostic or clinical success is claimed.
+
 21 October active update: localizer main attempt is starting after committed160-source/58-input/
 400-asset admission and both metadata preflights. Nineteen artificial checks pass. The runtime-only
 independent audit successor preserves originalv1source, which never executed. Actual CUDA replay

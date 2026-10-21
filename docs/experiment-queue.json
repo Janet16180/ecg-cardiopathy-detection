@@ -3162,7 +3162,7 @@
       "local_evidence_directory": "outputs/ssl_synthetic_localization/ludb_repository_validation_v1"
     },
     "ludb_frozen_localizer_v1": {
-      "status": "running_main_after_source_and_independent_metadata_preflight",
+      "status": "main_complete_audit32_failed_order_guard_recovery33_in_preparation",
       "protocol": "docs/ssl-synthetic-localization-ludb-localizer-v1.md",
       "configuration": "configs/ssl_synthetic_ludb_localizer_v1.json",
       "output_directory": "outputs/ssl_synthetic_localization/ludb_localizer_v1",
@@ -3177,7 +3177,19 @@
       "declared_input_files": 58,
       "declared_release_assets": 400,
       "independent_runtime": "v2_original_v1_unexecuted",
-      "artificial_tests_passed": 19
+      "artificial_tests_passed": 19,
+      "main_stage": 31,
+      "main_summary_sha256": "e25e7be0b12774c485b56b5bff1664b5718d7efc25b18135eb67f45fd9ffd4fc",
+      "main_primary_gain": -0.04813152337635353,
+      "independently_verified": false,
+      "failed_independent_stage": 32,
+      "failed_independent_error": "Require all200 original records",
+      "failed_independent_report": "docs/ssl-synthetic-localization-ludb-localizer-independent-failure-v2.md",
+      "actual_ledger_sha256": "8e00e2e18182f38f81c4e7f9eb2112b6fe97f94b8b5e65c86bda8097a5c80218",
+      "current_machine_stages": 32,
+      "current_machine_cumulative_cpu_seconds": 641.839774805,
+      "current_machine_cumulative_gpu_wall_seconds": 473.0495132012293,
+      "recovery_protocol": "docs/ssl-synthetic-localization-ludb-localizer-independent-audit-v3.md"
     }
   },
   "experiment_041_cpu_screening": {

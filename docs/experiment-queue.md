@@ -1,5 +1,13 @@
 # Experiment queue
 
+21 October transfer main35 completed: all resource checks and the six prospective fixedB
+real/held-out numerical-transfer checks pass provisionally. DirectAP0.032520; gains against
+nuisance-siteAP0.021489, observed-amplitudeAP0.010529 and donor-maskAP0.019137. Independent36
+is running; no independently verified result yet. GPU lock51.149857s within262.527045s wholewall.
+Unused audit admissionv1 failed metadata-only source-roster preflight;v2 adds its missing
+independent parameter helper before any audit execution. No source/math/threshold changes.
+All work stays local under the user's explicit no-push/GitHub-runner instruction.
+
 21 October local continuation: user requests GPU acceleration and NO PUSH to avoid GitHub runner
 use. [Matched source/editor transfer](ssl-synthetic-localization-background-editor-transfer-v1.md)
 is prospectively committed at6d6c65a:64real LUDB/64generated development backgrounds, six variants

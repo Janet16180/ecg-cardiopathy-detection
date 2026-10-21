@@ -3224,7 +3224,7 @@
       ]
     },
     "background_editor_transfer_v1": {
-      "status": "protocol_committed_implementation_in_progress",
+      "status": "main_complete_independent_audit_running",
       "protocol": "docs/ssl-synthetic-localization-background-editor-transfer-v1.md",
       "configuration": "configs/ssl_synthetic_background_editor_transfer_v1.json",
       "protocol_commit": "6d6c65a",
@@ -3235,9 +3235,19 @@
       "variants": 6,
       "optimizer_updates": 0,
       "new_generator_forwards": 0,
-      "scientific_scores_computed": false,
+      "scientific_scores_computed": true,
       "push_authorized": false,
-      "next_action": "Review and admit immutable sources/inputs; run actual CUDA full-path profile before bounded factorial inference."
+      "next_action": "Complete independent actual36 reconstruction before confirming result; no training or push.",
+      "main_stage": 35,
+      "main_summary_sha256": "c3ea28105ef99659b0f8854fd32430169ecb48f456b02b8b709fec306da93ba7",
+      "main_ledger_sha256": "8cf80790df2ef3ce3a5c0d2cf539b1e6311697a01a4394e672c7f6b1d819e304",
+      "main_six_gates_passed": true,
+      "independently_verified": false,
+      "main_cpu_seconds": 211.44608792399998,
+      "main_gpu_lock_seconds": 51.14985655294731,
+      "audit_admission": "configs/ssl_synthetic_background_editor_transfer_audit_admission_v2.json",
+      "unused_audit_admission": "configs/ssl_synthetic_background_editor_transfer_audit_admission_v1.json",
+      "unused_admission_reason": "Metadata-only preflight found a missing imported independent parameter helper; no numerical audit executed under v1."
     }
   },
   "experiment_041_cpu_screening": {

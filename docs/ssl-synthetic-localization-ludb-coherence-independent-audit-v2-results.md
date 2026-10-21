@@ -28,7 +28,7 @@ endpoint. It verified all328 numerical rows, every one of13,120,000 saved Boolea
 all2000 saved cohort-mean/contrast vectors, all distribution and histogram fields, and complete
 input/source/snapshot/output identities. It records55,230 row scalar checks,620 exact predecessor
 checks and988 source/output checks. All128 original generated transformations/coherence values
-and the original0.8094248365473182 interval endpoint close exactly. Four fixed figure hashes,
+and the original mean0.8094248365473182 and its interval close exactly. Four fixed figure hashes,
 PNG signatures and dimensions agree; the audit did not independently rerender pixels or perform
 a clinical figure interpretation.
 

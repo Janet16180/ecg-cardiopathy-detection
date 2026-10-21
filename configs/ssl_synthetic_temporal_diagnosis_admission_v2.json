@@ -1,0 +1,58 @@
+{
+  "study_id": "generated_temporal_diagnosis_v2",
+  "frozen_config_sha256": "6666537aa626f16dd13171d4035a8c2ff5b23d2d9a0f90797df1319fb1e733a1",
+  "frozen_protocol_sha256": "21d0b72981151085170444a8d1a17b239aef0f46bb17d99fe36b103a117c0662",
+  "parent": {
+    "root": "outputs/ssl_synthetic_localization/generated_paired_suppression_v1",
+    "sha256": {
+      "summary.json": "8850ab4119e9d964aa6177ed33edc93559b810dd96038304da6d364685360111",
+      "prospective_ledger.json": "29d9afbe3dad2cc11ab5257b6cf96c90cd3521284c6b04fcc6ad79980338c8ef",
+      "independent_audit_v1/summary.json": "07f8a0d5a50c57d4355576ee2d24fc552b390ab99be5aed211c83f2f5fedb4bd",
+      "independent_audit_v1/prospective_ledger.json": "705cc964022f4f1d78d08d7d1eff75a665f02c150e311dacf2e1c4503ede5496",
+      "fresh_support.npy": "fd8187d0a07a03232f4d7ba6fea91991eb5a0c6945a76e9ec8306e058eee4299",
+      "fit_1/B/fresh_probabilities.npy": "d8b0ff125f24066ff9e67e7335315e8ff733ec4c6680eca3553d1526156ad678",
+      "fit_1/B/fresh_metrics.json": "511dd289da685ee289097007361a2345370db54687dbca3a24b01c38ebf942f0",
+      "fit_1/P/fresh_probabilities.npy": "1e05d4901ad223c0f2329bed513c9fb0a2414cfff1ba40bcd13d0becb8930471",
+      "fit_1/P/fresh_metrics.json": "7a5d4e1aee0940fa7c4c98e254f19cc2f216084b3c3705b39f6b51b2ce895cb1",
+      "fit_1/K/fresh_probabilities.npy": "1e03b7dd02c7a047be00a59cb3c5cf35d0714e742c7de6ca15b8dfcc90c8582d",
+      "fit_1/K/fresh_metrics.json": "d1b3bba1ddf9a2b3741d762cc50ac1785867274d55073f488ba2b604df1190c3",
+      "fit_1/PK/fresh_probabilities.npy": "a68a6994c54042c2d9becea87f90ca4c31c9883a082736974a214fda07ca5cba",
+      "fit_1/PK/fresh_metrics.json": "9b448f840c3173cd21f66b40a2b9f54342bf40865ed145584083279950fe6dba",
+      "fit_2/B/fresh_probabilities.npy": "374bd1c7698a10def3718c8e0502f351173811ba2d0799af088a077627adb81d",
+      "fit_2/B/fresh_metrics.json": "7b67fd0483483ae05e602f2f20b514ed2044b5a315cdf51524eaf27be3ea1622",
+      "fit_2/P/fresh_probabilities.npy": "141e707740ab32e02e4a1e1221d9b4fdcf0eea7eec65feee9e88c2abb20be93c",
+      "fit_2/P/fresh_metrics.json": "3dec114c9c420677cff0d8e7a842c98ef8d029510ac7668e15fac9c1a948f3be",
+      "fit_2/K/fresh_probabilities.npy": "1468e0aae467d16ca4047119e5128173779a8b61e6345dab3e919fb84b132e58",
+      "fit_2/K/fresh_metrics.json": "207b7f1cd7c64de0164067c34b9df54dffb322d1ce2f44483fd1c14e4e852207",
+      "fit_2/PK/fresh_probabilities.npy": "fd93ac815c097e75ec8a350c2a5d447dd5366b052871cd163974783b57565525",
+      "fit_2/PK/fresh_metrics.json": "0c6f0f6bcc0fcb4750679d709fb12d43c1d50f5367ca249dec0ff5dd314bb6e6",
+      "fit_3/B/fresh_probabilities.npy": "ca9608285be410af0f311f4e71db1da601d9785447b63cdb22ee138dc9512bb7",
+      "fit_3/B/fresh_metrics.json": "90408b26a8e6fc962e75f0d9c33347b536adf494ef5ddd89d9708bef193b5b9c",
+      "fit_3/P/fresh_probabilities.npy": "76cf066371fca903f131f3ab85309d37ec05efb52271e36ba1d25bf4091bdc73",
+      "fit_3/P/fresh_metrics.json": "ef9b4594328bdd30c9d7bc794b5110051c0f5243c224c600e322cf31393e799d",
+      "fit_3/K/fresh_probabilities.npy": "9af4781d6089f9f2f5ff7178748bd370d8ec3fa6e36036b52a80bb276a255c31",
+      "fit_3/K/fresh_metrics.json": "9133bb69acc1e01d81d2ebbd7a457c931ce6c8243ad8ffc6498ead0acbe1dcb7",
+      "fit_3/PK/fresh_probabilities.npy": "95ac654248378fb566bb92cf3f595e492b9daec42097ee4fbc3c3068a31c70b6",
+      "fit_3/PK/fresh_metrics.json": "a98732055175bf3941e4fe73bc3b8a9463514f161110c34f2758cc8a0e33c862"
+    }
+  },
+  "recovery": {
+    "root": "outputs/ssl_synthetic_localization/generated_temporal_diagnosis_v1",
+    "sha256": {
+      "cases.jsonl": "a48bf0672cc4b8c77034d2ea6373483a7e907ab4bc1e371ab38a026099917cdf",
+      "predecessor_closure.json": "811a41b52b47341a51a7f2bc1295f9eddf20707950434eae70eb2106da406e61",
+      "failure.json": "525c05ec36b261ae847885ef664d8547e2a2ed086c87713134ed114ba94c5116",
+      "prospective_ledger.json": "addd84989aba46a9c8a6263d9a4ae1597ffb648766915ccccba019d7db010710",
+      "independent_failure_audit_v1/summary.json": "17ce0f66c51653a0c99d26e0c00c161b5c738657ef1d9f8cc7721acb59970827",
+      "independent_failure_audit_v1/prospective_ledger.json": "4ee0f57ef15ee12c63368ffd7d1eb35bd6cd4e106c6d272e965f776f9fed67a8"
+    }
+  },
+  "prior_ledger": {
+    "path": "outputs/ssl_synthetic_localization/generated_temporal_diagnosis_v1/independent_failure_audit_v1/prospective_ledger.json",
+    "sha256": "4ee0f57ef15ee12c63368ffd7d1eb35bd6cd4e106c6d272e965f776f9fed67a8",
+    "current_machine_cumulative_cpu_seconds": 410.97305985599996,
+    "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967
+  },
+  "amendment_scope": "identities_and_terminal_accounting_only",
+  "historical_costs_verified": false
+}

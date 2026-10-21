@@ -1,0 +1,145 @@
+{
+  "study_id": "ludb_frozen_localizer_v1",
+  "protocol": "docs/ssl-synthetic-localization-ludb-localizer-v1.md",
+  "output_root": "outputs/ssl_synthetic_localization/ludb_localizer_v1",
+  "identity_admission": "configs/ssl_synthetic_ludb_localizer_admission_v1.json",
+  "model_root": "outputs/ssl_synthetic_localization/generated_paired_suppression_v1",
+  "fits": [
+    1,
+    2,
+    3
+  ],
+  "arms": [
+    "B",
+    "P",
+    "K",
+    "PK"
+  ],
+  "native_indices": [
+    0,
+    1,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "native_leads": [
+    "i",
+    "ii",
+    "v1",
+    "v2",
+    "v3",
+    "v4",
+    "v5",
+    "v6"
+  ],
+  "raw_alias": "data/raw/ludb/1.0.1/data",
+  "actual_raw_target": "outputs/ssl_synthetic_localization/ludb_acquisition_v4/data",
+  "landmark_root": "outputs/ssl_synthetic_localization/ludb_peak_timing_v1",
+  "coherence_root": "outputs/ssl_synthetic_localization/ludb_coherence_bridge_v2",
+  "measurement_ids": "all_1_through_200_not_divisible_by_5",
+  "parser_ids": "all_1_through_200_divisible_by_5_not_scored",
+  "primary": "B_mean_N_midrank_minus_mean_six_within_span_rolls",
+  "shift_fractions": [
+    0.17,
+    0.31,
+    0.43,
+    0.59,
+    0.71,
+    0.83
+  ],
+  "bootstrap": {
+    "draws": 2000,
+    "seed": 2026106501,
+    "unit": "whole_record_fixed_three_fits",
+    "percentiles": [
+      2.5,
+      97.5
+    ]
+  },
+  "secondary": [
+    "all_fit_arm_lead_landmark_gains",
+    "PK_minus_B_landmark_gain",
+    "energy_spearman_and_six_rolls_defined_only_with_counts",
+    "strict_q90_map_energy_jaccard_and_six_rolls",
+    "raw_probability_mean_q95_max_and_constant_counts"
+  ],
+  "undefined_spearman": "null_with_reason_and_defined_only_denominators",
+  "empty_jaccard_union": "zero_with_flag",
+  "scientific_pass_threshold": null,
+  "clinical_claim": false,
+  "profile": {
+    "record_ids": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9
+    ],
+    "batch_size": 8,
+    "all_models": true,
+    "safety_factor": 2,
+    "full_batches_per_model": 20,
+    "overhead_reserve_seconds": 180,
+    "output_reserve_bytes": 67108864,
+    "replay_background_index": 0,
+    "replay_all_four_variants": true,
+    "old_map_atol": 1e-06,
+    "old_map_rtol": 0
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "interop_threads": 1,
+    "cuda_device": 0,
+    "minimum_free_gpu_bytes": 2147483648,
+    "maximum_gpu_allocated_bytes": 2147483648,
+    "cpu_seconds": 900,
+    "wall_seconds": 900,
+    "gpu_lock_wall_seconds": 240,
+    "peak_rss_bytes": 2147483648,
+    "output_bytes": 805306368,
+    "audit_cpu_seconds": 900,
+    "audit_wall_seconds": 1200,
+    "audit_peak_rss_bytes": 2147483648,
+    "audit_output_bytes": 134217728,
+    "terminal_bookkeeping_reserve_seconds": 2,
+    "terminal_bookkeeping_reserve_bytes": 16384
+  },
+  "prior_ledger": {
+    "path": "outputs/ssl_synthetic_localization/ludb_coherence_bridge_v2/independent_audit_v1/prospective_ledger.json",
+    "sha256": "a3acf4aae3f27b00d51b18e6e50921c9935267e0d8646433bf486ec3f274e11f",
+    "current_machine_stages": 30,
+    "current_machine_cumulative_cpu_seconds": 460.93105389699997,
+    "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967
+  },
+  "figures": {
+    "fixed_record_ids": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "fixed_leads": [
+      "ii",
+      "v2"
+    ],
+    "fit_id": 1,
+    "all_arms": true
+  },
+  "selection_policy": "all_models_all_measurement_records_no_selection_no_training",
+  "independent_replay": {
+    "record_ids": [
+      1,
+      199
+    ],
+    "all_models": true,
+    "device": "cpu",
+    "atol": 1e-05,
+    "rtol": 0
+  }
+}

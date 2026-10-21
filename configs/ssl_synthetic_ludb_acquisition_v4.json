@@ -1,0 +1,163 @@
+{
+  "study": "ssl_synthetic_ludb_acquisition_v4",
+  "amendment": "docs/ssl-synthetic-localization-ludb-acquisition-v4.md",
+  "unchanged_scientific_protocol": "docs/ssl-synthetic-localization-ludb-qualification-v1.md",
+  "unchanged_scientific_protocol_sha256": "b10965364936ccf8229590b35ce49aaf536266e13e3f19e6d5280a608647f5b1",
+  "unchanged_scientific_config": "configs/ssl_synthetic_ludb_qualification_v1.json",
+  "unchanged_scientific_config_sha256": "d71fa85460e929653d1a26716fc464dc993a1a2b25557e685b2da23f2fbcded3",
+  "source_directory": "outputs/ssl_synthetic_localization/ludb_acquisition_v2",
+  "output_directory": "outputs/ssl_synthetic_localization/ludb_acquisition_v4",
+  "resume": {
+    "prefix_file": "release.zip.partial",
+    "prefix_bytes": 10616832,
+    "prefix_sha256": "95bb3ae62b52332b8e3ff9a6eb79eb4426f615fc20f324c80941823c8eac4956",
+    "expected_complete_bytes": 14474484,
+    "range_header": "bytes=10616832-",
+    "if_range_etag": "6006e8e6-dcdcf4",
+    "required_http_status": 206,
+    "required_content_range": "bytes 10616832-14474483/14474484",
+    "allow_200_fallback": false,
+    "overwrite_source": false,
+    "copy_prefix_before_request": true,
+    "content_length_policy": "if_present_must_equal_3857652_exact_body_length_always_required"
+  },
+  "checksum_manifest": {
+    "file": "SHA256SUMS.txt",
+    "bytes": 215460,
+    "sha256": "cccef1f3529519db8f26a333c97a6872a7d0e3e5c64a1448b76b161fd87fb75f",
+    "reuse_local": true,
+    "new_manifest_request": false
+  },
+  "source_summary_sha256": "ffe2b782929f97d8ee61bd28988b5ea9570e36483bea1a66d8e8944ff351ab94",
+  "url": "https://physionet.org/static/published-projects/ludb/lobachevsky-university-electrocardiography-database-1.0.1.zip",
+  "resources": {
+    "offline_prepare_and_finish_combined": {
+      "cpu_seconds": 60,
+      "active_wall_seconds": 600
+    },
+    "external_curl": {
+      "cpu_seconds": 60,
+      "wall_seconds": 3600,
+      "received_payload_bytes": 3857652,
+      "maximum_get_requests": 1,
+      "connect_timeout_seconds": 180,
+      "low_speed_seconds": 180,
+      "low_speed_bytes_per_second": 1
+    },
+    "total": {
+      "cpu_seconds": 120,
+      "summed_active_wall_seconds": 4200,
+      "rss_bytes": 2147483648,
+      "selective_extract_bytes": 67108864,
+      "new_output_bytes": 134217728
+    },
+    "approval_wait_in_active_wall": false,
+    "uninterrupted_whole_wall_claim_allowed": false,
+    "gpu_seconds": 0
+  },
+  "scientific_changes": false,
+  "data_root_override": "outputs/ssl_synthetic_localization/ludb_acquisition_v4/data",
+  "request_url": "https://physionet.org/content/ludb/get-zip/1.0.1/",
+  "allow_redirects": false,
+  "new_head_requests": 0,
+  "source_predecessor_ledger": {
+    "path": "outputs/ssl_synthetic_localization/ludb_acquisition_v2/prospective_ledger.json",
+    "sha256": "9114b01b9e68d1ced6cf9c152014bbfcf4523d437dcff59fed53bcd11a38c833",
+    "current_machine_stages": 21,
+    "current_machine_cumulative_cpu_seconds": 429.84679126699996,
+    "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967
+  },
+  "prior_ledger_policy": {
+    "identity_admission_pins": "exact_source_predecessor_ledger_v2_failure_stage21",
+    "required_prior_stage_count": 21,
+    "new_narrow_audit_before_v3": false,
+    "required_lineage": "source_v1_failure19_then_narrow_failure_audit20_then_actual_v2_failure21_each_once",
+    "reset_or_skip_prior_cost_allowed": false
+  },
+  "required_narrow_failure_audit_ledger_sha256": "2fe1c2a450d72c42223af87a4014fdde20064fd5b6474dbd215cb65fad59bb03",
+  "required_v1_failure_ledger_sha256": "e505549b8110b2e4e7dadeca285209b115ffc6e50121d9c6088cbced054130f6",
+  "read_only_data_alias": {
+    "logical_data_root": "data/raw/ludb/1.0.1/data",
+    "actual_output_target": "outputs/ssl_synthetic_localization/ludb_acquisition_v4/data",
+    "isolated_worktree_equivalent_allowed": true,
+    "preserve_pointer_directories": true,
+    "stage_symlink": false,
+    "write_through_alias": false,
+    "identity_only_main_admission_override": true
+  },
+  "preserved_bindings": {
+    "outputs/ssl_synthetic_localization/ludb_acquisition_v1/summary.json": "f59fc938a23930ecbd30043c15f28a49499a1a8135f7ac35ead68016526de78b",
+    "outputs/ssl_synthetic_localization/ludb_acquisition_v1/prospective_ledger.json": "e505549b8110b2e4e7dadeca285209b115ffc6e50121d9c6088cbced054130f6",
+    "outputs/ssl_synthetic_localization/ludb_acquisition_v1/release.zip.partial": "1bf23aa1ac52cd6ec1205baca4b819c9e2c90842ecd0314c80dd4a48c1b4158f",
+    "outputs/ssl_synthetic_localization/ludb_acquisition_v1/SHA256SUMS.txt": "cccef1f3529519db8f26a333c97a6872a7d0e3e5c64a1448b76b161fd87fb75f",
+    "outputs/ssl_synthetic_localization/ludb_acquisition_v1/independent_failure_audit_v1/summary.json": "b00896ee50f5fc385766990564034774d9d3b0fd0d43f684b8147df2fe169732",
+    "outputs/ssl_synthetic_localization/ludb_acquisition_v1/independent_failure_audit_v1/prospective_ledger.json": "2fe1c2a450d72c42223af87a4014fdde20064fd5b6474dbd215cb65fad59bb03"
+  },
+  "retained_byte_forecast": {
+    "base_bytes": "one_enumeration_after_verified_prefix_and_source_copy",
+    "new_suffix_file_bytes": 3857652,
+    "suffix_appended_to_copied_prefix_bytes": 3857652,
+    "maximum_selective_extract_bytes": 67108864,
+    "receipt_reserve_bytes": 1048576,
+    "must_be_strictly_below_total_new_output_bytes": true,
+    "terminal_exact_enumerations": 1,
+    "terminal_bookkeeping_reserve_seconds": 2,
+    "terminal_bookkeeping_reserve_bytes": 16384
+  },
+  "transport_mode": "offline_prepare_then_one_transparent_external_curl_then_offline_finish",
+  "v3_execution_status": {
+    "download_process_started": false,
+    "attempt_or_cost_stage": false,
+    "reason": "automatic_approval_review_timed_out_before_process_start"
+  },
+  "curl": {
+    "executable": "curl",
+    "time_executable": "/usr/bin/time",
+    "locale": "C",
+    "resource_log": "curl_resources.txt",
+    "response_headers": "response_headers.txt",
+    "suffix_file": "suffix.partial",
+    "disable_curlrc": true,
+    "argv": [
+      "--disable",
+      "--http1.1",
+      "--fail",
+      "--silent",
+      "--show-error",
+      "--retry",
+      "0",
+      "--connect-timeout",
+      "180",
+      "--max-time",
+      "3600",
+      "--speed-time",
+      "180",
+      "--speed-limit",
+      "1",
+      "--max-filesize",
+      "3857652",
+      "--range",
+      "10616832-",
+      "--header",
+      "If-Range: \"6006e8e6-dcdcf4\"",
+      "--dump-header",
+      "{output_directory}/response_headers.txt",
+      "--output",
+      "{output_directory}/suffix.partial",
+      "https://physionet.org/content/ludb/get-zip/1.0.1/"
+    ],
+    "redirects": false,
+    "retries": 0,
+    "fallback": false,
+    "read_only_binary_identity_and_version": "prospective_admission",
+    "write_out_json_required": false
+  },
+  "measurement": {
+    "cpu": "prepare_own_cpu_plus_curl_child_user_plus_system_plus_finish_own_cpu",
+    "active_wall": "prepare_elapsed_plus_time_v_curl_elapsed_plus_finish_elapsed",
+    "rss": "maximum_of_phase_peak_rss_not_sum",
+    "approval_and_interphase_wait": "excluded_and_disclosed",
+    "immediate_prior_stage": 21,
+    "new_acquisition_terminal_stage": 22
+  }
+}

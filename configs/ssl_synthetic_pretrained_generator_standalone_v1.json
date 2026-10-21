@@ -1,0 +1,69 @@
+{
+  "study_id": "ssl_synthetic_pretrained_generator_standalone_v1",
+  "model_id": "deepsynthbody/deepfake_ecg",
+  "revision": "262e0e67c0101cd4989d7c2f66f16d6d54756e70",
+  "weight_filename": "pytorch_model.bin",
+  "weight_bytes": 42375017,
+  "weight_sha256": "e646eae78b7c9e48db0d38f094059ab89b53479bbc174a900ae3086517761827",
+  "source_filename": "modeling_deepfake.py",
+  "source_bytes": 11269,
+  "source_sha256": "160fdee62b49e9960c09d2e669bb13c8069668930ae26019e63bd242c9f6a5b5",
+  "seeds": [
+    2026102901,
+    2026102902,
+    2026102903,
+    2026102904
+  ],
+  "batch_size": 1,
+  "independent_leads": 8,
+  "samples": 5000,
+  "published_sample_rate_hz": 500,
+  "author_export_multiplier": 6000,
+  "physical_units_verified": false,
+  "cpu_wall_limit_seconds": 180,
+  "failure_reserve_seconds": 2,
+  "profile_forward_multiplier": 10,
+  "report_reserve_seconds": 15,
+  "output_bytes_ceiling": 100663296,
+  "cache_bytes_ceiling": 4294967296,
+  "cpu_seconds_ceiling": 14400,
+  "gpu_seconds_ceiling": 7200,
+  "output_relative": "outputs/ssl_synthetic_localization/pretrained_generator_standalone_v1",
+  "accounting_scope": "prospective_standalone_only",
+  "historical_receipts_available": false,
+  "historical_context_unverified": {
+    "cpu_seconds": 745.8142945699988,
+    "gpu_wall_seconds": 382.2241592870014
+  },
+  "audit_cpu_wall_limit_seconds": 120,
+  "audit_output_bytes_ceiling": 16777216,
+  "standalone_cpu_seconds_ceiling": 300,
+  "standalone_gpu_wall_seconds_ceiling": 0,
+  "source_snapshot_bytes_reserve": 1048576,
+  "public_assets": [
+    {
+      "filename": "pytorch_model.bin",
+      "url": "https://huggingface.co/deepsynthbody/deepfake_ecg/resolve/262e0e67c0101cd4989d7c2f66f16d6d54756e70/pytorch_model.bin",
+      "bytes": 42375017,
+      "sha256": "e646eae78b7c9e48db0d38f094059ab89b53479bbc174a900ae3086517761827"
+    },
+    {
+      "filename": "hf_modeling_deepfake.py",
+      "url": "https://huggingface.co/deepsynthbody/deepfake_ecg/resolve/262e0e67c0101cd4989d7c2f66f16d6d54756e70/modeling_deepfake.py",
+      "bytes": 11269,
+      "sha256": "160fdee62b49e9960c09d2e669bb13c8069668930ae26019e63bd242c9f6a5b5"
+    },
+    {
+      "filename": "mit_pulse2pulse.py",
+      "url": "https://raw.githubusercontent.com/vlbthambawita/Pulse2Pulse/f28e4b792e79c503b8b7e0912be9d304a3a7177b/models/pulse2pulse.py",
+      "bytes": 10390,
+      "sha256": "93273ea470c82cd90d7f705c1000e464bfa3e16f7d7733bb817c5bb6cbdbe78b"
+    },
+    {
+      "filename": "MIT_LICENSE",
+      "url": "https://raw.githubusercontent.com/vlbthambawita/Pulse2Pulse/f28e4b792e79c503b8b7e0912be9d304a3a7177b/LICENSE",
+      "bytes": 1074,
+      "sha256": "8f56e0a848cdb298c9b997c7d97188ebddb3d123c857684c660b6661abece712"
+    }
+  ]
+}

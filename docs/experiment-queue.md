@@ -1,5 +1,283 @@
 # Experiment queue
 
+21 October completed and independently verified: the frozen-localizer LUDB diagnostic covers
+all160measurementrecords and12existingmodels. Fixed B released-N rank gain is−0.048132
+[−0.080440,−0.017969]; PK−B secondary−0.069564[−0.099420,−0.042413]. The positive exact-landmark
+attraction hypothesis is not supported for B under these controls. Near-zero B energy correlation
+and modest q90 tail overlap coexist; neither disease specificity nor blanket beat avoidance follows.
+Independent34 verifies1,978,070new metric scalars/1920model-record rows/15360native lead rows,
+all2000draws and24CPU functional replays, zero mismatches. MainCUDA replay is exact for all12states.
+All resource gates pass; failed32ordering and33JSON-container attempts remain and are charged once.
+All34actual numerical stages total759.933143906CPU/473.049513201GPU-lock seconds; historical costs
+and setup remain separate. Read the [main result](ssl-synthetic-localization-ludb-localizer-v1-results.md),
+[independent result](ssl-synthetic-localization-ludb-localizer-independent-results-v4.md) and
+[scientific review](ssl-synthetic-localization-ludb-localizer-output-science-review-v1.md).
+Final source validation:2109passed/6skipped/2existingfixturewarnings,101.27seconds; Ruff/offline
+buildsPASS. Next is a separately prospective matched-background/held-out-editor test, not wider
+post-hoc N windows or unprofiled retraining. PR67 stays draft; no clinical labels or closed tests change.
+
+21 October latest: main31 completed every technical/resource gate on160realECGs/all12states,
+with exact old-map CUDA replay. Independent attempt32 stopped at the old parser-first record
+ordering guard before any new real-map scoring/CPU replay. Its failure and37.394049274CPU seconds
+remain; actual cumulative32 is641.839774805CPU/473.049513201GPU-lock seconds. A separately frozen
+record-order recovery is being prepared. Main outputs stay immutable and are not yet independently
+verified; no diagnostic or clinical success is claimed.
+
+21 October active update: localizer main attempt is starting after committed160-source/58-input/
+400-asset admission and both metadata preflights. Nineteen artificial checks pass. The runtime-only
+independent audit successor preserves originalv1source, which never executed. Actual CUDA replay
+and full-path resource profile gate every new diagnostic score; no result is reported yet.
+
+21 October: user authorized continued unattended synthetic-localization research in English,
+with finished work pushed to draft PR67. The [frozen-localizer diagnostic](ssl-synthetic-localization-ludb-localizer-v1.md)
+is prospectively defined: all twelve existing B/P/K/PK checkpoints,160LUDBdevelopmentrecords,
+native-lead N-landmark ranks and fixed activity associations. Source/asset admission and an
+actual CUDA inference/persistence profile gate execution. No new scores, training, pathology
+masks or completed result yet. Earlier verified results and14/15FAIL remain unchanged.
+
+20 October: two bounded LUDB studies are COMPLETE and independently verified.
+[Released-N timing](ssl-synthetic-localization-ludb-peak-timing-v1-results.md) gives mean rank
+0.963600 versus shifted 0.513082, gain 0.450519 [0.438960,0.462589] on 160 measurement records.
+[Generated/real coherence](ssl-synthetic-localization-ludb-coherence-bridge-v2-results.md) gives
+excess 0.809425 for 128 generated seeds versus 0.745016 for 200 LUDB records; real minus generated
+is −0.064409 [−0.079577,−0.050221]. Both cohorts are strongly aligned; the generated distribution
+is narrower. This is descriptive, without a physiological-quality or disease verdict.
+
+Independent audits reconstruct all timing vectors and all 328 coherence rows, 13.12 million mask
+cells and 2000 draws, with zero mismatches. The strict dense-span FAIL, missing onset evidence,
+failed audit 27/null fields and every earlier failure remain preserved. All 30 current-machine
+numerical stages total 460.931053897 CPU / 447.981392133 GPU-lock seconds; development/setup is
+separate and unavailable historical costs remain unknown. No scientific job remains running.
+
+Final CPU checks: 2079 passed, 6 skipped, 2 existing fixture warnings; Ruff and offline package builds
+pass. Package inspection excludes data/outputs/weights; 394 current-summary source obligations
+across 161 paths match. Read the [current handoff](ssl-synthetic-localization-autonomous-handoff-2026-10-20.md).
+Next proposed work tests frozen-localizer concentration at released N landmarks and fixed energy,
+then held-out editors/matched real and generated backgrounds after actual-path resource gates.
+These results do not establish learned-model transfer, disease masks or SSL benefit. Clinical
+labels and closed tests remain unchanged; PR 67 stays draft and must not merge automatically.
+
+**19 October temporal/lead diagnosis completed and independently verified:** Combined PK versus
+B improves oracle-conditioned temporal AP by0.103622[0.069175,0.140407] and lead-presence AP by
+0.087197[0.052253,0.128440]. Every mode/fit point gain is positive. These are descriptive ranking
+views on spent synthetic backgrounds; true edited leads are provided only to temporal scoring.
+The full parent15-gate rule still FAILS (14passed). Independent reconstruction verifies129bindings,
+16758metric scalars and1536rows with zero mismatches, including fresh full-grid predecessor closure.
+The first diagnostic attempt failed a strict range guard; its costs and all raw values are preserved.
+The separately committed recovery changes only floating-point range admission, with identical rows,
+comparisons and2000crossed draws. Read [results](ssl-synthetic-localization-temporal-diagnosis-v2-results.md),
+[audit](ssl-synthetic-localization-temporal-recovery-independent-audit-v2-results.md) and
+[current handoff](ssl-synthetic-localization-autonomous-handoff-2026-10-19.md).
+All18current-machine stages total429.496961CPU/447.981392GPU-lockseconds. No scientific job in this stream remains
+running. Next priority is prospective public-wave annotation/timing qualification; no clinical or
+real-disease localization is established. PR67 stays draft.
+
+**19 October paired/background suppression executed and audited:** The fixed four-arm, three-fit
+comparison passed9technicalchecks and independent verification (402bindings, zero mismatches),
+but failed its scientific rule:14of15gates passed. PK−B pooledAPgain is0.041908
+[0.005981,0.080065]; controltop600reduction is0.276235[0.213717,0.352266].
+Repeated-edit AP lower bound−0.011608 fails the frozen−0.01guard. P improves localization
+but worsens peaks; K suppresses peaks with an AP tradeoff. No arm selection or retuning.
+Read [executed results](ssl-synthetic-localization-paired-suppression-v1-results.md) and
+[independent audit](ssl-synthetic-localization-paired-suppression-independent-audit-v1-results.md).
+Both whole-wall and GPU-lock forecasts underestimated execution; hard caps passed. Fourteen
+current-machine stages total390.154951CPU/447.981392GPU-lock seconds, counting failures once.
+
+The [saved-map temporal/lead diagnosis](ssl-synthetic-localization-temporal-diagnosis-v1.md) was
+committed before reading these outcomes. Its first attempt stopped after1536rows at a one-ULP case-AP range excursion. The failed source,
+raw rows and costs are preserved; independent cause verification and separate recovery are now
+complete as recorded above. No new training, inference or clinical data.
+It has no scientific PASS rule and cannot change the preceding failed verdict. PR67 stays draft.
+
+**19 October independent-fit replication executed and audited:** Three new matched fit pairs on
+64fresh generated backgrounds pass18scientific and11integritygates. Mean supervised AP0.114598;
+gains against amplitude/permuted targets +0.090876[0.054197,0.134239] and
++0.096733[0.058458,0.140852]. Exact400-step replay and independent audit pass.
+Read [results](ssl-synthetic-localization-fit-replication-v1-results.md). Persistent control
+hotspots and modest absolute localization remain; this is not real disease localization.
+
+**19 October autonomous continuation authorized:** User requested several hours including useful
+recommended successors. Both RTX3090s passed actual host PyTorch operations under the shared
+lock; restricted-shell visibility is not GPU failure. Protocols precede scores, actual profiles
+gate GPU training and every attempt remains local. Clinical labels and closed tests are unchanged.
+
+**19 October saved-map hotspot diagnosis independently verified:** The
+[executed diagnostic](ssl-synthetic-localization-control-diagnosis-v1-results.md) reproduced all
+predecessor metrics exactly. Supervised native-minus-shifted derivative-activity overlap is 0.200347
+[0.118436, 0.271866]; paired excess over permuted supervision is 0.183264 [0.094637, 0.273739].
+Sham/nuisance hotspot persistence is 87.8%, while positive hotspot support precision is only
+4.1% focal / 13.5% repeated. This supports persistent background ranking alongside learned edit
+response, not physiological or disease localization. The [independent audit](ssl-synthetic-localization-control-diagnosis-independent-audit-v1-results.md)
+passed 19,735 diagnostic / 22,656 CSV / 2,701 predecessor scalar checks and 52 bindings with zero
+mismatches. Main+audit used 12.510548 CPU seconds, zero GPU; all ten new-machine stages total
+44.999765 CPU / 38.433311 GPU-lock seconds, including retained failures once. Ranked follow-ups are
+independent fit replication and a later controlled background-suppression objective, each requiring
+a fresh protocol/evaluation policy. No further fit is running; PR #67 stays draft.
+
+**19 October randomized localization learning independently verified:** The released-generator
+background experiment passed all 12 scientific and nine integrity gates. Supervised pooled full-grid
+AP was 0.077538 versus amplitude 0.024522 and permuted targets 0.021353. Frozen pooled gains were
++0.053016 [0.027369, 0.083052] and +0.056185 [0.031928, 0.083607]. Independent verification
+reconstructed cases, masks, schedules, states, recovery and metrics with zero mismatches.
+Read [results](ssl-synthetic-localization-randomized-learning-v1-results.md) and
+[independent audit](ssl-synthetic-localization-randomized-localization-independent-audit-v1-results.md).
+Absolute AP remains modest: supervised maximum output exceeded 0.5 on 23/48 sham and 25/48 nuisance
+controls. These uncalibrated outputs are not clinical false-positive rates. All eight new-machine
+stages total 32.489216 CPU / 38.433311 GPU-lock seconds, including failed attempts once; missing
+history was not reconstructed. No further fit is running. PR #67 stays draft. Start with the
+[current continuation](ssl-synthetic-localization-continuation-2026-10-19.md).
+
+**19 October randomized learning source frozen:** The [new protocol](ssl-synthetic-localization-randomized-learning-v1.md)
+uses80training/48held-out generatorseeds, variedlead/time/sign/width/amplitude, observed-onlydense
+localization and matched400-update supervised/permuted-target arms. Fixedoldfixtures nevertrain.
+Source0f4b155is committed; actual-pathGPUprofile and exactstep2/3model+Adamrecovery gate anyfit.
+No learnedlocalization result exists yet; clinical labels and closedtests remain unchanged.
+
+**19 October actual released-generator bank verified:** Pulse2Pulse generated all128fixedseeds
+and512canonicalvariants. All15operationalgates pass; the independent audit passed18,190scalar
+and126bindingchecks with zero mismatches and exact variant/mask reconstruction.
+See [executed results](ssl-synthetic-localization-generated-quality-v2-results.md) and
+[independent audit](ssl-synthetic-localization-generated-quality-independent-audit-v2-results.md).
+Native-minus-shifted independent-lead activity Jaccard is0.809425[0.803893,0.814856], an engineering
+timing proxy. Cumulative measured new-machineCPU12.057118seconds/GPU-lock13.564630seconds
+include the retained failedprofile and its audit. Clinical plausibility, diseaseconditioning and
+real disease localization remain unproven. Fixed-position fixtures cannot train a meaningful
+localizer; a separately committed randomized-support learning study is being prepared.
+
+**19 October actual GPU profile retained:** Qualityv1 completed four exact CPU predecessor
+replays and one CUDA profile, then stopped before the bank: full-path wall5.822870seconds
+forecast1,550.645226seconds exceeded the frozen1,200second cap. Peak CUDA allocation45,372,928bytes
+passed memory admission. Terminal failed-stageCPU0.772192seconds/GPU-lock6.083721seconds are retained
+and charged once. A separately committed1,800second resource successor is in preparation with
+all128seeds/endpoints/controls unchanged; this is no scientific PASS or completed bank.
+
+**19 October released generator executed:** The standalone public Pulse2Pulse probe and its independent
+saved-output audit pass. Six forwards produced four fixed-seed ECGs plus exact replay;34bindings
+and every technical gate verified with zero mismatches. See [results](ssl-synthetic-localization-pretrained-generator-standalone-v1-results.md)
+and [independent report](ssl-synthetic-localization-pretrained-generator-independent-audit-v1-results.md).
+Terminal new-machine main+audit CPU1.671499seconds, zeroGPU. The separately frozen128seed
+quality/support study has eight passing artificialtests and scientific sourceGO; its actual GPU
+profile remains a gate. No physical calibration, clinical normality or disease masks are established.
+
+**19 October synthetic-generation continuation:** Main is integrated while preserving both histories.
+Two RTX3090s and actual PyTorch CUDA access passed outside the restricted device namespace;
+see local `outputs/ssl_synthetic_localization/continuation_inventory_v1.json`. Historical localization
+arrays/receipts are absent here and were not recovered from the other checkout. The separately
+committed [standalone probe](ssl-synthetic-localization-pretrained-generator-standalone-v1.md)
+has scientific and independent source approval before its first download/inference. Its ledger
+is prospective and does not certify old reported costs. The [128-seed quality/support protocol](ssl-synthetic-localization-generated-quality-v1.md)
+is frozen before scores; execution requires probe PASS and its actual CUDA profile. PR67 stays draft.
+
+**18 October machine handoff:** The user will start a new Codex session on a local computer with
+two RTX 3090 GPUs. Read the [continuation handoff](ssl-synthetic-localization-machine-handoff.md)
+for completed findings, pending tasks, evidence transfer and startup commands. PR #67 remains draft.
+Git carries code/reports; local arrays, checkpoints and receipts need a separate local transfer.
+The mode diagnostic and independent checker are committed/source-reviewed but unexecuted. The
+Pulse2Pulse adapter passed nine artificial tests, but needs a prospective asset/protocol/accounting
+amendment and final review before any download or inference. No scientific run was started during
+handoff. The user superseded the earlier no-push instruction; historical paragraphs below retain
+their original execution context. Hardware inventory, transfer and new-machine profiles are pending.
+
+**Resource constraint clarified:** The user reiterated that cardiologist access is unavailable;
+recruiting or asking one is not a next step. Continue with existing information, public annotations
+and released research models, preserving current clinical label definitions. The user is architecture-agnostic: GAN, diffusion and VAE approaches are eligible. Published generator
+checkpoints are candidates for reuse; their condition controls and regional-label capabilities must
+be checked separately from waveform generation. No new download, fit or score follows automatically.
+
+**18 October counterfactual-loss finding verified:** The [four-arm factorial](ssl-synthetic-localization-counterfactual-factorial.md)
+completed with an initialization-averaged direct edited-AP gain of **0.060490 [0.045504,0.075278]**.
+All twelve prospectively frozen gates pass. Independent verification passed 154,715 checks with zero
+mismatches, covering 2,816 case rows, 1,024 response rows, all 23 response fields and exact BCE training
+closure. SSL plus paired loss has the highest pooled AP 0.567574. The benefit is heterogeneous:
+random focal AP increases 0.277629 while repeated-edit AP decreases 0.075376; pooled admission does
+not imply improvement in every mode. See the [executed results](ssl-synthetic-localization-counterfactual-factorial-results.md).
+Labels are introduced changes above 0.005 mV, not verified native pathology; single fitted randomness
+and the already studied pulse family limit the finding. Complete cumulative CPU 745.814 seconds,
+GPU-wall 382.224 seconds; newstage CPU 175.881 seconds. Replication and saved-map mode diagnosis are
+ranked only, with storage/protocol/profile gates. No further fit or remote action is scheduled.
+
+**18 October counterfactual-loss factorial prepared:** The user authorized continued local work
+until an important finding. The [prospective protocol](ssl-synthetic-localization-counterfactual-factorial.md)
+compares four matched arms: random/SSL initialization by BCE/BCE plus paired loss. Its single primary
+endpoint is the average loss effect on direct edited AP, guarded against baseline suppression,
+weak selectivity and increased control alerts. It reuses the exact 500 TRAIN patients and requires
+both BCE arms to reproduce their predecessor final states exactly. New 64/128 calibration/evaluation
+patients exclude all 384 previously spent validation patients. All new source is locally committed; 38 artificial CPU tests and Ruff passed. Independent source review passed. The one qualification passed all 192 backgrounds and 768 cases,
+with 768 exact replays and 384 matching baselines, zero failures or replacements. The actual four-arm GPU profile passed all four exact recoveries and runtime/storage forecasts.
+All four fixed fits completed. Both BCE arms reproduced all 600 predecessor losses and final
+tensor identities exactly. Before any scores, independent review caught a scoring helper argument
+order error; the [forward policy](ssl-synthetic-localization-counterfactual-factorial-evaluation-v2.md)
+requires new source/tests while preserving pinned v1 and every scientific endpoint. The new scorer passed real-helper/end-to-end tests (43 new factorial tests total) and independent
+review. The one forward evaluation completed: primary direct-AP loss effect +0.060490 [0.045504,0.075278],
+all twelve gates true, pending the authorized independent audit. Gains are heterogeneous: focal
+localization improves while random-initialized repeated-edit AP declines. No further fit or clinical
+claim follows; earlier failed verdicts remain unchanged. All work stays local;
+closed tests remain closed and earlier failed advancement decisions are unchanged.
+
+**18 October saved-map diagnostic complete:** The authorized
+[diagnostic](ssl-synthetic-localization-paired-diagnostic.md) completed in its separately frozen
+[forward adapter](ssl-synthetic-localization-paired-diagnostic-v2.md), preserving the first admission
+stop from rounded CPU accounting. All scientific comparisons and parent verdicts remain unchanged.
+The [executed report](ssl-synthetic-localization-paired-diagnostic-v2-results.md) shows seven of S's
+eight nuisance-control alerts already occurred on unchanged ECGs, with one new alert and no reverse
+flip. Scores still shifted on other patients; no noise-invariance or clinical false-positive claim
+follows. R had strong pre-edit phase-window output alignment and weak introduction response, without
+proving internal feature reliance. Independent arithmetic passed 57,450 checks with zero mismatches
+across all 384 control and 512 positive rows. All diagnostic attempts plus verification consumed
+24.789 CPU seconds; cumulative CPU is 569.934 seconds, paired-stage CPU 135.801 seconds and GPU-wall
+remains 226.413 seconds. A four-arm R/S by BCE/paired-loss study is ranked behind a new protocol and
+actual profile. No further fits, thresholds, data access, pushes or PR updates are scheduled.
+
+**18 October matched-control training complete:** The authorized
+[real-background study](ssl-synthetic-localization-paired-background-study.md) completed qualification,
+actual profiling, both fixed 600-update fits and frozen evaluation. Each arm saw the same 500 TRAIN
+patients, 2,000 inputs and 9,600 presentations; calibration/evaluation used 64/128 separate patients
+excluding the prior 192. All 692 backgrounds and 2,768 variants qualified without failure or replacement.
+The [results](ssl-synthetic-localization-paired-background-results.md) report edited AP R 0.346928,
+S 0.511194, and primary counterfactual AP-response gain +0.237969 [0.198587, 0.278683]. Focal
+localization improved; repeated edited AP was lower for S despite greater response. The complete
+advancement rule failed on R's selectivity lower bound and S's nuisance-control flag increase.
+Independent training and saved-map audits passed 274,874 checks with zero mismatches, reproducing all
+nine gates. Complete cumulative CPU was 545.145 seconds and GPU-wall 226.413 seconds, within the
+unchanged runtime/storage ceilings. Follow-up saved-map diagnostics are ranked; no extra fitting,
+threshold changes, closed tests, pushes or PR updates are scheduled. Labels remain introduced changes,
+not clinically verified native pathology.
+
+**18 October SSL and synthetic localization stream:** The user authorized unattended work with
+coordinated agents in independent worktrees, on draft PR #67. The original [pilot protocol](ssl-synthetic-localization-pilot.md)
+freezes a 2,048-patient real-SSL subset, 500 synthetic training examples, matched R/S/F fits and
+held-out edit-profile evaluation. The [input audit](ssl-synthetic-localization-input-audit-results.md)
+verified and decoded all 15,657 permitted training/validation ECGs: zero integrity failures, 11 training
+quality exclusions, all validation retained and 6,142 protected records unread. All 2,048 prospectively
+selected patients passed the [real-cache gate](ssl-synthetic-localization-real-cache-results.md).
+Initial generator v1 passed its design grid but failed 28/3,060 planned occupancy checks; its failure is
+retained. The [bounded v2 amendment](ssl-synthetic-localization-pilot-generator-v2.md) qualifies all
+3,060 planned cases with exact replays. Prepared A-only training/validation banks and independent
+counterfactual replay pass. The first actual GPU profile stopped at the deterministic CUDA interpolation backward check; its
+[failed report](ssl-synthetic-localization-profile-results.md) is retained. A [prospective equivalent output implementation](ssl-synthetic-localization-pilot-deterministic-output.md)
+passes CPU operator/gradient parity and its separate actual GPU profile, including exact replay.
+The fixed 1,000-update SSL plus 600-update R/S/F fits completed in 68.473 seconds with exact matching
+and frozen-encoder checks; see the [training report](ssl-synthetic-localization-training-results.md).
+The reviewed frozen evaluation completed: held-out-profile AP was R 0.637958, S 0.640600, F 0.157875;
+S−R +0.002642 [−0.003550, +0.008333] fails the frozen advancement rule. Both control point-vetoes pass.
+[Independent saved-map recomputation](ssl-synthetic-localization-numerical-audit-results.md) passed all
+123,007 checks with zero mismatches; a separate 766-check provenance closure also passes. The
+[saved-map counterfactual audit](ssl-synthetic-localization-counterfactual-v2-results.md) completed
+all 1,024 positive pairs without new inference: both R/S respond selectively to introduced changes.
+This does not change the failed primary result. The separately frozen
+[real-background follow-up](ssl-synthetic-localization-real-background-study.md) qualified fixed additive edits on all 192 validation backgrounds and 768 cases without failures; all
+384 positive baselines match controls exactly. The actual calibration-only inference profile passed in 6.526 seconds with unchanged model state.
+Frozen R/S evaluation completed all 128 patients: AP R 0.232088, S 0.289397; difference
++0.057309 [+0.037000, +0.077527], concentrated in repeated changes. Baseline-site alignment is
+higher for S even before the edit, so this is not a stronger intervention-response claim. Calibration
+was frozen before B. The completed independent saved-map audit passes 90,376 checks with zero
+mismatches; its first incomplete-schema audit is retained separately. The
+[updated plan](ssl-synthetic-localization-next-steps.md) proposes matched positive/control training
+on real backgrounds and a separate expert-annotation audit before clinical claims. No new fitting is scheduled. The user requested all further progress remain local, with no pushes or PR updates. Engineering-test real
+waveforms, reserved tests and earlier stopped experiments remain closed/stopped; clinical annotation
+audit still lacks ECGAD artifacts. See the JSON catalog for live receipt hashes and the agents' reports.
+
+**Updated:** 18 October 2026. This is the persistent project queue. The companion [JSON catalog](experiment-queue.json) records authorization, dependencies, protocols and next actions, including experiments that still need implementation. Read these two files first after a context reset; `AGENTS.md` points future sessions here.
 **18 October local CPU continuation:** The GPU driver is unavailable in `baseline`. The user
 requested autonomous multi-agent progress using existing data without cardiologist access.
 Three prospective studies are now executed; no further fit or final test is scheduled.

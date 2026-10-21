@@ -1,0 +1,25 @@
+{
+  "source_sha256": {
+    "configs/ssl_synthetic_ludb_annotation_diagnosis_v1.json": "7019a1ea07429c3cdeeb6d8bd567251073d8ab3722932c8547febfc21375db62",
+    "docs/ssl-synthetic-localization-ludb-annotation-diagnosis-v1.md": "0126f448ed178aad8352bfcf300d9b82638abe50e60da0d60331dd4d40712339",
+    "ecg_experiment/ssl_synthetic_ludb_annotation_diagnosis.py": "ada73f4478f85158a1fdecd26c73c047275ec6e0abb2781c4df091c2987376b2",
+    "scripts/reports/diagnose_ssl_synthetic_ludb_annotations.py": "107ce96fb0c8a8bbde6f7aaf18cba2a1081b9d799fb73571d7f505461fa681e3",
+    "tests/test_ssl_synthetic_ludb_annotation_diagnosis.py": "1899c92a7a55b34f96db8b55d95a010e23a5896d0d1dc2f91c883677ee0dd053",
+    "ecg_experiment/ssl_synthetic_ludb_raw_events.py": "3eecbeebd330263d411471106bdfbcdb952389ea0ce47be691114d88fefb16c5",
+    "tests/test_ssl_synthetic_ludb_raw_events.py": "ffdee0fcaf105005fd1e28043608ed471a7505326c762892252f3ef5d0828b8a",
+    "ecg_experiment/files.py": "d418732520e883994d3b72b064c03174184f606cfea4e166800bf8a096ef985b",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "ecg_experiment/__init__.py": "cca26ce1124d553e877ed33383ffaba3af13f89bd6628e7a1b9ca2cc5c1c6a35",
+    "pyproject.toml": "9df6d56e8f27348d067eb0cf3b6506f5efbbc03154b96b6b3987f4bb4854279e",
+    "uv.lock": "20c6e373cba70e7fe859ba59697f6145c34b42418eddc955f82d29a165d5db7c"
+  },
+  "wfdb_runtime": {
+    "version": "4.3.1",
+    "annotation_source_sha256": "7c30ff60172ce66c05bb2d3767ef6e908923588eff54e9b571b2705b3d18f819",
+    "record_source_sha256": "ecde27c0b69b14bec63d21fbc76c17d5168b0c9cf970e4febbeb1a68a2fda3ae"
+  },
+  "supersedes_unexecuted_admissions": [
+    "configs/ssl_synthetic_ludb_annotation_diagnosis_admission_v1.json",
+    "configs/ssl_synthetic_ludb_annotation_diagnosis_admission_v2.json"
+  ]
+}

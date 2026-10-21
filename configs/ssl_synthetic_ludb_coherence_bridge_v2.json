@@ -1,0 +1,218 @@
+{
+  "study": "ssl_synthetic_ludb_coherence_bridge_v2",
+  "protocol": "docs/ssl-synthetic-localization-ludb-coherence-bridge-v2.md",
+  "conditional_admission": {
+    "qualification_study": "ssl_synthetic_ludb_peak_timing_v1",
+    "qualification_directory": "outputs/ssl_synthetic_localization/ludb_peak_timing_v1",
+    "qualification_config": "configs/ssl_synthetic_ludb_peak_timing_v1.json",
+    "qualification_config_sha256": "bf4828d3b36a62235633d97dbef4cf5d2a6e741bc160968eaed00f6aa98739ea",
+    "qualification_protocol": "docs/ssl-synthetic-localization-ludb-peak-timing-v1.md",
+    "qualification_protocol_sha256": "f98baa77a9f68690ae48a01d8e7b32ce47e6bcfb01c6b88428f1ff06565828eb",
+    "require_ludb_technical_pass": true,
+    "require_ludb_scientific_pass": true,
+    "require_ludb_independent_audit_pass_zero_mismatch": true,
+    "require_main_and_audit_resource_gates": true,
+    "source_admission_before_new_real_reads": true,
+    "exact_predecessor_primary_bootstrap_closure": true,
+    "qualification_main_stage": 26,
+    "qualification_audit_stage": 28,
+    "qualification_interpretation": "concentration_at_released_N_timestamps_only_not_dense_QRS_or_validated_physiological_peaks",
+    "original_dense_AP_failures_preserved": true,
+    "original_AP_gated_bridge_v1_status": "unexecuted_not_rescued",
+    "no_gate_substitution_after_reading_coherence_scores": true,
+    "qualification_audit_directory": "independent_audit_v2",
+    "failed_independent_audit_v1_preserved": true,
+    "accounting_reconciliation": {
+      "path": "outputs/ssl_synthetic_localization/ludb_landmark_audit_reconciliation_v1/reconciled_prior.json",
+      "sha256": "27cdc3ceddc4a36e7be6ba2805caad98c094fcd5bb85e80d1d2c9b469d5b99dd",
+      "current_machine_stages": 27,
+      "current_machine_cumulative_cpu_seconds": 449.557301953,
+      "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967
+    }
+  },
+  "generated": {
+    "directory": "outputs/ssl_synthetic_localization/generated_quality_v2",
+    "allowed_files": {
+      "raw.npy": "8c8961fdbec65fd2cc6d4cea577793521c2612746d15eaab8dc34ba24e85fa11",
+      "cases.jsonl": "75d0787356a980f493ce574e1567b914e170868c8335cd9af7ede62613976c74",
+      "summary.json": "0067dc16c609a7209cb626e8d31600f6b654d192e3b0803968ca3275db1660b2",
+      "independent_audit_v1/summary.json": "5fc4ceb2e5fd2a405010e6527c555c1a675c56991e755531e02aabd67eaabb1f"
+    },
+    "count": 128,
+    "first_seed": 2026103000,
+    "last_seed_inclusive": 2026103127,
+    "old_shift_seed_first": 2026103200,
+    "old_bootstrap_seed": 2026103301,
+    "old_bootstrap_draws": 2000,
+    "old_primary": {
+      "mean_difference": 0.8094248365473182,
+      "ci_low": 0.8038931804338517,
+      "ci_high": 0.8148564292963815
+    },
+    "exact_closure_tolerance": 0
+  },
+  "ludb": {
+    "version": "1.0.1",
+    "count": 200,
+    "record_id_first": 1,
+    "record_id_last_inclusive": 200,
+    "logical_raw_alias": "data/raw/ludb/1.0.1/data",
+    "actual_output_target": "outputs/ssl_synthetic_localization/ludb_acquisition_v4/data",
+    "signal_files_per_record": [
+      "dat",
+      "hea"
+    ],
+    "new_numeric_annotation_stream_reads": 0,
+    "parse_diagnosis_comments": false,
+    "parse_ludb_csv": false,
+    "record_role": "spent_public_development_measurement",
+    "shift_seed_first": 2026106300,
+    "shift_index": "record_id_minus_1"
+  },
+  "representation": {
+    "canonical_independent_leads": [
+      "I",
+      "II",
+      "V1",
+      "V2",
+      "V3",
+      "V4",
+      "V5",
+      "V6"
+    ],
+    "samples": 5000,
+    "sample_rate_hz": 500,
+    "ludb_physical_to_native_cast": "float32_before_standardization",
+    "standardize_source": "ecg_experiment.ssl_synthetic_generated_quality.standardize",
+    "center": "float64_median",
+    "scale": "float64_linear_q95_minus_q05",
+    "minimum_raw_scale_strictly_greater_than": 1e-06,
+    "standardized_dtype": "float32",
+    "invalid_or_flat_policy": "fail_whole_attempt_no_omissions"
+  },
+  "coherence": {
+    "difference_dtype": "float64",
+    "prepend_first": true,
+    "smoothing_samples": 20,
+    "convolution": "numpy_same_zero_extension",
+    "activity_quantile": 0.9,
+    "quantile_method": "linear",
+    "strict_activity": true,
+    "length": 5000,
+    "pair_metric": "jaccard",
+    "pairs": 28,
+    "zero_union_value": 0.0,
+    "shifts": "default_rng(base+index).integers(1,5000,size=8)",
+    "applies_to": "completed_activity_masks",
+    "finite_range_float64_epsilon_units": 8,
+    "clip": false
+  },
+  "primary_descriptive": {
+    "contrast": "real_minus_generated_mean_native_minus_shifted_jaccard",
+    "bootstrap_draws": 2000,
+    "bootstrap_seed": 2026106401,
+    "draw_order": [
+      "200_whole_ludb_records",
+      "128_whole_generator_seeds"
+    ],
+    "helpers": [
+      "ecg_experiment.intervals.patient_groups",
+      "ecg_experiment.intervals.patient_resample"
+    ],
+    "percentiles": [
+      2.5,
+      97.5
+    ],
+    "percentile_method": "linear",
+    "skip_draws": false,
+    "scientific_pass_threshold": null,
+    "equivalence_threshold": null,
+    "clinical_interpretation": false
+  },
+  "distributions": {
+    "variables": [
+      "native_jaccard",
+      "shifted_jaccard",
+      "difference"
+    ],
+    "statistics": [
+      "mean",
+      "std_ddof1",
+      "min",
+      "q25",
+      "median",
+      "q75",
+      "max"
+    ],
+    "jaccard_histogram_edges": "0..1_step0.05",
+    "difference_histogram_edges": "-1..1_step0.1",
+    "fixed_generated_raster_indices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "fixed_ludb_raster_record_ids": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "selected_by_outcome": false
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "gpu_allowed": false,
+    "training_allowed": false,
+    "download_allowed": false,
+    "generator_forwards": 0,
+    "main": {
+      "cpu_seconds": 180,
+      "wall_seconds": 300,
+      "rss_bytes": 2147483648,
+      "new_output_bytes": 134217728
+    },
+    "independent_audit": {
+      "cpu_seconds": 180,
+      "wall_seconds": 300,
+      "rss_bytes": 2147483648,
+      "new_output_bytes": 67108864
+    },
+    "terminal_bookkeeping_reserve_seconds": 2,
+    "terminal_bookkeeping_reserve_bytes": 16384
+  },
+  "accounting": {
+    "immediate_prior": "completed_ludb_peak_timing_v1_independent_audit_v2_terminal_ledger_stage28_including_failed_audit27_once",
+    "actual_identity_and_cumulative_totals": "prospective_identity_only_admission",
+    "preserve_all_transport_failures_and_intervening_stage_costs_once": true,
+    "reset_to_old_generator_or_429_cpu_baseline": false,
+    "expected_main_stage": 29,
+    "expected_independent_audit_stage": 30
+  },
+  "output_directory": "outputs/ssl_synthetic_localization/ludb_coherence_bridge_v2",
+  "scientific_pass_flag_allowed": false,
+  "claims": {
+    "activity_synchrony_descriptor_only": true,
+    "clinical_ecg_quality": false,
+    "physiological_fidelity": false,
+    "disease_region_mask": false,
+    "real_disease_localization": false,
+    "ssl_benefit": false
+  },
+  "inherited_scientific_method": {
+    "protocol": "docs/ssl-synthetic-localization-ludb-coherence-bridge-v1.md",
+    "config": "configs/ssl_synthetic_ludb_coherence_bridge_v1.json",
+    "unchanged_sections": [
+      "generated",
+      "representation",
+      "coherence",
+      "primary_descriptive",
+      "distributions",
+      "resources",
+      "claims"
+    ],
+    "scientific_change": "prerequisite_only_from_failed_dense_AP_to_new_audited_released_N_landmark_qualification",
+    "no_method_threshold_cohort_seed_or_descriptor_changes": true
+  },
+  "audit_recovery_amendment": "docs/ssl-synthetic-localization-ludb-coherence-bridge-audit-recovery-v1.md"
+}

@@ -1,0 +1,34 @@
+{
+  "study_id": "ssl_synthetic_factorial_mode_diagnostic_v1",
+  "arms": [
+    "RB",
+    "SB",
+    "RP",
+    "SP"
+  ],
+  "modes": [
+    "focal",
+    "repeated"
+  ],
+  "evaluation_patients": 128,
+  "global_case_offset": 2000,
+  "evaluation_first_case": 2256,
+  "bootstrap_draws": 2000,
+  "bootstrap_seed": 20261028,
+  "area_fractions": [
+    0.01,
+    0.05,
+    0.1
+  ],
+  "metric_fields": 14,
+  "main_cpu_wall_limit_seconds": 120,
+  "audit_cpu_wall_limit_seconds": 120,
+  "combined_cpu_wall_limit_seconds": 240,
+  "failure_reserve_seconds": 2,
+  "output_bytes_ceiling": 16777216,
+  "cache_bytes_ceiling": 4294967296,
+  "cpu_seconds_ceiling": 14400,
+  "gpu_seconds_ceiling": 7200,
+  "numerical_tolerance": 1e-12,
+  "accounting_tolerance_seconds": 1e-09
+}

@@ -1,0 +1,138 @@
+{
+  "study_id": "pulse2pulse_generated_quality_v1",
+  "output_root": "outputs/ssl_synthetic_localization/generated_quality_v1",
+  "predecessor_root": "outputs/ssl_synthetic_localization/pretrained_generator_standalone_v1",
+  "n_samples": 128,
+  "first_seed": 2026103000,
+  "sampling_rate_hz": 500,
+  "samples": 5000,
+  "independent_leads": [
+    "I",
+    "II",
+    "V1",
+    "V2",
+    "V3",
+    "V4",
+    "V5",
+    "V6"
+  ],
+  "canonical_leads": [
+    "I",
+    "II",
+    "III",
+    "aVR",
+    "aVL",
+    "aVF",
+    "V1",
+    "V2",
+    "V3",
+    "V4",
+    "V5",
+    "V6"
+  ],
+  "standardization": {
+    "center_quantile": 0.5,
+    "low_quantile": 0.05,
+    "high_quantile": 0.95,
+    "quantile_method": "linear",
+    "minimum_raw_scale": 1e-06
+  },
+  "nuisance": {
+    "amplitude": 0.1,
+    "frequency_hz": 0.33,
+    "phase_seed_first": 2026103100
+  },
+  "intervention": {
+    "independent_lead": "II",
+    "amplitude": 0.5,
+    "hann_samples": 81,
+    "focal_centers": [
+      1250
+    ],
+    "repeated_centers": [
+      750,
+      1250,
+      1750,
+      2250,
+      2750,
+      3250,
+      3750,
+      4250
+    ],
+    "threshold": 0.01,
+    "minimum_retained_energy": 0.99
+  },
+  "coherence": {
+    "derivative_prepend_first": true,
+    "smoothing_samples": 20,
+    "activity_quantile": 0.9,
+    "strict_activity": true,
+    "shift_seed_first": 2026103200,
+    "shift_low_inclusive": 1,
+    "shift_high_exclusive": 5000,
+    "pair_metric": "jaccard",
+    "zero_union_value": 0.0
+  },
+  "bootstrap": {
+    "seed": 2026103301,
+    "draws": 2000,
+    "percentiles": [
+      2.5,
+      97.5
+    ]
+  },
+  "spectral": {
+    "method": "periodogram",
+    "denominator_hz": [
+      0.5,
+      100.0
+    ],
+    "bands_hz": [
+      [
+        0.5,
+        5.0
+      ],
+      [
+        5.0,
+        25.0
+      ],
+      [
+        25.0,
+        100.0
+      ]
+    ]
+  },
+  "figures": {
+    "example_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "interop_threads": 1,
+    "cuda_device": 0,
+    "minimum_gpu_free_bytes": 2147483648,
+    "maximum_gpu_allocated_bytes": 2147483648,
+    "cpu_seconds": 1800,
+    "wall_seconds": 1200,
+    "gpu_lock_wall_seconds": 1200,
+    "output_bytes": 536870912,
+    "final_receipt_reserve_bytes": 1048576,
+    "report_reserve_seconds": 30,
+    "profile_safety_factor": 2.0
+  },
+  "allowed_forwards": {
+    "cpu_predecessor_replay": 4,
+    "gpu_profile": 1,
+    "gpu_generation": 128,
+    "gpu_replay": 1
+  },
+  "decision": "operational_support_qualification_only; coherence_descriptive"
+}

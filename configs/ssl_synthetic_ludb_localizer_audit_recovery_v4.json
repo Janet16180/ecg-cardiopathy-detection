@@ -1,0 +1,45 @@
+{
+  "study": "ludb_localizer_independent_audit_recovery_v4",
+  "main_admission": {
+    "path": "configs/ssl_synthetic_ludb_localizer_admission_v2.json",
+    "sha256": "85a3f6c3c334144cdb9d50aada3e2e55a01b08771ea43772ed02ebf2255ba70b"
+  },
+  "previous_recovery": {
+    "path": "configs/ssl_synthetic_ludb_localizer_audit_recovery_v3.json",
+    "sha256": "b7bc102eb8c052e690734c8a46650118348d56fd4204e5a06c2803e2b0c86903"
+  },
+  "main_summary_sha256": "e25e7be0b12774c485b56b5bff1664b5718d7efc25b18135eb67f45fd9ffd4fc",
+  "main_ledger_sha256": "50e558091eb1930e2a25b4b966f51879dcd385bef11ff0671436e856006292a8",
+  "failed_audit": {
+    "directory": "outputs/ssl_synthetic_localization/ludb_localizer_v1/independent_audit_v3",
+    "summary_sha256": "7956843af0d612792b67ffd1a648d33df05d7150c22fb728699a63f8a6b799c2",
+    "ledger_sha256": "d3bca8dca1056e0311b6c00190464f715104f858e0e99e42e6ce518b06831365",
+    "error_type": "ValueError",
+    "error": "audit metadata must be an object",
+    "cpu_seconds": 36.38738272
+  },
+  "prior_ledger": {
+    "path": "outputs/ssl_synthetic_localization/ludb_localizer_v1/independent_audit_v3/prospective_ledger.json",
+    "sha256": "d3bca8dca1056e0311b6c00190464f715104f858e0e99e42e6ce518b06831365",
+    "current_machine_stages": 33,
+    "current_machine_cumulative_cpu_seconds": 678.227157525,
+    "current_machine_cumulative_gpu_wall_seconds": 473.0495132012293
+  },
+  "output_directory": "independent_audit_v4",
+  "next_stage": 34,
+  "method_change": false,
+  "resources": {
+    "cpu_seconds": 900,
+    "wall_seconds": 1200,
+    "peak_rss_bytes": 2147483648,
+    "output_bytes": 134217728,
+    "gpu_seconds": 0
+  },
+  "source_sha256": {
+    "ecg_experiment/ssl_synthetic_ludb_localizer_audit_v4.py": "3db0c3536e30699f519ac1a79c32cb7a5086a188943ff64a5e89ec685e607a36",
+    "scripts/validation/audit_ssl_synthetic_ludb_localizer_v4.py": "24640bb53bc07493e81c7ae4032aa2ef312fb2572e148c9878ce1225ba420f86",
+    "tests/test_ssl_synthetic_ludb_localizer_audit_v4.py": "ef780b372d2408777dffb51b445f0c8d4cd3114f4bb4982cd06a4ee5be6c34d6",
+    "docs/ssl-synthetic-localization-ludb-localizer-independent-audit-v4.md": "dae9bc4a2298a6469a02fe081be9a1a4c875037ec3c5a932a5aad4f87a0bfbbb",
+    "docs/ssl-synthetic-localization-ludb-localizer-independent-failure-v3.md": "fe6b1dd729fb45618dd0457fff98a136123145bc5cefcc2ea28b8fbc52686db5"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-20T00:43:38.770578+00:00",
+  "updated_at_utc": "2026-10-21",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "LUDB timing and descriptive coherence studies complete with independent zero-mismatch audits. Report this meaningful checkpoint; next proposed work is admitted frozen-localizer N-landmark/energy concentration, then held-out-editor and matched-background localization after actual-path/resource gates. No new fit, closed test or automatic merge.",
+    "next_action": "Execute admitted frozen-localizer landmark/activity diagnostic on160LUDBdevelopmentrecords and12frozenstates after committedsource and actual-pathresourceprofile. Independently verify, report and push to draftPR67; no auto-merge.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -3160,6 +3160,18 @@
       "distinct_source_paths": 161,
       "source_mismatches": 0,
       "local_evidence_directory": "outputs/ssl_synthetic_localization/ludb_repository_validation_v1"
+    },
+    "ludb_frozen_localizer_v1": {
+      "status": "protocol_committed_pending_source_asset_admission_and_actual_path_profile",
+      "protocol": "docs/ssl-synthetic-localization-ludb-localizer-v1.md",
+      "configuration": "configs/ssl_synthetic_ludb_localizer_v1.json",
+      "output_directory": "outputs/ssl_synthetic_localization/ludb_localizer_v1",
+      "model_count": 12,
+      "measurement_records": 160,
+      "primary": "B_N_midrank_gain_vs_six_within_span_rolls",
+      "scientific_pass_flag_defined": false,
+      "optimizer_updates": 0,
+      "clinical_claim": false
     }
   },
   "experiment_041_cpu_screening": {

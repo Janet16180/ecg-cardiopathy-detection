@@ -1,5 +1,12 @@
 # Experiment queue
 
+21 October: user authorized continued unattended synthetic-localization research in English,
+with finished work pushed to draft PR67. The [frozen-localizer diagnostic](ssl-synthetic-localization-ludb-localizer-v1.md)
+is prospectively defined: all twelve existing B/P/K/PK checkpoints,160LUDBdevelopmentrecords,
+native-lead N-landmark ranks and fixed activity associations. Source/asset admission and an
+actual CUDA inference/persistence profile gate execution. No new scores, training, pathology
+masks or completed result yet. Earlier verified results and14/15FAIL remain unchanged.
+
 20 October: two bounded LUDB studies are COMPLETE and independently verified.
 [Released-N timing](ssl-synthetic-localization-ludb-peak-timing-v1-results.md) gives mean rank
 0.963600 versus shifted 0.513082, gain 0.450519 [0.438960,0.462589] on 160 measurement records.

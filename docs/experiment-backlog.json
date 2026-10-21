@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-20",
+  "updated": "2026-10-21",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -1775,8 +1775,9 @@
       "cpu_hours": 0.2,
       "build_hours": 3.0,
       "blocked_by": [],
-      "status": "proposed",
-      "notes": "New protocol/checkpoint admission/inference-and-persistence profile before scores; all fixed fits/arms, no winning-arm selection, no training or pathology labels. Use only locally present checkpoints and preserve any missing-artifact blocker."
+      "status": "in_progress",
+      "notes": "New protocol/checkpoint admission/inference-and-persistence profile before scores; all fixed fits/arms, no winning-arm selection, no training or pathology labels. Use only locally present checkpoints and preserve any missing-artifact blocker. User clarified target: suspicious time segments and leads on ECG, not anatomical lesion localization. English reports and draftPR67 push authorized.",
+      "latest_status": "Protocol/config prospectively frozen21Oct before new outcomes; all12states verified by byte inventory; source/admission/profile gates pending."
     },
     {
       "id": "ssl_synthetic_heldout_editor_background_transfer",

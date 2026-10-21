@@ -31,5 +31,12 @@
     "peak_rss_bytes": 2147483648,
     "output_bytes": 134217728,
     "gpu_seconds": 0
+  },
+  "source_sha256": {
+    "ecg_experiment/ssl_synthetic_ludb_localizer_audit_v3.py": "a3aab529a65ce803dee2dfb9a23f5212ef5e2f1edf0a22baec38b0dd50a17a74",
+    "scripts/validation/audit_ssl_synthetic_ludb_localizer_v3.py": "2b91a38e1eeaa01e7b08d37514dad06f5f375958f0effe69896c1d0c8370cf63",
+    "tests/test_ssl_synthetic_ludb_localizer_audit_v3.py": "502c7bba8982b96e75acd07f7e3c10911744b460c1185c4369aa0d9d98d2f003",
+    "docs/ssl-synthetic-localization-ludb-localizer-independent-audit-v3.md": "8679c1f27d0d8fe7a928bd9baf2b6090312216fbe1ff58a0190d6dd3ce138e5b",
+    "docs/ssl-synthetic-localization-ludb-localizer-independent-failure-v2.md": "4b07b1bf342ee2629c284be77d5353b5be23ed3fa516f3a5a9b1994dfa1fe6ba"
   }
 }

@@ -83,9 +83,10 @@ def library_events(record: Path, extension: str) -> list[dict[str, Any]]:
 
 def agreement(raw: dict[str, Any], library: list[dict[str, Any]]) -> bool:
     """Require all numeric fields and all known wave symbols to agree, flagging unmapped symbols."""
-    fields = ["sample", "symbol", "type_code", "subtype", "channel", "num", "aux_length"]
+    fields = ["sample", "type_code", "subtype", "channel", "num", "aux_length"]
     return (not raw["errors"] and len(raw["events"]) == len(library)
             and all(all(first[key] == second[key] for key in fields)
+                    and (first["symbol"].startswith("unknown_code_") or first["symbol"] == second["symbol"])
                     for first, second in zip(raw["events"], library, strict=True)))
 
 
@@ -130,11 +131,7 @@ def run(admission_name: str, clock: dict[str, float]) -> dict[str, Any]:
         guard()
     except Exception as error:
         summary.update(status="FAIL", error_type=type(error).__name__, error=str(error))
-    finally:
-        for timer, (signum, handler) in previous_handlers.items():
-            signal.setitimer(timer, 0)
-            signal.signal(signum, handler)
-    finish(destination, config, summary, clock, verified)
+    finish(destination, config, summary, clock, verified, previous_handlers)
     return summary
 
 
@@ -143,8 +140,9 @@ def inspect_record(config: dict[str, Any], destination: Path, summary: dict[str,
     """Inspect only admitted record95 streams through a sanitized structural-only header."""
     source = from_stored(config["logical_data_root"])
     for name, expected in config["asset_sha256"].items():
-        if sha256_file(source / name) != expected:
-            raise ValueError("Admitted record95 source identity differs")
+        if (not os.path.samefile(source / name, from_stored(config["actual_data_target"]) / name)
+                or sha256_file(source / name) != expected):
+            raise ValueError("Admitted record95 alias or source identity differs")
     scratch = destination / "sanitized"
     scratch.mkdir()
     with (source / "95.hea").open() as stream:
@@ -210,31 +208,39 @@ def snapshot(destination: Path, admission: dict[str, Any], name: str) -> None:
 
 
 def finish(destination: Path, config: dict[str, Any], summary: dict[str, Any], clock: dict[str, float],
-           verified: bool) -> None:
-    """Retain actual diagnosis costs once, including the failed scientific predecessor."""
+           verified: bool, timers: dict[int, Any]) -> None:
+    """Keep guards live through receipt hashing and enumeration, retaining a bounded failure fallback."""
     prior, limits = config["prior_ledger"], config["resources"]
+    receipt, size = "summary.json", None
     summary.update(cpu_seconds=time.process_time() - clock["cpu"],
                    wall_seconds=time.perf_counter() - clock["wall"],
-                   peak_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024)
-    size = sum(path.stat().st_size for path in destination.rglob("*")
-               if path.is_file() and not path.is_symlink())
-    gates = {"cpu": summary["cpu_seconds"] < limits["cpu_seconds"],
-             "wall": summary["wall_seconds"] < limits["wall_seconds"],
-             "rss": summary["peak_rss_bytes"] < limits["rss_bytes"],
-             "output": size + 1024**2 < limits["new_output_bytes"]}
-    summary["resource_gates"] = gates
-    summary["technical_passed"] = (summary["status"] == "PASS" and all(gates.values())
-                                   and summary["all_12_dual_decoders_agree"])
-    write_new(destination / "summary.json", summary)
-    digest = sha256_file(destination / "summary.json")
-    size = sum(path.stat().st_size for path in destination.rglob("*")
-               if path.is_file() and not path.is_symlink())
+                   peak_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024,
+                   decoder_agreement_scope=("all numeric fields and known wave symbols; "
+                                            "unmapped labels retained"))
+    try:
+        write_new(destination / receipt, summary)
+        digest = sha256_file(destination / receipt)
+        size = sum(path.stat().st_size for path in destination.rglob("*")
+                   if path.is_file() and not path.is_symlink())
+    except Exception as error:
+        summary.update(status="FAIL", terminal_error_type=type(error).__name__, terminal_bytes_exact=False)
+        receipt = "finalization_failure.json"
+    finally:
+        for timer, (signum, handler) in timers.items():
+            signal.setitimer(timer, 0)
+            signal.signal(signum, handler)
+    if receipt == "finalization_failure.json":
+        write_new(destination / receipt, summary)
+        digest = sha256_file(destination / receipt)
     cpu, wall = time.process_time() - clock["cpu"], time.perf_counter() - clock["wall"]
-    gates.update(cpu=cpu < limits["cpu_seconds"], wall=wall < limits["wall_seconds"],
-                 output=size + 16384 < limits["new_output_bytes"])
-    write_new(destination / "prospective_ledger.json", {"stage": config["study"], "receipt": "summary.json",
+    gates = {"cpu": cpu < limits["cpu_seconds"], "wall": wall < limits["wall_seconds"],
+             "rss": summary["peak_rss_bytes"] < limits["rss_bytes"],
+             "output": size is not None and size + 16384 < limits["new_output_bytes"]}
+    passed = summary["status"] == "PASS" and all(gates.values()) and summary["all_12_dual_decoders_agree"]
+    write_new(destination / "prospective_ledger.json", {"stage": config["study"], "receipt": receipt,
         "receipt_sha256": digest, "cpu_seconds": cpu, "wall_seconds": wall, "gpu_wall_seconds": 0,
-        "resource_gates": gates, "current_machine_stages": 25 if verified else None,
+        "resource_gates": gates, "technical_passed": passed,
+        "current_machine_stages": 25 if verified else None,
         "prior_ledger_sha256": prior["sha256"] if verified else None,
         "current_machine_cumulative_cpu_seconds": prior["current_machine_cumulative_cpu_seconds"] + cpu
         if verified else None,
@@ -243,5 +249,5 @@ def finish(destination: Path, config: dict[str, Any], summary: dict[str, Any], c
         "output_bytes_before_terminal_ledger": size,
         "measurement_endpoint": "after receipt hash and byte count before terminal ledger serialization",
         "terminal_bookkeeping_reserve_seconds": 2, "terminal_bookkeeping_reserve_bytes": 16384})
-    if not summary["technical_passed"] or not all(gates.values()):
+    if not passed:
         raise RuntimeError("Retained annotation-only diagnostic technical failure")

@@ -50,7 +50,8 @@ def test_library_fallback_reads_only_sanitized_header_and_no_dat(tmp_path, monke
 
     monkeypatch.setattr(diagnosis.wfdb.io.record, "rdheader", checked_header)
     monkeypatch.setattr(diagnosis, "from_stored", lambda name: source)
-    config = {"logical_data_root": "artificial", "annotation_extensions": ["i"],
+    config = {"logical_data_root": "artificial", "actual_data_target": "artificial",
+              "annotation_extensions": ["i"],
               "asset_sha256": {name: diagnosis.sha256_file(source / name) for name in ["95.hea", "95.i"]}}
     summary = {"streams": {}}
     diagnosis.inspect_record(config, destination, summary, lambda: None)

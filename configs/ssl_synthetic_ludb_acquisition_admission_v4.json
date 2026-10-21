@@ -1,0 +1,50 @@
+{
+  "frozen_config_sha256": "d6b925ff3db361dd0145af9090338f2638060a113830a8b81bb4d9c4a5f5ce57",
+  "frozen_protocol_sha256": "c529018faf8b7ca36a8496fdcffa2edeeee2db880a9abdc1ec17524099bafa83",
+  "source_sha256": {
+    "configs/ssl_synthetic_ludb_acquisition_v3.json": "2c0a18e1390ed0e0acdec939f963d826358ba0b3550b14ee1fb02904aaa20b30",
+    "configs/ssl_synthetic_ludb_acquisition_v4.json": "d6b925ff3db361dd0145af9090338f2638060a113830a8b81bb4d9c4a5f5ce57",
+    "configs/ssl_synthetic_ludb_qualification_v1.json": "d71fa85460e929653d1a26716fc464dc993a1a2b25557e685b2da23f2fbcded3",
+    "docs/ssl-synthetic-localization-ludb-acquisition-v3.md": "724b8e3815d19d0d73bb9a105412004dce4ee5a866eac0dd1bbd560ffd3085dc",
+    "docs/ssl-synthetic-localization-ludb-acquisition-v4.md": "c529018faf8b7ca36a8496fdcffa2edeeee2db880a9abdc1ec17524099bafa83",
+    "docs/ssl-synthetic-localization-ludb-qualification-v1.md": "b10965364936ccf8229590b35ce49aaf536266e13e3f19e6d5280a608647f5b1",
+    "ecg_experiment/__init__.py": "cca26ce1124d553e877ed33383ffaba3af13f89bd6628e7a1b9ca2cc5c1c6a35",
+    "ecg_experiment/files.py": "d418732520e883994d3b72b064c03174184f606cfea4e166800bf8a096ef985b",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "ecg_experiment/ssl_synthetic_ludb_acquisition.py": "08870490568fd6988edd2a7a58b1db67dbbf775a349aba613baca9b7bf6ca2ec",
+    "ecg_experiment/ssl_synthetic_ludb_acquisition_v2.py": "88a788bb873ed91d218e59472b53bd1db9bac17595e1712077e4e7c5e25d4f97",
+    "ecg_experiment/ssl_synthetic_ludb_acquisition_v3.py": "108b8e3b11b9ae6570315cad9f7755b973954f12e97de907e96a9e5cccb3ec37",
+    "ecg_experiment/ssl_synthetic_ludb_acquisition_v4.py": "951783caef7af2a2c0d0118fc1dbf34df03f5e4a674511a2d5a9f06f886e1fd1",
+    "pyproject.toml": "9df6d56e8f27348d067eb0cf3b6506f5efbbc03154b96b6b3987f4bb4854279e",
+    "scripts/data/acquire_ssl_synthetic_ludb.py": "0662fd4dddb6f0a80a679c6ffe23db64fa668e04b61ff797481b0ec9c0a481f1",
+    "scripts/data/acquire_ssl_synthetic_ludb_v2.py": "ee409bfa424a3914fb1d6de7230f9a3ab732699093dc690ddaedbdc5a4b0299f",
+    "scripts/data/acquire_ssl_synthetic_ludb_v3.py": "8120aecacdcf494babd79fc2e296673e18b323d257d03eb36a40383c749e1f06",
+    "scripts/data/acquire_ssl_synthetic_ludb_v4.py": "ad66327bca18490c16056190d8b7f428ad5ba52e7b991c0d7435ae25267b3d2e",
+    "tests/test_ssl_synthetic_ludb_acquisition.py": "8887af2e6183e6f240ff07af448a82fae6ed3170eeb3d9a17be87aea24f8dc78",
+    "tests/test_ssl_synthetic_ludb_acquisition_v2.py": "00aa5f2fd1403c11568c2ca8d48b1566dfb09d7bb5dcb14aa78115d07695738c",
+    "tests/test_ssl_synthetic_ludb_acquisition_v3.py": "f2f0d3d2ee179971936904d1a342ea51fed5536c8f57e27a2465441ade3dae8c",
+    "tests/test_ssl_synthetic_ludb_acquisition_v4.py": "27af7444f68e38c8817e6137c0a37b2b484d0018dd7a1babcb0fbf9f07eea38b",
+    "uv.lock": "20c6e373cba70e7fe859ba59697f6145c34b42418eddc955f82d29a165d5db7c"
+  },
+  "prior_ledger": {
+    "path": "outputs/ssl_synthetic_localization/ludb_acquisition_v2/prospective_ledger.json",
+    "sha256": "9114b01b9e68d1ced6cf9c152014bbfcf4523d437dcff59fed53bcd11a38c833",
+    "current_machine_stages": 21,
+    "current_machine_cumulative_cpu_seconds": 429.84679126699996,
+    "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967
+  },
+  "executables": {
+    "curl": {
+      "path": "/usr/bin/curl",
+      "sha256": "1ccbd3dae948374ba8eef1ebda26c64b783ede50b463196e53666e0880bdac60",
+      "version_sha256": "cf3e690e20521e106b4456e7ada0711039374990d10c2cafbc15a9569b5ea6a1",
+      "version_text": "curl 8.5.0 (x86_64-pc-linux-gnu) libcurl/8.5.0 OpenSSL/3.0.13 zlib/1.3 brotli/1.1.0 zstd/1.5.5 libidn2/2.3.7 libpsl/0.21.2 (+libidn2/2.3.7) libssh/0.10.6/openssl/zlib nghttp2/1.59.0 librtmp/2.3 OpenLDAP/2.6.7\nRelease-Date: 2023-12-06, security patched: 8.5.0-2ubuntu10.16\nProtocols: dict file ftp ftps gopher gophers http https imap imaps ldap ldaps mqtt pop3 pop3s rtmp rtsp scp sftp smb smbs smtp smtps telnet tftp\nFeatures: alt-svc AsynchDNS brotli GSS-API HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerberos Largefile libz NTLM PSL SPNEGO SSL threadsafe TLS-SRP UnixSockets zstd\n"
+    },
+    "time": {
+      "path": "/usr/bin/time",
+      "sha256": "3b11dec50514a8473e9f6efa7a34d584d0657538c09988f61b72d38ad4991a10",
+      "version_sha256": "a3b64288a651d40a18a243c43c871f7ae2886baa58b7e3c64a1061bfd651245f",
+      "version_text": "time (GNU Time) UNKNOWN\nCopyright (C) 2018 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten by David Keppel, David MacKenzie, and Assaf Gordon.\n"
+    }
+  }
+}

@@ -1,5 +1,14 @@
 # Experiment queue
 
+22 October local continuation authorized for up to eight hours or important progress. The
+[mixed-background localizer protocol](ssl-synthetic-localization-mixed-background-v1.md) is
+committed at30300d2, followed by reviewed metadata-only cohort builder6493704. Exactly40real
+PTB-XL TRAIN patients are selected from10550eligible patients after original-role and patient-wide
+fold8/9/10 exclusions, with no replacement. No selected waveform has been decoded; no new fit
+or score exists yet. Missing v3/v4 manifests remain absent; this is an explicitly new supervised
+PTB-only cohort, not a recreated pretraining cohort. Exact B replay, source admission and a full
+CUDA training profile gate the matched3-fit comparison. User forbids push/GitHub runners.
+
 21 October latest local continuation COMPLETE: [matched background/editor transfer](ssl-synthetic-localization-background-editor-transfer-v1-results.md)
 passes all six prospective fixedB real/held-out numerical-transfer checks. Independent36 checks
 815829new numerical scalars,1536model-background rows,96CPU replays and2000×352draw entries,

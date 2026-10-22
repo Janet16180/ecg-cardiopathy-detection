@@ -3290,6 +3290,24 @@
       "current_machine_stages": 37,
       "current_machine_cumulative_cpu_seconds": 1076.7763161960002,
       "current_machine_cumulative_gpu_wall_seconds": 524.1993697541766
+    },
+    "mixed_background_v1": {
+      "status": "protocol_committed_fixed_metadata_cohort_selected_implementation_in_progress",
+      "protocol": "docs/ssl-synthetic-localization-mixed-background-v1.md",
+      "config": "configs/ssl_synthetic_mixed_background_v1.json",
+      "protocol_commit": "30300d2",
+      "cohort_builder_commit": "6493704",
+      "cohort_manifest": "outputs/ssl_synthetic_localization/mixed_background_cohort_v1/selection.json",
+      "cohort_sha256": "37ed98d9d1da0f4f521a52f947fbd597808a94e8851038c4bf9b858219a19104",
+      "selected_real_training_patients": 40,
+      "eligible_distinct_train_patients": 10550,
+      "real_waveform_decodes": 0,
+      "training_started": false,
+      "scientific_scores_computed": false,
+      "intended_scientific_gates": 14,
+      "push_authorized": false,
+      "v4_membership_verified": false,
+      "next_action": "Complete independent source/admission review and actual-path CUDA training profile; replay all generated baselines exactly before mixed model evaluation."
     }
   },
   "experiment_041_cpu_screening": {

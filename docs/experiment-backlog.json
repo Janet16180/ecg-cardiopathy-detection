@@ -1821,8 +1821,8 @@
       "cpu_hours": 0.25,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "proposed",
-      "notes": "First review public source definitions, licensing/access, annotation semantics and patient/evaluation role, under a separately committed bounded feasibility protocol before raw annotation scans or model scores. Preserve existing clinical label definitions and all closed-test restrictions; no clinician recruitment prerequisite. Wave boundaries, exact N landmarks, whole-record diagnoses and sparse option-conditioned benchmark answers are not automatically dense disease masks. Keep synthetic-to-real localization as the scientific question; no replacement classification benchmark, outcome-driven window widening, GAN tuning or unprofiled training. Do not reuse another checkout outputs. All records/maps stay local; no push."
+      "status": "in_progress",
+      "notes": "First review public source definitions, licensing/access, annotation semantics and patient/evaluation role, under a separately committed bounded feasibility protocol before raw annotation scans or model scores. Preserve existing clinical label definitions and all closed-test restrictions; no clinician recruitment prerequisite. Wave boundaries, exact N landmarks, whole-record diagnoses and sparse option-conditioned benchmark answers are not automatically dense disease masks. Keep synthetic-to-real localization as the scientific question; no replacement classification benchmark, outcome-driven window widening, GAN tuning or unprofiled training. Do not reuse another checkout outputs. All records/maps stay local; no push. Protocol da7fe80 now commits EDB annotation/header-only acquisition, qualification and independent audit from actual40; channel-local contract and reference-context limitations committed separately before parsing. No payload/score result yet."
     }
   ]
 }

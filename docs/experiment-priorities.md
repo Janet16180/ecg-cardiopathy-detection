@@ -1,5 +1,12 @@
 # Experiment priorities
 
+The new 24-hour goal is active from 22 October~23:05 UTC. EDB annotation-only qualification
+is now prospectively committed and in progress; no payload acquisition, decoding or new model
+score has executed. Acquire source identities before parsing, retain the 79-subject claim versus
+78 published grouping units, and keep all EDB roles development-only. This intermediate episode
+bridge does not establish the full twelve-lead goal. See the [active goal](ssl-synthetic-localization-goal-2026-10-22.md)
+and [EDB protocol](ssl-synthetic-localization-edb-annotation-qualification-v1.md).
+
 22 October 2026: the executed matched mixed-background localizer study fails its prospective
 scientific advancement rule, with 9 of 14 checks passing. Real held-out AP is 0.029844 versus
 0.032520 for generated-only training; paired difference -0.002676 [-0.006868, 0.001306].

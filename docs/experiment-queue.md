@@ -1,5 +1,16 @@
 # Experiment queue
 
+22 October, 23:05 UTC: user explicitly sets a NEW 24-hour autonomous goal toward real ECG
+abnormality detection and suspicious time/lead localization. The [goal](ssl-synthetic-localization-goal-2026-10-22.md)
+remains active beyond intermediate negative results. The [EDB annotation-only protocol](ssl-synthetic-localization-edb-annotation-qualification-v1.md)
+and separate channel-local contract are committed before acquisition or parsing. Three bounded
+charged phases will acquire annotation/header assets, qualify their semantics/availability, then
+independently reconstruct them. No waveform, annotation payload, model score or fit has been read
+or generated in this new study. Official79subjects versus78published-link components remains
+explicit; all EDB roles remain spent development. Two-channel episode annotations do not create
+twelve-lead pathology masks, and a single10s window may not identify record-relative transient ST.
+Keep all old failures/results, current clinical labels, closed tests and no-push instructions.
+
 22 October matched training COMPLETE and independently verified: [mixed-background localizers](ssl-synthetic-localization-mixed-background-v1-results.md)
 FAIL the prospective scientific rule (9/14). Real held-out AP is 0.029844 versus generated-only
 0.032520; difference -0.002676 [-0.006868, 0.001306], required useful gain +0.01. Real control

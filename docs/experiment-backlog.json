@@ -1799,7 +1799,7 @@
       "kind": "experiment",
       "title": "Test mixed real and generated backgrounds in localization training",
       "question": "Does a fixed mixed-background localizer improve introduced-change transfer beyond generated-only training under matched budgets and held-out editors?",
-      "evidence": "Actual main38 completes all technical/resource gates and exactly replays all three generated-only baselines, but scientific rule fails 9/14. Real held-out mixed AP0.029844 vs generated-only0.032520; difference -0.002676 [-0.006868,0.001306], required mean gain +0.01. Real sham/nuisance top600 decreases about0.156, while generated-family preservation and own amplitude lower-bound checks fail. Independent numerical audit pending.",
+      "evidence": "Actual main38 completes all technical/resource gates and exactly replays all three generated-only baselines, but scientific rule fails 9/14. Real held-out mixed AP0.029844 vs generated-only0.032520; difference -0.002676 [-0.006868,0.001306], required mean gain +0.01. Real sham/nuisance top600 decreases about0.156, while generated-family preservation and own amplitude lower-bound checks fail. Independent40 verifies 768 rows, 51144 metric/report scalars, all2000x348draws and24CPU replays with zero mismatches.",
       "value": 4,
       "clarity": 0.9,
       "gpu_hours": 0.25,
@@ -1807,14 +1807,14 @@
       "build_hours": 3.0,
       "blocked_by": [],
       "status": "done",
-      "notes": "docs/ssl-synthetic-localization-mixed-background-v1-results.md. Fixed40PTB TRAIN patients, original generated40, matched400updates/threefits/Hann-only training; held-out biphasic evaluation reused spent development. No GAN fine-tuning, disease masks, clinical false-positive reduction or population equivalence claim. Preserve 14/15 earlier failure and all historical missing artifacts. No push or automatic successor fitting."
+      "notes": "docs/ssl-synthetic-localization-mixed-background-v1-results.md. Fixed40PTB TRAIN patients, original generated40, matched400updates/threefits/Hann-only training; held-out biphasic evaluation reused spent development. No GAN fine-tuning, disease masks, clinical false-positive reduction or population equivalence claim. Preserve 14/15 earlier failure and all historical missing artifacts. No push or automatic successor fitting. Failed39 input-contract attempt is preserved and counted once; recovery changes only batched-call dispatch/history wrappers. All40 totals1274.365159998CPU/564.452248458GPU-lockseconds."
     },
     {
       "id": "ssl_synthetic_real_abnormality_endpoint_qualification",
       "kind": "repo",
       "title": "Qualify public expert annotations for a real ECG abnormality localization endpoint",
       "question": "Can existing public annotations support a defensible time/lead abnormality endpoint to test transfer from generated numerical supervision?",
-      "evidence": "Mixed-background main38 suppresses high real control responses without improving unfamiliar-change AP; earlier LUDB released-N qualification gives timing landmarks rather than pathology boundaries. Real disease localization remains unvalidated. Independent mixed numerical verification is pending.",
+      "evidence": "Mixed-background main38 suppresses high real control responses without improving unfamiliar-change AP; earlier LUDB released-N qualification gives timing landmarks rather than pathology boundaries. Real disease localization remains unvalidated. Mixed numerical result independently verified with zero mismatches; scientific rule remains FAIL.",
       "value": 5,
       "clarity": 0.8,
       "gpu_hours": 0,

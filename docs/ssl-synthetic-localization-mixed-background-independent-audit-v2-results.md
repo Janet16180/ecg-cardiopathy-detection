@@ -26,7 +26,8 @@ measured tradeoff that does not replace the failed primary/preservation checks.
 Those probabilities are uncalibrated; clinical alarm rates were not evaluated.
 
 All intervals below use2000 shared64-slot draws, seed2026106701, fixed three paired
-fits and fixed donor assignments. Original main35 point values close exactly;
+fits and fixed donor assignments. Original main35 point values are reproduced
+within the frozen1e−12 arithmetic tolerance;
 its earlier seed2026106601 intervals are not substituted for these new draws.
 
 | Training | Evaluation background | Editor | Direct AP | Edited−nuisance AP | Edited−amplitude AP | Edited−donor AP |

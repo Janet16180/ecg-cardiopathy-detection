@@ -4,8 +4,7 @@
 scientific advancement rule, with 9 of 14 checks passing. Real held-out AP is 0.029844 versus
 0.032520 for generated-only training; paired difference -0.002676 [-0.006868, 0.001306].
 Real control top600 responses decrease about 0.156, without improved unfamiliar-change ranking.
-The exact generated-only predecessor replay and every technical/resource gate pass. Independent
-numerical reconstruction is pending; read the [main report](ssl-synthetic-localization-mixed-background-v1-results.md).
+The exact generated-only predecessor replay and every technical/resource gate pass. Independent40 confirms the numerical result with zero mismatches; read the [main report](ssl-synthetic-localization-mixed-background-v1-results.md).
 
 The user's priority remains synthetic generation and localization of suspicious ECG time segments
 and leads. The next proposed step qualifies existing public expert annotations for a defensible
@@ -13,7 +12,7 @@ real-abnormality localization endpoint. Numerical edit masks, LUDB timing landma
 answer-option benchmarks must retain their distinct semantics. No GAN fine-tuning, clinical label
 change, retuning, new classification benchmark or closed test is scheduled by this ranking.
 
-All 38 actual scientific/presentation stages total 1172.911747755 CPU / 564.452248458 GPU-lock
+All 40 actual scientific/presentation stages total 1274.365159998 CPU / 564.452248458 GPU-lock
 seconds; unavailable historical costs and setup/developer QA remain separate. Keep PR67 draft and
 unmerged. The user explicitly requests no push or GitHub runners; all changes stay local.
 The following table is regenerated mechanically from the backlog.

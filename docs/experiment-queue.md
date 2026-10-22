@@ -1,16 +1,17 @@
 # Experiment queue
 
-22 October actual main38 completed on RTX 3090 after committed source/admission and actual-path
-training profile. [Mixed-background training](ssl-synthetic-localization-mixed-background-v1-results.md)
-FAILS its scientific rule (9/14 checks pass): real held-out AP is 0.029844 versus generated-only
-0.032520; paired difference -0.002676 [-0.006868, 0.001306], below the required +0.01 gain.
-Real sham/nuisance top600 responses decrease about 0.156, without improved held-out localization.
-All three generated-only 400-step fits reproduce their predecessor losses/model/Adam exactly.
-Forty fixed PTB TRAIN patients are decoded with official byte checks; no replacements, clinical
-labels or closed tests. Technical/resource gates pass. Independent attempt39 stopped at the checker's batched-input contract; its failure and 35.699429857 CPU seconds remain. No independently
-verified result yet. Actual39 totals 1208.611177612 CPU / 564.452248458 GPU-lock
-seconds; setup/tests/builds separate, unavailable historical costs unknown. No job remains
-running in the main study. The user requests no push/GitHub runners; PR67 stays draft/unmerged.
+22 October matched training COMPLETE and independently verified: [mixed-background localizers](ssl-synthetic-localization-mixed-background-v1-results.md)
+FAIL the prospective scientific rule (9/14). Real held-out AP is 0.029844 versus generated-only
+0.032520; difference -0.002676 [-0.006868, 0.001306], required useful gain +0.01. Real control
+top600 responses decrease about 0.156, without improved unfamiliar-change localization. Three
+400-step generated baselines reproduce every loss/model/Adam value exactly. All resource gates
+pass. Independent40 reconstructs 768 rows, 51,144 metric/report scalars, all 2,000×348 draws and
+24 CPU replays with zero mismatches; max replay difference 3.874302e-7. Failed39 missing-batch
+caller and 35.699429857 CPU seconds remain unchanged and counted once. All40 actual stages total
+1274.365159998 CPU / 564.452248458 GPU-lock seconds; setup/developer checks and missing historical
+costs remain separate. No scientific job remains running. Next proposed is public annotation
+qualification for a real-abnormality endpoint, before GAN fine-tuning or wider training. Clinical
+labels and closed tests stay unchanged. No push/GitHub runners; PR67 stays draft/unmerged.
 
 21 October latest local continuation COMPLETE: [matched background/editor transfer](ssl-synthetic-localization-background-editor-transfer-v1-results.md)
 passes all six prospective fixedB real/held-out numerical-transfer checks. Independent36 checks

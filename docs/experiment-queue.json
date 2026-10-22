@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-22T17:42:24.979733+00:00",
+  "updated_at_utc": "2026-10-22T19:57:00.250042+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -3292,7 +3292,7 @@
       "current_machine_cumulative_gpu_wall_seconds": 524.1993697541766
     },
     "mixed_background_v1": {
-      "status": "main_complete_scientific_fail_audit39_input_contract_failure_preserved",
+      "status": "complete_independently_verified_scientific_fail",
       "protocol": "docs/ssl-synthetic-localization-mixed-background-v1.md",
       "config": "configs/ssl_synthetic_mixed_background_v1.json",
       "protocol_commit": "30300d2",
@@ -3307,7 +3307,7 @@
       "intended_scientific_gates": 14,
       "push_authorized": false,
       "v4_membership_verified": false,
-      "next_action": "Preserve audit39 failure and costs; independently review a separate prospective input-wrapper recovery before numerical rerun. No main score/rule/source change.",
+      "next_action": "Completed matched negative study. Preserve scientificFAIL and failed39 once. Proposed next: separately protocolled public real-abnormality annotation endpoint qualification; no retuning, GAN fine-tuning, closed tests or push scheduled.",
       "admission": "configs/ssl_synthetic_mixed_background_admission_v1.json",
       "admission_commit": "d52dfa2",
       "output_directory": "outputs/ssl_synthetic_localization/mixed_background_v1",
@@ -3322,8 +3322,8 @@
         0.0013061679649567586
       ],
       "baseline_replay_all_exact": true,
-      "current_machine_stages": 39,
-      "current_machine_cumulative_cpu_seconds": 1208.6111776120001,
+      "current_machine_stages": 40,
+      "current_machine_cumulative_cpu_seconds": 1274.365159998,
       "current_machine_cumulative_gpu_wall_seconds": 564.4522484582849,
       "failed_audits": [
         {
@@ -3337,7 +3337,17 @@
           "gpu_wall_seconds": 0,
           "resource_gates_passed": true
         }
-      ]
+      ],
+      "independent_audit_required": true,
+      "independent_audit_passed": true,
+      "independent_audit_directory": "outputs/ssl_synthetic_localization/mixed_background_v1/independent_audit_v2",
+      "independent_report": "docs/ssl-synthetic-localization-mixed-background-independent-audit-v2-results.md",
+      "science_review": "docs/ssl-synthetic-localization-mixed-background-output-science-review-v1.md",
+      "audit_admission": "configs/ssl_synthetic_mixed_background_audit_admission_v2.json",
+      "audit_summary_sha256": "4f2f5e4943c454f7aa45572cfcafc512781702a53fd25a1dc23a011ccbba483a",
+      "audit_ledger_sha256": "0f7def28c1f5c5135e6096be38ca0d57826d5ab4d1d3e90acc7953a573a90feb",
+      "independent_audit_completed": true,
+      "handoff": "docs/ssl-synthetic-localization-mixed-training-handoff-2026-10-22.md"
     }
   },
   "experiment_041_cpu_screening": {

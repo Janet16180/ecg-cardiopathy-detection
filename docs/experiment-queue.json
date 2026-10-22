@@ -3292,7 +3292,7 @@
       "current_machine_cumulative_gpu_wall_seconds": 524.1993697541766
     },
     "mixed_background_v1": {
-      "status": "main_complete_scientific_fail_independent_audit_pending",
+      "status": "main_complete_scientific_fail_audit39_input_contract_failure_preserved",
       "protocol": "docs/ssl-synthetic-localization-mixed-background-v1.md",
       "config": "configs/ssl_synthetic_mixed_background_v1.json",
       "protocol_commit": "30300d2",
@@ -3307,7 +3307,7 @@
       "intended_scientific_gates": 14,
       "push_authorized": false,
       "v4_membership_verified": false,
-      "next_action": "Execute separately committed bounded independent reconstruction; preserve failed scientific rule. No retuning, push or closed tests.",
+      "next_action": "Preserve audit39 failure and costs; independently review a separate prospective input-wrapper recovery before numerical rerun. No main score/rule/source change.",
       "admission": "configs/ssl_synthetic_mixed_background_admission_v1.json",
       "admission_commit": "d52dfa2",
       "output_directory": "outputs/ssl_synthetic_localization/mixed_background_v1",
@@ -3322,9 +3322,22 @@
         0.0013061679649567586
       ],
       "baseline_replay_all_exact": true,
-      "current_machine_stages": 38,
-      "current_machine_cumulative_cpu_seconds": 1172.911747755,
-      "current_machine_cumulative_gpu_wall_seconds": 564.4522484582849
+      "current_machine_stages": 39,
+      "current_machine_cumulative_cpu_seconds": 1208.6111776120001,
+      "current_machine_cumulative_gpu_wall_seconds": 564.4522484582849,
+      "failed_audits": [
+        {
+          "stage": 39,
+          "directory": "outputs/ssl_synthetic_localization/mixed_background_v1/independent_audit_v1",
+          "receipt_sha256": "f5436ad157a203dfa310ef60191ec0f6130147fa53e8016830c95e52625df434",
+          "ledger_sha256": "309ee61bd827362b26f247c60082f9f9ff375efaa656c8f6136c21248b6bd86a",
+          "error": "Require float32 batched actual native-rate model inputs",
+          "cpu_seconds": 35.699429857,
+          "wall_seconds": 38.49024625914171,
+          "gpu_wall_seconds": 0,
+          "resource_gates_passed": true
+        }
+      ]
     }
   },
   "experiment_041_cpu_screening": {

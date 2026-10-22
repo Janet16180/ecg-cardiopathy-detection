@@ -88,7 +88,7 @@ Local root: `outputs/ssl_synthetic_localization/mixed_background_v1/`. Real iden
 
 The unchanged released generator remains Pulse2Pulse, Hub `deepsynthbody/deepfake_ecg` revision `262e0e67c0101cd4989d7c2f66f16d6d54756e70`, weight SHA-256 `e646eae78b7c9e48db0d38f094059ab89b53479bbc174a900ae3086517761827` and reviewed MIT architecture revision `f28e4b792e79c503b8b7e0912be9d304a3a7177b`. Its prior generated bank is reused. The checkpoint's availability and engineering qualification do not establish clinical realism or controllable disease.
 
-An independent source/arithmetic checker is being finalized under its own prospective CPU budget, without changing the executed main. Until its actual output passes, these main results remain provisionally verified only by their execution guards. Independent arithmetic/source authorship is distinct from independent physical observation of the original run.
+Independent attempt 39 stopped at `Require float32 batched actual native-rate model inputs`. The saved failure and sources remain at `independent_audit_v1/`; no main output is altered. It consumed 35.699429857 CPU / 38.490246259 wall seconds, zero GPU, peak RSS 980,168,704 bytes, with every resource gate passing. Cumulative actual39 is 1208.611177612 CPU / 564.452248458 GPU-lock seconds. A separately committed checker input-wrapper recovery is required; until it passes, these findings remain provisional. Independent arithmetic/source authorship is distinct from independent physical observation of the original run.
 
 ## What this establishes and the next question
 

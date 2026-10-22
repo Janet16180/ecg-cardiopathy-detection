@@ -7,8 +7,8 @@ FAILS its scientific rule (9/14 checks pass): real held-out AP is 0.029844 versu
 Real sham/nuisance top600 responses decrease about 0.156, without improved held-out localization.
 All three generated-only 400-step fits reproduce their predecessor losses/model/Adam exactly.
 Forty fixed PTB TRAIN patients are decoded with official byte checks; no replacements, clinical
-labels or closed tests. Technical/resource gates pass. Independent reconstruction is pending;
-these are provisional main findings. Actual38 totals 1172.911747755 CPU / 564.452248458 GPU-lock
+labels or closed tests. Technical/resource gates pass. Independent attempt39 stopped at the checker's batched-input contract; its failure and 35.699429857 CPU seconds remain. No independently
+verified result yet. Actual39 totals 1208.611177612 CPU / 564.452248458 GPU-lock
 seconds; setup/tests/builds separate, unavailable historical costs unknown. No job remains
 running in the main study. The user requests no push/GitHub runners; PR67 stays draft/unmerged.
 

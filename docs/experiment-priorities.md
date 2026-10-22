@@ -1,17 +1,27 @@
 # Experiment priorities
 
-21 October2026 local continuation is complete: matched real/generated backgrounds and original/held-out editors pass the six prospective fixedB real/held-out introduced-change transfer checks. Independent36 verifies815829new numerical scalars,96CPUreplays and2000×352draw entries with zero mismatches. DirectAP0.032520 remains modest; amplitude-gain lower bound0.000416452 is near zero. All arms loseAPonreal and held-out conditions descriptively. No disease localization or physiological validation follows; the original14/15FAIL and high uncalibrated control responses remain.
+22 October 2026: the executed matched mixed-background localizer study fails its prospective
+scientific advancement rule, with 9 of 14 checks passing. Real held-out AP is 0.029844 versus
+0.032520 for generated-only training; paired difference -0.002676 [-0.006868, 0.001306].
+Real control top600 responses decrease about 0.156, without improved unfamiliar-change ranking.
+The exact generated-only predecessor replay and every technical/resource gate pass. Independent
+numerical reconstruction is pending; read the [main report](ssl-synthetic-localization-mixed-background-v1-results.md).
 
-Read [results](ssl-synthetic-localization-background-editor-transfer-v1-results.md), [independent verification](ssl-synthetic-localization-background-editor-transfer-independent-audit-v1-results.md), [scientific interpretation](ssl-synthetic-localization-background-editor-transfer-output-science-review-v1.md) and [local handoff](ssl-synthetic-localization-local-transfer-handoff-2026-10-21.md).
+The user's priority remains synthetic generation and localization of suspicious ECG time segments
+and leads. The next proposed step qualifies existing public expert annotations for a defensible
+real-abnormality localization endpoint. Numerical edit masks, LUDB timing landmarks and sparse
+answer-option benchmarks must retain their distinct semantics. No GAN fine-tuning, clinical label
+change, retuning, new classification benchmark or closed test is scheduled by this ranking.
 
-User priority overrides this generic ranking: continue synthetic generation/localization. The next proposed hypothesis tests generated-only versus mixed real/generated LOCALIZER training before adapting Pulse2Pulse, with verified real TRAIN/EVAL patient separation, held-out target construction, matched budgets and actual GPU training profile. No fit/closed test is scheduled. A prospective training profile still must cover complete persistence/whole-stage overhead; inference/presentation passes do not waive it.
-
-User explicitly requests NO PUSH to avoid GitHub runners. Commits/results stay local; PR67 remains draft/unmerged and the hosted advisor page retains its earlier published version. All37actual numerical/presentation stages total1076.776316196CPU/524.199369754GPU-lockseconds; development/setup/tests and missing historical costs remain separate. The following table is regenerated mechanically from the backlog.
+All 38 actual scientific/presentation stages total 1172.911747755 CPU / 564.452248458 GPU-lock
+seconds; unavailable historical costs and setup/developer QA remain separate. Keep PR67 draft and
+unmerged. The user explicitly requests no push or GitHub runners; all changes stay local.
+The following table is regenerated mechanically from the backlog.
 
 | Rank | ID | Kind | Candidate | Value | Clarity | Hours | Score | Waiting on |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | --- |
-| 1 | cpc_validation_accounting040 | repo | Avoid repeated full-source validation in future CPC stage gates | 3 | 0.9 | 1.7 | 2.07 | - |
-| 2 | ssl_synthetic_mixed_background_localizer_training | experiment | Test mixed real and generated backgrounds in localization training | 4 | 0.9 | 3.5 | 1.92 | - |
+| 1 | ssl_synthetic_real_abnormality_endpoint_qualification | repo | Qualify public expert annotations for a real ECG abnormality localization endpoint | 5 | 0.8 | 3.2 | 2.22 | - |
+| 2 | cpc_validation_accounting040 | repo | Avoid repeated full-source validation in future CPC stage gates | 3 | 0.9 | 1.7 | 2.07 | - |
 | 3 | training_io_local_prefetch | repo | Serve training caches from local disk with read-ahead | 3 | 0.9 | 3.7 | 1.68 | - |
 | 4 | cpc_recurrent_checkpoint_contract | repo | Require exact recurrent checkpoint recovery in future CPC runners | 2 | 0.9 | 1.2 | 1.63 | - |
 | 5 | normal_score_confounders | experiment | Does the normal-reference score track noise, device, age, sex or heart rate? | 3 | 0.8 | 3.0 | 1.39 | - |

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-21",
+  "updated": "2026-10-22",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -1799,15 +1799,30 @@
       "kind": "experiment",
       "title": "Test mixed real and generated backgrounds in localization training",
       "question": "Does a fixed mixed-background localizer improve introduced-change transfer beyond generated-only training under matched budgets and held-out editors?",
-      "evidence": "Verified matchedsource/editor study passes narrowrealheldoutBconjunction, but realAP0.032520vs generated0.073252 and high realcontrolresponses remain. Bothsource andedit-related gaps suggest a directlocalizer-background training comparison beforeadaptingtheGAN.",
+      "evidence": "Actual main38 completes all technical/resource gates and exactly replays all three generated-only baselines, but scientific rule fails 9/14. Real held-out mixed AP0.029844 vs generated-only0.032520; difference -0.002676 [-0.006868,0.001306], required mean gain +0.01. Real sham/nuisance top600 decreases about0.156, while generated-family preservation and own amplitude lower-bound checks fail. Independent numerical audit pending.",
       "value": 4,
       "clarity": 0.9,
       "gpu_hours": 0.25,
       "cpu_hours": 0.25,
       "build_hours": 3.0,
       "blocked_by": [],
+      "status": "done",
+      "notes": "docs/ssl-synthetic-localization-mixed-background-v1-results.md. Fixed40PTB TRAIN patients, original generated40, matched400updates/threefits/Hann-only training; held-out biphasic evaluation reused spent development. No GAN fine-tuning, disease masks, clinical false-positive reduction or population equivalence claim. Preserve 14/15 earlier failure and all historical missing artifacts. No push or automatic successor fitting."
+    },
+    {
+      "id": "ssl_synthetic_real_abnormality_endpoint_qualification",
+      "kind": "repo",
+      "title": "Qualify public expert annotations for a real ECG abnormality localization endpoint",
+      "question": "Can existing public annotations support a defensible time/lead abnormality endpoint to test transfer from generated numerical supervision?",
+      "evidence": "Mixed-background main38 suppresses high real control responses without improving unfamiliar-change AP; earlier LUDB released-N qualification gives timing landmarks rather than pathology boundaries. Real disease localization remains unvalidated. Independent mixed numerical verification is pending.",
+      "value": 5,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.25,
+      "build_hours": 3,
+      "blocked_by": [],
       "status": "proposed",
-      "notes": "Freeze a new protocol/cohort/primarydecision before scores; sameobjective/architecture/initializations/updates/presentationbudget, generated-only vs mixedreal/generated. Verify real TRAIN/EVAL patient separation and exclude every currentevaluationrecord from fitting; generator-cohortmembershipunknown, so onlylocalizer seed/arraydisjointness can be verified forsynthetics. Use permittedtrainingcohorts, neverSPHtraining/closedtests/MIMIClabels. Hold numericaleditorfamilyout, retain nuisance/donorcontrols/allfits/modes, profile actualGPUtrainingpath/sharedlock/resources. No GAN fine-tuning ortraining scheduledbythisentry. Keep outputs local; do notpush."
+      "notes": "First review public source definitions, licensing/access, annotation semantics and patient/evaluation role, under a separately committed bounded feasibility protocol before raw annotation scans or model scores. Preserve existing clinical label definitions and all closed-test restrictions; no clinician recruitment prerequisite. Wave boundaries, exact N landmarks, whole-record diagnoses and sparse option-conditioned benchmark answers are not automatically dense disease masks. Keep synthetic-to-real localization as the scientific question; no replacement classification benchmark, outcome-driven window widening, GAN tuning or unprofiled training. Do not reuse another checkout outputs. All records/maps stay local; no push."
     }
   ]
 }

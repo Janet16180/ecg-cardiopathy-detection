@@ -109,3 +109,69 @@ def test_generated_control_cells_remain_exploratory() -> None:
     statistics, _ = mixed.summarize(rows, {"bootstrap": {"seed": 2026106701, "draws": 2000}})
     assert statistics["scientific_passed"]
     assert statistics["endpoints"]["mixed_minus_generated__generated__nuisance__top600_mean"]["mean"] > 0.7
+
+
+def test_missing_source_roster_stops_preflight_before_any_array(tmp_path, monkeypatch) -> None:
+    """An incomplete executable admission must not consume a scientific fitting attempt."""
+    import json
+
+    from ecg_experiment import ssl_synthetic_mixed_background_run as execution
+
+    (tmp_path / "config.json").write_text("{}")
+    (tmp_path / "admission.json").write_text(json.dumps({"source_sha256": {}, "input_sha256": {}}))
+    monkeypatch.setattr(
+        execution,
+        "from_stored",
+        lambda name: tmp_path / ("config.json" if name == execution.CONFIG else name),
+    )
+    with pytest.raises(ValueError, match="roster incomplete"):
+        execution.preflight("admission.json")
+
+
+def test_selected_record_failure_retains_identity_without_replacement(tmp_path, monkeypatch) -> None:
+    """The failed fixed patient/slot survives a decode error without advancing to another record."""
+    import json
+
+    from ecg_experiment import ssl_synthetic_mixed_background_data as data
+
+    record = {
+        "ecg_id": "1",
+        "patient_id": "2",
+        "filename_hr": "records500/00000/00001_hr",
+        "geometry_index": 40,
+    }
+    monkeypatch.setattr(data, "checked_raw", lambda root, name: tmp_path / "00001_hr.hea")
+
+    def failed_read(record, scratch):
+        raise ValueError("Artificial structural header failure")
+
+    monkeypatch.setattr(data.structural, "read_signal", failed_read)
+    with pytest.raises(ValueError, match="Artificial structural header"):
+        data.decode_real(record, {"raw_alias": "data/raw/ptb-xl/1.0.3"}, tmp_path)
+    retained = json.loads((tmp_path / "training_record_receipts/slot_40_failure.json").read_text())
+    assert retained["record"] == record
+    assert retained["replacement_selected"] is False
+    assert not (tmp_path / "training_record_receipts/slot_40_passed.json").exists()
+
+
+def test_baseline_closure_checks_complete_adam_options(tmp_path) -> None:
+    """Equal final weights and losses cannot hide an altered optimizer specification."""
+    import torch
+
+    from ecg_experiment import ssl_synthetic_mixed_background_training as training
+
+    model = torch.nn.Linear(2, 2)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001, foreach=False, fused=False)
+    parent, current = tmp_path / "parent", tmp_path / "current"
+    parent.mkdir()
+    current.mkdir()
+    for directory in [parent, current]:
+        np.save(directory / "losses.npy", np.ones(400))
+        np.save(directory / "loss_components.npy", np.ones((400, 5)))
+        torch.save(model.state_dict(), directory / "final_state.pt")
+    torch.save(optimizer.state_dict(), parent / "optimizer.pt")
+    altered = optimizer.state_dict()
+    altered["param_groups"][0]["lr"] = 0.002
+    torch.save(altered, current / "optimizer.pt")
+    with pytest.raises(ValueError, match="full400-loss/component/model/Adam replay differs"):
+        training.baseline_closure(current, parent, model)

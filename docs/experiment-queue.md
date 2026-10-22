@@ -1,13 +1,16 @@
 # Experiment queue
 
-22 October local continuation authorized for up to eight hours or important progress. The
-[mixed-background localizer protocol](ssl-synthetic-localization-mixed-background-v1.md) is
-committed at30300d2, followed by reviewed metadata-only cohort builder6493704. Exactly40real
-PTB-XL TRAIN patients are selected from10550eligible patients after original-role and patient-wide
-fold8/9/10 exclusions, with no replacement. No selected waveform has been decoded; no new fit
-or score exists yet. Missing v3/v4 manifests remain absent; this is an explicitly new supervised
-PTB-only cohort, not a recreated pretraining cohort. Exact B replay, source admission and a full
-CUDA training profile gate the matched3-fit comparison. User forbids push/GitHub runners.
+22 October actual main38 completed on RTX 3090 after committed source/admission and actual-path
+training profile. [Mixed-background training](ssl-synthetic-localization-mixed-background-v1-results.md)
+FAILS its scientific rule (9/14 checks pass): real held-out AP is 0.029844 versus generated-only
+0.032520; paired difference -0.002676 [-0.006868, 0.001306], below the required +0.01 gain.
+Real sham/nuisance top600 responses decrease about 0.156, without improved held-out localization.
+All three generated-only 400-step fits reproduce their predecessor losses/model/Adam exactly.
+Forty fixed PTB TRAIN patients are decoded with official byte checks; no replacements, clinical
+labels or closed tests. Technical/resource gates pass. Independent reconstruction is pending;
+these are provisional main findings. Actual38 totals 1172.911747755 CPU / 564.452248458 GPU-lock
+seconds; setup/tests/builds separate, unavailable historical costs unknown. No job remains
+running in the main study. The user requests no push/GitHub runners; PR67 stays draft/unmerged.
 
 21 October latest local continuation COMPLETE: [matched background/editor transfer](ssl-synthetic-localization-background-editor-transfer-v1-results.md)
 passes all six prospective fixedB real/held-out numerical-transfer checks. Independent36 checks

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-21T23:29:58.178089+00:00",
+  "updated_at_utc": "2026-10-22T17:42:24.979733+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -3292,7 +3292,7 @@
       "current_machine_cumulative_gpu_wall_seconds": 524.1993697541766
     },
     "mixed_background_v1": {
-      "status": "protocol_committed_fixed_metadata_cohort_selected_implementation_in_progress",
+      "status": "main_complete_scientific_fail_independent_audit_pending",
       "protocol": "docs/ssl-synthetic-localization-mixed-background-v1.md",
       "config": "configs/ssl_synthetic_mixed_background_v1.json",
       "protocol_commit": "30300d2",
@@ -3301,13 +3301,30 @@
       "cohort_sha256": "37ed98d9d1da0f4f521a52f947fbd597808a94e8851038c4bf9b858219a19104",
       "selected_real_training_patients": 40,
       "eligible_distinct_train_patients": 10550,
-      "real_waveform_decodes": 0,
-      "training_started": false,
-      "scientific_scores_computed": false,
+      "real_waveform_decodes": 40,
+      "training_started": true,
+      "scientific_scores_computed": true,
       "intended_scientific_gates": 14,
       "push_authorized": false,
       "v4_membership_verified": false,
-      "next_action": "Complete independent source/admission review and actual-path CUDA training profile; replay all generated baselines exactly before mixed model evaluation."
+      "next_action": "Execute separately committed bounded independent reconstruction; preserve failed scientific rule. No retuning, push or closed tests.",
+      "admission": "configs/ssl_synthetic_mixed_background_admission_v1.json",
+      "admission_commit": "d52dfa2",
+      "output_directory": "outputs/ssl_synthetic_localization/mixed_background_v1",
+      "results_report": "docs/ssl-synthetic-localization-mixed-background-v1-results.md",
+      "scientific_gates_passed": 9,
+      "scientific_gates_total": 14,
+      "scientific_passed": false,
+      "technical_passed": true,
+      "primary_ap_difference": -0.0026761154382608657,
+      "primary_ci95": [
+        -0.0068679451952205215,
+        0.0013061679649567586
+      ],
+      "baseline_replay_all_exact": true,
+      "current_machine_stages": 38,
+      "current_machine_cumulative_cpu_seconds": 1172.911747755,
+      "current_machine_cumulative_gpu_wall_seconds": 564.4522484582849
     }
   },
   "experiment_041_cpu_screening": {

@@ -1814,7 +1814,7 @@
       "kind": "repo",
       "title": "Qualify public expert annotations for a real ECG abnormality localization endpoint",
       "question": "Can existing public annotations support a defensible time/lead abnormality endpoint to test transfer from generated numerical supervision?",
-      "evidence": "Mixed-background main38 suppresses high real control responses without improving unfamiliar-change AP; earlier LUDB released-N qualification gives timing landmarks rather than pathology boundaries. Real disease localization remains unvalidated. Mixed numerical result independently verified with zero mismatches; scientific rule remains FAIL.",
+      "evidence": "Actual44 completes90rawWFDB/filteredviews but engineeringFAIL89records3030issues0STpositive239reference129361UNKNOWN; terminalNUL/qualitybit recovery requires independent v1 reconstruction and new prospective source-backed interpretation.",
       "value": 5,
       "clarity": 0.8,
       "gpu_hours": 0,
@@ -1822,7 +1822,7 @@
       "build_hours": 3,
       "blocked_by": [],
       "status": "in_progress",
-      "notes": "First review public source definitions, licensing/access, annotation semantics and patient/evaluation role, under a separately committed bounded feasibility protocol before raw annotation scans or model scores. Preserve existing clinical label definitions and all closed-test restrictions; no clinician recruitment prerequisite. Wave boundaries, exact N landmarks, whole-record diagnoses and sparse option-conditioned benchmark answers are not automatically dense disease masks. Keep synthetic-to-real localization as the scientific question; no replacement classification benchmark, outcome-driven window widening, GAN tuning or unprofiled training. Do not reuse another checkout outputs. All records/maps stay local; no push. Protocol da7fe80 now commits EDB annotation/header-only acquisition, qualification and independent audit from actual40; channel-local contract and reference-context limitations committed separately before parsing. No payload/score result yet."
+      "notes": "First review public source definitions, licensing/access, annotation semantics and patient/evaluation role, under a separately committed bounded feasibility protocol before raw annotation scans or model scores. Preserve existing clinical label definitions and all closed-test restrictions; no clinician recruitment prerequisite. Wave boundaries, exact N landmarks, whole-record diagnoses and sparse option-conditioned benchmark answers are not automatically dense disease masks. Keep synthetic-to-real localization as the scientific question; no replacement classification benchmark, outcome-driven window widening, GAN tuning or unprofiled training. Do not reuse another checkout outputs. All records/maps stay local; no push. Protocol da7fe80 now commits EDB annotation/header-only acquisition, qualification and independent audit from actual40; channel-local contract and reference-context limitations committed separately before parsing. No payload/score result yet. Renewed24hourwindow23October18:03UTCthrough24October18:03UTC. Acquisition43PASS all184assets; v1FAILpreserved. No waveform/modeloperation."
     }
   ]
 }

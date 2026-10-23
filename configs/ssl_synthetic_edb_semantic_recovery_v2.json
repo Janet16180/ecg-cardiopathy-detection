@@ -1,0 +1,117 @@
+{
+  "study_id": "ssl_synthetic_edb_semantic_recovery_v2",
+  "protocol": "docs/ssl-synthetic-localization-edb-semantic-recovery-v2.md",
+  "scientific_review": "docs/ssl-synthetic-localization-edb-format-scientific-review-v2.md",
+  "base_config": "configs/ssl_synthetic_edb_annotation_qualification_v1.json",
+  "contract": "configs/ssl_synthetic_edb_annotation_contract_v1.json",
+  "execution": "configs/ssl_synthetic_edb_qualification_execution_v2.json",
+  "released_roster_correction": "configs/ssl_synthetic_edb_acquisition_recovery_v3.json",
+  "semantic_recovery": {
+    "id": "ssl_synthetic_edb_semantic_recovery_v2",
+    "episode_terminal_nul": "remove_exactly_one_terminal_NUL_only_if_remaining_bytes_contain_no_NUL",
+    "definitions": "raw_unchanged",
+    "quality_policy": "two_channel_WFDB_bits_mask_0x33_unreadable_precedes_noisy"
+  },
+  "episode_semantics": {
+    "type_codes": [
+      18,
+      19,
+      22
+    ],
+    "NOTE_scope": "existing_narrow_episode_candidates_outside_definitions",
+    "raw_canonical_and_WFDB_views": "unchanged_byte_exact",
+    "unrelated_AUX": "raw_unchanged",
+    "case_folding": false,
+    "trim_whitespace": false,
+    "embedded_or_multiple_NUL": "record_issue_unknown128",
+    "all_other_grammar": "unchanged"
+  },
+  "quality_policy_details": {
+    "allowed_mask": 51,
+    "negative_subtypes": "record_issue_unknown_span",
+    "out_of_domain_bits": "record_issue_unknown_span",
+    "unreadable_masks": [
+      16,
+      32
+    ],
+    "noise_masks": [
+      1,
+      2
+    ],
+    "precedence": [
+      "unreadable",
+      "noisy",
+      "clean"
+    ],
+    "subtypes": {
+      "0": "cc",
+      "1": "nc",
+      "2": "cn",
+      "3": "nn",
+      "16": "uc",
+      "17": "uc",
+      "18": "un",
+      "19": "un",
+      "32": "cu",
+      "33": "nu",
+      "34": "cu",
+      "35": "nu",
+      "48": "uu",
+      "49": "uu",
+      "50": "uu",
+      "51": "uu"
+    },
+    "initial_state": "unknown",
+    "same_sample_update": "original_event_order",
+    "strict_clean_eligibility": "unchanged"
+  },
+  "assets": {
+    "count": 184,
+    "reuse": "exact_acquisition_v3_admitted_assets",
+    "requests": 0
+  },
+  "records": 90,
+  "components": 79,
+  "roles_unchanged": true,
+  "role_file": "outputs/ssl_synthetic_localization/edb_annotation_qualification_v1/acquisition_v3/record_roles.json",
+  "role_file_sha256": "10e2aa75f5e433197bc4ad52b897e3abe05825ae8ff33b2d76dc175fb4ac0283",
+  "v1_summary_sha256": "2afa87395df76b7de980edb684d63deaa58adf42ffb46c98ca064cee12755343",
+  "v1_engineering_failure_preserved": true,
+  "v1_independent_audit_required_before_execution": true,
+  "latest_actual_ledger_literal_admission_required": true,
+  "source_runtime_asset_admission_before_real_parse": true,
+  "resources": {
+    "qualification": {
+      "cpu_seconds": 120,
+      "wall_seconds": 300,
+      "rss_bytes": 2147483648,
+      "output_bytes": 16777216
+    },
+    "independent_verification": {
+      "cpu_seconds": 120,
+      "wall_seconds": 300,
+      "rss_bytes": 2147483648,
+      "output_bytes": 16777216
+    }
+  },
+  "cpu_threads": 1,
+  "terminal_reserve_seconds": 2,
+  "terminal_reserve_bytes": 1048576,
+  "primary_array_shape": [
+    90,
+    2,
+    720
+  ],
+  "record_issue": "all_unknown_reason128_overall_engineering_fail",
+  "all_other_contracts": "unchanged",
+  "each_actual_cost_once": true,
+  "new_waveform_decodes": 0,
+  "gpu_operations": 0,
+  "new_model_scores": 0,
+  "new_training_updates": 0,
+  "new_generator_forwards": 0,
+  "clinical_label_change": false,
+  "all_roles_spent_development": true,
+  "push_authorized": false,
+  "automatic_merge_authorized": false
+}

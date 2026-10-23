@@ -222,3 +222,26 @@ def test_terminal_phase_counters_and_prior_are_explicit(tmp_path, explicit_phase
     assert ledger["current_machine_stages"] == 42
     assert ledger["current_machine_cumulative_cpu_seconds"] == 10.0 + ledger["cpu_seconds"]
     assert ledger["current_machine_cumulative_gpu_wall_seconds"] == 20.0
+
+
+def test_terminal_enumeration_failure_preserves_failed_ledger(tmp_path, monkeypatch):
+    """A failed final byte enumeration retains measured costs and cannot pass admission."""
+    state = context(tmp_path)
+    prior = {
+        "current_machine_stages": 40,
+        "current_machine_cumulative_cpu_seconds": 10.0,
+        "current_machine_cumulative_gpu_wall_seconds": 20.0,
+    }
+
+    def broken_enumeration(self, pattern):
+        raise OSError("Artificial final byte enumeration failure")
+
+    monkeypatch.setattr(type(tmp_path), "rglob", broken_enumeration)
+    ledger = acq.finish(state, {"status": "passed"}, prior)
+    assert ledger["receipt"] == "finalization_failure.json"
+    assert not ledger["technical_passed"]
+    assert not ledger["resource_gates"]["output"]
+    assert ledger["output_bytes_before_terminal_ledger"] is None
+    assert ledger["current_machine_stages"] == 41
+    assert ledger["current_machine_cumulative_cpu_seconds"] == 10.0 + ledger["cpu_seconds"]
+    assert json.loads((tmp_path / ledger["receipt"]).read_text())["finalization_failure"]

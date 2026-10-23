@@ -417,9 +417,23 @@ def finish(context: dict[str, Any], summary: dict[str, Any], prior: dict[str, An
         new_model_scores=0,
         new_training_updates=0,
     )
-    write_new(root / "summary.json", summary)
-    receipt_hash = sha256_file(root / "summary.json")
-    retained = sum(p.stat().st_size for p in root.rglob("*") if p.is_file())
+    receipt = "summary.json"
+    retained = None
+    try:
+        write_new(root / receipt, summary)
+        receipt_hash = sha256_file(root / receipt)
+        retained = sum(p.stat().st_size for p in root.rglob("*") if p.is_file())
+    except Exception as error:
+        receipt = "finalization_failure.json"
+        summary = {
+            "status": "failed",
+            "error_type": type(error).__name__,
+            "error": str(error),
+            "finalization_failure": True,
+            "retained_byte_count_exact": False,
+        }
+        write_new(root / receipt, summary)
+        receipt_hash = sha256_file(root / receipt)
     cpu = time.process_time() - context["cpu_start"]
     wall = time.perf_counter() - context["wall_start"]
     rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024
@@ -427,13 +441,13 @@ def finish(context: dict[str, Any], summary: dict[str, Any], prior: dict[str, An
         "cpu": cpu <= limits["cpu_seconds"] - 2,
         "wall": wall <= limits["wall_seconds"] - 2,
         "rss": rss <= limits["rss_bytes"],
-        "output": retained <= limits["output_bytes"] - 1048576,
+        "output": retained is not None and retained <= limits["output_bytes"] - 1048576,
         "network": context["received_bytes"] <= context["config"]["source"]["received_payload_bytes"],
     }
     verified = prior is not None
     ledger = {
         "stage": context.get("stage", "edb_annotation_acquisition_v1"),
-        "receipt": "summary.json",
+        "receipt": receipt,
         "sha256": receipt_hash,
         "cpu_seconds": cpu,
         "wall_seconds": wall,

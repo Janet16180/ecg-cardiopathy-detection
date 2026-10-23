@@ -3350,7 +3350,7 @@
       "handoff": "docs/ssl-synthetic-localization-mixed-training-handoff-2026-10-22.md"
     },
     "edb_annotation_qualification_v1": {
-      "status": "main_complete_engineering_failed_independent_audit_pending",
+      "status": "complete_independently_audited_engineering_failed",
       "protocol": "docs/ssl-synthetic-localization-edb-annotation-qualification-v1.md",
       "configuration": "configs/ssl_synthetic_edb_annotation_qualification_v1.json",
       "protocol_commit": "da7fe80",
@@ -3376,7 +3376,7 @@
       "frozen_document_linkage_components": 78,
       "biological_identity_verified": false,
       "push_authorized": false,
-      "next_action": "Independently reconstruct frozen v1FAIL; source-review terminalNUL and quality-bit semantics before prospectively admitted recovery. No waveform/model operation.",
+      "next_action": "Execute separately committed semantic recovery054cc38 only after literal source/asset/latest-ledger admission; preserve independent confirmation of v1FAIL.",
       "acquisition_report": "docs/ssl-synthetic-localization-edb-acquisition-v3-results.md",
       "acquisition_admission": "configs/ssl_synthetic_edb_acquisition_admission_v3.json",
       "acquisition_directory": "outputs/ssl_synthetic_localization/edb_annotation_qualification_v1/acquisition_v3",
@@ -3389,7 +3389,7 @@
         41,
         42
       ],
-      "latest_actual_stage": 44,
+      "latest_actual_stage": 45,
       "main_report": "docs/ssl-synthetic-localization-edb-qualification-v1-results.md",
       "main_directory": "outputs/ssl_synthetic_localization/edb_annotation_qualification_v1/qualification_v1",
       "main_summary_sha256": "2afa87395df76b7de980edb684d63deaa58adf42ffb46c98ca064cee12755343",
@@ -3400,7 +3400,14 @@
       "strict_ST_positive_windows": 0,
       "strict_reference_windows": 239,
       "independent_audit_required": true,
-      "independent_audit_completed": false
+      "independent_audit_completed": true,
+      "independent_audit_passed": true,
+      "independent_mismatches": 0,
+      "independent_report": "docs/ssl-synthetic-localization-edb-independent-audit-v1-results.md",
+      "independent_directory": "outputs/ssl_synthetic_localization/edb_annotation_qualification_v1/independent_audit_v1",
+      "independent_summary_sha256": "de16a64e1271554307c7c99d850fc98e3805f2a8b9e2a5db3cb095b919e377e1",
+      "independent_ledger_sha256": "c20340a94f3cf4a2dccf56567b0baa028d3e14f4216745fce0cca6eb7b2caa00",
+      "combined_annotation_qualification": false
     }
   },
   "experiment_041_cpu_screening": {

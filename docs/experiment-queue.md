@@ -1,5 +1,13 @@
 # Experiment queue
 
+23October: independent EDB audit actual45PASS90records/zero mismatches, including
+129600labels+129600reasons,802909canonical events and3030issues. [Independent report](ssl-synthetic-localization-edb-independent-audit-v1-results.md).
+Combined engineering qualification remainsFAIL. AllresourcegatesPASS; cumulative45
+1287.186193435CPU/564.452248458GPU-lockseconds. Source-backed terminal-NUL/quality-bit
+recovery protocol054cc38 nowcommitted before any v2parse; same184assets/90records/
+79components/windowrules/roles. No waveform/modeloperation or clinicalclaim.
+
+
 23October18:03UTC: user renews the autonomous window through24October18:03UTC,
 same synthetic-generation/localization objective; no push/merge. Actual44main complete
 but annotation engineering FAIL:89/90records,3030issues,0STpositive/239reference/

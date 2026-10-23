@@ -1,0 +1,38 @@
+{
+  "study_id": "ssl_synthetic_edb_annotation_acquisition_v1",
+  "source_sha256": {
+    "configs/ssl_synthetic_edb_annotation_contract_v1.json": "ca226470af897218e733a24ee09e05d717aa8546e03c82867127abf3e3861ffb",
+    "configs/ssl_synthetic_edb_annotation_qualification_v1.json": "bf6b6bd235f0ca04ad93e3cbe6b0c7216592b04c577be2b06814b6c4690273ea",
+    "docs/ssl-synthetic-localization-edb-annotation-contract-v1.md": "b40fafb213687bce02e503efa8647f1ff4e0dbf1c5f8c6eab75c746c5f2e977c",
+    "docs/ssl-synthetic-localization-edb-annotation-qualification-v1.md": "07007cb933cbed55a1455d5581eac917f89e0a077da2065c6edca75be1dc99be",
+    "docs/ssl-synthetic-localization-edb-reference-context-review-v1.md": "28dbb86d014bae8cf79d2b8228d1a0998cbd5f077978943e641c68a897b4d522",
+    "docs/ssl-synthetic-localization-public-annotation-scientific-review-v1.md": "767bb24909c3c579895bdc78fbac1284a4329c046a9c9b7006ccef98deda2165",
+    "ecg_experiment/__init__.py": "cca26ce1124d553e877ed33383ffaba3af13f89bd6628e7a1b9ca2cc5c1c6a35",
+    "ecg_experiment/files.py": "d418732520e883994d3b72b064c03174184f606cfea4e166800bf8a096ef985b",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "ecg_experiment/ssl_synthetic_edb_acquisition.py": "21a7de180b10c9d51e54cdef5556cf0294dddd30961dd66055184480d5776595",
+    "pyproject.toml": "9df6d56e8f27348d067eb0cf3b6506f5efbbc03154b96b6b3987f4bb4854279e",
+    "scripts/data/acquire_ssl_synthetic_edb_annotations.py": "50cbcd0951c31ed95f290422a5914bd348df5a56e95ef2e95eb829259154c4eb",
+    "tests/test_ssl_synthetic_edb_acquisition.py": "d15fe28ec4ee2908dc957a22ca06108ec71f2ab3783a9fde664c910e4bf2ff21",
+    "uv.lock": "20c6e373cba70e7fe859ba59697f6145c34b42418eddc955f82d29a165d5db7c"
+  },
+  "runtime": {
+    "python": "3.11.13",
+    "executable_sha256": "79ac754f971da4a709b48dc73ec2072c4b79df4e448a52e8a5fb9b6062619287",
+    "openssl": "OpenSSL 3.0.16 11 Feb 2025",
+    "stdlib_sha256": {
+      "urllib.request": "14b9b807a9751574c103c95a59ac856cc85b494956ea8a3552aa161f3c2a9e45",
+      "urllib.error": "d12b3cc66af3f42a8ebe63e1c91d24f92c6237b6a93a3702938dffabd812d77b",
+      "http.client": "c3968eae8a9f38b0026e9b0ae0d2396b5fb3ade65688a17ed0ffeb4d7d9630f6",
+      "ssl": "5c9b4daa3d54e9941978c75076a6d0c60be3324a7bcda5b54b5fdf33e1d156d6",
+      "socket": "64360e73e3db69396d45d5ee256e8306b3653212ab96ae4a130070488cddbb30"
+    }
+  },
+  "prior_ledger": {
+    "path": "outputs/ssl_synthetic_localization/mixed_background_v1/independent_audit_v2/prospective_ledger.json",
+    "sha256": "0f7def28c1f5c5135e6096be38ca0d57826d5ab4d1d3e90acc7953a573a90feb",
+    "current_machine_stages": 40,
+    "current_machine_cumulative_cpu_seconds": 1274.365159998,
+    "current_machine_cumulative_gpu_wall_seconds": 564.4522484582849
+  }
+}

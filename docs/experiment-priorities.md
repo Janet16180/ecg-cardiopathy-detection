@@ -1,29 +1,3 @@
-# Experiment priorities
-
-The new 24-hour goal is active from 22 October~23:05 UTC. EDB annotation-only qualification
-is now prospectively committed and in progress; no payload acquisition, decoding or new model
-score has executed. Acquire source identities before parsing, retain the 79-subject claim versus
-78 published grouping units, and keep all EDB roles development-only. This intermediate episode
-bridge does not establish the full twelve-lead goal. See the [active goal](ssl-synthetic-localization-goal-2026-10-22.md)
-and [EDB protocol](ssl-synthetic-localization-edb-annotation-qualification-v1.md).
-
-22 October 2026: the executed matched mixed-background localizer study fails its prospective
-scientific advancement rule, with 9 of 14 checks passing. Real held-out AP is 0.029844 versus
-0.032520 for generated-only training; paired difference -0.002676 [-0.006868, 0.001306].
-Real control top600 responses decrease about 0.156, without improved unfamiliar-change ranking.
-The exact generated-only predecessor replay and every technical/resource gate pass. Independent40 confirms the numerical result with zero mismatches; read the [main report](ssl-synthetic-localization-mixed-background-v1-results.md).
-
-The user's priority remains synthetic generation and localization of suspicious ECG time segments
-and leads. The next proposed step qualifies existing public expert annotations for a defensible
-real-abnormality localization endpoint. Numerical edit masks, LUDB timing landmarks and sparse
-answer-option benchmarks must retain their distinct semantics. No GAN fine-tuning, clinical label
-change, retuning, new classification benchmark or closed test is scheduled by this ranking.
-
-All 40 actual scientific/presentation stages total 1274.365159998 CPU / 564.452248458 GPU-lock
-seconds; unavailable historical costs and setup/developer QA remain separate. Keep PR67 draft and
-unmerged. The user explicitly requests no push or GitHub runners; all changes stay local.
-The following table is regenerated mechanically from the backlog.
-
 | Rank | ID | Kind | Candidate | Value | Clarity | Hours | Score | Waiting on |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | --- |
 | 1 | ssl_synthetic_real_abnormality_endpoint_qualification | repo | Qualify public expert annotations for a real ECG abnormality localization endpoint | 5 | 0.8 | 3.2 | 2.22 | - |

@@ -3350,7 +3350,7 @@
       "handoff": "docs/ssl-synthetic-localization-mixed-training-handoff-2026-10-22.md"
     },
     "edb_annotation_qualification_v1": {
-      "status": "acquisition_complete_qualification_admission_in_progress",
+      "status": "main_complete_engineering_failed_independent_audit_pending",
       "protocol": "docs/ssl-synthetic-localization-edb-annotation-qualification-v1.md",
       "configuration": "configs/ssl_synthetic_edb_annotation_qualification_v1.json",
       "protocol_commit": "da7fe80",
@@ -3367,7 +3367,7 @@
       "original_prior_ledger_sha256": "0f7def28c1f5c5135e6096be38ca0d57826d5ab4d1d3e90acc7953a573a90feb",
       "waveform_downloads": 0,
       "annotation_payload_downloads": 90,
-      "annotation_parses": 0,
+      "annotation_parses": 90,
       "new_model_scores": 0,
       "new_training_updates": 0,
       "new_generator_forwards": 0,
@@ -3376,7 +3376,7 @@
       "frozen_document_linkage_components": 78,
       "biological_identity_verified": false,
       "push_authorized": false,
-      "next_action": "Freeze reviewed primary/independent sources and literal184asset admission before any annotation parse; then execute bounded qualification and independent reconstruction.",
+      "next_action": "Independently reconstruct frozen v1FAIL; source-review terminalNUL and quality-bit semantics before prospectively admitted recovery. No waveform/model operation.",
       "acquisition_report": "docs/ssl-synthetic-localization-edb-acquisition-v3-results.md",
       "acquisition_admission": "configs/ssl_synthetic_edb_acquisition_admission_v3.json",
       "acquisition_directory": "outputs/ssl_synthetic_localization/edb_annotation_qualification_v1/acquisition_v3",
@@ -3389,7 +3389,18 @@
         41,
         42
       ],
-      "latest_actual_stage": 43
+      "latest_actual_stage": 44,
+      "main_report": "docs/ssl-synthetic-localization-edb-qualification-v1-results.md",
+      "main_directory": "outputs/ssl_synthetic_localization/edb_annotation_qualification_v1/qualification_v1",
+      "main_summary_sha256": "2afa87395df76b7de980edb684d63deaa58adf42ffb46c98ca064cee12755343",
+      "main_ledger_sha256": "b8bd716df44281d03ed6d3c7f4e9e31318827c0736559feeb9665f3444e85f0e",
+      "main_engineering_passed": false,
+      "records_with_contract_issues": 89,
+      "annotation_issue_count": 3030,
+      "strict_ST_positive_windows": 0,
+      "strict_reference_windows": 239,
+      "independent_audit_required": true,
+      "independent_audit_completed": false
     }
   },
   "experiment_041_cpu_screening": {

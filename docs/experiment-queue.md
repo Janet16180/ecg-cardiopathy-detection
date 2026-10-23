@@ -1,5 +1,13 @@
 # Experiment queue
 
+23October18:03UTC: user renews the autonomous window through24October18:03UTC,
+same synthetic-generation/localization objective; no push/merge. Actual44main complete
+but annotation engineering FAIL:89/90records,3030issues,0STpositive/239reference/
+129361UNKNOWN windows. All90decoded/effectiveWFDBchecks/resources PASS. [Report](ssl-synthetic-localization-edb-qualification-v1-results.md).
+Independent frozen-v1 reconstruction and source-justified format recovery are next;
+no new fit or waveform operation. Original failures/results remain unchanged.
+
+
 23 October,04:14UTC: public EDB annotation/header acquisition actual43 COMPLETE;
 [report](ssl-synthetic-localization-edb-acquisition-v3-results.md). All180new ATR/HEA
 transfers and four reused metadata assets match their pinned identities; all resource

@@ -1,5 +1,46 @@
 # Experiment queue
 
+## Synthetic-localization stream: CLOSED, no successor
+
+User decision23October2026 replaces the22October handoff and renewed autonomous goal.
+[Closure report](ssl-synthetic-localization-closure-2026-10-23.md). Numerical transfer
+on introduced changes was established; every clinical/real-pathology advancement gate
+failed or remained unestablished. No locally qualified independent pathology-region
+reference exists for the intended endpoint. No synthetic, GAN, LUDB, mixed-training,
+annotation-recovery or discovery successor will run. PR67draft, localcommits, no push,
+no runners. Actual45terminal, independent auditPASS0mismatches, combinedqualificationFAIL.
+
+| Synthetic study | Current state | Successor |
+| --- | --- | --- |
+| ssl_synthetic_localization | CLOSED | None |
+| paired_background_study | CLOSED | None |
+| paired_saved_map_diagnostic | CLOSED | None |
+| counterfactual_loss_factorial | CLOSED | None |
+| factorial_mode_diagnostic | CLOSED | None |
+| pretrained_generator_feasibility | CLOSED | None |
+| continuation_2026_10_19 | CLOSED | None |
+| continuation_2026_10_19/randomized_learning | CLOSED | None |
+| continuation_2026_10_19/generated_control_diagnosis | CLOSED | None |
+| continuation_2026_10_19/generated_seed_replication | CLOSED | None |
+| continuation_2026_10_19/generated_paired_suppression | CLOSED | None |
+| continuation_2026_10_19/generated_temporal_diagnosis | CLOSED | None |
+| continuation_2026_10_19/generated_temporal_recovery | CLOSED | None |
+| ludb_public_annotation_qualification_v1 | CLOSED | None |
+| ludb_released_N_peak_timing_v1 | CLOSED | None |
+| ludb_real_generated_coherence_v2 | CLOSED | None |
+| ludb_frozen_localizer_v1 | CLOSED | None |
+| background_editor_transfer_v1 | CLOSED | None |
+| mixed_background_v1 | CLOSED | None |
+| edb_annotation_qualification_v1 | CLOSED | None |
+| edb_semantic_recovery_v2 | CLOSED | None |
+| ecgad_asset_discovery_v1 | CLOSED | None |
+
+All older synthetic snapshots/proposals below are ARCHIVAL and superseded by this
+closure. Their former next actions confer no authorization. Non-synthetic studies
+and their scientific evidence are unchanged.
+
+
+
 23October: independent EDB audit actual45PASS90records/zero mismatches, including
 129600labels+129600reasons,802909canonical events and3030issues. [Independent report](ssl-synthetic-localization-edb-independent-audit-v1-results.md).
 Combined engineering qualification remainsFAIL. AllresourcegatesPASS; cumulative45

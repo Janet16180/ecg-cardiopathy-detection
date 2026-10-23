@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-10-22T23:54:35.628345+00:00",
+  "updated_at_utc": "2026-10-23T18:55:27Z",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2270,9 +2270,9 @@
     "note": "Deliver completed code, protocols, resource/runtime evidence and results to main after checks. Keep original scientific receipts and closed ledgers unchanged. Future full Transformer/SimDINO training or fragment-localization work needs a prospective protocol and explicit scope; nothing restarts automatically."
   },
   "ssl_synthetic_localization": {
-    "status": "public_ludb_acquired_v1_admission_failure_runtime_v2_preparing",
-    "authorized": true,
-    "authorization_scope": "User requested an independent plan and work in this session on real-data self-supervision followed by limited synthetic localization supervision; another session owns No Time to Train.",
+    "status": "closed",
+    "authorized": false,
+    "authorization_scope": "Closed by user2026-10-23; all former synthetic continuation goals/proposals revoked.",
     "branch": "research/ssl-synthetic-localization",
     "plan": "docs/ssl-synthetic-localization-plan.md",
     "preflight_specification": "configs/ssl_synthetic_readiness.json",
@@ -2281,7 +2281,7 @@
     "performance_scored": true,
     "training_started": true,
     "closed_test_authorized": false,
-    "next_action": "Verified real-landmark diagnostic complete. Next scientific proposal: prospectively matched real/generated-background and held-out-editor localization with fixed models, actual-path/resource gates and exact numerical support; no new training, clinical masks, closed final test or auto-merge. Advisor website uses plain-language general results with optional technical appendix.",
+    "next_action": "None. Closed by user; no synthetic successor.",
     "readiness_report": "docs/ssl-synthetic-localization-setup-results.md",
     "readiness_receipt": "outputs/ssl_synthetic_localization/readiness_after_setup.json",
     "readiness_receipt_sha256": "8a2012b26369d5f9e7c1b7c113db2b749bfb81df21494d36bee5bfdbccf585f7",
@@ -2387,8 +2387,8 @@
     "updated_plan": "docs/ssl-synthetic-localization-next-steps.md",
     "paired_background_study": {
       "study_id": "ssl_synthetic_paired_background_v1",
-      "status": "completed_full_advancement_failed_independently_audited",
-      "authorized": true,
+      "status": "closed",
+      "authorized": false,
       "authorization_scope": "User explicitly said go ahead after explanation of training on real ECG backgrounds with matched positive/control examples. All local; no pushes or PR updates.",
       "protocol": "docs/ssl-synthetic-localization-paired-background-study.md",
       "configuration": "configs/ssl_synthetic_paired_background_v1.json",
@@ -2403,7 +2403,7 @@
       "training_started": true,
       "performance_scored": true,
       "closed_test_authorized": false,
-      "next_action": "The fixed experiment is complete with both independent audits passing. Preserve the failed full rule: R selectivity lower bound and S minus R nuisance-control increase failed. Rank a saved-map diagnostic of phase reliance and control flags before specifying any new fitting/replication protocol. Expert clinical annotation audit remains separate; no further fits, closed tests or remote actions scheduled.",
+      "next_action": "None. Closed by user; no synthetic successor.",
       "qualification_receipt": "outputs/ssl_synthetic_localization/paired_background_v1/preparation/summary.json",
       "qualification_receipt_sha256": "38a9c533be62157d0696c14468da9f4d908338069b54c6fe3bbe2790bdca2f18",
       "qualification_passed": true,
@@ -2443,13 +2443,18 @@
       "independent_audit_checks": 274874,
       "independent_audit_mismatches": 0,
       "cumulative_cpu_seconds": 545.1449704129989,
-      "cumulative_gpu_wall_seconds": 226.41281207299835
+      "cumulative_gpu_wall_seconds": 226.41281207299835,
+      "historical_status_before_closure": "completed_full_advancement_failed_independently_audited",
+      "closed": true,
+      "closed_at_utc_date": "2026-10-23",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     "latest_results_report": "docs/ssl-synthetic-localization-counterfactual-factorial-results.md",
     "paired_saved_map_diagnostic": {
       "study_id": "ssl_synthetic_paired_diagnostic_v1",
-      "status": "completed_v2_independently_audited",
-      "authorized": true,
+      "status": "closed",
+      "authorized": false,
       "authorization_scope": "User requested continuing after explanation of unwanted control flags and random-arm phase alignment. Saved-output diagnosis first, all local without pushes.",
       "protocol": "docs/ssl-synthetic-localization-paired-diagnostic.md",
       "admission_addendum": "docs/ssl-synthetic-localization-paired-diagnostic-admission.md",
@@ -2461,7 +2466,7 @@
       "new_inference": false,
       "waveform_reads_allowed": false,
       "parent_advancement_passed": false,
-      "next_action": "Completed saved-map diagnosis, no further scoring or fits. Seven SSL nuisance flags persist on unchanged ECGs and one new flag appears; many unflagged maxima also shift, so no nuisance-invariance claim. R has strong phase-aligned pre-edit outputs and little introduced response, not a proven internal mechanism. Preserve all failed parent gates. Rank a prospective R/S by BCE/paired-loss factorial with edited-AP/probability-response/control guards, fresh validation patients and actual profile. Clinical annotation recovery remains separate. All local/no pushes.",
+      "next_action": "None. Closed by user; no synthetic successor.",
       "source_commit": "a5e21a4",
       "source_review_passed": true,
       "artificial_tests_passed": 16,
@@ -2484,12 +2489,17 @@
       "independent_mismatches": 0,
       "diagnostic_all_attempt_cpu_seconds": 24.788812610999997,
       "cumulative_cpu_seconds": 569.9337830239988,
-      "paired_stage_cpu_seconds": 135.80085195200002
+      "paired_stage_cpu_seconds": 135.80085195200002,
+      "historical_status_before_closure": "completed_v2_independently_audited",
+      "closed": true,
+      "closed_at_utc_date": "2026-10-23",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     "counterfactual_loss_factorial": {
       "study_id": "ssl_synthetic_counterfactual_factorial_v1",
-      "status": "completed_all12gates_passed_independently_audited",
-      "authorized": true,
+      "status": "closed",
+      "authorized": false,
       "authorization_scope": "User requested continuing local coordinated work until an important conclusion or finding. No pushes or PR updates.",
       "protocol": "docs/ssl-synthetic-localization-counterfactual-factorial.md",
       "configuration": "configs/ssl_synthetic_counterfactual_factorial_v1.json",
@@ -2498,7 +2508,7 @@
       "performance_scored": true,
       "closed_test_authorized": false,
       "primary_endpoint": "Initialization-averaged paired-loss effect on direct edited-map AP; secondary interaction and AP-response effects.",
-      "next_action": "Completed and independently audited; see current machine handoff for source-ready unexecuted mode diagnosis and generator feasibility, then prospective seed replication. Preserve repeated-edit regression and all closed tests. PR 67 must remain draft.",
+      "next_action": "None. Closed by user; no synthetic successor.",
       "protocol_commit": "8beb272",
       "data_source_commit": "019c974",
       "training_evaluation_source_commit": "cfd50db",
@@ -2551,7 +2561,12 @@
       "profile_report": "docs/ssl-synthetic-localization-counterfactual-factorial-profile-results.md",
       "training_report": "docs/ssl-synthetic-localization-counterfactual-factorial-training-results.md",
       "independent_audit_report": "docs/ssl-synthetic-localization-counterfactual-factorial-audit-results.md",
-      "all_twelve_gates_passed": true
+      "all_twelve_gates_passed": true,
+      "historical_status_before_closure": "completed_all12gates_passed_independently_audited",
+      "closed": true,
+      "closed_at_utc_date": "2026-10-23",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     "resource_constraints": {
       "cardiologist_access": false,
@@ -2570,7 +2585,7 @@
       "runs_started_during_handoff": false
     },
     "factorial_mode_diagnostic": {
-      "status": "protocol_and_source_ready_unexecuted",
+      "status": "closed",
       "protocol": "docs/ssl-synthetic-localization-factorial-mode-diagnostic.md",
       "configuration": "configs/ssl_synthetic_factorial_mode_diagnostic_v1.json",
       "runner": "scripts/reports/diagnose_ssl_synthetic_factorial_modes.py",
@@ -2579,10 +2594,16 @@
       "artificial_tests_passed": 16,
       "performance_scored": false,
       "source_review_passed": true,
-      "execution_hold": true
+      "execution_hold": true,
+      "historical_status_before_closure": "protocol_and_source_ready_unexecuted",
+      "closed": true,
+      "closed_at_utc_date": "2026-10-23",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null,
+      "next_action": "None. Closed by user; no synthetic successor."
     },
     "pretrained_generator_feasibility": {
-      "status": "adapter_tested_unexecuted_asset_amendment_required",
+      "status": "closed",
       "protocol": "docs/ssl-synthetic-localization-pretrained-generator-feasibility.md",
       "configuration": "configs/ssl_synthetic_pretrained_generator_feasibility_v1.json",
       "assessment": "docs/ssl-synthetic-localization-pretrained-generator-assessment.md",
@@ -2597,10 +2618,16 @@
         "final integrated source review",
         "local dependency and hardware inventory"
       ],
-      "historical_protocol_status": "unexecuted_missing_parent_receipts; superseded_for_this_host_by_separate_standalone_probe"
+      "historical_protocol_status": "unexecuted_missing_parent_receipts; superseded_for_this_host_by_separate_standalone_probe",
+      "historical_status_before_closure": "adapter_tested_unexecuted_asset_amendment_required",
+      "closed": true,
+      "closed_at_utc_date": "2026-10-23",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null,
+      "next_action": "None. Closed by user; no synthetic successor."
     },
     "continuation_2026_10_19": {
-      "status": "complete_generation_localization_and_saved_map_diagnoses_audited",
+      "status": "closed",
       "historical_payloads_present": false,
       "history_preserved": true,
       "gpu_access_verified": true,
@@ -2657,7 +2684,7 @@
       },
       "quality_v2_execution": "completed_with_independent_saved_output_audit",
       "randomized_learning": {
-        "status": "complete_independently_audited",
+        "status": "closed",
         "protocol": "docs/ssl-synthetic-localization-randomized-learning-v1.md",
         "configuration": "configs/ssl_synthetic_randomized_localization_v1.json",
         "source_commit": "0f4b155",
@@ -2700,7 +2727,13 @@
           "denominator": 48
         },
         "evaluation_seeds_now_spent_engineering_data": true,
-        "further_fits_running": false
+        "further_fits_running": false,
+        "historical_status_before_closure": "complete_independently_audited",
+        "closed": true,
+        "closed_at_utc_date": "2026-10-23",
+        "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+        "successor": null,
+        "next_action": "None. Closed by user; no synthetic successor."
       },
       "results_summary": "docs/ssl-synthetic-localization-continuation-2026-10-19.md",
       "additional_learning_audit_tests": {
@@ -2717,8 +2750,8 @@
         "frozen_source_mismatches": 0
       },
       "generated_control_diagnosis": {
-        "status": "complete_independently_audited",
-        "authorized": true,
+        "status": "closed",
+        "authorized": false,
         "authorization": "User approved recommended saved-map hotspot diagnosis on 19 October 2026.",
         "protocol": "docs/ssl-synthetic-localization-control-diagnosis-v1.md",
         "configuration": "configs/ssl_synthetic_control_diagnosis_v1.json",
@@ -2800,7 +2833,13 @@
           "main_failure_source_bindings_checked": 76,
           "independent_core_bindings_checked": 6,
           "frozen_source_mismatches": 0
-        }
+        },
+        "historical_status_before_closure": "complete_independently_audited",
+        "closed": true,
+        "closed_at_utc_date": "2026-10-23",
+        "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+        "successor": null,
+        "next_action": "None. Closed by user; no synthetic successor."
       },
       "autonomous_continuation": {
         "authorized": true,
@@ -2815,7 +2854,7 @@
         "current_stage": "complete_audited_published_draft_pr"
       },
       "generated_seed_replication": {
-        "status": "complete_independently_audited",
+        "status": "closed",
         "new_fit_pairs": 3,
         "unchanged_train_backgrounds": 80,
         "spent_secondary_backgrounds": 48,
@@ -2872,10 +2911,16 @@
           "source_and_wheel_build": "passed; private artifacts excluded",
           "source_bindings_checked": 94,
           "source_mismatches": 0
-        }
+        },
+        "historical_status_before_closure": "complete_independently_audited",
+        "closed": true,
+        "closed_at_utc_date": "2026-10-23",
+        "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+        "successor": null,
+        "next_action": "None. Closed by user; no synthetic successor."
       },
       "generated_paired_suppression": {
-        "status": "complete_audited_scientific_rule_failed",
+        "status": "closed",
         "protocol": "docs/ssl-synthetic-localization-paired-suppression-v1.md",
         "configuration": "configs/ssl_synthetic_paired_suppression_v1.json",
         "protocol_commit": "4500999",
@@ -2922,10 +2967,16 @@
         "gpu_lock_wall_seconds": 269.41947098309174,
         "whole_wall_forecast_underestimated": true,
         "gpu_lock_forecast_underestimated": true,
-        "clinical_claim": false
+        "clinical_claim": false,
+        "historical_status_before_closure": "complete_audited_scientific_rule_failed",
+        "closed": true,
+        "closed_at_utc_date": "2026-10-23",
+        "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+        "successor": null,
+        "next_action": "None. Closed by user; no synthetic successor."
       },
       "generated_temporal_diagnosis": {
-        "status": "failed_strict_range_check_retained",
+        "status": "closed",
         "protocol": "docs/ssl-synthetic-localization-temporal-diagnosis-v1.md",
         "configuration": "configs/ssl_synthetic_temporal_diagnosis_v1.json",
         "protocol_commit": "ec86255",
@@ -2955,10 +3006,16 @@
         "latest_ledger_sha256": "4ee0f57ef15ee12c63368ffd7d1eb35bd6cd4e106c6d272e965f776f9fed67a8",
         "individual_lead_roundoff_excursions": 5,
         "maximum_individual_lead_ULPs": 2,
-        "case_endpoint_roundoff_excursions": 1
+        "case_endpoint_roundoff_excursions": 1,
+        "historical_status_before_closure": "failed_strict_range_check_retained",
+        "closed": true,
+        "closed_at_utc_date": "2026-10-23",
+        "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+        "successor": null,
+        "next_action": "None. Closed by user; no synthetic successor."
       },
       "generated_temporal_recovery": {
-        "status": "complete_descriptive_independently_verified",
+        "status": "closed",
         "protocol": "docs/ssl-synthetic-localization-temporal-diagnosis-v2.md",
         "configuration": "configs/ssl_synthetic_temporal_diagnosis_v2.json",
         "protocol_commit": "611171d",
@@ -2996,10 +3053,16 @@
           "ci_high": 0.12844041935350528
         },
         "parent_scientific_failure_preserved": true,
-        "raw_rows_changed": false
+        "raw_rows_changed": false,
+        "historical_status_before_closure": "complete_descriptive_independently_verified",
+        "closed": true,
+        "closed_at_utc_date": "2026-10-23",
+        "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+        "successor": null,
+        "next_action": "None. Closed by user; no synthetic successor."
       },
       "current_handoff": "docs/ssl-synthetic-localization-autonomous-handoff-2026-10-19.md",
-      "next_action": "LUDB timing and descriptive coherence studies complete with independent zero-mismatch audits. Report this meaningful checkpoint; next proposed work is admitted frozen-localizer N-landmark/energy concentration, then held-out-editor and matched-background localization after actual-path/resource gates. No new fit, closed test or automatic merge.",
+      "next_action": "None. Closed by user; no synthetic successor.",
       "final_repository_validation": {
         "record_type": "repository_setup_validation_not_scientific_cost",
         "created_at_utc": "2026-10-20T00:40:10.292925+00:00",
@@ -3029,11 +3092,16 @@
         "autonomous_package_build_v1.log_sha256": "a0c7f20eb912e23816c215859b095e8f300a775b4c7ea2238b573b6dd1c4b5c9",
         "data_weight_prediction_artifacts_uploaded": false
       },
-      "quality_execution_historical_planning_snapshot": "awaiting_final_numerical_source_review_and_actual_path_profile"
+      "quality_execution_historical_planning_snapshot": "awaiting_final_numerical_source_review_and_actual_path_profile",
+      "historical_status_before_closure": "complete_generation_localization_and_saved_map_diagnoses_audited",
+      "closed": true,
+      "closed_at_utc_date": "2026-10-23",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     "current_handoff": "docs/ssl-synthetic-localization-local-transfer-handoff-2026-10-21.md",
     "ludb_public_annotation_qualification_v1": {
-      "status": "annotation_diagnosis_complete_dense_interval_contract_failed",
+      "status": "closed",
       "protocol": "docs/ssl-synthetic-localization-ludb-qualification-v1.md",
       "config": "configs/ssl_synthetic_ludb_qualification_v1.json",
       "protocol_commit": "8214287",
@@ -3077,10 +3145,16 @@
       "annotation_diagnosis_summary_sha256": "ac906ddadef7fb306d7dc78501d144ce4bf536c10f246ab08183b7867170c902",
       "annotation_diagnosis_ledger_sha256": "cb86ee511b4740ab7b84a589fc81448556df3d5561907b4bd07e2f4748a020ba",
       "record95_missing_qrs_onsets": 35,
-      "record95_affected_leads": 9
+      "record95_affected_leads": 9,
+      "historical_status_before_closure": "annotation_diagnosis_complete_dense_interval_contract_failed",
+      "closed": true,
+      "closed_at_utc_date": "2026-10-23",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null,
+      "next_action": "None. Closed by user; no synthetic successor."
     },
     "ludb_released_N_peak_timing_v1": {
-      "status": "complete_independently_audited_landmark_only_pass",
+      "status": "closed",
       "protocol": "docs/ssl-synthetic-localization-ludb-peak-timing-v1.md",
       "config": "configs/ssl_synthetic_ludb_peak_timing_v1.json",
       "protocol_commit": "55177cc",
@@ -3115,10 +3189,16 @@
       "scientific_decision": "PASS_released_N_concentration_only",
       "independent_audit_zero_mismatches": true,
       "conditional_followup_expected_main_stage": 29,
-      "conditional_followup_expected_audit_stage": 30
+      "conditional_followup_expected_audit_stage": 30,
+      "historical_status_before_closure": "complete_independently_audited_landmark_only_pass",
+      "closed": true,
+      "closed_at_utc_date": "2026-10-23",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null,
+      "next_action": "None. Closed by user; no synthetic successor."
     },
     "ludb_real_generated_coherence_v2": {
-      "status": "complete_independently_verified_descriptive_only",
+      "status": "closed",
       "protocol": "docs/ssl-synthetic-localization-ludb-coherence-bridge-v2.md",
       "report": "docs/ssl-synthetic-localization-ludb-coherence-bridge-v2-results.md",
       "independent_report": "docs/ssl-synthetic-localization-ludb-coherence-independent-audit-v2-results.md",
@@ -3145,7 +3225,13 @@
       "scientific_pass_flag_defined": false,
       "clinical_quality_claim": false,
       "independent_zero_mismatches": true,
-      "new_generator_forwards": 0
+      "new_generator_forwards": 0,
+      "historical_status_before_closure": "complete_independently_verified_descriptive_only",
+      "closed": true,
+      "closed_at_utc_date": "2026-10-23",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null,
+      "next_action": "None. Closed by user; no synthetic successor."
     },
     "latest_validation": {
       "full_cpu_tests_passed": 2124,
@@ -3166,7 +3252,7 @@
       "github_runner_used": false
     },
     "ludb_frozen_localizer_v1": {
-      "status": "complete_independently_verified_descriptive_only",
+      "status": "closed",
       "protocol": "docs/ssl-synthetic-localization-ludb-localizer-v1.md",
       "configuration": "configs/ssl_synthetic_ludb_localizer_v1.json",
       "output_directory": "outputs/ssl_synthetic_localization/ludb_localizer_v1",
@@ -3230,10 +3316,16 @@
           "cpu_seconds": 36.38738272,
           "error": "audit metadata must be an object"
         }
-      ]
+      ],
+      "historical_status_before_closure": "complete_independently_verified_descriptive_only",
+      "closed": true,
+      "closed_at_utc_date": "2026-10-23",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null,
+      "next_action": "None. Closed by user; no synthetic successor."
     },
     "background_editor_transfer_v1": {
-      "status": "complete_independently_verified_numerical_transfer_only",
+      "status": "closed",
       "protocol": "docs/ssl-synthetic-localization-background-editor-transfer-v1.md",
       "configuration": "configs/ssl_synthetic_background_editor_transfer_v1.json",
       "protocol_commit": "6d6c65a",
@@ -3246,7 +3338,7 @@
       "new_generator_forwards": 0,
       "scientific_scores_computed": true,
       "push_authorized": false,
-      "next_action": "Preserve positive but modest numerical transfer and older failures. Next proposed: matched generated-only versus mixed real/generated localizer training with verified real-patient separation, held-out editor and actual-path training profile. No training or push scheduled.",
+      "next_action": "None. Closed by user; no synthetic successor.",
       "main_stage": 35,
       "main_summary_sha256": "c3ea28105ef99659b0f8854fd32430169ecb48f456b02b8b709fec306da93ba7",
       "main_ledger_sha256": "8cf80790df2ef3ce3a5c0d2cf539b1e6311697a01a4394e672c7f6b1d819e304",
@@ -3289,10 +3381,15 @@
       "latest_ledger_sha256": "73758dc5c2f8b20543a63549d61fc6ce669286cd988c2dd135c6453e1a024d4f",
       "current_machine_stages": 37,
       "current_machine_cumulative_cpu_seconds": 1076.7763161960002,
-      "current_machine_cumulative_gpu_wall_seconds": 524.1993697541766
+      "current_machine_cumulative_gpu_wall_seconds": 524.1993697541766,
+      "historical_status_before_closure": "complete_independently_verified_numerical_transfer_only",
+      "closed": true,
+      "closed_at_utc_date": "2026-10-23",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     "mixed_background_v1": {
-      "status": "complete_independently_verified_scientific_fail",
+      "status": "closed",
       "protocol": "docs/ssl-synthetic-localization-mixed-background-v1.md",
       "config": "configs/ssl_synthetic_mixed_background_v1.json",
       "protocol_commit": "30300d2",
@@ -3307,7 +3404,7 @@
       "intended_scientific_gates": 14,
       "push_authorized": false,
       "v4_membership_verified": false,
-      "next_action": "Completed matched negative study. Preserve scientificFAIL and failed39 once. Proposed next: separately protocolled public real-abnormality annotation endpoint qualification; no retuning, GAN fine-tuning, closed tests or push scheduled.",
+      "next_action": "None. Closed by user; no synthetic successor.",
       "admission": "configs/ssl_synthetic_mixed_background_admission_v1.json",
       "admission_commit": "d52dfa2",
       "output_directory": "outputs/ssl_synthetic_localization/mixed_background_v1",
@@ -3347,10 +3444,15 @@
       "audit_summary_sha256": "4f2f5e4943c454f7aa45572cfcafc512781702a53fd25a1dc23a011ccbba483a",
       "audit_ledger_sha256": "0f7def28c1f5c5135e6096be38ca0d57826d5ab4d1d3e90acc7953a573a90feb",
       "independent_audit_completed": true,
-      "handoff": "docs/ssl-synthetic-localization-mixed-training-handoff-2026-10-22.md"
+      "handoff": "docs/ssl-synthetic-localization-mixed-training-handoff-2026-10-22.md",
+      "historical_status_before_closure": "complete_independently_verified_scientific_fail",
+      "closed": true,
+      "closed_at_utc_date": "2026-10-23",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     "edb_annotation_qualification_v1": {
-      "status": "complete_independently_audited_engineering_failed",
+      "status": "closed",
       "protocol": "docs/ssl-synthetic-localization-edb-annotation-qualification-v1.md",
       "configuration": "configs/ssl_synthetic_edb_annotation_qualification_v1.json",
       "protocol_commit": "da7fe80",
@@ -3376,7 +3478,7 @@
       "frozen_document_linkage_components": 78,
       "biological_identity_verified": false,
       "push_authorized": false,
-      "next_action": "Execute separately committed semantic recovery054cc38 only after literal source/asset/latest-ledger admission; preserve independent confirmation of v1FAIL.",
+      "next_action": "None. Closed by user; no synthetic successor.",
       "acquisition_report": "docs/ssl-synthetic-localization-edb-acquisition-v3-results.md",
       "acquisition_admission": "configs/ssl_synthetic_edb_acquisition_admission_v3.json",
       "acquisition_directory": "outputs/ssl_synthetic_localization/edb_annotation_qualification_v1/acquisition_v3",
@@ -3407,8 +3509,41 @@
       "independent_directory": "outputs/ssl_synthetic_localization/edb_annotation_qualification_v1/independent_audit_v1",
       "independent_summary_sha256": "de16a64e1271554307c7c99d850fc98e3805f2a8b9e2a5db3cb095b919e377e1",
       "independent_ledger_sha256": "c20340a94f3cf4a2dccf56567b0baa028d3e14f4216745fce0cca6eb7b2caa00",
-      "combined_annotation_qualification": false
-    }
+      "combined_annotation_qualification": false,
+      "historical_status_before_closure": "complete_independently_audited_engineering_failed",
+      "closed": true,
+      "closed_at_utc_date": "2026-10-23",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
+    },
+    "historical_status_before_closure": "public_ludb_acquired_v1_admission_failure_runtime_v2_preparing",
+    "closed": true,
+    "closed_at_utc_date": "2026-10-23",
+    "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+    "successor": null,
+    "edb_semantic_recovery_v2": {
+      "status": "closed",
+      "closed": true,
+      "execution_status": "never_executed",
+      "protocol": "docs/ssl-synthetic-localization-edb-semantic-recovery-v2.md",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null,
+      "next_action": "None. Closed by user."
+    },
+    "ecgad_asset_discovery_v1": {
+      "status": "closed",
+      "closed": true,
+      "execution_status": "never_executed",
+      "protocol": "docs/ssl-synthetic-localization-ecgad-asset-discovery-v1.md",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null,
+      "next_action": "None. Closed by user."
+    },
+    "all_synthetic_studies_closed": true,
+    "successors": [],
+    "clinical_or_real_pathology_advancement_passed": false,
+    "latest_terminal_stage": 45,
+    "latest_terminal_ledger_sha256": "c20340a94f3cf4a2dccf56567b0baa028d3e14f4216745fce0cca6eb7b2caa00"
   },
   "experiment_041_cpu_screening": {
     "status": "complete_audited",
@@ -3470,5 +3605,5 @@
     "data_policy": "All models/raw data/features/private predictions remain local and ignored.",
     "next_action": "Research studies and reports are complete. Preserve local artifacts and the failed grounding ranking verdict; review PR #70. No experiment, closed test or automatic merge is scheduled."
   },
-  "current_user_priority": "Active explicitly requested 24-hour autonomous goal from 2026-10-22~23:05UTC: pursue pretrained-generator support for real ECG suspicious time/lead localization, continuing useful successors; no push or GitHub runners and no automatic PR67 merge."
+  "current_user_priority": "Synthetic-localization stream CLOSED by user2026-10-23, no successor. New separate direction: criteria-grounded ECG explanation benchmark, after local closure delivery."
 }

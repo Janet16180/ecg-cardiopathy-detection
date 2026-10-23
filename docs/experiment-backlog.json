@@ -1337,8 +1337,12 @@
       "cpu_hours": 0.2,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "done",
-      "notes": "Completed on 18 October. Source folds 1-8 assigned to train/validation/engineering_test at patient level, folds 9-10 excluded. All eligible paths present, deterministic replay verified. No waveform payload opened. Preparation/build time not separately metered; original estimates retained. Waveform quality/near-duplicate limits move to the input audit."
+      "status": "dropped",
+      "notes": "Completed on 18 October. Source folds 1-8 assigned to train/validation/engineering_test at patient level, folds 9-10 excluded. All eligible paths present, deterministic replay verified. No waveform payload opened. Preparation/build time not separately metered; original estimates retained. Waveform quality/near-duplicate limits move to the input audit. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_generator_qualification",
@@ -1354,8 +1358,12 @@
       "blocked_by": [
         "ssl_synthetic_waveform_audit"
       ],
-      "status": "done",
-      "notes": "Originalgrid26.494s,v1planned-domain29.305s,v2planned-domain38.161s, eachoneCPUthread. No numericalpredecessorperformancecomparison or clinicalvalidity claim. V2narrowsdomain prospectively; all plannedseeds kept."
+      "status": "dropped",
+      "notes": "Originalgrid26.494s,v1planned-domain29.305s,v2planned-domain38.161s, eachoneCPUthread. No numericalpredecessorperformancecomparison or clinicalvalidity claim. V2narrowsdomain prospectively; all plannedseeds kept. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_pilot",
@@ -1371,8 +1379,12 @@
       "blocked_by": [
         "ssl_synthetic_generator_qualification"
       ],
-      "status": "done",
-      "notes": "No advancement. Fits consumed 68.473 wall/68.392 CPU seconds; evaluation 34.474 wall/34.217 CPU seconds, plus preserved failed and passed profiles/preparation costs. Real SSL used 2048 permitted patients and 16000 presentations; 500 synthetic training subjects. B is now development evidence. No clinical transfer or disease result; no further training justified solely by this outcome."
+      "status": "dropped",
+      "notes": "No advancement. Fits consumed 68.473 wall/68.392 CPU seconds; evaluation 34.474 wall/34.217 CPU seconds, plus preserved failed and passed profiles/preparation costs. Real SSL used 2048 permitted patients and 16000 presentations; 500 synthetic training subjects. B is now development evidence. No clinical transfer or disease result; no further training justified solely by this outcome. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_annotation_audit",
@@ -1388,8 +1400,12 @@
       "blocked_by": [
         "@ecgad_development_artifacts"
       ],
-      "status": "proposed",
-      "notes": "Audit development only with a preselected 20-record sample and label-geometry checks. Do not relabel clinically by engineer judgment or reread the spent holdout. This is distinct from generator qualification."
+      "status": "dropped",
+      "notes": "Audit development only with a preselected 20-record sample and label-geometry checks. Do not relabel clinically by engineer judgment or reread the spent holdout. This is distinct from generator qualification. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "proposed",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_waveform_audit",
@@ -1403,8 +1419,12 @@
       "cpu_hours": 0.5,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "done",
-      "notes": "Executed106.906CPU/121.187wallseconds, one thread. Selectedrealcache2048/2048usable,11.082CPU/11.170wallseconds. Buildtime not separately metered. No protected payload opened; waveformquality does not establish clinical normality."
+      "status": "dropped",
+      "notes": "Executed106.906CPU/121.187wallseconds, one thread. Selectedrealcache2048/2048usable,11.082CPU/11.170wallseconds. Buildtime not separately metered. No protected payload opened; waveformquality does not establish clinical normality. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_counterfactual_audit",
@@ -1418,8 +1438,12 @@
       "cpu_hours": 0.009512362884166667,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "done",
-      "notes": "No new inference, training or thresholds. Original AP gain remains +0.002642 with interval crossing zero and advancement failed. Exploratory AP-change contrast is partly lower baseline-site AP and is not a new edited-AP gain. V1 provenance admission failure retained; explicit binding closure enabled V2."
+      "status": "dropped",
+      "notes": "No new inference, training or thresholds. Original AP gain remains +0.002642 with interval crossing zero and advancement failed. Exploratory AP-change contrast is partly lower baseline-site AP and is not a new edited-AP gain. V1 provenance admission failure retained; explicit binding closure enabled V2. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_real_background_transfer",
@@ -1433,8 +1457,12 @@
       "cpu_hours": 0.012342221036388889,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "done",
-      "notes": "No fitting, patient drops or closed tests. Pre-edit baseline-site AP is higher for S, so edited AP alone does not establish stronger intervention response. Focal difference interval crosses zero; record flags cover only 34/256 S and 16/256 R positives. Original pilot advancement remains failed. Initial audit schema omission failure retained. Measured stage GPU-wall/CPU and both independent audits are charged; build time remains unmetered."
+      "status": "dropped",
+      "notes": "No fitting, patient drops or closed tests. Pre-edit baseline-site AP is higher for S, so edited AP alone does not establish stronger intervention response. Focal difference interval crosses zero; record flags cover only 34/256 S and 16/256 R positives. Original pilot advancement remains failed. Initial audit schema omission failure retained. Measured stage GPU-wall/CPU and both independent audits are charged; build time remains unmetered. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_paired_background_training",
@@ -1448,8 +1476,12 @@
       "cpu_hours": 0.030836677594722223,
       "build_hours": 4,
       "blocked_by": [],
-      "status": "done",
-      "notes": "All 692 backgrounds/2768 cases qualify; each model 600 updates/9600 presentations across500patients/2000inputs. Strong focal response but repeated edited AP is lower for S; primary gain includes lower baseline-site ordering. Seven of nine gates pass; do not relax failed gates or launch replication automatically. All data/outputs local. Measured numerical runtime includes both final audits; implementation time unmetered."
+      "status": "dropped",
+      "notes": "All 692 backgrounds/2768 cases qualify; each model 600 updates/9600 presentations across500patients/2000inputs. Strong focal response but repeated edited AP is lower for S; primary gain includes lower baseline-site ordering. Seven of nine gates pass; do not relax failed gates or launch replication automatically. All data/outputs local. Measured numerical runtime includes both final audits; implementation time unmetered. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_paired_failure_diagnostic",
@@ -1463,8 +1495,12 @@
       "cpu_hours": 0.006885781280833333,
       "build_hours": 1,
       "blocked_by": [],
-      "status": "done",
-      "notes": "No waveform or checkpoint reads, GPU, inference or fitting. The original full decision remains failed; within-arm flips do not replace the cross-arm veto. The v1 admission stop from rounded accounting is retained and charged once. All attempts plus verification consumed 24.789 CPU seconds; implementation time is unmetered. No clinical or internal-feature causal conclusion."
+      "status": "dropped",
+      "notes": "No waveform or checkpoint reads, GPU, inference or fitting. The original full decision remains failed; within-arm flips do not replace the cross-arm veto. The v1 admission stop from rounded accounting is retained and charged once. All attempts plus verification consumed 24.789 CPU seconds; implementation time is unmetered. No clinical or internal-feature causal conclusion. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_counterfactual_loss_factorial",
@@ -1478,8 +1514,12 @@
       "cpu_hours": 0.04885569765166666,
       "build_hours": 4,
       "blocked_by": [],
-      "status": "done",
-      "notes": "Complete local study; docs/ssl-synthetic-localization-counterfactual-factorial-results.md. Newstage155.811347214 GPU-wall and175.880511546 scientific CPU seconds including verification; build4h remains an unmetered estimate. Forward CPU scoring argument-order bug was caught/fixed in NEWsource before any performance scoring, without altering pinnedv1. One fixed initialization/schedule/pulse family on fresh development patients; no clinical validation. No automatic replication or remote actions."
+      "status": "dropped",
+      "notes": "Complete local study; docs/ssl-synthetic-localization-counterfactual-factorial-results.md. Newstage155.811347214 GPU-wall and175.880511546 scientific CPU seconds including verification; build4h remains an unmetered estimate. Forward CPU scoring argument-order bug was caught/fixed in NEWsource before any performance scoring, without altering pinnedv1. One fixed initialization/schedule/pulse family on fresh development patients; no clinical validation. No automatic replication or remote actions. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_factorial_seed_replication",
@@ -1496,8 +1536,12 @@
         "@prospective_replication_protocol_and_actual_profile",
         "@storage_plan_within_4GiB"
       ],
-      "status": "proposed",
-      "notes": "No fit scheduled. Freeze exact seed handling, matched budget, same objective and primary/12guards before scoring; report focal/repeated effects without choosing favorable modes. Use separately frozen permitted fresh development patients, never closed tests. Currentstream~3.93GB leaves insufficient room for another full fourbank192background study under4GiB; require an honest storage plan preserving all existing artifacts. Clinical annotation audit remains separate."
+      "status": "dropped",
+      "notes": "No fit scheduled. Freeze exact seed handling, matched budget, same objective and primary/12guards before scoring; report focal/repeated effects without choosing favorable modes. Use separately frozen permitted fresh development patients, never closed tests. Currentstream~3.93GB leaves insufficient room for another full fourbank192background study under4GiB; require an honest storage plan preserving all existing artifacts. Clinical annotation audit remains separate. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "proposed",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_factorial_mode_diagnostic",
@@ -1513,8 +1557,12 @@
       "blocked_by": [
         "@prospective_saved_map_diagnostic_protocol"
       ],
-      "status": "proposed",
-      "notes": "Saved outputs only; no new inference/fits/thresholds or native disease claim. Freeze contrasts/regions before calculation, retain every patient, report ranking/coverage/baseline response components. This can characterize output behavior but cannot prove internal feature causality. Not automatically launched after the important finding."
+      "status": "dropped",
+      "notes": "Saved outputs only; no new inference/fits/thresholds or native disease claim. Freeze contrasts/regions before calculation, retain every patient, report ranking/coverage/baseline response components. This can characterize output behavior but cannot prove internal feature causality. Not automatically launched after the important finding. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "proposed",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "cpu_measurement_screening041",
@@ -1620,8 +1668,12 @@
       "cpu_hours": 0.0004643051425,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "done",
-      "notes": "Actual ECG arrays and weights local; amplitude calibration, disease conditioning and real pathology masks unverified. Historical output tree absent; old costs unknown locally."
+      "status": "dropped",
+      "notes": "Actual ECG arrays and weights local; amplitude calibration, disease conditioning and real pathology masks unverified. Historical output tree absent; old costs unknown locally. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_generated_quality",
@@ -1635,8 +1687,12 @@
       "cpu_hours": 0.5,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "done",
-      "notes": "V1profile wallforecastfailure preserved/charged; v2resourceonly amendment passed. Fixedposition fixtures are not learningbenchmark. AllnewmachineCPU12.057118s/GPU13.564630s throughaudit; clinicalfidelity/units/diseasecontrol unresolved."
+      "status": "dropped",
+      "notes": "V1profile wallforecastfailure preserved/charged; v2resourceonly amendment passed. Fixedposition fixtures are not learningbenchmark. AllnewmachineCPU12.057118s/GPU13.564630s throughaudit; clinicalfidelity/units/diseasecontrol unresolved. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_randomized_localization",
@@ -1650,8 +1706,12 @@
       "cpu_hours": 0.5,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "done",
-      "notes": "Sameinputs/init/schedule, variedsupports and exactstep2/3Adamrecovery. LowabsoluteAPanduncalibratedcontrols23/48sham25/48nuisance>.5remain. Onefit/editfamily only; no realdisease/SSLclaim. Main+audit20.432098CPU/24.868681GPU; earlierprofiles/costspreserved. Eval48seedsnowspentengineeringdata."
+      "status": "dropped",
+      "notes": "Sameinputs/init/schedule, variedsupports and exactstep2/3Adamrecovery. LowabsoluteAPanduncalibratedcontrols23/48sham25/48nuisance>.5remain. Onefit/editfamily only; no realdisease/SSLclaim. Main+audit20.432098CPU/24.868681GPU; earlierprofiles/costspreserved. Eval48seedsnowspentengineeringdata. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_generated_control_diagnosis",
@@ -1665,8 +1725,12 @@
       "cpu_hours": 0.1,
       "build_hours": 1.5,
       "blocked_by": [],
-      "status": "done",
-      "notes": "Main+audit terminal CPU 12.510548309 s, GPU zero; setup/review not clocked. Positive hotspot support precision 0.041146 focal / 0.134826 repeated; most ranked area remains outside added support. No new scientific PASS or clinical claim; 48 seeds remain spent engineering development data."
+      "status": "dropped",
+      "notes": "Main+audit terminal CPU 12.510548309 s, GPU zero; setup/review not clocked. Positive hotspot support precision 0.041146 focal / 0.134826 repeated; most ranked area remains outside added support. No new scientific PASS or clinical claim; 48 seeds remain spent engineering development data. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_generated_seed_replication",
@@ -1680,8 +1744,12 @@
       "cpu_hours": 0.2,
       "build_hours": 2.5,
       "blocked_by": [],
-      "status": "done",
-      "notes": "Exactoldpair800-update/fullmodel+Adam+lossreplay; fresh64nowspent. Main+audit145.681615584CPUseconds/GPU140.128609713; actualwall241.489>forecast167.774within1800cap. Threeseedcrossedintervalsexploratory; lowabsoluteAPandpersistentbackgroundresponsesremain."
+      "status": "dropped",
+      "notes": "Exactoldpair800-update/fullmodel+Adam+lossreplay; fresh64nowspent. Main+audit145.681615584CPUseconds/GPU140.128609713; actualwall241.489>forecast167.774within1800cap. Threeseedcrossedintervalsexploratory; lowabsoluteAPandpersistentbackgroundresponsesremain. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_public_annotation_qualification",
@@ -1695,9 +1763,13 @@
       "cpu_hours": 0.2,
       "build_hours": 2.5,
       "blocked_by": [],
-      "status": "done",
-      "notes": "All200records/2400streamsretained;35missingQRSonsetsdiagnosedinreserved95. Newlandmarkestimandcommittedbefore160reads. Acquisition/manifest/parser/independentauditfailuresandnullfieldsretained;actual28costincludesfailed27once. No96percentaccuracy/densemask/physiology/diseaselocalizationclaim.",
-      "latest_status": "Main26/recovery28PASSzeromismatches;gain0.450519[0.438960,0.462589]atNlandmarks,nodense/diseaseclaim.Failed27preservedonce.Conditionaldescriptivecoherencebridgev2next."
+      "status": "dropped",
+      "notes": "All200records/2400streamsretained;35missingQRSonsetsdiagnosedinreserved95. Newlandmarkestimandcommittedbefore160reads. Acquisition/manifest/parser/independentauditfailuresandnullfieldsretained;actual28costincludesfailed27once. No96percentaccuracy/densemask/physiology/diseaselocalizationclaim. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "latest_status": "Main26/recovery28PASSzeromismatches;gain0.450519[0.438960,0.462589]atNlandmarks,nodense/diseaseclaim.Failed27preservedonce.Conditionaldescriptivecoherencebridgev2next.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_generated_paired_suppression",
@@ -1711,8 +1783,12 @@
       "cpu_hours": 0.055409325143333334,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "done",
-      "notes": "All4arms/3fits/42factorialsecondaries retained. Paired learning improves AP but raises control peaks; suppression lowers peaks with AP tradeoff. No arm selection/retuning. Both wallforecasts underestimated actual despite caps pass. Implementation time estimated, not measured."
+      "status": "dropped",
+      "notes": "All4arms/3fits/42factorialsecondaries retained. Paired learning improves AP but raises control peaks; suppression lowers peaks with AP tradeoff. No arm selection/retuning. Both wallforecasts underestimated actual despite caps pass. Implementation time estimated, not measured. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_generated_temporal_diagnosis",
@@ -1726,8 +1802,12 @@
       "cpu_hours": 0.010928336198888888,
       "build_hours": 1,
       "blocked_by": [],
-      "status": "done",
-      "notes": "All4arms/3fits/64spentbackgrounds and6fixeddescriptivecontrasts reported. All1536rawrows byte-identical, onecaseendpoint/fiveleadAP roundoff excursions unchanged. Main+audit+failedattempt+causeaudit39.342010316CPU/GPU0; implementationtime estimated, not measured. Oracle true-lead scoring and dependent canonicalleads; no onset/offset or realdiseasevalidation."
+      "status": "dropped",
+      "notes": "All4arms/3fits/64spentbackgrounds and6fixeddescriptivecontrasts reported. All1536rawrows byte-identical, onecaseendpoint/fiveleadAP roundoff excursions unchanged. Main+audit+failedattempt+causeaudit39.342010316CPU/GPU0; implementationtime estimated, not measured. Oracle true-lead scoring and dependent canonicalleads; no onset/offset or realdiseasevalidation. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_profile_wall_coverage",
@@ -1743,8 +1823,12 @@
       "blocked_by": [
         "@prospective_profile_coverage_protocol_before_any_larger_fit"
       ],
-      "status": "proposed",
-      "notes": "Use new files only; preserve frozen profiles/forecastmisses. Include mapflush and all recurring I/O/bookkeeping plus a conservative overhead term, retain livecaps and sharedGPUlock. This supports the generator/localization objective; no new classification benchmark.21Oct inference-only profile now includes identical memmap flush and separates fixed/repeated costs: forecasts passed and exceeded actual143.515CPU/174.659wall/25.068GPU-lockseconds. This does not qualify any future full training path."
+      "status": "dropped",
+      "notes": "Use new files only; preserve frozen profiles/forecastmisses. Include mapflush and all recurring I/O/bookkeeping plus a conservative overhead term, retain livecaps and sharedGPUlock. This supports the generator/localization objective; no new classification benchmark.21Oct inference-only profile now includes identical memmap flush and separates fixed/repeated costs: forecasts passed and exceeded actual143.515CPU/174.659wall/25.068GPU-lockseconds. This does not qualify any future full training path. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "proposed",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_real_generated_coherence",
@@ -1760,8 +1844,12 @@
       "blocked_by": [
         "ssl_synthetic_public_annotation_qualification"
       ],
-      "status": "done",
-      "notes": "Descriptiveonly,all128/200retained,noquality/disease/verdict.Noexisting14/15failurechanged.Generatedbankmorealigned/narrower;causalshortcutunproven."
+      "status": "dropped",
+      "notes": "Descriptiveonly,all128/200retained,noquality/disease/verdict.Noexisting14/15failurechanged.Generatedbankmorealigned/narrower;causalshortcutunproven. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_frozen_real_landmark_diagnosis",
@@ -1775,9 +1863,13 @@
       "cpu_hours": 0.2,
       "build_hours": 3.0,
       "blocked_by": [],
-      "status": "done",
-      "notes": "New protocol/checkpoint admission/inference-and-persistence profile before scores; all fixed fits/arms, no winning-arm selection, no training or pathology labels. Use only locally present checkpoints and preserve any missing-artifact blocker. User clarified target: suspicious time segments and leads on ECG, not anatomical lesion localization. English reports and draftPR67 push authorized. Negative exact-N concentration does not prove specificity/blanket beat avoidance; B near-null Spearman and modest positive q90 tail overlap remain distinct. No clinical labels/test changes.",
-      "latest_status": "Complete descriptive diagnostic, no scientific/clinical PASS flag. Failed32and33auditI/Oattempts retained and charged once; all34costs759.933CPU/473.050GPU-lockseconds."
+      "status": "dropped",
+      "notes": "New protocol/checkpoint admission/inference-and-persistence profile before scores; all fixed fits/arms, no winning-arm selection, no training or pathology labels. Use only locally present checkpoints and preserve any missing-artifact blocker. User clarified target: suspicious time segments and leads on ECG, not anatomical lesion localization. English reports and draftPR67 push authorized. Negative exact-N concentration does not prove specificity/blanket beat avoidance; B near-null Spearman and modest positive q90 tail overlap remain distinct. No clinical labels/test changes. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "latest_status": "Complete descriptive diagnostic, no scientific/clinical PASS flag. Failed32and33auditI/Oattempts retained and charged once; all34costs759.933CPU/473.050GPU-lockseconds.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_heldout_editor_background_transfer",
@@ -1791,8 +1883,12 @@
       "cpu_hours": 0.5,
       "build_hours": 5.0,
       "blocked_by": [],
-      "status": "done",
-      "notes": "Report docs/ssl-synthetic-localization-background-editor-transfer-v1-results.md. Modest transfer of numerical edits only, not disease localization; amplitude lower bound0.00041645, allarms loseAPonreal/heldoutdescriptively. Preserve14/15FAIL, highuncalibratedcontrolresponses, spentdevelopment/unknowngeneratorcohortlimits. Threeactualstages35/36/37 completedwithinmeasuredgates; NO PUSH peruser."
+      "status": "dropped",
+      "notes": "Report docs/ssl-synthetic-localization-background-editor-transfer-v1-results.md. Modest transfer of numerical edits only, not disease localization; amplitude lower bound0.00041645, allarms loseAPonreal/heldoutdescriptively. Preserve14/15FAIL, highuncalibratedcontrolresponses, spentdevelopment/unknowngeneratorcohortlimits. Threeactualstages35/36/37 completedwithinmeasuredgates; NO PUSH peruser. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_mixed_background_localizer_training",
@@ -1806,8 +1902,12 @@
       "cpu_hours": 0.25,
       "build_hours": 3.0,
       "blocked_by": [],
-      "status": "done",
-      "notes": "docs/ssl-synthetic-localization-mixed-background-v1-results.md. Fixed40PTB TRAIN patients, original generated40, matched400updates/threefits/Hann-only training; held-out biphasic evaluation reused spent development. No GAN fine-tuning, disease masks, clinical false-positive reduction or population equivalence claim. Preserve 14/15 earlier failure and all historical missing artifacts. No push or automatic successor fitting. Failed39 input-contract attempt is preserved and counted once; recovery changes only batched-call dispatch/history wrappers. All40 totals1274.365159998CPU/564.452248458GPU-lockseconds."
+      "status": "dropped",
+      "notes": "docs/ssl-synthetic-localization-mixed-background-v1-results.md. Fixed40PTB TRAIN patients, original generated40, matched400updates/threefits/Hann-only training; held-out biphasic evaluation reused spent development. No GAN fine-tuning, disease masks, clinical false-positive reduction or population equivalence claim. Preserve 14/15 earlier failure and all historical missing artifacts. No push or automatic successor fitting. Failed39 input-contract attempt is preserved and counted once; recovery changes only batched-call dispatch/history wrappers. All40 totals1274.365159998CPU/564.452248458GPU-lockseconds. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "done",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     },
     {
       "id": "ssl_synthetic_real_abnormality_endpoint_qualification",
@@ -1821,8 +1921,12 @@
       "cpu_hours": 0.25,
       "build_hours": 3,
       "blocked_by": [],
-      "status": "in_progress",
-      "notes": "First review public source definitions, licensing/access, annotation semantics and patient/evaluation role, under a separately committed bounded feasibility protocol before raw annotation scans or model scores. Preserve existing clinical label definitions and all closed-test restrictions; no clinician recruitment prerequisite. Wave boundaries, exact N landmarks, whole-record diagnoses and sparse option-conditioned benchmark answers are not automatically dense disease masks. Keep synthetic-to-real localization as the scientific question; no replacement classification benchmark, outcome-driven window widening, GAN tuning or unprofiled training. Do not reuse another checkout outputs. All records/maps stay local; no push. Protocol da7fe80 now commits EDB annotation/header-only acquisition, qualification and independent audit from actual40; channel-local contract and reference-context limitations committed separately before parsing. No payload/score result yet. Renewed24hourwindow23October18:03UTCthrough24October18:03UTC. Acquisition43PASS all184assets; v1FAILpreserved. No waveform/modeloperation."
+      "status": "dropped",
+      "notes": "First review public source definitions, licensing/access, annotation semantics and patient/evaluation role, under a separately committed bounded feasibility protocol before raw annotation scans or model scores. Preserve existing clinical label definitions and all closed-test restrictions; no clinician recruitment prerequisite. Wave boundaries, exact N landmarks, whole-record diagnoses and sparse option-conditioned benchmark answers are not automatically dense disease masks. Keep synthetic-to-real localization as the scientific question; no replacement classification benchmark, outcome-driven window widening, GAN tuning or unprofiled training. Do not reuse another checkout outputs. All records/maps stay local; no push. Protocol da7fe80 now commits EDB annotation/header-only acquisition, qualification and independent audit from actual40; channel-local contract and reference-context limitations committed separately before parsing. No payload/score result yet. Renewed24hourwindow23October18:03UTCthrough24October18:03UTC. Acquisition43PASS all184assets; v1FAILpreserved. No waveform/modeloperation. CLOSED by user2026-10-23. No successor; retained only as historical evidence.",
+      "historical_status_before_closure": "in_progress",
+      "closure_status": "closed",
+      "closure_report": "docs/ssl-synthetic-localization-closure-2026-10-23.md",
+      "successor": null
     }
   ]
 }

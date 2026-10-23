@@ -419,6 +419,7 @@ def _extreme_parents(intervals: list[dict[str, Any]]) -> list[dict[str, Any]]:
             for parent in intervals
             if not parent["extreme"]
             and parent["valid"]
+            and interval["start"] < interval["end"]
             and all(parent[key] == interval[key] for key in ("category", "family", "channel", "sign"))
             and parent["start"] <= interval["start"]
             and interval["end"] <= parent["end"]

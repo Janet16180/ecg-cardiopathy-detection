@@ -406,3 +406,14 @@ def test_unexpected_rdann_exception_is_not_swallowed(tmp_path, monkeypatch):
     monkeypatch.setattr(core.wfdb, "rdann", fail)
     with pytest.raises(RuntimeError, match="unexpected decoder failure"):
         core.decode_record(record, tmp_path / "sanitized", config())
+
+
+@pytest.mark.parametrize(("start", "end"), [(5000, 5000), (5000, 2500)])
+def test_nonpositive_extreme_interval_has_no_containing_parent_metadata(start, end):
+    result = qualify(
+        event(0, 14), *episode(0, 10000, family="T"), event(start, 19, "(T0++"), event(end, 19, "T0++)")
+    )
+    assert_record_issue(result, "nonpositive_episode_duration")
+    extreme = result["episodes"][-1]
+    assert extreme["parent_begin_indices"] == []
+    assert extreme["parent_count"] == 0

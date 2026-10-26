@@ -1,0 +1,102 @@
+{
+  "study": "CLUSTER06",
+  "passed": true,
+  "result_sha256": "554dd9f8e2a7547ef5daef53b8ed1db58f9f21bd6471bce6a0e73a184509b3c6",
+  "source_commit": "e63133ff7813b8dfc9f10f1535607ab7d686ec06",
+  "source_files_verified": 46,
+  "input_files_verified": 104,
+  "artifact_files_verified": 7,
+  "role_support_whole_fold_identity_gates_verified": true,
+  "exact_50_bank_manifest_and_fixed_splits_verified": true,
+  "maximum_bank_coordinate_error": 0.0,
+  "models_reconstructed": 549,
+  "factorial_models": 540,
+  "own_reference_models": 9,
+  "all_saved_labels_exact": true,
+  "all_model_diagnostics_reproduced": true,
+  "maximum_saved_parameter_responsibility_error": 0.0,
+  "equivalence_comparisons_reconstructed": 183,
+  "equivalence_passed": true,
+  "maximum_equivalence_errors": {
+    "means": 8.881784197001252e-16,
+    "weights": 6.661338147750939e-16,
+    "responsibilities": 2.78388423424758e-14,
+    "covariances": 1.8821749714348357e-16,
+    "lower_bound": 1.0658141036401503e-14
+  },
+  "all_sensitivity_alignment_entropy_own_and_original_group_summaries_reproduced": true,
+  "all_fixed_floor_scale_contrasts_reproduced": true,
+  "primary_decision_exact": true,
+  "decision": {
+    "meaningful_conditional_averaging_benefit": true,
+    "p10_ari_difference": 0.2542243341351882,
+    "conditions": {
+      "p10_improvement_at_least_0.10": true,
+      "at_least_45_admissible_single_banks": true,
+      "at_least_9_admissible_ensembles": true
+    }
+  },
+  "primary_single_p10": 0.5873423337777407,
+  "primary_ensemble_p10": 0.8415666679129289,
+  "primary_original_reference_groups": {
+    "single": {
+      "0": {
+        "anchors": 368,
+        "agreement": {
+          "minimum": 0.28,
+          "p10": 0.96,
+          "median": 1.0,
+          "p90": 1.0,
+          "maximum": 1.0
+        },
+        "fraction_agreement_at_least_0.8": 0.9483695652173914
+      },
+      "1": {
+        "anchors": 43,
+        "agreement": {
+          "minimum": 0.5,
+          "p10": 0.724,
+          "median": 1.0,
+          "p90": 1.0,
+          "maximum": 1.0
+        },
+        "fraction_agreement_at_least_0.8": 0.813953488372093
+      }
+    },
+    "ensemble": {
+      "0": {
+        "anchors": 368,
+        "agreement": {
+          "minimum": 0.1,
+          "p10": 1.0,
+          "median": 1.0,
+          "p90": 1.0,
+          "maximum": 1.0
+        },
+        "fraction_agreement_at_least_0.8": 0.9918478260869565
+      },
+      "1": {
+        "anchors": 43,
+        "agreement": {
+          "minimum": 0.4,
+          "p10": 0.72,
+          "median": 1.0,
+          "p90": 1.0,
+          "maximum": 1.0
+        },
+        "fraction_agreement_at_least_0.8": 0.8837209302325582
+      }
+    }
+  },
+  "secondary_record_full3_RMS_p10": {
+    "single": 0.48608353594177034,
+    "ensemble": 0.385814071111471
+  },
+  "target_annotations_parsed": false,
+  "waveform_reads": false,
+  "model_encoder_loaded": false,
+  "new_encoder_inference": false,
+  "new_scientific_settings": false,
+  "seconds": 20.10367336915806,
+  "limits": "Finite shared-support-pool sensitivity only. Pairwise ARIs are dependent and no population CI follows. Averaging benefit is configuration-specific and does not reverse CLUSTER03/05 failures or establish disease groups."
+}

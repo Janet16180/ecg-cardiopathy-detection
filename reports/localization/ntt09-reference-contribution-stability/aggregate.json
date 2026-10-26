@@ -1,0 +1,1339 @@
+{
+  "study": "NTT-09",
+  "status": "completed",
+  "git_commit": "b147090a538ebc336c079fb625893a4723be1b76",
+  "counts": {
+    "patients": 60,
+    "support_patients": 27,
+    "single_banks": 50,
+    "ensembles": 10,
+    "new_decompositions": 3600,
+    "single_pairs_per_patient": 1225,
+    "ensemble_pairs_per_patient": 45,
+    "failed_decompositions": 0
+  },
+  "runtime": {
+    "python": "3.11.13",
+    "packages": {
+      "numpy": "2.4.6",
+      "scipy": "1.17.1",
+      "scikit-learn": "1.9.1",
+      "torch": "2.6.0+cu124",
+      "timm": "1.0.8",
+      "wfdb": "4.3.1",
+      "pandas": "3.0.6",
+      "threadpoolctl": "3.7.0"
+    },
+    "device": "cpu",
+    "machine": "x86_64",
+    "processor": "x86_64",
+    "torch_threads": 2,
+    "thread_environment": {
+      "OMP_NUM_THREADS": "2",
+      "OPENBLAS_NUM_THREADS": "2",
+      "MKL_NUM_THREADS": "2"
+    }
+  },
+  "seconds": 26.288372575305402,
+  "decision": {
+    "conditional_highlight_stability_benefit": true,
+    "conditions": {
+      "all_60_patient_differences_defined": true,
+      "every_patient_single_coverage_at_least_1164_of_1225": true,
+      "every_patient_ensemble_coverage_at_least_43_of_45": true,
+      "mean_patient_improvement_at_least_0.10": true
+    },
+    "mean_patient_jaccard_difference": 0.2140787087256179,
+    "patient_difference_distribution": {
+      "count": 60,
+      "defined": 60,
+      "undefined": 0,
+      "minimum": 0.04976568405139836,
+      "p10": 0.09447044595616023,
+      "median": 0.19432869020624127,
+      "p90": 0.3627455782312925,
+      "maximum": 0.4830687830687831,
+      "mean": 0.2140787087256179
+    }
+  },
+  "aggregate": {
+    "single": {
+      "patient_metrics": {
+        "negative_margin_fraction": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.06600000000000009,
+          "maximum": 0.56,
+          "mean": 0.030000000000000002
+        },
+        "zero_margin_fraction": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "minimum_margin": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": -0.1341005063769659,
+          "p10": -0.036929700413315995,
+          "median": 0.03874704807754009,
+          "p90": 0.13957342747972565,
+          "maximum": 0.17026057809457207,
+          "mean": 0.038657673253655066
+        },
+        "maximum_margin": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0945961654301184,
+          "p10": 0.18102857768156597,
+          "median": 0.2788887326364429,
+          "p90": 0.36361434107096446,
+          "maximum": 0.40202417841018523,
+          "mean": 0.2684648594120459
+        },
+        "mean_positive_quarter_size": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 2.0,
+          "p10": 2.398,
+          "median": 3.0,
+          "p90": 4.0,
+          "maximum": 5.0,
+          "mean": 3.115666666666667
+        },
+        "empty_positive_sets": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 1.0,
+          "maximum": 8.0,
+          "mean": 0.48333333333333334
+        },
+        "beat_zero_absolute_mass_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_positive_mass": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.01671595274826687,
+          "p10": 0.08258836298138574,
+          "median": 0.15768593957645433,
+          "p90": 0.21764759728054925,
+          "maximum": 0.22904652283626192,
+          "mean": 0.14924763844353733
+        },
+        "beat_positive_mass_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_negative_mass": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 7.799165207768961e-06,
+          "p90": 0.0020584103823382237,
+          "maximum": 0.017343497461307686,
+          "mean": 0.001128986865704354
+        },
+        "beat_negative_mass_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_absolute_mass": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.03405945020957456,
+          "p10": 0.08392056392114572,
+          "median": 0.15771326138592412,
+          "p90": 0.21764759728054925,
+          "maximum": 0.22904652283626192,
+          "mean": 0.15037662530924173
+        },
+        "beat_absolute_mass_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_cancellation": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0005613902339405008,
+          "p90": 0.05398672048627378,
+          "maximum": 0.26120951240438306,
+          "mean": 0.019066945068823647
+        },
+        "beat_cancellation_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_effective_fraction": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.7230404182254765,
+          "p10": 0.8895043558869475,
+          "median": 0.9661951699401665,
+          "p90": 0.9920404953513334,
+          "maximum": 0.995374926987155,
+          "mean": 0.9456537207004231
+        },
+        "beat_effective_fraction_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_top_absolute_share_0.1": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.11144568506269588,
+          "p10": 0.11682824659140939,
+          "median": 0.17498806783157816,
+          "p90": 0.2608254497984462,
+          "maximum": 0.3550098014194923,
+          "mean": 0.18265033246843704
+        },
+        "beat_top_absolute_share_0.25": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.2705382646823339,
+          "p10": 0.3061447686931719,
+          "median": 0.3401999483986371,
+          "p90": 0.42048344073203875,
+          "maximum": 0.4933653285120397,
+          "mean": 0.3536341950647102
+        },
+        "beat_top_absolute_share_0.5": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.5259595431274218,
+          "p10": 0.5364498894456855,
+          "median": 0.596348091404266,
+          "p90": 0.6753885267218469,
+          "maximum": 0.7939420144834786,
+          "mean": 0.6002946941358773
+        },
+        "beat_signed_mean_population_std": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0025340649481588417,
+          "p10": 0.0031087322485798133,
+          "median": 0.004382133363955574,
+          "p90": 0.006343308398298827,
+          "maximum": 0.012032539779826447,
+          "mean": 0.004655998393472529
+        },
+        "beat_signed_any_rank_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_signed_quarter_boundary_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_absolute_mean_population_std": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.002314042546798571,
+          "p10": 0.003012900520496659,
+          "median": 0.004275394376657474,
+          "p90": 0.006343308398298827,
+          "maximum": 0.011794706127408591,
+          "mean": 0.004476585687938525
+        },
+        "beat_absolute_any_rank_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_absolute_quarter_boundary_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_zero_absolute_mass_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_positive_mass": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.023991932592770878,
+          "p10": 0.08942392910354809,
+          "median": 0.1596769733401806,
+          "p90": 0.21806509458559875,
+          "maximum": 0.22904652283626192,
+          "mean": 0.1539375943233462
+        },
+        "token_positive_mass_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_negative_mass": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.003165891108583144,
+          "p90": 0.015164684792433804,
+          "maximum": 0.027677334405870887,
+          "mean": 0.005818942745513194
+        },
+        "token_negative_mass_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_absolute_mass": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.04861140989858259,
+          "p10": 0.10056901863657672,
+          "median": 0.16238602446592199,
+          "p90": 0.21806509458559875,
+          "maximum": 0.22904652283626192,
+          "mean": 0.1597565370688594
+        },
+        "token_absolute_mass_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_cancellation": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.05793456414729106,
+          "p90": 0.2618523374147577,
+          "maximum": 0.4624853704292216,
+          "mean": 0.1013105264928549
+        },
+        "token_cancellation_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_effective_fraction": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.48279257761663225,
+          "p10": 0.5153172663032721,
+          "median": 0.5875304040267161,
+          "p90": 0.6677352265642805,
+          "maximum": 0.7320713529417524,
+          "mean": 0.5906443804331718
+        },
+        "token_effective_fraction_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_top_absolute_share_0.1": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.21880983927907105,
+          "p10": 0.23721308694633864,
+          "median": 0.28881105973193666,
+          "p90": 0.3232054089056973,
+          "maximum": 0.3625231053966673,
+          "mean": 0.28506905730362764
+        },
+        "token_top_absolute_share_0.25": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.44899660459426755,
+          "p10": 0.5011838045031455,
+          "median": 0.5623700675970558,
+          "p90": 0.633729201469629,
+          "maximum": 0.6629446690908632,
+          "mean": 0.5636398384494433
+        },
+        "token_top_absolute_share_0.5": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.7529883343368582,
+          "p10": 0.7909001147660488,
+          "median": 0.8373656391233231,
+          "p90": 0.8721569016800268,
+          "maximum": 0.8903521813246102,
+          "mean": 0.8365168331819353
+        },
+        "token_signed_mean_population_std": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0006863756966956519,
+          "p10": 0.000855929618054227,
+          "median": 0.0010351239199681943,
+          "p90": 0.0014378131134959,
+          "maximum": 0.0024707093404975813,
+          "mean": 0.001126767497808954
+        },
+        "token_signed_any_rank_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_signed_quarter_boundary_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_absolute_mean_population_std": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0005999273207831485,
+          "p10": 0.0007718044429723321,
+          "median": 0.000945567256214448,
+          "p90": 0.001326171916949579,
+          "maximum": 0.002241371642447439,
+          "mean": 0.0010253510707153395
+        },
+        "token_absolute_any_rank_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_absolute_quarter_boundary_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        }
+      },
+      "pair_metrics": {
+        "signed_rank": {
+          "patient_mean": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 0.19170068027210882,
+            "p10": 0.3183317039734554,
+            "median": 0.6079138276689298,
+            "p90": 0.7367079777365492,
+            "maximum": 0.8269659863945578,
+            "mean": 0.5686389520092875
+          },
+          "defined_pairs_per_patient": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 1225.0,
+            "p10": 1225.0,
+            "median": 1225.0,
+            "p90": 1225.0,
+            "maximum": 1225.0,
+            "mean": 1225.0
+          },
+          "all_pairs_per_patient": 1225
+        },
+        "absolute_rank": {
+          "patient_mean": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 0.04784415584415584,
+            "p10": 0.25985352062903083,
+            "median": 0.5508911564625849,
+            "p90": 0.731012987012987,
+            "maximum": 0.7737142857142858,
+            "mean": 0.513190142476536
+          },
+          "defined_pairs_per_patient": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 1225.0,
+            "p10": 1225.0,
+            "median": 1225.0,
+            "p90": 1225.0,
+            "maximum": 1225.0,
+            "mean": 1225.0
+          },
+          "all_pairs_per_patient": 1225
+        },
+        "positive_quarter_jaccard": {
+          "patient_mean": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 0.20789115646258502,
+            "p10": 0.2900087679516251,
+            "median": 0.44687657920310975,
+            "p90": 0.6152163265306121,
+            "maximum": 0.7488979591836735,
+            "mean": 0.4417881343078918
+          },
+          "defined_pairs_per_patient": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 1197.0,
+            "p10": 1225.0,
+            "median": 1225.0,
+            "p90": 1225.0,
+            "maximum": 1225.0,
+            "mean": 1223.9
+          },
+          "all_pairs_per_patient": 1225
+        },
+        "absolute_quarter_jaccard": {
+          "patient_mean": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 0.20789115646258502,
+            "p10": 0.27879183673469393,
+            "median": 0.44687657920310975,
+            "p90": 0.6125714285714285,
+            "maximum": 0.7076734693877552,
+            "mean": 0.4320156354605335
+          },
+          "defined_pairs_per_patient": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 1225.0,
+            "p10": 1225.0,
+            "median": 1225.0,
+            "p90": 1225.0,
+            "maximum": 1225.0,
+            "mean": 1225.0
+          },
+          "all_pairs_per_patient": 1225
+        }
+      }
+    },
+    "ensemble": {
+      "patient_metrics": {
+        "negative_margin_fraction": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.2,
+          "mean": 0.0033333333333333335
+        },
+        "zero_margin_fraction": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "minimum_margin": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": -0.01436562214560122,
+          "p10": 0.050715895938713396,
+          "median": 0.1231951987945275,
+          "p90": 0.19255329576563676,
+          "maximum": 0.20643062499228704,
+          "mean": 0.11762947262956237
+        },
+        "maximum_margin": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0309215696537527,
+          "p10": 0.11774776481836978,
+          "median": 0.187970710163682,
+          "p90": 0.23992846448983246,
+          "maximum": 0.2637567624545182,
+          "mean": 0.18197235410133977
+        },
+        "mean_positive_quarter_size": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 2.0,
+          "p10": 3.0,
+          "median": 3.0,
+          "p90": 4.0,
+          "maximum": 5.0,
+          "mean": 3.1666666666666665
+        },
+        "empty_positive_sets": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_zero_absolute_mass_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_positive_mass": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.01679853169469387,
+          "p10": 0.08722119395416826,
+          "median": 0.15860337411010392,
+          "p90": 0.21160812973689389,
+          "maximum": 0.22280420147387373,
+          "mean": 0.1480072330171485
+        },
+        "beat_positive_mass_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_negative_mass": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.00600840118278862,
+          "mean": 0.00011136339482279349
+        },
+        "beat_negative_mass_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_absolute_mass": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.022806932877482488,
+          "p10": 0.08722119395416826,
+          "median": 0.15860337411010392,
+          "p90": 0.21160812973689389,
+          "maximum": 0.22280420147387373,
+          "mean": 0.14811859641197128
+        },
+        "beat_absolute_mass_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_cancellation": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.3800112893612238,
+          "mean": 0.007661336055332506
+        },
+        "beat_cancellation_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_effective_fraction": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.6789698727039818,
+          "p10": 0.9287687363593397,
+          "median": 0.9854052269437612,
+          "p90": 0.9958640883002194,
+          "maximum": 0.9983018713653351,
+          "mean": 0.9642209767454055
+        },
+        "beat_effective_fraction_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_top_absolute_share_0.1": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.1066381133599964,
+          "p10": 0.11479926267788992,
+          "median": 0.15721305168456662,
+          "p90": 0.24229534574322537,
+          "maximum": 0.3725263709285853,
+          "mean": 0.17406880898579238
+        },
+        "beat_top_absolute_share_0.25": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.2630667042442992,
+          "p10": 0.288791440385333,
+          "median": 0.3294150213068949,
+          "p90": 0.4106371467327323,
+          "maximum": 0.5207750886504553,
+          "mean": 0.3391903519375664
+        },
+        "beat_top_absolute_share_0.5": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.5162953777524883,
+          "p10": 0.5270816652686381,
+          "median": 0.5762634747296465,
+          "p90": 0.6567410848055741,
+          "maximum": 0.8283640185938941,
+          "mean": 0.5841050916795753
+        },
+        "beat_signed_mean_population_std": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0008004330885207366,
+          "p10": 0.0011201853307508081,
+          "median": 0.0017119029583444695,
+          "p90": 0.0025216463086564205,
+          "maximum": 0.005139498053735271,
+          "mean": 0.0018379308895315977
+        },
+        "beat_signed_any_rank_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_signed_quarter_boundary_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_absolute_mean_population_std": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0008004330885207366,
+          "p10": 0.0011201853307508081,
+          "median": 0.0017119029583444695,
+          "p90": 0.0025216463086564205,
+          "maximum": 0.005139498053735271,
+          "mean": 0.0018314767493485462
+        },
+        "beat_absolute_any_rank_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "beat_absolute_quarter_boundary_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_zero_absolute_mass_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_positive_mass": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.025582642567040285,
+          "p10": 0.09304827871229486,
+          "median": 0.16236366737435998,
+          "p90": 0.21179090007675586,
+          "maximum": 0.22280420147387373,
+          "mean": 0.15109521690859998
+        },
+        "token_positive_mass_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_negative_mass": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0005742808363281546,
+          "p90": 0.009524507497464092,
+          "maximum": 0.02829929732628893,
+          "mean": 0.003199347286274248
+        },
+        "token_negative_mass_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_absolute_mass": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.04037515462217532,
+          "p10": 0.09354213804349167,
+          "median": 0.16265933979302905,
+          "p90": 0.21193509829473375,
+          "maximum": 0.22280420147387373,
+          "mean": 0.15429456419487417
+        },
+        "token_absolute_mass_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_cancellation": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.008343279586680113,
+          "p90": 0.17372166245388768,
+          "maximum": 0.6310814467035641,
+          "mean": 0.06284932999155915
+        },
+        "token_cancellation_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_effective_fraction": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.44673337488254505,
+          "p10": 0.48766715902691415,
+          "median": 0.5918451763284289,
+          "p90": 0.679737750652303,
+          "maximum": 0.7476592205736189,
+          "mean": 0.5922775169361743
+        },
+        "token_effective_fraction_undefined_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_top_absolute_share_0.1": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.20961861511989072,
+          "p10": 0.23144146889642803,
+          "median": 0.28538473652335444,
+          "p90": 0.33439298986639576,
+          "maximum": 0.3868725064494438,
+          "mean": 0.28376045678538203
+        },
+        "token_top_absolute_share_0.25": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.43743421109974606,
+          "p10": 0.48996994109548775,
+          "median": 0.5602855379537844,
+          "p90": 0.6557868791971073,
+          "maximum": 0.7074296916759155,
+          "mean": 0.5629705221962207
+        },
+        "token_top_absolute_share_0.5": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.7431145997928308,
+          "p10": 0.7849765444200051,
+          "median": 0.8345346681772929,
+          "p90": 0.8891792269503277,
+          "maximum": 0.9188021176563655,
+          "mean": 0.8364863749748535
+        },
+        "token_signed_mean_population_std": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.00026023377001084156,
+          "p10": 0.00032708726203951584,
+          "median": 0.0004324300164610289,
+          "p90": 0.0006075642036309029,
+          "maximum": 0.001073730450301415,
+          "mean": 0.0004650967220810929
+        },
+        "token_signed_any_rank_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_signed_quarter_boundary_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_absolute_mean_population_std": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.00026015726310704533,
+          "p10": 0.0003162664836814484,
+          "median": 0.000408269030961566,
+          "p90": 0.0005738902477381537,
+          "maximum": 0.00103658085844346,
+          "mean": 0.0004487070371067314
+        },
+        "token_absolute_any_rank_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        },
+        "token_absolute_quarter_boundary_tie_banks": {
+          "count": 60,
+          "defined": 60,
+          "undefined": 0,
+          "minimum": 0.0,
+          "p10": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0
+        }
+      },
+      "pair_metrics": {
+        "signed_rank": {
+          "patient_mean": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 0.4888888888888888,
+            "p10": 0.6595261437908497,
+            "median": 0.8767676767676769,
+            "p90": 0.9222346542346542,
+            "maximum": 0.9525925925925927,
+            "mean": 0.8324247618471046
+          },
+          "defined_pairs_per_patient": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 45.0,
+            "p10": 45.0,
+            "median": 45.0,
+            "p90": 45.0,
+            "maximum": 45.0,
+            "mean": 45.0
+          },
+          "all_pairs_per_patient": 45
+        },
+        "absolute_rank": {
+          "patient_mean": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 0.33737373737373744,
+            "p10": 0.6495736072206658,
+            "median": 0.8712457912457912,
+            "p90": 0.9189225589225587,
+            "maximum": 0.9525925925925927,
+            "mean": 0.8192935227158654
+          },
+          "defined_pairs_per_patient": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 45.0,
+            "p10": 45.0,
+            "median": 45.0,
+            "p90": 45.0,
+            "maximum": 45.0,
+            "mean": 45.0
+          },
+          "all_pairs_per_patient": 45
+        },
+        "positive_quarter_jaccard": {
+          "patient_mean": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 0.36296296296296293,
+            "p10": 0.4713333333333333,
+            "median": 0.6351851851851852,
+            "p90": 0.9,
+            "maximum": 1.0,
+            "mean": 0.6558668430335097
+          },
+          "defined_pairs_per_patient": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 45.0,
+            "p10": 45.0,
+            "median": 45.0,
+            "p90": 45.0,
+            "maximum": 45.0,
+            "mean": 45.0
+          },
+          "all_pairs_per_patient": 45
+        },
+        "absolute_quarter_jaccard": {
+          "patient_mean": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 0.36296296296296293,
+            "p10": 0.4488888888888889,
+            "median": 0.61,
+            "p90": 0.9,
+            "maximum": 1.0,
+            "mean": 0.6495335097001765
+          },
+          "defined_pairs_per_patient": {
+            "count": 60,
+            "defined": 60,
+            "undefined": 0,
+            "minimum": 45.0,
+            "p10": 45.0,
+            "median": 45.0,
+            "p90": 45.0,
+            "maximum": 45.0,
+            "mean": 45.0
+          },
+          "all_pairs_per_patient": 45
+        }
+      }
+    }
+  },
+  "support_exposure": {
+    "single_support_slots_per_finding": 3,
+    "ensemble_support_slots_per_finding": 15,
+    "shared_contrast_support_patients_per_finding": 9,
+    "single_distinct_supports_per_finding": {
+      "count": 150,
+      "defined": 150,
+      "undefined": 0,
+      "minimum": 3.0,
+      "p10": 3.0,
+      "median": 3.0,
+      "p90": 3.0,
+      "maximum": 3.0,
+      "mean": 3.0
+    },
+    "ensemble_distinct_supports_per_finding": {
+      "count": 30,
+      "defined": 30,
+      "undefined": 0,
+      "minimum": 6.0,
+      "p10": 7.0,
+      "median": 8.0,
+      "p90": 9.0,
+      "maximum": 9.0,
+      "mean": 7.7
+    },
+    "ensemble_distinct_supports_all_findings": {
+      "count": 10,
+      "defined": 10,
+      "undefined": 0,
+      "minimum": 22.0,
+      "p10": 22.0,
+      "median": 23.0,
+      "p90": 24.0,
+      "maximum": 24.0,
+      "mean": 23.1
+    },
+    "equal_support_or_computation_budget_comparison": false
+  },
+  "maximum_contribution_sum_error": 1.4432899320127035e-15,
+  "full_pool_winner_runner_ties": 0,
+  "waveform_reads": 0,
+  "new_encoder_inferences": 0,
+  "new_clinical_annotations": 0,
+  "clinical_localization_evaluated": false,
+  "closed_tests_read": false,
+  "predecessor_reproduction": {
+    "evaluations": 180,
+    "patients": 60,
+    "maximum_array_error": 0.0,
+    "maximum_summary_error": 0.0,
+    "original_aggregate_reproduced": true
+  },
+  "result_sha256": "009eacb3c72b0dcfe85e155a9036542cc504e788ddd7179e097860fe4f4e8f64"
+}

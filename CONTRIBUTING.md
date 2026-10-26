@@ -60,6 +60,12 @@ runners as described in the queue. Never run GPU jobs in CI.
 
 Keep reusable Python in `ecg_experiment/`, command entry points in `scripts/`,
 tests in `tests/`, experiment settings in `configs/`, and explanations in `docs/`.
+For new research, use topic subdirectories such as `localization`, `clustering` and `explainability`.
+Mirror code topics in tests, keep each new study's protocol/results together, and group new commands
+and aggregate artifacts by topic. The [research directory guide](docs/research/README.md) gives the paths.
+Keep frozen historical files at their recorded locations. Write all new or edited file content in English,
+including comments, docstrings and documentation.
+
 Use `uv run python -m scripts.<area>.<command>` from the project root; see
 the [command guide](scripts/README.md). Group commands by purpose. Classes should
 encapsulate state and responsibilities; keep stateless operations as functions.

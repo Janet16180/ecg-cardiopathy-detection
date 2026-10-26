@@ -1,0 +1,98 @@
+{
+  "scope": "CLUSTER06, CLUSTER07, NTT08 and NTT09 autonomous research continuation",
+  "verified_at_utc": "2026-10-21T00:29:26.093937+00:00",
+  "scientific_source_reference": "22df402",
+  "integrated_reference_commit": "0cdbf517e7bfc8bbcf1011af29e271cfd21ff3e9",
+  "studies": {
+    "cluster06_bank_scale": {
+      "result_sha256": "554dd9f8e2a7547ef5daef53b8ed1db58f9f21bd6471bce6a0e73a184509b3c6",
+      "source_commit": "e63133ff7813b8dfc9f10f1535607ab7d686ec06",
+      "protocol_commit": "ce55355",
+      "protocol_precedes_source": true,
+      "completed_status_and_bindings_verified": true,
+      "seconds": 26.681377619039267
+    },
+    "cluster07_regional_projection": {
+      "result_sha256": "ed3dfe10bdc59e75c1295e686c846292b58e1cb348dc92a0721d90631fc4246b",
+      "source_commit": "e57b133f9ee165c09304601f96594218f1ec4a4b",
+      "protocol_commit": "68587c4",
+      "protocol_precedes_source": true,
+      "completed_status_and_bindings_verified": true,
+      "seconds": 79.0874795797281
+    },
+    "ntt08_contextual_contributions": {
+      "result_sha256": "0d137e4f8618a99f2d6994179b9ff5b1b3de0d82e309fd6ab4d915d5a3001058",
+      "source_commit": "9cb711e19d8e7567d23175bbc94b0a93fcf3e339",
+      "protocol_commit": "915a960",
+      "protocol_precedes_source": true,
+      "completed_status_and_bindings_verified": true,
+      "seconds": 5.817360264714807
+    },
+    "ntt09_reference_contribution_stability": {
+      "result_sha256": "009eacb3c72b0dcfe85e155a9036542cc504e788ddd7179e097860fe4f4e8f64",
+      "source_commit": "b147090a538ebc336c079fb625893a4723be1b76",
+      "protocol_commit": "d404cc2",
+      "protocol_precedes_source": true,
+      "completed_status_and_bindings_verified": true,
+      "seconds": 26.288372575305402
+    }
+  },
+  "immutable_file_references_verified": 500,
+  "unique_immutable_files_verified": 150,
+  "tests": {
+    "passed": 1710,
+    "skipped": 6,
+    "seconds": 83.38,
+    "log_sha256": "bd5e44e140f4b05ea9bd96db0f9a1c0435ca1463a168f850770a6b64c29dba65",
+    "location": "main checkout with a direct output directory"
+  },
+  "initial_isolated_copy_suite": {
+    "passed": 1709,
+    "failed": 1,
+    "skipped": 6,
+    "seconds": 128.16,
+    "reason": "An existing safe-leaf test deliberately rejects symlinked outputs before checking an absent leaf.",
+    "scientific_code_changed_for_rerun": false
+  },
+  "ruff_code_scopes": [
+    "ecg_experiment",
+    "scripts",
+    "tests"
+  ],
+  "ruff_code_passed": true,
+  "new_python_files_formatted": 18,
+  "offline_package_build_passed": true,
+  "wheel_domain_modules_exact": 6,
+  "source_sha256": {
+    "ecg_experiment/clustering/bank_scale.py": "492ac810457cdbcdb24b9e184066fa081c987314e0bc24665333bd9ce6bce657",
+    "ecg_experiment/clustering/regional_projection.py": "786c3e5f5b8aea3a5eb1514f8b7e07aa025bf51cdfa69183ba0ba5d3bab464b8",
+    "ecg_experiment/localization/contextual_margin.py": "16e5a97d2f64dc2737df432fcca3949ddbd939ebdf6ed8b1c4d8d3d8424d1d76",
+    "ecg_experiment/localization/contribution_inputs.py": "b74796129ae102c43c157cb0e5aa08ff8f2fe9386b6e14a4b7f9d35cbe231d4f",
+    "ecg_experiment/localization/contribution_study.py": "99bd14175a304792db0c3efa9a42778acf1199c9ebcbb91f516f47f86cb6afbe",
+    "ecg_experiment/localization/reference_contribution_stability.py": "da208ec5b131a6817169bc6f5ee26e240d38020d332468c8d593a8d1301dcea5"
+  },
+  "build_artifacts": {
+    "outputs/continuation_20261020_verification/build/.gitignore": "684888c0ebb17f374298b65ee2807526c066094c701bcc7ebbe1c1095f494fc1",
+    "outputs/continuation_20261020_verification/build/ecg_cardiopathy_detection-0.1.0-py3-none-any.whl": "d97dfcc4bfbee18dede7232da968ec85ac2e67c0d10f67d0ba637fad60bda251",
+    "outputs/continuation_20261020_verification/build/ecg_cardiopathy_detection-0.1.0.tar.gz": "8d1e7c8044f65d39d332790b0d735bbd0eadd16079db50e06c71d41c09168b78"
+  },
+  "new_local_document_links_validated": 35,
+  "historical_missing_output_links_unchanged": 68,
+  "ranked_backlog_exact": true,
+  "aggregate_json_files_checked": 9,
+  "aggregate_private_payload_key_check_passed": true,
+  "aggregate_figures_visually_inspected": 4,
+  "personal_identity_verified_for_new_commits": true,
+  "independent_audits_passed": [
+    "CLUSTER06:549 models",
+    "CLUSTER07:432 new fits and nine projections",
+    "NTT08:180 decompositions and 54000 random deletions",
+    "NTT09:3600 decompositions and 76200 bank pairs"
+  ],
+  "clinical_annotations": 0,
+  "clinical_localization_evaluated": false,
+  "closed_test_payloads_read": false,
+  "data_uploaded": false,
+  "pushed": false,
+  "pr_merged": false
+}

@@ -1,0 +1,380 @@
+{
+  "study": "NTT-06",
+  "stage": "native_development_comparison",
+  "status": "completed",
+  "created_at_utc": "2026-10-19T15:26:29.413073+00:00",
+  "git_commit": "7078768a642407cf02f804e5a2807a3e3a533809",
+  "source_sha256": {
+    "docs/research/localization/ntt06-native-encoder/protocol.md": "9224a2b1d626702c0a72a665e5acbe65298d7876600cf0dac8fa806f82f4885e",
+    "ecg_experiment/localization/jepa_native.py": "efd7dcc1293072a26a374ed0aaf149baaf1237860c8eddeaad934d485efafb3d",
+    "ecg_experiment/localization/native_study.py": "da56550e88d863364816413c10ebe37027ee7847c4153b1f6cbff84e0ef70545",
+    "scripts/experiments/localization/run_ntt06.py": "981c178711628e3f7473dd3ee05fd0108f524f2103af5a935c9b42afa8524590",
+    "tests/localization/test_jepa_native.py": "5adbd46985c9d8da3ac990d1f432b5e0f8d6803e6df890b261c5c8325a6a742b",
+    "tests/localization/test_native_study.py": "df844795310573197010f08cf5a3020c24d904138a429e55bba7a04afcd1fb65",
+    "ecg_experiment/native_reference_ntt05.py": "66f9b70d21dac90cb7db1bc5c6e59b6a956222c7737ac9867b94115669693a9e",
+    "ecg_experiment/same_wave_ntt04.py": "580b0aa424cb476bb6564b13343d8c2fee1d3a2c4931478d1b9e09077bc59666",
+    "ecg_experiment/clustering01.py": "45a735dd42de02a8d0fce4faac50a8a0676147fca22d3ecff7c65aaf82101799",
+    "ecg_experiment/visual_reference_ntt03.py": "e3894b34d0e4bf352f062f88b7aff463cbda70f0797502e6c0b98a64c50513ee",
+    "ecg_experiment/reference_transfer_ntt02.py": "ced07c41a8a0c1ee057dbe0d01927a31b0cf66de18e41e33b5b8c4e5ca040d1a",
+    "ecg_experiment/eda/ptbxl.py": "9eca8dba73d6134d4c9b863451496c46e52501580f84e66beb73c182f1369415",
+    "ecg_experiment/localization/__init__.py": "14caf8234bf2fb1a5d88906777888753a2e7d596c8e18f4252f4d4bd92948404",
+    "ecg_experiment/eda/avance2_features.py": "b88c31643811971a46ce789472bab6d2452250ccfc5d517b559633530fbdd698",
+    "ecg_experiment/eda/signals.py": "f5ab2aafbbd38d16d9e79724887ad4e0909be97c67c7d2b7b447bf65e33fd4d8",
+    "ecg_experiment/intervals.py": "b45103664e8c2e063b90c8223b64e7bbe6394e54796e0613538bd0b53dfe99af",
+    "ecg_experiment/files.py": "d418732520e883994d3b72b064c03174184f606cfea4e166800bf8a096ef985b",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "ecg_experiment/__init__.py": "cca26ce1124d553e877ed33383ffaba3af13f89bd6628e7a1b9ca2cc5c1c6a35",
+    "pyproject.toml": "9df6d56e8f27348d067eb0cf3b6506f5efbbc03154b96b6b3987f4bb4854279e",
+    "uv.lock": "20c6e373cba70e7fe859ba59697f6145c34b42418eddc955f82d29a165d5db7c",
+    "third_party/ntt_native/sources/ECG_JEPA-d937ad2c2c8a1e22856ce7e4a23a30f84a71217c/ecg_jepa.py": "f7becbdf72fd7c6f1f7db092f74c2e68b87f94e5fcb6894fa9772a77518c6fc9",
+    "third_party/ntt_native/sources/ECG_JEPA-d937ad2c2c8a1e22856ce7e4a23a30f84a71217c/pos_encoding.py": "eab89499f50f1c5baad65e25b27d4edef60ab8c7838b3f1a6374c5e1882fd094",
+    "third_party/ntt_native/sources/ECG_JEPA-d937ad2c2c8a1e22856ce7e4a23a30f84a71217c/models.py": "f0f0790f38ba7b39f8878e3a5cbaaa5d4a72ff64cc6d5abc1e821915a2230072"
+  },
+  "checkpoint_sha256": "61334869f905a7d6de32bc573c60024eaf6efba7c35c0e45fc2ea7d52b6ff66e",
+  "predecessor_reproduction": {
+    "all_method_choices_exact": true,
+    "patient_draw_predictions": 180,
+    "methods": 9,
+    "physical_correct": 167,
+    "maximum_score_error": 0.0,
+    "summary_exact": true
+  },
+  "profile_gate_passed": true,
+  "targets": 60,
+  "support_patients": 27,
+  "unique_waveforms": 87,
+  "support_draws": 3,
+  "summary": {
+    "balanced_accuracy": {
+      "native_qrs": 0.9166666666666665,
+      "native_late": 0.8333333333333334,
+      "native_wrong_reference": 0.861111111111111,
+      "native_global_pair": 0.8833333333333332,
+      "native_global_eight": 0.8111111111111112,
+      "native_shuffled_labels": 0.03888888888888888,
+      "dino": 0.8277777777777776,
+      "raw": 0.8833333333333333,
+      "raw_full_context": 0.9277777777777777,
+      "duration": 0.6777777777777777,
+      "amplitude": 0.5166666666666666,
+      "energy": 0.5777777777777778,
+      "combined_scalars": 0.7222222222222222,
+      "late_reference": 0.5722222222222222,
+      "shuffled_labels": 0.09444444444444444
+    },
+    "best_physical_baseline": "raw_full_context",
+    "primary": {
+      "difference": -0.011111111111111112,
+      "ci_low": -0.05981802675881615,
+      "ci_high": 0.04313788335847166,
+      "draws": 2000,
+      "skipped_draws": 0,
+      "seed": 20261018,
+      "baseline_maximum_recomputed_each_draw": true
+    },
+    "regional_control_differences": {
+      "native_late": {
+        "difference": 0.08333333333333315,
+        "ci_low": 0.03666159270725841,
+        "ci_high": 0.13005355877066405,
+        "draws": 2000,
+        "skipped_draws": 0,
+        "seed": 20261018
+      },
+      "native_global_pair": {
+        "difference": 0.033333333333333326,
+        "ci_low": -0.0017078586375261161,
+        "ci_high": 0.07352941176470584,
+        "draws": 2000,
+        "skipped_draws": 0,
+        "seed": 20261018
+      },
+      "native_global_eight": {
+        "difference": 0.10555555555555529,
+        "ci_low": 0.0625246469042742,
+        "ci_high": 0.15062252964426892,
+        "draws": 2000,
+        "skipped_draws": 0,
+        "seed": 20261018
+      }
+    },
+    "advance_gate_passed": false,
+    "by_draw": {
+      "20261018": {
+        "native_qrs": 0.8166666666666667,
+        "native_late": 0.7666666666666667,
+        "native_wrong_reference": 0.8,
+        "native_global_pair": 0.7666666666666667,
+        "native_global_eight": 0.7333333333333333,
+        "native_shuffled_labels": 0.1,
+        "dino": 0.85,
+        "raw": 0.9166666666666666,
+        "raw_full_context": 0.9166666666666666,
+        "duration": 0.5,
+        "amplitude": 0.5666666666666667,
+        "energy": 0.6166666666666667,
+        "combined_scalars": 0.7666666666666667,
+        "late_reference": 0.6166666666666667,
+        "shuffled_labels": 0.11666666666666667
+      },
+      "20261019": {
+        "native_qrs": 0.9666666666666667,
+        "native_late": 0.8666666666666667,
+        "native_wrong_reference": 0.8666666666666667,
+        "native_global_pair": 0.9666666666666667,
+        "native_global_eight": 0.85,
+        "native_shuffled_labels": 0.016666666666666666,
+        "dino": 0.8333333333333334,
+        "raw": 0.7833333333333333,
+        "raw_full_context": 0.8833333333333333,
+        "duration": 0.7166666666666667,
+        "amplitude": 0.48333333333333334,
+        "energy": 0.5666666666666667,
+        "combined_scalars": 0.6833333333333333,
+        "late_reference": 0.5333333333333333,
+        "shuffled_labels": 0.08333333333333333
+      },
+      "20261020": {
+        "native_qrs": 0.9666666666666667,
+        "native_late": 0.8666666666666667,
+        "native_wrong_reference": 0.9166666666666666,
+        "native_global_pair": 0.9166666666666666,
+        "native_global_eight": 0.85,
+        "native_shuffled_labels": 0.0,
+        "dino": 0.8,
+        "raw": 0.95,
+        "raw_full_context": 0.9833333333333333,
+        "duration": 0.8166666666666667,
+        "amplitude": 0.5,
+        "energy": 0.55,
+        "combined_scalars": 0.7166666666666667,
+        "late_reference": 0.5666666666666667,
+        "shuffled_labels": 0.08333333333333333
+      }
+    },
+    "by_finding": {
+      "NORM": {
+        "native_qrs": 0.9833333333333333,
+        "native_late": 0.9666666666666667,
+        "native_wrong_reference": 0.9333333333333333,
+        "native_global_pair": 0.9833333333333333,
+        "native_global_eight": 1.0,
+        "native_shuffled_labels": 0.0,
+        "dino": 0.8166666666666667,
+        "raw": 0.9833333333333333,
+        "raw_full_context": 0.9833333333333333,
+        "duration": 1.0,
+        "amplitude": 0.4166666666666667,
+        "energy": 0.5666666666666667,
+        "combined_scalars": 0.7833333333333333,
+        "late_reference": 0.5,
+        "shuffled_labels": 0.08333333333333333
+      },
+      "CRBBB": {
+        "native_qrs": 0.7666666666666667,
+        "native_late": 0.6333333333333333,
+        "native_wrong_reference": 0.6666666666666666,
+        "native_global_pair": 0.7166666666666667,
+        "native_global_eight": 0.55,
+        "native_shuffled_labels": 0.11666666666666667,
+        "dino": 0.7166666666666667,
+        "raw": 0.9166666666666666,
+        "raw_full_context": 0.9166666666666666,
+        "duration": 0.6,
+        "amplitude": 0.4,
+        "energy": 0.4666666666666667,
+        "combined_scalars": 0.5833333333333334,
+        "late_reference": 0.21666666666666667,
+        "shuffled_labels": 0.18333333333333332
+      },
+      "CLBBB": {
+        "native_qrs": 1.0,
+        "native_late": 0.9,
+        "native_wrong_reference": 0.9833333333333333,
+        "native_global_pair": 0.95,
+        "native_global_eight": 0.8833333333333333,
+        "native_shuffled_labels": 0.0,
+        "dino": 0.95,
+        "raw": 0.75,
+        "raw_full_context": 0.8833333333333333,
+        "duration": 0.43333333333333335,
+        "amplitude": 0.7333333333333333,
+        "energy": 0.7,
+        "combined_scalars": 0.8,
+        "late_reference": 1.0,
+        "shuffled_labels": 0.016666666666666666
+      }
+    },
+    "mean_score_margin": {
+      "native_qrs": 0.1564571140172815,
+      "native_late": 0.11830771327152544,
+      "native_wrong_reference": 0.09277477968621937,
+      "native_global_pair": 0.13751162620096855,
+      "native_global_eight": 0.1238594341249629,
+      "native_shuffled_labels": 0.1564571140172815
+    }
+  },
+  "target_vector_cosines": {
+    "native_late": {
+      "mean": 0.668428742885766,
+      "minimum": 0.5326666455688485,
+      "maximum": 0.9812617306043352
+    },
+    "native_global_pair": {
+      "mean": 0.888977079019143,
+      "minimum": 0.8008478986410421,
+      "maximum": 0.9854512173086983
+    },
+    "native_global_eight": {
+      "mean": 0.7500643450778255,
+      "minimum": 0.6541770779179561,
+      "maximum": 0.8650605330365001
+    }
+  },
+  "regional_candidates": 14802,
+  "automatic_qrs_candidates": 2022,
+  "candidate_assignments_are_calibrated": false,
+  "runtime": {
+    "python": "3.11.13",
+    "packages": {
+      "torch": "2.6.0+cu124",
+      "numpy": "2.4.6",
+      "scipy": "1.17.1",
+      "timm": "1.0.8",
+      "wfdb": "4.3.1"
+    },
+    "device": "cpu",
+    "machine": "x86_64",
+    "processor": "x86_64",
+    "torch_threads": 2,
+    "thread_environment": {
+      "OMP_NUM_THREADS": "2",
+      "OPENBLAS_NUM_THREADS": "2",
+      "MKL_NUM_THREADS": "2"
+    }
+  },
+  "embedding_space": "ecg-jepa-native-v1:5b3b97d023816a1d0f506e48a3f18ba25dcd53fb74c952bda181c61d48492b78",
+  "context_scope": "Full 10-second recording and all eight input leads: FFT resampling has global temporal support; 12 encoder blocks propagate same-lead/all-time and same-time/all-lead attention. Lead/time anchors identify input patches, not isolated contextual receptive fields.",
+  "native_leads": [
+    "I",
+    "II",
+    "V1",
+    "V2",
+    "V3",
+    "V4",
+    "V5",
+    "V6"
+  ],
+  "token_anchor_seconds": 0.2,
+  "clinical_localization_accuracy": null,
+  "pretraining_eligibility": "Documented Chapman/Ningbo and CODE15 sources exclude PTB; exact checkpoint patient manifest unavailable.",
+  "coexisting_annotations": {
+    "NORM": {
+      "NORM": 20
+    },
+    "CRBBB": {
+      "CD": 20,
+      "MI": 12,
+      "STTC": 1,
+      "HYP": 3
+    },
+    "CLBBB": {
+      "CD": 20,
+      "MI": 2,
+      "HYP": 3,
+      "STTC": 1
+    }
+  },
+  "inference_seconds": {
+    "total": 36.967883406206965,
+    "mean": 0.42491820007134445,
+    "maximum": 0.47076379507780075
+  },
+  "seconds": 60.26659076428041,
+  "peak_rss_bytes": 1514463232,
+  "gpu_used": false,
+  "weight_training": false,
+  "image_model_input": false,
+  "local_result": {
+    "path": "outputs/ntt06_native_encoder/result.json",
+    "sha256": "3deb6cc481ebd085ff30225e7954ad14d965880542484e162d43b2b5b9aea1b3"
+  },
+  "profile": {
+    "study": "NTT-06",
+    "stage": "synthetic_pretrained_cpu_profile",
+    "profile_gate_passed": true,
+    "gates": {
+      "finite_dense_shape": true,
+      "official_mean_equivalence": true,
+      "deterministic_repeat": true,
+      "forward_budget": true,
+      "rss_budget": true,
+      "profile_budget": true,
+      "all_parameters_frozen": true
+    },
+    "load_seconds": 22.456632755231112,
+    "forward_seconds": [
+      0.4142326582223177,
+      0.40733988070860505
+    ],
+    "official_pooled_seconds": 0.4049474778585136,
+    "mean_absolute_max_error": 1.5497207641601562e-06,
+    "repeat_absolute_max_error": 0.0,
+    "peak_rss_bytes": 1419485184,
+    "parameters": 85374720,
+    "dense_shape": [
+      400,
+      768
+    ],
+    "seconds": 23.684884828981012,
+    "waveform_reads": 0,
+    "clinical_score": false,
+    "source_sha256": {
+      "docs/research/localization/ntt06-native-encoder/protocol.md": "9224a2b1d626702c0a72a665e5acbe65298d7876600cf0dac8fa806f82f4885e",
+      "ecg_experiment/localization/jepa_native.py": "efd7dcc1293072a26a374ed0aaf149baaf1237860c8eddeaad934d485efafb3d",
+      "ecg_experiment/localization/native_study.py": "da56550e88d863364816413c10ebe37027ee7847c4153b1f6cbff84e0ef70545",
+      "scripts/experiments/localization/run_ntt06.py": "981c178711628e3f7473dd3ee05fd0108f524f2103af5a935c9b42afa8524590",
+      "tests/localization/test_jepa_native.py": "5adbd46985c9d8da3ac990d1f432b5e0f8d6803e6df890b261c5c8325a6a742b",
+      "tests/localization/test_native_study.py": "df844795310573197010f08cf5a3020c24d904138a429e55bba7a04afcd1fb65",
+      "ecg_experiment/native_reference_ntt05.py": "66f9b70d21dac90cb7db1bc5c6e59b6a956222c7737ac9867b94115669693a9e",
+      "ecg_experiment/same_wave_ntt04.py": "580b0aa424cb476bb6564b13343d8c2fee1d3a2c4931478d1b9e09077bc59666",
+      "ecg_experiment/clustering01.py": "45a735dd42de02a8d0fce4faac50a8a0676147fca22d3ecff7c65aaf82101799",
+      "ecg_experiment/visual_reference_ntt03.py": "e3894b34d0e4bf352f062f88b7aff463cbda70f0797502e6c0b98a64c50513ee",
+      "ecg_experiment/reference_transfer_ntt02.py": "ced07c41a8a0c1ee057dbe0d01927a31b0cf66de18e41e33b5b8c4e5ca040d1a",
+      "ecg_experiment/eda/ptbxl.py": "9eca8dba73d6134d4c9b863451496c46e52501580f84e66beb73c182f1369415",
+      "ecg_experiment/localization/__init__.py": "14caf8234bf2fb1a5d88906777888753a2e7d596c8e18f4252f4d4bd92948404",
+      "ecg_experiment/eda/avance2_features.py": "b88c31643811971a46ce789472bab6d2452250ccfc5d517b559633530fbdd698",
+      "ecg_experiment/eda/signals.py": "f5ab2aafbbd38d16d9e79724887ad4e0909be97c67c7d2b7b447bf65e33fd4d8",
+      "ecg_experiment/intervals.py": "b45103664e8c2e063b90c8223b64e7bbe6394e54796e0613538bd0b53dfe99af",
+      "ecg_experiment/files.py": "d418732520e883994d3b72b064c03174184f606cfea4e166800bf8a096ef985b",
+      "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+      "ecg_experiment/__init__.py": "cca26ce1124d553e877ed33383ffaba3af13f89bd6628e7a1b9ca2cc5c1c6a35",
+      "pyproject.toml": "9df6d56e8f27348d067eb0cf3b6506f5efbbc03154b96b6b3987f4bb4854279e",
+      "uv.lock": "20c6e373cba70e7fe859ba59697f6145c34b42418eddc955f82d29a165d5db7c",
+      "third_party/ntt_native/sources/ECG_JEPA-d937ad2c2c8a1e22856ce7e4a23a30f84a71217c/ecg_jepa.py": "f7becbdf72fd7c6f1f7db092f74c2e68b87f94e5fcb6894fa9772a77518c6fc9",
+      "third_party/ntt_native/sources/ECG_JEPA-d937ad2c2c8a1e22856ce7e4a23a30f84a71217c/pos_encoding.py": "eab89499f50f1c5baad65e25b27d4edef60ab8c7838b3f1a6374c5e1882fd094",
+      "third_party/ntt_native/sources/ECG_JEPA-d937ad2c2c8a1e22856ce7e4a23a30f84a71217c/models.py": "f0f0790f38ba7b39f8878e3a5cbaaa5d4a72ff64cc6d5abc1e821915a2230072"
+    },
+    "checkpoint_sha256": "61334869f905a7d6de32bc573c60024eaf6efba7c35c0e45fc2ea7d52b6ff66e",
+    "runtime": {
+      "python": "3.11.13",
+      "packages": {
+        "torch": "2.6.0+cu124",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "timm": "1.0.8",
+        "wfdb": "4.3.1"
+      },
+      "device": "cpu",
+      "machine": "x86_64",
+      "processor": "x86_64",
+      "torch_threads": 2,
+      "thread_environment": {
+        "OMP_NUM_THREADS": "2",
+        "OPENBLAS_NUM_THREADS": "2",
+        "MKL_NUM_THREADS": "2"
+      }
+    }
+  },
+  "profile_receipt_sha256": "32ee4d87cf5cc564ec0f6c45e12dda9ce79320f84b2bdb6fba08a638cc75c111"
+}

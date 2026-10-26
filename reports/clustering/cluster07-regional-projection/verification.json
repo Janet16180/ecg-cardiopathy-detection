@@ -1,0 +1,99 @@
+{
+  "study": "CLUSTER07",
+  "passed": true,
+  "result_sha256": "ed3dfe10bdc59e75c1295e686c846292b58e1cb348dc92a0721d90631fc4246b",
+  "source_commit": "e57b133f9ee165c09304601f96594218f1ec4a4b",
+  "source_files_verified": 41,
+  "input_files_verified": 52,
+  "artifact_files_verified": 9,
+  "role_support_whole_fold_identity_gates_verified": true,
+  "fixed1993patients_1582fitting_411anchors_and9samples_verified": true,
+  "weighted_covariances_bases_signs_spectra_and_retention_reconstructed": 9,
+  "maximum_basis_error": 0.0,
+  "maximum_spectrum_error": 0.0,
+  "maximum_variance_retention_error": 9.71445146547012e-17,
+  "maximum_coordinate_error": 0.0,
+  "new_grid_fits_reconstructed": 432,
+  "all_saved_labels_exact": true,
+  "all_convergence_iterations_occupancy_stability_eligibility_exact": true,
+  "maximum_silhouette_error": 0.0,
+  "allselected_rankings_and_pairwise_ARIs_exact": true,
+  "primary_decision_exact": true,
+  "decision": {
+    "primary_regional_concordance_passed": false,
+    "conditions": {
+      "regional_covariance9_rms_eligible": true,
+      "ntt_region9_rms_eligible": true,
+      "anchor_ari_at_least_0.50": false
+    },
+    "primary_anchor_ari": 0.1531812487323879,
+    "all_selected_pairwise_anchor_ari": {
+      "regional_covariance9_rms:native_region9_rms": 0.9422957660005379,
+      "regional_covariance9_rms:ntt_region9_rms": 0.1531812487323879,
+      "native_region9_rms:ntt_region9_rms": 0.15285448552857783
+    },
+    "cluster03_and_cluster05_negative_primaries_unchanged": true
+  },
+  "reference_variance_retention": {
+    "regional_basis_region_variance_retained": 0.14411172295691366,
+    "patient_basis_region_variance_retained": 0.10792363438928944,
+    "regional_basis_patient_variance_retained": 0.19788930194356583,
+    "patient_basis_patient_variance_retained": 0.3681652369911086
+  },
+  "all_three_selected_annotation_nuisance_AMIs_exact": true,
+  "annotation_AMIs": {
+    "regional_covariance9_rms": {
+      "device": -0.0009208371843104834,
+      "site": -0.009940632788352216,
+      "quality": 0.020873987656656746,
+      "hr_bpm": 0.4019328694517743,
+      "signal_std": 0.0478888482185019,
+      "baseline_fraction": 0.05577123581973357,
+      "beat_consistency": 0.08744670687981553,
+      "superclass_combination": 0.0478080406472251
+    },
+    "native_region9_rms": {
+      "device": -0.0016904989715251395,
+      "site": -0.009077147109880376,
+      "quality": 0.019928595523806613,
+      "hr_bpm": 0.40479706743013083,
+      "signal_std": 0.041869456725211245,
+      "baseline_fraction": 0.05277077396940351,
+      "beat_consistency": 0.09226530414026492,
+      "superclass_combination": 0.0468249562523292
+    },
+    "ntt_region9_rms": {
+      "device": 0.00952092613093052,
+      "site": -0.005412857053403374,
+      "quality": 0.04527664103440814,
+      "hr_bpm": 0.035958219213008256,
+      "signal_std": 0.060871613414389875,
+      "baseline_fraction": 0.0018907117171198882,
+      "beat_consistency": 0.05064464358359257,
+      "superclass_combination": 0.05866351228457728
+    }
+  },
+  "predecessor_replay_audit": {
+    "immutable05result_matches_prior_independent1440fit23controlaudit": true,
+    "all160saved07replay_candidate_records_match05": true,
+    "old03replay_receipt_matches05": true,
+    "all05selected_and_control_annotation_summaries_independently_recomputed": true,
+    "old1440models_not_repeated_again_in_this_audit": true,
+    "unchanged_baseline_coordinates_and288_baseline_fits_match05": true
+  },
+  "frozen_decision_hash_checked_before_source_diagnostic_parse": true,
+  "diagnostic_payloads_parsed": 1993,
+  "out_of_cohort_payloads_parsed": 0,
+  "seconds": 28.50778302270919,
+  "waveform_reads": false,
+  "encoder_model_loaded": false,
+  "new_encoder_inference": false,
+  "new_scientific_settings": false,
+  "limitations": "Greater regional variance retention follows the fitted covariance objective, not disease validity. Matched regional concordance remains below.50. Same development patients and no clinical masks; no earlier negative primary is rescued.",
+  "aggregate_json_audit": {
+    "shared_statistics_match_private_result": true,
+    "forbidden_identity_and_transform_payload_keys_absent": true,
+    "aggregate_sha256": "071aecc56cc1c99f9b3ce419a29ca727c98d2d0d08d37ac37f5c35680b02eeac",
+    "figures_visually_inspected": false
+  }
+}

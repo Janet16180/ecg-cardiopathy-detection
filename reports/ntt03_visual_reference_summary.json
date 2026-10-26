@@ -1,0 +1,88 @@
+{
+  "study": "NTT-03",
+  "status": "complete",
+  "git_commit": "9d3ee351f2a5ec6927a820d5714b4b860d082cd7",
+  "model_variant": "DINOv2-S14 plus SAM2-Tiny; not original large/large recipe",
+  "classes": 3,
+  "target_questions": 6,
+  "unique_target_patients": 6,
+  "lead_link_inventory": {
+    "explicit_question": 167,
+    "ambiguous_selected": 756,
+    "selected_lead_answer": 91,
+    "unresolved": 493
+  },
+  "seconds": 327.06795165501535,
+  "versions": {
+    "torch": "2.6.0+cu124",
+    "torchvision": "0.21.0+cu124",
+    "numpy": "2.4.6",
+    "pillow": "12.3.0"
+  },
+  "gpu_used": false,
+  "training_performed": false,
+  "reserved_patients_used": false,
+  "phase_comparator": "NTT02 all12leads and its separate fixed support draw; contextual only",
+  "clinical_localization_accuracy": null,
+  "views": {
+    "full": {
+      "real_accuracy": 1.0,
+      "wrong_accuracy": 0.3333333333333333,
+      "duration_accuracy": 0.6666666666666666,
+      "phase_context_accuracy": 1.0
+    },
+    "crop": {
+      "real_accuracy": 1.0,
+      "wrong_accuracy": 0.0,
+      "duration_accuracy": 0.6666666666666666,
+      "phase_context_accuracy": 1.0
+    }
+  },
+  "sam_trials": [
+    {
+      "diagnosis": "complete_left_bundle_branch_block",
+      "proposal_count": 1,
+      "oracle_iou": 0.016000000000000014,
+      "chosen_iou": 0.0,
+      "class_seconds": 92.22552638314664
+    },
+    {
+      "diagnosis": "left_anterior_fascicular_block",
+      "proposal_count": 3,
+      "oracle_iou": 0.014000000000000058,
+      "chosen_iou": 0.0,
+      "class_seconds": 93.07888508494943
+    },
+    {
+      "diagnosis": "left_ventricular_hypertrophy",
+      "proposal_count": 7,
+      "oracle_iou": 0.8791981712678044,
+      "chosen_iou": 0.0,
+      "class_seconds": 98.17547371797264
+    }
+  ],
+  "advance_gate_passed": false,
+  "result_sha256": "aa9b76d825a9aeff067d20521dc46d4013a637b8601c04573978fa3c3cdbce5c",
+  "source_sha256": {
+    "ecg_experiment/visual_reference_ntt03.py": "e3894b34d0e4bf352f062f88b7aff463cbda70f0797502e6c0b98a64c50513ee",
+    "scripts/experiments/run_visual_reference_ntt03.py": "d0dc326f8a707cbdf3eb4dd761e2a1d5af87dfecb5f22ebe7f1092d2d1b8c5d4",
+    "tests/test_visual_reference_ntt03.py": "926de57cb9804ff321111899d4a768b301893d44e23b2dedd922ddf43a357302",
+    "docs/ntt-03-visual-reference-pilot.md": "adfc19c371f1ed53c49d9e5e836519d2e7dfa36906d26060f521591616a9e191",
+    "docs/ntt-03-amendment-selection.md": "1f389e5c9b807f59d060bb8d2939ce85c98bf4784e10ab22ce70167a3fec9160",
+    "ecg_experiment/reference_transfer_ntt02.py": "ced07c41a8a0c1ee057dbe0d01927a31b0cf66de18e41e33b5b8c4e5ca040d1a",
+    "ecg_experiment/files.py": "d418732520e883994d3b72b064c03174184f606cfea4e166800bf8a096ef985b",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "pyproject.toml": "9df6d56e8f27348d067eb0cf3b6506f5efbbc03154b96b6b3987f4bb4854279e",
+    "uv.lock": "20c6e373cba70e7fe859ba59697f6145c34b42418eddc955f82d29a165d5db7c"
+  },
+  "public_checkpoint_sha256": {
+    "third_party/ntt_vision/checkpoints/dinov2_vits14_pretrain.pth": "b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9",
+    "third_party/ntt_vision/checkpoints/sam2_hiera_tiny.pt": "65b50056e05bcb13694174f51bb6da89c894b57b75ccdf0ba6352c597c5d1125"
+  },
+  "limits": [
+    "Only generated nominated evidence; unknown alternative valid beats",
+    "Known finding, lead and target options",
+    "Six patients, no clinical accuracy inference",
+    "Compact models, not original large/large recipe"
+  ]
+}

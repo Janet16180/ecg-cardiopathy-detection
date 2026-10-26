@@ -1,0 +1,94 @@
+{
+  "study": "NTT10",
+  "passed": true,
+  "result_sha256": "8e9e72a44d293de2b93c10563e9706eaecfb4219d7313f9e91380b05ee96a38a",
+  "source_commit": "99db6759d1805054f1fbe9b1f7537c2b0cac18f1",
+  "source_files_verified": 57,
+  "input_files_verified": 115,
+  "artifact_files_verified": 6,
+  "original87record_role_wholefold_support_target_gates_verified": true,
+  "all_fixed09contrasts_and50bank_manifest_unchanged": true,
+  "all30matched_finding_unions_weights_counts_and_banknorms_reconstructed": true,
+  "all_A_B_C_prototypes_and_analytic_A_identity_verified": true,
+  "maximum_prototype_identity_error": 8.326672684688674e-17,
+  "duplicate_union_diagnostics": {
+    "per_finding": {
+      "0": {
+        "unique_unions": 8,
+        "identical_union_block_pairs": 3
+      },
+      "1": {
+        "unique_unions": 8,
+        "identical_union_block_pairs": 3
+      },
+      "2": {
+        "unique_unions": 10,
+        "identical_union_block_pairs": 0
+      }
+    },
+    "unique_three_finding_union_triples": 10,
+    "identical_union_triple_block_pairs": 0,
+    "repeated_union_B_prototypes_exact": true
+  },
+  "new_decompositions_reconstructed": 1800,
+  "analytic_A_decompositions_reconstructed": 600,
+  "maximum_contribution_array_error": 0.0,
+  "maximum_contribution_sum_error": 1.2490009027033011e-15,
+  "maximum_analytic_A_contribution_error": 5.551115123125783e-16,
+  "all600original_A_decompositions_match09": true,
+  "within_method_pairs_reconstructed": 8100,
+  "matching_block_method_pairs_reconstructed": 1800,
+  "maximum_pair_metric_error": 3.3306690738754696e-16,
+  "maximum_matching_block_array_error": 3.3306690738754696e-16,
+  "all_null_masks_and_45pair_denominators_verified": true,
+  "all_family_patient_and_population_aggregates_reconstructed": true,
+  "maximum_numeric_summary_error": 5.551115123125783e-16,
+  "symmetric_primary_and_coverage_reproduced": true,
+  "decision": {
+    "assessable": true,
+    "category": "B_material_conditional_consistency_advantage",
+    "resolution": 0.05,
+    "effect": {
+      "first": "A",
+      "second": "B",
+      "all_60_patient_differences_defined": true,
+      "mean_patient_difference": -0.11497883597883599,
+      "distribution": {
+        "count": 60,
+        "defined": 60,
+        "undefined": 0,
+        "minimum": -0.5037037037037038,
+        "p10": -0.25155555555555553,
+        "median": -0.10137566137566145,
+        "p90": 0.0,
+        "maximum": 0.0888888888888889,
+        "mean": -0.11497883597883599
+      },
+      "per_method_every_patient_coverage_passed": {
+        "A": true,
+        "B": true
+      },
+      "patient_counts": {
+        "positive": 4,
+        "negative": 50,
+        "zero": 6,
+        "at_least_plus_0.05": 4,
+        "at_most_minus_0.05": 42,
+        "inside_resolution_band": 14,
+        "undefined": 0
+      }
+    },
+    "population_equivalence_or_clinical_adequacy_established": false
+  },
+  "prior09_independent_audit_bound": true,
+  "prior09_audit_sha256": "28453d899d5954e810ac84466a6dac4012f2b932d44ad0bc994fbe2a8bcf3b54",
+  "full3600prior09_decompositions_not_repeated_again_in_this_audit": true,
+  "new_production_module_imported": false,
+  "diagnostic_payloads_parsed": false,
+  "waveform_reads": false,
+  "model_loaded": false,
+  "new_encoder_inference": false,
+  "new_scientific_settings": false,
+  "seconds": 3.7831406043842435,
+  "limits": "Matched unique support people isolate weighting choices in this finite development design, not clinical truth. Computational costs remain unequal. Patient effects, same-block maps and diffuse contributions must qualify the mean category; no equivalence, noninferiority or pathological localization claim follows."
+}

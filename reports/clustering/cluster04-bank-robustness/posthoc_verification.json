@@ -1,0 +1,34 @@
+{
+  "study": "CLUSTER04",
+  "passed": true,
+  "scope": "Post-hoc descriptive breakdown of previously computed fitting-aligned bank agreement by original CLUSTER03 regional anchor cluster; no new fit or primary-gate change.",
+  "source_result_and_assignment_hashes_verified": true,
+  "all411_reference_agreement_values_recomputed_from_saved_aligned_labels_exactly": true,
+  "original_cluster_profiles": [
+    {
+      "original_cluster": 0,
+      "anchors": 368,
+      "single_bank_stable": 356,
+      "single_bank_fraction": 0.967391304347826,
+      "ensemble_stable": 365,
+      "ensemble_fraction": 0.9918478260869565
+    },
+    {
+      "original_cluster": 1,
+      "anchors": 43,
+      "single_bank_stable": 25,
+      "single_bank_fraction": 0.5813953488372093,
+      "ensemble_stable": 41,
+      "ensemble_fraction": 0.9534883720930233
+    }
+  ],
+  "total_single_stable": 381,
+  "total_ensemble_stable": 406,
+  "fitted_models": 0,
+  "waveform_or_model_reads": false,
+  "diagnostic_payloads_parsed": false,
+  "interpretation": "Overall92.70percent persistence is uneven: the original43-patient cluster has58.14percent stable anchors for single banks, rising to95.35percent for fixed5-bank ensembles. These are original geometric groups, not disease categories. Primary decision remains unchanged.",
+  "export_available_at_audit": true,
+  "export_all_profile_fields_verified_exactly": true,
+  "export_sha256": "4aad0d860c3016516c4d7fc6036829aa548a3c377c3e09e548d657282a797983"
+}

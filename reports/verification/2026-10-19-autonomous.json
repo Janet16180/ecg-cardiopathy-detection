@@ -1,0 +1,59 @@
+{
+  "scope": "Autonomous local continuation: CLUSTER04, CLUSTER05, NTT07 and strict evidence import",
+  "implementation_commit": "8a088c6",
+  "integrated_reference_commit": "4d621c64b6822fc776965cf2dc836259d77c698f",
+  "tests": {
+    "passed": 1660,
+    "skipped": 6,
+    "seconds": 73.13,
+    "log_sha256": "16573651df3bace3d1cd0381a327dfa22301cfaebb8292efe74915a5708e69e5"
+  },
+  "ruff_code_scopes": [
+    "ecg_experiment",
+    "scripts",
+    "tests"
+  ],
+  "ruff_code_passed": true,
+  "new_python_files_formatted": 22,
+  "offline_build_passed": true,
+  "wheel_modules_exact_current_source": 8,
+  "source_sha256": {
+    "ecg_experiment/clustering/bank_inputs.py": "0c56dd0a0606207c416c8240a249f4d0242059fd8778b04e4b40dae0e68013e3",
+    "ecg_experiment/clustering/bank_robustness.py": "ebac6dbbc050aba812f5acb8dc0857f1391307df8255219c264e2d1dbcdfc8b0",
+    "ecg_experiment/clustering/matched_controls.py": "4d31d6c39bce5d3500187e21ff24b40f65407dba572bc0842c246d13168b4867",
+    "ecg_experiment/localization/blinded_packet.py": "deb36523aef120fbba292dac246e27bcb413a40830c9b2849207dac3b304368e",
+    "ecg_experiment/localization/blinded_packet_v2.py": "547539194e752ada458a3901a3c4eec302cb2e0d414c4af47d3ac8c4e3f13a7a",
+    "ecg_experiment/localization/evidence_import_v2.py": "8a74311b503bae46ece7609961033bc32333b063237a4c3d3a49c806692dc8d3",
+    "ecg_experiment/localization/evidence_validation.py": "1db08ed799c89f9dafc6e06661c96599776e41f6d0eebffc4e78502764a1aba5",
+    "ecg_experiment/localization/review_forms.py": "fa028bbfd2c46c07ba73720ed905906f3f5a73d33e4dbbd0510fb9bb6bfdf669"
+  },
+  "new_local_document_links_checked": 27,
+  "new_local_document_links_valid": true,
+  "historical_missing_local_output_links_unchanged": 68,
+  "ranked_backlog_exact": true,
+  "aggregate_json_files_checked_for_private_keys": 9,
+  "aggregate_private_key_check_passed": true,
+  "independent_study_audits": {
+    "cluster04_all_new_fits": 110,
+    "cluster05_grid_fits": 1440,
+    "cluster05_control_fits": 23,
+    "ntt07_sources": 16,
+    "ntt07_inputs": 4091,
+    "ntt07_artifacts": 272,
+    "ntt07_cases": 30
+  },
+  "broader_notebook_lint": {
+    "command": "ruff check .",
+    "passed": false,
+    "existing_notebook_findings": 918,
+    "notebooks_changed": false,
+    "note": "Legacy notebooks are outside the passing Python code scopes and were left unchanged."
+  },
+  "build_note": "Offline isolated build passed using the established /tmp/ecg-uv-cache; empty task caches lacked the existing build dependency.",
+  "clinical_annotations": 0,
+  "clinical_localization_evaluated": false,
+  "closed_tests_read": false,
+  "pushed": false,
+  "pr_merged": false,
+  "data_uploaded": false
+}

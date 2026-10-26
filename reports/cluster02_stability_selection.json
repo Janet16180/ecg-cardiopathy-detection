@@ -1,0 +1,4147 @@
+{
+  "study": "CLUSTER-02",
+  "status": "complete",
+  "source_sha256": {
+    "docs/cluster-02-stability-selection.md": "b1227d90b855a68415c2ffe6d4fe57be96d787d527f77a88d781e444db8e5248",
+    "ecg_experiment/clustering02.py": "ec3daa0f9fb061abadb02a03694d5cdf31ca17006ec15d89e4394130018bac7d",
+    "scripts/experiments/run_clustering02.py": "6628f15a1d2d1d963026c30c7d1068a37792fa51a3d1364f7347537f59dac5cd",
+    "tests/test_clustering02.py": "2cf5dbfa568323c7069e59d1ee66a793249600e1b9e21f121f5649a0847c271a",
+    "ecg_experiment/clustering01.py": "45a735dd42de02a8d0fce4faac50a8a0676147fca22d3ecff7c65aaf82101799",
+    "ecg_experiment/eda/signals.py": "f5ab2aafbbd38d16d9e79724887ad4e0909be97c67c7d2b7b447bf65e33fd4d8",
+    "ecg_experiment/eda/ptbxl.py": "9eca8dba73d6134d4c9b863451496c46e52501580f84e66beb73c182f1369415",
+    "ecg_experiment/intervals.py": "b45103664e8c2e063b90c8223b64e7bbe6394e54796e0613538bd0b53dfe99af",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "pyproject.toml": "9df6d56e8f27348d067eb0cf3b6506f5efbbc03154b96b6b3987f4bb4854279e",
+    "uv.lock": "20c6e373cba70e7fe859ba59697f6145c34b42418eddc955f82d29a165d5db7c"
+  },
+  "input_sha256": {
+    "outputs/cluster01_physical_morphology/result.json": "74f0c82918f158a61368d308acdab5d5e98fe759852c966de76867e5c99bc8e7",
+    "outputs/cluster01_physical_morphology/morphology_features.csv": "8d19be5e03e70c354191e5795109251702daab90f21c17dd384a95ac6261c28d",
+    "outputs/cluster01_physical_morphology/analyzed_training_patients.csv": "afed2f97d7b4e9dcbc627a6c3c1c03630f49f6d75632ae3a73df6950facf9952",
+    "outputs/cluster01_physical_morphology/physical_measurements.csv": "6f2c42617970eb7d45ee0f0e03bef511ae58357395becc62b309b1d5ede71e90",
+    "outputs/cluster01_physical_morphology/assignments.csv": "3535bbdfa37f5af817b7474047eaf221393fe370909bae24eb14d47e1d4abc6f",
+    "outputs/cluster01_physical_morphology/reservation_manifest.json": "efaa51a62f52fc2d10881a58994d2da206ae5683cff08872c09cc5ec08ef253c",
+    "outputs/cluster01_physical_morphology/reservation_policy.json": "028a5ae4e36c29303b37e9d1268ca365090cb600cabe440b9ce0cc672bf78c5d",
+    "data/raw/ptb-xl/1.0.3/ptbxl_database.csv": "7600de9c1b27d181d850b3c6038a35d7c3ddb6bb33b702e3a20252a6859d216b",
+    "data/raw/ptb-xl/1.0.3/scp_statements.csv": "ad05b0b1fcae83bb1230755ad9cfc7c96f303feddc08a4a9ad5bdc9ca63bac8f"
+  },
+  "predecessor_reproduction": {
+    "raw:kmeans": {
+      "assignment_ari": 1.0,
+      "silhouette_absolute_error": 2.7755575615628914e-16
+    },
+    "residual:kmeans": {
+      "assignment_ari": 1.0,
+      "silhouette_absolute_error": 5.551115123125783e-17
+    }
+  },
+  "counts": {
+    "all": 1999,
+    "fitting": 1587,
+    "anchor_selection": 412
+  },
+  "subsample_patient_sha256": [
+    "3a10db89e6a9ac9a18639add2d77f856d255b73aeae1127e338aff203e098159",
+    "e5dbfe7bf0a4fff1fa9df94e9d223223692c1df2c1da121918889dc81b902fd5",
+    "53bdcc1475928af3a2a1ecf4b5ac8367cd932ffaeeaa31f15bc47465ed1d8dd9",
+    "e45e9ebbf0839bf258f0c34e2c4f2109bdb7f2209b0c7b67bfdee595bf67b14f",
+    "32559cdee7c252133efa0a9260bf03524279168c8e69dd8a7f85ca1f72a1adb5",
+    "ce1f0d2687369d2cadfdd6e304b46708df7322e565622c8f0bb89059d022ced9",
+    "1308a30b0d2878c789c6917c6452123f2710b21d9e10fc6a373147d599ae6fe0",
+    "aa06e8be4e4c547d1a90a6e6f9d6e8c8f135bc9f08ab47fae5ea7b603706fb7c",
+    "2c87812ccefc700baf7677cff1434a2b5ba0a0bb26334be2e817951203068dfd"
+  ],
+  "candidates": [
+    {
+      "key": "raw:kmeans:none:2",
+      "view": "raw",
+      "method": "kmeans",
+      "covariance": "none",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.3687147089140919,
+      "stability": {
+        "values": [
+          0.9024352539318579,
+          0.6662118278555277,
+          0.5846965299123827,
+          0.9356987446681881,
+          1.0,
+          0.857090447363562,
+          1.0,
+          0.9024352539318579
+        ],
+        "minimum": 0.5846965299123827,
+        "median": 0.9024352539318579,
+        "maximum": 1.0
+      },
+      "anchor_sizes": {
+        "0": 368,
+        "1": 44
+      },
+      "elapsed_seconds": 0.07534499699249864,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "raw:kmeans:none:4",
+      "view": "raw",
+      "method": "kmeans",
+      "covariance": "none",
+      "clusters": 4,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        false,
+        true,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false
+      ],
+      "silhouette": 0.08921337561282242,
+      "stability": {
+        "values": [
+          0.34618384894007226,
+          0.3333999271341107,
+          0.3384591660662393,
+          0.34279311407780316,
+          0.8918640489942882,
+          0.344742555253476,
+          0.34641948861872224,
+          0.34280874543162637
+        ],
+        "minimum": 0.3333999271341107,
+        "median": 0.3437756503425512,
+        "maximum": 0.8918640489942882
+      },
+      "anchor_sizes": {
+        "0": 154,
+        "1": 67,
+        "2": 166,
+        "3": 25
+      },
+      "elapsed_seconds": 0.08896764134988189,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "raw:kmeans:none:8",
+      "view": "raw",
+      "method": "kmeans",
+      "covariance": "none",
+      "clusters": 8,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "silhouette": 0.05136584003621187,
+      "stability": {
+        "values": [
+          0.49470935643927155,
+          0.49741386380026464,
+          0.6580435561870009,
+          0.5111399687901067,
+          0.8292611079157038,
+          0.8262889627855998,
+          0.8070099696832174,
+          0.7299867815581369
+        ],
+        "minimum": 0.49470935643927155,
+        "median": 0.6940151688725689,
+        "maximum": 0.8292611079157038
+      },
+      "anchor_sizes": {
+        "0": 39,
+        "1": 8,
+        "2": 65,
+        "3": 94,
+        "4": 13,
+        "5": 81,
+        "6": 39,
+        "7": 73
+      },
+      "elapsed_seconds": 0.13352240901440382,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "raw:gmm:diag:2",
+      "view": "raw",
+      "method": "gmm",
+      "covariance": "diag",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.18594981395781307,
+      "stability": {
+        "values": [
+          0.9047814811196766,
+          0.7969446896408894,
+          0.7884537428978748,
+          0.8319778808242981,
+          0.8861925249403863,
+          0.8678884893682983,
+          0.9141189986398088,
+          0.8954828605800591
+        ],
+        "minimum": 0.7884537428978748,
+        "median": 0.8770405071543423,
+        "maximum": 0.9141189986398088
+      },
+      "anchor_sizes": {
+        "0": 253,
+        "1": 159
+      },
+      "elapsed_seconds": 0.10267636366188526,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": true
+    },
+    {
+      "key": "raw:gmm:diag:4",
+      "view": "raw",
+      "method": "gmm",
+      "covariance": "diag",
+      "clusters": 4,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": -0.0024647979790560553,
+      "stability": {
+        "values": [
+          0.40892188132141266,
+          0.4686325590837155,
+          0.4667607673939885,
+          0.7751207321040591,
+          0.8628489551840806,
+          0.7700753144039977,
+          0.46489148118460144,
+          0.7910161827006795
+        ],
+        "minimum": 0.40892188132141266,
+        "median": 0.6193539367438565,
+        "maximum": 0.8628489551840806
+      },
+      "anchor_sizes": {
+        "0": 118,
+        "1": 90,
+        "2": 128,
+        "3": 76
+      },
+      "elapsed_seconds": 0.2075090641155839,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": false,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "raw:gmm:diag:8",
+      "view": "raw",
+      "method": "gmm",
+      "covariance": "diag",
+      "clusters": 8,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "silhouette": 0.00530620526852834,
+      "stability": {
+        "values": [
+          0.7869084258455712,
+          0.5995377416748622,
+          0.4860305430001957,
+          0.47227431828551314,
+          0.7152773025140429,
+          0.5657779300957543,
+          0.6074089980289851,
+          0.5506577526875065
+        ],
+        "minimum": 0.47227431828551314,
+        "median": 0.5826578358853083,
+        "maximum": 0.7869084258455712
+      },
+      "anchor_sizes": {
+        "0": 33,
+        "1": 82,
+        "2": 63,
+        "3": 8,
+        "4": 74,
+        "5": 39,
+        "6": 57,
+        "7": 56
+      },
+      "elapsed_seconds": 0.26009058533236384,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": false,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "raw:gmm:tied:2",
+      "view": "raw",
+      "method": "gmm",
+      "covariance": "tied",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true
+      ],
+      "silhouette": 0.4514366921457969,
+      "stability": {
+        "values": [
+          0.9188857114880601,
+          0.8050888685398363,
+          0.9219149390603635,
+          0.8980296693845173,
+          0.9468258130429883,
+          0.9155749301588464,
+          0.8704946218319801,
+          0.9738443683405129
+        ],
+        "minimum": 0.8050888685398363,
+        "median": 0.9172303208234532,
+        "maximum": 0.9738443683405129
+      },
+      "anchor_sizes": {
+        "0": 390,
+        "1": 22
+      },
+      "elapsed_seconds": 0.15137717314064503,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": false
+    },
+    {
+      "key": "raw:gmm:tied:4",
+      "view": "raw",
+      "method": "gmm",
+      "covariance": "tied",
+      "clusters": 4,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "silhouette": 0.23600660897516237,
+      "stability": {
+        "values": [
+          0.9615883422303937,
+          0.5814448894659333,
+          0.958997525060636,
+          0.9586190805112464,
+          0.9669049650336768,
+          0.9380539321729444,
+          0.5517659365122309,
+          0.9615883422303937
+        ],
+        "minimum": 0.5517659365122309,
+        "median": 0.9588083027859412,
+        "maximum": 0.9669049650336768
+      },
+      "anchor_sizes": {
+        "0": 11,
+        "1": 337,
+        "2": 13,
+        "3": 51
+      },
+      "elapsed_seconds": 0.28493626695126295,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "raw:gmm:tied:8",
+      "view": "raw",
+      "method": "gmm",
+      "covariance": "tied",
+      "clusters": 8,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "silhouette": 0.11826004732771969,
+      "stability": {
+        "values": [
+          0.9316502715249979,
+          0.8588391748575258,
+          0.8718893621342958,
+          0.9566854220373543,
+          0.8355207782897086,
+          0.9031953727596097,
+          0.7849125252943552,
+          0.9337694185952815
+        ],
+        "minimum": 0.7849125252943552,
+        "median": 0.8875423674469527,
+        "maximum": 0.9566854220373543
+      },
+      "anchor_sizes": {
+        "0": 47,
+        "1": 244,
+        "2": 8,
+        "3": 8,
+        "4": 4,
+        "5": 25,
+        "6": 16,
+        "7": 60
+      },
+      "elapsed_seconds": 0.529055752325803,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": false
+    },
+    {
+      "key": "raw:gmm:full:2",
+      "view": "raw",
+      "method": "gmm",
+      "covariance": "full",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.1958586851056714,
+      "stability": {
+        "values": [
+          0.9708714698615479,
+          0.9422018094650574,
+          0.840809302396861,
+          0.9232292397164445,
+          0.9421368898357856,
+          0.9708821673091663,
+          0.9231664758276446,
+          0.9516523481464778
+        ],
+        "minimum": 0.840809302396861,
+        "median": 0.9421693496504215,
+        "maximum": 0.9708821673091663
+      },
+      "anchor_sizes": {
+        "0": 150,
+        "1": 262
+      },
+      "elapsed_seconds": 0.2220598692074418,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": true
+    },
+    {
+      "key": "raw:gmm:full:4",
+      "view": "raw",
+      "method": "gmm",
+      "covariance": "full",
+      "clusters": 4,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.014598698246310882,
+      "stability": {
+        "values": [
+          0.6344103485315555,
+          0.6727877899374332,
+          0.7202105705303662,
+          0.6126727900669675,
+          0.7441500135759761,
+          0.8503068876163402,
+          0.6735881266897928,
+          0.7070975662210323
+        ],
+        "minimum": 0.6126727900669675,
+        "median": 0.6903428464554126,
+        "maximum": 0.8503068876163402
+      },
+      "anchor_sizes": {
+        "0": 125,
+        "1": 41,
+        "2": 136,
+        "3": 110
+      },
+      "elapsed_seconds": 0.479607542976737,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": false,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": false
+    },
+    {
+      "key": "raw:gmm:full:8",
+      "view": "raw",
+      "method": "gmm",
+      "covariance": "full",
+      "clusters": 8,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "silhouette": 0.0047729483755824765,
+      "stability": {
+        "values": [
+          0.3330030913272448,
+          0.4451182965734986,
+          0.31994315608511437,
+          0.5151184901621408,
+          0.45044545558997184,
+          0.48661052023844287,
+          0.3387219633288294,
+          0.3342159508313399
+        ],
+        "minimum": 0.31994315608511437,
+        "median": 0.391920129951164,
+        "maximum": 0.5151184901621408
+      },
+      "anchor_sizes": {
+        "0": 102,
+        "1": 60,
+        "2": 47,
+        "3": 10,
+        "4": 18,
+        "5": 26,
+        "6": 55,
+        "7": 94
+      },
+      "elapsed_seconds": 0.9870405602268875,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": false,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "residual:kmeans:none:2",
+      "view": "residual",
+      "method": "kmeans",
+      "covariance": "none",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.11316220588187785,
+      "stability": {
+        "values": [
+          0.8587389032880858,
+          0.8590293459997628,
+          0.877209944198282,
+          0.5466911061433921,
+          0.9234643127850765,
+          0.8587803644738904,
+          0.9328244921079794,
+          0.15092248187602478
+        ],
+        "minimum": 0.15092248187602478,
+        "median": 0.8589048552368266,
+        "maximum": 0.9328244921079794
+      },
+      "anchor_sizes": {
+        "0": 157,
+        "1": 255
+      },
+      "elapsed_seconds": 0.0687092668376863,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "residual:kmeans:none:4",
+      "view": "residual",
+      "method": "kmeans",
+      "covariance": "none",
+      "clusters": 4,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "silhouette": 0.08034240414033463,
+      "stability": {
+        "values": [
+          0.68334580387279,
+          0.6692161056633957,
+          0.5772297547999724,
+          0.7354819100967732,
+          0.8565686560563993,
+          0.762728764132222,
+          0.8723632622814925,
+          0.7661992792678819
+        ],
+        "minimum": 0.5772297547999724,
+        "median": 0.7491053371144976,
+        "maximum": 0.8723632622814925
+      },
+      "anchor_sizes": {
+        "0": 135,
+        "1": 188,
+        "2": 71,
+        "3": 18
+      },
+      "elapsed_seconds": 0.11895234417170286,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "residual:kmeans:none:8",
+      "view": "residual",
+      "method": "kmeans",
+      "covariance": "none",
+      "clusters": 8,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "silhouette": 0.06532910609630169,
+      "stability": {
+        "values": [
+          0.6280759610506976,
+          0.47162806613436076,
+          0.551041574691134,
+          0.5130073326639379,
+          0.6193072941282551,
+          0.6605717114927203,
+          0.7165895255094576,
+          0.3985941281610384
+        ],
+        "minimum": 0.3985941281610384,
+        "median": 0.5851744344096945,
+        "maximum": 0.7165895255094576
+      },
+      "anchor_sizes": {
+        "0": 20,
+        "1": 116,
+        "2": 7,
+        "3": 37,
+        "4": 75,
+        "5": 18,
+        "6": 66,
+        "7": 73
+      },
+      "elapsed_seconds": 0.13481666333973408,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "residual:gmm:diag:2",
+      "view": "residual",
+      "method": "gmm",
+      "covariance": "diag",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.1546100513234177,
+      "stability": {
+        "values": [
+          0.8499643787613234,
+          0.8320210907677866,
+          0.8145468055911345,
+          0.9047334643669968,
+          0.9613138106491378,
+          0.9140584920606771,
+          0.9422868186249281,
+          0.9327872852441718
+        ],
+        "minimum": 0.8145468055911345,
+        "median": 0.909395978213837,
+        "maximum": 0.9613138106491378
+      },
+      "anchor_sizes": {
+        "0": 155,
+        "1": 257
+      },
+      "elapsed_seconds": 0.0807685381732881,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": true
+    },
+    {
+      "key": "residual:gmm:diag:4",
+      "view": "residual",
+      "method": "gmm",
+      "covariance": "diag",
+      "clusters": 4,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": -0.021989416822924508,
+      "stability": {
+        "values": [
+          0.6895781390643247,
+          0.4842628972841192,
+          0.4506671654379227,
+          0.4840606927997536,
+          0.7005859612439158,
+          0.46329424857170914,
+          0.5187092857821017,
+          0.5896395694036517
+        ],
+        "minimum": 0.4506671654379227,
+        "median": 0.5014860915331105,
+        "maximum": 0.7005859612439158
+      },
+      "anchor_sizes": {
+        "0": 110,
+        "1": 136,
+        "2": 69,
+        "3": 97
+      },
+      "elapsed_seconds": 0.24434278160333633,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": false,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "residual:gmm:diag:8",
+      "view": "residual",
+      "method": "gmm",
+      "covariance": "diag",
+      "clusters": 8,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ],
+      "silhouette": -0.05048561296771852,
+      "stability": {
+        "values": [
+          0.5649833013067398,
+          0.3847379593025484,
+          0.30963426014747414,
+          0.5009748852244438,
+          0.5390393608211642,
+          0.37178444469389493,
+          0.4912270007607205,
+          0.42686108296845987
+        ],
+        "minimum": 0.30963426014747414,
+        "median": 0.4590440418645902,
+        "maximum": 0.5649833013067398
+      },
+      "anchor_sizes": {
+        "0": 74,
+        "1": 31,
+        "2": 55,
+        "3": 13,
+        "4": 88,
+        "5": 5,
+        "6": 75,
+        "7": 71
+      },
+      "elapsed_seconds": 0.29601531894877553,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": false,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "residual:gmm:tied:2",
+      "view": "residual",
+      "method": "gmm",
+      "covariance": "tied",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        true,
+        false,
+        true,
+        false,
+        false,
+        true,
+        false,
+        false
+      ],
+      "silhouette": 0.20236241341483097,
+      "stability": {
+        "values": [
+          0.06414847212290546,
+          1.0,
+          0.059531281148230045,
+          0.1342511206270503,
+          0.1342511206270503,
+          0.3558911550715125,
+          0.11911542913026775,
+          1.0
+        ],
+        "minimum": 0.059531281148230045,
+        "median": 0.1342511206270503,
+        "maximum": 1.0
+      },
+      "anchor_sizes": {
+        "0": 12,
+        "1": 400
+      },
+      "elapsed_seconds": 0.26374902902171016,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "residual:gmm:tied:4",
+      "view": "residual",
+      "method": "gmm",
+      "covariance": "tied",
+      "clusters": 4,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "silhouette": 0.13169017328337784,
+      "stability": {
+        "values": [
+          0.9544559457691248,
+          0.5934973734160846,
+          0.41776950155644393,
+          0.9334354511828054,
+          0.16662849614240458,
+          0.31805060272890984,
+          0.8140594394682074,
+          0.25853639690682134
+        ],
+        "minimum": 0.16662849614240458,
+        "median": 0.5056334374862642,
+        "maximum": 0.9544559457691248
+      },
+      "anchor_sizes": {
+        "0": 64,
+        "1": 301,
+        "2": 11,
+        "3": 36
+      },
+      "elapsed_seconds": 0.40793185820803046,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "residual:gmm:tied:8",
+      "view": "residual",
+      "method": "gmm",
+      "covariance": "tied",
+      "clusters": 8,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "silhouette": 0.04785950475248374,
+      "stability": {
+        "values": [
+          0.6573117993366958,
+          0.503872243474571,
+          0.47828903476526846,
+          0.4939755962947661,
+          0.7201633506217552,
+          0.4422577140590677,
+          0.6381277834723013,
+          0.5982034178828289
+        ],
+        "minimum": 0.4422577140590677,
+        "median": 0.5510378306787,
+        "maximum": 0.7201633506217552
+      },
+      "anchor_sizes": {
+        "0": 66,
+        "1": 36,
+        "2": 6,
+        "3": 18,
+        "4": 32,
+        "5": 7,
+        "6": 204,
+        "7": 43
+      },
+      "elapsed_seconds": 0.480897240806371,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": false,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "residual:gmm:full:2",
+      "view": "residual",
+      "method": "gmm",
+      "covariance": "full",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.18452508888887598,
+      "stability": {
+        "values": [
+          0.9227189687033879,
+          0.9039476621195291,
+          0.9321861847509313,
+          0.9608852632557866,
+          0.970627273827361,
+          0.9417951504784012,
+          0.9227189687033879,
+          0.9706039618627537
+        ],
+        "minimum": 0.9039476621195291,
+        "median": 0.9369906676146662,
+        "maximum": 0.970627273827361
+      },
+      "anchor_sizes": {
+        "0": 135,
+        "1": 277
+      },
+      "elapsed_seconds": 0.1733744228258729,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": true
+    },
+    {
+      "key": "residual:gmm:full:4",
+      "view": "residual",
+      "method": "gmm",
+      "covariance": "full",
+      "clusters": 4,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": -0.0028658788792314854,
+      "stability": {
+        "values": [
+          0.771825395099224,
+          0.22127930091810707,
+          0.7216967831496331,
+          0.44616144729395013,
+          0.6440634409166398,
+          0.6908628224406733,
+          0.774717341821929,
+          0.6861420870120005
+        ],
+        "minimum": 0.22127930091810707,
+        "median": 0.688502454726337,
+        "maximum": 0.774717341821929
+      },
+      "anchor_sizes": {
+        "0": 73,
+        "1": 71,
+        "2": 143,
+        "3": 125
+      },
+      "elapsed_seconds": 0.5018706051632762,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": false,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "residual:gmm:full:8",
+      "view": "residual",
+      "method": "gmm",
+      "covariance": "full",
+      "clusters": 8,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "silhouette": -0.03594564999896753,
+      "stability": {
+        "values": [
+          0.45586018077892965,
+          0.429592900810265,
+          0.2803107703849737,
+          0.25236290448618637,
+          0.3349959577764995,
+          0.27978810150930433,
+          0.5497648876414638,
+          0.37924048143194955
+        ],
+        "minimum": 0.25236290448618637,
+        "median": 0.3571182196042245,
+        "maximum": 0.5497648876414638
+      },
+      "anchor_sizes": {
+        "0": 50,
+        "1": 11,
+        "2": 96,
+        "3": 38,
+        "4": 103,
+        "5": 25,
+        "6": 63,
+        "7": 26
+      },
+      "elapsed_seconds": 0.9874498676508665,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": false,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "shape:kmeans:none:2",
+      "view": "shape",
+      "method": "kmeans",
+      "covariance": "none",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.17184772450275115,
+      "stability": {
+        "values": [
+          0.9420877215718902,
+          0.9708486375052499,
+          0.9805057190841339,
+          0.9902312149158843,
+          0.9612345665894918,
+          0.9708486375052499,
+          0.951588185717358,
+          0.9805141407243657
+        ],
+        "minimum": 0.9420877215718902,
+        "median": 0.9708486375052499,
+        "maximum": 0.9902312149158843
+      },
+      "anchor_sizes": {
+        "0": 148,
+        "1": 264
+      },
+      "elapsed_seconds": 0.06452735001221299,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": true
+    },
+    {
+      "key": "shape:kmeans:none:4",
+      "view": "shape",
+      "method": "kmeans",
+      "covariance": "none",
+      "clusters": 4,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.11895559911639443,
+      "stability": {
+        "values": [
+          0.8559651015166952,
+          0.8197890578557927,
+          0.8052748554871666,
+          0.9280622652490151,
+          0.8468758845011998,
+          0.902552934476406,
+          0.8237657987976948,
+          0.939080146906757
+        ],
+        "minimum": 0.8052748554871666,
+        "median": 0.8514204930089475,
+        "maximum": 0.939080146906757
+      },
+      "anchor_sizes": {
+        "0": 57,
+        "1": 55,
+        "2": 106,
+        "3": 194
+      },
+      "elapsed_seconds": 0.08683974668383598,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": true
+    },
+    {
+      "key": "shape:kmeans:none:8",
+      "view": "shape",
+      "method": "kmeans",
+      "covariance": "none",
+      "clusters": 8,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "silhouette": 0.0946188820331926,
+      "stability": {
+        "values": [
+          0.6647534993109793,
+          0.8248009520976801,
+          0.5816433247678048,
+          0.8307634901670801,
+          0.9081489249765781,
+          0.8005137969797435,
+          0.8486183221102636,
+          0.7767810102146505
+        ],
+        "minimum": 0.5816433247678048,
+        "median": 0.8126573745387118,
+        "maximum": 0.9081489249765781
+      },
+      "anchor_sizes": {
+        "0": 25,
+        "1": 98,
+        "2": 50,
+        "3": 64,
+        "4": 17,
+        "5": 58,
+        "6": 23,
+        "7": 77
+      },
+      "elapsed_seconds": 0.13847035123035312,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "shape:gmm:diag:2",
+      "view": "shape",
+      "method": "gmm",
+      "covariance": "diag",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.16385484346375168,
+      "stability": {
+        "values": [
+          0.7881434476498659,
+          0.840809302396861,
+          0.8768625217374483,
+          0.8230371458767607,
+          0.7795293910953248,
+          0.7710728712405076,
+          0.8678407743456845,
+          0.822736157665997
+        ],
+        "minimum": 0.7710728712405076,
+        "median": 0.8228866517713789,
+        "maximum": 0.8768625217374483
+      },
+      "anchor_sizes": {
+        "0": 150,
+        "1": 262
+      },
+      "elapsed_seconds": 0.09369221609085798,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": true
+    },
+    {
+      "key": "shape:gmm:diag:4",
+      "view": "shape",
+      "method": "gmm",
+      "covariance": "diag",
+      "clusters": 4,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.05086399769853749,
+      "stability": {
+        "values": [
+          0.8113131062837304,
+          0.4189256208461054,
+          0.9035828155752319,
+          0.8199321253238031,
+          0.7746569979708279,
+          0.6871756047771531,
+          0.8732347874303559,
+          0.5794277887256052
+        ],
+        "minimum": 0.4189256208461054,
+        "median": 0.7929850521272792,
+        "maximum": 0.9035828155752319
+      },
+      "anchor_sizes": {
+        "0": 36,
+        "1": 109,
+        "2": 113,
+        "3": 154
+      },
+      "elapsed_seconds": 0.17380736768245697,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "shape:gmm:diag:8",
+      "view": "shape",
+      "method": "gmm",
+      "covariance": "diag",
+      "clusters": 8,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "silhouette": 0.030317868150767417,
+      "stability": {
+        "values": [
+          0.5266039456232965,
+          0.6538403568009008,
+          0.36687402552696685,
+          0.6761423388962059,
+          0.7028266810230696,
+          0.49704837282347,
+          0.5232216488007592,
+          0.44469966997514393
+        ],
+        "minimum": 0.36687402552696685,
+        "median": 0.5249127972120278,
+        "maximum": 0.7028266810230696
+      },
+      "anchor_sizes": {
+        "0": 43,
+        "1": 69,
+        "2": 23,
+        "3": 78,
+        "4": 38,
+        "5": 10,
+        "6": 139,
+        "7": 12
+      },
+      "elapsed_seconds": 0.30544503033161163,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": false,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "shape:gmm:tied:2",
+      "view": "shape",
+      "method": "gmm",
+      "covariance": "tied",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.20091007249846068,
+      "stability": {
+        "values": [
+          0.9736391870060476,
+          1.0,
+          0.9865868946724732,
+          0.9865868946724732,
+          1.0,
+          1.0,
+          0.9865868946724732,
+          1.0
+        ],
+        "minimum": 0.9736391870060476,
+        "median": 0.9932934473362366,
+        "maximum": 1.0
+      },
+      "anchor_sizes": {
+        "0": 57,
+        "1": 355
+      },
+      "elapsed_seconds": 0.29912078799679875,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": true
+    },
+    {
+      "key": "shape:gmm:tied:4",
+      "view": "shape",
+      "method": "gmm",
+      "covariance": "tied",
+      "clusters": 4,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false
+      ],
+      "silhouette": 0.11128070222925886,
+      "stability": {
+        "values": [
+          0.32077516627543134,
+          0.9265462239750987,
+          0.3256096292168784,
+          0.3257619657604036,
+          0.33195588943531046,
+          0.911208877612487,
+          0.9606738999174737,
+          0.5258968870766059
+        ],
+        "minimum": 0.32077516627543134,
+        "median": 0.4289263882559582,
+        "maximum": 0.9606738999174737
+      },
+      "anchor_sizes": {
+        "0": 53,
+        "1": 71,
+        "2": 258,
+        "3": 30
+      },
+      "elapsed_seconds": 0.23812448978424072,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "shape:gmm:tied:8",
+      "view": "shape",
+      "method": "gmm",
+      "covariance": "tied",
+      "clusters": 8,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "silhouette": 0.07072437687997365,
+      "stability": {
+        "values": [
+          0.45766479261943577,
+          0.5348094049780645,
+          0.412465685939657,
+          0.507198327896514,
+          0.8274099904195797,
+          0.4957674018086317,
+          0.7399676478299618,
+          0.6034292525066058
+        ],
+        "minimum": 0.412465685939657,
+        "median": 0.5210038664372892,
+        "maximum": 0.8274099904195797
+      },
+      "anchor_sizes": {
+        "0": 13,
+        "1": 61,
+        "2": 23,
+        "3": 11,
+        "4": 26,
+        "5": 25,
+        "6": 213,
+        "7": 40
+      },
+      "elapsed_seconds": 0.5019152332097292,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    {
+      "key": "shape:gmm:full:2",
+      "view": "shape",
+      "method": "gmm",
+      "covariance": "full",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.15461946672971194,
+      "stability": {
+        "values": [
+          0.8772636420181765,
+          0.9709183522275924,
+          0.9517929619151508,
+          0.8678407743456845,
+          0.9327682053575163,
+          0.9328583630014963,
+          0.8953620197010927,
+          0.9233184765373404
+        ],
+        "minimum": 0.8678407743456845,
+        "median": 0.9280433409474284,
+        "maximum": 0.9709183522275924
+      },
+      "anchor_sizes": {
+        "0": 156,
+        "1": 256
+      },
+      "elapsed_seconds": 0.15131867490708828,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": true
+    },
+    {
+      "key": "shape:gmm:full:4",
+      "view": "shape",
+      "method": "gmm",
+      "covariance": "full",
+      "clusters": 4,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.061822842082816534,
+      "stability": {
+        "values": [
+          0.6719262543609648,
+          0.7394181615196619,
+          0.8013938679280329,
+          0.6243626406291499,
+          0.6955686937009221,
+          0.6894114535518703,
+          0.7728241602460622,
+          0.6717192033063962
+        ],
+        "minimum": 0.6243626406291499,
+        "median": 0.6924900736263961,
+        "maximum": 0.8013938679280329
+      },
+      "anchor_sizes": {
+        "0": 65,
+        "1": 129,
+        "2": 132,
+        "3": 86
+      },
+      "elapsed_seconds": 0.512958399951458,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": false
+    },
+    {
+      "key": "shape:gmm:full:8",
+      "view": "shape",
+      "method": "gmm",
+      "covariance": "full",
+      "clusters": 8,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": false,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "silhouette": 0.02189649182606337,
+      "stability": {
+        "values": [
+          0.4199367010884437,
+          0.4822043102779208,
+          0.5280577874834314,
+          0.41640329032721235,
+          0.6085004787373907,
+          0.47083809348839006,
+          0.440098671740451,
+          0.6254957337556657
+        ],
+        "minimum": 0.41640329032721235,
+        "median": 0.47652120188315544,
+        "maximum": 0.6254957337556657
+      },
+      "anchor_sizes": {
+        "0": 39,
+        "1": 108,
+        "2": 29,
+        "3": 18,
+        "4": 23,
+        "5": 90,
+        "6": 70,
+        "7": 35
+      },
+      "elapsed_seconds": 1.042269398458302,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": false,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": false,
+        "median_stability_at_least_0.80": false,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    }
+  ],
+  "pca": {
+    "raw": [
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9213069508308824
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9219136907372644
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9180702372616476
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9202963992705293
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9229708351854815
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9215734964627069
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9227155723981483
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9230498674402918
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9216790967646108
+      }
+    ],
+    "residual": [
+      {
+        "dimensions": 16,
+        "explained_variance": 0.907595591605829
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9064995920783885
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9046076256740112
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9069365825598972
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9088051872956882
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9071365997647418
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9076776474069361
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9085641625251245
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9076435432299192
+      }
+    ],
+    "shape": [
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9160464896684024
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9161253724823277
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9150057814773387
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9165670143423975
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9170901909056783
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9155273247444092
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9172470432122646
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9175951242224383
+      },
+      {
+        "dimensions": 16,
+        "explained_variance": 0.9156990111426391
+      }
+    ]
+  },
+  "waveforms_read": 0,
+  "gpu_used": false,
+  "threads": 2,
+  "sklearn_version": "1.9.1",
+  "numpy_version": "2.4.6",
+  "selected": {
+    "raw:kmeans": {
+      "key": "raw:kmeans:none:2",
+      "view": "raw",
+      "method": "kmeans",
+      "covariance": "none",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.3687147089140919,
+      "stability": {
+        "values": [
+          0.9024352539318579,
+          0.6662118278555277,
+          0.5846965299123827,
+          0.9356987446681881,
+          1.0,
+          0.857090447363562,
+          1.0,
+          0.9024352539318579
+        ],
+        "minimum": 0.5846965299123827,
+        "median": 0.9024352539318579,
+        "maximum": 1.0
+      },
+      "anchor_sizes": {
+        "0": 368,
+        "1": 44
+      },
+      "elapsed_seconds": 0.07534499699249864,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    "raw:gmm": {
+      "key": "raw:gmm:full:2",
+      "view": "raw",
+      "method": "gmm",
+      "covariance": "full",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.1958586851056714,
+      "stability": {
+        "values": [
+          0.9708714698615479,
+          0.9422018094650574,
+          0.840809302396861,
+          0.9232292397164445,
+          0.9421368898357856,
+          0.9708821673091663,
+          0.9231664758276446,
+          0.9516523481464778
+        ],
+        "minimum": 0.840809302396861,
+        "median": 0.9421693496504215,
+        "maximum": 0.9708821673091663
+      },
+      "anchor_sizes": {
+        "0": 150,
+        "1": 262
+      },
+      "elapsed_seconds": 0.2220598692074418,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": true
+    },
+    "residual:kmeans": {
+      "key": "residual:kmeans:none:2",
+      "view": "residual",
+      "method": "kmeans",
+      "covariance": "none",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.11316220588187785,
+      "stability": {
+        "values": [
+          0.8587389032880858,
+          0.8590293459997628,
+          0.877209944198282,
+          0.5466911061433921,
+          0.9234643127850765,
+          0.8587803644738904,
+          0.9328244921079794,
+          0.15092248187602478
+        ],
+        "minimum": 0.15092248187602478,
+        "median": 0.8589048552368266,
+        "maximum": 0.9328244921079794
+      },
+      "anchor_sizes": {
+        "0": 157,
+        "1": 255
+      },
+      "elapsed_seconds": 0.0687092668376863,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": false
+      },
+      "eligible": false
+    },
+    "residual:gmm": {
+      "key": "residual:gmm:full:2",
+      "view": "residual",
+      "method": "gmm",
+      "covariance": "full",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.18452508888887598,
+      "stability": {
+        "values": [
+          0.9227189687033879,
+          0.9039476621195291,
+          0.9321861847509313,
+          0.9608852632557866,
+          0.970627273827361,
+          0.9417951504784012,
+          0.9227189687033879,
+          0.9706039618627537
+        ],
+        "minimum": 0.9039476621195291,
+        "median": 0.9369906676146662,
+        "maximum": 0.970627273827361
+      },
+      "anchor_sizes": {
+        "0": 135,
+        "1": 277
+      },
+      "elapsed_seconds": 0.1733744228258729,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": true
+    },
+    "shape:kmeans": {
+      "key": "shape:kmeans:none:2",
+      "view": "shape",
+      "method": "kmeans",
+      "covariance": "none",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.17184772450275115,
+      "stability": {
+        "values": [
+          0.9420877215718902,
+          0.9708486375052499,
+          0.9805057190841339,
+          0.9902312149158843,
+          0.9612345665894918,
+          0.9708486375052499,
+          0.951588185717358,
+          0.9805141407243657
+        ],
+        "minimum": 0.9420877215718902,
+        "median": 0.9708486375052499,
+        "maximum": 0.9902312149158843
+      },
+      "anchor_sizes": {
+        "0": 148,
+        "1": 264
+      },
+      "elapsed_seconds": 0.06452735001221299,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": true
+    },
+    "shape:gmm": {
+      "key": "shape:gmm:tied:2",
+      "view": "shape",
+      "method": "gmm",
+      "covariance": "tied",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.20091007249846068,
+      "stability": {
+        "values": [
+          0.9736391870060476,
+          1.0,
+          0.9865868946724732,
+          0.9865868946724732,
+          1.0,
+          1.0,
+          0.9865868946724732,
+          1.0
+        ],
+        "minimum": 0.9736391870060476,
+        "median": 0.9932934473362366,
+        "maximum": 1.0
+      },
+      "anchor_sizes": {
+        "0": 57,
+        "1": 355
+      },
+      "elapsed_seconds": 0.29912078799679875,
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": true
+    }
+  },
+  "consensus": {
+    "key": "consensus:2",
+    "view": "consensus",
+    "method": "consensus",
+    "covariance": "none",
+    "clusters": 2,
+    "converged": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "reference_fit_balanced": true,
+    "reference_anchor_balanced": true,
+    "refits_anchor_balanced": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "silhouette": 0.19906073667411278,
+    "stability": {
+      "values": [
+        0.9421129652889415,
+        0.9138654413980698,
+        0.9231974974605333,
+        0.867067425792701,
+        0.9805056406218955,
+        0.9516725043410731,
+        0.8490818257091111,
+        0.9804967610158452
+      ],
+      "minimum": 0.8490818257091111,
+      "median": 0.9326552313747374,
+      "maximum": 0.9805056406218955
+    },
+    "conditions": {
+      "all_converged": true,
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "all_refits_anchor_balanced": true,
+      "silhouette_at_least_0.05": true,
+      "median_stability_at_least_0.80": true,
+      "minimum_stability_at_least_0.60": true
+    },
+    "eligible": true
+  },
+  "consensus_candidates": [
+    {
+      "key": "consensus:2",
+      "view": "consensus",
+      "method": "consensus",
+      "covariance": "none",
+      "clusters": 2,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": true,
+      "refits_anchor_balanced": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "silhouette": 0.19906073667411278,
+      "stability": {
+        "values": [
+          0.9421129652889415,
+          0.9138654413980698,
+          0.9231974974605333,
+          0.867067425792701,
+          0.9805056406218955,
+          0.9516725043410731,
+          0.8490818257091111,
+          0.9804967610158452
+        ],
+        "minimum": 0.8490818257091111,
+        "median": 0.9326552313747374,
+        "maximum": 0.9805056406218955
+      },
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": true,
+        "all_refits_anchor_balanced": true,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": true
+    },
+    {
+      "key": "consensus:4",
+      "view": "consensus",
+      "method": "consensus",
+      "covariance": "none",
+      "clusters": 4,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        true,
+        false
+      ],
+      "silhouette": 0.05422713112682772,
+      "stability": {
+        "values": [
+          0.9455312215548525,
+          0.9248186745684399,
+          0.9357974085693911,
+          0.8985625348049491,
+          0.9819477253057423,
+          0.9571679893598115,
+          0.9030198369741721,
+          0.9819559184494417
+        ],
+        "minimum": 0.8985625348049491,
+        "median": 0.9406643150621218,
+        "maximum": 0.9819559184494417
+      },
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": true,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": false
+    },
+    {
+      "key": "consensus:8",
+      "view": "consensus",
+      "method": "consensus",
+      "covariance": "none",
+      "clusters": 8,
+      "converged": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reference_fit_balanced": true,
+      "reference_anchor_balanced": false,
+      "refits_anchor_balanced": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "silhouette": -0.1620352518827235,
+      "stability": {
+        "values": [
+          0.9565180126877405,
+          0.9249695602945123,
+          0.876211329038949,
+          0.9503756084273609,
+          0.9611387941822058,
+          0.9587591223312216,
+          0.9428477751326315,
+          0.9674573280556011
+        ],
+        "minimum": 0.876211329038949,
+        "median": 0.9534468105575507,
+        "maximum": 0.9674573280556011
+      },
+      "conditions": {
+        "all_converged": true,
+        "reference_fit_balanced": true,
+        "reference_anchor_balanced": false,
+        "all_refits_anchor_balanced": false,
+        "silhouette_at_least_0.05": false,
+        "median_stability_at_least_0.80": true,
+        "minimum_stability_at_least_0.60": true
+      },
+      "eligible": false
+    }
+  ],
+  "decision": {
+    "robust_across_views": false,
+    "conditions": {
+      "all_three_mixture_views_eligible": true,
+      "every_cross_view_ari_at_least_0.50": false,
+      "consensus_eligible": true
+    },
+    "cross_view_anchor_ari": {
+      "raw:residual": 0.6856777505500818,
+      "raw:shape": 0.27197119974381406,
+      "residual:shape": 0.20463522499438958
+    },
+    "residual_minimum_ari_gain": 0.7530251802435044,
+    "residual_stability_improvement": false
+  },
+  "interpretation": {
+    "selected_associations": {
+      "raw:kmeans": {
+        "eligible": false,
+        "anchor_ami": {
+          "device": 0.013435098105681307,
+          "site": -5.543129938452635e-05,
+          "quality": 0.00487497790499691,
+          "hr_bpm": 0.01557503722673037,
+          "signal_std": 0.10032932436506105,
+          "baseline_fraction": 0.0016288885820195413,
+          "beat_consistency": 0.004354590441228527,
+          "superclass_combination": 0.10134725766603694
+        },
+        "full_cohort_ami_descriptive": {
+          "device": 0.009931782695228972,
+          "site": -0.0002726377899921358,
+          "quality": 0.006992242052453363,
+          "hr_bpm": 0.009258106585635875,
+          "signal_std": 0.0773137070166207,
+          "baseline_fraction": 0.005304739031742408,
+          "beat_consistency": 0.007000543232949679,
+          "superclass_combination": 0.10154563865855418
+        }
+      },
+      "raw:gmm": {
+        "eligible": true,
+        "anchor_ami": {
+          "device": 0.026531725144190742,
+          "site": -0.007365493301105419,
+          "quality": 0.06257969865251414,
+          "hr_bpm": 0.04290624960741836,
+          "signal_std": 0.1165105199190957,
+          "baseline_fraction": -0.0013702550558264402,
+          "beat_consistency": 0.04883920095147656,
+          "superclass_combination": 0.11655155750912162
+        },
+        "full_cohort_ami_descriptive": {
+          "device": 0.02009298353586374,
+          "site": -0.000879403601980842,
+          "quality": 0.048825180981975726,
+          "hr_bpm": 0.0281019953902528,
+          "signal_std": 0.08751777751734018,
+          "baseline_fraction": 0.0023004299784811283,
+          "beat_consistency": 0.030414648879676834,
+          "superclass_combination": 0.12388195359613353
+        }
+      },
+      "residual:kmeans": {
+        "eligible": false,
+        "anchor_ami": {
+          "device": -0.0017232540226325484,
+          "site": -7.694063157922063e-06,
+          "quality": -0.001353849376926274,
+          "hr_bpm": -0.001249044814755364,
+          "signal_std": 0.010810888095458158,
+          "baseline_fraction": -0.0022804349899087817,
+          "beat_consistency": 0.0019379464728033105,
+          "superclass_combination": 0.06922596907896561
+        },
+        "full_cohort_ami_descriptive": {
+          "device": -0.001132644633452518,
+          "site": -0.0004864417886016601,
+          "quality": -0.00038067954039141817,
+          "hr_bpm": -0.00023291846084361423,
+          "signal_std": 0.012134239718819346,
+          "baseline_fraction": -0.0005969830486983097,
+          "beat_consistency": 0.006812036049461744,
+          "superclass_combination": 0.08012691744586871
+        }
+      },
+      "residual:gmm": {
+        "eligible": true,
+        "anchor_ami": {
+          "device": 0.028172683252229998,
+          "site": -0.0051734659073919735,
+          "quality": 0.04211336627019799,
+          "hr_bpm": 0.03315904080049838,
+          "signal_std": 0.11847680103841546,
+          "baseline_fraction": -0.0022365175267229937,
+          "beat_consistency": 0.03695378474678218,
+          "superclass_combination": 0.13495607508720472
+        },
+        "full_cohort_ami_descriptive": {
+          "device": 0.017615394341748653,
+          "site": 0.001322588731601872,
+          "quality": 0.02341594783597625,
+          "hr_bpm": 0.01788598185262623,
+          "signal_std": 0.07915800958734545,
+          "baseline_fraction": 0.0008515396286356973,
+          "beat_consistency": 0.01955128599921233,
+          "superclass_combination": 0.1309924402244713
+        }
+      },
+      "shape:kmeans": {
+        "eligible": true,
+        "anchor_ami": {
+          "device": 0.045827632362898246,
+          "site": 0.0038056646651613477,
+          "quality": 0.03949432803801096,
+          "hr_bpm": 0.03412096012288625,
+          "signal_std": 0.10548180589465239,
+          "baseline_fraction": -0.002289385686281193,
+          "beat_consistency": 0.053331027824289674,
+          "superclass_combination": 0.17861038504270482
+        },
+        "full_cohort_ami_descriptive": {
+          "device": 0.036440897354193244,
+          "site": 0.0008984357958845267,
+          "quality": 0.0423761169108542,
+          "hr_bpm": 0.033886201351536506,
+          "signal_std": 0.07298918929930902,
+          "baseline_fraction": 0.001971526731659964,
+          "beat_consistency": 0.03654225389237477,
+          "superclass_combination": 0.18280644805606094
+        }
+      },
+      "shape:gmm": {
+        "eligible": true,
+        "anchor_ami": {
+          "device": 0.023150261361115084,
+          "site": -0.009880377454824755,
+          "quality": 0.08046655535889674,
+          "hr_bpm": 0.03133400762457321,
+          "signal_std": 0.025010729137210946,
+          "baseline_fraction": 0.00048784830700363934,
+          "beat_consistency": 0.09132602889759403,
+          "superclass_combination": 0.03853014080477136
+        },
+        "full_cohort_ami_descriptive": {
+          "device": 0.012296696534785993,
+          "site": -0.002994791132861836,
+          "quality": 0.08663173959163002,
+          "hr_bpm": 0.01916268166261784,
+          "signal_std": 0.02272424511030875,
+          "baseline_fraction": 0.000677083320428185,
+          "beat_consistency": 0.06347357875380179,
+          "superclass_combination": 0.02454640351286097
+        }
+      },
+      "consensus": {
+        "eligible": true,
+        "anchor_ami": {
+          "device": 0.029963845928631695,
+          "site": -0.008291008908174934,
+          "quality": 0.06794510423296901,
+          "hr_bpm": 0.0434760716456498,
+          "signal_std": 0.10940103056419709,
+          "baseline_fraction": -0.0019569890506985726,
+          "beat_consistency": 0.05368014382555731,
+          "superclass_combination": 0.1349404603368294
+        }
+      }
+    },
+    "anchor_annotations": {
+      "NORM": 196,
+      "MI": 91,
+      "STTC": 94,
+      "CD": 102,
+      "HYP": 57
+    },
+    "anchor_multi_abnormal": 87,
+    "bh_family_tests": 70,
+    "residual_annotation_ami_contrast": {
+      "difference": 0.06573010600823911,
+      "ci_low": 0.022442659923523605,
+      "ci_high": 0.12180484114054844,
+      "draws": 200,
+      "conditional_on_fitted_clusters": true
+    }
+  },
+  "elapsed_seconds": 20.09309847280383,
+  "git_commit": "b08811a2c588d01a9369bd8b65ffa7614b3128bf",
+  "immutable_output_sha256": {
+    "outputs/cluster02_stability_selection/cohort_local.csv": "6a373ebe718c2148707f8267ed262d7c621f83c6a76f15d9d0cfc9fa3ae0a606",
+    "outputs/cluster02_stability_selection/subsample_patient_hashes.json": "09059840c6f4a21acbbf2c45083d69832a5a1612dd41a0c0aacb960c89630471",
+    "outputs/cluster02_stability_selection/provenance.json": "205a29eb81f8979090fec90608e0f7595fbb3afaaee4416aeaf3209958abb3d9",
+    "outputs/cluster02_stability_selection/unsupervised_progress.json": "8e1430c7d4d6b9c1715b062958445e844a6e66b8081fae7d797f9f2714d4b88c",
+    "outputs/cluster02_stability_selection/assignments_local.npz": "4ac4c9b21e4e59119050af24c18162ec9f9499fd8e2814d2726f0bf47e44d85f",
+    "outputs/cluster02_stability_selection/unsupervised_decision.json": "e60912fda2bdfb7ebb8d324869c0ba7537d59af285de65841e64f5596688c49f",
+    "outputs/cluster02_stability_selection/anchor_enrichment.csv": "aeb04d745634add7cb5b1fb641b51b1f0802828fed5a017686a33fa589687f9a",
+    "outputs/cluster02_stability_selection/candidate_stability.png": "ba963c85464c6ce3e68ac04dbad60e584a090746ab20329fa14393ac6de2ac81",
+    "outputs/cluster02_stability_selection/candidate_table.csv": "8fd6289f0f96418a87c70b0b3abc1d8bd8e4f64430818a495d506f857ba779b3"
+  },
+  "final_verification": {
+    "all_checks_passed": true,
+    "result_sha256": "945b2fc803236badbd934133a685105e91f124f017142c669921efa494dc56ed",
+    "final_status_sha256": "b9b5b0dc13f56d69e1f89bcdf74c8be2b7a73ce0affadbcdbdb295ac99149277",
+    "verified_source_files": 11,
+    "verified_input_files": 9,
+    "verified_immutable_output_files": 9,
+    "verified_candidates": 36,
+    "verified_anchor_prediction_refits": 288,
+    "verified_patients": 1999,
+    "verified_anchor_patients": 412,
+    "bh_family_tests": 70,
+    "checks": [
+      "source and input byte hashes",
+      "committed source bytes",
+      "final result/status binding",
+      "all immutable outputs",
+      "exact predecessor cohort row alignment",
+      "PR67 train roles and folds 1-8",
+      "unique patient and ECG IDs",
+      "anchor hash allocation",
+      "all subsample hashes",
+      "all 36 configuration identities",
+      "anchor/refit array shapes and reference row alignment",
+      "all anchor stability ARIs",
+      "coverage and cluster size gates",
+      "selection ranking",
+      "cross-view ARIs and primary/secondary decisions",
+      "global BH q values and enrichment cluster sizes"
+    ],
+    "waveform_reads": 0,
+    "new_model_fits": 0,
+    "reporting_source_sha256": {
+      "outputs/cluster02_stability_selection/artifact_audit.py": "bc9731d608b7a3999426a339219720493b0d9735f3b9155b3d6d5d3424ab29f3",
+      "outputs/cluster02_stability_selection/aggregate_report.py": "b295228f7720e6370b67937812497fe0e1905587ebf0b04b9afc62cb2836087d"
+    }
+  },
+  "anchor_enrichment": [
+    {
+      "key": "raw:kmeans",
+      "cluster": 0,
+      "label": "NORM",
+      "n": 368,
+      "positive": 196,
+      "prevalence": 0.532608695652174,
+      "lift": 1.1195652173913044,
+      "p": 4.4706146925887394e-14,
+      "multi_abnormal_fraction": 0.1603260869565217,
+      "q": 3.4771447609023525e-13
+    },
+    {
+      "key": "raw:kmeans",
+      "cluster": 0,
+      "label": "MI",
+      "n": 368,
+      "positive": 72,
+      "prevalence": 0.1956521739130435,
+      "lift": 0.8858098423315814,
+      "p": 0.9997853497174464,
+      "multi_abnormal_fraction": 0.1603260869565217,
+      "q": 1.0
+    },
+    {
+      "key": "raw:kmeans",
+      "cluster": 0,
+      "label": "STTC",
+      "n": 368,
+      "positive": 73,
+      "prevalence": 0.1983695652173913,
+      "lift": 0.8694495837187788,
+      "p": 0.9999752975519972,
+      "multi_abnormal_fraction": 0.1603260869565217,
+      "q": 1.0
+    },
+    {
+      "key": "raw:kmeans",
+      "cluster": 0,
+      "label": "CD",
+      "n": 368,
+      "positive": 73,
+      "prevalence": 0.1983695652173913,
+      "lift": 0.8012574595055413,
+      "p": 0.9999999998917174,
+      "multi_abnormal_fraction": 0.1603260869565217,
+      "q": 1.0
+    },
+    {
+      "key": "raw:kmeans",
+      "cluster": 0,
+      "label": "HYP",
+      "n": 368,
+      "positive": 40,
+      "prevalence": 0.108695652173913,
+      "lift": 0.7856598016781083,
+      "p": 0.9999981678456336,
+      "multi_abnormal_fraction": 0.1603260869565217,
+      "q": 1.0
+    },
+    {
+      "key": "raw:kmeans",
+      "cluster": 1,
+      "label": "NORM",
+      "n": 44,
+      "positive": 0,
+      "prevalence": 0.0,
+      "lift": 0.0,
+      "p": 1.0,
+      "multi_abnormal_fraction": 0.6363636363636364,
+      "q": 1.0
+    },
+    {
+      "key": "raw:kmeans",
+      "cluster": 1,
+      "label": "MI",
+      "n": 44,
+      "positive": 19,
+      "prevalence": 0.4318181818181818,
+      "lift": 1.955044955044955,
+      "p": 0.0007366035759352,
+      "multi_abnormal_fraction": 0.6363636363636364,
+      "q": 0.001663298397273
+    },
+    {
+      "key": "raw:kmeans",
+      "cluster": 1,
+      "label": "STTC",
+      "n": 44,
+      "positive": 21,
+      "prevalence": 0.4772727272727273,
+      "lift": 2.0918762088974856,
+      "p": 9.891124458588822e-05,
+      "multi_abnormal_fraction": 0.6363636363636364,
+      "q": 0.0002387512800349
+    },
+    {
+      "key": "raw:kmeans",
+      "cluster": 1,
+      "label": "CD",
+      "n": 44,
+      "positive": 29,
+      "prevalence": 0.6590909090909091,
+      "lift": 2.662210338680927,
+      "p": 8.915890886804984e-10,
+      "multi_abnormal_fraction": 0.6363636363636364,
+      "q": 4.4579454434024936e-09
+    },
+    {
+      "key": "raw:kmeans",
+      "cluster": 1,
+      "label": "HYP",
+      "n": 44,
+      "positive": 17,
+      "prevalence": 0.3863636363636363,
+      "lift": 2.792663476874003,
+      "p": 1.0286817133604536e-05,
+      "multi_abnormal_fraction": 0.6363636363636364,
+      "q": 2.666952590193769e-05
+    },
+    {
+      "key": "raw:gmm",
+      "cluster": 0,
+      "label": "NORM",
+      "n": 150,
+      "positive": 23,
+      "prevalence": 0.1533333333333333,
+      "lift": 0.322312925170068,
+      "p": 1.0,
+      "multi_abnormal_fraction": 0.4466666666666666,
+      "q": 1.0
+    },
+    {
+      "key": "raw:gmm",
+      "cluster": 0,
+      "label": "MI",
+      "n": 150,
+      "positive": 55,
+      "prevalence": 0.3666666666666666,
+      "lift": 1.66007326007326,
+      "p": 1.0313993386770483e-07,
+      "multi_abnormal_fraction": 0.4466666666666666,
+      "q": 3.281725168517881e-07
+    },
+    {
+      "key": "raw:gmm",
+      "cluster": 0,
+      "label": "STTC",
+      "n": 150,
+      "positive": 58,
+      "prevalence": 0.3866666666666666,
+      "lift": 1.6947517730496453,
+      "p": 1.1044502811572696e-08,
+      "multi_abnormal_fraction": 0.4466666666666666,
+      "q": 4.547736451824051e-08
+    },
+    {
+      "key": "raw:gmm",
+      "cluster": 0,
+      "label": "CD",
+      "n": 150,
+      "positive": 67,
+      "prevalence": 0.4466666666666666,
+      "lift": 1.804183006535948,
+      "p": 3.054908017749549e-12,
+      "multi_abnormal_fraction": 0.4466666666666666,
+      "q": 2.1384356124246844e-11
+    },
+    {
+      "key": "raw:gmm",
+      "cluster": 0,
+      "label": "HYP",
+      "n": 150,
+      "positive": 41,
+      "prevalence": 0.2733333333333333,
+      "lift": 1.975672514619883,
+      "p": 4.406819065338132e-09,
+      "multi_abnormal_fraction": 0.4466666666666666,
+      "q": 1.9279833410854328e-08
+    },
+    {
+      "key": "raw:gmm",
+      "cluster": 1,
+      "label": "NORM",
+      "n": 262,
+      "positive": 173,
+      "prevalence": 0.6603053435114504,
+      "lift": 1.3879887832995794,
+      "p": 1.3550395805340582e-24,
+      "multi_abnormal_fraction": 0.0763358778625954,
+      "q": 1.9270045982328968e-23
+    },
+    {
+      "key": "raw:gmm",
+      "cluster": 1,
+      "label": "MI",
+      "n": 262,
+      "positive": 36,
+      "prevalence": 0.1374045801526717,
+      "lift": 0.6220954617901183,
+      "p": 0.999999972813695,
+      "multi_abnormal_fraction": 0.0763358778625954,
+      "q": 1.0
+    },
+    {
+      "key": "raw:gmm",
+      "cluster": 1,
+      "label": "STTC",
+      "n": 262,
+      "positive": 36,
+      "prevalence": 0.1374045801526717,
+      "lift": 0.6022413513074549,
+      "p": 0.999999997318168,
+      "multi_abnormal_fraction": 0.0763358778625954,
+      "q": 1.0
+    },
+    {
+      "key": "raw:gmm",
+      "cluster": 1,
+      "label": "CD",
+      "n": 262,
+      "positive": 35,
+      "prevalence": 0.1335877862595419,
+      "lift": 0.5395898817542284,
+      "p": 0.999999999999435,
+      "multi_abnormal_fraction": 0.0763358778625954,
+      "q": 1.0
+    },
+    {
+      "key": "raw:gmm",
+      "cluster": 1,
+      "label": "HYP",
+      "n": 262,
+      "positive": 16,
+      "prevalence": 0.0610687022900763,
+      "lift": 0.4414088656756395,
+      "p": 0.9999999992728212,
+      "multi_abnormal_fraction": 0.0763358778625954,
+      "q": 1.0
+    },
+    {
+      "key": "residual:kmeans",
+      "cluster": 0,
+      "label": "NORM",
+      "n": 157,
+      "positive": 34,
+      "prevalence": 0.2165605095541401,
+      "lift": 0.4552190302872742,
+      "p": 1.0,
+      "multi_abnormal_fraction": 0.3312101910828025,
+      "q": 1.0
+    },
+    {
+      "key": "residual:kmeans",
+      "cluster": 0,
+      "label": "MI",
+      "n": 157,
+      "positive": 58,
+      "prevalence": 0.3694267515923566,
+      "lift": 1.6725694687478123,
+      "p": 1.7159801419238576e-08,
+      "multi_abnormal_fraction": 0.3312101910828025,
+      "q": 6.005930496733501e-08
+    },
+    {
+      "key": "residual:kmeans",
+      "cluster": 0,
+      "label": "STTC",
+      "n": 157,
+      "positive": 54,
+      "prevalence": 0.3439490445859872,
+      "lift": 1.5075213443556037,
+      "p": 1.186020755015769e-05,
+      "multi_abnormal_fraction": 0.3312101910828025,
+      "q": 2.9650518875394225e-05
+    },
+    {
+      "key": "residual:kmeans",
+      "cluster": 0,
+      "label": "CD",
+      "n": 157,
+      "positive": 55,
+      "prevalence": 0.3503184713375796,
+      "lift": 1.4150118646184588,
+      "p": 0.0001367669930663,
+      "multi_abnormal_fraction": 0.3312101910828025,
+      "q": 0.0003191229838214
+    },
+    {
+      "key": "residual:kmeans",
+      "cluster": 0,
+      "label": "HYP",
+      "n": 157,
+      "positive": 30,
+      "prevalence": 0.1910828025477707,
+      "lift": 1.381159906134764,
+      "p": 0.0118614226274598,
+      "multi_abnormal_fraction": 0.3312101910828025,
+      "q": 0.0251605934521874
+    },
+    {
+      "key": "residual:kmeans",
+      "cluster": 1,
+      "label": "NORM",
+      "n": 255,
+      "positive": 162,
+      "prevalence": 0.6352941176470588,
+      "lift": 1.3354141656662664,
+      "p": 3.562072401249192e-17,
+      "multi_abnormal_fraction": 0.1372549019607843,
+      "q": 4.155751134790724e-16
+    },
+    {
+      "key": "residual:kmeans",
+      "cluster": 1,
+      "label": "MI",
+      "n": 255,
+      "positive": 33,
+      "prevalence": 0.1294117647058823,
+      "lift": 0.5859082094376212,
+      "p": 0.9999999958187924,
+      "multi_abnormal_fraction": 0.1372549019607843,
+      "q": 1.0
+    },
+    {
+      "key": "residual:kmeans",
+      "cluster": 1,
+      "label": "STTC",
+      "n": 255,
+      "positive": 40,
+      "prevalence": 0.1568627450980392,
+      "lift": 0.687526074259491,
+      "p": 0.9999959975390296,
+      "multi_abnormal_fraction": 0.1372549019607843,
+      "q": 1.0
+    },
+    {
+      "key": "residual:kmeans",
+      "cluster": 1,
+      "label": "CD",
+      "n": 255,
+      "positive": 47,
+      "prevalence": 0.1843137254901961,
+      "lift": 0.744482891195694,
+      "p": 0.9999457687766554,
+      "multi_abnormal_fraction": 0.1372549019607843,
+      "q": 1.0
+    },
+    {
+      "key": "residual:kmeans",
+      "cluster": 1,
+      "label": "HYP",
+      "n": 255,
+      "positive": 27,
+      "prevalence": 0.1058823529411764,
+      "lift": 0.7653250773993808,
+      "p": 0.9945987758910242,
+      "multi_abnormal_fraction": 0.1372549019607843,
+      "q": 1.0
+    },
+    {
+      "key": "residual:gmm",
+      "cluster": 0,
+      "label": "NORM",
+      "n": 135,
+      "positive": 16,
+      "prevalence": 0.1185185185185185,
+      "lift": 0.2491307634164777,
+      "p": 1.0,
+      "multi_abnormal_fraction": 0.4814814814814814,
+      "q": 1.0
+    },
+    {
+      "key": "residual:gmm",
+      "cluster": 0,
+      "label": "MI",
+      "n": 135,
+      "positive": 50,
+      "prevalence": 0.3703703703703703,
+      "lift": 1.6768416768416767,
+      "p": 5.660119511249205e-07,
+      "multi_abnormal_fraction": 0.4814814814814814,
+      "q": 1.7226450686410623e-06
+    },
+    {
+      "key": "residual:gmm",
+      "cluster": 0,
+      "label": "STTC",
+      "n": 135,
+      "positive": 54,
+      "prevalence": 0.4,
+      "lift": 1.7531914893617022,
+      "p": 1.4595333538990356e-08,
+      "multi_abnormal_fraction": 0.4814814814814814,
+      "q": 5.377228145943816e-08
+    },
+    {
+      "key": "residual:gmm",
+      "cluster": 0,
+      "label": "CD",
+      "n": 135,
+      "positive": 66,
+      "prevalence": 0.4888888888888889,
+      "lift": 1.974727668845316,
+      "p": 1.1524018334608844e-14,
+      "multi_abnormal_fraction": 0.4814814814814814,
+      "q": 1.1524018334608842e-13
+    },
+    {
+      "key": "residual:gmm",
+      "cluster": 0,
+      "label": "HYP",
+      "n": 135,
+      "positive": 40,
+      "prevalence": 0.2962962962962963,
+      "lift": 2.1416504223521766,
+      "p": 4.4773252592175154e-10,
+      "multi_abnormal_fraction": 0.4814814814814814,
+      "q": 2.4108674472709703e-09
+    },
+    {
+      "key": "residual:gmm",
+      "cluster": 1,
+      "label": "NORM",
+      "n": 277,
+      "positive": 180,
+      "prevalence": 0.6498194945848376,
+      "lift": 1.3659471008620054,
+      "p": 3.876660295801421e-26,
+      "multi_abnormal_fraction": 0.0794223826714801,
+      "q": 9.045540690203316e-25
+    },
+    {
+      "key": "residual:gmm",
+      "cluster": 1,
+      "label": "MI",
+      "n": 277,
+      "positive": 41,
+      "prevalence": 0.148014440433213,
+      "lift": 0.6701313127305907,
+      "p": 0.9999998403741952,
+      "multi_abnormal_fraction": 0.0794223826714801,
+      "q": 1.0
+    },
+    {
+      "key": "residual:gmm",
+      "cluster": 1,
+      "label": "STTC",
+      "n": 277,
+      "positive": 40,
+      "prevalence": 0.1444043321299639,
+      "lift": 0.6329211152930332,
+      "p": 0.9999999964524294,
+      "multi_abnormal_fraction": 0.0794223826714801,
+      "q": 1.0
+    },
+    {
+      "key": "residual:gmm",
+      "cluster": 1,
+      "label": "CD",
+      "n": 277,
+      "positive": 36,
+      "prevalence": 0.1299638989169675,
+      "lift": 0.5249522191548098,
+      "p": 0.9999999999999984,
+      "multi_abnormal_fraction": 0.0794223826714801,
+      "q": 1.0
+    },
+    {
+      "key": "residual:gmm",
+      "cluster": 1,
+      "label": "HYP",
+      "n": 277,
+      "positive": 17,
+      "prevalence": 0.0613718411552346,
+      "lift": 0.4435999746659066,
+      "p": 0.9999999999335094,
+      "multi_abnormal_fraction": 0.0794223826714801,
+      "q": 1.0
+    },
+    {
+      "key": "shape:kmeans",
+      "cluster": 0,
+      "label": "NORM",
+      "n": 148,
+      "positive": 11,
+      "prevalence": 0.0743243243243243,
+      "lift": 0.1562327633756205,
+      "p": 1.0,
+      "multi_abnormal_fraction": 0.4324324324324324,
+      "q": 1.0
+    },
+    {
+      "key": "shape:kmeans",
+      "cluster": 0,
+      "label": "MI",
+      "n": 148,
+      "positive": 56,
+      "prevalence": 0.3783783783783784,
+      "lift": 1.7130977130977132,
+      "p": 1.4005858827844825e-08,
+      "multi_abnormal_fraction": 0.4324324324324324,
+      "q": 5.377228145943816e-08
+    },
+    {
+      "key": "shape:kmeans",
+      "cluster": 0,
+      "label": "STTC",
+      "n": 148,
+      "positive": 76,
+      "prevalence": 0.5135135135135135,
+      "lift": 2.250718803910293,
+      "p": 1.3764318558806406e-24,
+      "multi_abnormal_fraction": 0.4324324324324324,
+      "q": 1.9270045982328968e-23
+    },
+    {
+      "key": "shape:kmeans",
+      "cluster": 0,
+      "label": "CD",
+      "n": 148,
+      "positive": 56,
+      "prevalence": 0.3783783783783784,
+      "lift": 1.528351881293058,
+      "p": 4.811964699762524e-06,
+      "multi_abnormal_fraction": 0.4324324324324324,
+      "q": 1.295528957628372e-05
+    },
+    {
+      "key": "shape:kmeans",
+      "cluster": 0,
+      "label": "HYP",
+      "n": 148,
+      "positive": 39,
+      "prevalence": 0.2635135135135135,
+      "lift": 1.9046941678520624,
+      "p": 7.604839167817225e-08,
+      "multi_abnormal_fraction": 0.4324324324324324,
+      "q": 2.5349463892724084e-07
+    },
+    {
+      "key": "shape:kmeans",
+      "cluster": 1,
+      "label": "NORM",
+      "n": 264,
+      "positive": 185,
+      "prevalence": 0.7007575757575758,
+      "lift": 1.4730210265924553,
+      "p": 2.5468329097456235e-38,
+      "multi_abnormal_fraction": 0.0871212121212121,
+      "q": 1.7827830368219365e-36
+    },
+    {
+      "key": "shape:kmeans",
+      "cluster": 1,
+      "label": "MI",
+      "n": 264,
+      "positive": 35,
+      "prevalence": 0.1325757575757575,
+      "lift": 0.6002331002331002,
+      "p": 0.99999999662292,
+      "multi_abnormal_fraction": 0.0871212121212121,
+      "q": 1.0
+    },
+    {
+      "key": "shape:kmeans",
+      "cluster": 1,
+      "label": "STTC",
+      "n": 264,
+      "positive": 18,
+      "prevalence": 0.0681818181818181,
+      "lift": 0.2988394584139264,
+      "p": 1.0,
+      "multi_abnormal_fraction": 0.0871212121212121,
+      "q": 1.0
+    },
+    {
+      "key": "shape:kmeans",
+      "cluster": 1,
+      "label": "CD",
+      "n": 264,
+      "positive": 46,
+      "prevalence": 0.1742424242424242,
+      "lift": 0.7038027332144979,
+      "p": 0.999998409309783,
+      "multi_abnormal_fraction": 0.0871212121212121,
+      "q": 1.0
+    },
+    {
+      "key": "shape:kmeans",
+      "cluster": 1,
+      "label": "HYP",
+      "n": 264,
+      "positive": 18,
+      "prevalence": 0.0681818181818181,
+      "lift": 0.492822966507177,
+      "p": 0.9999999852162562,
+      "multi_abnormal_fraction": 0.0871212121212121,
+      "q": 1.0
+    },
+    {
+      "key": "shape:gmm",
+      "cluster": 0,
+      "label": "NORM",
+      "n": 57,
+      "positive": 6,
+      "prevalence": 0.1052631578947368,
+      "lift": 0.2212674543501611,
+      "p": 0.9999999999802042,
+      "multi_abnormal_fraction": 0.4035087719298245,
+      "q": 1.0
+    },
+    {
+      "key": "shape:gmm",
+      "cluster": 0,
+      "label": "MI",
+      "n": 57,
+      "positive": 22,
+      "prevalence": 0.3859649122807017,
+      "lift": 1.747445536919221,
+      "p": 0.0017214519201385,
+      "multi_abnormal_fraction": 0.4035087719298245,
+      "q": 0.0037656760753031
+    },
+    {
+      "key": "shape:gmm",
+      "cluster": 0,
+      "label": "STTC",
+      "n": 57,
+      "positive": 28,
+      "prevalence": 0.4912280701754385,
+      "lift": 2.1530421799178794,
+      "p": 2.0009392505348565e-06,
+      "multi_abnormal_fraction": 0.4035087719298245,
+      "q": 5.602629901497597e-06
+    },
+    {
+      "key": "shape:gmm",
+      "cluster": 0,
+      "label": "CD",
+      "n": 57,
+      "positive": 20,
+      "prevalence": 0.3508771929824561,
+      "lift": 1.417268661850705,
+      "p": 0.0403788587086687,
+      "multi_abnormal_fraction": 0.4035087719298245,
+      "q": 0.0807577174173374
+    },
+    {
+      "key": "shape:gmm",
+      "cluster": 0,
+      "label": "HYP",
+      "n": 57,
+      "positive": 14,
+      "prevalence": 0.2456140350877192,
+      "lift": 1.7753154816866727,
+      "p": 0.0137628873548391,
+      "multi_abnormal_fraction": 0.4035087719298245,
+      "q": 0.0283353563187865
+    },
+    {
+      "key": "shape:gmm",
+      "cluster": 1,
+      "label": "NORM",
+      "n": 355,
+      "positive": 190,
+      "prevalence": 0.5352112676056338,
+      "lift": 1.1250359298649035,
+      "p": 2.0269083725760468e-10,
+      "multi_abnormal_fraction": 0.180281690140845,
+      "q": 1.1823632173360275e-09
+    },
+    {
+      "key": "shape:gmm",
+      "cluster": 1,
+      "label": "MI",
+      "n": 355,
+      "positive": 69,
+      "prevalence": 0.1943661971830985,
+      "lift": 0.879987618015787,
+      "p": 0.99939662265686,
+      "multi_abnormal_fraction": 0.180281690140845,
+      "q": 1.0
+    },
+    {
+      "key": "shape:gmm",
+      "cluster": 1,
+      "label": "STTC",
+      "n": 355,
+      "positive": 66,
+      "prevalence": 0.1859154929577464,
+      "lift": 0.8148636499850165,
+      "p": 0.9999995550403016,
+      "multi_abnormal_fraction": 0.180281690140845,
+      "q": 1.0
+    },
+    {
+      "key": "shape:gmm",
+      "cluster": 1,
+      "label": "CD",
+      "n": 355,
+      "positive": 82,
+      "prevalence": 0.2309859154929577,
+      "lift": 0.9330019331676332,
+      "p": 0.9801832900731924,
+      "multi_abnormal_fraction": 0.180281690140845,
+      "q": 1.0
+    },
+    {
+      "key": "shape:gmm",
+      "cluster": 1,
+      "label": "HYP",
+      "n": 355,
+      "positive": 43,
+      "prevalence": 0.1211267605633802,
+      "lift": 0.8755127254756611,
+      "p": 0.9948839058411928,
+      "multi_abnormal_fraction": 0.180281690140845,
+      "q": 1.0
+    },
+    {
+      "key": "consensus",
+      "cluster": 0,
+      "label": "NORM",
+      "n": 147,
+      "positive": 19,
+      "prevalence": 0.1292517006802721,
+      "lift": 0.2716923504095516,
+      "p": 1.0,
+      "multi_abnormal_fraction": 0.4557823129251701,
+      "q": 1.0
+    },
+    {
+      "key": "consensus",
+      "cluster": 0,
+      "label": "MI",
+      "n": 147,
+      "positive": 52,
+      "prevalence": 0.3537414965986394,
+      "lift": 1.6015549076773563,
+      "p": 1.734264247706038e-06,
+      "multi_abnormal_fraction": 0.4557823129251701,
+      "q": 5.058270722475944e-06
+    },
+    {
+      "key": "consensus",
+      "cluster": 0,
+      "label": "STTC",
+      "n": 147,
+      "positive": 60,
+      "prevalence": 0.4081632653061224,
+      "lift": 1.7889709075119409,
+      "p": 1.9538343861420927e-10,
+      "multi_abnormal_fraction": 0.4557823129251701,
+      "q": 1.1823632173360275e-09
+    },
+    {
+      "key": "consensus",
+      "cluster": 0,
+      "label": "CD",
+      "n": 147,
+      "positive": 69,
+      "prevalence": 0.4693877551020408,
+      "lift": 1.895958383353341,
+      "p": 2.2533994654718232e-14,
+      "multi_abnormal_fraction": 0.4557823129251701,
+      "q": 1.9717245322878452e-13
+    },
+    {
+      "key": "consensus",
+      "cluster": 0,
+      "label": "HYP",
+      "n": 147,
+      "positive": 41,
+      "prevalence": 0.2789115646258503,
+      "lift": 2.0159923618570232,
+      "p": 2.009055443739132e-09,
+      "multi_abnormal_fraction": 0.4557823129251701,
+      "q": 9.375592070782616e-09
+    },
+    {
+      "key": "consensus",
+      "cluster": 1,
+      "label": "NORM",
+      "n": 265,
+      "positive": 177,
+      "prevalence": 0.6679245283018868,
+      "lift": 1.404004620716211,
+      "p": 1.1502192826948652e-27,
+      "multi_abnormal_fraction": 0.0754716981132075,
+      "q": 4.025767489432028e-26
+    },
+    {
+      "key": "consensus",
+      "cluster": 1,
+      "label": "MI",
+      "n": 265,
+      "positive": 39,
+      "prevalence": 0.1471698113207547,
+      "lift": 0.6663072776280323,
+      "p": 0.9999994785581984,
+      "multi_abnormal_fraction": 0.0754716981132075,
+      "q": 1.0
+    },
+    {
+      "key": "consensus",
+      "cluster": 1,
+      "label": "STTC",
+      "n": 265,
+      "positive": 34,
+      "prevalence": 0.1283018867924528,
+      "lift": 0.5623444399839421,
+      "p": 0.9999999999597792,
+      "multi_abnormal_fraction": 0.0754716981132075,
+      "q": 1.0
+    },
+    {
+      "key": "consensus",
+      "cluster": 1,
+      "label": "CD",
+      "n": 265,
+      "positive": 33,
+      "prevalence": 0.1245283018867924,
+      "lift": 0.5029966703662597,
+      "p": 0.9999999999999964,
+      "multi_abnormal_fraction": 0.0754716981132075,
+      "q": 1.0
+    },
+    {
+      "key": "consensus",
+      "cluster": 1,
+      "label": "HYP",
+      "n": 265,
+      "positive": 16,
+      "prevalence": 0.060377358490566,
+      "lift": 0.4364117841774247,
+      "p": 0.999999999681221,
+      "multi_abnormal_fraction": 0.0754716981132075,
+      "q": 1.0
+    }
+  ],
+  "report_figures_sha256": {
+    "docs/figures/cluster-02/anchor_multilabel_prevalence.png": "5fa865c1afdbc1fbd43c670720d519a3f10ef4d6e9f738d71fdf3f81e9a4701d",
+    "docs/figures/cluster-02/candidate_stability.png": "ba963c85464c6ce3e68ac04dbad60e584a090746ab20329fa14393ac6de2ac81",
+    "docs/figures/cluster-02/anchor_associations.png": "569f10fbc2a07f08a37f50992f6ffa51bc8c4eeb8d47d71f377781cc03064652"
+  },
+  "final_verification_sha256": "a90858d6bfcb1137c65a2d13196eb0169d6a71f0e4fc5b61a20b143e95297f93"
+}

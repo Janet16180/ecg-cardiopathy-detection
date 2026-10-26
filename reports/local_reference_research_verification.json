@@ -1,0 +1,90 @@
+{
+  "scope": "Local bounded development studies; no independent clinical localization or etiologic validation",
+  "through_commit": "3203e38745b245baec9049514622001c88a6d540",
+  "studies": {
+    "ntt01_reference_label_audit": {
+      "result_sha256": "2aa8a65228c943112f2bcb79611e8ee70d607a1b96afcea95174f65043c2a5a4",
+      "frozen_source_files_verified": 12,
+      "all_source_hashes_match": true
+    },
+    "ntt02_native_reference_transfer": {
+      "result_sha256": "5e7f4052b60d3bfb3ae589bb6cc482c32c7af49d6858d8cc5ae37e6cb044047b",
+      "frozen_source_files_verified": 14,
+      "all_source_hashes_match": true
+    },
+    "ntt03_visual_reference": {
+      "result_sha256": "aa9b76d825a9aeff067d20521dc46d4013a637b8601c04573978fa3c3cdbce5c",
+      "frozen_source_files_verified": 230,
+      "all_source_hashes_match": true
+    },
+    "cluster01_physical_morphology": {
+      "result_sha256": "74f0c82918f158a61368d308acdab5d5e98fe759852c966de76867e5c99bc8e7",
+      "frozen_source_files_verified": 10,
+      "all_source_hashes_match": true
+    },
+    "cluster02_stability_selection": {
+      "result_sha256": "945b2fc803236badbd934133a685105e91f124f017142c669921efa494dc56ed",
+      "frozen_source_files_verified": 11,
+      "all_source_hashes_match": true
+    },
+    "shap01_linear_background": {
+      "result_sha256": "d3d0e9e4ed488432d4ee5d1990622bfed6ad180120f9d3316905c4ac15414a05",
+      "frozen_source_files_verified": 13,
+      "all_source_hashes_match": true
+    },
+    "ntt04_same_wave": {
+      "result_sha256": "79cfa5130ccc8d275e398ddb15b056a1affe1beb812fa32c52e12a8c2211e789",
+      "frozen_source_files_verified": 174,
+      "all_source_hashes_match": true
+    }
+  },
+  "verification": {
+    "integrated_cpu_tests": {
+      "passed": 1304,
+      "skipped": 6,
+      "seconds": 72.99,
+      "exit_code": 0,
+      "command": "OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 uv run --no-sync pytest -q"
+    },
+    "ruff": {
+      "passed": true,
+      "command": "uv run --no-sync ruff check ecg_experiment scripts tests"
+    },
+    "schema_structural_examples": {
+      "schema_valid": true,
+      "synthetic_example_valid": true,
+      "reject_exhaustive": true,
+      "reject_unmarked_normal": true,
+      "present_requires_evidence_or_reason": true,
+      "absent_without_regions": true,
+      "present_unlocalized_with_reason": true,
+      "reject_zero_based_ordinal": true,
+      "reject_unknown_lead": true
+    },
+    "clinical_annotation_validation": false,
+    "queue_and_backlog_json_valid": true,
+    "ntt04_independent_review": {
+      "passed": true,
+      "review_sha256": "f485e99faa471a2b3a374edae140151ccf090105f10922c6337048bf413742d2",
+      "waveform_reads": 0,
+      "model_inference_runs": 0,
+      "predictions_reconstructed": 180,
+      "methods_reconstructed": 9,
+      "bootstrap_draws_reconstructed": 2000
+    }
+  },
+  "identity": {
+    "repository_local_config": {
+      "user.name": "Janet16180",
+      "user.email": "clarajanet16180@outlook.com",
+      "remote.origin.url": "https://github.com/Janet16180/ecg-cardiopathy-detection.git"
+    },
+    "new_branch_commits_checked": 23,
+    "all_checked_authors_and_committers_personal": true,
+    "global_settings_changed": false,
+    "network_authentication_not_revalidated": true,
+    "scope_note": "Current deliverable branch and repository overrides. Historical remote-tracking refs/reflogs and global configuration are not rewritten by this verification."
+  },
+  "publication": "No further push or publication; all new research remains local",
+  "followup_jobs_scheduled": false
+}

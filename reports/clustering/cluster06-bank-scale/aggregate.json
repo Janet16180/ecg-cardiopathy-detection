@@ -1,0 +1,1756 @@
+{
+  "study": "CLUSTER-06",
+  "status": "completed",
+  "git_commit": "e63133ff7813b8dfc9f10f1535607ab7d686ec06",
+  "counts": {
+    "patients": 1993,
+    "fitting": 1582,
+    "anchors": 411,
+    "single_banks": 50,
+    "ensembles": 10,
+    "factorial_fits": 540,
+    "own_reference_fits": 9,
+    "exception_failed_fits": 0,
+    "nonconverged_factorial_fits": 0
+  },
+  "runtime": {
+    "python": "3.11.13",
+    "packages": {
+      "numpy": "2.4.6",
+      "scipy": "1.17.1",
+      "scikit-learn": "1.9.1",
+      "torch": "2.6.0+cu124",
+      "timm": "1.0.8",
+      "wfdb": "4.3.1",
+      "pandas": "3.0.6",
+      "threadpoolctl": "3.7.0"
+    },
+    "device": "cpu",
+    "machine": "x86_64",
+    "processor": "x86_64",
+    "torch_threads": 2,
+    "thread_environment": {
+      "OMP_NUM_THREADS": "2",
+      "OPENBLAS_NUM_THREADS": "2",
+      "MKL_NUM_THREADS": "2"
+    }
+  },
+  "seconds": 26.681377619039267,
+  "decision": {
+    "meaningful_conditional_averaging_benefit": true,
+    "p10_ari_difference": 0.2542243341351882,
+    "conditions": {
+      "p10_improvement_at_least_0.10": true,
+      "at_least_45_admissible_single_banks": true,
+      "at_least_9_admissible_ensembles": true
+    }
+  },
+  "predecessor_replay": {
+    "cluster03": {
+      "selected_fits": {
+        "native_qrs": {
+          "ari": 1.0,
+          "silhouette_error": 0.0
+        },
+        "native_global": {
+          "ari": 1.0,
+          "silhouette_error": 0.0
+        },
+        "ntt_affinity": {
+          "ari": 1.0,
+          "silhouette_error": 0.0
+        },
+        "ntt_regions": {
+          "ari": 1.0,
+          "silhouette_error": 0.0
+        },
+        "physical": {
+          "ari": 1.0,
+          "silhouette_error": 0.0
+        }
+      },
+      "original_banks_exact": true,
+      "maximum_coordinate_error": 0.0,
+      "native_qrs_predictions": 180,
+      "native_qrs_correct": 165,
+      "native_qrs_maximum_score_error": 0.0
+    },
+    "cluster04": {
+      "fits": 110,
+      "all_partition_ari_one": true,
+      "checks_exact": true,
+      "maximum_summary_error": 0.0
+    },
+    "cluster05": {
+      "fits": 54,
+      "all_partition_ari_one": true,
+      "maximum_coordinate_error": 0.0,
+      "reference_silhouettes_within_1e-12": true
+    }
+  },
+  "summaries": {
+    "regional_tied2:single:raw": {
+      "banks": 50,
+      "anchor_denominator": 411,
+      "admissible_banks": 50,
+      "pairwise_comparisons": 1225,
+      "pairwise_anchor_ari": {
+        "minimum": 0.402602201146966,
+        "p10": 0.5484789258611088,
+        "median": 0.7144729738397317,
+        "p90": 0.86448569627274,
+        "maximum": 0.9691331869635499
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.523480670607433,
+        "p10": 0.6272116507965101,
+        "median": 0.8004943293232047,
+        "p90": 0.9228351444998769,
+        "maximum": 0.9676626414335019
+      },
+      "reference_agreement": {
+        "minimum": 0.44,
+        "p10": 0.92,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 381,
+      "fraction_anchors_agreement_at_least_0.80": 0.927007299270073,
+      "modal_cluster_frequency": {
+        "minimum": 0.52,
+        "p10": 0.92,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.4021791902022728,
+        "maximum": 0.9988455359952018
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.44,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.967391304347826
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.44,
+            "p10": 0.58,
+            "median": 0.92,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.5813953488372093
+        }
+      },
+      "original_regional_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.44,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.967391304347826
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.44,
+            "p10": 0.58,
+            "median": 0.92,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.5813953488372093
+        }
+      }
+    },
+    "regional_tied2:single:rms": {
+      "banks": 50,
+      "anchor_denominator": 411,
+      "admissible_banks": 50,
+      "pairwise_comparisons": 1225,
+      "pairwise_anchor_ari": {
+        "minimum": 0.38217307600197775,
+        "p10": 0.5873423337777407,
+        "median": 0.7592601660232168,
+        "p90": 0.8702630256426933,
+        "maximum": 0.9653102116175648
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.4861995293404133,
+        "p10": 0.6029132472967738,
+        "median": 0.8387427709399357,
+        "p90": 0.9070632238832224,
+        "maximum": 0.9527531007555777
+      },
+      "reference_agreement": {
+        "minimum": 0.28,
+        "p10": 0.9,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 384,
+      "fraction_anchors_agreement_at_least_0.80": 0.9343065693430657,
+      "modal_cluster_frequency": {
+        "minimum": 0.5,
+        "p10": 0.9,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.4689955935892812,
+        "maximum": 1.0
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.28,
+            "p10": 0.96,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9483695652173914
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.42,
+            "p10": 0.724,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.813953488372093
+        }
+      },
+      "original_regional_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.28,
+            "p10": 0.96,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9483695652173914
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.5,
+            "p10": 0.724,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.813953488372093
+        }
+      }
+    },
+    "regional_tied2:single:equivalent": {
+      "banks": 50,
+      "anchor_denominator": 411,
+      "admissible_banks": 50,
+      "pairwise_comparisons": 1225,
+      "pairwise_anchor_ari": {
+        "minimum": 0.402602201146966,
+        "p10": 0.5484789258611088,
+        "median": 0.7144729738397317,
+        "p90": 0.86448569627274,
+        "maximum": 0.9691331869635499
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.523480670607433,
+        "p10": 0.6272116507965101,
+        "median": 0.8004943293232047,
+        "p90": 0.9228351444998769,
+        "maximum": 0.9676626414335019
+      },
+      "reference_agreement": {
+        "minimum": 0.44,
+        "p10": 0.92,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 381,
+      "fraction_anchors_agreement_at_least_0.80": 0.927007299270073,
+      "modal_cluster_frequency": {
+        "minimum": 0.52,
+        "p10": 0.92,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.4021791902022728,
+        "maximum": 0.9988455359952018
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.44,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.967391304347826
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.44,
+            "p10": 0.58,
+            "median": 0.92,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.5813953488372093
+        }
+      },
+      "original_regional_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.44,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.967391304347826
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.44,
+            "p10": 0.58,
+            "median": 0.92,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.5813953488372093
+        }
+      }
+    },
+    "regional_tied2:ensemble:raw": {
+      "banks": 10,
+      "anchor_denominator": 411,
+      "admissible_banks": 10,
+      "pairwise_comparisons": 45,
+      "pairwise_anchor_ari": {
+        "minimum": 0.8465139495170718,
+        "p10": 0.8880243544796425,
+        "median": 0.9216487375222846,
+        "p90": 0.9676626414335019,
+        "maximum": 0.9691331869635499
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.8940949660232931,
+        "p10": 0.9056405027019614,
+        "median": 0.9448218139003537,
+        "p90": 0.9713587254992774,
+        "maximum": 1.0
+      },
+      "reference_agreement": {
+        "minimum": 0.4,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 406,
+      "fraction_anchors_agreement_at_least_0.80": 0.9878345498783455,
+      "modal_cluster_frequency": {
+        "minimum": 0.5,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.0,
+        "maximum": 1.0
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.4,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9918478260869565
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.5,
+            "p10": 0.9,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9534883720930233
+        }
+      },
+      "original_regional_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.4,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9918478260869565
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.5,
+            "p10": 0.9,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9534883720930233
+        }
+      }
+    },
+    "regional_tied2:ensemble:rms": {
+      "banks": 10,
+      "anchor_denominator": 411,
+      "admissible_banks": 10,
+      "pairwise_comparisons": 45,
+      "pairwise_anchor_ari": {
+        "minimum": 0.8003971083875725,
+        "p10": 0.8415666679129289,
+        "median": 0.8969992261439903,
+        "p90": 0.9469863619376826,
+        "maximum": 0.9686665295449601
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.8487127296798231,
+        "p10": 0.8629306889386497,
+        "median": 0.9203003273077236,
+        "p90": 0.9558951739569633,
+        "maximum": 0.9841738327694337
+      },
+      "reference_agreement": {
+        "minimum": 0.2,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 403,
+      "fraction_anchors_agreement_at_least_0.80": 0.9805352798053528,
+      "modal_cluster_frequency": {
+        "minimum": 0.5,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.0,
+        "maximum": 1.0
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.4,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9891304347826086
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.2,
+            "p10": 0.8200000000000001,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9069767441860465
+        }
+      },
+      "original_regional_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.1,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9918478260869565
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.4,
+            "p10": 0.72,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.8837209302325582
+        }
+      }
+    },
+    "regional_tied2:ensemble:equivalent": {
+      "banks": 10,
+      "anchor_denominator": 411,
+      "admissible_banks": 10,
+      "pairwise_comparisons": 45,
+      "pairwise_anchor_ari": {
+        "minimum": 0.8465139495170718,
+        "p10": 0.8880243544796425,
+        "median": 0.9216487375222846,
+        "p90": 0.9676626414335019,
+        "maximum": 0.9691331869635499
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.8940949660232931,
+        "p10": 0.9056405027019614,
+        "median": 0.9448218139003537,
+        "p90": 0.9713587254992774,
+        "maximum": 1.0
+      },
+      "reference_agreement": {
+        "minimum": 0.4,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 406,
+      "fraction_anchors_agreement_at_least_0.80": 0.9878345498783455,
+      "modal_cluster_frequency": {
+        "minimum": 0.5,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.0,
+        "maximum": 1.0
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.4,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9918478260869565
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.5,
+            "p10": 0.9,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9534883720930233
+        }
+      },
+      "original_regional_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.4,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9918478260869565
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.5,
+            "p10": 0.9,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9534883720930233
+        }
+      }
+    },
+    "regional_diag2:single:raw": {
+      "banks": 50,
+      "anchor_denominator": 411,
+      "admissible_banks": 50,
+      "pairwise_comparisons": 1225,
+      "pairwise_anchor_ari": {
+        "minimum": 0.43882835459012276,
+        "p10": 0.6660808754329243,
+        "median": 0.7772784880633766,
+        "p90": 0.8522383023362534,
+        "maximum": 0.9423630883563451
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.6290244967752364,
+        "p10": 0.7622013759100201,
+        "median": 0.8278988418436349,
+        "p90": 0.8924523270859307,
+        "maximum": 0.9299263477218693
+      },
+      "reference_agreement": {
+        "minimum": 0.46,
+        "p10": 0.88,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 380,
+      "fraction_anchors_agreement_at_least_0.80": 0.9245742092457421,
+      "modal_cluster_frequency": {
+        "minimum": 0.5,
+        "p10": 0.88,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.5293608652873644,
+        "maximum": 1.0
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 341,
+          "agreement": {
+            "minimum": 0.46,
+            "p10": 0.96,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9442815249266863
+        },
+        "1": {
+          "anchors": 70,
+          "agreement": {
+            "minimum": 0.46,
+            "p10": 0.658,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.8285714285714286
+        }
+      },
+      "original_regional_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.0,
+            "p10": 0.6340000000000001,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.875
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.78,
+            "p10": 0.96,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9767441860465116
+        }
+      }
+    },
+    "regional_diag2:single:rms": {
+      "banks": 50,
+      "anchor_denominator": 411,
+      "admissible_banks": 50,
+      "pairwise_comparisons": 1225,
+      "pairwise_anchor_ari": {
+        "minimum": 0.4895425058169205,
+        "p10": 0.6584792761248283,
+        "median": 0.7657196109233391,
+        "p90": 0.8380700359359192,
+        "maximum": 0.9126199217333149
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.6523619164147522,
+        "p10": 0.7213740941326166,
+        "median": 0.8327900574005926,
+        "p90": 0.8758054517714279,
+        "maximum": 0.9031020808976512
+      },
+      "reference_agreement": {
+        "minimum": 0.22,
+        "p10": 0.84,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 376,
+      "fraction_anchors_agreement_at_least_0.80": 0.9148418491484185,
+      "modal_cluster_frequency": {
+        "minimum": 0.5,
+        "p10": 0.84,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.6343095546405662,
+        "maximum": 1.0
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 281,
+          "agreement": {
+            "minimum": 0.52,
+            "p10": 0.96,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9608540925266904
+        },
+        "1": {
+          "anchors": 130,
+          "agreement": {
+            "minimum": 0.22,
+            "p10": 0.6,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.8153846153846154
+        }
+      },
+      "original_regional_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.0,
+            "p10": 0.02,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.7336956521739131
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.8,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 1.0
+        }
+      }
+    },
+    "regional_diag2:single:equivalent": {
+      "banks": 50,
+      "anchor_denominator": 411,
+      "admissible_banks": 50,
+      "pairwise_comparisons": 1225,
+      "pairwise_anchor_ari": {
+        "minimum": 0.43882835459012276,
+        "p10": 0.6660808754329243,
+        "median": 0.7772784880633766,
+        "p90": 0.8522383023362534,
+        "maximum": 0.9423630883563451
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.6290244967752364,
+        "p10": 0.7622013759100201,
+        "median": 0.8278988418436349,
+        "p90": 0.8924523270859307,
+        "maximum": 0.9299263477218693
+      },
+      "reference_agreement": {
+        "minimum": 0.46,
+        "p10": 0.88,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 380,
+      "fraction_anchors_agreement_at_least_0.80": 0.9245742092457421,
+      "modal_cluster_frequency": {
+        "minimum": 0.5,
+        "p10": 0.88,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.5293608652873644,
+        "maximum": 1.0
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 341,
+          "agreement": {
+            "minimum": 0.46,
+            "p10": 0.96,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9442815249266863
+        },
+        "1": {
+          "anchors": 70,
+          "agreement": {
+            "minimum": 0.46,
+            "p10": 0.658,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.8285714285714286
+        }
+      },
+      "original_regional_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.0,
+            "p10": 0.6340000000000001,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.875
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 0.78,
+            "p10": 0.96,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9767441860465116
+        }
+      }
+    },
+    "regional_diag2:ensemble:raw": {
+      "banks": 10,
+      "anchor_denominator": 411,
+      "admissible_banks": 10,
+      "pairwise_comparisons": 45,
+      "pairwise_anchor_ari": {
+        "minimum": 0.8152901096699755,
+        "p10": 0.8311624650078558,
+        "median": 0.8843782368549278,
+        "p90": 0.916934844830862,
+        "maximum": 0.9408744110705016
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.8512848565053682,
+        "p10": 0.8830238136887096,
+        "median": 0.9274511064215955,
+        "p90": 0.9416917186789684,
+        "maximum": 0.952740504434125
+      },
+      "reference_agreement": {
+        "minimum": 0.4,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 397,
+      "fraction_anchors_agreement_at_least_0.80": 0.9659367396593674,
+      "modal_cluster_frequency": {
+        "minimum": 0.5,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.0,
+        "maximum": 1.0
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 341,
+          "agreement": {
+            "minimum": 0.5,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9794721407624634
+        },
+        "1": {
+          "anchors": 70,
+          "agreement": {
+            "minimum": 0.4,
+            "p10": 0.8800000000000001,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9
+        }
+      },
+      "original_regional_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.0,
+            "p10": 0.8700000000000003,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.907608695652174
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 1.0,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 1.0
+        }
+      }
+    },
+    "regional_diag2:ensemble:rms": {
+      "banks": 10,
+      "anchor_denominator": 411,
+      "admissible_banks": 10,
+      "pairwise_comparisons": 45,
+      "pairwise_anchor_ari": {
+        "minimum": 0.8201197283222026,
+        "p10": 0.8470173036927646,
+        "median": 0.8840976235238022,
+        "p90": 0.9412591502079414,
+        "maximum": 0.9606984978109421
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.8838279883932851,
+        "p10": 0.8928292991975377,
+        "median": 0.9315946756090261,
+        "p90": 0.9433188500372526,
+        "maximum": 0.9606608946886225
+      },
+      "reference_agreement": {
+        "minimum": 0.2,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 400,
+      "fraction_anchors_agreement_at_least_0.80": 0.9732360097323601,
+      "modal_cluster_frequency": {
+        "minimum": 0.5,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.0,
+        "maximum": 1.0
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 281,
+          "agreement": {
+            "minimum": 0.5,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9786476868327402
+        },
+        "1": {
+          "anchors": 130,
+          "agreement": {
+            "minimum": 0.2,
+            "p10": 0.9,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9615384615384616
+        }
+      },
+      "original_regional_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.0,
+            "p10": 0.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.75
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 1.0,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 1.0
+        }
+      }
+    },
+    "regional_diag2:ensemble:equivalent": {
+      "banks": 10,
+      "anchor_denominator": 411,
+      "admissible_banks": 10,
+      "pairwise_comparisons": 45,
+      "pairwise_anchor_ari": {
+        "minimum": 0.8152901096699755,
+        "p10": 0.8311624650078558,
+        "median": 0.8843782368549278,
+        "p90": 0.916934844830862,
+        "maximum": 0.9408744110705016
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.8512848565053682,
+        "p10": 0.8830238136887096,
+        "median": 0.9274511064215955,
+        "p90": 0.9416917186789684,
+        "maximum": 0.952740504434125
+      },
+      "reference_agreement": {
+        "minimum": 0.4,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 397,
+      "fraction_anchors_agreement_at_least_0.80": 0.9659367396593674,
+      "modal_cluster_frequency": {
+        "minimum": 0.5,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.0,
+        "maximum": 1.0
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 341,
+          "agreement": {
+            "minimum": 0.5,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9794721407624634
+        },
+        "1": {
+          "anchors": 70,
+          "agreement": {
+            "minimum": 0.4,
+            "p10": 0.8800000000000001,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9
+        }
+      },
+      "original_regional_reference_groups": {
+        "0": {
+          "anchors": 368,
+          "agreement": {
+            "minimum": 0.0,
+            "p10": 0.8700000000000003,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.907608695652174
+        },
+        "1": {
+          "anchors": 43,
+          "agreement": {
+            "minimum": 1.0,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 1.0
+        }
+      }
+    },
+    "record_full3:single:raw": {
+      "banks": 50,
+      "anchor_denominator": 411,
+      "admissible_banks": 48,
+      "pairwise_comparisons": 1225,
+      "pairwise_anchor_ari": {
+        "minimum": 0.5147458652970863,
+        "p10": 0.6465150207943335,
+        "median": 0.793203949571295,
+        "p90": 0.8650307546653092,
+        "maximum": 0.9414452891098076
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.6219669120466707,
+        "p10": 0.7238783367124095,
+        "median": 0.8402333776994767,
+        "p90": 0.895395224554389,
+        "maximum": 0.9376801828302102
+      },
+      "reference_agreement": {
+        "minimum": 0.22,
+        "p10": 0.74,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 362,
+      "fraction_anchors_agreement_at_least_0.80": 0.8807785888077859,
+      "modal_cluster_frequency": {
+        "minimum": 0.4,
+        "p10": 0.76,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.8554508105601306,
+        "maximum": 1.5690255736436503
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 329,
+          "agreement": {
+            "minimum": 0.22,
+            "p10": 0.8960000000000001,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9240121580547113
+        },
+        "1": {
+          "anchors": 54,
+          "agreement": {
+            "minimum": 0.28,
+            "p10": 0.5,
+            "median": 0.9299999999999999,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.7222222222222222
+        },
+        "2": {
+          "anchors": 28,
+          "agreement": {
+            "minimum": 0.68,
+            "p10": 0.72,
+            "median": 0.87,
+            "p90": 0.96,
+            "maximum": 0.96
+          },
+          "fraction_agreement_at_least_0.8": 0.6785714285714286
+        }
+      }
+    },
+    "record_full3:single:rms": {
+      "banks": 50,
+      "anchor_denominator": 411,
+      "admissible_banks": 50,
+      "pairwise_comparisons": 1225,
+      "pairwise_anchor_ari": {
+        "minimum": 0.3454228960051375,
+        "p10": 0.48608353594177034,
+        "median": 0.6554635339742776,
+        "p90": 0.7623660541088562,
+        "maximum": 0.8769236879123057
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.4684571023156763,
+        "p10": 0.6070860833432731,
+        "median": 0.7509719751940048,
+        "p90": 0.8220997665627381,
+        "maximum": 0.8797498059943223
+      },
+      "reference_agreement": {
+        "minimum": 0.2,
+        "p10": 0.58,
+        "median": 0.94,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 319,
+      "fraction_anchors_agreement_at_least_0.80": 0.7761557177615572,
+      "modal_cluster_frequency": {
+        "minimum": 0.38,
+        "p10": 0.6,
+        "median": 0.94,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.32744491915447627,
+        "p90": 1.1211460945412073,
+        "maximum": 1.5775765559836068
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 277,
+          "agreement": {
+            "minimum": 0.3,
+            "p10": 0.74,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.8736462093862816
+        },
+        "1": {
+          "anchors": 75,
+          "agreement": {
+            "minimum": 0.24,
+            "p10": 0.528,
+            "median": 0.84,
+            "p90": 0.92,
+            "maximum": 0.94
+          },
+          "fraction_agreement_at_least_0.8": 0.5866666666666667
+        },
+        "2": {
+          "anchors": 59,
+          "agreement": {
+            "minimum": 0.2,
+            "p10": 0.416,
+            "median": 0.82,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.559322033898305
+        }
+      }
+    },
+    "record_full3:single:equivalent": {
+      "banks": 50,
+      "anchor_denominator": 411,
+      "admissible_banks": 48,
+      "pairwise_comparisons": 1225,
+      "pairwise_anchor_ari": {
+        "minimum": 0.5147458652970863,
+        "p10": 0.6465150207943335,
+        "median": 0.793203949571295,
+        "p90": 0.8650307546653092,
+        "maximum": 0.9414452891098076
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.6219669120466707,
+        "p10": 0.7238783367124095,
+        "median": 0.8402333776994767,
+        "p90": 0.895395224554389,
+        "maximum": 0.9376801828302102
+      },
+      "reference_agreement": {
+        "minimum": 0.22,
+        "p10": 0.74,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 362,
+      "fraction_anchors_agreement_at_least_0.80": 0.8807785888077859,
+      "modal_cluster_frequency": {
+        "minimum": 0.4,
+        "p10": 0.76,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.8554508105601306,
+        "maximum": 1.5690255736436503
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 329,
+          "agreement": {
+            "minimum": 0.22,
+            "p10": 0.8960000000000001,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9240121580547113
+        },
+        "1": {
+          "anchors": 54,
+          "agreement": {
+            "minimum": 0.28,
+            "p10": 0.5,
+            "median": 0.9299999999999999,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.7222222222222222
+        },
+        "2": {
+          "anchors": 28,
+          "agreement": {
+            "minimum": 0.68,
+            "p10": 0.72,
+            "median": 0.87,
+            "p90": 0.96,
+            "maximum": 0.96
+          },
+          "fraction_agreement_at_least_0.8": 0.6785714285714286
+        }
+      }
+    },
+    "record_full3:ensemble:raw": {
+      "banks": 10,
+      "anchor_denominator": 411,
+      "admissible_banks": 10,
+      "pairwise_comparisons": 45,
+      "pairwise_anchor_ari": {
+        "minimum": 0.8217962717663835,
+        "p10": 0.869327067886731,
+        "median": 0.9190370935376533,
+        "p90": 0.9445860477220348,
+        "maximum": 0.9567627538181643
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.8437634143031191,
+        "p10": 0.8568389108137076,
+        "median": 0.9019083000613233,
+        "p90": 0.9632240519301367,
+        "maximum": 0.9770487048164238
+      },
+      "reference_agreement": {
+        "minimum": 0.1,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 389,
+      "fraction_anchors_agreement_at_least_0.80": 0.9464720194647201,
+      "modal_cluster_frequency": {
+        "minimum": 0.5,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.0,
+        "maximum": 1.360964047443681
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 329,
+          "agreement": {
+            "minimum": 0.1,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9604863221884499
+        },
+        "1": {
+          "anchors": 54,
+          "agreement": {
+            "minimum": 0.2,
+            "p10": 0.53,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.8333333333333334
+        },
+        "2": {
+          "anchors": 28,
+          "agreement": {
+            "minimum": 0.8,
+            "p10": 0.97,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 1.0
+        }
+      }
+    },
+    "record_full3:ensemble:rms": {
+      "banks": 10,
+      "anchor_denominator": 411,
+      "admissible_banks": 10,
+      "pairwise_comparisons": 45,
+      "pairwise_anchor_ari": {
+        "minimum": 0.37299774336043295,
+        "p10": 0.385814071111471,
+        "median": 0.7763711287976993,
+        "p90": 0.8588318298634072,
+        "maximum": 0.9109983772376135
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.383872727714719,
+        "p10": 0.4137446010278978,
+        "median": 0.8557046561417921,
+        "p90": 0.8984745119024888,
+        "maximum": 0.9124172231142247
+      },
+      "reference_agreement": {
+        "minimum": 0.1,
+        "p10": 0.7,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 347,
+      "fraction_anchors_agreement_at_least_0.80": 0.8442822384428224,
+      "modal_cluster_frequency": {
+        "minimum": 0.4,
+        "p10": 0.7,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.8812908992306927,
+        "maximum": 1.5709505944546684
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 277,
+          "agreement": {
+            "minimum": 0.3,
+            "p10": 0.7,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.8953068592057761
+        },
+        "1": {
+          "anchors": 75,
+          "agreement": {
+            "minimum": 0.2,
+            "p10": 0.7,
+            "median": 0.8,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.8
+        },
+        "2": {
+          "anchors": 59,
+          "agreement": {
+            "minimum": 0.1,
+            "p10": 0.4800000000000001,
+            "median": 0.9,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.6610169491525424
+        }
+      }
+    },
+    "record_full3:ensemble:equivalent": {
+      "banks": 10,
+      "anchor_denominator": 411,
+      "admissible_banks": 10,
+      "pairwise_comparisons": 45,
+      "pairwise_anchor_ari": {
+        "minimum": 0.8217962717663835,
+        "p10": 0.869327067886731,
+        "median": 0.9190370935376533,
+        "p90": 0.9445860477220348,
+        "maximum": 0.9567627538181643
+      },
+      "reference_anchor_ari": {
+        "minimum": 0.8437634143031191,
+        "p10": 0.8568389108137076,
+        "median": 0.9019083000613233,
+        "p90": 0.9632240519301367,
+        "maximum": 0.9770487048164238
+      },
+      "reference_agreement": {
+        "minimum": 0.1,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "anchors_agreement_at_least_0.80": 389,
+      "fraction_anchors_agreement_at_least_0.80": 0.9464720194647201,
+      "modal_cluster_frequency": {
+        "minimum": 0.5,
+        "p10": 1.0,
+        "median": 1.0,
+        "p90": 1.0,
+        "maximum": 1.0
+      },
+      "entropy_bits": {
+        "minimum": -0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 0.0,
+        "maximum": 1.360964047443681
+      },
+      "pairwise_observations_not_independent": true,
+      "own_reference_groups": {
+        "0": {
+          "anchors": 329,
+          "agreement": {
+            "minimum": 0.1,
+            "p10": 1.0,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.9604863221884499
+        },
+        "1": {
+          "anchors": 54,
+          "agreement": {
+            "minimum": 0.2,
+            "p10": 0.53,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 0.8333333333333334
+        },
+        "2": {
+          "anchors": 28,
+          "agreement": {
+            "minimum": 0.8,
+            "p10": 0.97,
+            "median": 1.0,
+            "p90": 1.0,
+            "maximum": 1.0
+          },
+          "fraction_agreement_at_least_0.8": 1.0
+        }
+      }
+    }
+  },
+  "fixed_floor_raw_rms_ari": {
+    "regional_tied2:reference": {
+      "anchor_ari": 0.9366639569584673,
+      "all_ari": 0.8375095103473705
+    },
+    "regional_tied2:single": {
+      "minimum": 0.48598094987759827,
+      "p10": 0.6163784996441439,
+      "median": 0.8361257439748502,
+      "p90": 0.928959137852972,
+      "maximum": 0.9475940764658775
+    },
+    "regional_tied2:ensemble": {
+      "minimum": 0.8041910222764641,
+      "p10": 0.8108174743853922,
+      "median": 0.8982139869756794,
+      "p90": 0.9413909176124996,
+      "maximum": 0.9512102016091021
+    },
+    "regional_diag2:reference": {
+      "anchor_ari": 0.4695430258077897,
+      "all_ari": 0.4778047131095436
+    },
+    "regional_diag2:single": {
+      "minimum": 0.43312924412779696,
+      "p10": 0.4744212230849893,
+      "median": 0.5356387264641549,
+      "p90": 0.5893063829295052,
+      "maximum": 0.6474980160664221
+    },
+    "regional_diag2:ensemble": {
+      "minimum": 0.4354295197605949,
+      "p10": 0.4365560053956542,
+      "median": 0.47931317849484373,
+      "p90": 0.5067664968769486,
+      "maximum": 0.5351489024134397
+    },
+    "record_full3:reference": {
+      "anchor_ari": 0.5735400330765983,
+      "all_ari": 0.5888460832239822
+    },
+    "record_full3:single": {
+      "minimum": 0.3364638437784146,
+      "p10": 0.48288168283619937,
+      "median": 0.5864987554871295,
+      "p90": 0.6896770805981175,
+      "maximum": 0.8577849472994141
+    },
+    "record_full3:ensemble": {
+      "minimum": 0.285002418210455,
+      "p10": 0.34417858984658606,
+      "median": 0.6258308365080477,
+      "p90": 0.6913896221156192,
+      "maximum": 0.6915513758252729
+    }
+  },
+  "equivalence_passed": true,
+  "waveform_reads": 0,
+  "new_encoder_inference": 0,
+  "gpu_used": false,
+  "target_annotations_parsed": false,
+  "result_sha256": "554dd9f8e2a7547ef5daef53b8ed1db58f9f21bd6471bce6a0e73a184509b3c6",
+  "numerical_equivalence": {
+    "comparisons": 183,
+    "passed": 183,
+    "minimum_all_ari": 1.0,
+    "minimum_anchor_ari": 1.0,
+    "maximum_errors": {
+      "means": 8.881784197001252e-16,
+      "weights": 6.661338147750939e-16,
+      "responsibilities": 2.78388423424758e-14,
+      "covariances": 1.8821749714348357e-16,
+      "lower_bound": 1.0658141036401503e-14
+    },
+    "failed_conditions": {
+      "all_ari_one": 0,
+      "anchor_ari_one": 0,
+      "convergence_equal": 0,
+      "means_within_1e-6": 0,
+      "weights_within_1e-6": 0,
+      "responsibilities_within_1e-6": 0,
+      "covariances_within_1e-6": 0,
+      "lower_bound_within_1e-6": 0
+    }
+  }
+}

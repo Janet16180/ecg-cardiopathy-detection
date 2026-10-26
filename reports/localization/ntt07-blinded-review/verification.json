@@ -1,0 +1,68 @@
+{
+  "status": "passed",
+  "result_sha256": "e6b98f43a915363cec1591a0f1565687aa9800fd6d10d046b5dbeea506550c01",
+  "source_commit": "35b28a391b1fdd18b6f7d326b579ba146edb6b03",
+  "hash_bindings_verified": {
+    "source_sha256": 16,
+    "input_sha256": 4091,
+    "artifact_sha256": 272
+  },
+  "frozen_source_git_bytes_verified": true,
+  "saved_signals": {
+    "count": 30,
+    "shape": [
+      5000,
+      12
+    ],
+    "dtype": "little-endianfloat64",
+    "finite": true,
+    "signal_hashes_verified": true,
+    "source_file_hashes_match_cache": true,
+    "within_fixed_15mV": true
+  },
+  "original_attempt": {
+    "failure_unchanged": true,
+    "failed_status_preserved": true,
+    "seven_saved_signals_identical": true,
+    "all_prior_files_hash_bound_unchanged": true
+  },
+  "reviewer_packet": {
+    "pdf_files": 30,
+    "pdf_pages": 180,
+    "png_files": 180,
+    "pending_forms": 30,
+    "clinical_annotations": 0,
+    "pdf_text_metadata_and_dimensions_pass": true,
+    "png_metadata_dimensions_pass": true,
+    "physical_scale_and_panel_bounds_pass": true,
+    "coordinate_round_trips_pass": true,
+    "reviewer_inventory_allowlist_pass": true,
+    "private_key_separated": true
+  },
+  "runtime": {
+    "seconds": 213.5013925228268,
+    "wall_gate_900seconds_passed": true,
+    "encoder_forwards": 0,
+    "gpu_used": false
+  },
+  "safe_aggregate_privacy": true,
+  "limitations": [
+    "Technical readiness only; no expert annotations or clinical accuracy.",
+    "Software does not authenticate expert identity or adjudication lineage.",
+    "PNG uses the declared actual integer buffer height coordinate convention; physical screen scale depends on the viewer."
+  ],
+  "findings": [],
+  "mutable_status_snapshots_skipped": 0,
+  "scope": "Independent local audit of frozen sources, permitted identities, canonical signal bytes, and reviewer artifacts; no signal or image was forwarded to an external API.",
+  "selection_and_role_reproduction": {
+    "cohort_patients": 1993,
+    "fitting_patients": 1582,
+    "validation_anchors": 411,
+    "selected_unique_patients": 30,
+    "patient_sample_hashes": 9,
+    "cached_coordinate_regions": 22156,
+    "same_identity_only_selection_and_display_order": true,
+    "pr67_train_role_whole_fold_and_support_exclusions_passed": true
+  },
+  "local_audit_report": "outputs/ntt07_blinded_review_verification/audit.json"
+}

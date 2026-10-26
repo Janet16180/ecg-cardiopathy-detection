@@ -1,0 +1,87 @@
+{
+  "schema_version": "ecg-evidence-1.0-draft",
+  "record_ref": "synthetic-record-001",
+  "sampling_rate_hz": 500,
+  "n_samples": 5000,
+  "lead_order": [
+    "I",
+    "II",
+    "III",
+    "aVR",
+    "aVL",
+    "aVF",
+    "V1",
+    "V2",
+    "V3",
+    "V4",
+    "V5",
+    "V6"
+  ],
+  "finding": {
+    "name": "Example finding only; no clinical claim",
+    "state": "present",
+    "source_label_retained": true
+  },
+  "provenance": {
+    "kind": "synthetic_example",
+    "source": "Contract demonstration with invented coordinates; no waveform",
+    "source_revision": "1",
+    "independent_of_model": false,
+    "independent_of_support_bank": false,
+    "model_output_visible": false
+  },
+  "acceptable_evidence_sets": [
+    {
+      "set_id": "alternative-a",
+      "regions": [
+        {
+          "region_id": "a-v1",
+          "leads": [
+            "V1"
+          ],
+          "coordinates": {
+            "kind": "seconds",
+            "start": 1.0,
+            "stop": 1.3
+          },
+          "role": "support"
+        },
+        {
+          "region_id": "a-v6",
+          "leads": [
+            "V6"
+          ],
+          "coordinates": {
+            "kind": "seconds",
+            "start": 1.0,
+            "stop": 1.3
+          },
+          "role": "comparison"
+        }
+      ],
+      "rationale": "Illustrates a jointly reviewed lead pair."
+    },
+    {
+      "set_id": "alternative-b",
+      "regions": [
+        {
+          "region_id": "b-beats",
+          "leads": [
+            "V1",
+            "V6"
+          ],
+          "coordinates": {
+            "kind": "beat_ordinals",
+            "first": 4,
+            "last": 5
+          },
+          "role": "support"
+        }
+      ],
+      "rationale": "Illustrates an alternative recurring beat span, not additional required evidence."
+    }
+  ],
+  "exhaustive_abnormality_annotation": false,
+  "unmarked_samples": "unknown",
+  "review_status": "draft"
+}

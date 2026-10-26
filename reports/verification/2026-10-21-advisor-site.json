@@ -1,0 +1,22 @@
+{
+  "status": "published_private",
+  "as_of": "2026-10-21",
+  "url": "https://ecg-thesis-research-progress-oct21.aheadcomputi-2222.chatgpt.site",
+  "project_id": "appgprj_6ad90c50998481919223e3197308e2ca",
+  "source_commit": "04ac9db3f5d5ead52f7ef46d42f4325953fc93a5",
+  "deployment_id": "appgdep_6ad916aa13288191b54abf35b79f69d4",
+  "native_deployment_status": "succeeded",
+  "audience": "owner_private_preserved",
+  "brief": "docs/research/advisor-meeting-2026-10-21.md",
+  "complete_study_reports": 18,
+  "overview_chapters": 10,
+  "aggregate_figures": 2,
+  "private_ecgs_or_arrays_uploaded": false,
+  "validation": {
+    "scientific_prose": "independently_reviewed_corrections_applied",
+    "javascript_syntax": "passed",
+    "html_unique_ids_internal_anchors_local_assets": "passed",
+    "browser_visual_qa": "unavailable_not_claimed"
+  },
+  "github_runners": "not_used_for_site_build_or_deployment"
+}

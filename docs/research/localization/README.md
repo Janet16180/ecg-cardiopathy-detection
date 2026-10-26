@@ -1,0 +1,61 @@
+# ECG evidence localization
+
+New localization code belongs in `ecg_experiment/localization/`, mirrored by `tests/localization/`.
+Place each new study's protocol and results in its own directory here. Existing studies below remain at
+their recorded paths, including the frozen implementations they reference.
+
+## Current direction
+
+- [Research plan](../../ecg-reference-localization-plan.md)
+- [Executed findings](../../reference-localization-findings-2026-10-18.md)
+- [Draft specialist evidence annotation guide](../../ecg-evidence-annotation-guide.md)
+
+## Existing studies
+
+| Study | Protocol | Results |
+| --- | --- | --- |
+| NTT-01: reference annotation audit | [Protocol](../../ntt-01-reference-label-audit.md) | [Results](../../ntt-01-reference-label-audit-results.md) |
+| NTT-02: native candidate-window matching | [Protocol](../../ntt-02-native-reference-transfer.md) | [Results](../../ntt-02-native-reference-transfer-results.md) |
+| NTT-03: compact visual matching and proposals | [Protocol](../../ntt-03-visual-reference-pilot.md) | [Results](../../ntt-03-visual-reference-pilot-results.md) |
+| NTT-04: same-wave finding discrimination | [Protocol](../../ntt-04-same-wave-finding-discrimination.md) | [Results](../../ntt-04-same-wave-finding-discrimination-results.md) |
+| NTT-05: native signal adapter engineering | [Protocol](../../ntt-05-native-signal-adapter.md) | [Results](../../ntt-05-native-signal-adapter-results.md) |
+
+The [native adapter implementation](../../../ecg_experiment/native_reference_ntt05.py) remains frozen at
+its original location. Its engineering checks do not establish learned-native recognition or clinical
+highlighting. Read the results and live output receipts before reporting progress.
+
+Follow the [shared directory guide](../README.md) for new code, commands, schemas and aggregate reports.
+
+## Native pretrained signal execution
+
+[NTT-06 protocol](ntt06-native-encoder/protocol.md) and [results](ntt06-native-encoder/results.md)
+connect the native adapter to frozen ECG-JEPA and return scored original-time regions without image
+inputs. Native QRS finding discrimination reaches 91.67% versus physical references 92.78%; the
+primary gate fails. Its shifted-window control reaches 83.33%, while specialist localization agreement
+remains unmeasured. Private dense/pooled vectors are available for a separate clustering protocol.
+
+[CLUSTER-03](../clustering/cluster03-native-reference/results.md) now clusters both the raw native
+vectors and No Time to Train affinity outputs on a broader matched cohort. Stable partitions depend
+on representation/reference choices; the failed persistence gate and phenotype limits are retained.
+
+## Blinded review readiness
+
+[NTT-07](ntt07-blinded-review/results.md) prepares thirty anonymous calibrated twelve-lead cases and
+thirty pending forms. Its independently audited wider-layout repair preserves the original clipping
+failure and the exact same selected patients. The [semantic guide](ntt07-blinded-review/annotation-validation.md)
+and [forward strict import policy](ntt07-blinded-review/strict-import-policy.md) preserve signal,
+coordinate, provenance and alternative-evidence semantics. No human annotations or clinical
+localization score exist; clinician rubric approval and actual review remain pending.
+
+## Explanations without new clinical annotations
+
+[NTT-08](ntt08-contextual-contributions/results.md) independently reconstructs exact signed contextual beat and unique-token contributions to all 180 original classifier margins. Contributions are distributed across beats and their rankings vary with the reference bank even for the same finding contrast. Cached representation deletion tests model response, without clinical interval truth or a waveform intervention. The user confirms that a cardiologist is unavailable; clinical review remains pending rather than assumed.
+
+[NTT-09](ntt09-reference-contribution-stability/results.md) fixes each patient's full-pool finding contrast and tests reference averaging directly. Mean patient top-positive-quarter overlap rises from 0.4418 to 0.6559; all 3,600 decompositions and 76,200 bank pairs independently reproduce. Larger support exposure and diffuse contributions qualify the conditional pass. The [20 October findings](../findings-2026-10-20.md) summarize the research phase without assuming cardiologist access.
+
+
+[NTT-10](ntt10-matched-union/results.md) holds unique support patients fixed. Equal-patient weighting
+improves conditional beat-set consistency over normalized-bank averaging (0.7708 vs 0.6559;
+A-minus-B -0.11498). Its uniform contrast anchor shares B's convention; this is not clinical validation.
+The [advisor brief](../advisor-meeting-2026-10-21.md) distinguishes compact images, physical waveform
+matching and learned native ECG-JEPA execution, preserving both failed recognition-gain gates.

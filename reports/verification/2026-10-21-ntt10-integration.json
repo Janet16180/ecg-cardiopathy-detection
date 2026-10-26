@@ -1,0 +1,24 @@
+{
+  "as_of": "2026-10-21",
+  "study": "NTT10",
+  "status": "local_checks_passed_remote_ci_paused",
+  "result_sha256": "8e9e72a44d293de2b93c10563e9706eaecfb4219d7313f9e91380b05ee96a38a",
+  "executed_source_commit": "99db6759d1805054f1fbe9b1f7537c2b0cac18f1",
+  "integrated_source_commit": "87edabd",
+  "executed_results_commit": "fdce559",
+  "integrated_results_commit": "54b40af",
+  "full_cpu_suite": {
+    "passed": 1730,
+    "skipped": 6,
+    "seconds": 111.42
+  },
+  "ruff": "passed",
+  "four_new_python_format_checks": "passed",
+  "offline_package_build": "passed",
+  "new_module_wheel_byte_match": true,
+  "independent_reconstruction": "reports/localization/ntt10-matched-union/verification.json",
+  "github_runner_execution": "paused_by_user_no_rerun",
+  "prior_ci_failure": "Missing pdftotext caused two PDF-test failures; poppler-utils installation step prepared, no remote execution.",
+  "private_data_uploaded": false,
+  "clinical_localization_evaluated": false
+}

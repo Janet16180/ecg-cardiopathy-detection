@@ -1,0 +1,93 @@
+{
+  "study": "NTT09",
+  "passed": true,
+  "result_sha256": "009eacb3c72b0dcfe85e155a9036542cc504e788ddd7179e097860fe4f4e8f64",
+  "source_commit": "b147090a538ebc336c079fb625893a4723be1b76",
+  "source_files_verified": 53,
+  "input_files_verified": 105,
+  "artifact_files_verified": 5,
+  "original87record_identity_PR67_wholefold_support_target_gates_verified": true,
+  "fixed50bank_draws_independently_regenerated": true,
+  "all60full_nine_pool_contrasts_reconstructed": true,
+  "all_single_and_normalized_five_bank_prototypes_verified": true,
+  "distinct_support_exposure_reconstructed": true,
+  "support_exposure": {
+    "single_support_slots_per_finding": 3,
+    "ensemble_support_slots_per_finding": 15,
+    "shared_contrast_support_patients_per_finding": 9,
+    "single_distinct_supports_per_finding": {
+      "count": 150,
+      "defined": 150,
+      "undefined": 0,
+      "minimum": 3.0,
+      "p10": 3.0,
+      "median": 3.0,
+      "p90": 3.0,
+      "maximum": 3.0,
+      "mean": 3.0
+    },
+    "ensemble_distinct_supports_per_finding": {
+      "count": 30,
+      "defined": 30,
+      "undefined": 0,
+      "minimum": 6.0,
+      "p10": 7.0,
+      "median": 8.0,
+      "p90": 9.0,
+      "maximum": 9.0,
+      "mean": 7.7
+    },
+    "ensemble_distinct_supports_all_findings": {
+      "count": 10,
+      "defined": 10,
+      "undefined": 0,
+      "minimum": 22.0,
+      "p10": 22.0,
+      "median": 23.0,
+      "p90": 24.0,
+      "maximum": 24.0,
+      "mean": 23.1
+    },
+    "equal_support_or_computation_budget_comparison": false
+  },
+  "decompositions_reconstructed": 3600,
+  "maximum_contribution_array_error": 6.938893903907228e-18,
+  "maximum_margin_sum_error": 1.4710455076283324e-15,
+  "maximum_pair_metric_error": 3.3306690738754696e-16,
+  "all_pair_null_masks_and_denominators_verified": true,
+  "all_patient_family_summaries_and_equalpatient_aggregates_verified": true,
+  "maximum_numeric_summary_error": 3.3306690738754696e-16,
+  "primary_decision_reproduced": true,
+  "decision": {
+    "conditional_highlight_stability_benefit": true,
+    "conditions": {
+      "all_60_patient_differences_defined": true,
+      "every_patient_single_coverage_at_least_1164_of_1225": true,
+      "every_patient_ensemble_coverage_at_least_43_of_45": true,
+      "mean_patient_improvement_at_least_0.10": true
+    },
+    "mean_patient_jaccard_difference": 0.2140787087256179,
+    "patient_difference_distribution": {
+      "count": 60,
+      "defined": 60,
+      "undefined": 0,
+      "minimum": 0.04976568405139836,
+      "p10": 0.09447044595616023,
+      "median": 0.19432869020624127,
+      "p90": 0.3627455782312925,
+      "maximum": 0.4830687830687831,
+      "mean": 0.2140787087256179
+    }
+  },
+  "NTT08_replay_bindings_and_prior_independent_audit_present": true,
+  "prior_NTT08_audit_sha256": "6de315167060d4f5cd889c246d31a17fcfda33792390d87890a1f04c21a1ff7a",
+  "original08_54000deletions_not_repeated_in_this_audit": true,
+  "new_production_module_imported": false,
+  "diagnostic_payloads_parsed": false,
+  "waveform_reads": false,
+  "model_loaded": false,
+  "new_encoder_inference": false,
+  "new_scientific_settings": false,
+  "seconds": 9.253984173294157,
+  "limits": "Conditional contribution-ranking agreement within the same finite support pool and explored60patients. Ensembles use15supportslots/finding versus3, so this is not an equal-support-budget averaging effect. Sharedbankpairs are dependent; no clinical or pathological localization accuracy follows."
+}

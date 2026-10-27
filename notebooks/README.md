@@ -66,6 +66,8 @@ from the raw files.
 | `Avance2.8.ipynb` | Avance 2: feature engineering, the team version that combines the three individual ones |
 | `Avance2.8-ag.ipynb`, `Avance2.8-el.ipynb`, `Avance2.8-jr.ipynb` | Individual Avance 2 versions by Andre, Emiliano and Janet; Emiliano's runs in Google Colab |
 | `Avance3.8.ipynb` | Avance 3: baseline model (logistic regression), metric, minimum performance, feature importance, under- and overfitting |
+| `Avance4.8.ipynb` | Avance 4: seven alternative models on the Avance 2 features, tuning of the SVM and the MLP, and the final individual model (team) |
+| `Avance4.8-jr.ipynb` | Janet's individual Avance 4 version: seven classic models with gradient boosting as a reference, tuning of the SVM, logistic regression and MLP, and an MLP as the final model; writes `outputs/avance4_modelos/` |
 
 `Avance2.8.ipynb` runs from start to finish in about two minutes once its feature cache exists; the first run
 measures the 21,799 ECGs in parallel and writes `outputs/avance2_fusion/`:

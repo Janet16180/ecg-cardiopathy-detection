@@ -2,6 +2,8 @@
 
 import csv
 import json
+import subprocess
+import sys
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -65,3 +67,28 @@ def write_synthetic_cpc_pool(directory: Path, records: int = 600, seed: int = 0)
 def synthetic_cpc_pool(tmp_path: Path) -> Path:
     """Directory holding a synthetic CPC waveform cache."""
     return write_synthetic_cpc_pool(tmp_path / "cpc_pool")
+
+
+def pytest_pyfunc_call(pyfuncitem: pytest.Function) -> bool | None:
+    """Import the immutable audit command in a child process to isolate its thread settings.
+
+    Parameters
+    ----------
+    pyfuncitem : pytest.Function
+        Collected test; every other test retains pytest's normal execution path.
+
+    Returns
+    -------
+    bool or None
+        True after the real command import succeeds, or None for normal test execution.
+    """
+    module = "scripts.validation.audit_ssl_synthetic_counterfactual_factorial"
+    node = f"tests/test_imports.py::test_script_module_imports[{module}]"
+    if pyfuncitem.nodeid != node:
+        return None
+    subprocess.run(
+        [sys.executable, "-c", "import importlib, sys; importlib.import_module(sys.argv[1])", module],
+        cwd=Path(__file__).parents[1],
+        check=True,
+    )
+    return True

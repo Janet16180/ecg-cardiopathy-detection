@@ -1,0 +1,48 @@
+{
+  "study": "ssl_synthetic_ludb_landmark_independent_audit_recovery_v2",
+  "output_directory": "outputs/ssl_synthetic_localization/ludb_peak_timing_v1/independent_audit_v2",
+  "main_summary": {
+    "path": "outputs/ssl_synthetic_localization/ludb_peak_timing_v1/summary.json",
+    "sha256": "2e48b4e06512f126bb0eddf12306b54c462da1e300fa2624c0effed1c1bc8c29"
+  },
+  "main_ledger": {
+    "path": "outputs/ssl_synthetic_localization/ludb_peak_timing_v1/prospective_ledger.json",
+    "sha256": "8bb1bc5625ec53a1ab009c35a87c6098a438ddcca2db149efc6f00d251739494"
+  },
+  "failed_audit_ledger": {
+    "path": "outputs/ssl_synthetic_localization/ludb_peak_timing_v1/independent_audit_v1/prospective_ledger.json",
+    "sha256": "9ea0b22a57d596a4e99e64aecb844155b44d05cbb8e3fe6278b10e7f7eddd282"
+  },
+  "failed_audit_summary": {
+    "path": "outputs/ssl_synthetic_localization/ludb_peak_timing_v1/independent_audit_v1/summary.json",
+    "sha256": "2c08acf7e8e8ff324c473811c579f614091a90671790b697bba350613e0dd070"
+  },
+  "main_admission": {
+    "path": "configs/ssl_synthetic_ludb_peak_timing_admission_v1.json",
+    "sha256": "58affcc86311b60956557dfeb9c3f5dccb974e579c886b6de3d6797caff6f6c0"
+  },
+  "reconciliation": {
+    "record_type": "explicit_failed_audit_accounting_reconciliation_not_new_experiment",
+    "current_machine_stages": 27,
+    "current_machine_cumulative_cpu_seconds": 449.557301953,
+    "current_machine_cumulative_gpu_wall_seconds": 447.98139213304967,
+    "failed_audit_cpu_seconds_counted_once": 1.717297662,
+    "original_failed_cumulative_values_preserved_null": true
+  },
+  "legacy_stage18_count": "derive18from_frozen_protocol_when_original_receipt_has_no_stage_field_without_rewriting_it",
+  "receipt_path_schema": "preserve_repository_relative_or_basename_receipts_and_verify_actual_bound_receipt",
+  "scientific_endpoint_changed": false,
+  "resources": {
+    "cpu_seconds": 600,
+    "wall_seconds": 1200,
+    "rss_bytes": 2147483648,
+    "new_output_bytes": 134217728,
+    "cpu_threads": 1,
+    "gpu_allowed": false
+  },
+  "audit_stage": 28,
+  "prior_reconciliation": {
+    "path": "outputs/ssl_synthetic_localization/ludb_landmark_audit_reconciliation_v1/reconciled_prior.json",
+    "sha256": "27cdc3ceddc4a36e7be6ba2805caad98c094fcd5bb85e80d1d2c9b469d5b99dd"
+  }
+}

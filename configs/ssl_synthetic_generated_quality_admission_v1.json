@@ -1,0 +1,10 @@
+{
+  "study_id": "pulse2pulse_generated_quality_admission_v1",
+  "predecessor_sha256": {
+    "summary.json": "5c3ddf9aac3af4f7c6b38fc91558cd273e0b2221fe2dde09ebe777067e7209a5",
+    "prospective_ledger.json": "76c3f16e7c2820cfc416af6edc65b4e123261132652f301dbd82615128a17657",
+    "independent_audit_v1/summary.json": "8fa5da061d689b3e4b1282d87e568f1553182f37025944480b3e13b2221b0b51",
+    "independent_audit_v1/prospective_ledger.json": "9575bb804e073ec2fa6bc95eb847ca6b6103420798555cc878d3fe30b4abb791",
+    "pytorch_model.bin": "e646eae78b7c9e48db0d38f094059ab89b53479bbc174a900ae3086517761827"
+  }
+}

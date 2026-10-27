@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "stream": "ssl_synthetic_localization",
+  "checks": [
+    {"name": "ptbxl_metadata", "path": "data/raw/ptb-xl/1.0.3/ptbxl_database.csv", "kind": "file", "required": true},
+    {"name": "ptbxl_statements", "path": "data/raw/ptb-xl/1.0.3/scp_statements.csv", "kind": "file", "required": true},
+    {"name": "ptbxl_500hz_directory", "path": "data/raw/ptb-xl/1.0.3/records500", "kind": "directory", "required": true},
+    {"name": "project_python", "path": ".venv/bin/python", "kind": "file", "required": true},
+    {"name": "training_partition", "path": "data/processed/ssl_synthetic_localization_v1/partition.json", "kind": "file", "required": true},
+    {"name": "qualified_generator", "path": "outputs/ssl_synthetic_localization/generator_qualification.json", "kind": "file", "required": true},
+    {"name": "training_protocol", "path": "docs/ssl-synthetic-localization-pilot.md", "kind": "file", "required": true},
+    {"name": "gpu_profile", "path": "outputs/ssl_synthetic_localization/profile.json", "kind": "file", "required": true},
+    {"name": "xecg_checkpoint", "path": "third_party/checkpoints/xecg/model.safetensors", "kind": "file", "required": false},
+    {"name": "ecgad_data_for_development_audit", "path": "data/raw/ecgad/benchmark_data.npy", "kind": "file", "required": false},
+    {"name": "ecgad_labels_for_development_audit", "path": "data/raw/ecgad/benchmark_label.npy", "kind": "file", "required": false},
+    {"name": "ecgad_record_match", "path": "data/raw/ecgad/ecgad_ptbxl_match.csv", "kind": "file", "required": false},
+    {"name": "predecessor_058_receipt", "path": "outputs/experiment058_synthetic_generator_v1/result.json", "kind": "file", "required": false},
+    {"name": "predecessor_064_receipt", "path": "outputs/experiment064_dino_knn_v1/result.json", "kind": "file", "required": false},
+    {"name": "predecessor_067_receipt", "path": "outputs/experiment067_holdout_v1/result.json", "kind": "file", "required": false}
+  ]
+}

@@ -24,7 +24,7 @@ def test_original_split_hash_blocks_unverified_processing(
         raise AssertionError("Unverified split reached source or waveform reads")
 
     monkeypatch.setattr(pd, "read_parquet", forbidden_read)
-    monkeypatch.setattr(recovery, "load_view", forbidden_read)
+    monkeypatch.setattr(recovery, "read_verified_view", forbidden_read)
     with pytest.raises(ValueError, match="SHA-256 gate"):
         recovery.recover(tmp_path, Path("quality"), 1, 1)
     assert not (tmp_path / "quality").exists()
@@ -87,3 +87,66 @@ def test_undefined_strict_label_stays_undefined_during_duplicate_resolution() ->
     assert not result.loc[0, "supervised_eligible"]
     assert result.loc[0, "supervised_target"] == ""
     assert result.loc[0, "supervised_duplicate_status"] == "unique"
+
+
+def test_training_labels_skip_protected_split_rows(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Protected split labels never enter the adapter's training evidence frame."""
+    import hashlib
+
+    directory = tmp_path / recovery.RECONSTRUCTION
+    directory.mkdir(parents=True)
+    base = {
+        "source": "georgia", "family": "georgia", "duration_s": "10.0", "window_sha256": "",
+        "duplicate_status": "unique",
+    } | dict.fromkeys(recovery.LABEL_COLUMNS, "")
+    rows = pd.DataFrame([
+        base | {"record": "E1", "path": "training/georgia/g1/E1", "signal_sha256": "a" * 64,
+                "duplicate_group": "E1", "split": "train", "primary": "1.0"},
+        base | {"record": "E2", "path": "training/georgia/g1/E2", "signal_sha256": "b" * 64,
+                "duplicate_group": "E2", "split": "test", "primary": "protected_label_marker"},
+    ])
+    path = directory / "rows.csv"
+    rows.to_csv(path, index=False)
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    monkeypatch.setattr(recovery, "SPLIT_SHA256", digest)
+    (directory / "metadata.json").write_text(json.dumps({
+        "complete": True, "original_rows_reproduced": True, "rows_sha256": digest,
+    }))
+    original_reader = pd.read_csv
+    reads = []
+
+    def guarded_reader(*args: object, **kwargs: object) -> pd.DataFrame:
+        reads.append(kwargs)
+        return original_reader(*args, **kwargs)
+
+    def headers(input_root: Path, source: str, metadata: dict, columns: list[str]) -> tuple:
+        selected = rows[rows["source"] == source].set_index("record")
+        selected = selected.assign(age="40", sex="Male", fs=500, samples=5000)
+        return selected[columns], {}
+
+    monkeypatch.setattr(recovery.pd, "read_csv", guarded_reader)
+    monkeypatch.setattr(recovery, "source_checkpoint", headers)
+    selected, _ = recovery.verified_training_rows(tmp_path)
+    assert selected["record"].tolist() == ["E1"]
+    assert selected["primary"].tolist() == ["1.0"]
+    assert selected["full_signal_sha256"].tolist() == ["a" * 64]
+    assert selected["split_record_id"].tolist() == ["georgia:E1"]
+    assert not set(recovery.LABEL_COLUMNS) & set(reads[0]["usecols"])
+    assert reads[1]["skiprows"] == [2]
+
+
+def test_reference_overlaps_disable_eligibility_without_hiding_quality_evidence() -> None:
+    """Full-signal and canonical matches both exclude training, including crop-only matches."""
+    base = {"ssl_eligible": True, "supervised_eligible": True,
+            "supervised_target": "1.0", "quality_status": "passed"}
+    rows = pd.DataFrame([
+        base | {"full_signal_sha256": "same-full", "signal_window_sha256": "first-window"},
+        base | {"full_signal_sha256": "different-full", "signal_window_sha256": "same-window"},
+    ])
+    result = recovery.exclude_reference_overlaps(rows, {"same-window"}, {"same-full"})
+    assert not result["ssl_eligible"].any()
+    assert not result["supervised_eligible"].any()
+    assert result["quality_status"].tolist() == ["passed", "passed"]
+    assert result["heldout_overlap_reasons"].tolist() == ["heldout_full_signal", "heldout_canonical_window"]

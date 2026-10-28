@@ -16,7 +16,8 @@ from .ecg_quality import assess
 from .files import sha256_file, write_json_atomic
 from .ningbo import LABEL_COLUMNS, clean_age, duplicate_status, label_key, male
 from .paths import to_stored
-from .public_sources import load_view, signal_sha256
+from .public_sources import signal_sha256
+from .recovery_views import read_verified_view
 
 SPLIT_SHA256 = "5ecd82154fe9ed574b9706d9b7efbe417a578197845cf2a6a48615ca54959cc8"
 RECOVERY = Path("outputs/cohort25_recovery_20261028")
@@ -31,15 +32,54 @@ HEADER_COLUMNS = ("source", "path", "age", "sex", "fs", "samples")
 SOURCE_FILES = (
     "ecg_experiment/challenge_training_recovery.py", "scripts/data/recover_challenge_training_quality.py",
     "ecg_experiment/public_sources.py", "ecg_experiment/ecg_quality.py", "ecg_experiment/ningbo.py",
-    "ecg_experiment/downloads.py", "ecg_experiment/paths.py",
+    "ecg_experiment/downloads.py", "ecg_experiment/paths.py", "ecg_experiment/recovery_views.py",
 )
-VIEW_REJECTIONS = {"duration_contract", "nonfinite_or_shape", "constant_lead",
-                   "lead_or_rate_contract", "units_contract"}
+SPLIT_REFERENCE_COLUMNS = ("source", "family", "record", "path", "duration_s", "signal_sha256",
+                          "window_sha256", "duplicate_group", "duplicate_status", "split")
+REFERENCE_ROOT = RECOVERY / "heldout_references"
 
 
 def stored(path: Path) -> str:
     """Store a root-relative input name through the shared receipt path helper."""
     return to_stored(ROOT / path)
+
+
+def original_split(input_root: Path) -> tuple[pd.DataFrame, dict, dict[str, str]]:
+    """Require exact original split bytes and read its label-free reference columns only."""
+    directory = input_root / RECONSTRUCTION
+    metadata_path = directory / "metadata.json"
+    metadata = json.loads(metadata_path.read_text())
+    rows_path = directory / "rows.csv"
+    if (not metadata.get("complete") or not metadata.get("original_rows_reproduced") or
+            metadata.get("rows_sha256") != SPLIT_SHA256 or sha256_file(rows_path) != SPLIT_SHA256):
+        raise ValueError("Original Challenge split SHA-256 gate has not passed")
+    inputs = {stored(RECONSTRUCTION / name): sha256_file(directory / name)
+              for name in ("metadata.json", "rows.csv")}
+    split = pd.read_csv(rows_path, dtype=str, keep_default_na=False, usecols=list(SPLIT_REFERENCE_COLUMNS))
+    if (split.groupby("duplicate_group")["split"].nunique() > 1).any():
+        raise ValueError("Challenge duplicate group spans split partitions")
+    return split, metadata, inputs
+
+
+def source_checkpoint(
+    input_root: Path, source: str, metadata: dict, columns: list[str],
+) -> tuple[pd.DataFrame, dict[str, str]]:
+    """Read selected header evidence bound to the original split reconstruction receipt."""
+    directory = input_root / RECONSTRUCTION
+    table_name = f"{source}_verified.parquet"
+    receipt_name = f"{source}_receipt.json"
+    receipt = json.loads((directory / receipt_name).read_text())
+    bound = metadata["sources"][source]
+    digest = sha256_file(directory / table_name)
+    if (digest != receipt["checkpoint_sha256"] or digest != bound["checkpoint_sha256"] or
+            receipt["verified_records"] != bound["verified_records"]):
+        raise ValueError(f"Source checkpoint is not bound to the original split: {source}")
+    headers = pd.read_parquet(directory / table_name, columns=columns)
+    if not headers.index.is_unique or len(headers) != receipt["verified_records"]:
+        raise ValueError(f"Invalid source checkpoint record identity: {source}")
+    inputs = {stored(RECONSTRUCTION / table_name): digest,
+              stored(RECONSTRUCTION / receipt_name): sha256_file(directory / receipt_name)}
+    return headers, inputs
 
 
 def verified_training_rows(input_root: Path) -> tuple[pd.DataFrame, dict[str, str]]:
@@ -57,34 +97,25 @@ def verified_training_rows(input_root: Path) -> tuple[pd.DataFrame, dict[str, st
         Training-only rows with source evidence and every consumed artifact's SHA-256.
     """
     directory = input_root / RECONSTRUCTION
-    metadata_path = directory / "metadata.json"
-    metadata = json.loads(metadata_path.read_text())
+    split, metadata, inputs = original_split(input_root)
     rows_path = directory / "rows.csv"
-    if (not metadata.get("complete") or not metadata.get("original_rows_reproduced") or
-            metadata.get("rows_sha256") != SPLIT_SHA256 or sha256_file(rows_path) != SPLIT_SHA256):
-        raise ValueError("Original Challenge split SHA-256 gate has not passed")
-    inputs = {stored(RECONSTRUCTION / name): sha256_file(directory / name)
-              for name in ("metadata.json", "rows.csv")}
-    split = pd.read_csv(rows_path, dtype=str, keep_default_na=False)
-    if (split.groupby("duplicate_group")["split"].nunique() > 1).any():
-        raise ValueError("Challenge duplicate group spans split partitions")
-    train = split[split["split"] == "train"].copy()
+    skip = list(split.index[split["split"] != "train"] + 1)
+    train = pd.read_csv(rows_path, dtype=str, keep_default_na=False, skiprows=skip,
+                        usecols=[*SPLIT_REFERENCE_COLUMNS, *LABEL_COLUMNS])
+    expected_ids = split.loc[split["split"] == "train", ["source", "record"]].reset_index(drop=True)
+    if not train[["source", "record"]].equals(expected_ids):
+        raise ValueError("Training-only split label read lost row identity")
     if train["record"].duplicated().any():
         raise ValueError("Challenge training record names are not unique")
     joined = []
     for source, release in RELEASES.items():
-        table_name = f"{source}_verified.parquet"
-        receipt_name = f"{source}_receipt.json"
-        receipt = json.loads((directory / receipt_name).read_text())
-        digest = sha256_file(directory / table_name)
-        if digest != receipt["checkpoint_sha256"]:
-            raise ValueError(f"Verified source checkpoint changed: {source}")
-        inputs[stored(RECONSTRUCTION / table_name)] = digest
-        inputs[stored(RECONSTRUCTION / receipt_name)] = sha256_file(directory / receipt_name)
-        headers = pd.read_parquet(directory / table_name, columns=list(HEADER_COLUMNS))
+        headers, source_inputs = source_checkpoint(input_root, source, metadata,
+                                                    [*HEADER_COLUMNS, "signal_sha256", "window_sha256"])
+        inputs.update(source_inputs)
         selected = train[train["source"] == source].set_index("record")
         evidence = headers.reindex(selected.index)
-        if not (evidence["source"] == source).all() or not (evidence["path"] == selected["path"]).all():
+        identity = ("source", "path", "signal_sha256", "window_sha256")
+        if not all((evidence[name].fillna("") == selected[name].fillna("")).all() for name in identity):
             raise ValueError(f"Training/header identity mismatch: {source}")
         selected = selected.join(evidence[["age", "sex", "fs", "samples"]])
         selected["age_raw"] = selected.pop("age")
@@ -92,6 +123,9 @@ def verified_training_rows(input_root: Path) -> tuple[pd.DataFrame, dict[str, st
         selected["male"] = male(selected["sex"])
         selected["release"] = release
         selected["record_id"] = source + ":" + selected.index
+        selected["split_record_id"] = selected["record_id"]
+        selected["split_rows_sha256"] = SPLIT_SHA256
+        selected["full_signal_sha256"] = selected["signal_sha256"]
         selected["patient_id"] = ""
         selected["patient_identity_known"] = False
         selected["view_policy"] = "ssl_center_crop" if source.startswith("cpsc_") else "strict_10s"
@@ -122,22 +156,16 @@ def verified_view(input_root: str, row: dict, expected: dict[str, str]) -> list[
         View-contract or quality-policy exclusions.
     """
     raw = Path(input_root) / "data/raw" / row["release"]
-    for suffix, digest in expected.items():
-        if sha256_file(raw / (row["path"] + suffix)) != digest:
-            raise ValueError(f"Checksum mismatch before decoding: {row['record_id']}{suffix}")
-    try:
-        signal, start, samples, flags = load_view(raw, row["path"], row["view_policy"])
-    except ValueError as error:
-        if str(error) not in VIEW_REJECTIONS:
-            raise
-        reasons = [str(error)]
-    else:
+    signal, start, samples, flags, reasons = read_verified_view(
+        raw, row["path"], row["view_policy"], expected,
+    )
+    if signal is not None:
         reasons, reviews = assess(signal)
-        row.update(window_start=start, samples=samples, signal_window_sha256=signal_sha256(signal),
+        canonical_hash = signal_sha256(signal)
+        if row["source"] == "ningbo" and canonical_hash != row["window_sha256"]:
+            raise ValueError(f"Ningbo window differs from its frozen split: {row['record_id']}")
+        row.update(window_start=start, samples=samples, signal_window_sha256=canonical_hash,
                    review_flags=";".join(reviews), view_review_flags=flags)
-    for suffix, digest in expected.items():
-        if sha256_file(raw / (row["path"] + suffix)) != digest:
-            raise ValueError(f"Checksum mismatch after decoding: {row['record_id']}{suffix}")
     return reasons
 
 
@@ -214,6 +242,41 @@ def supervised_window_duplicates(rows: pd.DataFrame) -> pd.DataFrame:
     return rows
 
 
+def heldout_references(input_root: Path) -> tuple[set[str], set[str], dict[str, str]]:
+    """Require a complete mechanical reference receipt and its exact canonical hash table."""
+    receipt_path = REFERENCE_ROOT / "receipt.json"
+    receipt = json.loads((input_root / receipt_path).read_text())
+    if (not receipt.get("complete") or not receipt.get("coverage_complete") or
+            receipt.get("scope") != "mechanical_reference_recovery" or
+            receipt.get("original_split_sha256") != SPLIT_SHA256):
+        raise ValueError("Complete mechanical held-out window references are required")
+    table_path = Path(receipt["table_path"])
+    if table_path.is_absolute() or ".." in table_path.parts:
+        raise ValueError("Unsafe reference table path")
+    if sha256_file(input_root / table_path) != receipt["table_sha256"]:
+        raise ValueError("Held-out window reference table changed")
+    refs = pd.read_csv(input_root / table_path, dtype=str, keep_default_na=False,
+                       usecols=["canonical_sha256", "full_signal_sha256"])
+    hashes = {stored(receipt_path): sha256_file(input_root / receipt_path),
+              stored(table_path): receipt["table_sha256"]}
+    return set(refs["canonical_sha256"]) - {""}, set(refs["full_signal_sha256"]) - {""}, hashes
+
+
+def exclude_reference_overlaps(rows: pd.DataFrame, windows: set[str], full_signals: set[str]) -> pd.DataFrame:
+    """Keep quality evidence but reject any training eligibility matching a known held-out reference."""
+    rows = rows.copy()
+    full = rows["full_signal_sha256"].isin(full_signals)
+    window = rows["signal_window_sha256"].isin(windows)
+    rows["heldout_overlap_reasons"] = [
+        ";".join(reason for reason, found in (("heldout_full_signal", whole),
+                                           ("heldout_canonical_window", crop)) if found)
+        for whole, crop in zip(full, window, strict=True)
+    ]
+    rows.loc[full | window, ["supervised_eligible", "ssl_eligible"]] = False
+    rows.loc[full | window, "supervised_target"] = ""
+    return rows
+
+
 def recover(input_root: Path, output: Path, workers: int, limit: int | None) -> dict[str, object]:
     """
     Stage verified training evidence after the exact split gate, without fitting a model.
@@ -243,6 +306,8 @@ def recover(input_root: Path, output: Path, workers: int, limit: int | None) -> 
         raise FileExistsError(destination)
     start = time.monotonic()
     rows, input_hashes = verified_training_rows(input_root)
+    window_refs, full_refs, reference_inputs = heldout_references(input_root)
+    input_hashes.update(reference_inputs)
     selected = rows if limit is None else rows.groupby("source", sort=False).head(limit)
     checksums = {}
     for release in set(RELEASES.values()):
@@ -263,6 +328,7 @@ def recover(input_root: Path, output: Path, workers: int, limit: int | None) -> 
         if sha256_file(input_root / name) != digest:
             raise ValueError(f"Recovery input changed during processing: {name}")
     assessed = supervised_window_duplicates(pd.DataFrame(results))
+    assessed = exclude_reference_overlaps(assessed, window_refs, full_refs)
     worker_peak = int(assessed.pop("worker_peak_rss_kib").max())
     destination.mkdir(parents=True)
     path = destination / "training_rows.csv"
@@ -275,6 +341,7 @@ def recover(input_root: Path, output: Path, workers: int, limit: int | None) -> 
             "ssl_eligible": int(part["ssl_eligible"].sum()),
             "supervised_eligible": int(part["supervised_eligible"].sum()),
             "supervised_labels": labeled.value_counts().to_dict(),
+            "heldout_overlap_excluded": int((part["heldout_overlap_reasons"] != "").sum()),
         }
     receipt = {
         "complete": True, "scope": "training_quality" if limit is None else "resource_profile",

@@ -8,6 +8,11 @@ canonical ECG. The threshold view also compares the existing age-preferred and n
 calibration-only 5% normal-budget cutoff; the exploratory slider never changes those comparison rows.
 Both cohorts use the same quality and label-admission rules. English and Spanish are available.
 
+The threshold explorer links the exact confusion matrix to TP/FN and FP/TN count plots and a
+sensitivity-versus-referral plot. Dots are saved cutoffs, without interpolated counts. A ring follows
+the selected slider point; a square stays at the frozen calibration cutoff. Class denominators and
+the full ECG denominator are explicit. Keyboard slider updates are announced through a short live summary.
+
 The old PR's serialized models, alternative diagnosis target, validation prediction CSVs and diagnosis
 hit-rate claims are not imported. No missing notebooks or historical training steps are reconstructed by
 assertion. Unsupported multilabel diagnoses are unavailable. Localization is visibly work in progress;

@@ -1,6 +1,7 @@
 import {copy} from './i18n.mjs';
 import {fraction, matrixAt, nearestIndex, parseCanonicalCSV} from './matrix.mjs';
 import {ageComparisonRows} from './comparison.mjs';
+import {impactPlots} from './threshold_impact.mjs';
 
 const state = {lang:'en', evaluation:null, cohorts:null, status:null, model:0, pool:0, cutoff:0};
 const content = document.querySelector('#content');
@@ -42,15 +43,6 @@ function ratesHTML(matrix) {
   return `<div class="rates">${['sensitivity','specificity','precision','referral'].map(key => `<div class="metric"><span>${t(key)}</span><b>${percent(matrix[key === 'referral' ? 'referral_fraction' : key])}</b><small>${denominators[key]}</small></div>`).join('')}</div>`;
 }
 
-function plotHTML(pool) {
-  const sweep = pool.sweep;
-  const low = sweep.threshold[0], high = sweep.threshold.at(-1);
-  const x = value => 55 + 510 * (high === low ? .5 : (value - low) / (high - low));
-  const y = value => 230 - 190 * value;
-  const path = key => sweep.threshold.map((value, index) => sweep[key][index] === null ? '' : `${index === 0 ? 'M' : 'L'}${x(value).toFixed(2)},${y(sweep[key][index]).toFixed(2)}`).join(' ');
-  const fixed = Math.max(55, Math.min(565, x(pool.threshold)));
-  return `<svg class="plot" viewBox="0 0 620 280" role="img" aria-label="${t('sensitivity')} / ${t('specificity')}">${[0,.5,1].map(value => `<line x1="55" x2="565" y1="${y(value)}" y2="${y(value)}"/><text x="40" y="${y(value) + 4}" text-anchor="end">${value * 100}%</text>`).join('')}<path class="sensitivity" d="${path('sensitivity')}"/><path class="specificity" d="${path('specificity')}"/><line class="marker" x1="${fixed}" x2="${fixed}" y1="35" y2="230"/><text x="55" y="252">${cutoff(low)}</text><text x="565" y="252" text-anchor="end">${cutoff(high)}</text><text x="310" y="276" text-anchor="middle">${t('threshold')}</text></svg><div class="legend"><span>${t('sensitivity')}</span><span class="specificity">${t('specificity')}</span><span class="fixed">${t('frozen')}</span></div>`;
-}
 
 function selectedPool() {
   return state.evaluation.models[state.model].evaluations[state.pool];
@@ -81,7 +73,7 @@ function evaluation() {
   const controls = `<div class="controls"><label>${t('model')}<select id="model">${state.evaluation.models.map((value, index) => `<option value="${index}" ${index === state.model ? 'selected' : ''}>${escape(value.label)}</option>`).join('')}</select></label><label>${t('pool')}<select id="pool">${model.evaluations.map((value, index) => `<option value="${index}" ${index === state.pool ? 'selected' : ''}>${escape(value.label)}</option>`).join('')}</select></label></div>`;
   const descriptors = `<div class="cards"><div class="card"><small>AUROC · ${escape(pool.label)}</small><div class="value">${decimal(matrix.auroc)}</div><small>Average precision: ${decimal(matrix.average_precision)}</small></div><div class="card"><small>${t('records')}</small><div class="value">${integer(matrix.ecgs)}</div><small>${t('positive')}: ${integer(matrix.positives)} · ${t('negative')}: ${integer(matrix.negatives)}</small></div><div class="card"><small>${t('prevalence')}</small><div class="value">${percent(fraction(matrix.positives, matrix.ecgs))}</div><small>${integer(matrix.positives)} / ${integer(matrix.ecgs)} ${t('records')}</small></div></div>`;
   const fixed = panel(`<h2>${t('frozen')}</h2><p class="muted">${t('frozenText')}</p><p class="threshold">score &gt; ${cutoff(pool.threshold)}</p><p class="muted">${t('calibration')}: ${integer(pool.calibration.flagged_normals)} / ${integer(pool.calibration.normals)} · ${t('allowed')}: ${integer(pool.calibration.allowed_normals)} · ${t('tied')}: ${integer(pool.calibration.tied_normals)}</p><div class="grid-two">${matrixHTML(matrix)}${ratesHTML(matrix)}</div>`);
-  const explore = panel(`<h2>${t('explore')}</h2><p class="muted">${t('exploreText')}</p><div class="slider-label"><label for="cutoff">${t('threshold')}</label><output id="cutoff-value" class="threshold"></output></div><input id="cutoff" class="slider" type="range" min="0" max="${pool.sweep.threshold.length - 1}" step="1" value="${state.cutoff}" aria-describedby="cutoff-help"><div class="slider-label"><small id="cutoff-help">${t('comparison')}</small><button class="secondary" id="reset">${t('reset')}</button></div><div class="grid-two"><div id="exploratory-matrix"></div><div id="exploratory-rates"></div></div>${plotHTML(pool)}`);
+  const explore = panel(`<h2>${t('explore')}</h2><p class="muted">${t('exploreText')}</p><div class="slider-label"><label for="cutoff">${t('threshold')}</label><output id="cutoff-value" class="threshold"></output></div><input id="cutoff" class="slider" type="range" min="0" max="${pool.sweep.threshold.length - 1}" step="1" value="${state.cutoff}" aria-describedby="cutoff-help"><div class="slider-label"><small id="cutoff-help">${t('comparison')}</small><button class="secondary" id="reset">${t('reset')}</button></div><div class="grid-two"><div id="exploratory-matrix"></div><div id="exploratory-rates"></div></div><div id="threshold-impact"></div><p id="threshold-summary" class="sr-only" aria-live="polite" aria-atomic="true"></p>`);
   return header + primaryHTML() + controls + ageComparisonHTML(pool) + descriptors + fixed + explore + `<details><summary>${t('provenance')}</summary><p><small>${t('artifactHash')}</small><br><code>${escape(state.evaluation.artifact_sha256)}</code></p></details>`;
 }
 
@@ -123,6 +115,9 @@ function updateMatrix() {
   document.querySelector('#cutoff').setAttribute('aria-valuetext', `${t('threshold')} ${cutoff(matrix.threshold)}`);
   document.querySelector('#exploratory-matrix').innerHTML = matrixHTML(matrix);
   document.querySelector('#exploratory-rates').innerHTML = ratesHTML(matrix);
+  const labels = Object.fromEntries(['thresholdImpact','positiveCounts','negativeCounts','workloadSensitivity','savedPoints','currentCutoff','frozen','threshold','positive','negative','sensitivity','referral'].map(key => [key,t(key)]));
+  document.querySelector('#threshold-impact').innerHTML = impactPlots(pool, state.cutoff, labels, {integer,percent,cutoff});
+  document.querySelector('#threshold-summary').textContent = `${t('threshold')} ${cutoff(matrix.threshold)}: TP ${integer(matrix.tp)}, FN ${integer(matrix.fn)}, FP ${integer(matrix.fp)}, TN ${integer(matrix.tn)}.`;
 }
 
 function setupEvaluation() {

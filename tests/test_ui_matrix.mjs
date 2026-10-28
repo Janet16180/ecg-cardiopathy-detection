@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {matrixAt, nearestIndex, parseCanonicalCSV} from '../ui/static/matrix.mjs';
 import {ageComparisonRows} from '../ui/static/comparison.mjs';
+import {thresholdImpact, impactPlots} from '../ui/static/threshold_impact.mjs';
+import {copy} from '../ui/static/i18n.mjs';
 
 test('saved cutoff extremes, ties and zero denominator use exact matrices', () => {
   // Strict >: score .5 ties are not referred at threshold .5.
@@ -54,4 +56,52 @@ test('age comparison pairs actual model IDs at their own fixed cutoff in the sam
   assert.deepEqual(ageComparisonRows({models:data.models.slice(1)},'sph'),[]);
   data.models[0].evaluations[1].metrics.ecgs = 31;
   assert.deepEqual(ageComparisonRows(data,'sph'),[]);
+});
+
+const impactPool = () => ({threshold:.5,sweep:{threshold:[-.01,.5,1],
+  tp:[2,1,0],fn:[0,1,2],fp:[3,0,0],tn:[0,3,3]}});
+const plotFormat = {integer:String,cutoff:value=>Number(value).toPrecision(7),
+  percent:value=>value === null ? 'undefined' : `${(100*value).toFixed(1)}%`};
+
+test('threshold plots use exact matrix points and a separate fixed calibration marker', () => {
+  const pool=impactPool(), before=JSON.stringify(pool);
+  const low=thresholdImpact(pool,0), high=thresholdImpact(pool,2);
+  assert.deepEqual(low.selected,matrixAt(pool.sweep,0));
+  assert.deepEqual(high.selected,matrixAt(pool.sweep,2));
+  assert.deepEqual(low.frozen,high.frozen);
+  assert.equal(low.frozenIndex,1);
+  assert.equal(low.selected.referral_fraction,1);
+  assert.equal(high.selected.referral_fraction,0);
+  assert.equal(high.selected.sensitivity,0);
+  assert.equal(JSON.stringify(pool),before);
+  const html=impactPlots(pool,0,copy.en,plotFormat);
+  assert.equal((html.match(/class="current-point"/g)||[]).length,5);
+  assert.equal((html.match(/class="frozen-point"/g)||[]).length,5);
+  assert.equal((html.match(/class="saved-point /g)||[]).length,15);
+  assert.match(html,/class="current-point" data-index="0" data-series="tp" data-threshold="-0.01" data-value="2"/);
+  assert.match(html,/class="frozen-point" data-index="1" data-series="tp" data-threshold="0.5" data-value="1"/);
+  assert.doesNotMatch(html,/<path|<polyline/);
+});
+
+test('threshold plots preserve undefined sensitivity and reject inconsistent populations', () => {
+  const pool={threshold:.5,sweep:{threshold:[.5],tp:[0],fn:[0],fp:[0],tn:[4]}};
+  assert.equal(thresholdImpact(pool,0).selected.sensitivity,null);
+  const html=impactPlots(pool,0,copy.en,plotFormat);
+  assert.doesNotMatch(html,/NaN|Infinity|data-value="null"/);
+  assert.equal((html.match(/class="current-point"/g)||[]).length,4);
+  assert.throws(()=>thresholdImpact({...pool,threshold:.6},0),RangeError);
+  assert.throws(()=>thresholdImpact(impactPool(),3),RangeError);
+  const inconsistent=impactPool();inconsistent.sweep.tp[0]=3;
+  assert.throws(()=>thresholdImpact(inconsistent,0),/same reference population/);
+});
+
+test('threshold graphs provide translated accessible descriptions and class denominators', () => {
+  const html=impactPlots(impactPool(),1,copy.es,plotFormat);
+  assert.match(html,/¿Qué cambia con el umbral\?/);
+  assert.match(html,/Sensibilidad frente a carga de derivación/);
+  assert.match(html,/role="img" aria-labelledby="positiveCounts-title positiveCounts-desc"/);
+  assert.match(html,/n = 2/);
+  assert.match(html,/n = 3/);
+  assert.match(html,/TP \/ 2/);
+  assert.match(html,/\(TP \+ FP\) \/ 5/);
 });

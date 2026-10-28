@@ -96,6 +96,55 @@ def check_age_comparison(browser: Browser, evaluation: dict[str, Any],
     return comparison_script, browser.script(comparison_script)
 
 
+def check_impact_point(browser: Browser, point: dict[str, Any], index: int) -> None:
+    """Compare each visible graph marker with the same exact saved matrix as the slider."""
+    browser.script(f"const slider=document.querySelector('#cutoff');slider.value={index};"
+                   "slider.dispatchEvent(new Event('input',{bubbles:true}));return true")
+    markers = browser.script("""return [...document.querySelectorAll('#threshold-impact .current-point')]
+        .map(node=>({series:node.dataset.series,value:Number(node.dataset.value),
+            threshold:Number(node.dataset.threshold),index:Number(node.dataset.index)}));""")
+    expected = {key: point["sweep"][key][index] for key in ("tp", "fn", "fp", "tn", "sensitivity")}
+    if ({value["series"]: value["value"] for value in markers} != expected or
+            any(value["threshold"] != point["sweep"]["threshold"][index] or value["index"] != index
+                for value in markers)):
+        raise ValueError("The threshold graphs do not show the slider's exact saved matrix")
+    frozen = browser.script("""return [...document.querySelectorAll('#threshold-impact .frozen-point')]
+        .map(node=>Number(node.dataset.threshold));""")
+    if len(frozen) != 5 or any(value != point["threshold"] for value in frozen):
+        raise ValueError("The frozen calibration markers moved with the exploratory slider")
+
+
+def check_threshold_impact(browser: Browser, evaluation: dict[str, Any], output: Path) -> None:
+    """Check graph values across both sites, slider extremes and a model change."""
+    default = next(index for index, value in enumerate(evaluation["models"])
+                   if value["id"] == evaluation["default_model_id"])
+    other = next(index for index, value in enumerate(evaluation["models"])
+                 if value["id"] == "all_age_blend")
+    for model_index in (default, other):
+        browser.script(f"const model=document.querySelector('#model');model.value={model_index};"
+                       "model.dispatchEvent(new Event('change',{bubbles:true}));return true")
+        for pool_index, point in enumerate(evaluation["models"][model_index]["evaluations"]):
+            browser.script(f"const pool=document.querySelector('#pool');pool.value={pool_index};"
+                           "pool.dispatchEvent(new Event('change',{bubbles:true}));return true")
+            for index in (0, len(point["sweep"]["threshold"]) // 2,
+                          len(point["sweep"]["threshold"]) - 1):
+                check_impact_point(browser, point, index)
+    browser.script(f"document.querySelector('#model').value={default};"
+                   "document.querySelector('#model').dispatchEvent(new Event('change',{bubbles:true}));"
+                   "document.querySelector('#reset').click();return true")
+    point = evaluation["models"][default]["evaluations"][0]
+    check_impact_point(browser, point, len(point["sweep"]["threshold"]) // 2)
+    browser.command("POST", "/window/rect", {"width": 1440, "height": 1900})
+    browser.script("document.querySelector('#threshold-impact').scrollIntoView();return true")
+    browser.screenshot(output / "threshold-impact.png", 1440, 1900)
+    browser.command("POST", "/window/rect", {"width": 390, "height": 1600})
+    browser.script("document.querySelector('#threshold-impact').scrollIntoView();return true")
+    browser.screenshot(output / "threshold-impact-mobile.png", 390, 1600)
+    if browser.script("return document.documentElement.scrollWidth > window.innerWidth"):
+        raise ValueError("The threshold graphs overflow the mobile page")
+    browser.script("document.querySelector('#reset').click();window.scrollTo(0,0);return true")
+
+
 def check(app_url: str, driver_url: str, output: Path,
           firefox_binary: Path | None = None) -> dict[str, Any]:
     """Verify actual default, matrices, primary conclusion, cohorts and bilingual WIP rendering."""
@@ -131,6 +180,7 @@ def check(app_url: str, driver_url: str, output: Path,
         outcome = "return document.body.textContent.includes('Development advantage was not established')"
         if not browser.script(outcome):
             raise ValueError("The failed primary development comparison is not visible")
+        check_threshold_impact(browser, evaluation, output)
         browser.screenshot(output / "evaluation.png", 1440, 2750)
         browser.command("POST", "/window/rect", {"width": 390, "height": 1600})
         browser.script("document.querySelector('#age-comparison').closest('.panel').scrollIntoView(); "
@@ -163,9 +213,12 @@ def check(app_url: str, driver_url: str, output: Path,
                 "default_model": model["id"], "strict_threshold_extremes_match": True,
                 "age_comparison_both_sites_fixed_counts": True,
                 "age_comparison_independent_of_slider": True,
+                "threshold_graph_markers_match_saved_matrices": True,
+                "threshold_graph_sites_and_model_change": True,
                 "primary_failed_conclusion_visible": True, "primary_cohort_counts_visible": True,
                 "mobile_overflow": False, "spanish_switch": True, "localization_status_only": True,
-                "screenshots": ["evaluation.png", "age-comparison-mobile.png",
+                "screenshots": ["evaluation.png", "age-comparison-mobile.png", "threshold-impact.png",
+                                "threshold-impact-mobile.png",
                                 "cohorts.png", "cohorts-mobile.png"]}
     finally:
         browser.command("DELETE", "")
@@ -179,6 +232,9 @@ def check_spanish_comparison(browser: Browser, app_url: str) -> None:
         return table.textContent.includes('Preferencia por jóvenes · 25.000') &&
             table.textContent.includes('Sin preferencia de edad · 25.000');"""):
         raise ValueError("The two cohort labels were not translated into Spanish")
+    if not browser.script("""return document.querySelector('#threshold-impact').textContent
+        .includes('Sensibilidad frente a carga de derivación');"""):
+        raise ValueError("The threshold graphs were not translated into Spanish")
 
 
 def main() -> None:

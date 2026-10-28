@@ -23,7 +23,17 @@ SEED = 20261028
 FS = 250
 SAMPLES = 2500
 EXPORT_MODELS = {"all_age": "all_age_blend", "ptb_baseline": "ptb_baseline_blend"}
-SCORE_KEYS = ("original", "full", "lead", "component", "grid", "self_swap_grid", "hgb_grid", "xecg_grid")
+SCORE_KEYS = ("original", "full", "lead", "component", "grid", "self_swap_grid", "self_swap_lead",
+              "self_swap_full", "hgb_grid", "xecg_grid", "hgb_original", "xecg_original")
+AGGREGATE = Path("reports/nbr01-normal-beat-replacement-2026-10-28/results.json")
+SUBSETS = ("abnormal", "normal", "inferior", "anterior", "lbbb", "rbbb", "stt")
+SUMMARY_NAMES = ("territory", "territory_minus_energy", "swap_territory", "wave", "wave_minus_energy",
+                 "qrs_bbb", "qrs_bbb_minus_energy", "stt_stt", "stt_stt_minus_energy", "bbb_lead",
+                 "bbb_lead_minus_energy", "top1_hit", "top1_hit_minus_energy", "top3_hit",
+                 "top3_hit_minus_energy")
+SUMMARY_SUBSET_NAMES = ("flagged", "original", "full_score", "full_drop", "swap_full_drop", "grid_abs",
+                        "swap_grid_abs", "lead_abs", "swap_lead_abs", "grid_flip", "lead_flip",
+                        "component_flip", "full_flip", "swap_grid_flip", "swap_lead_flip", "swap_full_flip")
 
 
 def quotas(available: dict[str, int]) -> dict[str, int]:
@@ -116,6 +126,8 @@ def model_scores(scores: np.ndarray, model: int) -> dict[str, Any]:
     return {"original": rounded(blend[0]), "full": rounded(blend[where["full"]]),
             "lead": rounded(blend[where["lead"]]), "component": rounded(blend[where["component"]]),
             "grid": rounded(blend[where["grid"]]), "self_swap_grid": rounded(blend[where["swap_grid"]]),
+            "self_swap_lead": rounded(blend[where["swap_lead"]]),
+            "self_swap_full": rounded(blend[where["swap_full"]]),
             "hgb_grid": rounded(hgb[where["grid"]]), "xecg_grid": rounded(xecg[where["grid"]]),
             "hgb_original": rounded(hgb[0]), "xecg_original": rounded(xecg[0])}
 
@@ -159,16 +171,70 @@ def validate(data: dict[str, Any]) -> None:
             need(set(SCORE_KEYS) <= set(scores), "score keys")
             need(np.shape(scores["lead"]) == (12,), "lead")
             need(np.shape(scores["component"]) == (3,), "component")
+            need(np.shape(scores["self_swap_lead"]) == (12,), "self_swap_lead")
             for key in ("grid", "self_swap_grid", "hgb_grid", "xecg_grid"):
                 need(np.shape(scores[key]) == (12, 3), key)
-            need(all(isinstance(scores[key], float) for key in ("original", "full")), "original/full")
+            need(all(isinstance(scores[key], float) for key in ("original", "full", "self_swap_full",
+                                                                 "hgb_original", "xecg_original")), "scalars")
         need(np.shape(example.get("energy_grid")) == (12, 3), "energy_grid")
+    summary = data.get("summary", {})
+    need({"statistics", "n", "decisions", "primary_endpoint"} <= set(summary), "summary")
+    statistics = summary["statistics"].values()
+    need(all({"point", "low", "high"} <= set(value) for value in statistics), "statistics")
+    need(all(f"{model}/territory" in summary["statistics"] for model in EXPORT_MODELS.values()), "territory")
+
+
+def summary_block(statistics: dict[str, dict[str, float]], counts: pd.DataFrame,
+                  integrity: dict[str, Any], primary: str) -> dict[str, Any]:
+    """
+    Collect the study-level numbers for the page, keyed exactly as in the aggregate ``results.json``.
+
+    Parameters
+    ----------
+    statistics : dict[str, dict[str, float]]
+        ``statistics`` of the analyze stage.
+    counts : pd.DataFrame
+        Records and flagged records per group, indexed by group.
+    integrity : dict[str, Any]
+        Score-stage integrity record.
+    primary : str
+        Primary endpoint recorded by the prepare stage.
+
+    Returns
+    -------
+    dict[str, Any]
+        Selected statistics with intervals, group sizes and the protocol's decision labels.
+    """
+    keys = [key for key in statistics if key.startswith("energy/")]
+    for model in EXPORT_MODELS.values():
+        keys += [f"{model}/{name}" for name in SUMMARY_NAMES]
+        keys += [f"{model}/{subset}/{name}" for subset in SUBSETS for name in SUMMARY_SUBSET_NAMES]
+    selected = {key: {name: statistics[key][name] for name in ("point", "low", "high")} for key in keys}
+
+    def above(key: str) -> bool:
+        return statistics[key]["low"] > 0
+
+    decisions = {
+        "primary": "territory localization shown" if above("all_age_blend/territory") else "not shown",
+        "qualifier": ("beyond replaced energy" if above("all_age_blend/territory_minus_energy")
+                      else "not shown beyond replaced energy"),
+        "operator_check": "passed" if above("all_age_blend/abnormal/full_drop") else "flagged",
+        "integrity_registered": "passed" if integrity["registered_check_passed"] else "failed",
+        "integrity_amendment_1": ("not needed" if integrity["amendment_1"] is None
+                                  else "passed" if integrity["amendment_1"]["passed"] else "failed"),
+        "secondary_model": "ptb_baseline_blend, descriptive, no decision"}
+    n = {group: {name: int(value) for name, value in row.items()} for group, row in counts.iterrows()}
+    return {"source": str(AGGREGATE), "primary_endpoint": primary,
+            "primary_statistic": "all_age_blend/territory",
+            "intervals": "95% whole-patient bootstrap, 2,000 draws, seed 20261028", "statistics": selected,
+            "n": n, "decisions": decisions}
 
 
 def export(input_root: Path) -> dict[str, Any]:
     """Write ``examples.json`` from the scored records and validate it."""
     receipt = study.binding()
     study.require(input_root, "score")
+    study.require(input_root, "analyze")
     data = np.load(input_root / study.OUTPUT / "score/scores.npz")
     rows = study.prepared_rows(input_root).set_index("ecg_id").loc[data["ecg_id"]].reset_index()
     limits = nf.thresholds(input_root)
@@ -190,6 +256,12 @@ def export(input_root: Path) -> dict[str, Any]:
     value = {"schema_version": 1, "fs": FS, "leads": list(ns.LEAD_NAMES), "components": list(nc.COMPONENTS),
              "models": {EXPORT_MODELS[model]: {"threshold": limits[f"{model}_blend"]} for model in nf.MODELS},
              "examples": examples}
+    output = input_root / study.OUTPUT
+    value["summary"] = summary_block(
+        json.loads((output / "analyze/results.json").read_text())["statistics"],
+        pd.read_csv(output / "analyze/counts.csv", index_col="group"),
+        json.loads((output / "score/integrity.json").read_text()),
+        study.require(input_root, "prepare")["primary_endpoint"])
     validate(value)
     path = input_root / study.OUTPUT / "examples.json"
     write_text_atomic(path, json.dumps(value, separators=(",", ":")))

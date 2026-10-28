@@ -1,5 +1,6 @@
 import {copy} from './i18n.mjs';
 import {fraction, matrixAt, nearestIndex, parseCanonicalCSV} from './matrix.mjs';
+import {ageComparisonRows} from './comparison.mjs';
 
 const state = {lang:'en', evaluation:null, cohorts:null, status:null, model:0, pool:0, cutoff:0};
 const content = document.querySelector('#content');
@@ -61,6 +62,18 @@ function primaryHTML() {
   return panel(`<h2>${t('primaryComparison')}</h2><p>${escape(labels[value.first])} vs ${escape(labels[value.second])} · ${escape(value.site.toUpperCase())}</p><p>${t('pairedDifference')}: <strong>${(100 * interval.difference).toFixed(2)} ${t('percentagePoints')}</strong></p><p>${t('interval')}: [${(100 * interval.ci_low).toFixed(2)}, ${(100 * interval.ci_high).toFixed(2)}] ${t('percentagePoints')} · ${integer(interval.draws)} ${t('draws')}. ${t('conditional')}</p><div class="notice">${t(value.development_advantage ? 'advantage' : 'noAdvantage')}</div>`);
 }
 
+function ageComparisonHTML(pool) {
+  const rows = ageComparisonRows(state.evaluation, pool.pool);
+  if (!rows.length) return '';
+  const headings = [t('cohort'), t('threshold'), 'TP', 'FN', 'FP', 'TN', t('sensitivity'), t('specificity'), 'AUROC', t('referral')];
+  const body = rows.map(row => {
+    const m = row.metrics;
+    const values = [cutoff(row.threshold), ...['tp','fn','fp','tn'].map(key => integer(m[key])), percent(m.sensitivity), percent(m.specificity), decimal(m.auroc), percent(m.referral_fraction)];
+    return `<tr data-model-id="${row.id}" data-pool="${escape(row.pool)}"><th scope="row">${t(row.labelKey)}</th>${values.map(value => `<td>${value}</td>`).join('')}</tr>`;
+  }).join('');
+  return panel(`<h2>${t('ageComparison')}</h2><p>${t('ageComparisonText')}</p><p class="muted">${t('ageComparisonFixed')}</p><p>${escape(pool.label)} · ${integer(pool.metrics.ecgs)} ${t('records')} · ${t('positive')}: ${integer(pool.metrics.positives)} · ${t('negative')}: ${integer(pool.metrics.negatives)}</p><div class="table-wrap" tabindex="0" role="region" aria-label="${t('ageComparison')}"><table class="data age-comparison" id="age-comparison"><thead><tr>${headings.map(value => `<th scope="col">${value}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div>`);
+}
+
 function evaluation() {
   const header = heading('evaluation', 'evalIntro') + notice('scope') + `<p class="muted">${t('offlineEvaluation')}</p>`;
   if (!state.evaluation) return header + panel(`<h2>${t('noEvaluation')}</h2><p>${t('noEvaluationText')}</p>`);
@@ -69,7 +82,7 @@ function evaluation() {
   const descriptors = `<div class="cards"><div class="card"><small>AUROC · ${escape(pool.label)}</small><div class="value">${decimal(matrix.auroc)}</div><small>Average precision: ${decimal(matrix.average_precision)}</small></div><div class="card"><small>${t('records')}</small><div class="value">${integer(matrix.ecgs)}</div><small>${t('positive')}: ${integer(matrix.positives)} · ${t('negative')}: ${integer(matrix.negatives)}</small></div><div class="card"><small>${t('prevalence')}</small><div class="value">${percent(fraction(matrix.positives, matrix.ecgs))}</div><small>${integer(matrix.positives)} / ${integer(matrix.ecgs)} ${t('records')}</small></div></div>`;
   const fixed = panel(`<h2>${t('frozen')}</h2><p class="muted">${t('frozenText')}</p><p class="threshold">score &gt; ${cutoff(pool.threshold)}</p><p class="muted">${t('calibration')}: ${integer(pool.calibration.flagged_normals)} / ${integer(pool.calibration.normals)} · ${t('allowed')}: ${integer(pool.calibration.allowed_normals)} · ${t('tied')}: ${integer(pool.calibration.tied_normals)}</p><div class="grid-two">${matrixHTML(matrix)}${ratesHTML(matrix)}</div>`);
   const explore = panel(`<h2>${t('explore')}</h2><p class="muted">${t('exploreText')}</p><div class="slider-label"><label for="cutoff">${t('threshold')}</label><output id="cutoff-value" class="threshold"></output></div><input id="cutoff" class="slider" type="range" min="0" max="${pool.sweep.threshold.length - 1}" step="1" value="${state.cutoff}" aria-describedby="cutoff-help"><div class="slider-label"><small id="cutoff-help">${t('comparison')}</small><button class="secondary" id="reset">${t('reset')}</button></div><div class="grid-two"><div id="exploratory-matrix"></div><div id="exploratory-rates"></div></div>${plotHTML(pool)}`);
-  return header + primaryHTML() + controls + descriptors + fixed + explore + `<details><summary>${t('provenance')}</summary><p><small>${t('artifactHash')}</small><br><code>${escape(state.evaluation.artifact_sha256)}</code></p></details>`;
+  return header + primaryHTML() + controls + ageComparisonHTML(pool) + descriptors + fixed + explore + `<details><summary>${t('provenance')}</summary><p><small>${t('artifactHash')}</small><br><code>${escape(state.evaluation.artifact_sha256)}</code></p></details>`;
 }
 
 function recording() {

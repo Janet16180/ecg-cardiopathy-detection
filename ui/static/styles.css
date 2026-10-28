@@ -66,6 +66,9 @@ button.secondary { color:var(--tinta-2); background:var(--superficie); border:1p
 table.data { border-collapse:collapse; width:100%; text-align:left; font-size:13px; }
 table.data th,table.data td { padding:10px 12px; border-bottom:1px solid var(--borde); }
 table.data th { font-weight:550; color:var(--tinta-2); }
+.age-comparison { min-width:960px; font-variant-numeric:tabular-nums; }
+.age-comparison td { white-space:nowrap; }
+.age-comparison th:first-child { min-width:190px; }
 .plot { width:100%; height:auto; overflow:visible; }
 .plot text { fill:var(--tinta-2); font-size:11px; font-family:system-ui,sans-serif; }
 .plot line { stroke:var(--borde); }

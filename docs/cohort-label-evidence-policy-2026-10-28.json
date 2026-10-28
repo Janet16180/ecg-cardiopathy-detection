@@ -1,0 +1,37 @@
+{
+  "policy_version": "2026-10-28-v1",
+  "interpretation": "Documented annotation evidence ordering, not measured label accuracy",
+  "ptbxl": {
+    "reference": "https://physionet.org/content/ptb-xl/1.0.3/",
+    "human_validated_rank": 1,
+    "physician_origin_unvalidated_rank": 2,
+    "unvalidated_automatic_or_unknown": "exclude"
+  },
+  "sources": {
+    "chapman_shaoxing": {
+      "rank": 0,
+      "evidence": "source_process_physician_label_secondary_validation_senior_adjudication",
+      "reference": "https://physionet.org/content/ecg-arrhythmia/1.0.0/"
+    },
+    "ningbo": {
+      "rank": 0,
+      "evidence": "source_process_physician_label_secondary_validation_senior_adjudication",
+      "reference": "https://physionet.org/content/ecg-arrhythmia/1.0.0/"
+    },
+    "cpsc_2018": {
+      "rank": 1,
+      "evidence": "human_read_source_no_per_record_reader_count_proof",
+      "reference": "https://moody-challenge.physionet.org/2021/"
+    },
+    "cpsc_2018_extra": {
+      "rank": 1,
+      "evidence": "human_read_source_no_per_record_reader_count_proof",
+      "reference": "https://moody-challenge.physionet.org/2021/"
+    },
+    "georgia": {
+      "rank": 1,
+      "evidence": "human_overread_source_no_per_record_reader_count_proof",
+      "reference": "https://moody-challenge.physionet.org/2021/"
+    }
+  }
+}

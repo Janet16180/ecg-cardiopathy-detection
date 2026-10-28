@@ -2,22 +2,21 @@ import * as g from "./graficas.js";
 import { IDIOMAS, LOCALES, TEXTOS } from "./textos.js";
 
 // Menú lateral: para agregar una página basta con una entrada aquí, su texto en textos.js y su función
-const DATASETS = ["eda/resumen", "eda/pacientes", "eda/diagnosticos", "eda/clases", "eda/senales", "eda/duplicados", "visor"];
-const MODELOS = ["experimentos/modelos", "experimentos/resultados", "experimentos/eleccion", "modelo"];
+const DATASETS = ["eda/resumen", "eda/pacientes", "eda/diagnosticos", "eda/clases", "eda/senales", "eda/duplicados"];
+const MODELOS = ["experimentos/modelos", "experimentos/caracteristicas", "experimentos/resultados"];
 const MENU = [
   { accion: "registrar" },
   { ruta: "historial" },
-  { grupo: "acerca", hijos: [
-    { grupo: "datasets", hijos: DATASETS.map(ruta => ({ ruta })) },
-    { grupo: "modelos", hijos: MODELOS.map(ruta => ({ ruta })) },
-  ] },
+  { grupo: "datasets", hijos: DATASETS.map(ruta => ({ ruta })) },
+  { grupo: "modelos", hijos: MODELOS.map(ruta => ({ ruta })) },
 ];
-const MIGAS = { historial: [], ...Object.fromEntries(DATASETS.map(ruta => [ruta, ["acerca", "datasets"]])),
-                ...Object.fromEntries(MODELOS.map(ruta => [ruta, ["acerca", "modelos"]])) };
-const DIBUJOS = { barras: g.barras, apiladas: g.apiladas, calor: g.calor, histogramas: g.histogramas, cajas: g.cajas, agrupadas: g.agrupadas, lineas: g.lineas };
-const TEMAS = ["", "light", "dark"];
+const MIGAS = { historial: [], ...Object.fromEntries(DATASETS.map(ruta => [ruta, ["datasets"]])),
+                ...Object.fromEntries(MODELOS.map(ruta => [ruta, ["modelos"]])) };
+const DIBUJOS = { barras: g.barras, apiladas: g.apiladas, calor: g.calor, histogramas: g.histogramas, cajas: g.cajas, agrupadas: g.agrupadas, lineas: g.lineas,
+                  matriz: matrizConfusion };
 
-const estado = { originales: [], nuevo: "", seleccion: [], idioma: "es", pagina: 0, peticion: 0, dibujo: null, pendiente: null, ultimoId: null, fs: 500, modelo: null, areas: false };
+const estado = { originales: [], nuevo: "", seleccion: [], idioma: "es", pagina: 0, peticion: 0, dibujo: null, dibujoVisor: null,
+                 pendiente: null, ultimoId: null, fs: 500, modelo: null, presupuesto: null, areas: false, completas: new Set() };
 const contenido = document.getElementById("contenido");
 const todos = () => [...estado.originales, estado.nuevo];
 const tr = () => TEXTOS[estado.idioma];
@@ -139,18 +138,22 @@ function abrirMenuMovil(abrir) {
   document.getElementById("boton-menu").setAttribute("aria-expanded", String(abrir));
 }
 
-const temaActual = () => document.documentElement.dataset.theme ?? "";
+// Sin elección guardada, el tema sigue al del sistema; el botón cambia entre claro (sol) y oscuro (luna)
+const sistemaOscuro = matchMedia("(prefers-color-scheme: dark)");
+const temaActual = () => document.documentElement.dataset.theme ?? (sistemaOscuro.matches ? "dark" : "light");
 
 function rotularTema() {
-  document.getElementById("tema").textContent = tr().tema[temaActual()];
+  const boton = document.getElementById("tema");
+  boton.setAttribute("aria-checked", String(temaActual() === "dark"));
+  boton.setAttribute("aria-label", tr().tema);
+  boton.title = tr().tema;
 }
 
 function iniciarTema() {
   document.getElementById("tema").addEventListener("click", () => {
-    const siguiente = TEMAS[(TEMAS.indexOf(temaActual()) + 1) % TEMAS.length];
-    if (siguiente) document.documentElement.dataset.theme = siguiente;
-    else delete document.documentElement.dataset.theme;
-    try { siguiente ? localStorage.setItem("tema", siguiente) : localStorage.removeItem("tema"); } catch { /* idem */ }
+    const siguiente = temaActual() === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = siguiente;
+    try { localStorage.setItem("tema", siguiente); } catch { /* idem */ }
     rotularTema();
     redibujar();
   });
@@ -170,6 +173,8 @@ function mostrar() {
   const analisis = camino.match(/^historial\/(\d+)$/);   // #/historial/12: un análisis guardado
   const ruta = analisis ? camino : camino in MIGAS ? camino : "inicio";
   estado.dibujo = null;
+  estado.dibujoVisor = null;
+  estado.completas.clear();
   estado.pagina++;     // invalida lo que pidió la página anterior
   estado.peticion++;
   g.ocultarTooltip();
@@ -179,8 +184,7 @@ function mostrar() {
   escribirURL(ruta, false);
   if (analisis) return paginaAnalisis(Number(analisis[1]));
   if (ruta === "historial") return paginaHistorial();
-  if (ruta === "visor") return paginaVisor();
-  if (ruta === "modelo") return paginaModelo();
+  if (ruta === "experimentos/modelos") return paginaModelosProbados();
   if (ruta.startsWith("experimentos/")) return paginaExperimentos(ruta);
   return paginaInicio();
 }
@@ -189,7 +193,7 @@ function mostrar() {
 function encabezado(ruta) {
   const [titulo, descripcion] = tr().paginas[ruta];
   const migas = [...MIGAS[ruta].map(grupo => tr().grupos[grupo]), titulo].join("  ›  ");
-  return [MIGAS[ruta].length ? h("p", { class: "migas" }, migas) : null, h("h1", {}, titulo), h("p", { class: "bajada" }, descripcion)]
+  return [MIGAS[ruta].length ? h("p", { class: "migas" }, migas) : null, h("h1", {}, titulo), descripcion ? h("p", { class: "bajada" }, descripcion) : null]
     .filter(Boolean);
 }
 
@@ -217,13 +221,6 @@ function dibujarBloques(destino, bloques) {
   for (const b of bloques) {
     if (b.tipo === "titulo") { destino.append(h("h2", { class: "subtitulo" }, b.titulo)); continue; }
     if (b.tipo === "aviso") { destino.append(h("p", { class: "aviso" }, b.nota)); continue; }
-    if (b.tipo === "lista") {   // fortalezas y debilidades de un modelo
-      destino.append(h("section", { class: "tarjeta completo" },
-        h("div", { class: "tarjeta-cabeza" }, h("div", {}, h("h3", {}, b.titulo), b.nota ? h("p", { class: "nota" }, b.nota) : null)),
-        h("div", { class: "listas" }, Object.entries(b.datos).map(([clave, items]) =>
-          h("div", { class: `lista lista-${clave}` }, h("h4", {}, tr().listas[clave]), h("ul", {}, items.map(i => h("li", {}, i))))))));
-      continue;
-    }
     if (b.tipo === "kpis") {
       const kpis = h("div", { class: "kpis" });
       destino.append(kpis);
@@ -233,11 +230,27 @@ function dibujarBloques(destino, bloques) {
     const cuerpo = h("div", { class: "cuerpo" });
     const esGrafica = b.tipo in DIBUJOS;
     let comoTabla = !esGrafica;
+    // opciones.visibles: solo las primeras filas, con un botón para ver la tabla completa
+    const n = b.opciones.visibles;
+    const recortable = Boolean(n) && b.datos.index.length > n;
+    const filas = () => (recortable && !estado.completas.has(b.titulo)
+      ? { ...b.datos, index: b.datos.index.slice(0, n), data: b.datos.data.slice(0, n) } : b.datos);
     const pintar = () => {
       cuerpo.replaceChildren();
-      if (comoTabla) cuerpo.append(tabla(b.datos));
-      else DIBUJOS[b.tipo](cuerpo, b.datos, b.opciones);
+      if (comoTabla) cuerpo.append(tabla(filas()));
+      else DIBUJOS[b.tipo](cuerpo, filas(), b.opciones);
     };
+    let completa = null;
+    if (recortable) {
+      const rotular = () => { completa.textContent = estado.completas.has(b.titulo) ? tr().verMenos(n) : tr().verTodas(b.datos.index.length); };
+      completa = h("button", { type: "button", class: "vista" });
+      completa.addEventListener("click", () => {
+        if (!estado.completas.delete(b.titulo)) estado.completas.add(b.titulo);
+        rotular();
+        pintar();
+      });
+      rotular();
+    }
     let boton = null;
     if (esGrafica) {
       boton = h("button", { type: "button", class: "vista" }, tr().verTabla);
@@ -250,7 +263,7 @@ function dibujarBloques(destino, bloques) {
     destino.append(h("section", { class: `tarjeta${b.opciones.ancho === "medio" ? "" : " completo"}` },
       h("div", { class: "tarjeta-cabeza" },
         h("div", {}, h("h3", {}, b.titulo), b.nota ? h("p", { class: "nota" }, b.nota) : null),
-        boton),
+        h("div", { class: "botones-tarjeta" }, boton, completa)),
       cuerpo));
     pintar();
   }
@@ -259,6 +272,7 @@ function dibujarBloques(destino, bloques) {
 // Vuelve a dibujar la página actual (cambio de tamaño o de tema) sin pedir datos otra vez
 function redibujar() {
   estado.dibujo?.();
+  estado.dibujoVisor?.();
 }
 
 function dibujarECG(papel, ecg, areas = []) {
@@ -320,8 +334,19 @@ async function pedirFrecuencia(archivos) {
   const fsCabecera = await fsDeCabecera(archivos);
   const lista = await api("/api/modelos", new URLSearchParams());
   modeloValido(lista);
-  const modelo = h("select", {}, lista.modelos.map(m => h("option", { value: m.id }, m.resumen)));
+  const modelo = h("select", {}, lista.modelos.map(m => h("option", { value: m.id }, m.nombre)));
   modelo.value = estado.modelo;
+  // Umbral del riesgo: 99% o 95% de sensibilidad en validación; la nota dice qué implica cada uno
+  if (!lista.puntos.some(p => p.id === estado.punto)) estado.punto = lista.punto_predeterminado;
+  const punto = h("select", {}, lista.puntos.map(p => h("option", { value: p.id }, p.nombre)));
+  punto.value = estado.punto;
+  const notaPunto = h("p", { class: "nota" });
+  const explicarPunto = () => {
+    const p = lista.puntos.find(x => x.id === punto.value);
+    notaPunto.textContent = t.puntoNota(g.formatear(100 * p.sensibilidad, "pct"), g.formatear(100 * p.especificidad, "pct"));
+  };
+  punto.addEventListener("change", explicarPunto);
+  explicarPunto();
   const fs = h("input", { type: "number", min: "50", max: "10000", step: "any", required: "",
                           value: String(fsCabecera ?? estado.fs) });
   fs.readOnly = fsCabecera !== null;
@@ -332,7 +357,8 @@ async function pedirFrecuencia(archivos) {
     h("label", { class: "campo" }, t.pideFs, fs),
     fsCabecera !== null ? h("p", { class: "nota" }, t.deCabecera) : null,
     lista.modelos.length ? h("label", { class: "campo" }, t.modelo, modelo) : null,
-    h("p", { class: "nota" }, t.privacidad),
+    lista.modelos.length ? h("label", { class: "campo" }, t.punto, punto) : null,
+    lista.modelos.length ? notaPunto : null,
     h("div", { class: "dialogo-botones" }, cancelar, h("button", { type: "submit", class: "boton" }, t.confirmar)));
   const dialogo = document.getElementById("dialogo-registro");
   dialogo.replaceChildren(formulario);
@@ -343,9 +369,12 @@ async function pedirFrecuencia(archivos) {
     estado.fs = Number(fs.value);
     estado.modelo = modelo.value || estado.modelo;
     guardar("modelo", estado.modelo);
+    estado.punto = punto.value;
+    guardar("punto", estado.punto);
     estado.pendiente = {
       fs: estado.fs,
       modelo: estado.modelo,
+      punto: estado.punto,
       archivos: await Promise.all(archivos.map(async a => ({ nombre: a.name, contenido: await base64(a) }))),
     };
     if (location.hash.startsWith("#/inicio")) mostrar();
@@ -401,9 +430,13 @@ function detalleEtiquetas(etiquetas) {
       h("div", { class: "medidor-relleno", style: `width:${100 * e.probabilidad}%` }),
       h("div", { class: "medidor-umbral", style: `left:${100 * e.umbral}%` })));
   const orden = nivel => etiquetas.filter(e => e.nivel === nivel).sort((a, b) => b.probabilidad - a.probabilidad);
-  return h("div", { class: "detalle-etiquetas" },
-    h("h4", {}, t.categorias), h("ul", {}, orden("categoría").map(fila)),
-    h("h4", {}, t.diagnosticos), h("ul", {}, orden("diagnóstico").slice(0, 5).map(fila)),
+  // Modelo actual: las 5 cardiopatías más probables y las que pasan su umbral. Análisis guardados con el modelo
+  // anterior (experimento 063): sus categorías y diagnósticos, como se guardaron
+  const listas = etiquetas.some(e => e.nivel === "cardiopatía")
+    ? [h("h4", {}, t.cardiopatias), h("ul", {}, orden("cardiopatía").filter((e, i) => i < 5 || e.presente).map(fila))]
+    : [h("h4", {}, t.categorias), h("ul", {}, orden("categoría").map(fila)),
+       h("h4", {}, t.diagnosticos), h("ul", {}, orden("diagnóstico").slice(0, 5).map(fila))];
+  return h("div", { class: "detalle-etiquetas" }, listas,
     h("p", { class: "nota nota-etiquetas" }, t.explicaEtiquetas(iconoAlerta(t.alerta))));
 }
 
@@ -461,7 +494,8 @@ function lineaFicha(f, m) {
   const dato = (etiqueta, valor) => h("span", {}, h("small", {}, etiqueta), " ", valor);
   return h("p", { class: "linea-ficha" },
     dato(t.ficha.fs, `${g.formatear(f.fs)} Hz`), dato(t.ficha.duracion, `${g.formatear(f.duracion)} s`), dato(t.ficha.formato, f.formato),
-    m.conectado && m.nombre ? dato(t.modelo, m.nombre) : null);
+    m.conectado && m.nombre ? dato(t.modelo, m.nombre) : null,
+    m.conectado && m.punto ? dato(t.ficha.umbral, t.puntoNombre(m.punto)) : null);
 }
 
 // Una tabla del resultado en su tarjeta; completo: ocupa las dos columnas
@@ -609,7 +643,7 @@ function confirmarEliminar(id) {
   cancelar.focus();
 }
 
-// Acerca de > Datasets
+// Datasets
 function filtros(alCambiar) {
   const chips = [];
   const refrescar = () => chips.forEach(c => c.setAttribute("aria-pressed", String(estado.seleccion.includes(c.dataset.nombre))));
@@ -645,7 +679,8 @@ function filtros(alCambiar) {
 
 function paginaEda(ruta) {
   const bloques = h("div", { class: "bloques" });
-  contenido.replaceChildren(...encabezado(ruta), filtros(() => cargarEda(ruta, bloques)), bloques);
+  contenido.replaceChildren(...encabezado(ruta), filtros(() => cargarEda(ruta, bloques)), bloques,
+                            ruta === "eda/senales" ? seccionVisor() : "");
   cargarEda(ruta, bloques);
 }
 
@@ -672,8 +707,11 @@ async function cargarEda(ruta, destino) {
   }
 }
 
-function paginaVisor() {
+// Visor de ECGs, al final de "Señales": un ECG al azar del dataset y la clase elegidos
+function seccionVisor() {
   const t = tr().visor;
+  const pagina = estado.pagina;
+  let pedido = 0;   // contador propio: los bloques de la página usan estado.peticion
   const elegirDataset = h("select", {}, todos().map(d => h("option", { value: d }, nombre(d))));
   elegirDataset.value = estado.seleccion[0] ?? todos()[0];
   const elegirClase = h("select", {}, Object.entries(t.clases).map(([valor, texto]) => h("option", { value: valor }, texto)));
@@ -686,13 +724,13 @@ function paginaVisor() {
   const campo = (etiqueta, valor, clase = "") => h("div", { class: clase }, h("small", {}, etiqueta), valor);
 
   const cargar = async () => {
-    const id = ++estado.peticion;
+    const id = ++pedido;
     tarjetaEcg.classList.add("cargando");
     const parametros = new URLSearchParams({ dataset: elegirDataset.value });
     if (elegirClase.value) parametros.set("clase", elegirClase.value);
     try {
       const d = await api("/api/ecg", parametros);
-      if (id !== estado.peticion) return;
+      if (id !== pedido || pagina !== estado.pagina) return;
       ficha.replaceChildren(
         campo(t.dataset, d.dataset === d.origen ? d.dataset : t.de(d.dataset, d.origen)),
         campo(t.registro, d.registro),
@@ -701,11 +739,11 @@ function paginaVisor() {
         campo(t.clase, d.clase ?? t.sinDiagnostico),
         campo(t.disponibles, g.formatear(d.ecgs_disponibles, "entero")),
         campo(t.cardiopatias, d.cardiopatias.length ? d.cardiopatias.join(", ") : t.ninguna, "ancho"),
-        campo(t.etiquetas, d.diagnosticos?.length ? d.diagnosticos.join(", ") : t.sinDato, "ancho"));
-      estado.dibujo = () => dibujarECG(papel, d);
-      estado.dibujo();
+        campo(t.etiquetas, d.etiquetas.length ? etiquetasOriginales(d.etiquetas) : t.sinDato, "ancho"));
+      estado.dibujoVisor = () => dibujarECG(papel, d);
+      estado.dibujoVisor();
     } catch (error) {
-      if (id !== estado.peticion) return;
+      if (id !== pedido || pagina !== estado.pagina) return;
       ficha.replaceChildren(h("p", { class: "aviso error" }, error.message));
       papel.replaceChildren();
     } finally {
@@ -716,50 +754,120 @@ function paginaVisor() {
   elegirClase.addEventListener("change", cargar);
   otro.addEventListener("click", cargar);
 
-  contenido.replaceChildren(
-    ...encabezado("visor"),
+  cargar();
+  return h("section", { class: "seccion-visor" },
+    h("h2", { class: "subtitulo" }, t.seccion),
     h("div", { class: "filtros controles" }, h("label", {}, t.dataset, elegirDataset), h("label", {}, t.clase, elegirClase), otro),
     h("div", { class: "bloques" }, h("section", { class: "tarjeta completo" }, ficha), tarjetaEcg));
-  cargar();
 }
 
-// Acerca de > Modelo entrenado
-async function paginaModelo() {
-  const t = tr().paginaModelo;
-  const bloques = h("div", { class: "bloques" });
-  const contrato = h("section", { class: "tarjeta completo" },
-    h("h3", {}, t.contrato),
-    h("dl", { class: "contrato" }, t.partes.map(([termino, definicion]) => [h("dt", {}, termino), h("dd", {}, definicion)])));
-  contenido.replaceChildren(...encabezado("modelo"), bloques);
+// Cada etiqueta tal como viene en el dataset (código SNOMED CT o SCP) y su nombre
+function etiquetasOriginales(etiquetas) {
+  return h("ul", { class: "etiquetas-originales" },
+    etiquetas.map(e => h("li", {}, e.codigo ? h("code", {}, e.codigo) : null, e.nombre)));
+}
+
+// Modelos > Modelos probados: en el orden de experimentos.TIPOS, con 2,000 o con todas las etiquetas; el "+" explica cada modelo
+const METRICAS = ["AUROC", "AUPRC", "esp_sens95", "esp_sens99"];
+
+async function paginaModelosProbados() {
+  const t = tr().ranking;
+  const cuerpo = h("div", {}, h("p", { class: "aviso" }, tr().calculando));
+  contenido.replaceChildren(...encabezado("experimentos/modelos"), cuerpo);
   const pagina = estado.pagina;
-  const lista = await api("/api/modelos", new URLSearchParams());
-  if (pagina !== estado.pagina) return;
-  if (!lista.modelos.length) {
-    bloques.replaceChildren(h("p", { class: "aviso" }, t.sinModelo), contrato);
+  let d;
+  try {
+    d = await api("/api/modelos-probados", new URLSearchParams());
+  } catch (error) {
+    if (pagina === estado.pagina) cuerpo.replaceChildren(h("p", { class: "aviso error" }, error.message));
     return;
   }
-  modeloValido(lista);
-  const botones = h("div", { class: "selector-modelo", role: "group", "aria-label": t.elegir });
-  const eleccion = h("section", { class: "tarjeta completo" }, h("h3", {}, t.elegir), botones, h("p", { class: "nota" }, t.elegirNota));
-  const cargar = async () => {
-    botones.replaceChildren(...lista.modelos.map(m => h("button", {
-      type: "button", class: m.id === estado.modelo ? "boton" : "boton-secundario", "aria-pressed": String(m.id === estado.modelo),
-      onclick: () => { estado.modelo = m.id; guardar("modelo", m.id); cargar(); },
-    }, m.resumen)));
-    const pedido = ++estado.peticion;
-    const d = await api("/api/modelo", new URLSearchParams({ cual: estado.modelo }));
-    if (pagina !== estado.pagina || pedido !== estado.peticion) return;
-    estado.dibujo = () => {
-      dibujarBloques(bloques, [...lista.comparacion, ...d.bloques]);
-      bloques.prepend(eleccion);
-      bloques.append(contrato);
-    };
-    estado.dibujo();
+  if (pagina !== estado.pagina) return;
+  if (!d.presupuestos.some(p => p.id === estado.presupuesto)) estado.presupuesto = d.presupuestos[0].id;
+  const abiertos = new Set();
+  const dibujar = () => {
+    const p = estado.presupuesto;
+    const selector = h("div", { class: "selector-presupuesto", role: "group", "aria-label": t.etiquetas },
+      d.presupuestos.map(x => h("button", {
+        type: "button", "aria-pressed": String(x.id === p),
+        onclick: () => { estado.presupuesto = x.id; guardar("presupuesto", x.id); dibujar(); },
+      }, x.nombre)));
+    const filas = d.modelos.filter(m => m.valores[p]);   // en el orden de experimentos.TIPOS
+    const milesimas = v => Math.round(1000 * v);   // empates a tres decimales cuentan como mejores
+    const mejor = Object.fromEntries(METRICAS.map(c => [c, Math.max(...filas.map(m => milesimas(m.valores[p][c])))]));
+    const cabeza = h("div", { class: "ranking-fila ranking-cabeza" },
+      h("span", {}, "#"), h("span", {}, t.modelo), METRICAS.map(c => h("span", { class: "ranking-valor" }, t.metricas[c])), h("span", {}));
+    const sinDato = d.modelos.filter(m => !m.valores[p]).map(m => m.nombre);
+    cuerpo.replaceChildren(selector, h("section", { class: "tarjeta ranking" }, cabeza,
+      filas.map((m, i) => filaModelo(m, i + 1, p, METRICAS.filter(c => milesimas(m.valores[p][c]) === mejor[c]), abiertos))),
+      h("p", { class: "nota ranking-nota" }, d.nota, sinDato.length ? ` ${t.sinDato(sinDato.join(", "))}` : ""));
   };
-  cargar();
+  dibujar();
 }
 
-// Acerca de > Modelos: modelos probados, resultados y por qué se eligieron los de la UI
+function filaModelo(m, puesto, p, mejores, abiertos) {
+  const t = tr().ranking;
+  const v = m.valores[p];
+  const detalle = h("div", { class: "detalle-modelo" });
+  detalle.hidden = !abiertos.has(m.id);
+  if (!detalle.hidden) detalle.append(...detalleModelo(m.detalle));
+  const boton = h("button", { type: "button", class: "boton-mas", "aria-expanded": String(!detalle.hidden),
+                              "aria-label": `${t.detalles}: ${m.nombre}`, title: t.detalles }, detalle.hidden ? "+" : "−");
+  boton.addEventListener("click", () => {
+    if (!detalle.childElementCount) detalle.append(...detalleModelo(m.detalle));
+    detalle.hidden = !detalle.hidden;
+    if (detalle.hidden) abiertos.delete(m.id); else abiertos.add(m.id);
+    boton.textContent = detalle.hidden ? "+" : "−";
+    boton.setAttribute("aria-expanded", String(!detalle.hidden));
+  });
+  const insignias = [
+    mejores.length ? h("span", { class: "insignia insignia-mejor", title: t.mejorEn(mejores.map(c => t.metricas[c]).join(", ")) }, t.mejor) : null,
+    m.en_interfaz ? h("span", { class: "insignia insignia-interfaz" }, t.enInterfaz) : null,
+  ];
+  return h("div", { class: "ranking-modelo" },
+    h("div", { class: "ranking-fila" },
+      h("span", { class: "ranking-puesto" }, puesto),
+      h("div", { class: "ranking-nombre" }, h("span", {}, m.nombre), insignias, h("span", { class: "ranking-familia" }, m.familia)),
+      h("div", { class: "ranking-metricas" }, METRICAS.map(c => h("span", {
+        class: `ranking-valor${mejores.includes(c) ? " mejor" : ""}`, "data-etiqueta": t.metricas[c] }, h("span", {}, g.formatear(v[c], 3))))),
+      boton),
+    detalle);
+}
+
+function detalleModelo(x) {
+  const t = tr().ranking;
+  const seccion = (titulo, ...hijos) => h("section", {}, h("h4", {}, titulo), ...hijos);
+  return [
+    h("div", { class: "lista detalle-ancho" }, h("h4", {}, t.porQue), h("ul", {}, x.por_que.map(i => h("li", {}, i)))),
+    h("div", {}, seccion(t.comoFunciona, h("ol", {}, x.pasos.map(paso => h("li", {}, paso))))),
+    h("div", {},
+      seccion(x.ejemplo.titulo, h("p", { class: "nota" }, x.ejemplo.nota), h("div", { class: "cuerpo" }, tabla(x.ejemplo.datos))),
+      x.salida_interfaz ? seccion(t.salidaInterfaz(x.salida_interfaz.ecg), h("pre", { class: "salida-json" }, jsonCompacto(x.salida_interfaz.salida))) : null),
+    h("p", { class: "nota detalle-ancho" }, x.fuente),
+  ];
+}
+
+// JSON con sangría, pero cada objeto sin otros objetos dentro en una sola línea
+function jsonCompacto(valor) {
+  return JSON.stringify(valor, null, 2).replace(/\{\n\s+([^{}]*?)\n\s*\}/g, (_, dentro) => `{ ${dentro.replace(/\n\s+/g, " ")} }`);
+}
+
+// Matriz de confusión: filas = realidad (con cardiopatía, normal); columnas = el modelo (con riesgo, sin riesgo)
+function matrizConfusion(cont, d) {
+  const t = tr().matriz;
+  const [[vp, fn], [fp, vn]] = d.data;
+  const celda = (n, [nombre, explica], clase) => h("div", { class: `matriz-celda ${clase}` },
+    h("span", { class: "matriz-numero" }, g.formatear(n, "entero")), h("span", { class: "matriz-nombre" }, nombre), h("span", { class: "matriz-explica" }, explica));
+  const proporcion = (a, b) => t.proporcion(g.formatear(a, "entero"), g.formatear(a + b, "entero"), g.formatear(a / (a + b), 3));
+  cont.append(
+    h("div", { class: "matriz" },
+      h("span", {}), d.columns.map(c => h("span", { class: "matriz-eje" }, c)),
+      h("span", { class: "matriz-fila" }, d.index[0]), celda(vp, t.vp, "acierto"), celda(fn, t.fn, "error"),
+      h("span", { class: "matriz-fila" }, d.index[1]), celda(fp, t.fp, "error"), celda(vn, t.vn, "acierto")),
+    h("p", { class: "matriz-resumen" }, `${t.sensibilidad}: ${proporcion(vp, fn)} · ${t.especificidad}: ${proporcion(vn, fp)}`));
+}
+
+// Modelos > Resultados
 async function paginaExperimentos(ruta) {
   const bloques = h("div", { class: "bloques" }, h("p", { class: "aviso" }, tr().calculando));
   contenido.replaceChildren(...encabezado(ruta), bloques);
@@ -780,6 +888,8 @@ async function iniciar() {
   estado.originales = d.originales;
   estado.nuevo = d.nuevo;
   estado.modelo = leer("modelo");
+  estado.punto = leer("punto");
+  estado.presupuesto = leer("presupuesto");
   const guardada = leer("seleccion");
   estado.seleccion = Array.isArray(guardada) ? todos().filter(x => guardada.includes(x)) : [];
   if (!estado.seleccion.length) estado.seleccion = [...estado.originales];
@@ -801,7 +911,7 @@ async function iniciar() {
   document.getElementById("cortina").addEventListener("click", () => abrirMenuMovil(false));
   let espera;
   addEventListener("resize", () => { clearTimeout(espera); espera = setTimeout(redibujar, 200); });
-  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redibujar);
+  sistemaOscuro.addEventListener("change", () => { rotularTema(); redibujar(); });
   addEventListener("hashchange", mostrar);
   mostrar();
 }

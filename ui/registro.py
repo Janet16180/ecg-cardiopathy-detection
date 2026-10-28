@@ -102,14 +102,14 @@ def leer(archivos: dict[str, bytes], fs_indicada: float) -> tuple[np.ndarray, fl
     return senal, fs, {**ficha, "fs": fs, "duracion": round(len(senal) / fs, 2)}, avisos
 
 
-def analizar(senal: np.ndarray, fs: float, ficha: dict, avisos: list, cual: str) -> dict:
+def analizar(senal: np.ndarray, fs: float, ficha: dict, avisos: list, cual: str, punto: str) -> dict:
     """Medidas de la señal, comparación con el dataset balanceado, ECG para dibujar, resultado del modelo elegido y
     sus áreas de interés (None si el modelo no corrió)."""
     fs_entera = int(round(fs))
     duracion = len(senal) / fs
     primeros = senal[: int(10 * fs)]
     m = medidas(primeros, fs_entera)
-    filtrada = pasa_altas(np.nan_to_num(primeros), fs)   # como las señales del dataset balanceado v2
+    filtrada = pasa_altas(np.nan_to_num(primeros), fs)   # como las señales del dataset balanceado
     m_filtrada = medidas(filtrada, fs_entera)
     picos = picos_r(np.nan_to_num(primeros[:, 1]), fs)
 
@@ -153,9 +153,9 @@ def analizar(senal: np.ndarray, fs: float, ficha: dict, avisos: list, cual: str)
     interes = None
     if duracion >= 10:
         entrada = resample_poly(filtrada, modelo.FS, fs_entera, axis=0)[: modelo.MUESTRAS].astype(np.float32)
-        resultado = modelo.predecir(entrada, cual)
+        resultado = modelo.predecir(entrada, cual, punto)
         if modelo.MODELOS:
-            interes = areas.calcular(entrada, modelo.MODELOS[cual])
+            interes = areas.calcular(entrada, modelo.MODELOS[cual], resultado["umbral"])
     else:
         resultado = {"conectado": bool(modelo.MODELOS),
                      "motivo": tx("El modelo necesita 10 s de señal y este ECG dura {s} s.", s=round(duracion, 1))}

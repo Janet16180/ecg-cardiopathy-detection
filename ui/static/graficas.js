@@ -253,7 +253,8 @@ export function calor(cont, df, op = {}) {
   const finitos = df.data.flat().filter(Number.isFinite);
   const max = op.maximo || Math.max(...finitos, 1);
   const min = op.minimo ?? 0;
-  const paradas = ["c0", "c1", "c2", "c3", "c4", "c5"].map(n => rgb(color(n)));
+  // op.intenso: el azul más fuerte es el valor más alto también en modo oscuro (métricas donde más es mejor)
+  const paradas = (op.intenso ? ["i0", "i1", "i2", "i3", "i4", "i5"] : ["c0", "c1", "c2", "c3", "c4", "c5"]).map(n => rgb(color(n)));
   const W0 = Math.max(cont.clientWidth, 280);
   const izq = Math.min(Math.max(...filas.map(f => medir(f))) + 14, 300);
   const minimo = Math.max(46, ...finitos.map(v => medir(fmt(v), 11) + 14));

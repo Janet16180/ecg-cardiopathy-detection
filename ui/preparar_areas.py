@@ -3,8 +3,8 @@
 Uso, desde la raíz del repo:
     .venv-mps/bin/python ui/preparar_areas.py
 
-Solo usa los ECGs normales del entrenamiento del dataset balanceado v2 (ni validación ni prueba):
-- mediana y escala robusta (1.4826 × MAD) de cada medida primaria del Avance 2, de la tabla del experimento 058;
+Solo usa los ECGs normales del entrenamiento del dataset balanceado v3 (ni validación ni prueba):
+- mediana y escala robusta (1.4826 × MAD) de cada medida primaria del Avance 2, de la tabla del experimento 067;
 - umbrales de los latidos atípicos: correlación con el latido mediano, RR prematuro y pausa, elegidos para que
   cada regla no marque ningún latido en el 98% de esos ECGs.
 """
@@ -17,6 +17,7 @@ from scipy.signal import sosfiltfilt
 
 import areas
 from ecg_experiment import balanceado_v2 as v2
+from ecg_experiment import balanceado_v3 as v3
 from ecg_experiment import caracteristicas_avance2 as ca2
 
 SIN_MARCAS = 0.98   # fracción de ECGs normales del entrenamiento en los que cada regla no marca ningún latido
@@ -31,11 +32,11 @@ def latidos_de(senal: np.ndarray) -> tuple[float, float, float]:
     return tabla["correlacion"].min(), tabla["rr"].min(), tabla["rr"].max()
 
 
-ecgs, senales = v2.load(areas.RAIZ)
-particion = pd.read_csv(areas.RAIZ / v2.DATASET / "particion.csv", index_col="fila")
+ecgs, senales = v3.load(areas.RAIZ)
+particion = pd.read_csv(areas.RAIZ / v3.DATASET / "particion.csv", index_col="fila")
 normales = particion.index[(particion["split"] == "train") & (ecgs["y"] == 0)]
 
-primarias = pd.read_csv(areas.RAIZ / "outputs/experiment058_svm_v2/caracteristicas_primarias.csv", index_col="fila").loc[normales]
+primarias = pd.read_csv(areas.RAIZ / "outputs/experiment067_multietiqueta_v3/caracteristicas_primarias.csv", index_col="fila").loc[normales]
 primarias = primarias[primarias["status"] == "ok"].drop(columns=["status", "implausible", "flat_leads"])
 mediana = primarias.median()
 escala = 1.4826 * (primarias - mediana).abs().median()

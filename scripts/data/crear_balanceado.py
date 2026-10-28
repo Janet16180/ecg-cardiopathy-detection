@@ -1,13 +1,13 @@
-"""Recrea data/processed/balanceado_jovenes_v2/senales.npy, idéntico al original, a partir de los datos de PhysioNet.
+"""Recrea data/processed/balanceado_jovenes_v3/senales.npy, idéntico al original, a partir de los datos de PhysioNet.
 
-El notebook 29 eligió los 20,000 ECGs y guardó la lista en ecgs.csv, que va en Git. Este script lee esos mismos
+Los notebooks 29 y 43 eligieron los 20,000 ECGs y guardaron la lista en ecgs.csv, que va en Git. Este script lee esos mismos
 registros de data/raw con la misma lectura del notebook 29 (primeros 10 s de las 12 derivaciones a 500 Hz, en mV,
 con el filtro pasa-altas de 0.5 Hz) y comprueba con huellas.csv, ECG por ECG, que cada archivo de PhysioNet y cada
 señal guardada son idénticos a los originales.
 
 Uso, desde la raíz del repo:
     python scripts/data/crear_balanceado.py               # con los datasets ya descargados en data/raw
-    python scripts/data/crear_balanceado.py --descargar   # baja de PhysioNet solo los registros que falten (40,185 archivos, 3.2 GB)
+    python scripts/data/crear_balanceado.py --descargar   # baja de PhysioNet solo los registros que falten (40,177 archivos, 3.2 GB)
 
 Necesita las versiones de numpy, scipy y wfdb fijadas en pyproject.toml; con otras, la señal puede no salir idéntica.
 """
@@ -28,7 +28,7 @@ from scipy.signal import butter, resample_poly, sosfiltfilt
 
 RAIZ = Path(__file__).resolve().parents[2]
 RAW = RAIZ / "data/raw"
-DATASET = RAIZ / "data/processed/balanceado_jovenes_v2"
+DATASET = RAIZ / "data/processed/balanceado_jovenes_v3"
 NOTEBOOKS = RAIZ / "notebooks"   # las rutas de ecgs.csv son relativas a esta carpeta (notebook 29)
 
 FS = 500
@@ -136,7 +136,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--descargar", action="store_true", help="baja de PhysioNet solo los registros que falten en data/raw")
     parser.add_argument("--referencia", action="store_true",
-                        help="escribe huellas.csv a partir del senales.npy actual (solo después de rehacer el dataset con el notebook 29)")
+                        help="escribe huellas.csv a partir del senales.npy actual (solo después de rehacer el dataset con los notebooks 29 y 43)")
     args = parser.parse_args()
 
     ecgs = pd.read_csv(DATASET / "ecgs.csv", index_col="fila", dtype={"registro": str})

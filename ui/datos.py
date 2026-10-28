@@ -1,7 +1,7 @@
 """Datos y cálculos de la UI.
 
 Junta la tabla del notebook 28 (un ECG por fila, sin los "por definir") con el dataset balanceado del
-notebook 29, que entra como un dataset más ("Balanceado"). Cada sección del EDA es una función que
+notebook 43 (v3), que entra como un dataset más ("Balanceado"). Cada sección del EDA es una función que
 recibe los datasets seleccionados y devuelve una lista de bloques (tablas y gráficas) para el navegador.
 """
 import json
@@ -13,13 +13,13 @@ import numpy as np
 import pandas as pd
 import wfdb
 from scipy.signal import resample_poly
-from scipy.stats import chi2_contingency
+
+from ecg_experiment import balanceado_v3 as v3
 
 RAIZ = Path(__file__).resolve().parent.parent
 NOTEBOOKS = RAIZ / "notebooks"   # las rutas de la tabla del notebook 28 son relativas a esta carpeta
 TABLA_28 = RAIZ / "outputs/28-ecgs_info.pkl"
-CLASIFICACION = NOTEBOOKS / "28-clasificacion-etiquetas.csv"
-BALANCEADO = RAIZ / "data/processed/balanceado_jovenes_v2"
+BALANCEADO = RAIZ / "data/processed/balanceado_jovenes_v3"
 CACHE = RAIZ / "outputs/ui"   # lo escribe ui/preparar_senales.py
 
 NUEVO = "Balanceado"
@@ -35,8 +35,9 @@ def cargar_tabla() -> pd.DataFrame:
     originales["registro"] = originales["registro"].astype(str)
     originales["origen"] = originales["dataset"]
 
-    balanceado = pd.read_csv(BALANCEADO / "ecgs.csv", usecols=["fila", "registro", "dataset"], dtype={"registro": str})
-    nuevo = balanceado.merge(originales.drop(columns="origen"), on=["dataset", "registro"], how="left")
+    balanceado = v3.load_table(RAIZ).reset_index()[["fila", "registro", "dataset", "grupo"]]
+    nuevo = balanceado.merge(originales.drop(columns=["origen", "paciente"]), on=["dataset", "registro"], how="left")
+    nuevo = nuevo.rename(columns={"grupo": "paciente"})   # ID del dataset o, si no trae, el propio registro (notebook 31)
     nuevo["origen"] = nuevo["dataset"]
     nuevo["dataset"] = NUEVO
 
@@ -51,15 +52,15 @@ TABLA = cargar_tabla()
 ORIGINALES = [d for d in TABLA["dataset"].unique() if d != NUEVO]
 DATASETS = ORIGINALES + [NUEVO]
 
-clasificacion = pd.read_csv(CLASIFICACION).drop_duplicates("diagnostico")
-CATEGORIA_DE = clasificacion.set_index("diagnostico")["categoria"].to_dict()
-GENERAL_DE = clasificacion.set_index("diagnostico")["diagnostico_general"].to_dict()
-
 MEDIDAS = pd.read_pickle(CACHE / "medidas.pkl").merge(
     TABLA[["dataset", "origen", "registro", "clase", "edad", "sexo"]], on=["dataset", "origen", "registro"])
 FORMATO = pd.read_csv(CACHE / "formato.csv", index_col="dataset")
 # Fila i = fila i de ecgs.csv. No va en Git (2.2 GB): lo crea scripts/data/crear_balanceado.py; sin él, la UI arranca igual
 SENALES = np.load(BALANCEADO / "senales.npy", mmap_mode="r") if (BALANCEADO / "senales.npy").exists() else None
+# Entrenamiento, validación o prueba de cada ECG del balanceado (notebook 43)
+PARTICION = pd.read_csv(BALANCEADO / "particion.csv", index_col="fila")["split"]
+# Código original de cada etiqueta (SNOMED CT o SCP), en el orden de "diagnosticos"; lo escribe ui/preparar_etiquetas.py
+CODIGOS = pd.read_csv(CACHE / "codigos_etiquetas.csv", dtype=str).set_index(["dataset", "registro"])["codigos"].str.split(",").to_dict()
 
 
 def tx(plantilla: str, **valores) -> dict:
@@ -82,43 +83,13 @@ def filtrar(seleccion: tuple[str, ...]) -> pd.DataFrame:
     return TABLA[TABLA["dataset"].isin(seleccion)]
 
 
-def aviso_doble_conteo(seleccion: tuple[str, ...]) -> list[dict]:
-    if NUEVO in seleccion and len(seleccion) > 1:
-        return [bloque("aviso", nota="El dataset balanceado reutiliza ECGs de los originales: al seleccionarlo junto con ellos, esos ECGs cuentan dos veces en los totales.")]
-    return []
-
-
 def cardiopatias_largo(t: pd.DataFrame) -> pd.DataFrame:
-    """Una fila por cardiopatía de cada ECG, con su categoría y su diagnóstico general."""
-    cardio = t[["dataset", "cardiopatias"]].explode("cardiopatias").dropna().rename_axis("ecg").reset_index()
-    cardio["categoria"] = cardio["cardiopatias"].map(CATEGORIA_DE)
-    cardio["general"] = cardio["cardiopatias"].map(GENERAL_DE)
-    return cardio
+    """Una fila por cardiopatía de cada ECG."""
+    return t[["dataset", "cardiopatias"]].explode("cardiopatias").dropna().rename_axis("ecg").reset_index()
 
 
 def histograma(valores: pd.Series, bordes: np.ndarray) -> np.ndarray:
     return np.histogram(valores.dropna(), bordes)[0]
-
-
-def cajas(t: pd.DataFrame, columna: str, por: str, orden: list[str]) -> pd.DataFrame:
-    """Cuartiles y bigotes (1.5 veces el rango intercuartílico, como matplotlib) de una medida por grupo."""
-    filas = {}
-    for nombre, grupo in t.groupby(por):
-        valores = grupo[columna].dropna()
-        q1, mediana, q3 = valores.quantile([0.25, 0.5, 0.75])
-        dentro = valores[valores.between(q1 - 1.5 * (q3 - q1), q3 + 1.5 * (q3 - q1))]
-        filas[nombre] = {"bigote inferior": dentro.min(), "Q1": q1, "mediana": mediana, "Q3": q3,
-                         "bigote superior": dentro.max(), "ECGs": len(valores)}
-    return pd.DataFrame.from_dict(filas, orient="index").reindex([o for o in orden if o in filas])
-
-
-def v_de_cramer(x: pd.Series, y: pd.Series) -> float:
-    """V de Cramér entre dos variables categóricas, de 0 (nada) a 1 (una determina a la otra)."""
-    tabla = pd.crosstab(x, y)
-    if min(tabla.shape) < 2:
-        return np.nan
-    chi2 = chi2_contingency(tabla)[0]
-    return float(np.sqrt(chi2 / (tabla.to_numpy().sum() * (min(tabla.shape) - 1))))
 
 
 def describir(agrupado) -> pd.DataFrame:
@@ -131,6 +102,22 @@ def describir(agrupado) -> pd.DataFrame:
 def rango_fc(fc: pd.Series) -> pd.Series:
     rango = pd.cut(fc, [0, 60, 100, 1000], right=False, labels=["menos de 60", "60 a 99", "100 o más"])
     return rango.cat.add_categories("sin estimar").fillna("sin estimar")
+
+
+def particion_balanceado() -> pd.DataFrame:
+    """ECGs, clases y pacientes de cada parte del dataset balanceado."""
+    b = TABLA[TABLA["dataset"] == NUEVO]
+    parte = PARTICION.reindex(b["fila"]).map({"train": "entrenamiento", "val": "validación", "test": "prueba"}).to_numpy()
+    por = b.groupby(parte)
+    tabla = pd.DataFrame({
+        "ECGs": por.size(),
+        "% del dataset": (100 * por.size() / len(b)).round(1),
+        "normales": por["clase"].apply(lambda s: int(s.eq("normal").sum())),
+        "con cardiopatía": por["clase"].apply(lambda s: int(s.eq("con cardiopatía").sum())),
+        "pacientes": por["paciente"].nunique(),
+    }).reindex(["entrenamiento", "validación", "prueba"])
+    tabla.loc["total"] = [len(b), 100.0, int(b["clase"].eq("normal").sum()), int(b["clase"].eq("con cardiopatía").sum()), b["paciente"].nunique()]
+    return tabla.rename_axis("parte")
 
 
 @lru_cache(maxsize=64)
@@ -159,10 +146,9 @@ def resumen(seleccion: tuple[str, ...]) -> list[dict]:
             {"etiqueta": "Cardiopatías distintas", "valor": t["cardiopatias"].dropna().explode().nunique()},
             {"etiqueta": "Con cardiopatía", "valor": round(100 * t["clase"].dropna().eq("con cardiopatía").mean(), 1), "formato": "pct"}]
     return [
-        *aviso_doble_conteo(seleccion),
         bloque("kpis", datos=kpis),
-        bloque("tabla", "Resumen comparativo", tabla,
-               nota="% con cardiopatía y % normal sobre los ECGs con diagnóstico. La derivación plana se mide en la muestra de señales (1,000 ECGs por dataset original, 100 de PTB Diagnostic; todos los del balanceado)."),
+        bloque("tabla", "Resumen comparativo", tabla),
+        *([bloque("tabla", "Partición del dataset balanceado", particion_balanceado())] if NUEVO in seleccion else []),
         bloque("barras", "ECGs por dataset", por.size().reindex(list(seleccion)).rename("ECGs"), formato="entero", eje="ECGs"),
         bloque("barras", "% de ECGs con cardiopatía", tabla["% con cardiopatía"], formato="pct", eje="% de ECGs con diagnóstico", ancho="medio"),
         bloque("barras", "Edad mediana", tabla["edad (mediana)"], formato=0, eje="años", ancho="medio"),
@@ -195,19 +181,14 @@ def pacientes(seleccion: tuple[str, ...]) -> list[dict]:
     ids["ECGs por paciente"] = (ids["ECGs con ID"] / ids["pacientes"].replace(0, np.nan)).round(2)
 
     return [
-        *aviso_doble_conteo(seleccion),
         bloque("titulo", "Edad"),
-        bloque("tabla", "Edad por dataset (años)", edad,
-               nota=tx("Edad ya corregida en el notebook 28: 300 de PTB-XL pasa a 90 y -1 de CPSC queda vacío. "
-                       "La edad 0 de Ningbo ({n} ECGs) se trata como desconocida y no entra al balanceado (notebooks 29 y 30).",
-                       n=int((TABLA["dataset"].eq("Ningbo") & TABLA["edad"].eq(0)).sum()))),
+        bloque("tabla", "Edad por dataset (años)", edad),
         bloque("histogramas", "Distribución de la edad", hist_edad, ancho_bin=5, eje="Edad (años)", unidad="ECGs"),
         bloque("titulo", "Sexo"),
         bloque("apiladas", "Sexo por dataset", sexo, colores=["s3", "s2", "gris"]),
         bloque("titulo", "Datos vacíos y pacientes"),
         bloque("calor", "% de ECGs sin el dato", vacios, formato=1, maximo=100),
-        bloque("tabla", "ECGs por paciente", ids,
-               nota="Los datasets del Challenge (Ningbo, Chapman, Georgia, CPSC) no traen ID de paciente."),
+        bloque("tabla", "ECGs por paciente", ids),
     ]
 
 
@@ -224,19 +205,18 @@ def diagnosticos(seleccion: tuple[str, ...]) -> list[dict]:
                .reindex(sel).fillna(0).round(1))
     por_ecg.columns = [("4 o más" if c == 4 else str(c)) for c in por_ecg.columns]
 
-    distintas = (cardio.drop_duplicates(["dataset", "cardiopatias"])
-                 .pivot_table(index="dataset", columns="categoria", values="cardiopatias", aggfunc="count", fill_value=0)
-                 .reindex(sel).fillna(0).astype(int))
-    distintas["total"] = distintas.sum(axis=1)
+    distintas = cardio.drop_duplicates(["dataset", "cardiopatias"]).groupby("dataset").size().reindex(sel, fill_value=0)
 
-    prevalencia = (cardio.drop_duplicates(["ecg", "categoria"])
-                   .pivot_table(index="dataset", columns="categoria", values="ecg", aggfunc="count", fill_value=0)
-                   .div(con_dx, axis=0).mul(100).reindex(sel).fillna(0).round(1))
-
-    # % de ECGs de cada dataset con cada cardiopatía; las 20 con mayor % promedio entre los datasets
-    pct = (cardio.drop_duplicates(["ecg", "cardiopatias"]).groupby(["cardiopatias", "dataset"]).size()
-           .unstack().div(con_dx).mul(100))
-    frecuentes = pct.loc[pct.fillna(0).mean(axis=1).nlargest(20).index].reindex(columns=sel).round(1).rename_axis("cardiopatía")
+    # ECGs y % de ECGs de cada dataset con cada cardiopatía, ordenadas por su % promedio entre los datasets.
+    # Bajo 1%, dos cifras significativas: con un decimal, las que tienen pocos ECGs se verían como 0.
+    n = (cardio.drop_duplicates(["ecg", "cardiopatias"]).groupby(["cardiopatias", "dataset"]).size()
+         .unstack(fill_value=0).reindex(columns=sel, fill_value=0))
+    pct = n.div(con_dx.reindex(sel), axis=1).mul(100)
+    orden = pct.mean(axis=1).sort_values(ascending=False).index
+    todas = pd.DataFrame(index=orden).rename_axis("cardiopatía")
+    for d in sel:
+        todas[f"{d} · ECGs"] = n.loc[orden, d]
+        todas[f"{d} · %"] = pct.loc[orden, d].map(lambda v: round(v, 1) if v >= 1 else float(f"{v:.2g}"))
 
     por_edad = (t.pivot_table(index="dataset", columns="grupo_edad", values="con_cardiopatia", aggfunc="mean", observed=False)
                 .mul(100).reindex(sel).round(1))
@@ -247,37 +227,27 @@ def diagnosticos(seleccion: tuple[str, ...]) -> list[dict]:
              .explode().dropna().value_counts().head(15).rename_axis("par de cardiopatías").to_frame("ECGs"))
 
     bloques = [
-        *aviso_doble_conteo(seleccion),
         bloque("titulo", "Clase de cada ECG"),
-        bloque("apiladas", "Clase de cada ECG", clases, colores=["s1", "s3", "s4"],
-               nota="Clasificación provisional de las etiquetas (notebook 28, sección 5), pendiente de revisar con el cardiólogo."),
+        bloque("apiladas", "Clase de cada ECG", clases, colores=["s1", "s3", "s4"]),
         bloque("apiladas", "Cardiopatías distintas por ECG", por_ecg, colores=["o1", "o2", "o3", "o4", "o5"]),
         bloque("titulo", "Cardiopatías reportadas"),
-        bloque("barras", "Cardiopatías distintas por dataset", distintas["total"], formato="entero", eje="cardiopatías distintas"),
-        bloque("tabla", "Cardiopatías distintas por categoría", distintas),
-        bloque("calor", "% de ECGs con al menos una cardiopatía de cada categoría", prevalencia, formato=1, maximo=100),
-        bloque("calor", "Las 20 cardiopatías más frecuentes (% de los ECGs con diagnóstico)", frecuentes, formato=1,
-               maximo=float(np.nanmax(frecuentes.to_numpy())) if frecuentes.size else 100,
-               nota="Orden: % promedio entre los datasets seleccionados. Celda vacía: el dataset no reporta esa cardiopatía."),
+        bloque("barras", "Cardiopatías distintas por dataset", distintas.rename("cardiopatías distintas"), formato="entero",
+               eje="cardiopatías distintas"),
+        bloque("tabla", "Cardiopatías, de la más a la menos frecuente (ECGs y % de los ECGs con diagnóstico)", todas, visibles=20),
     ]
     if len(sel) > 1:
         conjuntos = cardio.groupby("dataset")["cardiopatias"].agg(set)
-        generales = cardio.groupby("dataset")["general"].agg(set)
         con = [d for d in sel if d in conjuntos.index]
         comunes = pd.DataFrame({a: {b: len(conjuntos[a] & conjuntos[b]) for b in con} for a in con}).loc[con, con]
-        comunes_g = pd.DataFrame({a: {b: len(generales[a] & generales[b]) for b in con} for a in con}).loc[con, con]
         bloques += [
             bloque("calor", "Cardiopatías en común entre datasets (diagonal: total del dataset)", comunes, formato=0,
                    maximo=int(comunes.to_numpy().max())),
-            bloque("calor", "Diagnósticos generales en común (junta subtipos de una misma enfermedad)", comunes_g, formato=0,
-                   maximo=int(comunes_g.to_numpy().max())),
         ]
     bloques += [
         bloque("titulo", "Cardiopatía según edad y sexo"),
         bloque("calor", "% de ECGs con cardiopatía por grupo de edad", por_edad, formato=1, maximo=100),
         bloque("calor", "% de ECGs con cardiopatía por sexo", por_sexo, formato=1, maximo=100, ancho="medio"),
-        bloque("tabla", "Pares de cardiopatías más frecuentes", pares, ancho="medio",
-               nota="Sobre todos los ECGs seleccionados juntos."),
+        bloque("tabla", "Pares de cardiopatías más frecuentes", pares, ancho="medio"),
     ]
     return bloques
 
@@ -304,41 +274,27 @@ def clases(seleccion: tuple[str, ...]) -> list[dict]:
                .pivot_table(index="grupo_edad", columns="clase", values="mujer", aggfunc="mean", observed=False)
                .reindex(columns=DOS_CLASES).mul(100).round(1).rename_axis("grupo de edad"))
 
-    asociacion = pd.Series({
-        "dataset de origen": v_de_cramer(t["origen"], t["clase"]),
-        "sexo": v_de_cramer(t["sexo"], t["clase"]),
-        "grupo de edad": v_de_cramer(t["grupo_edad"], t["clase"]),
-    }, name="V de Cramér").dropna().round(3)
-
     enfermos = t[t["clase"] == "con cardiopatía"]
-    generales = enfermos["cardiopatias"].apply(lambda l: sorted({GENERAL_DE[c] for c in l}))
     joven = enfermos["edad"] < 30
     jovenes = pd.DataFrame({
-        "menores de 30 (ECGs)": generales[joven].explode().value_counts(),
-        "30 o más (ECGs)": generales[~joven].explode().value_counts(),
+        "menores de 30 (ECGs)": enfermos.loc[joven, "cardiopatias"].explode().value_counts(),
+        "30 o más (ECGs)": enfermos.loc[~joven, "cardiopatias"].explode().value_counts(),
     }).fillna(0).astype(int)
     jovenes["% en menores de 30"] = (100 * jovenes["menores de 30 (ECGs)"] / max(joven.sum(), 1)).round(1)
     jovenes["% en 30 o más"] = (100 * jovenes["30 o más (ECGs)"] / max((~joven).sum(), 1)).round(1)
-    jovenes = jovenes.sort_values("menores de 30 (ECGs)", ascending=False).head(15).rename_axis("diagnóstico general")
+    jovenes = jovenes.sort_values("menores de 30 (ECGs)", ascending=False).head(15).rename_axis("cardiopatía")
 
     bloques = [
-        *aviso_doble_conteo(seleccion),
-        bloque("aviso", nota=tx("Solo ECGs normales y con cardiopatía ({n}), analizados como un solo conjunto. "
-                                "Con el dataset balanceado reproduce el notebook 29.", n=len(t))),
         bloque("titulo", "Clase y dataset de origen"),
-        bloque("apiladas", "Clase según el dataset de origen", pct_origen, colores=colores),
+        bloque("apiladas", "Clase según el dataset de origen", pct_origen, colores=colores, ancho="medio"),
         bloque("tabla", "ECGs por dataset de origen y clase", origen, ancho="medio"),
-        bloque("barras", "Asociación con la clase (V de Cramér: 0 = ninguna, 1 = la determina)", asociacion,
-               formato=3, eje="V de Cramér", ancho="medio"),
         bloque("titulo", "Edad y sexo por clase"),
         bloque("tabla", "Edad por clase (años)", edad),
         bloque("histogramas", "Edad por clase", hist_edad, ancho_bin=5, eje="Edad (años)", unidad="ECGs", colores=colores),
         bloque("apiladas", "Sexo por clase", sexo, colores=["s3", "s2", "gris"], ancho="medio"),
         bloque("tabla", "% de mujeres por grupo de edad y clase", mujeres, ancho="medio"),
         bloque("titulo", "Cardiopatías en jóvenes y mayores"),
-        bloque("tabla", "Diagnósticos generales más frecuentes en menores de 30", jovenes,
-               nota=tx("ECGs con cardiopatía: {jovenes} de menores de 30 y {mayores} de 30 o más.",
-                       jovenes=int(joven.sum()), mayores=int((~joven).sum()))),
+        bloque("tabla", "Cardiopatías más frecuentes en menores de 30", jovenes),
     ]
 
     m = MEDIDAS[MEDIDAS["dataset"].isin(seleccion) & MEDIDAS["clase"].isin(DOS_CLASES)]
@@ -346,13 +302,11 @@ def clases(seleccion: tuple[str, ...]) -> list[dict]:
     fc = pd.crosstab(m["clase"], rango_fc(m["frecuencia cardiaca"]), normalize="index").mul(100).reindex(DOS_CLASES).round(1)
     bloques += [
         bloque("titulo", "Señales por clase"),
-        bloque("aviso", nota=tx("Medidas sobre los {n} ECGs con señal medida: la muestra de 1,000 por dataset original "
-                                "(100 de PTB Diagnostic) y todos los del balanceado.", n=len(m))),
         bloque("agrupadas", "Amplitud pico a pico mediana por derivación (mV)", amplitud, colores=colores, formato=2, eje="mV"),
         bloque("apiladas", "Frecuencia cardiaca por clase (latidos por minuto, derivación II)", fc,
                colores=["o2", "o4", "o5", "gris"], ancho="medio"),
         bloque("tabla", "Frecuencia cardiaca por clase", describir(m.groupby("clase")["frecuencia cardiaca"]).reindex(DOS_CLASES).round(1),
-               ancho="medio", nota="Estimada con una versión simplificada de Pan-Tompkins (notebook 29)."),
+               ancho="medio", nota="Estimada con una versión simplificada de Pan-Tompkins."),
     ]
     return bloques
 
@@ -374,37 +328,16 @@ def senales(seleccion: tuple[str, ...]) -> list[dict]:
     calidad.columns = ["ECGs medidos", "% con derivación plana", "% con muestras vacías", "amplitud II (mediana)",
                        "deriva de línea base (mediana)", "ruido (mediana)", "frecuencia cardiaca (mediana)"]
 
-    amplitud = m.groupby("dataset")[DERIVACIONES].median().reindex(sel).round(2)
-    fc = pd.crosstab(m["dataset"], rango_fc(m["frecuencia cardiaca"]), normalize="index").mul(100).reindex(sel).round(1)
-    extremos = m.assign(extremo=m[DERIVACIONES].max(axis=1) > 10).groupby(["dataset", "origen"]).agg(ECGs=("extremo", "sum"), medidos=("extremo", "size"))
-    extremos = extremos[extremos["ECGs"] > 0].reindex(sel, level="dataset")
-    extremos["% de los medidos"] = (100 * extremos["ECGs"] / extremos["medidos"]).round(1)
-    extremos.index = [d if d == o else f"{d} · {o}" for d, o in extremos.index]
-
-    bloques = [
+    return [
         bloque("titulo", "Formato"),
         bloque("tabla", "Derivaciones, frecuencia de muestreo y duración", FORMATO.reindex(sel)),
         bloque("titulo", "Calidad"),
-        bloque("aviso", nota="Medidas en los primeros 10 s de las 12 derivaciones, sobre la muestra de 1,000 ECGs por dataset "
-                             "original (100 de PTB Diagnostic, semilla 42, la misma del notebook 28) y los 20,000 del balanceado. "
-                             "Las señales del balanceado llevan un filtro pasa-altas de 0.5 Hz (notebook 29)."),
         bloque("tabla", "Calidad de las señales (mV)", calidad, nota="Amplitud, deriva y ruido en mV."),
         bloque("barras", "% de ECGs con al menos una derivación plana", calidad["% con derivación plana"], formato="pct",
                eje="% de ECGs medidos", ancho="medio"),
         bloque("barras", "% de ECGs con muestras vacías", calidad["% con muestras vacías"], formato="pct",
                eje="% de ECGs medidos", ancho="medio"),
-        bloque("cajas", "Amplitud pico a pico de la derivación II", cajas(m, "II", "dataset", sel), eje="mV", ancho="medio"),
-        bloque("cajas", "Deriva de línea base", cajas(m, "deriva de línea base", "dataset", sel), eje="mV", ancho="medio"),
-        bloque("cajas", "Ruido (cambios de menos de 10 ms)", cajas(m, "ruido", "dataset", sel), eje="mV", ancho="medio"),
-        bloque("cajas", "Frecuencia cardiaca (derivación II)", cajas(m, "frecuencia cardiaca", "dataset", sel), eje="latidos por minuto", ancho="medio"),
-        bloque("titulo", "Amplitud y frecuencia cardiaca"),
-        bloque("calor", "Amplitud pico a pico mediana por derivación (mV)", amplitud, formato=2,
-               maximo=float(np.nanmax(amplitud.to_numpy())) if amplitud.size else 1),
-        bloque("apiladas", "Frecuencia cardiaca estimada (latidos por minuto)", fc, colores=["o2", "o4", "o5", "gris"]),
     ]
-    if len(extremos):
-        bloques.append(bloque("tabla", "ECGs con alguna derivación de más de 10 mV pico a pico", extremos.rename_axis("dataset")))
-    return bloques
 
 
 @lru_cache(maxsize=64)
@@ -428,8 +361,7 @@ def duplicados(seleccion: tuple[str, ...]) -> list[dict]:
     sin_archivo = t.loc[t["huella"].isna() & (t["dataset"] != NUEVO), ["dataset", "registro"]].set_index("dataset")
 
     bloques = [
-        bloque("aviso", nota="Dos ECGs son copias idénticas si su archivo de señal tiene la misma huella MD5 (notebook 28, sección 15). "
-                             "Se buscan entre los datasets originales y, aparte, dentro del balanceado."),
+        bloque("aviso", nota="Dos ECGs son copias idénticas si su archivo de señal tiene la misma huella MD5."),
         bloque("barras", "% de ECGs con una copia idéntica", por["% con copia"], formato="pct", eje="% de ECGs", ancho="medio"),
         bloque("tabla", "Copias idénticas por dataset", por, ancho="medio"),
     ]
@@ -469,6 +401,8 @@ def ecg_al_azar(dataset: str, clase: str | None) -> dict:
         senal, campos = wfdb.rdsamp(str(ruta))
         fs = int(campos["fs"])
     senal = resample_poly(senal[: 10 * fs, :12], FS_VISOR, fs, axis=0)
+    nombres = vacio_a_none(fila["diagnosticos"]) or []
+    codigos = CODIGOS.get((fila["origen"], fila["registro"]), [None] * len(nombres))   # PTB Diagnostic no usa códigos
     return {
         "dataset": dataset,
         "origen": fila["origen"],
@@ -477,7 +411,7 @@ def ecg_al_azar(dataset: str, clase: str | None) -> dict:
         "sexo": vacio_a_none(fila["sexo"]),
         "clase": vacio_a_none(fila["clase"]),
         "cardiopatias": vacio_a_none(fila["cardiopatias"]),
-        "diagnosticos": vacio_a_none(fila["diagnosticos"]),
+        "etiquetas": [{"codigo": c, "nombre": n} for c, n in zip(codigos, nombres)],
         "ecgs_disponibles": len(t),
         "fs": FS_VISOR,
         "derivaciones": DERIVACIONES,

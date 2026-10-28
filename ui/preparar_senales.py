@@ -5,7 +5,7 @@ Uso, desde la raíz del repo:
 
 Lee las cabeceras de todos los ECGs (formato de cada dataset) y las señales de la misma muestra
 del notebook 28 (1,000 ECGs por dataset, 100 de PTB Diagnostic, semilla 42), más los 20,000 ECGs
-del dataset balanceado (notebook 29).
+del dataset balanceado v3 (notebook 43).
 """
 import time
 from pathlib import Path
@@ -18,7 +18,7 @@ from medidas_senal import DERIVACIONES, medidas
 
 RAIZ = Path(__file__).resolve().parent.parent
 RAW = RAIZ / "data/raw"
-BALANCEADO = RAIZ / "data/processed/balanceado_jovenes_v2"
+BALANCEADO = RAIZ / "data/processed/balanceado_jovenes_v3"
 SALIDA = RAIZ / "outputs/ui"
 
 N_MUESTRA = 1000

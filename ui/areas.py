@@ -154,7 +154,7 @@ def ventanas(m: dict) -> dict[str, tuple[int, int]]:
             "ST": (m["offset"], m["t_start"]), "T": (m["t_start"], fin_t), "QT": (m["t_peak"], fin_t)}
 
 
-def calcular(senal: np.ndarray, m) -> dict:
+def calcular(senal: np.ndarray, m, umbral: float) -> dict:
     """
     Áreas de interés de un ECG para un modelo de modelo.MODELOS.
 
@@ -163,7 +163,9 @@ def calcular(senal: np.ndarray, m) -> dict:
     senal : np.ndarray
         ``(5000, 12)``, la misma entrada que recibe el modelo.
     m : object
-        Modelo con ``guardado`` (preprocesador y columnas primarias), ``umbral`` y ``riesgo(X)``.
+        Modelo con ``guardado`` (preprocesador y columnas primarias) y ``riesgo(X)``.
+    umbral : float
+        Probabilidad a partir de la cual se marca riesgo (el punto de operación elegido).
 
     Returns
     -------
@@ -181,7 +183,7 @@ def calcular(senal: np.ndarray, m) -> dict:
     p = probabilidades(fila, m)
     logit = np.log(p.clip(1e-6, 1 - 1e-6) / (1 - p.clip(1e-6, 1 - 1e-6)))
     efecto = (logit["original"] - logit.drop("original")).sort_values(ascending=False)
-    riesgo = bool(p["original"] >= m.umbral)
+    riesgo = bool(p["original"] >= umbral)
     elegidos = efecto[efecto >= MINIMO_EFECTO].index[:MAXIMO_GRUPOS] if riesgo else []
 
     limpia = sosfiltfilt(ca2.SOS_CLEAN, entrada, axis=0)

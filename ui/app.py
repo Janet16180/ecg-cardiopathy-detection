@@ -47,6 +47,8 @@ class Archivo(BaseModel):
 class NuevoECG(BaseModel):
     archivos: list[Archivo] = Field(min_length=1, max_length=4)
     fs: float = Field(500, ge=50, le=10000)   # solo para CSV y NumPy, que no traen la frecuencia de muestreo
+    # punto va antes que modelo: dentro de la clase, el campo modelo tapa al módulo modelo
+    punto: Literal["99", "95"] = modelo.PUNTO_PREDETERMINADO   # umbral del riesgo: % de sensibilidad en validación
     modelo: str = modelo.PREDETERMINADO
 
 
@@ -125,7 +127,7 @@ def registrar(nuevo: NuevoECG, lang: Idioma = "es") -> dict:
         senal, fs, ficha, avisos = registro.leer(archivos, nuevo.fs)
     except registro.ECGIlegible as error:
         raise HTTPException(422, traducir(error.args[0], lang))
-    resultado = registro.analizar(senal, fs, ficha, avisos, validar_modelo(nuevo.modelo, lang))
+    resultado = registro.analizar(senal, fs, ficha, avisos, validar_modelo(nuevo.modelo, lang), nuevo.punto)
     id_analisis, fecha = historial.guardar(archivos, resultado)
     return {**traducir_resultado(resultado, lang), "id": id_analisis, "fecha": fecha}
 
@@ -150,25 +152,38 @@ def eliminar_analisis(id_analisis: int) -> None:
         raise HTTPException(404)
 
 
+def traducir_detalle(x: dict, idioma: str) -> dict:
+    """Textos del detalle de un modelo (el "+" de Modelos probados); la salida de la interfaz conserva sus llaves."""
+    t = lambda v: traducir(v, idioma)
+    interfaz = x["salida_interfaz"]
+    if interfaz and "etiquetas" in interfaz["salida"]:
+        interfaz = {**interfaz, "salida": {**interfaz["salida"], "etiquetas": [{**e, "etiqueta": t(e["etiqueta"])} for e in interfaz["salida"]["etiquetas"]]}}
+    return {**x, "pasos": [t(p) for p in x["pasos"]], "ejemplo": traducir_bloque(x["ejemplo"], idioma), "salida_interfaz": interfaz,
+            "fuente": t(x["fuente"]),
+            "por_que": [t(p) for p in x["por_que"]]}
+
+
+@app.get("/api/modelos-probados")
+def modelos_probados(lang: Idioma = "es") -> dict:
+    """La mejor variante de cada tipo de modelo de los experimentos 058 a 062, con sus métricas en validación y su explicación."""
+    d = experimentos.modelos_probados()
+    return {"presupuestos": [{**p, "nombre": traducir(p["nombre"], lang)} for p in d["presupuestos"]], "nota": traducir(d["nota"], lang),
+            "modelos": [{**m, "nombre": traducir(m["nombre"], lang), "familia": traducir(m["familia"], lang),
+                         "detalle": traducir_detalle(m["detalle"], lang)} for m in d["modelos"]]}
+
+
 @app.get("/api/experimentos/{seccion}")
-def pagina_experimentos(seccion: Literal["modelos", "resultados", "eleccion"], lang: Idioma = "es") -> list[dict]:
-    """Modelos probados, resultados y por qué se eligieron los de la UI (experimentos 057 a 063)."""
+def pagina_experimentos(seccion: Literal["resultados", "caracteristicas"], lang: Idioma = "es") -> list[dict]:
+    """Resultados de los experimentos y las características de la señal que usan los modelos."""
     return [traducir_bloque(b, lang) for b in experimentos.SECCIONES[seccion]()]
 
 
 @app.get("/api/modelos")
 def modelos(lang: Idioma = "es") -> dict:
-    """Los modelos que se pueden elegir y su comparación."""
-    return {"modelos": [{**m, "nombre": traducir(m["nombre"], lang), "resumen": traducir(m["resumen"], lang)} for m in modelo.lista()],
-            "predeterminado": modelo.PREDETERMINADO,
-            "comparacion": [traducir_bloque(b, lang) for b in modelo.comparacion()] if modelo.MODELOS else []}
-
-
-@app.get("/api/modelo")
-def modelo_entrenado(cual: str = modelo.PREDETERMINADO, lang: Idioma = "es") -> dict:
-    descripcion = modelo.descripcion(validar_modelo(cual, lang))
-    return {**descripcion, "nombre": traducir(descripcion.get("nombre"), lang),
-            "bloques": [traducir_bloque(b, lang) for b in descripcion["bloques"]]}
+    """Los modelos y los umbrales que se pueden elegir al registrar un ECG."""
+    return {"modelos": [{**m, "nombre": traducir(m["nombre"], lang)} for m in modelo.lista()], "predeterminado": modelo.PREDETERMINADO,
+            "puntos": [{**p, "nombre": traducir(p["nombre"], lang)} for p in modelo.puntos()],
+            "punto_predeterminado": modelo.PUNTO_PREDETERMINADO}
 
 
 ESTATICOS = Path(__file__).parent / "static"

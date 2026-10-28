@@ -89,7 +89,6 @@ TEXTOS = {
     "% con derivación plana (muestra)": ("% with flat lead (sample)", "% con derivazione piatta (campione)"),
     "% con derivación plana": ("% with flat lead", "% con derivazione piatta"),
     "% con muestras vacías": ("% with missing samples", "% con campioni mancanti"),
-    "% de los medidos": ("% of measured", "% dei misurati"),
     "ECGs con ID": ("ECGs with ID", "ECG con ID"),
     "ECGs con una copia idéntica": ("ECGs with an identical copy", "ECG con una copia identica"),
     "ECGs con dato": ("ECGs with value", "ECG con dato"),
@@ -110,7 +109,6 @@ TEXTOS = {
     "30 o más (ECGs)": ("30 or older (ECGs)", "30 anni o più (ECG)"),
     "% en menores de 30": ("% under 30", "% sotto i 30 anni"),
     "% en 30 o más": ("% 30 or older", "% da 30 anni in su"),
-    "V de Cramér": ("Cramér's V", "V di Cramér"),
 
     # Ejes
     "años": ("years", "anni"),
@@ -143,8 +141,9 @@ TEXTOS = {
     "Cardiopatías distintas por categoría": ("Distinct heart conditions by category", "Cardiopatie distinte per categoria"),
     "% de ECGs con al menos una cardiopatía de cada categoría": ("% of ECGs with at least one heart condition in each category",
                                                                  "% di ECG con almeno una cardiopatia per categoria"),
-    "Las 20 cardiopatías más frecuentes (% de los ECGs con diagnóstico)": ("The 20 most frequent heart conditions (% of ECGs with a diagnosis)",
-                                                                          "Le 20 cardiopatie più frequenti (% degli ECG con diagnosi)"),
+    "Cardiopatías, de la más a la menos frecuente (ECGs y % de los ECGs con diagnóstico)": (
+        "Heart conditions, from most to least frequent (ECGs and % of ECGs with a diagnosis)",
+        "Cardiopatie, dalla più alla meno frequente (ECG e % degli ECG con diagnosi)"),
     "Cardiopatías en común entre datasets (diagonal: total del dataset)": ("Heart conditions shared between datasets (diagonal: dataset total)",
                                                                           "Cardiopatie in comune tra dataset (diagonale: totale del dataset)"),
     "Diagnósticos generales en común (junta subtipos de una misma enfermedad)": ("General diagnoses in common (groups subtypes of the same disease)",
@@ -156,8 +155,6 @@ TEXTOS = {
     "Clase y dataset de origen": ("Class and source dataset", "Classe e dataset di origine"),
     "Clase según el dataset de origen": ("Class by source dataset", "Classe per dataset di origine"),
     "ECGs por dataset de origen y clase": ("ECGs by source dataset and class", "ECG per dataset di origine e classe"),
-    "Asociación con la clase (V de Cramér: 0 = ninguna, 1 = la determina)": ("Association with the class (Cramér's V: 0 = none, 1 = determines it)",
-                                                                            "Associazione con la classe (V di Cramér: 0 = nessuna, 1 = la determina)"),
     "Edad y sexo por clase": ("Age and sex by class", "Età e sesso per classe"),
     "Edad por clase (años)": ("Age by class (years)", "Età per classe (anni)"),
     "Edad por clase": ("Age by class", "Età per classe"),
@@ -176,57 +173,19 @@ TEXTOS = {
     "Calidad de las señales (mV)": ("Signal quality (mV)", "Qualità dei segnali (mV)"),
     "% de ECGs con al menos una derivación plana": ("% of ECGs with at least one flat lead", "% di ECG con almeno una derivazione piatta"),
     "% de ECGs con muestras vacías": ("% of ECGs with missing samples", "% di ECG con campioni mancanti"),
-    "Amplitud pico a pico de la derivación II": ("Peak-to-peak amplitude of lead II", "Ampiezza picco-picco della derivazione II"),
-    "Deriva de línea base": ("Baseline wander", "Deriva della linea di base"),
-    "Ruido (cambios de menos de 10 ms)": ("Noise (changes shorter than 10 ms)", "Rumore (variazioni inferiori a 10 ms)"),
-    "Frecuencia cardiaca (derivación II)": ("Heart rate (lead II)", "Frequenza cardiaca (derivazione II)"),
-    "Amplitud y frecuencia cardiaca": ("Amplitude and heart rate", "Ampiezza e frequenza cardiaca"),
-    "Frecuencia cardiaca estimada (latidos por minuto)": ("Estimated heart rate (beats per minute)", "Frequenza cardiaca stimata (battiti al minuto)"),
-    "ECGs con alguna derivación de más de 10 mV pico a pico": ("ECGs with a lead above 10 mV peak to peak", "ECG con almeno una derivazione oltre 10 mV picco-picco"),
     "% de ECGs con una copia idéntica": ("% of ECGs with an identical copy", "% di ECG con una copia identica"),
     "Copias idénticas por dataset": ("Identical copies by dataset", "Copie identiche per dataset"),
     "Grupos de ECGs idénticos ({n} grupos)": ("Groups of identical ECGs ({n} groups)", "Gruppi di ECG identici ({n} gruppi)"),
     "ECGs con cabecera pero sin archivo de señal": ("ECGs with a header but no signal file", "ECG con intestazione ma senza file di segnale"),
 
     # Notas y avisos
-    "El dataset balanceado reutiliza ECGs de los originales: al seleccionarlo junto con ellos, esos ECGs cuentan dos veces en los totales.": (
-        "The balanced dataset reuses ECGs from the original ones: when selected together, those ECGs count twice in the totals.",
-        "Il dataset bilanciato riutilizza ECG dei dataset originali: se selezionati insieme, quegli ECG contano due volte nei totali."),
-    "% con cardiopatía y % normal sobre los ECGs con diagnóstico. La derivación plana se mide en la muestra de señales (1,000 ECGs por dataset original, 100 de PTB Diagnostic; todos los del balanceado).": (
-        "% with heart disease and % normal are computed over ECGs with a diagnosis. Flat leads are measured on the signal sample (1,000 ECGs per original dataset, 100 from PTB Diagnostic; all ECGs of the balanced dataset).",
-        "% con cardiopatia e % normale calcolati sugli ECG con diagnosi. La derivazione piatta è misurata sul campione di segnali (1.000 ECG per dataset originale, 100 di PTB Diagnostic; tutti quelli del dataset bilanciato)."),
-    "Edad ya corregida en el notebook 28: 300 de PTB-XL pasa a 90 y -1 de CPSC queda vacío. La edad 0 de Ningbo ({n} ECGs) se trata como desconocida y no entra al balanceado (notebooks 29 y 30).": (
-        "Age already corrected in notebook 28: PTB-XL's 300 becomes 90 and CPSC's -1 becomes missing. Ningbo's age 0 ({n} ECGs) is treated as unknown and is not part of the balanced dataset (notebooks 29 and 30).",
-        "Età già corretta nel notebook 28: il 300 di PTB-XL diventa 90 e il -1 di CPSC diventa mancante. L'età 0 di Ningbo ({n} ECG) è trattata come sconosciuta e non entra nel dataset bilanciato (notebook 29 e 30)."),
-    "Los datasets del Challenge (Ningbo, Chapman, Georgia, CPSC) no traen ID de paciente.": (
-        "The Challenge datasets (Ningbo, Chapman, Georgia, CPSC) have no patient ID.",
-        "I dataset della Challenge (Ningbo, Chapman, Georgia, CPSC) non hanno ID paziente."),
-    "Clasificación provisional de las etiquetas (notebook 28, sección 5), pendiente de revisar con el cardiólogo.": (
-        "Provisional label classification (notebook 28, section 5), pending review with the cardiologist.",
-        "Classificazione provvisoria delle etichette (notebook 28, sezione 5), da rivedere con il cardiologo."),
-    "Orden: % promedio entre los datasets seleccionados. Celda vacía: el dataset no reporta esa cardiopatía.": (
-        "Order: mean % across the selected datasets. Empty cell: the dataset does not report that condition.",
-        "Ordine: % media tra i dataset selezionati. Cella vuota: il dataset non riporta quella cardiopatia."),
-    "Sobre todos los ECGs seleccionados juntos.": ("Over all selected ECGs together.", "Su tutti gli ECG selezionati insieme."),
-    "Solo ECGs normales y con cardiopatía ({n}), analizados como un solo conjunto. Con el dataset balanceado reproduce el notebook 29.": (
-        "Only normal ECGs and ECGs with heart disease ({n}), analyzed as a single set. With the balanced dataset it reproduces notebook 29.",
-        "Solo ECG normali e con cardiopatia ({n}), analizzati come un unico insieme. Con il dataset bilanciato riproduce il notebook 29."),
-    "ECGs con cardiopatía: {jovenes} de menores de 30 y {mayores} de 30 o más.": (
-        "ECGs with heart disease: {jovenes} under 30 and {mayores} aged 30 or older.",
-        "ECG con cardiopatia: {jovenes} sotto i 30 anni e {mayores} da 30 anni in su."),
-    "Medidas sobre los {n} ECGs con señal medida: la muestra de 1,000 por dataset original (100 de PTB Diagnostic) y todos los del balanceado.": (
-        "Measured on the {n} ECGs with a measured signal: the sample of 1,000 per original dataset (100 from PTB Diagnostic) and all ECGs of the balanced dataset.",
-        "Misure sui {n} ECG con segnale misurato: il campione di 1.000 per dataset originale (100 di PTB Diagnostic) e tutti quelli del dataset bilanciato."),
-    "Estimada con una versión simplificada de Pan-Tompkins (notebook 29).": (
-        "Estimated with a simplified version of Pan-Tompkins (notebook 29).",
-        "Stimata con una versione semplificata di Pan-Tompkins (notebook 29)."),
-    "Medidas en los primeros 10 s de las 12 derivaciones, sobre la muestra de 1,000 ECGs por dataset original (100 de PTB Diagnostic, semilla 42, la misma del notebook 28) y los 20,000 del balanceado. Las señales del balanceado llevan un filtro pasa-altas de 0.5 Hz (notebook 29).": (
-        "Measured on the first 10 s of the 12 leads, over the sample of 1,000 ECGs per original dataset (100 from PTB Diagnostic, seed 42, the same as notebook 28) and the 20,000 ECGs of the balanced dataset. The signals of the balanced dataset have a 0.5 Hz high-pass filter (notebook 29).",
-        "Misure sui primi 10 s delle 12 derivazioni, sul campione di 1.000 ECG per dataset originale (100 di PTB Diagnostic, seme 42, lo stesso del notebook 28) e sui 20.000 del dataset bilanciato. I segnali del dataset bilanciato hanno un filtro passa-alto a 0,5 Hz (notebook 29)."),
+    "Estimada con una versión simplificada de Pan-Tompkins.": (
+        "Estimated with a simplified version of Pan-Tompkins.",
+        "Stimata con una versione semplificata di Pan-Tompkins."),
     "Amplitud, deriva y ruido en mV.": ("Amplitude, wander and noise in mV.", "Ampiezza, deriva e rumore in mV."),
-    "Dos ECGs son copias idénticas si su archivo de señal tiene la misma huella MD5 (notebook 28, sección 15). Se buscan entre los datasets originales y, aparte, dentro del balanceado.": (
-        "Two ECGs are identical copies if their signal files have the same MD5 hash (notebook 28, section 15). Copies are searched across the original datasets and, separately, within the balanced one.",
-        "Due ECG sono copie identiche se il loro file di segnale ha lo stesso hash MD5 (notebook 28, sezione 15). Si cercano tra i dataset originali e, separatamente, all'interno di quello bilanciato."),
+    "Dos ECGs son copias idénticas si su archivo de señal tiene la misma huella MD5.": (
+        "Two ECGs are identical copies if their signal files have the same MD5 hash.",
+        "Due ECG sono copie identiche se il loro file di segnale ha lo stesso hash MD5."),
 
     # Registrar nuevo ECG
     "Medidas de la señal": ("Signal measures", "Misure del segnale"),
@@ -290,155 +249,254 @@ TEXTOS = {
         "I file di {dataset} non sono in data/raw: scaricali da PhysioNet per vederne gli ECG."),
     "Datasets desconocidos: {nombres}": ("Unknown datasets: {nombres}", "Dataset sconosciuti: {nombres}"),
 
-    # Acerca de > Modelo entrenado (modelo.py)
-    "Cómo funciona el modelo": ("How the model works", "Come funziona il modello"),
-    "Métricas en validación": ("Validation metrics", "Metriche di validazione"),
-    "Puntos de operación en validación": ("Operating points on validation", "Punti operativi sulla validazione"),
-    "Variables de entrada por familia": ("Input variables by family", "Variabili di input per famiglia"),
-    "parte": ("part", "parte"),
-    "descripción": ("description", "descrizione"),
-    "métrica": ("metric", "metrica"),
-    "punto de operación": ("operating point", "punto operativo"),
     "familia": ("family", "famiglia"),
     "variables": ("variables", "variabili"),
     "entrada": ("input", "input"),
     "características": ("features", "caratteristiche"),
-    "preprocesamiento": ("preprocessing", "preelaborazione"),
     "modelo": ("model", "modello"),
     "entrenamiento": ("training", "addestramento"),
     "umbral": ("threshold", "soglia"),
-    "notebooks": ("notebooks", "notebook"),
-    "umbral (probabilidad)": ("threshold (probability)", "soglia (probabilità)"),
     "sensibilidad": ("sensitivity", "sensibilità"),
     "especificidad": ("specificity", "specificità"),
     "99% de sensibilidad": ("99% sensitivity", "sensibilità del 99%"),
     "95% de sensibilidad": ("95% sensitivity", "sensibilità del 95%"),
-    "especificidad con 95% de sensibilidad": ("specificity at 95% sensitivity", "specificità al 95% di sensibilità"),
-    "especificidad con 99% de sensibilidad": ("specificity at 99% sensitivity", "specificità al 99% di sensibilità"),
-    "12 derivaciones, 10 s a 500 Hz en mV con filtro pasa-altas de 0.5 Hz; el modelo usa los primeros 9.6 s": (
-        "12 leads, 10 s at 500 Hz in mV with a 0.5 Hz high-pass filter; the model uses the first 9.6 s",
-        "12 derivazioni, 10 s a 500 Hz in mV con filtro passa-alto a 0,5 Hz; il modello usa i primi 9,6 s"),
-    "111 variables de la señal: intervalos, amplitudes y ejes del QRS, ST-T, onda P, ritmo y espectro": (
-        "111 signal variables: intervals, QRS amplitudes and axes, ST-T, P wave, rhythm and spectrum",
-        "111 variabili del segnale: intervalli, ampiezze e assi del QRS, ST-T, onda P, ritmo e spettro"),
-    "imputación por mediana, recorte de extremos, Yeo-Johnson y estandarización, ajustados con el entrenamiento": (
-        "median imputation, clipping of extremes, Yeo-Johnson and standardization, fitted on the training set",
-        "imputazione con la mediana, taglio degli estremi, Yeo-Johnson e standardizzazione, adattati sull'addestramento"),
-    "HistGradientBoostingClassifier de scikit-learn con sus valores por defecto": (
-        "scikit-learn's HistGradientBoostingClassifier with its default settings",
-        "HistGradientBoostingClassifier di scikit-learn con i valori predefiniti"),
-    "los {n} ECGs del entrenamiento del dataset balanceado, con todas sus etiquetas": (
-        "the {n} training ECGs of the balanced dataset, with all their labels",
-        "i {n} ECG di addestramento del dataset bilanciato, con tutte le etichette"),
-    "el punto con 99% de sensibilidad en validación (tabla de puntos de operación)": (
-        "the point with 99% sensitivity on validation (operating points table)",
-        "il punto con sensibilità del 99% sulla validazione (tabella dei punti operativi)"),
-    "32 (comparación con la SVM de referencia) y 38 (este modelo)": (
-        "32 (comparison with the reference SVM) and 38 (this model)",
-        "32 (confronto con la SVM di riferimento) e 38 (questo modello)"),
-    "{n} ECGs de validación del dataset balanceado. La prueba todavía no se usa.": (
-        "{n} validation ECGs of the balanced dataset. The test set is not used yet.",
-        "{n} ECG di validazione del dataset bilanciato. Il test non è ancora usato."),
-    "La interfaz usa el de 99% de sensibilidad: en validación marca como riesgo al {fa}% de los ECGs normales.": (
-        "The interface uses the 99% sensitivity point: on validation it flags {fa}% of normal ECGs as at risk.",
-        "L'interfaccia usa il punto al 99% di sensibilità: sulla validazione segnala come a rischio il {fa}% degli ECG normali."),
-    "Solo dice si hay cardiopatía": ("Only says whether there is heart disease", "Dice solo se c'è cardiopatia"),
-    "Además dice qué cardiopatía": ("Also says which heart disease", "Dice anche quale cardiopatia"),
     "Modelo desconocido: {cual}": ("Unknown model: {cual}", "Modello sconosciuto: {cual}"),
     "riesgo": ("risk", "rischio"),
     "categoría": ("category", "categoria"),
     "diagnóstico": ("diagnosis", "diagnosi"),
     "validación": ("validation", "validazione"),
-    "VPP": ("PPV", "VPP"),
-    "prevalencia en validación": ("prevalence in validation", "prevalenza nella validazione"),
-    "un HistGradientBoostingClassifier por etiqueta: {c} categorías y {d} diagnósticos con al menos 20 ECGs en validación": (
-        "one HistGradientBoostingClassifier per label: {c} categories and {d} diagnoses with at least 20 ECGs in validation",
-        "un HistGradientBoostingClassifier per etichetta: {c} categorie e {d} diagnosi con almeno 20 ECG nella validazione"),
-    "probabilidad de tener alguna de las categorías: 1 − Π(1 − p)": (
-        "probability of having any of the categories: 1 − Π(1 − p)",
-        "probabilità di avere almeno una delle categorie: 1 − Π(1 − p)"),
-    "riesgo: el punto con 99% de sensibilidad en validación; cada categoría y diagnóstico: el punto de máximo F1 en validación": (
-        "risk: the point with 99% sensitivity on validation; each category and diagnosis: the point of maximum F1 on validation",
-        "rischio: il punto con sensibilità del 99% sulla validazione; ogni categoria e diagnosi: il punto di F1 massimo sulla validazione"),
-    "39 (este modelo; protocolo del experimento 063)": ("39 (this model; protocol of experiment 063)", "39 (questo modello; protocollo dell'esperimento 063)"),
-    "¿Acierta qué cardiopatía?": ("Does it get the heart disease right?", "Indovina quale cardiopatia?"),
-    "Fracción de los ECGs con cardiopatía de validación.": ("Fraction of the validation ECGs with heart disease.",
-                                                            "Frazione degli ECG con cardiopatia della validazione."),
-    "entre los ECGs con cardiopatía": ("among ECGs with heart disease", "tra gli ECG con cardiopatia"),
-    "categoría más probable es real": ("the most likely category is a true one", "la categoria più probabile è reale"),
-    "uno de los 3 diagnósticos más probables es real": ("one of the 3 most likely diagnoses is a true one",
-                                                        "una delle 3 diagnosi più probabili è reale"),
-    "referencia: siempre las más frecuentes": ("baseline: always the most frequent", "riferimento: sempre le più frequenti"),
-    "Categorías: métricas en validación": ("Categories: validation metrics", "Categorie: metriche di validazione"),
-    "Diagnósticos: métricas en validación": ("Diagnoses: validation metrics", "Diagnosi: metriche di validazione"),
-    "Validación del dataset balanceado, con todas las etiquetas. Sensibilidad y VPP en el umbral de máximo F1.": (
-        "Validation of the balanced dataset, with all labels. Sensitivity and PPV at the maximum-F1 threshold.",
-        "Validazione del dataset bilanciato, con tutte le etichette. Sensibilità e VPP alla soglia di F1 massimo."),
-    "Comparación de los dos modelos": ("Comparison of the two models", "Confronto tra i due modelli"),
-    "AUROC para detectar cardiopatía, todas las etiquetas": ("AUROC for detecting heart disease, all labels",
-                                                             "AUROC per rilevare la cardiopatia, tutte le etichette"),
-    "AUROC para detectar cardiopatía, 2,000 etiquetas": ("AUROC for detecting heart disease, 2,000 labels",
-                                                         "AUROC per rilevare la cardiopatia, 2.000 etichette"),
-    "especificidad con 99% de sensibilidad, todas las etiquetas": ("specificity at 99% sensitivity, all labels",
-                                                                   "specificità al 99% di sensibilità, tutte le etichette"),
-    "especificidad con 99% de sensibilidad, 2,000 etiquetas": ("specificity at 99% sensitivity, 2,000 labels",
-                                                               "specificità al 99% di sensibilità, 2.000 etichette"),
-    "la categoría más probable es real, todas las etiquetas": ("the most likely category is a true one, all labels",
-                                                               "la categoria più probabile è reale, tutte le etichette"),
-    "la categoría más probable es real, 2,000 etiquetas": ("the most likely category is a true one, 2,000 labels",
-                                                           "la categoria più probabile è reale, 2.000 etichette"),
-    "uno de los 3 diagnósticos más probables es real, todas las etiquetas": (
-        "one of the 3 most likely diagnoses is a true one, all labels", "una delle 3 diagnosi più probabili è reale, tutte le etichette"),
-    "uno de los 3 diagnósticos más probables es real, 2,000 etiquetas": (
-        "one of the 3 most likely diagnoses is a true one, 2,000 labels", "una delle 3 diagnosi più probabili è reale, 2.000 etichette"),
     "cumple": ("meets", "soddisfa"),
     "no cumple": ("does not meet", "non soddisfa"),
-    "Validación del dataset balanceado; con 2,000 etiquetas, media de 5 semillas. Con 2,000 etiquetas, el modelo "
-    "multietiqueta {cumple} la no inferioridad del protocolo para detectar cardiopatía: el límite inferior de la "
-    "diferencia de AUROC quedó por encima de −0.01 en {n} de 5 semillas. Adivinando siempre las más frecuentes, la "
-    "categoría acierta en {a}% de los ECGs con cardiopatía y los 3 diagnósticos en {b}%.": (
-        "Validation of the balanced dataset; with 2,000 labels, mean of 5 seeds. With 2,000 labels, the multi-label model "
-        "{cumple} the protocol's non-inferiority for detecting heart disease: the lower bound of the AUROC difference was "
-        "above −0.01 in {n} of 5 seeds. Always guessing the most frequent ones, the category is right in {a}% of ECGs with "
-        "heart disease and the 3 diagnoses in {b}%.",
-        "Validazione del dataset bilanciato; con 2.000 etichette, media di 5 semi. Con 2.000 etichette, il modello "
-        "multi-etichetta {cumple} la non inferiorità del protocollo per rilevare la cardiopatia: il limite inferiore della "
-        "differenza di AUROC è rimasto sopra −0,01 in {n} semi su 5. Indovinando sempre le più frequenti, la categoria è "
-        "corretta nel {a}% degli ECG con cardiopatia e le 3 diagnosi nel {b}%."),
-    # Acerca de > Modelos (experimentos.py)
-    "Validación del dataset balanceado (2,000 ECGs), leída de las salidas de los notebooks 31 a 39. La prueba no se ha usado.": (
-        "Validation of the balanced dataset (2,000 ECGs), read from the outputs of notebooks 31 to 39. The test set has not been used.",
-        "Validazione del dataset bilanciato (2.000 ECG), letta dagli output dei notebook 31-39. Il test non è stato usato."),
-    "Los dos modelos que usa la UI van primero. Validación del dataset balanceado (2,000 ECGs), leída de las salidas de los notebooks 31 a 39. La prueba no se ha usado.": (
-        "The two models used by the UI come first. Validation of the balanced dataset (2,000 ECGs), read from the outputs of notebooks 31 to 39. The test set has not been used.",
-        "I due modelli usati dall'interfaccia vengono per primi. Validazione del dataset bilanciato (2.000 ECG), letta dagli output dei notebook 31-39. Il test non è stato usato."),
-    "Familias de modelos probadas": ("Model families tested", "Famiglie di modelli provate"),
-    "qué es": ("what it is", "cos'è"),
-    "variantes": ("variants", "varianti"),
-    "notebook": ("notebook", "notebook"),
+    # Modelos > Modelos probados y Resultados (experimentos.py)
+    "La salida es la distancia del ECG a la frontera, no una probabilidad.": (
+        "The output is the ECG's distance to the boundary, not a probability.",
+        "L'uscita è la distanza dell'ECG dalla frontiera, non una probabilità."),
+    "La salida es la distancia de sus fragmentos más raros a lo normal, no una probabilidad.": (
+        "The output is the distance of its most unusual segments from normal, not a probability.",
+        "L'uscita è la distanza dei suoi frammenti più insoliti dal normale, non una probabilità."),
+    "Desde que elegimos el modelo base del proyecto lo usamos como referencia, y con PTB-XL fue el que mejor clasificó: AUROC de {a} en validación cruzada. En la comparación de modelos individuales quedó fuera solo porque es un ensamble.": (
+        "We have used it as a reference since we chose the project's baseline model, and on PTB-XL it was the best classifier: AUROC of {a} in cross-validation. It was left out of the comparison of individual models only because it is an ensemble.",
+        "Lo usiamo come riferimento da quando abbiamo scelto il modello di base del progetto, e su PTB-XL è stato quello che ha classificato meglio: AUROC di {a} in validazione incrociata. Nel confronto tra modelli individuali è rimasto fuori solo perché è un ensemble."),
+    "Varias medidas del ECG se leen con umbrales, como un QRS de 120 ms o más en un bloqueo de rama, y un árbol decide justamente con umbrales.": (
+        "Several ECG measures are read with thresholds, such as a QRS of 120 ms or more in a bundle branch block, and a tree decides precisely with thresholds.",
+        "Diverse misure dell'ECG si leggono con soglie, come un QRS di 120 ms o più in un blocco di branca, e un albero decide proprio con soglie."),
+    "Da una probabilidad directamente, que es lo que la interfaz necesita para fijar el umbral de riesgo.": (
+        "It gives a probability directly, which is what the interface needs to set the risk threshold.",
+        "Dà direttamente una probabilità, che è ciò che serve all'interfaccia per fissare la soglia di rischio."),
+    "Ganó la comparación de siete modelos individuales que hicimos con PTB-XL, así que es la referencia contra la que medimos a los demás.": (
+        "It won the comparison of seven individual models we ran on PTB-XL, so it is the reference we measure the others against.",
+        "Ha vinto il confronto tra sette modelli individuali che abbiamo fatto su PTB-XL, quindi è il riferimento con cui misuriamo gli altri."),
+    "En esa comparación rindió mejor que la red neuronal con cantidades de etiquetas cercanas a las 2,000 que tendrá la cohorte.": (
+        "In that comparison it did better than the neural network with label counts close to the 2,000 the cohort will have.",
+        "In quel confronto ha reso meglio della rete neurale con quantità di etichette vicine alle 2.000 che avrà la coorte."),
+    "Su configuración por defecto ya estaba cerca de la mejor, y con los mismos datos siempre da el mismo modelo, lo que facilita revisarlo.": (
+        "Its default settings were already close to the best, and with the same data it always gives the same model, which makes it easier to review.",
+        "La sua configurazione predefinita era già vicina alla migliore, e con gli stessi dati dà sempre lo stesso modello, il che lo rende più facile da verificare."),
+    "AnomalyDINO (Damm et al., 2025) es un método de imágenes que encuentra defectos comparando cada parte de una imagen con un banco de imágenes normales, sin entrenar un clasificador. Quisimos probar la misma idea con ECGs.": (
+        "AnomalyDINO (Damm et al., 2025) is an image method that finds defects by comparing each part of an image with a bank of normal images, without training a classifier. We wanted to try the same idea with ECGs.",
+        "AnomalyDINO (Damm et al., 2025) è un metodo per immagini che trova difetti confrontando ogni parte di un'immagine con una banca di immagini normali, senza addestrare un classificatore. Abbiamo voluto provare la stessa idea con gli ECG."),
+    "Solo necesita ECGs normales con etiqueta. En un tamizaje de estudiantes la mayoría de los ECGs serán normales, y de cada cardiopatía habrá pocos ejemplos.": (
+        "It only needs labeled normal ECGs. In a student screening most ECGs will be normal, and there will be few examples of each heart condition.",
+        "Ha bisogno solo di ECG normali etichettati. In uno screening di studenti la maggior parte degli ECG sarà normale, e di ogni cardiopatia ci saranno pochi esempi."),
+    "Además de la puntuación, señala qué fragmento del ECG es el raro, lo que podría ayudar a explicar el resultado.": (
+        "Besides the score, it points out which segment of the ECG is unusual, which could help explain the result.",
+        "Oltre al punteggio, indica quale frammento dell'ECG è insolito, il che potrebbe aiutare a spiegare il risultato."),
+    "La idea viene del artículo de imágenes “No Time to Train!” (2025). Ahí un DINOv2 congelado describe cada parte de una imagen y, con unos pocos ejemplos etiquetados, reconoce objetos sin volver a entrenar.": (
+        "The idea comes from the image paper “No Time to Train!” (2025). There, a frozen DINOv2 describes each part of an image and, with a few labeled examples, recognizes objects without retraining.",
+        "L'idea viene dall'articolo sulle immagini “No Time to Train!” (2025). Lì un DINOv2 congelato descrive ogni parte di un'immagine e, con pochi esempi etichettati, riconosce oggetti senza riaddestrare."),
+    "Quisimos hacer lo mismo con señales: que un encoder aprenda a describir ECGs sin etiquetas y que después basten pocas etiquetas para decidir. Para preentrenarlo usamos SimDINOv2 (2025), una forma simplificada de entrenar DINOv2.": (
+        "We wanted to do the same with signals: have an encoder learn to describe ECGs without labels, so that a few labels are then enough to decide. To pretrain it we used SimDINOv2 (2025), a simplified way to train DINOv2.",
+        "Abbiamo voluto fare lo stesso con i segnali: che un encoder impari a descrivere gli ECG senza etichette e che poi bastino poche etichette per decidere. Per preaddestrarlo abbiamo usato SimDINOv2 (2025), un modo semplificato di addestrare DINOv2."),
+    "Encaja con la cohorte real, que tendrá unos 20,000 ECGs y solo unos 2,000 con etiqueta.": (
+        "It fits the real cohort, which will have about 20,000 ECGs and only about 2,000 labeled.",
+        "Si adatta alla coorte reale, che avrà circa 20.000 ECG e solo circa 2.000 etichettati."),
+    "El encoder es nuestro y se preentrenó sin ECGs de validación ni de prueba, así que la comparación con los demás es limpia.": (
+        "The encoder is our own and was pretrained without validation or test ECGs, so the comparison with the others is clean.",
+        "L'encoder è nostro ed è stato preaddestrato senza ECG di validazione né di test, quindi il confronto con gli altri è pulito."),
+    "xECG (Lunelli et al.) es un modelo base para ECG: una red xLSTM preentrenada con más de 2.3 millones de ECGs sin etiquetas, pensada para ajustarse después a cada tarea.": (
+        "xECG (Lunelli et al.) is a foundation model for ECG: an xLSTM network pretrained on more than 2.3 million unlabeled ECGs, meant to be fine-tuned later for each task.",
+        "xECG (Lunelli et al.) è un modello di base per l'ECG: una rete xLSTM preaddestrata con più di 2,3 milioni di ECG senza etichette, pensata per essere poi regolata per ogni compito."),
+    "Quisimos saber si partir de una red ya preentrenada ayuda cuando hay pocas etiquetas, en lugar de entrenar desde cero.": (
+        "We wanted to know whether starting from an already pretrained network helps when there are few labels, instead of training from scratch.",
+        "Volevamo sapere se partire da una rete già preaddestrata aiuta quando ci sono poche etichette, invece di addestrare da zero."),
+    "Usamos una versión compacta que preentrenamos con EchoNext, que no comparte ECGs con nuestro dataset, para que la comparación fuera limpia.": (
+        "We used a compact version that we pretrained on EchoNext, which shares no ECGs with our dataset, so the comparison would be clean.",
+        "Abbiamo usato una versione compatta che abbiamo preaddestrato con EchoNext, che non condivide ECG con il nostro dataset, perché il confronto fosse pulito."),
+    "Fue el modelo base del proyecto. Cada ECG ya era una fila de 111 medidas numéricas, el formato para el que está pensado un modelo lineal.": (
+        "It was the project's baseline model. Each ECG was already a row of 111 numeric measures, the format a linear model is designed for.",
+        "È stato il modello di base del progetto. Ogni ECG era già una riga di 111 misure numeriche, il formato per cui è pensato un modello lineare."),
+    "Sus pesos se leen directamente: cada uno dice cuánto sube el riesgo con una medida. Eso importa al presentarle el modelo a un cardiólogo.": (
+        "Its weights can be read directly: each one says how much the risk rises with a measure. That matters when presenting the model to a cardiologist.",
+        "I suoi pesi si leggono direttamente: ognuno dice quanto sale il rischio con una misura. Questo conta quando si presenta il modello a un cardiologo."),
+    "Es el punto de partida: un modelo más complejo solo vale la pena si lo supera.": (
+        "It is the starting point: a more complex model is only worth it if it beats it.",
+        "È il punto di partenza: un modello più complesso vale la pena solo se lo supera."),
+    "111 medidas del ECG": (
+        "111 ECG measures",
+        "111 misure dell'ECG"),
+    "Encoder transformer propio": (
+        "Our own transformer encoder",
+        "Encoder transformer proprio"),
+    "Encoder xLSTM preentrenado": (
+        "Pretrained xLSTM encoder",
+        "Encoder xLSTM preaddestrato"),
+    "Encoder SimDINOv2 y ECGs normales": (
+        "SimDINOv2 encoder and normal ECGs",
+        "Encoder SimDINOv2 ed ECG normali"),
+    "Detección de anomalías": (
+        "Anomaly detection",
+        "Rilevamento di anomalie"),
+    "Validación del dataset balanceado: {v} ECGs. Con 2,000 etiquetas, cada valor es la media de 5 semillas. De cada tipo de modelo se muestra la variante con mejor AUROC con 2,000 etiquetas.": (
+        "Validation of the balanced dataset: {v} ECGs. With 2,000 labels, each value is the mean of 5 seeds. For each model type, the variant with the best AUROC with 2,000 labels is shown.",
+        "Validazione del dataset bilanciato: {v} ECG. Con 2.000 etichette, ogni valore è la media di 5 semi. Per ogni tipo di modello si mostra la variante con il miglior AUROC con 2.000 etichette."),
+    "Calcula las 111 medidas del ECG: intervalos, amplitudes del QRS, segmento ST, onda T, ejes, ritmo y espectro.": (
+        "Computes the 111 ECG measures: intervals, QRS amplitudes, ST segment, T wave, axes, rhythm and spectrum.",
+        "Calcola le 111 misure dell'ECG: intervalli, ampiezze del QRS, segmento ST, onda T, assi, ritmo e spettro."),
+    "Entrena 100 árboles de hasta 31 hojas con tasa de aprendizaje de 0.1 (HistGradientBoostingClassifier de scikit-learn, con sus valores por defecto).": (
+        "Trains 100 trees of up to 31 leaves with a learning rate of 0.1 (scikit-learn's HistGradientBoostingClassifier, with its default values).",
+        "Addestra 100 alberi fino a 31 foglie con tasso di apprendimento di 0,1 (HistGradientBoostingClassifier di scikit-learn, con i valori predefiniti)."),
+    "Suma la salida de los árboles y la convierte en probabilidad con una sigmoide.": (
+        "Adds up the output of the trees and turns it into a probability with a sigmoid.",
+        "Somma l'uscita degli alberi e la trasforma in probabilità con una sigmoide."),
+    "Usa un kernel RBF, que permite una frontera curva entre las dos clases.": (
+        "Uses an RBF kernel, which allows a curved boundary between the two classes.",
+        "Usa un kernel RBF, che permette una frontiera curva tra le due classi."),
+    "Prueba 36 combinaciones de C y gamma y se queda con la mejor por validación cruzada de 5 pliegues, agrupada por paciente.": (
+        "It tries 36 combinations of C and gamma and keeps the best one by 5-fold cross-validation grouped by patient.",
+        "Prova 36 combinazioni di C e gamma e tiene la migliore con validazione incrociata a 5 fold raggruppata per paziente."),
+    "Con 2,000 etiquetas eligió C de 1 o 3 y gamma entre 0.004 y 0.016, según la semilla; con todas, C = 3 y gamma = 0.008.": (
+        "With 2,000 labels it chose C of 1 or 3 and gamma between 0.004 and 0.016, depending on the seed; with all labels, C = 3 and gamma = 0.008.",
+        "Con 2.000 etichette ha scelto C di 1 o 3 e gamma tra 0,004 e 0,016, a seconda del seme; con tutte, C = 3 e gamma = 0,008."),
+    "Ajusta un peso por medida con regularización L2 (C = 0.1), que evita pesos demasiado grandes.": (
+        "It fits one weight per measure with L2 regularization (C = 0.1), which keeps the weights from growing too large.",
+        "Stima un peso per misura con regolarizzazione L2 (C = 0,1), che evita pesi troppo grandi."),
+    "Corta el ECG en 48 fragmentos de 0.2 s con las 12 derivaciones.": (
+        "Cuts the ECG into 48 segments of 0.2 s with the 12 leads.",
+        "Taglia l'ECG in 48 frammenti di 0,2 s con le 12 derivazioni."),
+    "Un encoder transformer tipo ViT, con 6 bloques de atención, convierte los fragmentos en 384 números que describen el ECG. Tiene {p} parámetros.": (
+        "A ViT-style transformer encoder with 6 attention blocks turns the segments into 384 numbers that describe the ECG. It has {p} parameters.",
+        "Un encoder transformer tipo ViT, con 6 blocchi di attenzione, trasforma i frammenti in 384 numeri che descrivono l'ECG. Ha {p} parametri."),
+    "El encoder se preentrenó con SimDINOv2 en {n} ECGs sin etiquetas, sin pacientes de la validación ni de la prueba. Tardó {h} h en el Mac.": (
+        "The encoder was pretrained with SimDINOv2 on {n} unlabeled ECGs, with no patients from validation or test. It took {h} h on the Mac.",
+        "L'encoder è stato preaddestrato con SimDINOv2 su {n} ECG senza etichetta, senza pazienti della validazione né del test. Ha richiesto {h} h sul Mac."),
+    "A esos números se agregan 10 medidas de ritmo e intervalos: frecuencia, variabilidad de los RR, prematuridad, pausas, PR, onda P, ancho del QRS y número de latidos.": (
+        "10 rhythm and interval measures are added to those numbers: rate, RR variability, prematurity, pauses, PR, P wave, QRS width and number of beats.",
+        "A quei numeri si aggiungono 10 misure di ritmo e intervalli: frequenza, variabilità degli RR, prematurità, pause, PR, onda P, larghezza del QRS e numero di battiti."),
+    "Con las etiquetas solo se entrena la regresión logística; el encoder no cambia.": (
+        "Only the logistic regression is trained with the labels; the encoder does not change.",
+        "Con le etichette si addestra solo la regressione logistica; l'encoder non cambia."),
+    "Corta el ECG en 48 fragmentos de 0.2 s con las 12 derivaciones y convierte cada uno en 96 números.": (
+        "Cuts the ECG into 48 segments of 0.2 s with the 12 leads and turns each one into 96 numbers.",
+        "Taglia l'ECG in 48 frammenti di 0,2 s con le 12 derivazioni e trasforma ognuno in 96 numeri."),
+    "Cuatro bloques xLSTM leen los fragmentos en orden, alternando la dirección de lectura. Tiene {p} parámetros.": (
+        "Four xLSTM blocks read the segments in order, alternating the reading direction. It has {p} parameters.",
+        "Quattro blocchi xLSTM leggono i frammenti in ordine, alternando la direzione di lettura. Ha {p} parametri."),
+    "Se preentrenó con SimDINOv2 en {n} ECGs de EchoNext, sin etiquetas. EchoNext no forma parte de nuestro dataset.": (
+        "It was pretrained with SimDINOv2 on {n} EchoNext ECGs, without labels. EchoNext is not part of our dataset.",
+        "È stato preaddestrato con SimDINOv2 su {n} ECG di EchoNext, senza etichette. EchoNext non fa parte del nostro dataset."),
+    "Una capa final recibe el promedio de los 48 fragmentos y da la probabilidad.": (
+        "A final layer takes the mean of the 48 segments and gives the probability.",
+        "Uno strato finale riceve la media dei 48 frammenti e dà la probabilità."),
+    "Toda la red se ajusta 20 épocas con nuestras etiquetas; el encoder aprende 10 veces más lento que la capa final.": (
+        "The whole network is fine-tuned for 20 epochs with our labels; the encoder learns 10 times more slowly than the final layer.",
+        "Tutta la rete viene regolata per 20 epoche con le nostre etichette; l'encoder impara 10 volte più lentamente dello strato finale."),
+    "Usa nuestro encoder SimDINOv2, sin cambiarlo, para describir cada fragmento de 0.2 s del ECG.": (
+        "Uses our SimDINOv2 encoder, unchanged, to describe each 0.2 s segment of the ECG.",
+        "Usa il nostro encoder SimDINOv2, senza modificarlo, per descrivere ogni frammento di 0,2 s dell'ECG."),
+    "Guarda en un banco los fragmentos de todos los ECGs normales etiquetados: {n} con todas las etiquetas.": (
+        "Stores the segments of all labeled normal ECGs in a bank: {n} with all labels.",
+        "Conserva in una banca i frammenti di tutti gli ECG normali etichettati: {n} con tutte le etichette."),
+    "Para cada fragmento de un ECG nuevo busca el fragmento normal más parecido y mide la distancia.": (
+        "For each segment of a new ECG it finds the most similar normal segment and measures the distance.",
+        "Per ogni frammento di un nuovo ECG cerca il frammento normale più simile e misura la distanza."),
+    "La puntuación del ECG es la distancia de su fragmento más distinto.": (
+        "The ECG's score is the distance of its most different segment.",
+        "Il punteggio dell'ECG è la distanza del suo frammento più diverso."),
+    "La puntuación del ECG es el promedio de sus 3 fragmentos más distintos.": (
+        "The ECG's score is the mean of its 3 most different segments.",
+        "Il punteggio dell'ECG è la media dei suoi 3 frammenti più diversi."),
+    "La puntuación del ECG es el promedio de sus 5 fragmentos más distintos.": (
+        "The ECG's score is the mean of its 5 most different segments.",
+        "Il punteggio dell'ECG è la media dei suoi 5 frammenti più diversi."),
+    "Todas las etiquetas ({n})": (
+        "All labels ({n})",
+        "Tutte le etichette ({n})"),
+    "Validación del dataset balanceado: {v} ECGs. Con 2,000 etiquetas, cada valor es la media de 5 semillas.": (
+        "Validation of the balanced dataset: {v} ECGs. With 2,000 labels, each value is the mean of 5 seeds.",
+        "Validazione del dataset bilanciato: {v} ECG. Con 2.000 etichette, ogni valore è la media di 5 semi."),
+    "Ejemplo de salida": (
+        "Example output",
+        "Esempio di uscita"),
+    "clase real": (
+        "true class",
+        "classe reale"),
+    "cardiopatías": (
+        "heart conditions",
+        "cardiopatie"),
+    "salida": (
+        "output",
+        "uscita"),
+    "umbral (99% de sens.)": (
+        "threshold (99% sens.)",
+        "soglia (99% di sens.)"),
+    "decisión": (
+        "decision",
+        "decisione"),
+    "con riesgo": (
+        "at risk",
+        "a rischio"),
+    "sin riesgo": (
+        "not at risk",
+        "senza rischio"),
+    "ECG de validación": (
+        "validation ECG",
+        "ECG di validazione"),
+    "Modelo entrenado con todas las etiquetas; el umbral da 99% de sensibilidad en validación.": (
+        "Model trained with all labels; the threshold gives 99% sensitivity on validation.",
+        "Modello addestrato con tutte le etichette; la soglia dà una sensibilità del 99% sulla validazione."),
+    "Modelo entrenado con 2,000 etiquetas (semilla 0); el umbral da 99% de sensibilidad en validación.": (
+        "Model trained with 2,000 labels (seed 0); the threshold gives 99% sensitivity on validation.",
+        "Modello addestrato con 2.000 etichette (seme 0); la soglia dà una sensibilità del 99% sulla validazione."),
+    "Un gradient boosting por categoría y por diagnóstico sobre las mismas 111 medidas: además del riesgo, dice qué cardiopatía es más probable. Es el modelo multietiqueta de la interfaz.": (
+        "One gradient boosting per category and per diagnosis on the same 111 measures: besides the risk, it says which heart disease is most likely. It is the interface's multi-label model.",
+        "Un gradient boosting per categoria e per diagnosi sulle stesse 111 misure: oltre al rischio, dice quale cardiopatia è più probabile. È il modello multi-etichetta dell'interfaccia."),
+    "Un HistGradientBoostingClassifier por etiqueta, con la configuración por defecto: {c} categorías y {d} diagnósticos con al menos 20 ECGs en validación ({t} modelos).": (
+        "One HistGradientBoostingClassifier per label, with the default settings: {c} categories and {d} diagnoses with at least 20 ECGs in validation ({t} models).",
+        "Un HistGradientBoostingClassifier per etichetta, con la configurazione predefinita: {c} categorie e {d} diagnosi con almeno 20 ECG in validazione ({t} modelli)."),
+    "Riesgo de cardiopatía: la probabilidad de tener alguna categoría, 1 − Π(1 − p) sobre las {c} categorías.": (
+        "Heart disease risk: the probability of having any category, 1 − Π(1 − p) over the {c} categories.",
+        "Rischio di cardiopatia: la probabilità di avere almeno una categoria, 1 − Π(1 − p) sulle {c} categorie."),
+    "Cada categoría y diagnóstico se marca con su umbral de máximo F1 en validación; el riesgo, con el de 99% de sensibilidad.": (
+        "Each category and diagnosis is flagged with its maximum-F1 threshold on validation; the risk, with the 99% sensitivity one.",
+        "Ogni categoria e diagnosi viene segnalata con la sua soglia di F1 massimo sulla validazione; il rischio, con quella del 99% di sensibilità."),
+    "La probabilidad de cardiopatía (el riesgo) y la de cada una de las {c} categorías y {d} diagnósticos, cada una con su umbral.": (
+        "The probability of heart disease (the risk) and that of each of the {c} categories and {d} diagnoses, each with its threshold.",
+        "La probabilità di cardiopatia (il rischio) e quella di ciascuna delle {c} categorie e {d} diagnosi, ognuna con la sua soglia."),
+    "AUROC dentro de cada dataset de origen (2,000 etiquetas)": (
+        "AUROC within each source dataset (2,000 labels)",
+        "AUROC all'interno di ogni dataset di origine (2.000 etichette)"),
+    "{d} ({n} ECGs)": (
+        "{d} ({n} ECGs)",
+        "{d} ({n} ECG)"),
+    "Fracción de ECGs normales que no se marcan como riesgo cuando se detecta el 95% o el 99% de las cardiopatías.": (
+        "Fraction of normal ECGs not flagged as at risk when 95% or 99% of heart disease cases are detected.",
+        "Frazione di ECG normali non segnalati a rischio quando si rileva il 95% o il 99% delle cardiopatie."),
+    "Matriz de confusión: {m}, umbral de {s}% de sensibilidad": (
+        "Confusion matrix: {m}, {s}% sensitivity threshold",
+        "Matrice di confusione: {m}, soglia di sensibilità del {s}%"),
+    "marcado con riesgo": (
+        "flagged as at risk",
+        "segnalato a rischio"),
+    "marcado sin riesgo": (
+        "flagged as not at risk",
+        "segnalato senza rischio"),
+    "Realidad": (
+        "Actual",
+        "Realtà"),
     "xECG preentrenado": ("Pretrained xECG", "xECG preaddestrato"),
     "SimDINOv2 propio": ("Our own SimDINOv2", "SimDINOv2 proprio"),
     "Anomalías estilo AnomalyDINO": ("AnomalyDINO-style anomalies", "Anomalie in stile AnomalyDINO"),
-    "Grafo con memoria": ("Graph with memory", "Grafo con memoria"),
     "Multietiqueta": ("Multi-label", "Multi-etichetta"),
-    "Las 111 medidas de la señal con un clasificador clásico: SVM RBF, gradient boosting o regresión logística.": (
-        "The 111 signal measures with a classical classifier: RBF SVM, gradient boosting or logistic regression.",
-        "Le 111 misure del segnale con un classificatore classico: SVM RBF, gradient boosting o regressione logistica."),
-    "Codificador xECG preentrenado sin etiquetas con EchoNext (experimento 043): congelado, con ajuste fino, primero la cabeza y sin preentrenar como control.": (
-        "xECG encoder pretrained without labels on EchoNext (experiment 043): frozen, fine-tuned, head first, and without pretraining as a control.",
-        "Encoder xECG preaddestrato senza etichette su EchoNext (esperimento 043): congelato, con fine-tuning, prima la testa e senza preaddestramento come controllo."),
-    "Codificador propio preentrenado sin etiquetas con SimDINOv2, sin ECGs de validación ni de prueba: congelado, con 10 medidas de intervalos y con ajuste fino.": (
-        "Our own encoder pretrained without labels with SimDINOv2, without validation or test ECGs: frozen, with 10 interval measures, and fine-tuned.",
-        "Encoder proprio preaddestrato senza etichette con SimDINOv2, senza ECG di validazione né di test: congelato, con 10 misure di intervalli e con fine-tuning."),
-    "Banco de tokens de 0.2 s de ECGs normales (codificador SimDINOv2 propio); cada ECG se puntúa por la distancia de sus tokens al normal más cercano.": (
-        "Bank of 0.2 s tokens from normal ECGs (our SimDINOv2 encoder); each ECG is scored by the distance of its tokens to the nearest normal one.",
-        "Banca di token di 0,2 s di ECG normali (encoder SimDINOv2 proprio); ogni ECG riceve un punteggio dalla distanza dei suoi token dal normale più vicino."),
-    "Las 12 derivaciones como nodos de un grafo con conexiones aprendidas, convoluciones temporales, memoria de prototipos y salida variacional; inspirado en Li et al. (2026).": (
-        "The 12 leads as nodes of a graph with learned connections, temporal convolutions, a prototype memory and a variational output; inspired by Li et al. (2026).",
-        "Le 12 derivazioni come nodi di un grafo con connessioni apprese, convoluzioni temporali, memoria di prototipi e uscita variazionale; ispirato a Li et al. (2026)."),
-    "Un gradient boosting por categoría y por diagnóstico sobre las mismas 111 medidas; el riesgo es la probabilidad de tener alguna categoría.": (
-        "One gradient boosting per category and per diagnosis on the same 111 measures; the risk is the probability of having any category.",
-        "Un gradient boosting per categoria e per diagnosi sulle stesse 111 misure; il rischio è la probabilità di avere almeno una categoria."),
     "Gradient boosting ajustado": ("Tuned gradient boosting", "Gradient boosting ottimizzato"),
     "SVM ajustada": ("Tuned SVM", "SVM ottimizzata"),
     "Regresión logística": ("Logistic regression", "Regressione logistica"),
@@ -454,85 +512,32 @@ TEXTOS = {
     "Anomalía: máximo (1% de AnomalyDINO)": ("Anomaly: maximum (AnomalyDINO's 1%)", "Anomalia: massimo (1% di AnomalyDINO)"),
     "Anomalía: promedio de los 3 peores": ("Anomaly: mean of the 3 worst", "Anomalia: media dei 3 peggiori"),
     "Anomalía: promedio de los 5 peores": ("Anomaly: mean of the 5 worst", "Anomalia: media dei 5 peggiori"),
-    "Resultados con 2,000 etiquetas (media de 5 semillas)": ("Results with 2,000 labels (mean of 5 seeds)", "Risultati con 2.000 etichette (media di 5 semi)"),
-    "Resultados con todas las etiquetas (una semilla)": ("Results with all labels (one seed)", "Risultati con tutte le etichette (un seme)"),
-    "La regla de decisión pide que el intervalo pareado de AUROC frente a la SVM de referencia quede por encima de 0 en al menos 4 de 5 semillas. El multietiqueta se comparó con el binario, no con la SVM (ver Modelo entrenado).": (
-        "The decision rule requires the paired AUROC interval against the reference SVM to be above 0 in at least 4 of 5 seeds. The multi-label model was compared with the binary one, not with the SVM (see Trained model).",
-        "La regola di decisione richiede che l'intervallo appaiato dell'AUROC rispetto alla SVM di riferimento sia sopra 0 in almeno 4 semi su 5. Il multi-etichetta è stato confrontato con il binario, non con la SVM (vedi Modello addestrato)."),
-    "desv. del AUROC": ("AUROC SD", "dev. std. dell'AUROC"),
     "esp. con 95% de sens.": ("spec. at 95% sens.", "spec. al 95% di sens."),
     "esp. con 99% de sens.": ("spec. at 99% sens.", "spec. al 99% di sens."),
-    "semillas mejor que la SVM": ("seeds better than the SVM", "semi migliori della SVM"),
-    "semillas peor que la SVM": ("seeds worse than the SVM", "semi peggiori della SVM"),
-    "Referencias de atajos": ("Shortcut baselines", "Riferimenti di scorciatoie"),
-    "AUROC de una regresión logística que solo ve el dataset de origen o el sexo: el piso que cualquier modelo debe superar (notebook 31).": (
-        "AUROC of a logistic regression that only sees the source dataset or the sex: the floor any model must beat (notebook 31).",
-        "AUROC di una regressione logistica che vede solo il dataset di origine o il sesso: la soglia minima che ogni modello deve superare (notebook 31)."),
     "2,000 etiquetas": ("2,000 labels", "2.000 etichette"),
     "todas las etiquetas": ("all labels", "tutte le etichette"),
-    "solo dataset de origen": ("source dataset only", "solo dataset di origine"),
-    "solo sexo": ("sex only", "solo sesso"),
     "referencia": ("baseline", "riferimento"),
     "Curva de aprendizaje: AUROC según las etiquetas": ("Learning curve: AUROC by number of labels", "Curva di apprendimento: AUROC in base alle etichette"),
-    "Media de 5 semillas; con todas las etiquetas, una semilla. Solo los modelos que se entrenaron con los cinco presupuestos.": (
-        "Mean of 5 seeds; with all labels, one seed. Only the models trained with all five label budgets.",
-        "Media di 5 semi; con tutte le etichette, un seme. Solo i modelli addestrati con tutti e cinque i budget di etichette."),
     "todas": ("all", "tutte"),
     "ECGs etiquetados": ("labeled ECGs", "ECG etichettati"),
-    "AUROC dentro de cada dataset de origen": ("AUROC within each source dataset", "AUROC all'interno di ogni dataset di origine"),
-    "2,000 etiquetas, semilla 0. n son los ECGs de validación de cada dataset: con pocos, el AUROC es muy inestable. CPSC 2018 extra no aparece porque en validación todos sus ECGs tienen cardiopatía.": (
-        "2,000 labels, seed 0. n is the number of validation ECGs of each dataset: with few, the AUROC is very unstable. CPSC 2018 extra is missing because all its validation ECGs have heart disease.",
-        "2.000 etichette, seme 0. n è il numero di ECG di validazione di ogni dataset: con pochi, l'AUROC è molto instabile. CPSC 2018 extra manca perché tutti i suoi ECG di validazione hanno una cardiopatia."),
     "Especificidad con sensibilidad fija": ("Specificity at fixed sensitivity", "Specificità a sensibilità fissa"),
-    "Fracción de ECGs normales que no se marcan como riesgo cuando se detecta el 95% o el 99% de las cardiopatías. Con 2,000 etiquetas, media de 5 semillas.": (
-        "Fraction of normal ECGs not flagged as at risk when 95% or 99% of heart disease is detected. With 2,000 labels, mean of 5 seeds.",
-        "Frazione di ECG normali non segnalati a rischio quando si rileva il 95% o il 99% delle cardiopatie. Con 2.000 etichette, media di 5 semi."),
     "95% de sensibilidad, 2,000 etiquetas": ("95% sensitivity, 2,000 labels", "sensibilità 95%, 2.000 etichette"),
     "99% de sensibilidad, 2,000 etiquetas": ("99% sensitivity, 2,000 labels", "sensibilità 99%, 2.000 etichette"),
     "95% de sensibilidad, todas las etiquetas": ("95% sensitivity, all labels", "sensibilità 95%, tutte le etichette"),
     "99% de sensibilidad, todas las etiquetas": ("99% sensitivity, all labels", "sensibilità 99%, tutte le etichette"),
-    "Macro-AUROC del modelo multietiqueta": ("Macro-AUROC of the multi-label model", "Macro-AUROC del modello multi-etichetta"),
-    "Promedio simple del AUROC de cada etiqueta. Los modelos binarios tienen una sola clase positiva, así que su macro-AUROC es su AUROC.": (
-        "Simple mean of the AUROC of each label. Binary models have a single positive class, so their macro-AUROC is their AUROC.",
-        "Media semplice dell'AUROC di ogni etichetta. I modelli binari hanno una sola classe positiva, quindi il loro macro-AUROC è il loro AUROC."),
     "etiquetas": ("labels", "etichette"),
-    "2,000 etiquetas (media de 5 semillas)": ("2,000 labels (mean of 5 seeds)", "2.000 etichette (media di 5 semi)"),
-    "desv. entre semillas": ("SD across seeds", "dev. std. tra semi"),
     "categorías": ("categories", "categorie"),
-    "macro-AUROC": ("macro-AUROC", "macro-AUROC"),
     "AUROC de cada categoría y diagnóstico (multietiqueta)": ("AUROC of each category and diagnosis (multi-label)", "AUROC di ogni categoria e diagnosi (multi-etichetta)"),
-    "Primero las 6 categorías y después los diagnósticos, cada grupo de mayor a menor AUROC con todas las etiquetas.": (
-        "First the 6 categories and then the diagnoses, each group from highest to lowest AUROC with all labels.",
-        "Prima le 6 categorie e poi le diagnosi, ogni gruppo dal più alto al più basso AUROC con tutte le etichette."),
     "etiqueta": ("label", "etichetta"),
     "Gradient boosting binario": ("Binary gradient boosting", "Gradient boosting binario"),
     "Gradient boosting multietiqueta": ("Multi-label gradient boosting", "Gradient boosting multi-etichetta"),
     "SVM de referencia": ("Reference SVM", "SVM di riferimento"),
-    "en uso": ("in use", "in uso"),
-    "no elegido": ("not chosen", "non scelto"),
     "Notebooks 32 y 38": ("Notebooks 32 and 38", "Notebook 32 e 38"),
     "Notebook 32": ("Notebook 32", "Notebook 32"),
     "Notebook 39 (experimento 063)": ("Notebook 39 (experiment 063)", "Notebook 39 (esperimento 063)"),
-    "Notebook 36 (experimento 062)": ("Notebook 36 (experiment 062)", "Notebook 36 (esperimento 062)"),
     "Notebook 34 (experimento 060)": ("Notebook 34 (experiment 060)", "Notebook 34 (esperimento 060)"),
     "Notebook 33 (experimento 059)": ("Notebook 33 (experiment 059)", "Notebook 33 (esperimento 059)"),
     "Notebook 35 (experimento 061)": ("Notebook 35 (experiment 061)", "Notebook 35 (esperimento 061)"),
-    "AUROC de {a} con 2,000 etiquetas: el {r}.º de {n} variantes probadas.": (
-        "AUROC of {a} with 2,000 labels: #{r} of {n} variants tested.", "AUROC di {a} con 2.000 etichette: {r}° su {n} varianti provate."),
-    "Con todas las etiquetas, AUROC de {a} ({r}.º de {n}).": ("With all labels, AUROC of {a} (#{r} of {n}).", "Con tutte le etichette, AUROC di {a} ({r}° su {n})."),
-    "Usa las 111 medidas de la señal: cada variable es una medida del ECG con nombre (intervalos, amplitudes, ejes, ST-T).": (
-        "It uses the 111 signal measures: each variable is a named ECG measure (intervals, amplitudes, axes, ST-T).",
-        "Usa le 111 misure del segnale: ogni variabile è una misura dell'ECG con un nome (intervalli, ampiezze, assi, ST-T)."),
-    "Frente a la SVM de referencia (regla de decisión): mejor en {k} y peor en {p} de 5 semillas; la regla pide 4.": (
-        "Against the reference SVM (decision rule): better in {k} and worse in {p} of 5 seeds; the rule requires 4.",
-        "Rispetto alla SVM di riferimento (regola di decisione): migliore in {k} e peggiore in {p} semi su 5; la regola ne richiede 4."),
-    "Con 250 etiquetas, AUROC de {a} contra {b} de la SVM de referencia.": (
-        "With 250 labels, AUROC of {a} against {b} for the reference SVM.", "Con 250 etichette, AUROC di {a} contro {b} della SVM di riferimento."),
-    "Con 99% de sensibilidad y 2,000 etiquetas, especificidad de {e}: marca como riesgo al {fa}% de los ECGs normales.": (
-        "At 99% sensitivity and 2,000 labels, specificity of {e}: it flags {fa}% of normal ECGs as at risk.",
-        "Al 99% di sensibilità e con 2.000 etichette, specificità di {e}: segnala come a rischio il {fa}% degli ECG normali."),
-    "AUROC más bajo dentro de un dataset de origen: {v} en {ds} (n = {n}).": (
-        "Lowest AUROC within a source dataset: {v} in {ds} (n = {n}).", "AUROC più basso all'interno di un dataset di origine: {v} in {ds} (n = {n})."),
     "Dice qué cardiopatía: la categoría más probable es real en {a}% de los ECGs con cardiopatía ({b}% con 2,000 etiquetas), contra {c}% adivinando siempre la más frecuente.": (
         "It says which heart disease: the most likely category is a true one in {a}% of ECGs with heart disease ({b}% with 2,000 labels), against {c}% always guessing the most frequent.",
         "Dice quale cardiopatia: la categoria più probabile è reale nel {a}% degli ECG con cardiopatia ({b}% con 2.000 etichette), contro il {c}% indovinando sempre la più frequente."),
@@ -553,43 +558,9 @@ TEXTOS = {
     "Su riesgo combina las categorías como si fueran independientes, pero el {p}% de los ECGs con cardiopatía de validación tiene dos o más.": (
         "Its risk combines the categories as if they were independent, but {p}% of validation ECGs with heart disease have two or more.",
         "Il suo rischio combina le categorie come se fossero indipendenti, ma il {p}% degli ECG con cardiopatia della validazione ne ha due o più."),
-    "Con 250 etiquetas, AUROC de {a}: el {r}.º de {n} variantes entrenadas con ese presupuesto.": (
-        "With 250 labels, AUROC of {a}: #{r} of {n} variants trained with that budget.", "Con 250 etichette, AUROC di {a}: {r}° su {n} varianti addestrate con quel budget."),
-    "Con todas las etiquetas y 99% de sensibilidad, especificidad de {e} ({r}.º de {n}).": (
-        "With all labels and 99% sensitivity, specificity of {e} (#{r} of {n}).", "Con tutte le etichette e sensibilità del 99%, specificità di {e} ({r}° su {n})."),
-    "Con 2,000 etiquetas, AUROC de {a} ({r}.º de {n}).": ("With 2,000 labels, AUROC of {a} (#{r} of {n}).", "Con 2.000 etichette, AUROC di {a} ({r}° su {n})."),
-    "Con todas las etiquetas, AUROC de {a}: el {r}.º de {n}.": ("With all labels, AUROC of {a}: #{r} of {n}.", "Con tutte le etichette, AUROC di {a}: {r}° su {n}."),
-    "Con 99% de sensibilidad y 2,000 etiquetas, especificidad de {e}, contra {s} de la SVM.": (
-        "At 99% sensitivity and 2,000 labels, specificity of {e}, against {s} for the SVM.", "Al 99% di sensibilità e con 2.000 etichette, specificità di {e}, contro {s} della SVM."),
-    "Entrenar una semilla con 2,000 etiquetas toma {m} min en el Mac (suma de sus épocas).": (
-        "Training one seed with 2,000 labels takes {m} min on the Mac (sum of its epochs).",
-        "Addestrare un seme con 2.000 etichette richiede {m} min sul Mac (somma delle sue epoche)."),
     "Se programó a partir del resumen de Li et al. (2026); los tamaños y los pesos de las pérdidas son propios.": (
         "It was built from the abstract of Li et al. (2026); the sizes and loss weights are our own.",
         "È stato programmato a partire dall'abstract di Li et al. (2026); le dimensioni e i pesi delle perdite sono nostri."),
-    "Aprende sin etiquetas: se preentrenó con {n} ECGs sin etiquetar.": ("It learns without labels: it was pretrained on {n} unlabeled ECGs.",
-                                                                         "Impara senza etichette: è stato preaddestrato con {n} ECG senza etichetta."),
-    "Con las 10 medidas de intervalos, AUROC de {a} con 2,000 etiquetas ({r}.º de {n}).": (
-        "With the 10 interval measures, AUROC of {a} with 2,000 labels (#{r} of {n}).", "Con le 10 misure di intervalli, AUROC di {a} con 2.000 etichette ({r}° su {n})."),
-    "El codificador limpio llega a {a} congelado, contra {b} del codificador 047 que vio PTB-XL completo.": (
-        "The clean encoder reaches {a} frozen, against {b} for encoder 047, which saw all of PTB-XL.",
-        "L'encoder pulito arriva a {a} congelato, contro {b} dell'encoder 047, che ha visto tutto PTB-XL."),
-    "El preentrenamiento tomó {h} h en el Mac.": ("Pretraining took {h} h on the Mac.", "Il preaddestramento ha richiesto {h} h sul Mac."),
-    "Pesos ya preentrenados con EchoNext, que no tiene ECGs del dataset balanceado.": (
-        "Weights already pretrained on EchoNext, which has no ECGs from the balanced dataset.",
-        "Pesi già preaddestrati su EchoNext, che non contiene ECG del dataset bilanciato."),
-    "Su mejor forma, el ajuste fino completo, llega a {a} con 2,000 etiquetas ({r}.º de {n}).": (
-        "Its best form, full fine-tuning, reaches {a} with 2,000 labels (#{r} of {n}).", "La sua forma migliore, il fine-tuning completo, arriva a {a} con 2.000 etichette ({r}° su {n})."),
-    "El preentrenamiento aporta poco: {a} contra {b} de la misma red sin preentrenar.": (
-        "Pretraining adds little: {a} against {b} for the same network without pretraining.",
-        "Il preaddestramento aggiunge poco: {a} contro {b} della stessa rete senza preaddestramento."),
-    "Solo necesita ECGs normales etiquetados.": ("It only needs labeled normal ECGs.", "Ha bisogno solo di ECG normali etichettati."),
-    "AUROC de {a} con 2,000 etiquetas ({r}.º de {n}).": ("AUROC of {a} with 2,000 labels (#{r} of {n}).", "AUROC di {a} con 2.000 etichette ({r}° su {n})."),
-    "Más normales en el banco casi no ayudan: {a} con 250 etiquetas y {b} con 2,000.": (
-        "More normal ECGs in the bank barely help: {a} with 250 labels and {b} with 2,000.",
-        "Più ECG normali nella banca aiutano appena: {a} con 250 etichette e {b} con 2.000."),
-    "Con 99% de sensibilidad y 2,000 etiquetas, especificidad de {e}.": ("At 99% sensitivity and 2,000 labels, specificity of {e}.",
-                                                                         "Al 99% di sensibilità e con 2.000 etichette, specificità di {e}."),
     "Repolarización (ST-T)": ("Repolarization (ST-T)", "Ripolarizzazione (ST-T)"),
     "QRS: amplitud y eje": ("QRS: amplitude and axis", "QRS: ampiezza e asse"),
     "Estadísticos de la señal": ("Signal statistics", "Statistiche del segnale"),
@@ -597,6 +568,219 @@ TEXTOS = {
     "Espectro": ("Spectrum", "Spettro"),
     "Ritmo": ("Rhythm", "Ritmo"),
     "Onda P": ("P wave", "Onda P"),
+
+    # Datasets > Resumen: partición del balanceado (datos.particion_balanceado)
+    "Partición del dataset balanceado": ("Balanced dataset split", "Suddivisione del dataset bilanciato"),
+    "parte": ("part", "parte"),
+    "prueba": ("test", "test"),
+    "% del dataset": ("% of the dataset", "% del dataset"),
+    "normales": ("normal", "normali"),
+
+    # Modelos > Resultados: modelos de la interfaz (experimentos.modelos_interfaz)
+    "Modelos de la interfaz (experimento 067)": ("Interface models (experiment 067)", "Modelli dell'interfaccia (esperimento 067)"),
+    "Cardiopatías que el modelo distingue": ("Heart conditions the model distinguishes", "Cardiopatie che il modello distingue"),
+    "de {n}": ("of {n}", "su {n}"),
+    "AUROC del riesgo de cardiopatía": ("AUROC of the heart disease risk", "AUROC del rischio di cardiopatia"),
+    "Especificidad con 99% de sensibilidad": ("Specificity at 99% sensitivity", "Specificità al 99% di sensibilità"),
+    "Una de las 3 cardiopatías más probables es real": ("One of the 3 most likely heart conditions is real", "Una delle 3 cardiopatie più probabili è reale"),
+    "AUROC de cada cardiopatía (todas las etiquetas)": ("AUROC of each heart condition (all labels)", "AUROC di ogni cardiopatia (tutte le etichette)"),
+    "casos en entrenamiento": ("training cases", "casi in addestramento"),
+    "casos en validación": ("validation cases", "casi in validazione"),
+    "IC 95% bajo": ("95% CI low", "IC 95% inferiore"),
+    "IC 95% alto": ("95% CI high", "IC 95% superiore"),
+    "¿la distingue?": ("does it distinguish it?", "la distingue?"),
+
+    # Modelos > Características de la señal (experimentos.caracteristicas)
+    "Se diseñaron y seleccionaron en el notebook Avance2.8 con los ECGs de entrenamiento de PTB-XL. La interfaz las calcula con el mismo código, en ecg_experiment/caracteristicas_avance2.py.": (
+        "They were designed and selected in the Avance2.8 notebook with the PTB-XL training ECGs. The interface computes them with the same code, in ecg_experiment/caracteristicas_avance2.py.",
+        "Sono state progettate e selezionate nel notebook Avance2.8 con gli ECG di addestramento di PTB-XL. L'interfaccia le calcola con lo stesso codice, in ecg_experiment/caracteristicas_avance2.py."),
+    "Características de entrada": ("Input features", "Caratteristiche di ingresso"),
+    "de {n} medidas candidatas": ("of {n} candidate measurements", "su {n} misure candidate"),
+    "Familias": ("Families", "Famiglie"),
+    "Objetivos de la selección": ("Selection targets", "Obiettivi della selezione"),
+    "cardiopatía y las superclases MI, STTC, CD e HYP de PTB-XL": ("heart disease and the PTB-XL superclasses MI, STTC, CD and HYP",
+                                                                  "cardiopatia e le superclassi MI, STTC, CD e HYP di PTB-XL"),
+    "Coincidencia con el notebook (correlación mediana)": ("Agreement with the notebook (median correlation)", "Concordanza con il notebook (correlazione mediana)"),
+    "Spearman, {m} medidas en {n} ECGs de PTB-XL": ("Spearman, {m} measurements in {n} PTB-XL ECGs", "Spearman, {m} misure in {n} ECG di PTB-XL"),
+    "De las medidas candidatas a las características de entrada": ("From the candidate measurements to the input features",
+                                                                   "Dalle misure candidate alle caratteristiche di ingresso"),
+    "paso": ("step", "passo"),
+    "criterio": ("criterion", "criterio"),
+    "eliminadas": ("removed", "eliminate"),
+    "quedan": ("remaining", "restano"),
+    "Construcción": ("Construction", "Costruzione"),
+    "Varianza": ("Variance", "Varianza"),
+    "Relevancia": ("Relevance", "Rilevanza"),
+    "Redundancia": ("Redundancy", "Ridondanza"),
+    "Medidas de la señal elegidas por su uso clínico": ("Signal measurements chosen for their clinical use", "Misure del segnale scelte per il loro uso clinico"),
+    "Casi constantes: varianza menor de {v} con cada medida llevada a [0, 1]": (
+        "Almost constant: variance below {v} with each measurement scaled to [0, 1]",
+        "Quasi costanti: varianza inferiore a {v} con ogni misura portata a [0, 1]"),
+    "Sin efecto de al menos {e} (η² o V² de Cramér, q < 0.05) frente a ninguno de los 5 objetivos": (
+        "No effect of at least {e} (η² or Cramér's V², q < 0.05) for any of the 5 targets",
+        "Nessun effetto di almeno {e} (η² o V² di Cramér, q < 0,05) per alcuno dei 5 obiettivi"),
+    "Correlación de {r} o más con otra de mayor efecto, que se conserva": (
+        "Correlation of {r} or more with another one with a larger effect, which is kept",
+        "Correlazione di {r} o più con un'altra di effetto maggiore, che viene conservata"),
+    "Características por familia": ("Features by family", "Caratteristiche per famiglia"),
+    "Las características, de mayor a menor efecto": ("The features, from largest to smallest effect", "Le caratteristiche, dall'effetto maggiore al minore"),
+    "característica": ("feature", "caratteristica"),
+    "qué mide": ("what it measures", "cosa misura"),
+    "prueba estadística": ("statistical test", "test statistico"),
+    "efecto máximo": ("maximum effect", "effetto massimo"),
+    "objetivo del efecto máximo": ("target of the maximum effect", "obiettivo dell'effetto massimo"),
+    "chi-cuadrado": ("chi-squared", "chi-quadrato"),
+    "Cardiopatía": ("Heart disease", "Cardiopatia"),
+    "Altura de la onda R en {d} (mV)": ("R wave height in {d} (mV)", "Altezza dell'onda R in {d} (mV)"),
+    "Profundidad de la onda S en {d} (mV)": ("S wave depth in {d} (mV)", "Profondità dell'onda S in {d} (mV)"),
+    "Profundidad de la onda Q en {d} (mV)": ("Q wave depth in {d} (mV)", "Profondità dell'onda Q in {d} (mV)"),
+    "Área neta del QRS en {d} (mV·ms)": ("Net QRS area in {d} (mV·ms)", "Area netta del QRS in {d} (mV·ms)"),
+    "Nivel del ST en {d}, de 60 a 80 ms tras el QRS (mV)": ("ST level in {d}, 60 to 80 ms after the QRS (mV)", "Livello del ST in {d}, da 60 a 80 ms dopo il QRS (mV)"),
+    "Amplitud de la onda T en {d} (mV)": ("T wave amplitude in {d} (mV)", "Ampiezza dell'onda T in {d} (mV)"),
+    "Desviación estándar de la señal en {d} (mV)": ("Standard deviation of the signal in {d} (mV)", "Deviazione standard del segnale in {d} (mV)"),
+    "Curtosis de la señal en {d}": ("Kurtosis of the signal in {d}", "Curtosi del segnale in {d}"),
+    "Frecuencia cardiaca (lpm)": ("Heart rate (bpm)", "Frequenza cardiaca (bpm)"),
+    "Frecuencia en tres clases: bradicardia (< 60 lpm), normal y taquicardia (≥ 100 lpm)": (
+        "Rate in three classes: bradycardia (< 60 bpm), normal and tachycardia (≥ 100 bpm)",
+        "Frequenza in tre classi: bradicardia (< 60 bpm), normale e tachicardia (≥ 100 bpm)"),
+    "Correlación media de cada latido con el latido mediano": ("Mean correlation of each beat with the median beat",
+                                                               "Correlazione media di ogni battito con il battito mediano"),
+    "Duración del QRS (ms)": ("QRS duration (ms)", "Durata del QRS (ms)"),
+    "Duración del QRS en tres clases: estrecho (< 110 ms), intermedio (110 a 119 ms) y ancho (≥ 120 ms)": (
+        "QRS duration in three classes: narrow (< 110 ms), intermediate (110 to 119 ms) and wide (≥ 120 ms)",
+        "Durata del QRS in tre classi: stretto (< 110 ms), intermedio (da 110 a 119 ms) e largo (≥ 120 ms)"),
+    "Intervalo PR: del inicio de la onda P al inicio del QRS (ms)": ("PR interval: from the P wave onset to the QRS onset (ms)",
+                                                                     "Intervallo PR: dall'inizio dell'onda P all'inizio del QRS (ms)"),
+    "Del punto de mayor amplitud antes del QRS al inicio del QRS (ms)": ("From the point of largest amplitude before the QRS to the QRS onset (ms)",
+                                                                         "Dal punto di ampiezza massima prima del QRS all'inizio del QRS (ms)"),
+    "QT corregido por la frecuencia con Bazett: QT / √RR (ms)": ("QT corrected for rate with Bazett: QT / √RR (ms)",
+                                                                 "QT corretto per la frequenza con Bazett: QT / √RR (ms)"),
+    "QTc en tres clases: normal (< 450 ms), limítrofe (450 a 479 ms) y prolongado (≥ 480 ms)": (
+        "QTc in three classes: normal (< 450 ms), borderline (450 to 479 ms) and prolonged (≥ 480 ms)",
+        "QTc in tre classi: normale (< 450 ms), borderline (da 450 a 479 ms) e prolungato (≥ 480 ms)"),
+    "No se encontró una onda P medible": ("No measurable P wave was found", "Non è stata trovata un'onda P misurabile"),
+    "Índice de Sokolow-Lyon: S en V1 + la mayor R entre V5 y V6 (mV)": ("Sokolow-Lyon index: S in V1 + the larger R of V5 and V6 (mV)",
+                                                                        "Indice di Sokolow-Lyon: S in V1 + la R maggiore tra V5 e V6 (mV)"),
+    "Producto de Cornell: (R en aVL + S en V3) × duración del QRS (mV·ms)": ("Cornell product: (R in aVL + S in V3) × QRS duration (mV·ms)",
+                                                                             "Prodotto di Cornell: (R in aVL + S in V3) × durata del QRS (mV·ms)"),
+    "Eje eléctrico del QRS: seno del ángulo": ("QRS electrical axis: sine of the angle", "Asse elettrico del QRS: seno dell'angolo"),
+    "Eje eléctrico del QRS: coseno del ángulo": ("QRS electrical axis: cosine of the angle", "Asse elettrico del QRS: coseno dell'angolo"),
+    "Eje del QRS desviado a la izquierda (de -90° a -30°)": ("QRS axis deviated to the left (-90° to -30°)", "Asse del QRS deviato a sinistra (da -90° a -30°)"),
+    "Eje del QRS desviado a la derecha (más de 90°)": ("QRS axis deviated to the right (more than 90°)", "Asse del QRS deviato a destra (oltre 90°)"),
+    "Eje del QRS extremo (menos de -90°)": ("Extreme QRS axis (less than -90°)", "Asse del QRS estremo (meno di -90°)"),
+    "Derivaciones con onda Q patológica (al menos 25% de la R y 0.1 mV): 0, 1, 2 o 3 o más": (
+        "Leads with a pathological Q wave (at least 25% of the R and 0.1 mV): 0, 1, 2, or 3 or more",
+        "Derivazioni con onda Q patologica (almeno il 25% della R e 0,1 mV): 0, 1, 2, o 3 o più"),
+    "R / (R + S) en V1": ("R / (R + S) in V1", "R / (R + S) in V1"),
+    "Pendiente de la altura de la R de V1 a V4 (mV por derivación)": ("Slope of the R height from V1 to V4 (mV per lead)",
+                                                                      "Pendenza dell'altezza della R da V1 a V4 (mV per derivazione)"),
+    "Transición temprana de la R: la R supera a la S desde V1 o V2": ("Early R transition: the R exceeds the S from V1 or V2",
+                                                                      "Transizione precoce della R: la R supera la S da V1 o V2"),
+    "Transición tardía de la R: la R supera a la S en V5, en V6 o en ninguna": ("Late R transition: the R exceeds the S in V5, in V6 or in none",
+                                                                                "Transizione tardiva della R: la R supera la S in V5, in V6 o in nessuna"),
+    "Mayor descenso del ST en todo el ECG, sin aVR (mV)": ("Largest ST depression in the whole ECG, without aVR (mV)",
+                                                           "Massimo sottoslivellamento del ST in tutto l'ECG, senza aVR (mV)"),
+    "Mayor elevación del ST en todo el ECG, sin aVR (mV)": ("Largest ST elevation in the whole ECG, without aVR (mV)",
+                                                            "Massimo sopraslivellamento del ST in tutto l'ECG, senza aVR (mV)"),
+    "Mayor descenso del ST en la cara anterior: V1 a V4 (mV)": ("Largest ST depression in the anterior wall: V1 to V4 (mV)",
+                                                                "Massimo sottoslivellamento del ST nella parete anteriore: da V1 a V4 (mV)"),
+    "Mayor descenso del ST en la cara inferior: II, III y aVF (mV)": ("Largest ST depression in the inferior wall: II, III and aVF (mV)",
+                                                                      "Massimo sottoslivellamento del ST nella parete inferiore: II, III e aVF (mV)"),
+    "Mayor descenso del ST en la cara lateral: I, aVL, V5 y V6 (mV)": ("Largest ST depression in the lateral wall: I, aVL, V5 and V6 (mV)",
+                                                                       "Massimo sottoslivellamento del ST nella parete laterale: I, aVL, V5 e V6 (mV)"),
+    "Mayor elevación del ST en la cara inferior: II, III y aVF (mV)": ("Largest ST elevation in the inferior wall: II, III and aVF (mV)",
+                                                                       "Massimo sopraslivellamento del ST nella parete inferiore: II, III e aVF (mV)"),
+    "Amplitud de la onda T en su pico, en la media cuadrática de I, II y V1 a V6 (mV)": (
+        "T wave amplitude at its peak, in the root mean square of I, II and V1 to V6 (mV)",
+        "Ampiezza dell'onda T al suo picco, nella media quadratica di I, II e da V1 a V6 (mV)"),
+    "Eje de la onda T: seno del ángulo": ("T wave axis: sine of the angle", "Asse dell'onda T: seno dell'angolo"),
+    "Eje de la onda T: coseno del ángulo": ("T wave axis: cosine of the angle", "Asse dell'onda T: coseno dell'angolo"),
+    "Ángulo entre los ejes del QRS y de la onda T (0 a 180°)": ("Angle between the QRS and T wave axes (0 to 180°)",
+                                                                "Angolo tra gli assi del QRS e dell'onda T (da 0 a 180°)"),
+    "Onda T invertida (menor de -0.1 mV) en al menos una de I, II y V3 a V6": ("Inverted T wave (below -0.1 mV) in at least one of I, II and V3 to V6",
+                                                                               "Onda T invertita (sotto -0,1 mV) in almeno una tra I, II e da V3 a V6"),
+    "Fracción de la potencia de 0.5 a 40 Hz que está entre 0.5 y 5 Hz": ("Fraction of the 0.5 to 40 Hz power between 0.5 and 5 Hz",
+                                                                         "Frazione della potenza da 0,5 a 40 Hz compresa tra 0,5 e 5 Hz"),
+    "Fracción de la potencia de 0.5 a 40 Hz que está entre 5 y 15 Hz": ("Fraction of the 0.5 to 40 Hz power between 5 and 15 Hz",
+                                                                        "Frazione della potenza da 0,5 a 40 Hz compresa tra 5 e 15 Hz"),
+    "Entropía del espectro de 0.5 a 40 Hz (de 0 a 1)": ("Spectral entropy from 0.5 to 40 Hz (0 to 1)", "Entropia spettrale da 0,5 a 40 Hz (da 0 a 1)"),
+    "Fracción de la potencia por encima de 40 Hz": ("Fraction of the power above 40 Hz", "Frazione della potenza sopra 40 Hz"),
+
+    # Diagnósticos > Clasificación de las etiquetas (datos.clasificacion_etiquetas)
+    "Clasificación de las etiquetas": ("Label classification", "Classificazione delle etichette"),
+    "La clasificación en uso (nombre unificado, diagnóstico general, categoría y grupo) la hizo el asistente de IA (Claude) el 26 y 27 de octubre de 2026, con su criterio y sin citar fuentes, y no la ha revisado un cardiólogo. Las columnas de bibliografía comparan cada etiqueta con la lista de enunciados de la AHA/ACCF/HRS (Mason et al., 2007), los criterios internacionales para atletas (Drezner et al., 2017) y las superclases de PTB-XL. El modelo multietiqueta solo predice los diagnósticos generales con al menos 20 ECGs en validación. Detalle: docs/clasificacion-etiquetas-bibliografia.md.": (
+        "The classification in use (unified name, general diagnosis, category and group) was made by the AI assistant (Claude) on 26 and 27 October 2026, using its own judgment and without citing sources, and no cardiologist has reviewed it. The literature columns compare each label with the AHA/ACCF/HRS statement list (Mason et al., 2007), the international criteria for athletes (Drezner et al., 2017) and the PTB-XL superclasses. The multi-label model only predicts the general diagnoses with at least 20 validation ECGs. Details: docs/clasificacion-etiquetas-bibliografia.md.",
+        "La classificazione in uso (nome unificato, diagnosi generale, categoria e gruppo) è stata fatta dall'assistente di IA (Claude) il 26 e 27 ottobre 2026, con il proprio criterio e senza citare fonti, e nessun cardiologo l'ha rivista. Le colonne della bibliografia confrontano ogni etichetta con l'elenco di enunciati AHA/ACCF/HRS (Mason et al., 2007), i criteri internazionali per gli atleti (Drezner et al., 2017) e le superclassi di PTB-XL. Il modello multi-etichetta prevede solo le diagnosi generali con almeno 20 ECG in validazione. Dettagli: docs/clasificacion-etiquetas-bibliografia.md."),
+    "Etiquetas originales de cardiopatía": ("Original heart-condition labels", "Etichette originali di cardiopatia"),
+    "Cardiopatías al unir sinónimos": ("Heart conditions after merging synonyms", "Cardiopatie dopo aver unito i sinonimi"),
+    "Diagnósticos generales": ("General diagnoses", "Diagnosi generali"),
+    "Diagnósticos que predice el modelo multietiqueta": ("Diagnoses the multi-label model predicts", "Diagnosi previste dal modello multi-etichetta"),
+    "Clasificación de cada etiqueta original": ("Classification of each original label", "Classificazione di ogni etichetta originale"),
+    "etiqueta original": ("original label", "etichetta originale"),
+    "código": ("code", "codice"),
+    "nombre unificado (en uso)": ("unified name (in use)", "nome unificato (in uso)"),
+    "diagnóstico general (en uso)": ("general diagnosis (in use)", "diagnosi generale (in uso)"),
+    "categoría (en uso)": ("category (in use)", "categoria (in uso)"),
+    "grupo (en uso)": ("group (in use)", "gruppo (in uso)"),
+    "enunciado AHA 2007": ("AHA 2007 statement", "enunciato AHA 2007"),
+    "categoría AHA 2007": ("AHA 2007 category", "categoria AHA 2007"),
+    "correspondencia con la AHA": ("match with the AHA list", "corrispondenza con l'elenco AHA"),
+    "criterio de atletas 2017": ("2017 athlete criteria", "criteri per atleti 2017"),
+    "condición del criterio": ("criterion condition", "condizione del criterio"),
+    "grupo según la bibliografía": ("group according to the literature", "gruppo secondo la bibliografia"),
+    "¿coincide el grupo?": ("does the group match?", "il gruppo coincide?"),
+    "¿lo predice el modelo multietiqueta?": ("predicted by the multi-label model?", "previsto dal modello multi-etichetta?"),
+    "sí": ("yes", "sì"),
+    "no": ("no", "no"),
+    "no aplica": ("not applicable", "non applicabile"),
+    "solo su categoría": ("only its category", "solo la sua categoria"),
+    "no cardiopatía": ("not a heart condition", "non cardiopatia"),
+    "por definir": ("to be defined", "da definire"),
+    "anormal": ("abnormal", "anormale"),
+    "limítrofe": ("borderline", "borderline"),
+    "depende del tipo": ("depends on the type", "dipende dal tipo"),
+    "sin criterio publicado": ("no published criterion", "nessun criterio pubblicato"),
+    "oficial PTB-XL": ("official PTB-XL", "ufficiale PTB-XL"),
+    "mismo término": ("same term", "stesso termine"),
+    "equivalente propuesto por el asistente": ("equivalent proposed by the assistant", "equivalente proposto dall'assistente"),
+    "sin enunciado en la lista": ("no statement in the list", "nessun enunciato nell'elenco"),
+    "Mobitz I es normal y Mobitz II anormal; la etiqueta no dice cuál": ("Mobitz I is normal and Mobitz II abnormal; the label does not say which",
+                                                                         "Mobitz I è normale e Mobitz II anormale; l'etichetta non dice quale"),
+    "Q/R ≥0.25 o ≥40 ms en ≥2 derivaciones (sin III ni aVR)": ("Q/R ≥0.25 or ≥40 ms in ≥2 leads (excluding III and aVR)",
+                                                               "Q/R ≥0,25 o ≥40 ms in ≥2 derivazioni (escluse III e aVR)"),
+    "QTc ≥470 ms en hombres, ≥480 ms en mujeres": ("QTc ≥470 ms in men, ≥480 ms in women", "QTc ≥470 ms negli uomini, ≥480 ms nelle donne"),
+    "anormal si hay ≥2 en un trazo de 10 s": ("abnormal if there are ≥2 in a 10 s tracing", "anormale se ce ne sono ≥2 in un tracciato di 10 s"),
+    "anormal si la pausa es ≥3 s": ("abnormal if the pause is ≥3 s", "anormale se la pausa è ≥3 s"),
+    "anormal solo si QRS ≥140 ms; si no, la tabla no lo clasifica": ("abnormal only if QRS ≥140 ms; otherwise the table does not classify it",
+                                                                    "anormale solo se QRS ≥140 ms; altrimenti la tabella non lo classifica"),
+    "el grado no se especifica": ("the degree is not specified", "il grado non è specificato"),
+    "en bigeminismo hay más de 2 extrasístoles en 10 s": ("in bigeminy there are more than 2 premature beats in 10 s",
+                                                         "nel bigeminismo ci sono più di 2 extrasistoli in 10 s"),
+    "en trigeminismo suele haber más de 2 extrasístoles en 10 s": ("in trigeminy there are usually more than 2 premature beats in 10 s",
+                                                                  "nel trigeminismo di solito ci sono più di 2 extrasistoli in 10 s"),
+    "la AHA la define desde +90° y los criterios de atletas desde >120°": ("the AHA defines it from +90° and the athlete criteria from >120°",
+                                                                         "l'AHA la definisce da +90° e i criteri per atleti da >120°"),
+    "la onda P >120 ms es parte de la definición de agrandamiento auricular izquierdo": (
+        "a P wave >120 ms is part of the definition of left atrial enlargement",
+        "un'onda P >120 ms fa parte della definizione di ingrandimento atriale sinistro"),
+    "la tabla nombra dupletas, tripletas y TV no sostenida": ("the table names couplets, triplets and non-sustained VT",
+                                                             "la tabella nomina coppie, triplette e TV non sostenuta"),
+    "la tabla nombra dupletas, tripletas y TV no sostenida; la fibrilación es más grave": (
+        "the table names couplets, triplets and non-sustained VT; fibrillation is more severe",
+        "la tabella nomina coppie, triplette e TV non sostenuta; la fibrillazione è più grave"),
+    "no dice si es sinusal (22) o no sinusal (42)": ("it does not say whether it is sinus (22) or non-sinus (42)",
+                                                    "non dice se è sinusale (22) o non sinusale (42)"),
+    "normal con PR 200-400 ms; anormal si ≥400 ms": ("normal with PR 200-400 ms; abnormal if ≥400 ms", "normale con PR 200-400 ms; anormale se ≥400 ms"),
+    "normal si ≥30 lpm; <30 lpm es anormal": ("normal if ≥30 bpm; <30 bpm is abnormal", "normale se ≥30 bpm; <30 bpm è anormale"),
+    "normal solo si el voltaje es el único hallazgo": ("normal only if the voltage is the only finding", "normale solo se il voltaggio è l'unico reperto"),
+    "onda P ≥2.5 mm en II, III o aVF": ("P wave ≥2.5 mm in II, III or aVF", "onda P ≥2,5 mm in II, III o aVF"),
+    "origen no especificado": ("unspecified origin", "origine non specificata"),
+    "solo el patrón tipo 1; la etiqueta no dice el tipo": ("only the type 1 pattern; the label does not say the type",
+                                                          "solo il pattern di tipo 1; l'etichetta non dice il tipo"),
+    "≥0.5 mm en ≥2 derivaciones contiguas": ("≥0.5 mm in ≥2 contiguous leads", "≥0,5 mm in ≥2 derivazioni contigue"),
+    "≥1 mm en ≥2 contiguas; no cuenta aVR, III, V1 ni V1-V3 en menores de 16": (
+        "≥1 mm in ≥2 contiguous leads; aVR, III, V1, and V1-V3 under age 16 do not count",
+        "≥1 mm in ≥2 derivazioni contigue; non contano aVR, III, V1, né V1-V3 sotto i 16 anni"),
 }
 
 CATEGORIAS = {
@@ -816,9 +1000,7 @@ def traducir_bloque(b: dict, idioma: str) -> dict:
     """Traduce títulos, notas, ejes y los textos de la tabla de un bloque; los números no cambian."""
     t = lambda x: traducir(x, idioma)
     datos = b["datos"]
-    if b["tipo"] == "lista":
-        datos = {k: [t(x) for x in v] for k, v in datos.items()}
-    elif isinstance(datos, dict):
+    if isinstance(datos, dict):
         datos = {"columns": [t(c) for c in datos["columns"]], "index": [t(i) for i in datos["index"]],
                  "data": [[t(v) for v in fila] for fila in datos["data"]], "nombre_indice": t(datos["nombre_indice"])}
     elif isinstance(datos, list):

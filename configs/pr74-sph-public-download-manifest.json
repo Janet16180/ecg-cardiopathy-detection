@@ -1,0 +1,36 @@
+{
+  "benchmark": "https://github.com/AI4HealthUOL/ecg-fm-benchmarking",
+  "dataset": "sph",
+  "files": [
+    {
+      "name": "19738468/rule.pdf",
+      "url": "https://ndownloader.figshare.com/files/35284594",
+      "size": 47063,
+      "md5": "8e84772f206d50f0e661c787cd4c905a"
+    },
+    {
+      "name": "17912444/records.tar.gz",
+      "url": "https://ndownloader.figshare.com/files/32630684",
+      "size": 2281799680,
+      "md5": "0beef976f54cf0a95fac9f45bb157950"
+    },
+    {
+      "name": "17912507/code.csv",
+      "url": "https://ndownloader.figshare.com/files/32630954",
+      "size": 1839,
+      "md5": "9fafec6cc6e1ef8117e2964116654d05"
+    },
+    {
+      "name": "17912441/metadata.csv",
+      "url": "https://ndownloader.figshare.com/files/34793152",
+      "size": 999219,
+      "md5": "8ef8e8789059a585c89c5302c7891909"
+    },
+    {
+      "name": "17914088/example-code.pdf",
+      "url": "https://ndownloader.figshare.com/files/34793155",
+      "size": 402008,
+      "md5": "6fdcd9c6ed2b1de438578338b964cc99"
+    }
+  ]
+}

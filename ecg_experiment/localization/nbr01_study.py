@@ -18,6 +18,7 @@ from ..pr74_screening_metrics import budget_threshold
 from . import nbr01_analysis as na
 from . import nbr01_counterpart as nc
 from . import nbr01_features as nf
+from . import nbr01_parity
 from . import nbr01_selection as ns
 
 OUTPUT = Path("outputs/nbr01_normal_beat_replacement_20261028")
@@ -269,14 +270,65 @@ def score(input_root: Path) -> dict[str, Any]:
     write_npz_atomic(directory / "scores.npz", scores=scored["scores"], energy=scored["energy"],
                      ecg_id=rows["ecg_id"].to_numpy(dtype=str), group=rows["group"].to_numpy(dtype=str),
                      patient=rows["patient_key"].to_numpy(dtype=str))
+    registered = max(gaps.values()) <= SCORE_TOLERANCE and all(decisions.values())
     integrity = {"max_abs_difference": gaps, "tolerance": SCORE_TOLERANCE, "decisions_identical": decisions,
-                 "thresholds_replayed_exactly": True,
-                 "passed": max(gaps.values()) <= SCORE_TOLERANCE and all(decisions.values()),
+                 "thresholds_replayed_exactly": True, "registered_check_passed": registered,
+                 "amendment_1": (None if registered
+                                 else amendment_check(input_root, rows, scored["scores"], saved)),
                  "thresholds": limits, "records": len(rows)}
+    integrity["passed"] = registered or (all(decisions.values()) and integrity["amendment_1"]["passed"])
     write_json_atomic(directory / "integrity.json", integrity)
     if not integrity["passed"]:
         raise ValueError(f"Unreplaced scores do not reproduce the saved SPH scores: {gaps}")
     return complete(input_root, "score", receipt, integrity)
+
+
+def parity(input_root: Path, device: int) -> dict[str, Any]:
+    """Amendment 1: re-encode records with non-identical unreplaced features in their historical batch."""
+    receipt = binding()
+    result = nbr01_parity.historical_parity(input_root, prepared_rows(input_root), WORK / "full", device)
+    write_json_atomic(stage_dir(input_root, "parity") / "parity.json", result)
+    if not result["passed"]:
+        raise ValueError("Historical-batch re-encoding did not reproduce the saved features")
+    return complete(input_root, "parity", receipt, result)
+
+
+def amendment_check(input_root: Path, rows: pd.DataFrame, scores: np.ndarray, saved: Any) -> dict[str, Any]:
+    """
+    Apply the Amendment 1 rule to the unreplaced-score gaps.
+
+    Every score gap above tolerance must come from a record that the parity stage showed to be
+    bit-identical when encoded inside its historical batch.
+
+    Parameters
+    ----------
+    input_root : Path
+        Checkout holding outputs.
+    rows : pd.DataFrame
+        Prepared rows in score order.
+    scores : np.ndarray
+        (records, variants, models, kinds) scores.
+    saved : Any
+        Saved SPH predictions.
+
+    Returns
+    -------
+    dict[str, Any]
+        Records over tolerance, the parity records and whether the rule passed.
+    """
+    checked = require(input_root, "parity")
+    positions = rows["position"].astype(int).to_numpy()
+    worst = np.zeros(len(rows))
+    for m, model in enumerate(nf.MODELS):
+        for k, kind in enumerate(nf.KINDS):
+            worst = np.maximum(worst, np.abs(scores[:, 0, m, k] - saved[f"{model}_{kind}"][positions]))
+    over = sorted(rows.loc[worst > SCORE_TOLERANCE, "ecg_id"])
+    explained = sorted(item["ecg_id"] for item in checked["differing"])
+    gaps = dict(zip(rows.loc[worst > SCORE_TOLERANCE, "ecg_id"], worst[worst > SCORE_TOLERANCE].tolist(),
+                    strict=True))
+    return {"records_over_tolerance": over, "largest_gap_by_record": gaps,
+            "parity_records": explained, "parity_passed": bool(checked["passed"]),
+            "passed": bool(checked["passed"]) and set(over) <= set(explained)}
 
 
 def analyze(input_root: Path) -> dict[str, Any]:

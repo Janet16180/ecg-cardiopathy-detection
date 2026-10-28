@@ -17,14 +17,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input-root", type=Path, required=True)
     parser.add_argument("--stage", required=True, choices=("counterpart", "profile", "select", "prepare",
-                                                           "encode", "score", "analyze", "export"))
+                                                           "encode", "parity", "score", "analyze", "export"))
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--workers", type=int, default=12)
     parser.add_argument("--shard", type=int, default=0)
     parser.add_argument("--shards", type=int, default=1)
     args = parser.parse_args()
     with threadpool_limits(limits=2):
-        if args.stage in ("profile", "encode"):
+        if args.stage in ("profile", "encode", "parity"):
             configure_cuda_runtime()
         if args.stage == "counterpart":
             result = nbr01_study.counterpart(args.input_root, args.workers)
@@ -36,6 +36,8 @@ def main() -> None:
             result = nbr01_study.prepare(args.input_root, args.workers)
         elif args.stage == "encode":
             result = nbr01_study.encode(args.input_root, args.device, args.shard, args.shards)
+        elif args.stage == "parity":
+            result = nbr01_study.parity(args.input_root, args.device)
         elif args.stage == "score":
             result = nbr01_study.score(args.input_root)
         elif args.stage == "analyze":

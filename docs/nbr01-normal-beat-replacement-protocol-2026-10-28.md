@@ -243,3 +243,32 @@ Small results in `outputs/nbr01_normal_beat_replacement_20261028/` (stage receip
   normal scores; the energy map and the normals measure this.
 - SPH MI statements are mostly old MI and have no lateral territory; ST-T statements carry no lead.
 - SPH has been read by many experiments; results are development evidence.
+
+## Amendment 1 (28 October 2026, after integrity check 2 failed, before any replacement score was read)
+
+Integrity check 2 failed as registered. The `score` stage scored all 1,037 prepared ECGs and compared only
+their unreplaced variants with the saved SPH scores: HGB was exact for both models, but the xECG scores
+differed by up to 4.12e-8 (`all_age`) and 2.46e-8 (`ptb_baseline`), and the blends by up to 2.06e-8 and
+1.23e-8, above the 1e-12 gate. Referral decisions were identical for both blends, and the thresholds replayed
+exactly. The stage raised and wrote no completion receipt. No endpoint, drop, share or replaced-variant score
+has been read.
+
+Diagnosis, from the unreplaced variants only: 1,035 of the 1,037 unreplaced xECG feature vectors are
+bit-identical to the saved SPH features; 2 differ by at most 7.15e-6. Scoring the saved features of the same
+1,037 records reproduces the saved xECG scores to 6.1e-16, so the frozen heads are not the cause, and the
+records whose features are identical reproduce to 6.1e-16. The 2 gaps come from the encoder: in this study
+each record's variants share a batch of 16, while the saved features were encoded in consecutive batches of
+16 SPH rows. The batch shape is the same, so this is a batch-content effect of the FP32 kernels, a smaller
+relative of the batch-shape effect documented in `pr74-batch-shape-reproduction-2026-10-28.md`.
+
+Additive successor check, in the spirit of that precedent; no tolerance, threshold, endpoint or decision rule
+changes. Stage `parity` re-encodes every record whose unreplaced features are not bit-identical inside its
+historical batch (rows `16 * (p // 16)` to `16 * (p // 16) + 15` of the frozen SPH table, read and verified
+with `read_signal`) and requires bit-identical features and xECG scores within 1e-12 of the saved scores for
+both models. The `score` stage then records the registered check as failed and passes only if (a) referral
+decisions are identical, (b) every record whose unreplaced score differs by more than 1e-12 is one that the
+parity stage reproduced exactly in its historical batch. If either fails, the study stops.
+
+The analysis keeps the scores as computed: all 105 variants of a record were encoded the same way, in
+batches drawn from that record's own variants, so drops compare like with like. The report states that the
+registered check failed and gives the size of the batch-content effect (at most 2.06e-8 on the primary blend).

@@ -14,7 +14,8 @@ from pydantic import BaseModel, ConfigDict, Field
 from ecg_experiment import ROOT
 
 from .artifacts import ArtifactUnavailableError, load_cohorts, load_evaluation
-from .inference import BUNDLE, Predictor, analyze
+from .config import CACHED, ArtifactMode, artifact_mode
+from .inference import Predictor, analyze
 from .security import LocalSecurityMiddleware
 
 STATIC = Path(__file__).parent / "static"
@@ -39,19 +40,20 @@ def unavailable(error: Exception) -> HTTPException:
     return HTTPException(503, "Completed, verified corrective artifacts are not available locally.")
 
 
-def artifact_status(loader: Any, root: Path) -> dict[str, Any]:
+def artifact_status(loader: Any, root: Path, mode: ArtifactMode) -> dict[str, Any]:
     """Report completion without treating a proposal, profile or missing artifact as a result."""
     try:
-        loader(root)
+        loader(root, mode)
     except ARTIFACT_ERRORS:
         return {"state": "unavailable", "message": "Waiting for completed, verified local artifacts."}
     return {"state": "completed", "message": "Completed artifact and receipt verified."}
 
 
-def analyze_request(payload: SignalRequest, root: Path, predictor: Predictor | None) -> dict[str, Any]:
+def analyze_request(payload: SignalRequest, root: Path, predictor: Predictor | None,
+                    mode: ArtifactMode) -> dict[str, Any]:
     """Apply executed-model allowlists before a new recording reaches the verified runtime."""
     try:
-        available = load_evaluation(root)
+        available = load_evaluation(root, mode)
     except ARTIFACT_ERRORS:
         available = {"models": []}
     known_models = {value["id"] for value in available["models"]}
@@ -60,32 +62,36 @@ def analyze_request(payload: SignalRequest, root: Path, predictor: Predictor | N
     try:
         return analyze(payload.samples, payload.leads, payload.sample_rate, payload.units,
                        payload.model_id, root, predictor,
-                       enable_inference=bool(known_models))
+                       enable_inference=bool(known_models), mode=mode)
     except (ValueError, OSError, RuntimeError) as error:
         raise HTTPException(
             422, "The recording or verified runtime does not meet the analysis contract.",
         ) from error
 
 
-def workspace_status(root: Path) -> dict[str, Any]:
+def workspace_status(root: Path, mode: ArtifactMode) -> dict[str, Any]:
     """Describe only local completion states for allowlisted research artifacts."""
-    return {"scope": "reused_development", "evaluation": artifact_status(load_evaluation, root),
-            "cohorts": artifact_status(load_cohorts, root),
-            "inference": {"state": "bundle_present" if (root / BUNDLE).is_file() else "unavailable"},
+    bundle_present = (root / mode.evaluation_dir / "model_bundle.joblib").is_file()
+    return {"scope": "reused_development", "artifact_mode": mode.name,
+            "evaluation": artifact_status(load_evaluation, root, mode),
+            "cohorts": artifact_status(load_cohorts, root, mode),
+            "inference": {"state": "bundle_present" if bundle_present else "unavailable"},
             "localization": {"state": "work_in_progress", "validated": False}}
 
 
-def public_artifact(loader: Any, root: Path) -> dict[str, Any]:
+def public_artifact(loader: Any, root: Path, mode: ArtifactMode) -> dict[str, Any]:
     """Translate missing or inconsistent evidence into a nonidentifying unavailable response."""
     try:
-        return loader(root)
+        return loader(root, mode)
     except ARTIFACT_ERRORS as error:
         raise unavailable(error) from error
 
 
-def create_app(artifact_root: Path | None = None, predictor: Predictor | None = None) -> FastAPI:
+def create_app(artifact_root: Path | None = None, predictor: Predictor | None = None,
+               mode_name: str | None = None) -> FastAPI:
     """Build the local API with fixed artifact allowlists and an optional verified predictor."""
     root = artifact_root if artifact_root is not None else Path(os.environ.get("ECG_APP_ARTIFACT_ROOT", ROOT))
+    mode = artifact_mode(mode_name or os.environ.get("ECG_APP_ARTIFACT_MODE", CACHED.name))
     application = FastAPI(title="ECG research workspace", docs_url=None, redoc_url=None, openapi_url=None)
 
     application.add_middleware(LocalSecurityMiddleware)
@@ -93,22 +99,22 @@ def create_app(artifact_root: Path | None = None, predictor: Predictor | None = 
     @application.get("/api/status")
     def status() -> dict[str, Any]:
         """Expose only availability and development scope, never raw record inventories."""
-        return workspace_status(root)
+        return workspace_status(root, mode)
 
     @application.get("/api/evaluation")
     def evaluation() -> dict[str, Any]:
         """Return receipt-bound aggregate counts and saved threshold grids only."""
-        return public_artifact(load_evaluation, root)
+        return public_artifact(load_evaluation, root, mode)
 
     @application.get("/api/cohorts")
     def cohorts() -> dict[str, Any]:
         """Return completed training cohort summaries without raw labels or patient identities."""
-        return public_artifact(load_cohorts, root)
+        return public_artifact(load_cohorts, root, mode)
 
     @application.post("/api/analyze")
     def new_ecg(payload: SignalRequest) -> dict[str, Any]:
         """Assess a new user-provided recording without persisting its samples or patient metadata."""
-        return analyze_request(payload, root, predictor)
+        return analyze_request(payload, root, predictor, mode)
 
     @application.get("/", response_class=HTMLResponse)
     def index() -> str:

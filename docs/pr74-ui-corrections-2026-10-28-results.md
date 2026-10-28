@@ -35,8 +35,13 @@ oversize chunk before extending its buffer or invoking validation/inference.
 The fixed `cached` and `from_raw` startup modes were exercised with synthetic completed receipts,
 including rejection of cached fallback when fresh artifacts are absent. Each mode pairs its own cohort
 summaries, evaluation and verified bundle loader. Real cohort metadata passed in both namespaces, each
-with 770 strictly young and 770 matched control records. The from-raw evaluation remained unavailable
-while its separate pipeline was still running; the app did not substitute the completed cached results.
+with 770 strictly young and 770 matched control records. While the fresh pipeline was running, its
+results remained unavailable and the app did not substitute cached results. After completion, a real
+HTTP ASGI check returned 200 for `/api/status`, `/api/evaluation` and `/api/cohorts`, all explicitly in
+`from_raw` mode. The app verified fresh aggregate SHA-256
+`3dd9bac300ad5002dac0312a24088eefb1c6b6aaaa73e31c3aacde4710670086`, loaded all 15 models and 30
+model/site payloads, retained the fixed baseline default and displayed the unchanged failed primary
+comparison. This routing check generated no new model score or waveform read.
 
 ## Presentation contract
 

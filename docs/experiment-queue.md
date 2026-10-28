@@ -549,6 +549,16 @@ B: 0.777065 (+0.307 pp, [−0.224, +0.892]), specificity 0.949489, AUROC 0.93924
 local outputs in `outputs/heads01_token_superclass_20261028/` (including a 4.2 GB frozen xECG token
 cache). No process is running and nothing was promoted.
 
+## CLF-01 measurement classifiers at SPH (28 October 2026)
+
+The [protocol](clf01-measurement-classifiers-protocol-2026-10-28.md) tested PR 74's internal claim that
+boosting and the RBF SVM are the best measurement models, on the external SPH hospital at the 5% normal
+budget. All models were trained on the all-age 25k cohort and its 130 measurements, with the Avance 4.8
+hyperparameters. Complete. The frozen HGB beat every challenger: SVM −4.21 pp sensitivity (98.33%
+[−5.47, −3.02]), MLP −4.10 pp, LR −11.02 pp, and it also won inside the xECG blend.
+[Results](clf01-measurement-classifiers-results-2026-10-28.md),
+[aggregate](../reports/clf01-measurement-classifiers-2026-10-28/aggregate.json). No process is running.
+
 ## Research branches
 
 The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.md) supplies the rationale for authorized Experiments 011–013. These are independent model families, not xECG modifications. They have no measured project results yet. The additional [vision architectures](cross-domain-architecture-candidates.md) and [xECG modifications](xecg-next-experiments.md) remain research candidates outside this accepted queue.

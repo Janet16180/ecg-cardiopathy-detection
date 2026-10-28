@@ -1,0 +1,827 @@
+"""Traducciones de los textos que manda el servidor: español (original) a inglés e italiano.
+
+Las llaves son los textos tal como los genera datos.py. Los diagnósticos y las categorías son los nombres de
+notebooks/28-clasificacion-etiquetas.csv; su traducción es propia y no la ha revisado un cardiólogo.
+Lo que no está en el diccionario (nombres de datasets, registros, derivaciones, números) queda igual.
+"""
+from decimal import Decimal
+
+IDIOMAS = ("es", "en", "it")
+
+TEXTOS = {
+    # Clases, sexo y valores de las tablas
+    "normal": ("normal", "normale"),
+    "con cardiopatía": ("with heart disease", "con cardiopatia"),
+    "sin cardiopatía, con otros hallazgos": ("no heart disease, other findings", "senza cardiopatia, con altri reperti"),
+    "mujer": ("female", "donna"),
+    "hombre": ("male", "uomo"),
+    "sin dato": ("missing", "dato mancante"),
+    "sin ID": ("no ID", "senza ID"),
+    "sin estimar": ("not estimated", "non stimata"),
+    "menos de 60": ("under 60", "meno di 60"),
+    "60 a 99": ("60 to 99", "da 60 a 99"),
+    "100 o más": ("100 or more", "100 o più"),
+    "4 o más": ("4 or more", "4 o più"),
+    "Balanceado": ("Balanced", "Bilanciato"),
+    "cabeceras .hea": (".hea headers", "intestazioni .hea"),
+    "no vienen en los datos": ("not in the data", "non presenti nei dati"),
+    "forma de los .npy; fs según su README": ("shape of the .npy files; fs from its README", "forma dei file .npy; fs dal suo README"),
+    "forma de senales.npy; fs del notebook 29": ("shape of senales.npy; fs from notebook 29", "forma di senales.npy; fs dal notebook 29"),
+
+    # Áreas de interés (areas.py)
+    "Onda P e intervalo PR": ("P wave and PR interval", "Onda P e intervallo PR"),
+    "Duración del QRS": ("QRS duration", "Durata del QRS"),
+    "Voltaje y forma del QRS": ("QRS voltage and shape", "Voltaggio e forma del QRS"),
+    "Ondas Q": ("Q waves", "Onde Q"),
+    "Segmento ST": ("ST segment", "Segmento ST"),
+    "Onda T": ("T wave", "Onda T"),
+    "Intervalo QT": ("QT interval", "Intervallo QT"),
+    "Ritmo y frecuencia": ("Rhythm and rate", "Ritmo e frequenza"),
+    "Ruido y espectro de la señal": ("Signal noise and spectrum", "Rumore e spettro del segnale"),
+    "llega antes de tiempo": ("comes early", "arriva in anticipo"),
+    "forma distinta a la del latido típico": ("shape differs from the typical beat", "forma diversa dal battito tipico"),
+    "pausa larga entre latidos": ("long pause between beats", "pausa lunga tra i battiti"),
+    "seguido de una pausa larga": ("followed by a long pause", "seguito da una pausa lunga"),
+    "Hay una derivación plana: el modelo no puede medir las ondas.": (
+        "There is a flat lead: the model cannot measure the waves.",
+        "C'è una derivazione piatta: il modello non può misurare le onde."),
+    "No se detectaron latidos suficientes para medir las ondas.": (
+        "Not enough beats were detected to measure the waves.",
+        "Non sono stati rilevati battiti sufficienti per misurare le onde."),
+
+    # Encabezados de columnas e índices
+    "ECGs": ("ECGs", "ECG"),
+    "Datasets": ("Datasets", "Dataset"),
+    "dataset": ("dataset", "dataset"),
+    "dataset de origen": ("source dataset", "dataset di origine"),
+    "origen": ("source", "origine"),
+    "clase": ("class", "classe"),
+    "paciente": ("patient", "paziente"),
+    "pacientes": ("patients", "pazienti"),
+    "registro": ("record", "registrazione"),
+    "edad": ("age", "età"),
+    "sexo": ("sex", "sesso"),
+    "diagnósticos": ("diagnoses", "diagnosi"),
+    "cardiopatía": ("heart condition", "cardiopatia"),
+    "diagnóstico general": ("general diagnosis", "diagnosi generale"),
+    "par de cardiopatías": ("pair of heart conditions", "coppia di cardiopatie"),
+    "grupo de edad": ("age group", "fascia d'età"),
+    "derivación": ("lead", "derivazione"),
+    "derivaciones": ("leads", "derivazioni"),
+    "nombres de derivaciones": ("lead names", "nomi delle derivazioni"),
+    "duración mín (s)": ("min duration (s)", "durata min (s)"),
+    "duración máx (s)": ("max duration (s)", "durata max (s)"),
+    "ECGs (archivos)": ("ECGs (files)", "ECG (file)"),
+    "fuente": ("source", "fonte"),
+    "total": ("total", "totale"),
+    "grupos": ("groups", "gruppi"),
+    "medidos": ("measured", "misurati"),
+    "datasets donde aparece cada copia": ("datasets where each copy appears", "dataset in cui compare ogni copia"),
+    "edad (mediana)": ("age (median)", "età (mediana)"),
+    "% con ID de paciente": ("% with patient ID", "% con ID paziente"),
+    "% mujeres": ("% female", "% donne"),
+    "cardiopatías distintas": ("distinct heart conditions", "cardiopatie distinte"),
+    "cardiopatías por ECG": ("heart conditions per ECG", "cardiopatie per ECG"),
+    "% con cardiopatía": ("% with heart disease", "% con cardiopatia"),
+    "% normal": ("% normal", "% normale"),
+    "% con copia idéntica": ("% with identical copy", "% con copia identica"),
+    "% con copia": ("% with copy", "% con copia"),
+    "% con derivación plana (muestra)": ("% with flat lead (sample)", "% con derivazione piatta (campione)"),
+    "% con derivación plana": ("% with flat lead", "% con derivazione piatta"),
+    "% con muestras vacías": ("% with missing samples", "% con campioni mancanti"),
+    "% de los medidos": ("% of measured", "% dei misurati"),
+    "ECGs con ID": ("ECGs with ID", "ECG con ID"),
+    "ECGs con una copia idéntica": ("ECGs with an identical copy", "ECG con una copia identica"),
+    "ECGs con dato": ("ECGs with value", "ECG con dato"),
+    "ECGs medidos": ("measured ECGs", "ECG misurati"),
+    "ECGs por paciente": ("ECGs per patient", "ECG per paziente"),
+    "media": ("mean", "media"),
+    "desv. estándar": ("std. dev.", "dev. standard"),
+    "mín": ("min", "min"),
+    "mediana": ("median", "mediana"),
+    "máx": ("max", "max"),
+    "bigote inferior": ("lower whisker", "baffo inferiore"),
+    "bigote superior": ("upper whisker", "baffo superiore"),
+    "amplitud II (mediana)": ("lead II amplitude (median)", "ampiezza II (mediana)"),
+    "deriva de línea base (mediana)": ("baseline wander (median)", "deriva della linea di base (mediana)"),
+    "ruido (mediana)": ("noise (median)", "rumore (mediana)"),
+    "frecuencia cardiaca (mediana)": ("heart rate (median)", "frequenza cardiaca (mediana)"),
+    "menores de 30 (ECGs)": ("under 30 (ECGs)", "sotto i 30 anni (ECG)"),
+    "30 o más (ECGs)": ("30 or older (ECGs)", "30 anni o più (ECG)"),
+    "% en menores de 30": ("% under 30", "% sotto i 30 anni"),
+    "% en 30 o más": ("% 30 or older", "% da 30 anni in su"),
+    "V de Cramér": ("Cramér's V", "V di Cramér"),
+
+    # Ejes
+    "años": ("years", "anni"),
+    "Edad (años)": ("Age (years)", "Età (anni)"),
+    "latidos por minuto": ("beats per minute", "battiti al minuto"),
+    "% de ECGs": ("% of ECGs", "% di ECG"),
+    "% de ECGs con diagnóstico": ("% of ECGs with a diagnosis", "% di ECG con diagnosi"),
+    "% de ECGs medidos": ("% of measured ECGs", "% di ECG misurati"),
+
+    # Cifras de la portada y del resumen
+    "Cardiopatías distintas": ("Distinct heart conditions", "Cardiopatie distinte"),
+    "Con cardiopatía": ("With heart disease", "Con cardiopatia"),
+
+    # Títulos de secciones y tarjetas
+    "Resumen comparativo": ("Comparative summary", "Riepilogo comparativo"),
+    "ECGs por dataset": ("ECGs by dataset", "ECG per dataset"),
+    "% de ECGs con cardiopatía": ("% of ECGs with heart disease", "% di ECG con cardiopatia"),
+    "Edad mediana": ("Median age", "Età mediana"),
+    "Edad": ("Age", "Età"),
+    "Edad por dataset (años)": ("Age by dataset (years)", "Età per dataset (anni)"),
+    "Distribución de la edad": ("Age distribution", "Distribuzione dell'età"),
+    "Sexo": ("Sex", "Sesso"),
+    "Sexo por dataset": ("Sex by dataset", "Sesso per dataset"),
+    "Datos vacíos y pacientes": ("Missing data and patients", "Dati mancanti e pazienti"),
+    "% de ECGs sin el dato": ("% of ECGs missing the value", "% di ECG senza il dato"),
+    "Clase de cada ECG": ("Class of each ECG", "Classe di ogni ECG"),
+    "Cardiopatías distintas por ECG": ("Distinct heart conditions per ECG", "Cardiopatie distinte per ECG"),
+    "Cardiopatías reportadas": ("Reported heart conditions", "Cardiopatie riportate"),
+    "Cardiopatías distintas por dataset": ("Distinct heart conditions by dataset", "Cardiopatie distinte per dataset"),
+    "Cardiopatías distintas por categoría": ("Distinct heart conditions by category", "Cardiopatie distinte per categoria"),
+    "% de ECGs con al menos una cardiopatía de cada categoría": ("% of ECGs with at least one heart condition in each category",
+                                                                 "% di ECG con almeno una cardiopatia per categoria"),
+    "Las 20 cardiopatías más frecuentes (% de los ECGs con diagnóstico)": ("The 20 most frequent heart conditions (% of ECGs with a diagnosis)",
+                                                                          "Le 20 cardiopatie più frequenti (% degli ECG con diagnosi)"),
+    "Cardiopatías en común entre datasets (diagonal: total del dataset)": ("Heart conditions shared between datasets (diagonal: dataset total)",
+                                                                          "Cardiopatie in comune tra dataset (diagonale: totale del dataset)"),
+    "Diagnósticos generales en común (junta subtipos de una misma enfermedad)": ("General diagnoses in common (groups subtypes of the same disease)",
+                                                                                "Diagnosi generali in comune (raggruppa i sottotipi della stessa malattia)"),
+    "Cardiopatía según edad y sexo": ("Heart disease by age and sex", "Cardiopatia per età e sesso"),
+    "% de ECGs con cardiopatía por grupo de edad": ("% of ECGs with heart disease by age group", "% di ECG con cardiopatia per fascia d'età"),
+    "% de ECGs con cardiopatía por sexo": ("% of ECGs with heart disease by sex", "% di ECG con cardiopatia per sesso"),
+    "Pares de cardiopatías más frecuentes": ("Most frequent pairs of heart conditions", "Coppie di cardiopatie più frequenti"),
+    "Clase y dataset de origen": ("Class and source dataset", "Classe e dataset di origine"),
+    "Clase según el dataset de origen": ("Class by source dataset", "Classe per dataset di origine"),
+    "ECGs por dataset de origen y clase": ("ECGs by source dataset and class", "ECG per dataset di origine e classe"),
+    "Asociación con la clase (V de Cramér: 0 = ninguna, 1 = la determina)": ("Association with the class (Cramér's V: 0 = none, 1 = determines it)",
+                                                                            "Associazione con la classe (V di Cramér: 0 = nessuna, 1 = la determina)"),
+    "Edad y sexo por clase": ("Age and sex by class", "Età e sesso per classe"),
+    "Edad por clase (años)": ("Age by class (years)", "Età per classe (anni)"),
+    "Edad por clase": ("Age by class", "Età per classe"),
+    "Sexo por clase": ("Sex by class", "Sesso per classe"),
+    "% de mujeres por grupo de edad y clase": ("% female by age group and class", "% di donne per fascia d'età e classe"),
+    "Cardiopatías en jóvenes y mayores": ("Heart conditions in younger and older patients", "Cardiopatie nei giovani e negli adulti"),
+    "Diagnósticos generales más frecuentes en menores de 30": ("Most frequent general diagnoses under 30", "Diagnosi generali più frequenti sotto i 30 anni"),
+    "Señales por clase": ("Signals by class", "Segnali per classe"),
+    "Amplitud pico a pico mediana por derivación (mV)": ("Median peak-to-peak amplitude by lead (mV)", "Ampiezza picco-picco mediana per derivazione (mV)"),
+    "Frecuencia cardiaca por clase (latidos por minuto, derivación II)": ("Heart rate by class (beats per minute, lead II)",
+                                                                         "Frequenza cardiaca per classe (battiti al minuto, derivazione II)"),
+    "Frecuencia cardiaca por clase": ("Heart rate by class", "Frequenza cardiaca per classe"),
+    "Formato": ("Format", "Formato"),
+    "Derivaciones, frecuencia de muestreo y duración": ("Leads, sampling rate and duration", "Derivazioni, frequenza di campionamento e durata"),
+    "Calidad": ("Quality", "Qualità"),
+    "Calidad de las señales (mV)": ("Signal quality (mV)", "Qualità dei segnali (mV)"),
+    "% de ECGs con al menos una derivación plana": ("% of ECGs with at least one flat lead", "% di ECG con almeno una derivazione piatta"),
+    "% de ECGs con muestras vacías": ("% of ECGs with missing samples", "% di ECG con campioni mancanti"),
+    "Amplitud pico a pico de la derivación II": ("Peak-to-peak amplitude of lead II", "Ampiezza picco-picco della derivazione II"),
+    "Deriva de línea base": ("Baseline wander", "Deriva della linea di base"),
+    "Ruido (cambios de menos de 10 ms)": ("Noise (changes shorter than 10 ms)", "Rumore (variazioni inferiori a 10 ms)"),
+    "Frecuencia cardiaca (derivación II)": ("Heart rate (lead II)", "Frequenza cardiaca (derivazione II)"),
+    "Amplitud y frecuencia cardiaca": ("Amplitude and heart rate", "Ampiezza e frequenza cardiaca"),
+    "Frecuencia cardiaca estimada (latidos por minuto)": ("Estimated heart rate (beats per minute)", "Frequenza cardiaca stimata (battiti al minuto)"),
+    "ECGs con alguna derivación de más de 10 mV pico a pico": ("ECGs with a lead above 10 mV peak to peak", "ECG con almeno una derivazione oltre 10 mV picco-picco"),
+    "% de ECGs con una copia idéntica": ("% of ECGs with an identical copy", "% di ECG con una copia identica"),
+    "Copias idénticas por dataset": ("Identical copies by dataset", "Copie identiche per dataset"),
+    "Grupos de ECGs idénticos ({n} grupos)": ("Groups of identical ECGs ({n} groups)", "Gruppi di ECG identici ({n} gruppi)"),
+    "ECGs con cabecera pero sin archivo de señal": ("ECGs with a header but no signal file", "ECG con intestazione ma senza file di segnale"),
+
+    # Notas y avisos
+    "El dataset balanceado reutiliza ECGs de los originales: al seleccionarlo junto con ellos, esos ECGs cuentan dos veces en los totales.": (
+        "The balanced dataset reuses ECGs from the original ones: when selected together, those ECGs count twice in the totals.",
+        "Il dataset bilanciato riutilizza ECG dei dataset originali: se selezionati insieme, quegli ECG contano due volte nei totali."),
+    "% con cardiopatía y % normal sobre los ECGs con diagnóstico. La derivación plana se mide en la muestra de señales (1,000 ECGs por dataset original, 100 de PTB Diagnostic; todos los del balanceado).": (
+        "% with heart disease and % normal are computed over ECGs with a diagnosis. Flat leads are measured on the signal sample (1,000 ECGs per original dataset, 100 from PTB Diagnostic; all ECGs of the balanced dataset).",
+        "% con cardiopatia e % normale calcolati sugli ECG con diagnosi. La derivazione piatta è misurata sul campione di segnali (1.000 ECG per dataset originale, 100 di PTB Diagnostic; tutti quelli del dataset bilanciato)."),
+    "Edad ya corregida en el notebook 28: 300 de PTB-XL pasa a 90 y -1 de CPSC queda vacío. La edad 0 de Ningbo ({n} ECGs) se trata como desconocida y no entra al balanceado (notebooks 29 y 30).": (
+        "Age already corrected in notebook 28: PTB-XL's 300 becomes 90 and CPSC's -1 becomes missing. Ningbo's age 0 ({n} ECGs) is treated as unknown and is not part of the balanced dataset (notebooks 29 and 30).",
+        "Età già corretta nel notebook 28: il 300 di PTB-XL diventa 90 e il -1 di CPSC diventa mancante. L'età 0 di Ningbo ({n} ECG) è trattata come sconosciuta e non entra nel dataset bilanciato (notebook 29 e 30)."),
+    "Los datasets del Challenge (Ningbo, Chapman, Georgia, CPSC) no traen ID de paciente.": (
+        "The Challenge datasets (Ningbo, Chapman, Georgia, CPSC) have no patient ID.",
+        "I dataset della Challenge (Ningbo, Chapman, Georgia, CPSC) non hanno ID paziente."),
+    "Clasificación provisional de las etiquetas (notebook 28, sección 5), pendiente de revisar con el cardiólogo.": (
+        "Provisional label classification (notebook 28, section 5), pending review with the cardiologist.",
+        "Classificazione provvisoria delle etichette (notebook 28, sezione 5), da rivedere con il cardiologo."),
+    "Orden: % promedio entre los datasets seleccionados. Celda vacía: el dataset no reporta esa cardiopatía.": (
+        "Order: mean % across the selected datasets. Empty cell: the dataset does not report that condition.",
+        "Ordine: % media tra i dataset selezionati. Cella vuota: il dataset non riporta quella cardiopatia."),
+    "Sobre todos los ECGs seleccionados juntos.": ("Over all selected ECGs together.", "Su tutti gli ECG selezionati insieme."),
+    "Solo ECGs normales y con cardiopatía ({n}), analizados como un solo conjunto. Con el dataset balanceado reproduce el notebook 29.": (
+        "Only normal ECGs and ECGs with heart disease ({n}), analyzed as a single set. With the balanced dataset it reproduces notebook 29.",
+        "Solo ECG normali e con cardiopatia ({n}), analizzati come un unico insieme. Con il dataset bilanciato riproduce il notebook 29."),
+    "ECGs con cardiopatía: {jovenes} de menores de 30 y {mayores} de 30 o más.": (
+        "ECGs with heart disease: {jovenes} under 30 and {mayores} aged 30 or older.",
+        "ECG con cardiopatia: {jovenes} sotto i 30 anni e {mayores} da 30 anni in su."),
+    "Medidas sobre los {n} ECGs con señal medida: la muestra de 1,000 por dataset original (100 de PTB Diagnostic) y todos los del balanceado.": (
+        "Measured on the {n} ECGs with a measured signal: the sample of 1,000 per original dataset (100 from PTB Diagnostic) and all ECGs of the balanced dataset.",
+        "Misure sui {n} ECG con segnale misurato: il campione di 1.000 per dataset originale (100 di PTB Diagnostic) e tutti quelli del dataset bilanciato."),
+    "Estimada con una versión simplificada de Pan-Tompkins (notebook 29).": (
+        "Estimated with a simplified version of Pan-Tompkins (notebook 29).",
+        "Stimata con una versione semplificata di Pan-Tompkins (notebook 29)."),
+    "Medidas en los primeros 10 s de las 12 derivaciones, sobre la muestra de 1,000 ECGs por dataset original (100 de PTB Diagnostic, semilla 42, la misma del notebook 28) y los 20,000 del balanceado. Las señales del balanceado llevan un filtro pasa-altas de 0.5 Hz (notebook 29).": (
+        "Measured on the first 10 s of the 12 leads, over the sample of 1,000 ECGs per original dataset (100 from PTB Diagnostic, seed 42, the same as notebook 28) and the 20,000 ECGs of the balanced dataset. The signals of the balanced dataset have a 0.5 Hz high-pass filter (notebook 29).",
+        "Misure sui primi 10 s delle 12 derivazioni, sul campione di 1.000 ECG per dataset originale (100 di PTB Diagnostic, seme 42, lo stesso del notebook 28) e sui 20.000 del dataset bilanciato. I segnali del dataset bilanciato hanno un filtro passa-alto a 0,5 Hz (notebook 29)."),
+    "Amplitud, deriva y ruido en mV.": ("Amplitude, wander and noise in mV.", "Ampiezza, deriva e rumore in mV."),
+    "Dos ECGs son copias idénticas si su archivo de señal tiene la misma huella MD5 (notebook 28, sección 15). Se buscan entre los datasets originales y, aparte, dentro del balanceado.": (
+        "Two ECGs are identical copies if their signal files have the same MD5 hash (notebook 28, section 15). Copies are searched across the original datasets and, separately, within the balanced one.",
+        "Due ECG sono copie identiche se il loro file di segnale ha lo stesso hash MD5 (notebook 28, sezione 15). Si cercano tra i dataset originali e, separatamente, all'interno di quello bilanciato."),
+
+    # Registrar nuevo ECG
+    "Medidas de la señal": ("Signal measures", "Misure del segnale"),
+    "Medidas de la señal (primeros 10 s)": ("Signal measures (first 10 s)", "Misure del segnale (primi 10 s)"),
+    "Comparación con el dataset balanceado": ("Comparison with the balanced dataset", "Confronto con il dataset bilanciato"),
+    "medida": ("measure", "misura"),
+    "valor": ("value", "valore"),
+    "latidos detectados (derivación II)": ("detected beats (lead II)", "battiti rilevati (derivazione II)"),
+    "frecuencia cardiaca (latidos por minuto)": ("heart rate (beats per minute)", "frequenza cardiaca (battiti al minuto)"),
+    "intervalo RR medio (ms)": ("mean RR interval (ms)", "intervallo RR medio (ms)"),
+    "derivaciones planas": ("flat leads", "derivazioni piatte"),
+    "muestras vacías": ("missing samples", "campioni mancanti"),
+    "este ECG": ("this ECG", "questo ECG"),
+    "mediana de los normales": ("median of normal ECGs", "mediana degli ECG normali"),
+    "mediana de los ECGs con cardiopatía": ("median of ECGs with heart disease", "mediana degli ECG con cardiopatia"),
+    "percentil entre los normales": ("percentile among normal ECGs", "percentile tra gli ECG normali"),
+    "amplitud de la derivación II (mV)": ("lead II amplitude (mV)", "ampiezza della derivazione II (mV)"),
+    "amplitud máxima entre derivaciones (mV)": ("maximum amplitude across leads (mV)", "ampiezza massima tra le derivazioni (mV)"),
+    "deriva de línea base (mV)": ("baseline wander (mV)", "deriva della linea di base (mV)"),
+    "ruido (mV)": ("noise (mV)", "rumore (mV)"),
+    "No se reconocieron los nombres de las derivaciones; se asumió el orden estándar (I, II, III, aVR, aVL, aVF, V1 a V6).": (
+        "Lead names were not recognized; the standard order was assumed (I, II, III, aVR, aVL, aVF, V1 to V6).",
+        "I nomi delle derivazioni non sono stati riconosciuti; si è assunto l'ordine standard (I, II, III, aVR, aVL, aVF, da V1 a V6)."),
+    "Se necesitan 12 derivaciones y el archivo tiene {n}.": ("12 leads are needed and the file has {n}.", "Servono 12 derivazioni e il file ne ha {n}."),
+    "La unidad {unidad} no se reconoce; se asumió mV.": ("Unit {unidad} was not recognized; mV was assumed.", "Unità {unidad} non riconosciuta; si è assunto mV."),
+    "El arreglo debe tener 2 dimensiones (muestras × derivaciones).": ("The array must have 2 dimensions (samples × leads).",
+                                                                       "L'array deve avere 2 dimensioni (campioni × derivazioni)."),
+    "Se asumió que los valores están en mV.": ("Values were assumed to be in mV.", "Si è assunto che i valori siano in mV."),
+    "Se usó la frecuencia de muestreo indicada al subir el archivo: {fs} Hz.": (
+        "The sampling rate given when uploading the file was used: {fs} Hz.",
+        "È stata usata la frequenza di campionamento indicata al caricamento del file: {fs} Hz."),
+    "Formato no reconocido: sube un .hea con su .dat o .mat (WFDB), un .csv o un .npy.": (
+        "Format not recognized: upload a .hea with its .dat or .mat (WFDB), a .csv or a .npy.",
+        "Formato non riconosciuto: carica un .hea con il suo .dat o .mat (WFDB), un .csv o un .npy."),
+    "No se pudo leer el archivo: {detalle}": ("The file could not be read: {detalle}", "Impossibile leggere il file: {detalle}"),
+    "Falta el archivo {archivo} que indica la cabecera.": ("The file {archivo} named in the header is missing.",
+                                                          "Manca il file {archivo} indicato nell'intestazione."),
+    "El ECG dura {s} s, menos de los 10 s que usan las medidas y el modelo.": (
+        "The ECG lasts {s} s, less than the 10 s used by the measures and the model.",
+        "L'ECG dura {s} s, meno dei 10 s usati dalle misure e dal modello."),
+    "Derivaciones planas (señal constante): {n}.": ("Flat leads (constant signal): {n}.", "Derivazioni piatte (segnale costante): {n}."),
+    "Hay {n} muestras vacías (NaN); se trataron como 0.": ("There are {n} missing samples (NaN); they were treated as 0.",
+                                                          "Ci sono {n} campioni mancanti (NaN); sono stati trattati come 0."),
+    "No se pudo estimar la frecuencia cardiaca en la derivación II.": ("Heart rate could not be estimated from lead II.",
+                                                                       "Non è stato possibile stimare la frequenza cardiaca dalla derivazione II."),
+    "Alguna derivación pasa de 10 mV pico a pico; revisa las unidades.": ("A lead exceeds 10 mV peak to peak; check the units.",
+                                                                          "Una derivazione supera 10 mV picco-picco; controlla le unità."),
+    "El modelo necesita 10 s de señal y este ECG dura {s} s.": ("The model needs 10 s of signal and this ECG lasts {s} s.",
+                                                               "Il modello ha bisogno di 10 s di segnale e questo ECG dura {s} s."),
+    "Nombre de archivo no válido: {nombre}": ("Invalid file name: {nombre}", "Nome file non valido: {nombre}"),
+    "Los archivos pesan más de {mb} MB.": ("The files are larger than {mb} MB.", "I file superano {mb} MB."),
+
+    # Errores de la API
+    "No existe el análisis {id} en el historial.": ("Analysis {id} does not exist in the history.", "L'analisi {id} non esiste nello storico."),
+    "{dataset} no tiene ECGs de clase '{clase}'.": ("{dataset} has no ECGs of class '{clase}'.", "{dataset} non ha ECG della classe '{clase}'."),
+    "Las señales del dataset balanceado no están en este equipo: créalas con scripts/data/crear_balanceado.py.": (
+        "The signals of the balanced dataset are not on this computer: create them with scripts/data/crear_balanceado.py.",
+        "I segnali del dataset bilanciato non sono su questo computer: creali con scripts/data/crear_balanceado.py."),
+    "Los archivos de {dataset} no están en data/raw: descárgalos de PhysioNet para ver sus ECGs.": (
+        "The {dataset} files are not in data/raw: download them from PhysioNet to see its ECGs.",
+        "I file di {dataset} non sono in data/raw: scaricali da PhysioNet per vederne gli ECG."),
+    "Datasets desconocidos: {nombres}": ("Unknown datasets: {nombres}", "Dataset sconosciuti: {nombres}"),
+
+    # Acerca de > Modelo entrenado (modelo.py)
+    "Cómo funciona el modelo": ("How the model works", "Come funziona il modello"),
+    "Métricas en validación": ("Validation metrics", "Metriche di validazione"),
+    "Puntos de operación en validación": ("Operating points on validation", "Punti operativi sulla validazione"),
+    "Variables de entrada por familia": ("Input variables by family", "Variabili di input per famiglia"),
+    "parte": ("part", "parte"),
+    "descripción": ("description", "descrizione"),
+    "métrica": ("metric", "metrica"),
+    "punto de operación": ("operating point", "punto operativo"),
+    "familia": ("family", "famiglia"),
+    "variables": ("variables", "variabili"),
+    "entrada": ("input", "input"),
+    "características": ("features", "caratteristiche"),
+    "preprocesamiento": ("preprocessing", "preelaborazione"),
+    "modelo": ("model", "modello"),
+    "entrenamiento": ("training", "addestramento"),
+    "umbral": ("threshold", "soglia"),
+    "notebooks": ("notebooks", "notebook"),
+    "umbral (probabilidad)": ("threshold (probability)", "soglia (probabilità)"),
+    "sensibilidad": ("sensitivity", "sensibilità"),
+    "especificidad": ("specificity", "specificità"),
+    "99% de sensibilidad": ("99% sensitivity", "sensibilità del 99%"),
+    "95% de sensibilidad": ("95% sensitivity", "sensibilità del 95%"),
+    "especificidad con 95% de sensibilidad": ("specificity at 95% sensitivity", "specificità al 95% di sensibilità"),
+    "especificidad con 99% de sensibilidad": ("specificity at 99% sensitivity", "specificità al 99% di sensibilità"),
+    "12 derivaciones, 10 s a 500 Hz en mV con filtro pasa-altas de 0.5 Hz; el modelo usa los primeros 9.6 s": (
+        "12 leads, 10 s at 500 Hz in mV with a 0.5 Hz high-pass filter; the model uses the first 9.6 s",
+        "12 derivazioni, 10 s a 500 Hz in mV con filtro passa-alto a 0,5 Hz; il modello usa i primi 9,6 s"),
+    "111 variables de la señal: intervalos, amplitudes y ejes del QRS, ST-T, onda P, ritmo y espectro": (
+        "111 signal variables: intervals, QRS amplitudes and axes, ST-T, P wave, rhythm and spectrum",
+        "111 variabili del segnale: intervalli, ampiezze e assi del QRS, ST-T, onda P, ritmo e spettro"),
+    "imputación por mediana, recorte de extremos, Yeo-Johnson y estandarización, ajustados con el entrenamiento": (
+        "median imputation, clipping of extremes, Yeo-Johnson and standardization, fitted on the training set",
+        "imputazione con la mediana, taglio degli estremi, Yeo-Johnson e standardizzazione, adattati sull'addestramento"),
+    "HistGradientBoostingClassifier de scikit-learn con sus valores por defecto": (
+        "scikit-learn's HistGradientBoostingClassifier with its default settings",
+        "HistGradientBoostingClassifier di scikit-learn con i valori predefiniti"),
+    "los {n} ECGs del entrenamiento del dataset balanceado, con todas sus etiquetas": (
+        "the {n} training ECGs of the balanced dataset, with all their labels",
+        "i {n} ECG di addestramento del dataset bilanciato, con tutte le etichette"),
+    "el punto con 99% de sensibilidad en validación (tabla de puntos de operación)": (
+        "the point with 99% sensitivity on validation (operating points table)",
+        "il punto con sensibilità del 99% sulla validazione (tabella dei punti operativi)"),
+    "32 (comparación con la SVM de referencia) y 38 (este modelo)": (
+        "32 (comparison with the reference SVM) and 38 (this model)",
+        "32 (confronto con la SVM di riferimento) e 38 (questo modello)"),
+    "{n} ECGs de validación del dataset balanceado. La prueba todavía no se usa.": (
+        "{n} validation ECGs of the balanced dataset. The test set is not used yet.",
+        "{n} ECG di validazione del dataset bilanciato. Il test non è ancora usato."),
+    "La interfaz usa el de 99% de sensibilidad: en validación marca como riesgo al {fa}% de los ECGs normales.": (
+        "The interface uses the 99% sensitivity point: on validation it flags {fa}% of normal ECGs as at risk.",
+        "L'interfaccia usa il punto al 99% di sensibilità: sulla validazione segnala come a rischio il {fa}% degli ECG normali."),
+    "Solo dice si hay cardiopatía": ("Only says whether there is heart disease", "Dice solo se c'è cardiopatia"),
+    "Además dice qué cardiopatía": ("Also says which heart disease", "Dice anche quale cardiopatia"),
+    "Modelo desconocido: {cual}": ("Unknown model: {cual}", "Modello sconosciuto: {cual}"),
+    "riesgo": ("risk", "rischio"),
+    "categoría": ("category", "categoria"),
+    "diagnóstico": ("diagnosis", "diagnosi"),
+    "validación": ("validation", "validazione"),
+    "VPP": ("PPV", "VPP"),
+    "prevalencia en validación": ("prevalence in validation", "prevalenza nella validazione"),
+    "un HistGradientBoostingClassifier por etiqueta: {c} categorías y {d} diagnósticos con al menos 20 ECGs en validación": (
+        "one HistGradientBoostingClassifier per label: {c} categories and {d} diagnoses with at least 20 ECGs in validation",
+        "un HistGradientBoostingClassifier per etichetta: {c} categorie e {d} diagnosi con almeno 20 ECG nella validazione"),
+    "probabilidad de tener alguna de las categorías: 1 − Π(1 − p)": (
+        "probability of having any of the categories: 1 − Π(1 − p)",
+        "probabilità di avere almeno una delle categorie: 1 − Π(1 − p)"),
+    "riesgo: el punto con 99% de sensibilidad en validación; cada categoría y diagnóstico: el punto de máximo F1 en validación": (
+        "risk: the point with 99% sensitivity on validation; each category and diagnosis: the point of maximum F1 on validation",
+        "rischio: il punto con sensibilità del 99% sulla validazione; ogni categoria e diagnosi: il punto di F1 massimo sulla validazione"),
+    "39 (este modelo; protocolo del experimento 063)": ("39 (this model; protocol of experiment 063)", "39 (questo modello; protocollo dell'esperimento 063)"),
+    "¿Acierta qué cardiopatía?": ("Does it get the heart disease right?", "Indovina quale cardiopatia?"),
+    "Fracción de los ECGs con cardiopatía de validación.": ("Fraction of the validation ECGs with heart disease.",
+                                                            "Frazione degli ECG con cardiopatia della validazione."),
+    "entre los ECGs con cardiopatía": ("among ECGs with heart disease", "tra gli ECG con cardiopatia"),
+    "categoría más probable es real": ("the most likely category is a true one", "la categoria più probabile è reale"),
+    "uno de los 3 diagnósticos más probables es real": ("one of the 3 most likely diagnoses is a true one",
+                                                        "una delle 3 diagnosi più probabili è reale"),
+    "referencia: siempre las más frecuentes": ("baseline: always the most frequent", "riferimento: sempre le più frequenti"),
+    "Categorías: métricas en validación": ("Categories: validation metrics", "Categorie: metriche di validazione"),
+    "Diagnósticos: métricas en validación": ("Diagnoses: validation metrics", "Diagnosi: metriche di validazione"),
+    "Validación del dataset balanceado, con todas las etiquetas. Sensibilidad y VPP en el umbral de máximo F1.": (
+        "Validation of the balanced dataset, with all labels. Sensitivity and PPV at the maximum-F1 threshold.",
+        "Validazione del dataset bilanciato, con tutte le etichette. Sensibilità e VPP alla soglia di F1 massimo."),
+    "Comparación de los dos modelos": ("Comparison of the two models", "Confronto tra i due modelli"),
+    "AUROC para detectar cardiopatía, todas las etiquetas": ("AUROC for detecting heart disease, all labels",
+                                                             "AUROC per rilevare la cardiopatia, tutte le etichette"),
+    "AUROC para detectar cardiopatía, 2,000 etiquetas": ("AUROC for detecting heart disease, 2,000 labels",
+                                                         "AUROC per rilevare la cardiopatia, 2.000 etichette"),
+    "especificidad con 99% de sensibilidad, todas las etiquetas": ("specificity at 99% sensitivity, all labels",
+                                                                   "specificità al 99% di sensibilità, tutte le etichette"),
+    "especificidad con 99% de sensibilidad, 2,000 etiquetas": ("specificity at 99% sensitivity, 2,000 labels",
+                                                               "specificità al 99% di sensibilità, 2.000 etichette"),
+    "la categoría más probable es real, todas las etiquetas": ("the most likely category is a true one, all labels",
+                                                               "la categoria più probabile è reale, tutte le etichette"),
+    "la categoría más probable es real, 2,000 etiquetas": ("the most likely category is a true one, 2,000 labels",
+                                                           "la categoria più probabile è reale, 2.000 etichette"),
+    "uno de los 3 diagnósticos más probables es real, todas las etiquetas": (
+        "one of the 3 most likely diagnoses is a true one, all labels", "una delle 3 diagnosi più probabili è reale, tutte le etichette"),
+    "uno de los 3 diagnósticos más probables es real, 2,000 etiquetas": (
+        "one of the 3 most likely diagnoses is a true one, 2,000 labels", "una delle 3 diagnosi più probabili è reale, 2.000 etichette"),
+    "cumple": ("meets", "soddisfa"),
+    "no cumple": ("does not meet", "non soddisfa"),
+    "Validación del dataset balanceado; con 2,000 etiquetas, media de 5 semillas. Con 2,000 etiquetas, el modelo "
+    "multietiqueta {cumple} la no inferioridad del protocolo para detectar cardiopatía: el límite inferior de la "
+    "diferencia de AUROC quedó por encima de −0.01 en {n} de 5 semillas. Adivinando siempre las más frecuentes, la "
+    "categoría acierta en {a}% de los ECGs con cardiopatía y los 3 diagnósticos en {b}%.": (
+        "Validation of the balanced dataset; with 2,000 labels, mean of 5 seeds. With 2,000 labels, the multi-label model "
+        "{cumple} the protocol's non-inferiority for detecting heart disease: the lower bound of the AUROC difference was "
+        "above −0.01 in {n} of 5 seeds. Always guessing the most frequent ones, the category is right in {a}% of ECGs with "
+        "heart disease and the 3 diagnoses in {b}%.",
+        "Validazione del dataset bilanciato; con 2.000 etichette, media di 5 semi. Con 2.000 etichette, il modello "
+        "multi-etichetta {cumple} la non inferiorità del protocollo per rilevare la cardiopatia: il limite inferiore della "
+        "differenza di AUROC è rimasto sopra −0,01 in {n} semi su 5. Indovinando sempre le più frequenti, la categoria è "
+        "corretta nel {a}% degli ECG con cardiopatia e le 3 diagnosi nel {b}%."),
+    # Acerca de > Modelos (experimentos.py)
+    "Validación del dataset balanceado (2,000 ECGs), leída de las salidas de los notebooks 31 a 39. La prueba no se ha usado.": (
+        "Validation of the balanced dataset (2,000 ECGs), read from the outputs of notebooks 31 to 39. The test set has not been used.",
+        "Validazione del dataset bilanciato (2.000 ECG), letta dagli output dei notebook 31-39. Il test non è stato usato."),
+    "Los dos modelos que usa la UI van primero. Validación del dataset balanceado (2,000 ECGs), leída de las salidas de los notebooks 31 a 39. La prueba no se ha usado.": (
+        "The two models used by the UI come first. Validation of the balanced dataset (2,000 ECGs), read from the outputs of notebooks 31 to 39. The test set has not been used.",
+        "I due modelli usati dall'interfaccia vengono per primi. Validazione del dataset bilanciato (2.000 ECG), letta dagli output dei notebook 31-39. Il test non è stato usato."),
+    "Familias de modelos probadas": ("Model families tested", "Famiglie di modelli provate"),
+    "qué es": ("what it is", "cos'è"),
+    "variantes": ("variants", "varianti"),
+    "notebook": ("notebook", "notebook"),
+    "xECG preentrenado": ("Pretrained xECG", "xECG preaddestrato"),
+    "SimDINOv2 propio": ("Our own SimDINOv2", "SimDINOv2 proprio"),
+    "Anomalías estilo AnomalyDINO": ("AnomalyDINO-style anomalies", "Anomalie in stile AnomalyDINO"),
+    "Grafo con memoria": ("Graph with memory", "Grafo con memoria"),
+    "Multietiqueta": ("Multi-label", "Multi-etichetta"),
+    "Las 111 medidas de la señal con un clasificador clásico: SVM RBF, gradient boosting o regresión logística.": (
+        "The 111 signal measures with a classical classifier: RBF SVM, gradient boosting or logistic regression.",
+        "Le 111 misure del segnale con un classificatore classico: SVM RBF, gradient boosting o regressione logistica."),
+    "Codificador xECG preentrenado sin etiquetas con EchoNext (experimento 043): congelado, con ajuste fino, primero la cabeza y sin preentrenar como control.": (
+        "xECG encoder pretrained without labels on EchoNext (experiment 043): frozen, fine-tuned, head first, and without pretraining as a control.",
+        "Encoder xECG preaddestrato senza etichette su EchoNext (esperimento 043): congelato, con fine-tuning, prima la testa e senza preaddestramento come controllo."),
+    "Codificador propio preentrenado sin etiquetas con SimDINOv2, sin ECGs de validación ni de prueba: congelado, con 10 medidas de intervalos y con ajuste fino.": (
+        "Our own encoder pretrained without labels with SimDINOv2, without validation or test ECGs: frozen, with 10 interval measures, and fine-tuned.",
+        "Encoder proprio preaddestrato senza etichette con SimDINOv2, senza ECG di validazione né di test: congelato, con 10 misure di intervalli e con fine-tuning."),
+    "Banco de tokens de 0.2 s de ECGs normales (codificador SimDINOv2 propio); cada ECG se puntúa por la distancia de sus tokens al normal más cercano.": (
+        "Bank of 0.2 s tokens from normal ECGs (our SimDINOv2 encoder); each ECG is scored by the distance of its tokens to the nearest normal one.",
+        "Banca di token di 0,2 s di ECG normali (encoder SimDINOv2 proprio); ogni ECG riceve un punteggio dalla distanza dei suoi token dal normale più vicino."),
+    "Las 12 derivaciones como nodos de un grafo con conexiones aprendidas, convoluciones temporales, memoria de prototipos y salida variacional; inspirado en Li et al. (2026).": (
+        "The 12 leads as nodes of a graph with learned connections, temporal convolutions, a prototype memory and a variational output; inspired by Li et al. (2026).",
+        "Le 12 derivazioni come nodi di un grafo con connessioni apprese, convoluzioni temporali, memoria di prototipi e uscita variazionale; ispirato a Li et al. (2026)."),
+    "Un gradient boosting por categoría y por diagnóstico sobre las mismas 111 medidas; el riesgo es la probabilidad de tener alguna categoría.": (
+        "One gradient boosting per category and per diagnosis on the same 111 measures; the risk is the probability of having any category.",
+        "Un gradient boosting per categoria e per diagnosi sulle stesse 111 misure; il rischio è la probabilità di avere almeno una categoria."),
+    "Gradient boosting ajustado": ("Tuned gradient boosting", "Gradient boosting ottimizzato"),
+    "SVM ajustada": ("Tuned SVM", "SVM ottimizzata"),
+    "Regresión logística": ("Logistic regression", "Regressione logistica"),
+    "xECG afinado": ("Fine-tuned xECG", "xECG con fine-tuning"),
+    "xECG cabeza y luego todo": ("xECG, head first then all", "xECG, prima la testa poi tutto"),
+    "xECG congelado": ("Frozen xECG", "xECG congelato"),
+    "xECG sin preentrenar": ("xECG without pretraining", "xECG senza preaddestramento"),
+    "SimDINOv2 congelado": ("Frozen SimDINOv2", "SimDINOv2 congelato"),
+    "SimDINOv2 congelado + intervalos": ("Frozen SimDINOv2 + intervals", "SimDINOv2 congelato + intervalli"),
+    "SimDINOv2 afinado + intervalos": ("Fine-tuned SimDINOv2 + intervals", "SimDINOv2 con fine-tuning + intervalli"),
+    "SimDINOv2 cabeza y luego todo": ("SimDINOv2, head first then all", "SimDINOv2, prima la testa poi tutto"),
+    "SimDINOv2 047 congelado (contaminado)": ("Frozen SimDINOv2 047 (contaminated)", "SimDINOv2 047 congelato (contaminato)"),
+    "Anomalía: máximo (1% de AnomalyDINO)": ("Anomaly: maximum (AnomalyDINO's 1%)", "Anomalia: massimo (1% di AnomalyDINO)"),
+    "Anomalía: promedio de los 3 peores": ("Anomaly: mean of the 3 worst", "Anomalia: media dei 3 peggiori"),
+    "Anomalía: promedio de los 5 peores": ("Anomaly: mean of the 5 worst", "Anomalia: media dei 5 peggiori"),
+    "Resultados con 2,000 etiquetas (media de 5 semillas)": ("Results with 2,000 labels (mean of 5 seeds)", "Risultati con 2.000 etichette (media di 5 semi)"),
+    "Resultados con todas las etiquetas (una semilla)": ("Results with all labels (one seed)", "Risultati con tutte le etichette (un seme)"),
+    "La regla de decisión pide que el intervalo pareado de AUROC frente a la SVM de referencia quede por encima de 0 en al menos 4 de 5 semillas. El multietiqueta se comparó con el binario, no con la SVM (ver Modelo entrenado).": (
+        "The decision rule requires the paired AUROC interval against the reference SVM to be above 0 in at least 4 of 5 seeds. The multi-label model was compared with the binary one, not with the SVM (see Trained model).",
+        "La regola di decisione richiede che l'intervallo appaiato dell'AUROC rispetto alla SVM di riferimento sia sopra 0 in almeno 4 semi su 5. Il multi-etichetta è stato confrontato con il binario, non con la SVM (vedi Modello addestrato)."),
+    "desv. del AUROC": ("AUROC SD", "dev. std. dell'AUROC"),
+    "esp. con 95% de sens.": ("spec. at 95% sens.", "spec. al 95% di sens."),
+    "esp. con 99% de sens.": ("spec. at 99% sens.", "spec. al 99% di sens."),
+    "semillas mejor que la SVM": ("seeds better than the SVM", "semi migliori della SVM"),
+    "semillas peor que la SVM": ("seeds worse than the SVM", "semi peggiori della SVM"),
+    "Referencias de atajos": ("Shortcut baselines", "Riferimenti di scorciatoie"),
+    "AUROC de una regresión logística que solo ve el dataset de origen o el sexo: el piso que cualquier modelo debe superar (notebook 31).": (
+        "AUROC of a logistic regression that only sees the source dataset or the sex: the floor any model must beat (notebook 31).",
+        "AUROC di una regressione logistica che vede solo il dataset di origine o il sesso: la soglia minima che ogni modello deve superare (notebook 31)."),
+    "2,000 etiquetas": ("2,000 labels", "2.000 etichette"),
+    "todas las etiquetas": ("all labels", "tutte le etichette"),
+    "solo dataset de origen": ("source dataset only", "solo dataset di origine"),
+    "solo sexo": ("sex only", "solo sesso"),
+    "referencia": ("baseline", "riferimento"),
+    "Curva de aprendizaje: AUROC según las etiquetas": ("Learning curve: AUROC by number of labels", "Curva di apprendimento: AUROC in base alle etichette"),
+    "Media de 5 semillas; con todas las etiquetas, una semilla. Solo los modelos que se entrenaron con los cinco presupuestos.": (
+        "Mean of 5 seeds; with all labels, one seed. Only the models trained with all five label budgets.",
+        "Media di 5 semi; con tutte le etichette, un seme. Solo i modelli addestrati con tutti e cinque i budget di etichette."),
+    "todas": ("all", "tutte"),
+    "ECGs etiquetados": ("labeled ECGs", "ECG etichettati"),
+    "AUROC dentro de cada dataset de origen": ("AUROC within each source dataset", "AUROC all'interno di ogni dataset di origine"),
+    "2,000 etiquetas, semilla 0. n son los ECGs de validación de cada dataset: con pocos, el AUROC es muy inestable. CPSC 2018 extra no aparece porque en validación todos sus ECGs tienen cardiopatía.": (
+        "2,000 labels, seed 0. n is the number of validation ECGs of each dataset: with few, the AUROC is very unstable. CPSC 2018 extra is missing because all its validation ECGs have heart disease.",
+        "2.000 etichette, seme 0. n è il numero di ECG di validazione di ogni dataset: con pochi, l'AUROC è molto instabile. CPSC 2018 extra manca perché tutti i suoi ECG di validazione hanno una cardiopatia."),
+    "Especificidad con sensibilidad fija": ("Specificity at fixed sensitivity", "Specificità a sensibilità fissa"),
+    "Fracción de ECGs normales que no se marcan como riesgo cuando se detecta el 95% o el 99% de las cardiopatías. Con 2,000 etiquetas, media de 5 semillas.": (
+        "Fraction of normal ECGs not flagged as at risk when 95% or 99% of heart disease is detected. With 2,000 labels, mean of 5 seeds.",
+        "Frazione di ECG normali non segnalati a rischio quando si rileva il 95% o il 99% delle cardiopatie. Con 2.000 etichette, media di 5 semi."),
+    "95% de sensibilidad, 2,000 etiquetas": ("95% sensitivity, 2,000 labels", "sensibilità 95%, 2.000 etichette"),
+    "99% de sensibilidad, 2,000 etiquetas": ("99% sensitivity, 2,000 labels", "sensibilità 99%, 2.000 etichette"),
+    "95% de sensibilidad, todas las etiquetas": ("95% sensitivity, all labels", "sensibilità 95%, tutte le etichette"),
+    "99% de sensibilidad, todas las etiquetas": ("99% sensitivity, all labels", "sensibilità 99%, tutte le etichette"),
+    "Macro-AUROC del modelo multietiqueta": ("Macro-AUROC of the multi-label model", "Macro-AUROC del modello multi-etichetta"),
+    "Promedio simple del AUROC de cada etiqueta. Los modelos binarios tienen una sola clase positiva, así que su macro-AUROC es su AUROC.": (
+        "Simple mean of the AUROC of each label. Binary models have a single positive class, so their macro-AUROC is their AUROC.",
+        "Media semplice dell'AUROC di ogni etichetta. I modelli binari hanno una sola classe positiva, quindi il loro macro-AUROC è il loro AUROC."),
+    "etiquetas": ("labels", "etichette"),
+    "2,000 etiquetas (media de 5 semillas)": ("2,000 labels (mean of 5 seeds)", "2.000 etichette (media di 5 semi)"),
+    "desv. entre semillas": ("SD across seeds", "dev. std. tra semi"),
+    "categorías": ("categories", "categorie"),
+    "macro-AUROC": ("macro-AUROC", "macro-AUROC"),
+    "AUROC de cada categoría y diagnóstico (multietiqueta)": ("AUROC of each category and diagnosis (multi-label)", "AUROC di ogni categoria e diagnosi (multi-etichetta)"),
+    "Primero las 6 categorías y después los diagnósticos, cada grupo de mayor a menor AUROC con todas las etiquetas.": (
+        "First the 6 categories and then the diagnoses, each group from highest to lowest AUROC with all labels.",
+        "Prima le 6 categorie e poi le diagnosi, ogni gruppo dal più alto al più basso AUROC con tutte le etichette."),
+    "etiqueta": ("label", "etichetta"),
+    "Gradient boosting binario": ("Binary gradient boosting", "Gradient boosting binario"),
+    "Gradient boosting multietiqueta": ("Multi-label gradient boosting", "Gradient boosting multi-etichetta"),
+    "SVM de referencia": ("Reference SVM", "SVM di riferimento"),
+    "en uso": ("in use", "in uso"),
+    "no elegido": ("not chosen", "non scelto"),
+    "Notebooks 32 y 38": ("Notebooks 32 and 38", "Notebook 32 e 38"),
+    "Notebook 32": ("Notebook 32", "Notebook 32"),
+    "Notebook 39 (experimento 063)": ("Notebook 39 (experiment 063)", "Notebook 39 (esperimento 063)"),
+    "Notebook 36 (experimento 062)": ("Notebook 36 (experiment 062)", "Notebook 36 (esperimento 062)"),
+    "Notebook 34 (experimento 060)": ("Notebook 34 (experiment 060)", "Notebook 34 (esperimento 060)"),
+    "Notebook 33 (experimento 059)": ("Notebook 33 (experiment 059)", "Notebook 33 (esperimento 059)"),
+    "Notebook 35 (experimento 061)": ("Notebook 35 (experiment 061)", "Notebook 35 (esperimento 061)"),
+    "AUROC de {a} con 2,000 etiquetas: el {r}.º de {n} variantes probadas.": (
+        "AUROC of {a} with 2,000 labels: #{r} of {n} variants tested.", "AUROC di {a} con 2.000 etichette: {r}° su {n} varianti provate."),
+    "Con todas las etiquetas, AUROC de {a} ({r}.º de {n}).": ("With all labels, AUROC of {a} (#{r} of {n}).", "Con tutte le etichette, AUROC di {a} ({r}° su {n})."),
+    "Usa las 111 medidas de la señal: cada variable es una medida del ECG con nombre (intervalos, amplitudes, ejes, ST-T).": (
+        "It uses the 111 signal measures: each variable is a named ECG measure (intervals, amplitudes, axes, ST-T).",
+        "Usa le 111 misure del segnale: ogni variabile è una misura dell'ECG con un nome (intervalli, ampiezze, assi, ST-T)."),
+    "Frente a la SVM de referencia (regla de decisión): mejor en {k} y peor en {p} de 5 semillas; la regla pide 4.": (
+        "Against the reference SVM (decision rule): better in {k} and worse in {p} of 5 seeds; the rule requires 4.",
+        "Rispetto alla SVM di riferimento (regola di decisione): migliore in {k} e peggiore in {p} semi su 5; la regola ne richiede 4."),
+    "Con 250 etiquetas, AUROC de {a} contra {b} de la SVM de referencia.": (
+        "With 250 labels, AUROC of {a} against {b} for the reference SVM.", "Con 250 etichette, AUROC di {a} contro {b} della SVM di riferimento."),
+    "Con 99% de sensibilidad y 2,000 etiquetas, especificidad de {e}: marca como riesgo al {fa}% de los ECGs normales.": (
+        "At 99% sensitivity and 2,000 labels, specificity of {e}: it flags {fa}% of normal ECGs as at risk.",
+        "Al 99% di sensibilità e con 2.000 etichette, specificità di {e}: segnala come a rischio il {fa}% degli ECG normali."),
+    "AUROC más bajo dentro de un dataset de origen: {v} en {ds} (n = {n}).": (
+        "Lowest AUROC within a source dataset: {v} in {ds} (n = {n}).", "AUROC più basso all'interno di un dataset di origine: {v} in {ds} (n = {n})."),
+    "Dice qué cardiopatía: la categoría más probable es real en {a}% de los ECGs con cardiopatía ({b}% con 2,000 etiquetas), contra {c}% adivinando siempre la más frecuente.": (
+        "It says which heart disease: the most likely category is a true one in {a}% of ECGs with heart disease ({b}% with 2,000 labels), against {c}% always guessing the most frequent.",
+        "Dice quale cardiopatia: la categoria più probabile è reale nel {a}% degli ECG con cardiopatia ({b}% con 2.000 etichette), contro il {c}% indovinando sempre la più frequente."),
+    "Uno de sus 3 diagnósticos más probables es real en {a}% ({c}% adivinando los más frecuentes).": (
+        "One of its 3 most likely diagnoses is a true one in {a}% ({c}% guessing the most frequent).",
+        "Una delle sue 3 diagnosi più probabili è reale nel {a}% ({c}% indovinando le più frequenti)."),
+    "Macro-AUROC de {c} en las categorías y de {d} en los diagnósticos, con todas las etiquetas.": (
+        "Macro-AUROC of {c} for the categories and {d} for the diagnoses, with all labels.",
+        "Macro-AUROC di {c} nelle categorie e di {d} nelle diagnosi, con tutte le etichette."),
+    "Con todas las etiquetas, AUROC de {a} para detectar cardiopatía, contra {b} del binario.": (
+        "With all labels, AUROC of {a} for detecting heart disease, against {b} for the binary model.",
+        "Con tutte le etichette, AUROC di {a} per rilevare la cardiopatia, contro {b} del binario."),
+    "Con 2,000 etiquetas, su detección {cumple} la no inferioridad frente al binario: {k} de 5 semillas, y la regla pide 4.": (
+        "With 2,000 labels, its detection {cumple} non-inferiority against the binary model: {k} of 5 seeds, and the rule requires 4.",
+        "Con 2.000 etichette, il suo rilevamento {cumple} la non inferiorità rispetto al binario: {k} semi su 5, e la regola ne richiede 4."),
+    "El AUPRC de los diagnósticos va de {a} ({da}) a {b} ({db}).": ("The AUPRC of the diagnoses ranges from {a} ({da}) to {b} ({db}).",
+                                                                    "L'AUPRC delle diagnosi va da {a} ({da}) a {b} ({db})."),
+    "Su riesgo combina las categorías como si fueran independientes, pero el {p}% de los ECGs con cardiopatía de validación tiene dos o más.": (
+        "Its risk combines the categories as if they were independent, but {p}% of validation ECGs with heart disease have two or more.",
+        "Il suo rischio combina le categorie come se fossero indipendenti, ma il {p}% degli ECG con cardiopatia della validazione ne ha due o più."),
+    "Con 250 etiquetas, AUROC de {a}: el {r}.º de {n} variantes entrenadas con ese presupuesto.": (
+        "With 250 labels, AUROC of {a}: #{r} of {n} variants trained with that budget.", "Con 250 etichette, AUROC di {a}: {r}° su {n} varianti addestrate con quel budget."),
+    "Con todas las etiquetas y 99% de sensibilidad, especificidad de {e} ({r}.º de {n}).": (
+        "With all labels and 99% sensitivity, specificity of {e} (#{r} of {n}).", "Con tutte le etichette e sensibilità del 99%, specificità di {e} ({r}° su {n})."),
+    "Con 2,000 etiquetas, AUROC de {a} ({r}.º de {n}).": ("With 2,000 labels, AUROC of {a} (#{r} of {n}).", "Con 2.000 etichette, AUROC di {a} ({r}° su {n})."),
+    "Con todas las etiquetas, AUROC de {a}: el {r}.º de {n}.": ("With all labels, AUROC of {a}: #{r} of {n}.", "Con tutte le etichette, AUROC di {a}: {r}° su {n}."),
+    "Con 99% de sensibilidad y 2,000 etiquetas, especificidad de {e}, contra {s} de la SVM.": (
+        "At 99% sensitivity and 2,000 labels, specificity of {e}, against {s} for the SVM.", "Al 99% di sensibilità e con 2.000 etichette, specificità di {e}, contro {s} della SVM."),
+    "Entrenar una semilla con 2,000 etiquetas toma {m} min en el Mac (suma de sus épocas).": (
+        "Training one seed with 2,000 labels takes {m} min on the Mac (sum of its epochs).",
+        "Addestrare un seme con 2.000 etichette richiede {m} min sul Mac (somma delle sue epoche)."),
+    "Se programó a partir del resumen de Li et al. (2026); los tamaños y los pesos de las pérdidas son propios.": (
+        "It was built from the abstract of Li et al. (2026); the sizes and loss weights are our own.",
+        "È stato programmato a partire dall'abstract di Li et al. (2026); le dimensioni e i pesi delle perdite sono nostri."),
+    "Aprende sin etiquetas: se preentrenó con {n} ECGs sin etiquetar.": ("It learns without labels: it was pretrained on {n} unlabeled ECGs.",
+                                                                         "Impara senza etichette: è stato preaddestrato con {n} ECG senza etichetta."),
+    "Con las 10 medidas de intervalos, AUROC de {a} con 2,000 etiquetas ({r}.º de {n}).": (
+        "With the 10 interval measures, AUROC of {a} with 2,000 labels (#{r} of {n}).", "Con le 10 misure di intervalli, AUROC di {a} con 2.000 etichette ({r}° su {n})."),
+    "El codificador limpio llega a {a} congelado, contra {b} del codificador 047 que vio PTB-XL completo.": (
+        "The clean encoder reaches {a} frozen, against {b} for encoder 047, which saw all of PTB-XL.",
+        "L'encoder pulito arriva a {a} congelato, contro {b} dell'encoder 047, che ha visto tutto PTB-XL."),
+    "El preentrenamiento tomó {h} h en el Mac.": ("Pretraining took {h} h on the Mac.", "Il preaddestramento ha richiesto {h} h sul Mac."),
+    "Pesos ya preentrenados con EchoNext, que no tiene ECGs del dataset balanceado.": (
+        "Weights already pretrained on EchoNext, which has no ECGs from the balanced dataset.",
+        "Pesi già preaddestrati su EchoNext, che non contiene ECG del dataset bilanciato."),
+    "Su mejor forma, el ajuste fino completo, llega a {a} con 2,000 etiquetas ({r}.º de {n}).": (
+        "Its best form, full fine-tuning, reaches {a} with 2,000 labels (#{r} of {n}).", "La sua forma migliore, il fine-tuning completo, arriva a {a} con 2.000 etichette ({r}° su {n})."),
+    "El preentrenamiento aporta poco: {a} contra {b} de la misma red sin preentrenar.": (
+        "Pretraining adds little: {a} against {b} for the same network without pretraining.",
+        "Il preaddestramento aggiunge poco: {a} contro {b} della stessa rete senza preaddestramento."),
+    "Solo necesita ECGs normales etiquetados.": ("It only needs labeled normal ECGs.", "Ha bisogno solo di ECG normali etichettati."),
+    "AUROC de {a} con 2,000 etiquetas ({r}.º de {n}).": ("AUROC of {a} with 2,000 labels (#{r} of {n}).", "AUROC di {a} con 2.000 etichette ({r}° su {n})."),
+    "Más normales en el banco casi no ayudan: {a} con 250 etiquetas y {b} con 2,000.": (
+        "More normal ECGs in the bank barely help: {a} with 250 labels and {b} with 2,000.",
+        "Più ECG normali nella banca aiutano appena: {a} con 250 etichette e {b} con 2.000."),
+    "Con 99% de sensibilidad y 2,000 etiquetas, especificidad de {e}.": ("At 99% sensitivity and 2,000 labels, specificity of {e}.",
+                                                                         "Al 99% di sensibilità e con 2.000 etichette, specificità di {e}."),
+    "Repolarización (ST-T)": ("Repolarization (ST-T)", "Ripolarizzazione (ST-T)"),
+    "QRS: amplitud y eje": ("QRS: amplitude and axis", "QRS: ampiezza e asse"),
+    "Estadísticos de la señal": ("Signal statistics", "Statistiche del segnale"),
+    "Intervalos": ("Intervals", "Intervalli"),
+    "Espectro": ("Spectrum", "Spettro"),
+    "Ritmo": ("Rhythm", "Ritmo"),
+    "Onda P": ("P wave", "Onda P"),
+}
+
+CATEGORIAS = {
+    "fármaco o electrolitos": ("drug or electrolytes", "farmaci o elettroliti"),
+    "marcapasos": ("pacemaker", "pacemaker"),
+    "síntoma": ("symptom", "sintomo"),
+    "técnico": ("technical", "tecnico"),
+    "variante benigna": ("benign variant", "variante benigna"),
+    "sin especificar": ("unspecified", "non specificato"),
+    "voltaje aislado": ("isolated voltage", "voltaggio isolato"),
+    "arritmia": ("arrhythmia", "aritmia"),
+    "conducción": ("conduction", "conduzione"),
+    "eje y forma de onda": ("axis and waveform", "asse e morfologia d'onda"),
+    "estructural": ("structural", "strutturale"),
+    "hipertrofia o agrandamiento": ("hypertrophy or enlargement", "ipertrofia o ingrandimento"),
+    "isquemia o infarto": ("ischemia or infarction", "ischemia o infarto"),
+    "repolarización (ST-T)": ("repolarization (ST-T)", "ripolarizzazione (ST-T)"),
+}
+
+DIAGNOSTICOS = {
+    "ECG normal": ("normal ECG", "ECG normale"),
+    "FEVI ≤ 45%": ("LVEF ≤ 45%", "FEVS ≤ 45%"),
+    "QRS anormal": ("abnormal QRS", "QRS anomalo"),
+    "QRS fragmentado": ("fragmented QRS", "QRS frammentato"),
+    "QT corto": ("short QT", "QT corto"),
+    "QT prolongado": ("prolonged QT", "QT lungo"),
+    "agrandamiento auricular derecho": ("right atrial enlargement", "ingrandimento atriale destro"),
+    "agrandamiento auricular izquierdo": ("left atrial enlargement", "ingrandimento atriale sinistro"),
+    "agrandamiento auricular sin especificar": ("atrial enlargement, unspecified", "ingrandimento atriale non specificato"),
+    "alteración de onda P": ("P wave abnormality", "alterazione dell'onda P"),
+    "alteración de onda R": ("R wave abnormality", "alterazione dell'onda R"),
+    "alteración de onda T": ("T wave abnormality", "alterazione dell'onda T"),
+    "alteración electrolítica o por fármaco": ("electrolyte or drug effect", "alterazione elettrolitica o da farmaci"),
+    "alteración inespecífica del ST-T": ("nonspecific ST-T change", "alterazione aspecifica del tratto ST-T"),
+    "aneurisma ventricular": ("ventricular aneurysm", "aneurisma ventricolare"),
+    "angina": ("angina", "angina"),
+    "angina estable": ("stable angina", "angina stabile"),
+    "angina inestable": ("unstable angina", "angina instabile"),
+    "anomalía inespecífica ST-T": ("nonspecific ST-T abnormality", "anomalia aspecifica ST-T"),
+    "anomalía inespecífica de onda T": ("nonspecific T wave abnormality", "anomalia aspecifica dell'onda T"),
+    "arritmia sin especificar": ("arrhythmia, unspecified", "aritmia non specificata"),
+    "arritmia sinusal": ("sinus arrhythmia", "aritmia sinusale"),
+    "arritmia supraventricular": ("supraventricular arrhythmia", "aritmia sopraventricolare"),
+    "bajo voltaje del QRS": ("low QRS voltage", "basso voltaggio del QRS"),
+    "bigeminismo auricular": ("atrial bigeminy", "bigeminismo atriale"),
+    "bigeminismo de origen no especificado": ("bigeminy of unspecified origin", "bigeminismo di origine non specificata"),
+    "bigeminismo ventricular": ("ventricular bigeminy", "bigeminismo ventricolare"),
+    "bloqueo AV Mobitz I": ("Mobitz I AV block", "blocco AV Mobitz I"),
+    "bloqueo AV Mobitz II": ("Mobitz II AV block", "blocco AV Mobitz II"),
+    "bloqueo AV completo": ("complete AV block", "blocco AV completo"),
+    "bloqueo AV de primer grado": ("first-degree AV block", "blocco AV di primo grado"),
+    "bloqueo AV de segundo grado": ("second-degree AV block", "blocco AV di secondo grado"),
+    "bloqueo AV sin especificar": ("AV block, unspecified", "blocco AV non specificato"),
+    "bloqueo de rama derecha": ("right bundle branch block", "blocco di branca destra"),
+    "bloqueo de rama izquierda": ("left bundle branch block", "blocco di branca sinistra"),
+    "bloqueo de rama sin especificar": ("bundle branch block, unspecified", "blocco di branca non specificato"),
+    "bloqueo fascicular": ("fascicular block", "blocco fascicolare"),
+    "bloqueo fascicular anterior izquierdo": ("left anterior fascicular block", "emiblocco anteriore sinistro"),
+    "bloqueo fascicular posterior izquierdo": ("left posterior fascicular block", "emiblocco posteriore sinistro"),
+    "bloqueo incompleto de rama derecha": ("incomplete right bundle branch block", "blocco di branca destra incompleto"),
+    "bloqueo incompleto de rama izquierda": ("incomplete left bundle branch block", "blocco di branca sinistra incompleto"),
+    "bloqueo sinoauricular": ("sinoatrial block", "blocco senoatriale"),
+    "bradicardia sin especificar": ("bradycardia, unspecified", "bradicardia non specificata"),
+    "bradicardia sinusal": ("sinus bradycardia", "bradicardia sinusale"),
+    "cambio de onda P": ("P wave change", "modifica dell'onda P"),
+    "cambios del segmento ST": ("ST segment changes", "alterazioni del tratto ST"),
+    "cardiomiopatía": ("cardiomyopathy", "cardiomiopatia"),
+    "control sano": ("healthy control", "controllo sano"),
+    "depresión del ST": ("ST depression", "sottoslivellamento del tratto ST"),
+    "derrame pericárdico moderado o grande": ("moderate or large pericardial effusion", "versamento pericardico moderato o severo"),
+    "desviación del eje a la derecha": ("right axis deviation", "deviazione assiale destra"),
+    "desviación del eje a la izquierda": ("left axis deviation", "deviazione assiale sinistra"),
+    "disfunción del nodo sinusal": ("sinus node dysfunction", "disfunzione del nodo del seno"),
+    "disfunción sistólica del VD moderada o mayor": ("moderate or greater RV systolic dysfunction", "disfunzione sistolica del VD moderata o maggiore"),
+    "disociación auriculoventricular": ("atrioventricular dissociation", "dissociazione atrioventricolare"),
+    "efecto de digital": ("digitalis effect", "effetto digitalico"),
+    "electrodos de brazos invertidos": ("arm leads reversed", "inversione degli elettrodi degli arti superiori"),
+    "elevación del ST": ("ST elevation", "sopraslivellamento del tratto ST"),
+    "escape de la unión": ("junctional escape", "scappamento giunzionale"),
+    "estenosis aórtica moderada o mayor": ("moderate or greater aortic stenosis", "stenosi aortica moderata o maggiore"),
+    "extrasístole auricular": ("premature atrial contraction", "extrasistole atriale"),
+    "extrasístole auricular bloqueada": ("blocked premature atrial contraction", "extrasistole atriale bloccata"),
+    "extrasístole de la unión": ("premature junctional contraction", "extrasistole giunzionale"),
+    "extrasístole supraventricular": ("premature supraventricular contraction", "extrasistole sopraventricolare"),
+    "extrasístole ventricular": ("premature ventricular contraction", "extrasistole ventricolare"),
+    "extrasístoles de origen no especificado": ("premature beats of unspecified origin", "extrasistoli di origine non specificata"),
+    "fibrilación auricular": ("atrial fibrillation", "fibrillazione atriale"),
+    "fibrilación o flutter auricular": ("atrial fibrillation or flutter", "fibrillazione o flutter atriale"),
+    "fibrilación o flutter ventricular": ("ventricular fibrillation or flutter", "fibrillazione o flutter ventricolare"),
+    "fibrilación ventricular": ("ventricular fibrillation", "fibrillazione ventricolare"),
+    "fibrilación y flutter auricular": ("atrial fibrillation and flutter", "fibrillazione e flutter atriale"),
+    "flutter auricular": ("atrial flutter", "flutter atriale"),
+    "flutter ventricular": ("ventricular flutter", "flutter ventricolare"),
+    "grosor de pared del VI ≥ 1.3 cm": ("LV wall thickness ≥ 1.3 cm", "spessore di parete del VS ≥ 1,3 cm"),
+    "hipertrofia septal": ("septal hypertrophy", "ipertrofia settale"),
+    "hipertrofia sin especificar": ("hypertrophy, unspecified", "ipertrofia non specificata"),
+    "hipertrofia ventricular derecha": ("right ventricular hypertrophy", "ipertrofia ventricolare destra"),
+    "hipertrofia ventricular izquierda": ("left ventricular hypertrophy", "ipertrofia ventricolare sinistra"),
+    "hipertrofia ventricular sin especificar": ("ventricular hypertrophy, unspecified", "ipertrofia ventricolare non specificata"),
+    "infarto agudo de miocardio": ("acute myocardial infarction", "infarto miocardico acuto"),
+    "infarto anterior": ("anterior infarction", "infarto anteriore"),
+    "infarto anterolateral": ("anterolateral infarction", "infarto anterolaterale"),
+    "infarto anteroseptal": ("anteroseptal infarction", "infarto anterosettale"),
+    "infarto antiguo": ("old infarction", "infarto pregresso"),
+    "infarto de miocardio": ("myocardial infarction", "infarto miocardico"),
+    "infarto inferior": ("inferior infarction", "infarto inferiore"),
+    "infarto inferolateral": ("inferolateral infarction", "infarto inferolaterale"),
+    "infarto inferoposterior": ("inferoposterior infarction", "infarto inferoposteriore"),
+    "infarto inferoposterolateral": ("inferoposterolateral infarction", "infarto inferoposterolaterale"),
+    "infarto lateral": ("lateral infarction", "infarto laterale"),
+    "infarto posterior": ("posterior infarction", "infarto posteriore"),
+    "insuficiencia aórtica moderada o mayor": ("moderate or greater aortic regurgitation", "insufficienza aortica moderata o maggiore"),
+    "insuficiencia cardiaca": ("heart failure", "scompenso cardiaco"),
+    "insuficiencia mitral moderada o mayor": ("moderate or greater mitral regurgitation", "insufficienza mitralica moderata o maggiore"),
+    "insuficiencia pulmonar moderada o mayor": ("moderate or greater pulmonary regurgitation", "insufficienza polmonare moderata o maggiore"),
+    "insuficiencia tricuspídea moderada o mayor": ("moderate or greater tricuspid regurgitation", "insufficienza tricuspidale moderata o maggiore"),
+    "intervalo PR corto": ("short PR interval", "intervallo PR corto"),
+    "intervalo PR prolongado": ("prolonged PR interval", "intervallo PR lungo"),
+    "isquemia anterior": ("anterior ischemia", "ischemia anteriore"),
+    "isquemia anterolateral": ("anterolateral ischemia", "ischemia anterolaterale"),
+    "isquemia anteroseptal": ("anteroseptal ischemia", "ischemia anterosettale"),
+    "isquemia inespecífica": ("nonspecific ischemia", "ischemia aspecifica"),
+    "isquemia inferior": ("inferior ischemia", "ischemia inferiore"),
+    "isquemia inferolateral": ("inferolateral ischemia", "ischemia inferolaterale"),
+    "isquemia lateral": ("lateral ischemia", "ischemia laterale"),
+    "isquemia miocárdica": ("myocardial ischemia", "ischemia miocardica"),
+    "isquemia miocárdica aguda": ("acute myocardial ischemia", "ischemia miocardica acuta"),
+    "isquemia miocárdica crónica": ("chronic myocardial ischemia", "ischemia miocardica cronica"),
+    "latido de escape auricular": ("atrial escape beat", "battito di scappamento atriale"),
+    "latido de escape ventricular": ("ventricular escape beat", "battito di scappamento ventricolare"),
+    "latidos de fusión": ("fusion beats", "battiti di fusione"),
+    "lesión subendocárdica": ("subendocardial injury", "lesione subendocardica"),
+    "lesión subendocárdica anterolateral": ("anterolateral subendocardial injury", "lesione subendocardica anterolaterale"),
+    "lesión subendocárdica anteroseptal": ("anteroseptal subendocardial injury", "lesione subendocardica anterosettale"),
+    "lesión subendocárdica inferior": ("inferior subendocardial injury", "lesione subendocardica inferiore"),
+    "lesión subendocárdica inferolateral": ("inferolateral subendocardial injury", "lesione subendocardica inferolaterale"),
+    "lesión subendocárdica lateral": ("lateral subendocardial injury", "lesione subendocardica laterale"),
+    "mala progresión de onda R": ("poor R wave progression", "scarsa progressione dell'onda R"),
+    "marcapasos artificial": ("artificial pacemaker", "pacemaker artificiale"),
+    "marcapasos auricular migratorio": ("wandering atrial pacemaker", "pacemaker atriale migrante"),
+    "miocarditis": ("myocarditis", "miocardite"),
+    "onda P alta": ("tall P wave", "onda P alta"),
+    "onda P prolongada": ("prolonged P wave", "onda P prolungata"),
+    "onda Q anormal": ("abnormal Q wave", "onda Q patologica"),
+    "onda R anormal": ("abnormal R wave", "onda R anomala"),
+    "onda T anormal": ("abnormal T wave", "onda T anomala"),
+    "onda T de alto voltaje": ("high-voltage T wave", "onda T ad alto voltaggio"),
+    "onda T de baja amplitud": ("low-amplitude T wave", "onda T a bassa ampiezza"),
+    "onda T invertida": ("inverted T wave", "onda T invertita"),
+    "onda U anormal": ("abnormal U wave", "onda U anomala"),
+    "palpitaciones": ("palpitations", "palpitazioni"),
+    "paro sinusal": ("sinus arrest", "arresto sinusale"),
+    "patrón de Brugada": ("Brugada pattern", "pattern di Brugada"),
+    "preexcitación ventricular (WPW)": ("ventricular pre-excitation (WPW)", "preeccitazione ventricolare (WPW)"),
+    "presión sistólica pulmonar ≥ 45 mmHg": ("pulmonary systolic pressure ≥ 45 mmHg", "pressione sistolica polmonare ≥ 45 mmHg"),
+    "repolarización precoz": ("early repolarization", "ripolarizzazione precoce"),
+    "ritmo auricular ectópico": ("ectopic atrial rhythm", "ritmo atriale ectopico"),
+    "ritmo de escape auricular acelerado": ("accelerated atrial escape rhythm", "ritmo di scappamento atriale accelerato"),
+    "ritmo de escape ventricular": ("ventricular escape rhythm", "ritmo di scappamento ventricolare"),
+    "ritmo de la unión": ("junctional rhythm", "ritmo giunzionale"),
+    "ritmo de la unión acelerado": ("accelerated junctional rhythm", "ritmo giunzionale accelerato"),
+    "ritmo ectópico o de escape": ("ectopic or escape rhythm", "ritmo ectopico o di scappamento"),
+    "ritmo idioventricular acelerado": ("accelerated idioventricular rhythm", "ritmo idioventricolare accelerato"),
+    "ritmo sinusal": ("sinus rhythm", "ritmo sinusale"),
+    "rotación horaria o antihoraria": ("clockwise or counterclockwise rotation", "rotazione oraria o antioraria"),
+    "sobrecarga ventricular izquierda": ("left ventricular strain", "sovraccarico ventricolare sinistro"),
+    "síndrome bradicardia-taquicardia": ("bradycardia-tachycardia syndrome", "sindrome bradicardia-tachicardia"),
+    "taquicardia auricular": ("atrial tachycardia", "tachicardia atriale"),
+    "taquicardia de la unión": ("junctional tachycardia", "tachicardia giunzionale"),
+    "taquicardia por reentrada auriculoventricular": ("atrioventricular reentrant tachycardia", "tachicardia da rientro atrioventricolare"),
+    "taquicardia por reentrada nodal": ("AV nodal reentrant tachycardia", "tachicardia da rientro nodale"),
+    "taquicardia sinusal": ("sinus tachycardia", "tachicardia sinusale"),
+    "taquicardia supraventricular": ("supraventricular tachycardia", "tachicardia sopraventricolare"),
+    "taquicardia supraventricular paroxística": ("paroxysmal supraventricular tachycardia", "tachicardia sopraventricolare parossistica"),
+    "taquicardia ventricular": ("ventricular tachycardia", "tachicardia ventricolare"),
+    "taquicardia ventricular paroxística": ("paroxysmal ventricular tachycardia", "tachicardia ventricolare parossistica"),
+    "trastorno inespecífico de conducción intraventricular": ("nonspecific intraventricular conduction disorder", "disturbo aspecifico della conduzione intraventricolare"),
+    "trigeminismo de origen no especificado": ("trigeminy of unspecified origin", "trigeminismo di origine non specificata"),
+    "trigeminismo ventricular": ("ventricular trigeminy", "trigeminismo ventricolare"),
+    "valvulopatía": ("valvular heart disease", "valvulopatia"),
+    "velocidad tricuspídea ≥ 3.2 m/s": ("tricuspid velocity ≥ 3.2 m/s", "velocità tricuspidale ≥ 3,2 m/s"),
+    "voltaje QRS alto": ("high QRS voltage", "alto voltaggio del QRS"),
+    "voltaje alto de ventrículo izquierdo": ("left ventricular high voltage", "alto voltaggio ventricolare sinistro"),
+}
+
+TRADUCCIONES = {**TEXTOS, **CATEGORIAS, **DIAGNOSTICOS}
+
+
+def numero(valor: int | float | Decimal, idioma: str) -> str:
+    """Número con separador de miles según el idioma (1,234 en español e inglés, 1.234 en italiano)."""
+    if isinstance(valor, float) and valor.is_integer():
+        valor = int(valor)
+    texto = f"{valor:,}"   # los decimales llegan ya redondeados
+    return texto.translate(str.maketrans(",.", ".,")) if idioma == "it" else texto
+
+
+def traducir(texto, idioma: str):
+    """Traduce un texto o una plantilla de datos.tx(); lo que no está en el diccionario queda igual."""
+    if isinstance(texto, dict):
+        valores = {k: numero(v, idioma) if isinstance(v, (int, float, Decimal)) else traducir(v, idioma) for k, v in texto["valores"].items()}
+        return traducir(texto["plantilla"], idioma).format(**valores)
+    if not isinstance(texto, str) or idioma == "es":
+        return texto
+    if texto in TRADUCCIONES:
+        return TRADUCCIONES[texto][IDIOMAS.index(idioma) - 1]
+    for separador in (" + ", " · "):   # pares de cardiopatías y "dataset · origen"
+        if separador in texto:
+            return separador.join(traducir(parte, idioma) for parte in texto.split(separador))
+    return texto
+
+
+def traducir_kpis(kpis: list[dict], idioma: str) -> list[dict]:
+    return [{**k, "etiqueta": traducir(k["etiqueta"], idioma), "detalle": traducir(k.get("detalle"), idioma)} for k in kpis]
+
+
+def traducir_bloque(b: dict, idioma: str) -> dict:
+    """Traduce títulos, notas, ejes y los textos de la tabla de un bloque; los números no cambian."""
+    t = lambda x: traducir(x, idioma)
+    datos = b["datos"]
+    if b["tipo"] == "lista":
+        datos = {k: [t(x) for x in v] for k, v in datos.items()}
+    elif isinstance(datos, dict):
+        datos = {"columns": [t(c) for c in datos["columns"]], "index": [t(i) for i in datos["index"]],
+                 "data": [[t(v) for v in fila] for fila in datos["data"]], "nombre_indice": t(datos["nombre_indice"])}
+    elif isinstance(datos, list):
+        datos = traducir_kpis(datos, idioma)
+    opciones = {k: t(v) if k in ("eje", "unidad") else v for k, v in b["opciones"].items()}
+    return {**b, "titulo": t(b["titulo"]), "nota": t(b["nota"]), "datos": datos, "opciones": opciones}

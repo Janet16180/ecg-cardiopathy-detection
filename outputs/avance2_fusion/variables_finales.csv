@@ -1,0 +1,112 @@
+variable,evaluada_como,familia,prueba,efecto_max,objetivo_max
+t_amp_aVR,t_amp_aVR,Repolarización (ST-T),ANOVA,0.27228180048224,Cardiopatía
+qrs_class,qrs_class,Intervalos,chi-cuadrado,0.26645667837130727,CD
+q_patho_class,q_patho_class,QRS: amplitud y eje,chi-cuadrado,0.24518427342110957,MI
+st_min_mv,st_min_mv,Repolarización (ST-T),ANOVA,0.2421388423145536,Cardiopatía
+t_amp_V5,t_amp_V5,Repolarización (ST-T),ANOVA,0.22868327689561344,STTC
+qrs_t_angle_deg,qrs_t_angle_deg,Repolarización (ST-T),ANOVA,0.22734879466565766,Cardiopatía
+qrs_dur_ms,qrs_dur_ms,Intervalos,ANOVA,0.1901967421640999,CD
+st_aVR,st_aVR,Repolarización (ST-T),ANOVA,0.1842682170723858,STTC
+st_dep_lateral_mv,st_dep_lateral_mv,Repolarización (ST-T),ANOVA,0.1696504964312252,STTC
+st_V5,st_V5,Repolarización (ST-T),ANOVA,0.1656741534746424,STTC
+s_depth_II,s_depth_II,QRS: amplitud y eje,ANOVA,0.15279543782433896,CD
+q_depth_V1,q_depth_V1,QRS: amplitud y eje,ANOVA,0.15156504278434468,CD
+t_amp_V4,t_amp_V4,Repolarización (ST-T),ANOVA,0.1483762884221528,STTC
+cornell_product_mvms,cornell_product_mvms,QRS: amplitud y eje,ANOVA,0.14365700243970253,Cardiopatía
+sokolow_lyon_mv,sokolow_lyon_mv,QRS: amplitud y eje,ANOVA,0.1376133819060195,HYP
+s_depth_aVF,s_depth_aVF,QRS: amplitud y eje,ANOVA,0.13614875799276885,CD
+qrs_axis_sin,qrs_axis_sin,QRS: amplitud y eje,ANOVA,0.1292599680892152,CD
+std_aVL,std_aVL,Estadísticos de la señal,ANOVA,0.12907715849450319,Cardiopatía
+t_axis_cos,t_axis_cos,Repolarización (ST-T),ANOVA,0.12577606253747933,Cardiopatía
+t_peak_rms_mv,t_peak_rms_mv,Repolarización (ST-T),ANOVA,0.12386208101832226,STTC
+qrs_area_II,qrs_area_II,QRS: amplitud y eje,ANOVA,0.12206360302418522,CD
+s_depth_III,s_depth_III,QRS: amplitud y eje,ANOVA,0.12197777390559493,Cardiopatía
+std_V5,std_V5,Estadísticos de la señal,ANOVA,0.12015299019064442,HYP
+std_III,std_III,Estadísticos de la señal,ANOVA,0.11996343079543846,Cardiopatía
+std_V6,std_V6,Estadísticos de la señal,ANOVA,0.11995114198381901,HYP
+q_depth_V2,q_depth_V2,QRS: amplitud y eje,ANOVA,0.11717416079036513,MI
+kurt_aVR,kurt_aVR,Estadísticos de la señal,ANOVA,0.11260326429425314,CD
+r_amp_II,r_amp_II,QRS: amplitud y eje,ANOVA,0.11204743254911707,CD
+kurt_V6,kurt_V6,Estadísticos de la señal,ANOVA,0.1116085408418537,CD
+kurt_V1,kurt_V1,Estadísticos de la señal,ANOVA,0.10887955622440694,CD
+s_depth_V6,s_depth_V6,QRS: amplitud y eje,ANOVA,0.10564600619825042,CD
+st_V4,st_V4,Repolarización (ST-T),ANOVA,0.09859089148508546,STTC
+r_amp_aVR,r_amp_aVR,QRS: amplitud y eje,ANOVA,0.0984274292435826,CD
+t_amp_aVF,t_amp_aVF,Repolarización (ST-T),ANOVA,0.0983685879108864,STTC
+s_depth_aVR,s_depth_aVR,QRS: amplitud y eje,ANOVA,0.09711627959174383,CD
+r_amp_V6,r_amp_V6,QRS: amplitud y eje,ANOVA,0.09475624051367805,HYP
+std_V1,std_V1,Estadísticos de la señal,ANOVA,0.09022659320513161,HYP
+qrs_area_V6,qrs_area_V6,QRS: amplitud y eje,ANOVA,0.08674106046725871,HYP
+st_dep_inferior_mv,st_dep_inferior_mv,Repolarización (ST-T),ANOVA,0.08367340847549261,STTC
+sp_entropy,sp_entropy,Espectro,ANOVA,0.08118970681875717,CD
+qrs_area_III,qrs_area_III,QRS: amplitud y eje,ANOVA,0.0785457031290684,Cardiopatía
+std_I,std_I,Estadísticos de la señal,ANOVA,0.0758455439220951,HYP
+t_amp_aVL,t_amp_aVL,Repolarización (ST-T),ANOVA,0.07533419993611545,Cardiopatía
+s_depth_V5,s_depth_V5,QRS: amplitud y eje,ANOVA,0.07414496791528052,CD
+pq_peak_ms,pq_peak_ms,Intervalos,ANOVA,0.07240390102157263,Cardiopatía
+qrs_area_V4,qrs_area_V4,QRS: amplitud y eje,ANOVA,0.07156273525452365,CD
+r_amp_V3,r_amp_V3,QRS: amplitud y eje,ANOVA,0.0714272750332327,MI
+std_aVR,std_aVR,Estadísticos de la señal,ANOVA,0.07063308337380349,HYP
+r_prog_slope_mv,r_prog_slope_mv,QRS: amplitud y eje,ANOVA,0.06991191837532264,CD
+s_depth_V1,s_depth_V1,QRS: amplitud y eje,ANOVA,0.06915757296297581,HYP
+kurt_V3,kurt_V3,Estadísticos de la señal,ANOVA,0.06849308930631012,STTC
+sp_mid_rel,sp_mid_rel,Espectro,ANOVA,0.06775453280133886,STTC
+qtc_bazett_ms,qtc_bazett_ms,Intervalos,ANOVA,0.06750654690406727,Cardiopatía
+st_aVL,st_aVL,Repolarización (ST-T),ANOVA,0.06708642623333257,Cardiopatía
+q_depth_V3,q_depth_V3,QRS: amplitud y eje,ANOVA,0.06622522566204275,MI
+std_V4,std_V4,Estadísticos de la señal,ANOVA,0.06507870677707454,HYP
+s_depth_V4,s_depth_V4,QRS: amplitud y eje,ANOVA,0.06212491150424977,Cardiopatía
+t_amp_V3,t_amp_V3,Repolarización (ST-T),ANOVA,0.060014873651031996,STTC
+qrs_area_aVR,qrs_area_aVR,QRS: amplitud y eje,ANOVA,0.05801065541807944,CD
+kurt_II,kurt_II,Estadísticos de la señal,ANOVA,0.05629330520590734,CD
+std_aVF,std_aVF,Estadísticos de la señal,ANOVA,0.05551756068917253,CD
+qrs_axis_cos,qrs_axis_cos,QRS: amplitud y eje,ANOVA,0.05408997745445503,CD
+r_amp_V2,r_amp_V2,QRS: amplitud y eje,ANOVA,0.053188977745584516,MI
+kurt_I,kurt_I,Estadísticos de la señal,ANOVA,0.05103516063863956,CD
+qrs_area_I,qrs_area_I,QRS: amplitud y eje,ANOVA,0.05058448395699124,HYP
+st_dep_anterior_mv,st_dep_anterior_mv,Repolarización (ST-T),ANOVA,0.048849366931718256,STTC
+sp_low_rel,sp_low_rel,Espectro,ANOVA,0.04836726809544916,CD
+s_depth_V3,s_depth_V3,QRS: amplitud y eje,ANOVA,0.047594863507375205,Cardiopatía
+qrs_area_V3,qrs_area_V3,QRS: amplitud y eje,ANOVA,0.0463097693179742,Cardiopatía
+qtc_class,qtc_class,Intervalos,chi-cuadrado,0.04490618029868004,Cardiopatía
+std_V3,std_V3,Estadísticos de la señal,ANOVA,0.04401054079033601,HYP
+st_elev_inferior_mv,st_elev_inferior_mv,Repolarización (ST-T),ANOVA,0.042380634546109366,STTC
+kurt_V4,kurt_V4,Estadísticos de la señal,ANOVA,0.03975949935663372,CD
+t_axis_sin,t_axis_sin,Repolarización (ST-T),ANOVA,0.03949791173519255,STTC
+std_V2,std_V2,Estadísticos de la señal,ANOVA,0.039310954710229044,HYP
+std_II,std_II,Estadísticos de la señal,ANOVA,0.03803739626106692,HYP
+t_amp_V1,t_amp_V1,Repolarización (ST-T),ANOVA,0.035738752963873924,STTC
+q_depth_V6,q_depth_V6,QRS: amplitud y eje,ANOVA,0.0356860773152,CD
+s_depth_I,s_depth_I,QRS: amplitud y eje,ANOVA,0.034200708928703145,CD
+qrs_area_V1,qrs_area_V1,QRS: amplitud y eje,ANOVA,0.034156442423590276,HYP
+st_V3,st_V3,Repolarización (ST-T),ANOVA,0.031924967939310545,STTC
+noise_hf_frac,noise_hf_frac,Calidad,ANOVA,0.03151955174190005,CD
+q_depth_aVF,q_depth_aVF,QRS: amplitud y eje,ANOVA,0.02939138595512498,MI
+q_depth_III,q_depth_III,QRS: amplitud y eje,ANOVA,0.028521191170322254,MI
+r_amp_III,r_amp_III,QRS: amplitud y eje,ANOVA,0.02818087853186909,MI
+r_frac_V1,r_frac_V1,QRS: amplitud y eje,ANOVA,0.027701672488185426,CD
+hr_bpm,hr_bpm,Ritmo,ANOVA,0.026684157305980057,Cardiopatía
+s_depth_V2,s_depth_V2,QRS: amplitud y eje,ANOVA,0.025480038554072108,HYP
+st_III,st_III,Repolarización (ST-T),ANOVA,0.02527624977265471,CD
+st_V1,st_V1,Repolarización (ST-T),ANOVA,0.02506077115643008,HYP
+kurt_V2,kurt_V2,Estadísticos de la señal,ANOVA,0.02502722891249652,STTC
+beat_similarity,beat_similarity,Ritmo,ANOVA,0.023668166055917525,Cardiopatía
+pr_ms,pr_ms,Intervalos,ANOVA,0.0231176750435647,CD
+q_depth_II,q_depth_II,QRS: amplitud y eje,ANOVA,0.02215263597437175,CD
+t_amp_V2,t_amp_V2,Repolarización (ST-T),ANOVA,0.020655046681248443,Cardiopatía
+kurt_aVL,kurt_aVL,Estadísticos de la señal,ANOVA,0.020651178904884777,CD
+hr_class,hr_class,Ritmo,chi-cuadrado,0.02024281810186215,STTC
+st_max_mv,st_max_mv,Repolarización (ST-T),ANOVA,0.016415146083671606,HYP
+qrs_area_V2,qrs_area_V2,QRS: amplitud y eje,ANOVA,0.014393605338006196,HYP
+q_depth_aVL,q_depth_aVL,QRS: amplitud y eje,ANOVA,0.013788437088801184,CD
+kurt_III,kurt_III,Estadísticos de la señal,ANOVA,0.012882749156938777,CD
+kurt_aVF,kurt_aVF,Estadísticos de la señal,ANOVA,0.01089675163784014,MI
+s_depth_aVL,s_depth_aVL,QRS: amplitud y eje,ANOVA,0.010323825903519225,CD
+st_V2,st_V2,Repolarización (ST-T),ANOVA,0.010297648677650912,STTC
+axis_class_izquierda,axis_class,QRS: amplitud y eje,chi-cuadrado,0.27750635398011486,CD
+axis_class_derecha,axis_class,QRS: amplitud y eje,chi-cuadrado,0.27750635398011486,CD
+axis_class_extrema,axis_class,QRS: amplitud y eje,chi-cuadrado,0.27750635398011486,CD
+r_transition_class_temprana,r_transition_class,QRS: amplitud y eje,chi-cuadrado,0.10526201103460413,CD
+r_transition_class_tardia,r_transition_class,QRS: amplitud y eje,chi-cuadrado,0.10526201103460413,CD
+t_inverted_any,t_inverted_any,Repolarización (ST-T),chi-cuadrado,0.14247952469743866,Cardiopatía
+flag_no_p_wave,flag_no_p_wave,Onda P,chi-cuadrado,0.01674964796743678,Cardiopatía

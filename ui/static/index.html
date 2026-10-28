@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ECG · Cardiopatías</title>
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M2 17h7l3-8 4 15 3-11 2 4h9' fill='none' stroke='%232a78d6' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <script>
+    try { const tema = localStorage.getItem("tema"); if (tema) document.documentElement.dataset.theme = tema; } catch (e) {}
+  </script>
+</head>
+<body>
+  <div class="app">
+    <aside class="lateral" id="lateral">
+      <a class="marca" href="#/inicio">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 17h7l3-8 4 15 3-11 2 4h9"/></svg>
+        <span id="marca">ECG · Cardiopatías</span>
+      </a>
+      <nav id="menu" aria-label="Secciones"></nav>
+      <div class="lateral-pie">
+        <div class="idiomas" id="idiomas" role="group" aria-label="Idioma"></div>
+        <button type="button" id="tema" class="boton-tema"></button>
+      </div>
+    </aside>
+    <div class="cortina" id="cortina"></div>
+    <main>
+      <button type="button" class="boton-menu" id="boton-menu" aria-controls="lateral" aria-expanded="false">Menú</button>
+      <div id="contenido"></div>
+    </main>
+  </div>
+  <input type="file" id="archivo-ecg" multiple accept=".hea,.dat,.mat,.csv,.npy" hidden>
+  <dialog id="dialogo-registro"></dialog>
+  <div id="tooltip" role="tooltip"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+carpeta,dataset,registro,edad,sexo,clase,cardiopatías,diagnósticos
+1-normal,PTB-XL,1089,62.0,F,normal,,"normal ECG, sinus rhythm"
+2-con-cardiopatia,PTB-XL,18890,59.0,M,con cardiopatía,QT prolongado,"long QT-interval, sinus rhythm"
+3-aleatorio,PTB-XL,4032,73.0,F,con cardiopatía,infarto inferior,"inferior myocardial infarction, sinus rhythm"

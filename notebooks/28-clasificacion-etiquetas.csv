@@ -1,0 +1,199 @@
+etiqueta,fuente,diagnostico,grupo,categoria,diagnostico_general
+normal ECG,SCP,ECG normal,normal,normal,ECG normal
+Healthy control,PTB,control sano,normal,normal,control sano
+sinus rhythm,SCP,ritmo sinusal,normal,normal,ritmo sinusal
+electrolytic disturbance or drug (former EDIS),SCP,alteración electrolítica o por fármaco,no cardiopatía,fármaco o electrolitos,alteración electrolítica o por fármaco
+digitalis-effect,SCP,efecto de digital,no cardiopatía,fármaco o electrolitos,efecto de digital
+atrial pacing pattern,SNOMED,marcapasos artificial,no cardiopatía,marcapasos,marcapasos artificial
+normal functioning artificial pacemaker,SCP,marcapasos artificial,no cardiopatía,marcapasos,marcapasos artificial
+pacing rhythm,SNOMED,marcapasos artificial,no cardiopatía,marcapasos,marcapasos artificial
+ventricular pacing pattern,SNOMED,marcapasos artificial,no cardiopatía,marcapasos,marcapasos artificial
+Palpitation,PTB,palpitaciones,no cardiopatía,síntoma,palpitaciones
+suspect arm ecg leads reversed,SNOMED,electrodos de brazos invertidos,no cardiopatía,técnico,electrodos de brazos invertidos
+sinus arrhythmia,SCP,arritmia sinusal,no cardiopatía,variante benigna,arritmia sinusal
+sinus bradycardia,SCP,bradicardia sinusal,no cardiopatía,variante benigna,bradicardia sinusal
+sinus atrium to atrial wandering rhythm,SNOMED,marcapasos auricular migratorio,no cardiopatía,variante benigna,marcapasos auricular migratorio
+wandering atrial pacemaker,SNOMED,marcapasos auricular migratorio,no cardiopatía,variante benigna,marcapasos auricular migratorio
+early repolarization,SNOMED,repolarización precoz,no cardiopatía,variante benigna,repolarización precoz
+clockwise or counterclockwise vectorcardiographic loop,SNOMED,rotación horaria o antihoraria,no cardiopatía,variante benigna,rotación horaria o antihoraria
+clockwise rotation,SNOMED,rotación horaria o antihoraria,no cardiopatía,variante benigna,rotación horaria o antihoraria
+countercolockwise rotation,SNOMED,rotación horaria o antihoraria,no cardiopatía,variante benigna,rotación horaria o antihoraria
+sinus tachycardia,SCP,taquicardia sinusal,no cardiopatía,variante benigna,taquicardia sinusal
+bradycardia,SNOMED,bradicardia sin especificar,por definir,sin especificar,bradicardia sin especificar
+high QRS voltage,SCP,voltaje QRS alto,por definir,voltaje aislado,voltaje QRS alto
+left ventricular high voltage,SNOMED,voltaje alto de ventrículo izquierdo,por definir,voltaje aislado,voltaje alto de ventrículo izquierdo
+voltage criteria (QRS) for left ventricular hypertrophy,SCP,voltaje alto de ventrículo izquierdo,por definir,voltaje aislado,voltaje alto de ventrículo izquierdo
+Dysrhythmia,PTB,arritmia sin especificar,cardiopatía,arritmia,arritmia sin especificar
+supraventricular arrhythmia,SCP,arritmia supraventricular,cardiopatía,arritmia,taquicardia supraventricular
+atrial bigeminy,SNOMED,bigeminismo auricular,cardiopatía,arritmia,extrasístole supraventricular
+"bigeminal pattern (unknown origin, SV or Ventricular)",SCP,bigeminismo de origen no especificado,cardiopatía,arritmia,extrasístoles de origen no especificado
+ventricular bigeminy,SNOMED,bigeminismo ventricular,cardiopatía,arritmia,extrasístole ventricular
+sinoatrial block,SNOMED,bloqueo sinoauricular,cardiopatía,arritmia,disfunción del nodo sinusal
+atrioventricular dissociation,SNOMED,disociación auriculoventricular,cardiopatía,arritmia,disociación auriculoventricular
+junctional escape,SNOMED,escape de la unión,cardiopatía,arritmia,ritmo ectópico o de escape
+atrial premature complex,SCP,extrasístole auricular,cardiopatía,arritmia,extrasístole supraventricular
+premature atrial contraction,SNOMED,extrasístole auricular,cardiopatía,arritmia,extrasístole supraventricular
+supraventricular premature beats,SNOMED,extrasístole auricular,cardiopatía,arritmia,extrasístole supraventricular
+blocked premature atrial contraction,SNOMED,extrasístole auricular bloqueada,cardiopatía,arritmia,extrasístole supraventricular
+junctional premature complex,SNOMED,extrasístole de la unión,cardiopatía,arritmia,extrasístole supraventricular
+premature ventricular contractions,SNOMED,extrasístole ventricular,cardiopatía,arritmia,extrasístole ventricular
+ventricular ectopics,SNOMED,extrasístole ventricular,cardiopatía,arritmia,extrasístole ventricular
+ventricular premature beats,SNOMED,extrasístole ventricular,cardiopatía,arritmia,extrasístole ventricular
+ventricular premature complex,SCP,extrasístole ventricular,cardiopatía,arritmia,extrasístole ventricular
+premature complex(es),SCP,extrasístoles de origen no especificado,cardiopatía,arritmia,extrasístoles de origen no especificado
+atrial fibrillation,SCP,fibrilación auricular,cardiopatía,arritmia,fibrilación o flutter auricular
+chronic atrial fibrillation,SNOMED,fibrilación auricular,cardiopatía,arritmia,fibrilación o flutter auricular
+ventricular fibrillation,SNOMED,fibrilación ventricular,cardiopatía,arritmia,fibrilación o flutter ventricular
+atrial fibrillation and flutter,SNOMED,fibrilación y flutter auricular,cardiopatía,arritmia,fibrilación o flutter auricular
+atrial flutter,SCP,flutter auricular,cardiopatía,arritmia,fibrilación o flutter auricular
+ventricular flutter,SNOMED,flutter ventricular,cardiopatía,arritmia,fibrilación o flutter ventricular
+atrial escape beat,SNOMED,latido de escape auricular,cardiopatía,arritmia,ritmo ectópico o de escape
+ventricular escape beat,SNOMED,latido de escape ventricular,cardiopatía,arritmia,ritmo ectópico o de escape
+fusion beats,SNOMED,latidos de fusión,cardiopatía,arritmia,latidos de fusión
+sinus arrest,SNOMED,paro sinusal,cardiopatía,arritmia,disfunción del nodo sinusal
+atrial rhythm,SNOMED,ritmo auricular ectópico,cardiopatía,arritmia,ritmo ectópico o de escape
+accelerated atrial escape rhythm,SNOMED,ritmo de escape auricular acelerado,cardiopatía,arritmia,ritmo ectópico o de escape
+ventricular escape rhythm,SNOMED,ritmo de escape ventricular,cardiopatía,arritmia,ritmo ectópico o de escape
+atrioventricular junctional rhythm,SNOMED,ritmo de la unión,cardiopatía,arritmia,ritmo ectópico o de escape
+accelerated junctional rhythm,SNOMED,ritmo de la unión acelerado,cardiopatía,arritmia,ritmo ectópico o de escape
+accelerated idioventricular rhythm,SNOMED,ritmo idioventricular acelerado,cardiopatía,arritmia,ritmo ectópico o de escape
+brady tachy syndrome,SNOMED,síndrome bradicardia-taquicardia,cardiopatía,arritmia,disfunción del nodo sinusal
+atrial tachycardia,SNOMED,taquicardia auricular,cardiopatía,arritmia,taquicardia supraventricular
+junctional tachycardia,SNOMED,taquicardia de la unión,cardiopatía,arritmia,taquicardia supraventricular
+atrioventricular reentrant tachycardia,SNOMED,taquicardia por reentrada auriculoventricular,cardiopatía,arritmia,taquicardia supraventricular
+atrioventricular  node reentrant tachycardia,SNOMED,taquicardia por reentrada nodal,cardiopatía,arritmia,taquicardia supraventricular
+supraventricular tachycardia,SCP,taquicardia supraventricular,cardiopatía,arritmia,taquicardia supraventricular
+paroxysmal supraventricular tachycardia,SCP,taquicardia supraventricular paroxística,cardiopatía,arritmia,taquicardia supraventricular
+ventricular tachycardia,SNOMED,taquicardia ventricular,cardiopatía,arritmia,taquicardia ventricular
+paroxysmal ventricular tachycardia,SNOMED,taquicardia ventricular paroxística,cardiopatía,arritmia,taquicardia ventricular
+"trigeminal pattern (unknown origin, SV or Ventricular)",SCP,trigeminismo de origen no especificado,cardiopatía,arritmia,extrasístoles de origen no especificado
+ventricular trigeminy,SNOMED,trigeminismo ventricular,cardiopatía,arritmia,extrasístole ventricular
+decreased qt interval,SNOMED,QT corto,cardiopatía,conducción,QT corto
+long QT-interval,SCP,QT prolongado,cardiopatía,conducción,QT prolongado
+prolonged qt interval,SNOMED,QT prolongado,cardiopatía,conducción,QT prolongado
+mobitz type i wenckebach atrioventricular block,SNOMED,bloqueo AV Mobitz I,cardiopatía,conducción,bloqueo AV de segundo grado
+mobitz type II atrioventricular block,SNOMED,bloqueo AV Mobitz II,cardiopatía,conducción,bloqueo AV de segundo grado
+complete heart block,SNOMED,bloqueo AV completo,cardiopatía,conducción,bloqueo AV completo
+third degree AV block,SCP,bloqueo AV completo,cardiopatía,conducción,bloqueo AV completo
+1st degree av block,SNOMED,bloqueo AV de primer grado,cardiopatía,conducción,bloqueo AV de primer grado
+first degree AV block,SCP,bloqueo AV de primer grado,cardiopatía,conducción,bloqueo AV de primer grado
+2nd degree av block,SNOMED,bloqueo AV de segundo grado,cardiopatía,conducción,bloqueo AV de segundo grado
+second degree AV block,SCP,bloqueo AV de segundo grado,cardiopatía,conducción,bloqueo AV de segundo grado
+av block,SNOMED,bloqueo AV sin especificar,cardiopatía,conducción,bloqueo AV sin especificar
+complete right bundle branch block,SCP,bloqueo de rama derecha,cardiopatía,conducción,bloqueo de rama derecha
+right bundle branch block,SNOMED,bloqueo de rama derecha,cardiopatía,conducción,bloqueo de rama derecha
+complete left bundle branch block,SCP,bloqueo de rama izquierda,cardiopatía,conducción,bloqueo de rama izquierda
+left bundle branch block,SNOMED,bloqueo de rama izquierda,cardiopatía,conducción,bloqueo de rama izquierda
+Bundle branch block,PTB,bloqueo de rama sin especificar,cardiopatía,conducción,bloqueo de rama sin especificar
+bundle branch block,SNOMED,bloqueo de rama sin especificar,cardiopatía,conducción,bloqueo de rama sin especificar
+left anterior fascicular block,SCP,bloqueo fascicular anterior izquierdo,cardiopatía,conducción,bloqueo fascicular
+left posterior fascicular block,SCP,bloqueo fascicular posterior izquierdo,cardiopatía,conducción,bloqueo fascicular
+incomplete right bundle branch block,SCP,bloqueo incompleto de rama derecha,cardiopatía,conducción,bloqueo incompleto de rama derecha
+incomplete left bundle branch block,SCP,bloqueo incompleto de rama izquierda,cardiopatía,conducción,bloqueo incompleto de rama izquierda
+shortened pr interval,SNOMED,intervalo PR corto,cardiopatía,conducción,intervalo PR corto
+prolonged PR interval,SCP,intervalo PR prolongado,cardiopatía,conducción,bloqueo AV de primer grado
+prolonged pr interval,SNOMED,intervalo PR prolongado,cardiopatía,conducción,bloqueo AV de primer grado
+brugada,SNOMED,patrón de Brugada,cardiopatía,conducción,patrón de Brugada
+Wolf-Parkinson-White syndrome,SCP,preexcitación ventricular (WPW),cardiopatía,conducción,preexcitación ventricular (WPW)
+ventricular pre excitation,SNOMED,preexcitación ventricular (WPW),cardiopatía,conducción,preexcitación ventricular (WPW)
+wolff parkinson white pattern,SNOMED,preexcitación ventricular (WPW),cardiopatía,conducción,preexcitación ventricular (WPW)
+diffuse intraventricular block,SNOMED,trastorno inespecífico de conducción intraventricular,cardiopatía,conducción,trastorno inespecífico de conducción intraventricular
+non-specific intraventricular conduction disturbance (block),SCP,trastorno inespecífico de conducción intraventricular,cardiopatía,conducción,trastorno inespecífico de conducción intraventricular
+nonspecific intraventricular conduction disorder,SNOMED,trastorno inespecífico de conducción intraventricular,cardiopatía,conducción,trastorno inespecífico de conducción intraventricular
+abnormal QRS,SCP,QRS anormal,cardiopatía,eje y forma de onda,QRS anormal
+fqrs wave,SNOMED,QRS fragmentado,cardiopatía,eje y forma de onda,QRS anormal
+low QRS voltages in the frontal and horizontal leads,SCP,bajo voltaje del QRS,cardiopatía,eje y forma de onda,bajo voltaje del QRS
+low qrs voltages,SNOMED,bajo voltaje del QRS,cardiopatía,eje y forma de onda,bajo voltaje del QRS
+p wave change,SNOMED,cambio de onda P,cardiopatía,eje y forma de onda,alteración de onda P
+right axis deviation,SNOMED,desviación del eje a la derecha,cardiopatía,eje y forma de onda,desviación del eje a la derecha
+left axis deviation,SNOMED,desviación del eje a la izquierda,cardiopatía,eje y forma de onda,desviación del eje a la izquierda
+poor R wave Progression,SNOMED,mala progresión de onda R,cardiopatía,eje y forma de onda,alteración de onda R
+tall p wave,SNOMED,onda P alta,cardiopatía,eje y forma de onda,alteración de onda P
+prolonged P wave,SNOMED,onda P prolongada,cardiopatía,eje y forma de onda,alteración de onda P
+Q waves present,SCP,onda Q anormal,cardiopatía,eje y forma de onda,onda Q anormal
+qwave abnormal,SNOMED,onda Q anormal,cardiopatía,eje y forma de onda,onda Q anormal
+r wave abnormal,SNOMED,onda R anormal,cardiopatía,eje y forma de onda,alteración de onda R
+lvef_lte_45_flag,EchoNext,FEVI ≤ 45%,cardiopatía,estructural,FEVI ≤ 45%
+Cardiomyopathy,PTB,cardiomiopatía,cardiopatía,estructural,cardiomiopatía
+pericardial_effusion_moderate_large_flag,EchoNext,derrame pericárdico moderado o grande,cardiopatía,estructural,derrame pericárdico moderado o grande
+rv_systolic_dysfunction_moderate_or_greater_flag,EchoNext,disfunción sistólica del VD moderada o mayor,cardiopatía,estructural,disfunción sistólica del VD moderada o mayor
+aortic_stenosis_moderate_or_greater_flag,EchoNext,estenosis aórtica moderada o mayor,cardiopatía,estructural,estenosis aórtica moderada o mayor
+lvwt_gte_13_flag,EchoNext,grosor de pared del VI ≥ 1.3 cm,cardiopatía,estructural,grosor de pared del VI ≥ 1.3 cm
+aortic_regurgitation_moderate_or_greater_flag,EchoNext,insuficiencia aórtica moderada o mayor,cardiopatía,estructural,insuficiencia aórtica moderada o mayor
+Heart failure (NYHA 2),PTB,insuficiencia cardiaca,cardiopatía,estructural,insuficiencia cardiaca
+Heart failure (NYHA 3),PTB,insuficiencia cardiaca,cardiopatía,estructural,insuficiencia cardiaca
+Heart failure (NYHA 4),PTB,insuficiencia cardiaca,cardiopatía,estructural,insuficiencia cardiaca
+mitral_regurgitation_moderate_or_greater_flag,EchoNext,insuficiencia mitral moderada o mayor,cardiopatía,estructural,insuficiencia mitral moderada o mayor
+pulmonary_regurgitation_moderate_or_greater_flag,EchoNext,insuficiencia pulmonar moderada o mayor,cardiopatía,estructural,insuficiencia pulmonar moderada o mayor
+tricuspid_regurgitation_moderate_or_greater_flag,EchoNext,insuficiencia tricuspídea moderada o mayor,cardiopatía,estructural,insuficiencia tricuspídea moderada o mayor
+Myocarditis,PTB,miocarditis,cardiopatía,estructural,miocarditis
+pasp_gte_45_flag,EchoNext,presión sistólica pulmonar ≥ 45 mmHg,cardiopatía,estructural,presión sistólica pulmonar ≥ 45 mmHg
+Valvular heart disease,PTB,valvulopatía,cardiopatía,estructural,valvulopatía
+tr_max_gte_32_flag,EchoNext,velocidad tricuspídea ≥ 3.2 m/s,cardiopatía,estructural,velocidad tricuspídea ≥ 3.2 m/s
+right atrial  high voltage,SNOMED,agrandamiento auricular derecho,cardiopatía,hipertrofia o agrandamiento,agrandamiento auricular derecho
+right atrial abnormality,SNOMED,agrandamiento auricular derecho,cardiopatía,hipertrofia o agrandamiento,agrandamiento auricular derecho
+right atrial hypertrophy,SNOMED,agrandamiento auricular derecho,cardiopatía,hipertrofia o agrandamiento,agrandamiento auricular derecho
+right atrial overload/enlargement,SCP,agrandamiento auricular derecho,cardiopatía,hipertrofia o agrandamiento,agrandamiento auricular derecho
+left atrial abnormality,SNOMED,agrandamiento auricular izquierdo,cardiopatía,hipertrofia o agrandamiento,agrandamiento auricular izquierdo
+left atrial enlargement,SNOMED,agrandamiento auricular izquierdo,cardiopatía,hipertrofia o agrandamiento,agrandamiento auricular izquierdo
+left atrial hypertrophy,SNOMED,agrandamiento auricular izquierdo,cardiopatía,hipertrofia o agrandamiento,agrandamiento auricular izquierdo
+left atrial overload/enlargement,SCP,agrandamiento auricular izquierdo,cardiopatía,hipertrofia o agrandamiento,agrandamiento auricular izquierdo
+atrial hypertrophy,SNOMED,agrandamiento auricular sin especificar,cardiopatía,hipertrofia o agrandamiento,agrandamiento auricular sin especificar
+septal hypertrophy,SCP,hipertrofia septal,cardiopatía,hipertrofia o agrandamiento,hipertrofia ventricular izquierda
+Hypertrophy,PTB,hipertrofia sin especificar,cardiopatía,hipertrofia o agrandamiento,hipertrofia sin especificar
+right ventricular hypertrophy,SCP,hipertrofia ventricular derecha,cardiopatía,hipertrofia o agrandamiento,hipertrofia ventricular derecha
+left ventricular hypertrophy,SCP,hipertrofia ventricular izquierda,cardiopatía,hipertrofia o agrandamiento,hipertrofia ventricular izquierda
+ventricular hypertrophy,SNOMED,hipertrofia ventricular sin especificar,cardiopatía,hipertrofia o agrandamiento,hipertrofia sin especificar
+left ventricular strain,SNOMED,sobrecarga ventricular izquierda,cardiopatía,hipertrofia o agrandamiento,hipertrofia ventricular izquierda
+ST-T changes compatible with ventricular aneurysm,SCP,aneurisma ventricular,cardiopatía,isquemia o infarto,aneurisma ventricular
+Stable angina,PTB,angina estable,cardiopatía,isquemia o infarto,angina
+Unstable angina,PTB,angina inestable,cardiopatía,isquemia o infarto,angina
+acute myocardial infarction,SNOMED,infarto agudo de miocardio,cardiopatía,isquemia o infarto,infarto de miocardio
+anterior myocardial infarction,SCP,infarto anterior,cardiopatía,isquemia o infarto,infarto de miocardio
+anterolateral myocardial infarction,SCP,infarto anterolateral,cardiopatía,isquemia o infarto,infarto de miocardio
+anteroseptal myocardial infarction,SCP,infarto anteroseptal,cardiopatía,isquemia o infarto,infarto de miocardio
+old myocardial infarction,SNOMED,infarto antiguo,cardiopatía,isquemia o infarto,infarto de miocardio
+Myocardial infarction,PTB,infarto de miocardio,cardiopatía,isquemia o infarto,infarto de miocardio
+myocardial infarction,SNOMED,infarto de miocardio,cardiopatía,isquemia o infarto,infarto de miocardio
+inferior myocardial infarction,SCP,infarto inferior,cardiopatía,isquemia o infarto,infarto de miocardio
+inferolateral myocardial infarction,SCP,infarto inferolateral,cardiopatía,isquemia o infarto,infarto de miocardio
+inferoposterior myocardial infarction,SCP,infarto inferoposterior,cardiopatía,isquemia o infarto,infarto de miocardio
+inferoposterolateral myocardial infarction,SCP,infarto inferoposterolateral,cardiopatía,isquemia o infarto,infarto de miocardio
+lateral myocardial infarction,SCP,infarto lateral,cardiopatía,isquemia o infarto,infarto de miocardio
+posterior myocardial infarction,SCP,infarto posterior,cardiopatía,isquemia o infarto,infarto de miocardio
+anterior ischemia,SNOMED,isquemia anterior,cardiopatía,isquemia o infarto,isquemia miocárdica
+ischemic in anterior leads,SCP,isquemia anterior,cardiopatía,isquemia o infarto,isquemia miocárdica
+ischemic in anterolateral leads,SCP,isquemia anterolateral,cardiopatía,isquemia o infarto,isquemia miocárdica
+ischemic in anteroseptal leads,SCP,isquemia anteroseptal,cardiopatía,isquemia o infarto,isquemia miocárdica
+non-specific ischemic,SCP,isquemia inespecífica,cardiopatía,isquemia o infarto,isquemia miocárdica
+inferior ischaemia,SNOMED,isquemia inferior,cardiopatía,isquemia o infarto,isquemia miocárdica
+ischemic in inferior leads,SCP,isquemia inferior,cardiopatía,isquemia o infarto,isquemia miocárdica
+ischemic in inferolateral leads,SCP,isquemia inferolateral,cardiopatía,isquemia o infarto,isquemia miocárdica
+ischemic in lateral leads,SCP,isquemia lateral,cardiopatía,isquemia o infarto,isquemia miocárdica
+lateral ischaemia,SNOMED,isquemia lateral,cardiopatía,isquemia o infarto,isquemia miocárdica
+myocardial ischemia,SNOMED,isquemia miocárdica,cardiopatía,isquemia o infarto,isquemia miocárdica
+acute myocardial ischemia,SNOMED,isquemia miocárdica aguda,cardiopatía,isquemia o infarto,isquemia miocárdica
+chronic myocardial ischemia,SNOMED,isquemia miocárdica crónica,cardiopatía,isquemia o infarto,isquemia miocárdica
+subendocardial injury in anterolateral leads,SCP,lesión subendocárdica anterolateral,cardiopatía,isquemia o infarto,lesión subendocárdica
+subendocardial injury in anteroseptal leads,SCP,lesión subendocárdica anteroseptal,cardiopatía,isquemia o infarto,lesión subendocárdica
+subendocardial injury in inferior leads,SCP,lesión subendocárdica inferior,cardiopatía,isquemia o infarto,lesión subendocárdica
+subendocardial injury in inferolateral leads,SCP,lesión subendocárdica inferolateral,cardiopatía,isquemia o infarto,lesión subendocárdica
+subendocardial injury in lateral leads,SCP,lesión subendocárdica lateral,cardiopatía,isquemia o infarto,lesión subendocárdica
+nonspecific st t abnormality,SNOMED,anomalía inespecífica ST-T,cardiopatía,repolarización (ST-T),alteración inespecífica del ST-T
+non-diagnostic T abnormalities,SCP,anomalía inespecífica de onda T,cardiopatía,repolarización (ST-T),alteración de onda T
+non-specific T-wave changes,SCP,anomalía inespecífica de onda T,cardiopatía,repolarización (ST-T),alteración de onda T
+non-specific ST changes,SCP,cambios del segmento ST,cardiopatía,repolarización (ST-T),alteración inespecífica del ST-T
+s t changes,SNOMED,cambios del segmento ST,cardiopatía,repolarización (ST-T),alteración inespecífica del ST-T
+st interval abnormal,SNOMED,cambios del segmento ST,cardiopatía,repolarización (ST-T),alteración inespecífica del ST-T
+inferior ST segment depression,SNOMED,depresión del ST,cardiopatía,repolarización (ST-T),depresión del ST
+non-specific ST depression,SCP,depresión del ST,cardiopatía,repolarización (ST-T),depresión del ST
+st depression,SNOMED,depresión del ST,cardiopatía,repolarización (ST-T),depresión del ST
+non-specific ST elevation,SCP,elevación del ST,cardiopatía,repolarización (ST-T),elevación del ST
+st elevation,SNOMED,elevación del ST,cardiopatía,repolarización (ST-T),elevación del ST
+T-wave abnormality,SCP,onda T anormal,cardiopatía,repolarización (ST-T),alteración de onda T
+t wave abnormal,SNOMED,onda T anormal,cardiopatía,repolarización (ST-T),alteración de onda T
+high t-voltage,SNOMED,onda T de alto voltaje,cardiopatía,repolarización (ST-T),alteración de onda T
+low amplitude T-waves,SCP,onda T de baja amplitud,cardiopatía,repolarización (ST-T),alteración de onda T
+inverted T-waves,SCP,onda T invertida,cardiopatía,repolarización (ST-T),alteración de onda T
+t wave inversion,SNOMED,onda T invertida,cardiopatía,repolarización (ST-T),alteración de onda T
+u wave abnormal,SNOMED,onda U anormal,cardiopatía,repolarización (ST-T),onda U anormal

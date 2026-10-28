@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-18",
+  "updated": "2026-10-28",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -1198,7 +1198,7 @@
       "kind": "experiment",
       "title": "Replace CPC GRU context with mLSTM-xLSTM on clean cohorts v3",
       "question": "Does matrix memory improve a matched fresh CPC development readout at 25k, and does a conditional 50k tier help?",
-      "evidence": "Audited full CPC comparison: primary xLSTM minus GRU−0.00897[−0.01840,+0.00094] at25k and−0.00737[−0.01652,+0.00117] at50k; xLSTM scaling+0.00231[−0.00707,+0.01136]. Neither frozen improvement rule passed.",
+      "evidence": "Audited full CPC comparison: primary xLSTM minus GRU\u22120.00897[\u22120.01840,+0.00094] at25k and\u22120.00737[\u22120.01652,+0.00117] at50k; xLSTM scaling+0.00231[\u22120.00707,+0.01136]. Neither frozen improvement rule passed.",
       "value": 3,
       "clarity": 0.6,
       "gpu_hours": 4,
@@ -1416,6 +1416,40 @@
       ],
       "status": "proposed",
       "notes": "No scores or fit scheduled. Preserve native sparse-choice semantics; verify timing/lead alignment, annotation provenance and patient roles before any metric. Do not convert choices to clinical disease masks."
+    },
+    {
+      "id": "pr74_training_sampling_uncertainty",
+      "title": "Training-sample uncertainty for the strict young matched comparison",
+      "question": "Does the small-cohort age comparison persist when training records and normal calibration samples are resampled under a fixed matched design?",
+      "evidence": "Corrective evaluation primary blend gain +0.004743, paired patient 95% CI [-0.007221, 0.016380]; current interval conditions on the 770-record fitted cohorts and calibration sample.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 2,
+      "build_hours": 3,
+      "blocked_by": [
+        "@prospective_resampling_protocol"
+      ],
+      "status": "open",
+      "notes": "Not scheduled. Reuse verified frozen features only; preserve source/evidence/target matching and patient boundaries, report all draws without selecting seeds or cohorts. Does not authorize closed data or new clinical claims."
+    },
+    {
+      "id": "pr74_prospective_student_workflow",
+      "title": "Prospective student ECG quality and local-normal referral workflow",
+      "question": "How often does the complete quality-abstention and frozen referral workflow need cardiologist review on an independently acquired student pilot?",
+      "evidence": "Corrective matrices describe reused hospital development scoring; they do not validate the application quality-plus-referral workflow or Italian student prevalence. SPH scoring preserves all admitted rows, including descriptive quality failures.",
+      "value": 5,
+      "clarity": 0.5,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 12,
+      "blocked_by": [
+        "@cardiologist_target_review",
+        "@prospective_student_acquisition",
+        "@user_pipeline_freeze"
+      ],
+      "status": "open",
+      "notes": "Not scheduled. Obtain cardiologist endpoint and nurse acquisition protocol; calibrate the normal referral budget locally, count abstentions separately from negative predictions, freeze the pipeline before any independent final test. Existing closed Challenge/EchoNext test permission remains unchanged."
     }
   ]
 }

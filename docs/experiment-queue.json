@@ -23,7 +23,7 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-10-28T15:36:46.498551+00:00",
+  "updated_at_utc": "2026-10-28T20:50:47+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2379,5 +2379,20 @@
     "aggregate": "reports/clf01-measurement-classifiers-2026-10-28/aggregate.json",
     "primary_result": "SVM 0.703683 vs HGB 0.745815, -0.042132 [-0.054690, -0.030160]; MLP -0.041016; LR -0.110212; every interval below zero, alone and in the xECG blend. HGB retained.",
     "next_action": "None scheduled."
+  },
+  "nbr01_normal_beat_replacement_20261028": {
+    "authorization": "Coordinator request on behalf of the user (28 October 2026): show where the screening blend sees the problem, for the app page; SPH development data only, no closed data.",
+    "status": "complete",
+    "protocol": "docs/nbr01-normal-beat-replacement-protocol-2026-10-28.md",
+    "protocol_commit": "8c07b07",
+    "amendment_commit": "8064761",
+    "source_commit": "eef3380",
+    "output": "outputs/nbr01_normal_beat_replacement_20261028",
+    "primary": "all_age_blend territory contrast: expected-lead share of whole-lead replacement drops, inferior MI (II, III, aVF) against anterior MI (V1-V4), 95% whole-patient bootstrap; qualifier: paired difference against the replaced-energy map.",
+    "results": "docs/nbr01-normal-beat-replacement-results-2026-10-28.md",
+    "aggregate": "reports/nbr01-normal-beat-replacement-2026-10-28/results.json",
+    "examples": "outputs/nbr01_normal_beat_replacement_20261028/examples.json",
+    "primary_result": "+0.306 [+0.248, +0.363]; energy +0.115 [+0.078, +0.153]; model minus energy +0.190 [+0.134, +0.246]. Passed with the qualifier. Registered unreplaced-score check failed at 1e-12 (2 records, batch shape); passed under Amendment 1.",
+    "next_action": "Page built by the main session from examples.json; follow-ups in the backlog (nbr_*)."
   }
 }

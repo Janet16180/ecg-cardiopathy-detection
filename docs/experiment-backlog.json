@@ -1529,6 +1529,98 @@
       "experiment": "CLF-01",
       "protocol": "docs/clf01-measurement-classifiers-protocol-2026-10-28.md",
       "notes": "Done as CLF-01: HGB better than every challenger (SVM -4.21 pp [98.33%: -5.47, -3.02], MLP -4.10 pp, LR -11.02 pp; also in the xECG blend). See docs/clf01-measurement-classifiers-results-2026-10-28.md."
+    },
+    {
+      "id": "nbr_lateral_territory_ptb",
+      "kind": "experiment",
+      "title": "NBR territory test on PTB-XL fold 9, including lateral MI and territorial ischaemia",
+      "question": "Does the blend's whole-lead replacement evidence also follow the lateral territory and the ischaemia territories that SPH cannot label?",
+      "evidence": "NBR-01: territory contrast +0.306 [+0.248, +0.363] over inferior and anterior MI only (49 and 55 SPH patients); SPH has no lateral MI statement and no lead for ST-T statements.",
+      "value": 3,
+      "clarity": 0.7,
+      "gpu_hours": 0.3,
+      "cpu_hours": 0.3,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "PTB-XL fold 9 is development data already used for evaluation; the PTB-only blend trained on folds 1-7 and the all-age blend can both be explained. Reuses the NBR-01 pipeline unchanged."
+    },
+    {
+      "id": "nbr_logit_drops",
+      "kind": "analysis",
+      "title": "NBR-01 attributions with drops on the logit scale",
+      "question": "Do lead and wave attributions change when drops are measured in log-odds, which are not compressed for ECGs scored near 1?",
+      "evidence": "NBR-01: saturated ECGs (score 0.999) have largest single-lead probability drops below 0.01, so their shares rest on tiny drops.",
+      "value": 2,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.05,
+      "build_hours": 1,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Saved scores only (score/scores.npz); needs a short protocol because it re-reads SPH results. Also decides which scale the page should show."
+    },
+    {
+      "id": "nbr_timing_counterpart",
+      "kind": "experiment",
+      "title": "Counterpart that also normalizes QRS duration and QT",
+      "question": "How much of the blend's BBB and repolarization evidence is carried by interval timing that the 070 counterpart keeps?",
+      "evidence": "NBR-01: the counterpart is warped to each beat's own QRS onset, offset and T end; full replacement unflags only 12 of 34 LBBB ECGs, and LBBB attribution goes mainly to the ST-T (0.62).",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0.3,
+      "cpu_hours": 0.3,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Map the template on population-normal knots for the record's heart rate instead of the record's own knots; keep the self-swap and energy controls."
+    },
+    {
+      "id": "nbr_limb_lead_consistent",
+      "kind": "experiment",
+      "title": "Limb-lead-consistent replacement for NBR attributions",
+      "question": "Does the lead II and aVR emphasis in NBR-01 come from replacing one limb lead and leaving the others inconsistent?",
+      "evidence": "NBR-01: inferior MI evidence sits in II (0.37) and aVR (0.24) rather than III (0.04) and aVF (0.08); aVR carries 0.21-0.27 of the evidence for anterior and ST-T groups.",
+      "value": 2,
+      "clarity": 0.6,
+      "gpu_hours": 0.2,
+      "cpu_hours": 0.2,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Replace I and II, recompute III, aVR, aVL and aVF from them, and compare the territory contrast with the per-lead version."
+    },
+    {
+      "id": "nbr_record_specific_counterpart",
+      "kind": "experiment",
+      "title": "Record-specific normal counterpart for NBR attributions",
+      "question": "Does a counterpart built from the record's own normal-looking beats (or the 062 rank-6 projection) leave normal ECGs nearly unchanged while keeping the territory contrast?",
+      "evidence": "NBR-01: full replacement lowers normal scores by 0.119 [0.099, 0.138], and grid cells change normal scores as much as abnormal ones (0.0106 against 0.0079); 070 follow-up 2.",
+      "value": 2,
+      "clarity": 0.5,
+      "gpu_hours": 0.3,
+      "cpu_hours": 0.3,
+      "build_hours": 4,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Would make per-student explanations on near-normal ECGs less driven by template-versus-record differences."
+    },
+    {
+      "id": "nbr_page_clinician_review",
+      "kind": "analysis",
+      "title": "Clinician review of the NBR page examples",
+      "question": "Does a cardiologist judge the lead and wave attributions on the 16 NBR-01 page examples as plausible and useful for follow-up decisions?",
+      "evidence": "NBR-01 examples.json: 16 SPH ECGs drawn within groups; label-derived validation only, no clinician marks since the ECGAD holdout was spent.",
+      "value": 3,
+      "clarity": 0.4,
+      "gpu_hours": 0,
+      "cpu_hours": 0,
+      "build_hours": 1,
+      "blocked_by": [
+        "@clinician_available"
+      ],
+      "status": "blocked",
+      "notes": "Needs a local cardiologist or TecSalud residents; ask the user first."
     }
   ]
 }

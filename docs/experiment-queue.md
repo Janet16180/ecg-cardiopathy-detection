@@ -559,6 +559,20 @@ hyperparameters. Complete. The frozen HGB beat every challenger: SVM −4.21 pp 
 [Results](clf01-measurement-classifiers-results-2026-10-28.md),
 [aggregate](../reports/clf01-measurement-classifiers-2026-10-28/aggregate.json). No process is running.
 
+## NBR-01 normal-beat replacement for the screening blend (28 October 2026)
+
+The [protocol](nbr01-normal-beat-replacement-protocol-2026-10-28.md) explains the screening blend by
+replacing one lead, one wave (P, QRS, ST-T) in one lead, or one wave in all leads with Experiment 070's
+normal counterpart (062 rank-0 model refitted; 070's saved counterparts reproduced to 0.0 mV), and validates
+the lead and wave attributions against SPH labels with a disease-blind energy map as the qualifier. Complete,
+on 1,037 SPH evaluation ECGs. Primary passed: the `all_age_blend` territory contrast (inferior against
+anterior MI) is +0.306 [+0.248, +0.363], and +0.190 [+0.134, +0.246] beyond the energy map. Localization is
+coarse (inferior evidence mostly in II and aVR), and one lead removes the flag for only 12.4% of flagged
+abnormal ECGs. The registered score-reproduction check failed at 1e-12 (2 records, batch shape) and passed
+under Amendment 1. [Results](nbr01-normal-beat-replacement-results-2026-10-28.md),
+[aggregate](../reports/nbr01-normal-beat-replacement-2026-10-28/results.json); page examples in
+`outputs/nbr01_normal_beat_replacement_20261028/examples.json`. No process is running.
+
 ## Research branches
 
 The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.md) supplies the rationale for authorized Experiments 011–013. These are independent model families, not xECG modifications. They have no measured project results yet. The additional [vision architectures](cross-domain-architecture-candidates.md) and [xECG modifications](xecg-next-experiments.md) remain research candidates outside this accepted queue.

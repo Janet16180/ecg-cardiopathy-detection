@@ -1,9 +1,12 @@
 """Raw baseline admission preserves original labels, roles and difficult evaluation windows."""
 
+from types import SimpleNamespace
+
 import pandas as pd
+import pytest
 
 from ecg_experiment.measurement_screening042 import patient_role
-from ecg_experiment.raw_role_bootstrap import admitted_tables
+from ecg_experiment.raw_role_bootstrap import admitted_tables, validate_ptb_header
 
 
 def test_administrative_baseline_retains_sph_quality_failures_and_excludes_calibration_positives():
@@ -35,3 +38,13 @@ def test_administrative_baseline_retains_sph_quality_failures_and_excludes_calib
     assert evidence.loc[evidence.role.eq("calibration"), "primary"].sum() == 1
     assert evidence.use_evaluation.all()
     assert len(set(sph_rows.patient_id)) == len(sph_rows)
+
+
+def test_official_uppercase_augmented_leads_match_the_frozen_canonical_order():
+    names = ["I", "II", "III", "AVR", "AVL", "AVF", "V1", "V2", "V3", "V4", "V5", "V6"]
+    header = SimpleNamespace(fs=500, sig_name=names,
+                             units=["mV"] * 12, adc_gain=[1000.0] * 12, baseline=[0] * 12)
+    validate_ptb_header(header)
+    header.sig_name[0], header.sig_name[1] = header.sig_name[1], header.sig_name[0]
+    with pytest.raises(ValueError, match="contract changed"):
+        validate_ptb_header(header)

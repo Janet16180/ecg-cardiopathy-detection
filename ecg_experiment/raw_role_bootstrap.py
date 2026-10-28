@@ -74,15 +74,21 @@ def metadata(input_root: Path) -> tuple[pd.DataFrame, pd.DataFrame, dict[str, st
     return ptb, other, hashes
 
 
+def validate_ptb_header(header: wfdb.Record) -> None:
+    """Preserve the original raw decoder's lead order/scaling while accepting official lead-name case."""
+    names = tuple(name.upper() for name in header.sig_name)
+    if (header.fs != 500 or names != tuple(name.upper() for name in LEADS) or
+            header.units != ["mV"] * 12 or header.adc_gain != [1000.0] * 12 or header.baseline != [0] * 12):
+        raise ValueError("PTB baseline raw format/scaling contract changed")
+
+
 def ptb_record(item: tuple[str, int, str, dict[str, str]]) -> dict:
     """Apply the historical baseline's constant-lead exclusion and fingerprint an official PTB pair."""
     input_root, ecg_id, stem, expected = item
     raw = Path(input_root) / PTB_RAW
     verify_pair(raw, stem, expected, "before decoding")
     header = wfdb.rdheader(str(raw / stem))
-    if (header.fs != 500 or tuple(header.sig_name) != LEADS or header.units != ["mV"] * 12 or
-            header.adc_gain != [1000.0] * 12 or header.baseline != [0] * 12):
-        raise ValueError("PTB baseline raw format/scaling contract changed")
+    validate_ptb_header(header)
     original = read_ecg(raw / stem)
     if original.shape != (5000, 12) or not np.isfinite(original).all():
         raise ValueError("Invalid PTB baseline raw waveform")

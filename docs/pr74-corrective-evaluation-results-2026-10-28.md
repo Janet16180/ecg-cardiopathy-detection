@@ -88,8 +88,9 @@ The aggregate SHA-256 is `36389457555c74e86ca352595a36b2b51353c1f804308c65d208ad
 identical to the receipt-bound local evaluation artifact. Models, embeddings and patient predictions
 remain local. This executed run reused verified historical PTB/SPH feature artifacts; the separate
 [fresh bootstrap protocol](pr74-fresh-baseline-protocol-2026-10-28.md) removes those input dependencies.
-Its actual executed verification scope will be recorded separately; the cached execution alone is
-not described as a full cold reproduction.
+The [completed fresh verification report](pr74-from-raw-reproduction-results-2026-10-28.md) records
+the full new raw PTB/SPH extraction, the preserved numerical correction and explicit raw-table/
+training-feature reuse. All 30 scientific evaluation payloads and the primary interval match exactly.
 
 All classifier/scaler fitting used admitted training ECGs only. The released xECG encoder was frozen;
 only CPU readouts were trained. No new score was computed on the original Challenge held-out groups,
@@ -98,3 +99,12 @@ possible alternative window or establish patient independence for sources withou
 Released xECG's prior Chapman/Ningbo exposure remains a limitation. Labels remain source-specific
 ECG-annotation proxies, not confirmed cardiopathy or referral truth. SPH and PTB evaluation are reused
 development evidence, and scores are uncalibrated rather than population disease probabilities.
+
+The matrices measure the fixed models offline on every admitted development record. They do not
+validate the application's complete quality-abstention plus referral workflow. For example, the
+fresh raw administrative receipt (`bebdc12bbecb800b4f6db29cf8414b893a13a4c9cb6e4e3f8ceef8d7f663682f`)
+marks descriptive signal-quality failures in 32 of 6,968 admitted SPH calibration ECGs and 38 of
+10,434 evaluation ECGs; these rows remain in the prespecified scoring population. The application
+can instead abstain before prediction on failed quality or physiological feature extraction.
+An abstention needs review and is never a negative prediction or evidence of health. No primary
+denominator or endpoint was changed after seeing results.

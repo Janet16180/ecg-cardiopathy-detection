@@ -86,3 +86,19 @@ def test_mutated_scientific_source_prevents_completed_receipt(tmp_path, monkeypa
     with pytest.raises(ValueError, match="Artifact changed"):
         artifact_io.finish(tmp_path, Path("outputs/experiment"), "profile", receipt, {}, {})
     assert not (stage / "completion.json").exists()
+
+
+def test_missing_cached_measurement_stays_nan_and_rows_align_by_id(tmp_path):
+    from ecg_experiment.cpu_screening041 import RAW_FEATURES
+    from ecg_experiment.pr74_screening_replay import RAW_FEATURES_PATH, raw_features
+
+    path = tmp_path / RAW_FEATURES_PATH
+    path.parent.mkdir(parents=True)
+    rows = pd.DataFrame(0.0, index=range(2), columns=RAW_FEATURES)
+    rows.insert(0, "ecg_id", ["2", "1"])
+    rows.iloc[0, 1] = np.nan
+    rows.to_csv(path, index=False)
+    actual = raw_features(tmp_path, ["1", "2"])
+    assert actual.index.tolist() == ["1", "2"]
+    assert actual.iloc[0, 0] == 0.0
+    assert np.isnan(actual.iloc[1, 0])

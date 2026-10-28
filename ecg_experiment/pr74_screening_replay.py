@@ -40,7 +40,7 @@ def raw_features(input_root: Path, ecg_ids: list[str]) -> pd.DataFrame:
     rows["ecg_id"] = rows["ecg_id"].map(canonical_integral_id)
     if rows["ecg_id"].duplicated().any() or set(rows["ecg_id"]) != set(ids):
         raise ValueError("PTB measurement-cache identities changed")
-    features = rows.set_index("ecg_id").loc[ids, list(RAW_FEATURES)].astype(float)
+    features = rows.set_index("ecg_id").loc[ids, list(RAW_FEATURES)].replace("", np.nan).astype(float)
     return features.replace([np.inf, -np.inf], np.nan)
 
 

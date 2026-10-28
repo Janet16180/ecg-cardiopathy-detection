@@ -529,8 +529,12 @@ profile, admitted training extraction and fixed evaluation completed. The primar
 gain was +0.474 percentage points, paired 95% interval [−0.722, +1.638]; both gates failed and no
 pipeline was promoted. All components, cohorts, matrices and threshold curves are in the
 [results report](pr74-corrective-evaluation-results-2026-10-28.md) and its aggregate artifact. The
-fixed score and calibration/decision rules preceded the run. Fresh-from-raw bootstrap verification
-is still in progress; the cached execution alone is not a full cold reproduction.
+fixed score and calibration/decision rules preceded the run. Fresh dependency-graph verification is complete: all 30 model/site payloads, threshold sweeps and
+the primary paired interval reproduce exactly. A full new 36,631-record raw PTB/SPH extraction
+and an additive 13-row batch-shape reproduction passed the unchanged baseline gate. Raw QC/hash
+tables and the earlier Challenge training extraction were explicitly verified and reused; the
+[executed scope](pr74-from-raw-reproduction-results-2026-10-28.md) distinguishes that reuse from the
+[default uncached reproduction commands](pr74-from-raw-reproduction-2026-10-28.md).
 
 ## Research branches
 

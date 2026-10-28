@@ -2,7 +2,7 @@
   "schema_version": 1,
   "pr74_corrective_evaluation_20261028": {
     "authorization": "User requested a corrective PR with reproducible cohort assembly, fixed training/evaluation and threshold confusion matrices; no closed-test scoring.",
-    "status": "fixed_development_evaluation_complete_fresh_bootstrap_in_progress",
+    "status": "fixed_development_evaluation_and_fresh_reproduction_complete",
     "protocol": "docs/pr74-corrective-evaluation-protocol-2026-10-28.md",
     "output": "outputs/pr74_corrective_evaluation_20261028",
     "primary": "Strict 18–25 versus source/evidence/target-matched general-age 770-record cohorts; fixed 50:50 HGB/xECG score; paired SPH sensitivity under separately fitted 5% normal calibration budgets.",
@@ -12,7 +12,16 @@
     "results": "docs/pr74-corrective-evaluation-results-2026-10-28.md",
     "aggregate": "reports/pr74-corrective-evaluation-2026-10-28/aggregate.json",
     "primary_result": "Strict versus matched blend sensitivity difference +0.004743303571428603, paired 95% interval [-0.00722066887507738, 0.01638047118601283]; practical and positive-lower-bound gates failed. No pipeline promoted.",
-    "next_action": "Development evaluation and all prespecified matrices/sweeps are complete. Finish and verify fresh-from-raw baseline/bootstrap execution without historical scientific artifact prerequisites; report its actual scope separately."
+    "next_action": "Integrate and review corrective source/UI/results; cardiologist endpoint and prospective student workflow remain future work. No automatic promotion, further fit or closed test.",
+    "fresh_reproduction": {
+      "guide": "docs/pr74-from-raw-reproduction-2026-10-28.md",
+      "results": "docs/pr74-from-raw-reproduction-results-2026-10-28.md",
+      "verification": "reports/pr74-corrective-evaluation-2026-10-28/fresh-reproduction.json",
+      "output": "outputs/pr74_from_raw_validation_20261028",
+      "parity": "All 30 evaluation payloads exact, including sweeps and primary patient interval; zero AUROC and threshold differences.",
+      "execution_scope": "New raw administrative roles and full 36,631-record PTB/SPH raw features; explicit verified raw QC/hash-table and 19,666-record training-feature reuse. Default uncached graph executable without old scientific artifacts.",
+      "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
+    }
   },
   "updated_at_utc": "2026-10-19T03:10:05.941072+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",

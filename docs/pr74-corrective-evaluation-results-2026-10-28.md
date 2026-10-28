@@ -88,8 +88,9 @@ The aggregate SHA-256 is `36389457555c74e86ca352595a36b2b51353c1f804308c65d208ad
 identical to the receipt-bound local evaluation artifact. Models, embeddings and patient predictions
 remain local. This executed run reused verified historical PTB/SPH feature artifacts; the separate
 [fresh bootstrap protocol](pr74-fresh-baseline-protocol-2026-10-28.md) removes those input dependencies.
-Its actual executed verification scope will be recorded separately; the cached execution alone is
-not described as a full cold reproduction.
+The [completed fresh verification report](pr74-from-raw-reproduction-results-2026-10-28.md) records
+the full new raw PTB/SPH extraction, the preserved numerical correction and explicit raw-table/
+training-feature reuse. All 30 scientific evaluation payloads and the primary interval match exactly.
 
 All classifier/scaler fitting used admitted training ECGs only. The released xECG encoder was frozen;
 only CPU readouts were trained. No new score was computed on the original Challenge held-out groups,

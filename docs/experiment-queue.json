@@ -23,7 +23,7 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-10-28T20:50:47+00:00",
+  "updated_at_utc": "2026-10-28T22:17:43+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2394,5 +2394,20 @@
     "examples": "outputs/nbr01_normal_beat_replacement_20261028/examples.json",
     "primary_result": "+0.306 [+0.248, +0.363]; energy +0.115 [+0.078, +0.153]; model minus energy +0.190 [+0.134, +0.246]. Passed with the qualifier. Registered unreplaced-score check failed at 1e-12 (2 records, batch shape); passed under Amendment 1.",
     "next_action": "Page built by the main session from examples.json; follow-ups in the backlog (nbr_*)."
+  },
+  "nbr02_personal_counterpart_20261028": {
+    "authorization": "Coordinator request on behalf of the user (28 October 2026): the user chose a personalized normal counterpart fitted on a multi-source cohort; SPH development data only, no closed data.",
+    "status": "complete",
+    "protocol": "docs/nbr02-personal-counterpart-protocol-2026-10-28.md",
+    "protocol_commit": "3d8cace",
+    "source_commit": "33dfd2e",
+    "stacked_on": "research/normal-beat-replacement-20261028 (fb20de7)",
+    "output": "outputs/nbr02_personal_counterpart_20261028",
+    "primary": "C6 replaces P0 only if (A) C6-P0 selectivity (abnormal over normal mean absolute whole-lead change) lower bound > 0, (B) C6-P0 territory contrast lower bound > -0.05, (C) C6 abnormal full-replacement drop lower bound > 0; 2,000 whole-patient draws, seed 20261028.",
+    "results": "docs/nbr02-personal-counterpart-results-2026-10-28.md",
+    "aggregate": "reports/nbr02-personal-counterpart-2026-10-28/results.json",
+    "examples": "outputs/nbr02_personal_counterpart_20261028/examples.json",
+    "primary_result": "A failed: -0.152 [-0.205, -0.104]; B passed: +0.080 [+0.041, +0.123]; C passed: 0.245 [0.227, 0.261]. C6 does not replace P0; the page keeps NBR-01's counterpart.",
+    "next_action": "Follow-ups nbr_subspace_absorption, nbr_bounded_personalization and nbr_dual_view_page in the backlog."
   }
 }

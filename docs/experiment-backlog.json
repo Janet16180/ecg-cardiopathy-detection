@@ -1602,8 +1602,10 @@
       "cpu_hours": 0.3,
       "build_hours": 4,
       "blocked_by": [],
-      "status": "open",
-      "notes": "Would make per-student explanations on near-normal ECGs less driven by template-versus-record differences."
+      "status": "done",
+      "notes": "Done as NBR-02 with the 062 rank-6 projection (P6, C6): normal lead changes fell 15% but abnormal changes 29%, so selectivity fell (-0.152 [-0.205, -0.104]); territory contrast rose +0.080. Measured hours: about 0.6 GPU and 1 CPU. See docs/nbr02-personal-counterpart-results-2026-10-28.md.",
+      "experiment": "NBR-02",
+      "protocol": "docs/nbr02-personal-counterpart-protocol-2026-10-28.md"
     },
     {
       "id": "nbr_page_clinician_review",
@@ -1621,6 +1623,53 @@
       ],
       "status": "blocked",
       "notes": "Needs a local cardiologist or TecSalud residents; ask the user first."
+    },
+    {
+      "id": "nbr_subspace_absorption",
+      "kind": "analysis",
+      "title": "How much abnormality the 062 rank-6 normal subspace absorbs, by SPH group",
+      "question": "What share of each group's median-beat deviation from the population template does the bounded rank-6 projection explain, and does a fit without clipped or outlying normals absorb less?",
+      "evidence": "NBR-02: rank-6 templates move 0.037-0.044 mV for abnormal groups against 0.026 for normals; at least one C6 coordinate is clipped for 79% of LBBB; full C6 replacement unflags 36% of flagged abnormal ECGs against 76% for P0.",
+      "value": 2,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.2,
+      "build_hours": 1.5,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Label-free on the template side; uses saved NBR-02 plans and fitted models; no new scores needed."
+    },
+    {
+      "id": "nbr_bounded_personalization",
+      "kind": "experiment",
+      "title": "Smaller clip bound or rank for the personalized counterpart, chosen off SPH",
+      "question": "Does a personalized counterpart with a smaller BOX or rank, chosen on PTB-XL fold 9, keep abnormal changes while shrinking normal ones, and pass the NBR-02 selectivity rule once on SPH?",
+      "evidence": "NBR-02: rank 6 with BOX 2.58 lowered selectivity by 0.15 while sharpening the territory contrast by 0.08 and top-1 hits by 0.22.",
+      "value": 2,
+      "clarity": 0.5,
+      "gpu_hours": 0.6,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Selection must happen on development data other than SPH, with a frozen protocol before SPH is scored."
+    },
+    {
+      "id": "nbr_dual_view_page",
+      "kind": "analysis",
+      "title": "Page design: population counterpart for flips, personalized ranking for leads",
+      "question": "Should the app page show P0 replacement for decisions and flips and the C6 lead ranking as a second view?",
+      "evidence": "NBR-02: C6 top-1 territory hit 0.712 against 0.490 for P0, but C6 full replacement leaves most abnormal ECGs flagged.",
+      "value": 2,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0,
+      "build_hours": 0.5,
+      "blocked_by": [
+        "@user_decision"
+      ],
+      "status": "blocked",
+      "notes": "A product decision for the user; both arms' examples files exist."
     }
   ]
 }

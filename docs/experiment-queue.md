@@ -573,6 +573,19 @@ under Amendment 1. [Results](nbr01-normal-beat-replacement-results-2026-10-28.md
 [aggregate](../reports/nbr01-normal-beat-replacement-2026-10-28/results.json); page examples in
 `outputs/nbr01_normal_beat_replacement_20261028/examples.json`. No process is running.
 
+## NBR-02 personalized normal counterpart (28 October 2026)
+
+The [protocol](nbr02-personal-counterpart-protocol-2026-10-28.md) compared NBR-01's population counterpart
+(P0) with rank-6 personalized templates (062's bounded normal subspace) and with templates fitted on the
+7,339 usable normals of the all-age 25k cohort, in a 2 x 2 of arms on the same 1,037 SPH ECGs. Complete.
+C6 did not replace P0: selectivity fell (-0.152 [-0.205, -0.104]) because the personalized template absorbed
+part of the abnormality (abnormal lead changes -29%, normal -15%; full replacement unflags 36% of flagged
+abnormal ECGs against 76%), although territory localization improved (+0.080 [+0.041, +0.123]) and the
+guardrail passed. The cohort effect was negligible; personalization drove everything. Stacked on the NBR-01
+branch. [Results](nbr02-personal-counterpart-results-2026-10-28.md),
+[aggregate](../reports/nbr02-personal-counterpart-2026-10-28/results.json); C6 page examples in
+`outputs/nbr02_personal_counterpart_20261028/examples.json`. No process is running.
+
 ## Research branches
 
 The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.md) supplies the rationale for authorized Experiments 011–013. These are independent model families, not xECG modifications. They have no measured project results yet. The additional [vision architectures](cross-domain-architecture-candidates.md) and [xECG modifications](xecg-next-experiments.md) remain research candidates outside this accepted queue.

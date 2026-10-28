@@ -2,8 +2,11 @@
 
 This app adapts PR 74's sidebar, ECG mark and visual palette around new reproducible development results.
 It displays the primary strict-age/matched-control and secondary expanded-age cohort summaries,
-exact confusion matrices across saved score
-cutoffs, and a quality-gated analysis of a newly provided canonical ECG. English and Spanish are available.
+exact confusion matrices across saved score cutoffs, and a quality-gated analysis of a newly provided
+canonical ECG. The threshold view also compares the existing age-preferred and no-age-preference
+25,000-record cohorts side by side for the selected evaluation site. Each fixed 50:50 blend uses its own
+calibration-only 5% normal-budget cutoff; the exploratory slider never changes those comparison rows.
+Both cohorts use the same quality and label-admission rules. English and Spanish are available.
 
 The old PR's serialized models, alternative diagnosis target, validation prediction CSVs and diagnosis
 hit-rate claims are not imported. No missing notebooks or historical training steps are reconstructed by
@@ -165,5 +168,6 @@ python -m scripts.validation.check_corrected_ui_browser \
 
 Use `--firefox-binary` when the browser needs an explicit executable. This check uses only aggregate
 API data: it checks the fixed default, exact slider endpoints, the failed primary-comparison conclusion,
-actual cohort counts, mobile layout, Spanish switching and status-only localization. It saves no raw ECG
+the secondary table's exact model/site counts and cutoffs, slider independence, actual cohort counts,
+mobile layout, Spanish switching and status-only localization. It saves no raw ECG
 or individual prediction. The screenshot files are concrete review artifacts for this corrective PR.

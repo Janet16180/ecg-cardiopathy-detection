@@ -6,15 +6,22 @@ test groups or EchoNext test, establish clinical diagnostic accuracy, or select 
 
 ## Question and primary comparison
 
-Does the younger, label-evidence-first training selection improve sensitivity over the all-age
-selection when both use the same fixed model and a separately fitted 5% normal-referral calibration
-rule at SPH? Both training cohorts have a ceiling of 25,000 records, retain both proxy classes, and
-follow the committed cohort assembly protocol and unchanged signal-quality policy. Cohort size,
-source, label-evidence and class composition may differ. The comparison cannot isolate a causal
+Does the strict 18–25 training selection improve sensitivity over an equally sized general-age
+selection matched exactly within source, label-evidence rank and binary target, when both use the
+same fixed model and a separately fitted 5% normal-referral calibration rule at SPH? There are 770
+admitted 18–25 records (506 negatives, 264 positives). These two primary training selections use the
+same frozen admission/cleaning and both classes. Overlap between training selections is allowed and
+reported. Matching reduces these measured composition differences but cannot establish a causal
 effect of age. No age-subgroup evaluation or target redefinition is introduced.
 
+The completed 25,000-record age-preferred and all-age selections are secondary. Their broad age
+distributions and differing source/class composition prevent calling them student cohorts. This
+amendment precedes all new extraction/fitting/comparative scores. The user was offered the primary
+scope choice; after more than two minutes without an answer, the parent stated the recommended
+strict-age comparison as the working assumption. Any later steering retains completed arms.
+
 Primary score: the fixed arithmetic mean of HGB and frozen-xECG logistic scores (weight 0.50 each).
-Primary contrast: younger minus all-age sensitivity on the exact existing SPH evaluation patients.
+Primary contrast: strict 18–25 minus matched-general sensitivity on the exact existing SPH evaluation patients.
 Practical development advantage requires a point gain of at least 0.02 and a positive lower endpoint
 of a two-sided 95% paired whole-patient bootstrap interval (2,000 draws, seed 20261028). Otherwise the
 prespecified advantage is not established. No automatic winner or pipeline promotion follows.

@@ -524,11 +524,13 @@ fixes strict 18–25 versus source/evidence/target-matched general-age training 
 primary comparison, with the 25k selections secondary. Every evaluation remains reused development.
 Challenge/EchoNext closed-test scoring is excluded.
 
-Live state is under `outputs/pr74_corrective_evaluation_20261028/`: qualification and the real GPU
-profile completed; admitted Challenge training feature extraction is running. No new fitted-model
-result is claimed yet. The fixed 50:50 score, separate 5% normal calibration budgets and paired
-patient sensitivity rule were committed before the run. Fresh-from-raw bootstrap work must remove
-historical cache prerequisites before an end-to-end reproduction claim.
+Live state is under `outputs/pr74_corrective_evaluation_20261028/`: qualification, the real GPU
+profile, admitted training extraction and fixed evaluation completed. The primary strict-age blend
+gain was +0.474 percentage points, paired 95% interval [−0.722, +1.638]; both gates failed and no
+pipeline was promoted. All components, cohorts, matrices and threshold curves are in the
+[results report](pr74-corrective-evaluation-results-2026-10-28.md) and its aggregate artifact. The
+fixed score and calibration/decision rules preceded the run. Fresh-from-raw bootstrap verification
+is still in progress; the cached execution alone is not a full cold reproduction.
 
 ## Research branches
 

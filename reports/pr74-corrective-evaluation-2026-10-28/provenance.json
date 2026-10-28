@@ -1,0 +1,9 @@
+{
+  "scope": "aggregate_only_reused_development",
+  "aggregate_sha256": "36389457555c74e86ca352595a36b2b51353c1f804308c65d208ad1735a52f58",
+  "local_completed_artifact": "outputs/pr74_corrective_evaluation_20261028/evaluate/screening_evaluation.json",
+  "completion_sha256": "2d6a0e59fac54ef9215ea2bfc3ecb1f139dc3d855f61b356b08da0cfdae0e7b6",
+  "execution_revision": "2bc377d65521e6a9805aaf24821948dab672f72d",
+  "model_bundle_sha256": "177c2e1a488cc2bec50f68f5e040c4479035b7ce8fba24d9cd4ec4c7a18d8fde",
+  "patient_level_artifacts_in_git": false
+}

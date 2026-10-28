@@ -1,0 +1,39 @@
+name: Screening application checks
+
+on:
+  pull_request:
+    paths:
+      - "ui/**"
+      - "tests/test_ui_matrix.mjs"
+      - ".github/workflows/screening-app-checks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: screening-app-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app-checks:
+    name: Application lint and matrix interaction
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7
+        with:
+          version: "0.9.28"
+          enable-cache: true
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22"
+      - name: Install locked lint tools
+        run: |
+          uv python install
+          uv sync --locked --only-group dev
+      - name: Lint application Python
+        run: uv run --locked --only-group dev ruff check --output-format=github ui
+      - name: Check threshold matrix interaction
+        run: node --test tests/test_ui_matrix.mjs

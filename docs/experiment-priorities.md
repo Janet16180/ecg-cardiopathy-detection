@@ -122,6 +122,10 @@ SPH blend AUROC by 0.0025 but sensitivity at the 5% budget by only 0.31 pp (not 
 token maximum to xECG mean pooling lowered xECG sensitivity by 1.98 pp. New: `conduction_miss_analysis`,
 `full_pool_fixed_heads`, `superclass_mixture_resampling` and `xecg_learned_attention_readout`.
 
+After CLF-01 (28 October 2026): `measurement_classifier_external` is done. At SPH the frozen HGB
+beat the Avance 4.8 SVM, MLP and logistic regression by 4.1 to 11.0 pp sensitivity at the 5% budget,
+alone and inside the xECG blend. See [CLF-01](clf01-measurement-classifiers-results-2026-10-28.md).
+
 Reruns after Ningbo (`rerun_of` in the backlog): 022 as `ningbo_sph_transfer`, 024 as `rerun_024_multisource`,
 025 as `rerun_025_ningbo`, 026 as `multisource_normal_manifold` and 027 as `multisource_calibration`. 023 is
 not affected (echo labels). Both blockers (`ningbo_eda`, `challenge_label_mapping`) were closed by PR #20 on 29 September 2026.

@@ -1512,6 +1512,23 @@
       "blocked_by": [],
       "status": "open",
       "notes": "Descriptive, saved predictions only; useful input for the cardiologist label discussion. No label change without the cardiologist."
+    },
+    {
+      "id": "measurement_classifier_external",
+      "kind": "experiment",
+      "title": "RBF SVM, MLP and logistic regression against the frozen HGB at SPH",
+      "question": "Do the Avance 4.8 tuned SVM, MLP or the logistic baseline beat the frozen HGB on the same measurements at the SPH 5% normal budget?",
+      "evidence": "Avance 4.8 internal PTB-XL CV: GB 0.955, SVM 0.951, MLP 0.949, LR 0.935 AUROC; no external test.",
+      "value": 3,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.05,
+      "build_hours": 0.7,
+      "blocked_by": [],
+      "status": "done",
+      "experiment": "CLF-01",
+      "protocol": "docs/clf01-measurement-classifiers-protocol-2026-10-28.md",
+      "notes": "Done as CLF-01: HGB better than every challenger (SVM -4.21 pp [98.33%: -5.47, -3.02], MLP -4.10 pp, LR -11.02 pp; also in the xECG blend). See docs/clf01-measurement-classifiers-results-2026-10-28.md."
     }
   ]
 }

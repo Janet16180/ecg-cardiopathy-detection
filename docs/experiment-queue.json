@@ -23,7 +23,7 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-10-28T15:20:40.439636+00:00",
+  "updated_at_utc": "2026-10-28T15:36:46.498551+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2366,5 +2366,18 @@
     "aggregate": "reports/heads01-token-superclass-2026-10-28/aggregate.json",
     "primary_result": "A 0.771484 vs 0.773996, -0.002511 [-0.008251, 0.003311]; B 0.777065, +0.003069 [-0.002242, 0.008919]; both fail gates 1 and 2. B AUROC 0.939240 (+0.002470, 95% [0.001541, 0.003335]). No pipeline promoted.",
     "next_action": "None scheduled. Follow-ups ranked in the backlog: xecg_learned_attention_readout, superclass_mixture_resampling, full_pool_fixed_heads, conduction_miss_analysis."
+  },
+  "clf01_measurement_classifiers_20261028": {
+    "authorization": "Coordinator request on behalf of the user (28 October 2026): external SPH test of the PR 74 claim that boosting and SVM are among the best models; CPU only, no closed data.",
+    "status": "complete",
+    "protocol": "docs/clf01-measurement-classifiers-protocol-2026-10-28.md",
+    "protocol_commit": "25923c0",
+    "source_commit": "d2bda20",
+    "output": "outputs/clf01_measurement_classifiers_20261028",
+    "primary": "SVM minus frozen HGB SPH sensitivity at the 5% normal budget, all-age 25k cohort, same 130 measurements; 98.33% Bonferroni paired patient intervals over SVM, MLP and LR.",
+    "results": "docs/clf01-measurement-classifiers-results-2026-10-28.md",
+    "aggregate": "reports/clf01-measurement-classifiers-2026-10-28/aggregate.json",
+    "primary_result": "SVM 0.703683 vs HGB 0.745815, -0.042132 [-0.054690, -0.030160]; MLP -0.041016; LR -0.110212; every interval below zero, alone and in the xECG blend. HGB retained.",
+    "next_action": "None scheduled."
   }
 }

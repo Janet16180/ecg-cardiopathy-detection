@@ -1,0 +1,301 @@
+{
+  "verified": true,
+  "scope": "saved_reused_development_predictions_only",
+  "input_sha256": {
+    "screening_evaluation.json": "36389457555c74e86ca352595a36b2b51353c1f804308c65d208ad1735a52f58",
+    "sph_predictions.npz": "80887f40d37db9616dfc15814fad89e32ce6c341e623e352294a7dae271da242",
+    "ptb_predictions.npz": "3e6318ca479526a016be1841f6ff50a40e50eb42eb10ad4616b803ec0badf9b3",
+    "completion.json": "2d6a0e59fac54ef9215ea2bfc3ecb1f139dc3d855f61b356b08da0cfdae0e7b6"
+  },
+  "auditor_sha256": "eea74dd4c34cdf53abd3dbfae39210d2f7f11a9c21b3dd4eab9da8c58473e82d",
+  "pools": [
+    {
+      "site": "sph",
+      "evaluation_ecgs": 10434,
+      "calibration_ecgs": 6968,
+      "calibration_evaluation_patients_disjoint": true,
+      "models": [
+        {
+          "model_id": "strict_young_hgb",
+          "tp": 2108,
+          "fn": 1476,
+          "fp": 315,
+          "tn": 6535,
+          "auroc": 0.898912522810219,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "strict_young_xecg",
+          "tp": 2476,
+          "fn": 1108,
+          "fp": 345,
+          "tn": 6505,
+          "auroc": 0.9207172999217936,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "strict_young_blend",
+          "tp": 2523,
+          "fn": 1061,
+          "fp": 330,
+          "tn": 6520,
+          "auroc": 0.9262188396115746,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "matched_general_hgb",
+          "tp": 2151,
+          "fn": 1433,
+          "fp": 342,
+          "tn": 6508,
+          "auroc": 0.888989548031804,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "matched_general_xecg",
+          "tp": 2449,
+          "fn": 1135,
+          "fp": 342,
+          "tn": 6508,
+          "auroc": 0.9102467984228363,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "matched_general_blend",
+          "tp": 2506,
+          "fn": 1078,
+          "fp": 335,
+          "tn": 6515,
+          "auroc": 0.9146140999739313,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "younger_hgb",
+          "tp": 2614,
+          "fn": 970,
+          "fp": 333,
+          "tn": 6517,
+          "auroc": 0.9264002623175183,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "younger_xecg",
+          "tp": 2740,
+          "fn": 844,
+          "fp": 354,
+          "tn": 6496,
+          "auroc": 0.932969116592805,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "younger_blend",
+          "tp": 2760,
+          "fn": 824,
+          "fp": 330,
+          "tn": 6520,
+          "auroc": 0.9364514223800835,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "all_age_hgb",
+          "tp": 2673,
+          "fn": 911,
+          "fp": 375,
+          "tn": 6475,
+          "auroc": 0.9257572178050052,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "all_age_xecg",
+          "tp": 2744,
+          "fn": 840,
+          "fp": 350,
+          "tn": 6500,
+          "auroc": 0.9335103297705942,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "all_age_blend",
+          "tp": 2774,
+          "fn": 810,
+          "fp": 358,
+          "tn": 6492,
+          "auroc": 0.9367695434697602,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "ptb_baseline_hgb",
+          "tp": 2395,
+          "fn": 1189,
+          "fp": 333,
+          "tn": 6517,
+          "auroc": 0.9079384857273202,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "ptb_baseline_xecg",
+          "tp": 2407,
+          "fn": 1177,
+          "fp": 335,
+          "tn": 6515,
+          "auroc": 0.9131929011339939,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "ptb_baseline_blend",
+          "tp": 2460,
+          "fn": 1124,
+          "fp": 346,
+          "tn": 6504,
+          "auroc": 0.9174945011079249,
+          "thresholds_verified": 203
+        }
+      ]
+    },
+    {
+      "site": "ptb",
+      "evaluation_ecgs": 2146,
+      "calibration_ecgs": 2129,
+      "calibration_evaluation_patients_disjoint": true,
+      "models": [
+        {
+          "model_id": "strict_young_hgb",
+          "tp": 764,
+          "fn": 468,
+          "fp": 46,
+          "tn": 868,
+          "auroc": 0.898845342294467,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "strict_young_xecg",
+          "tp": 777,
+          "fn": 455,
+          "fp": 34,
+          "tn": 880,
+          "auroc": 0.9024339992611327,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "strict_young_blend",
+          "tp": 790,
+          "fn": 442,
+          "fp": 28,
+          "tn": 886,
+          "auroc": 0.9148562050640825,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "matched_general_hgb",
+          "tp": 781,
+          "fn": 451,
+          "fp": 45,
+          "tn": 869,
+          "auroc": 0.8890624555969195,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "matched_general_xecg",
+          "tp": 766,
+          "fn": 466,
+          "fp": 43,
+          "tn": 871,
+          "auroc": 0.8912959305464776,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "matched_general_blend",
+          "tp": 789,
+          "fn": 443,
+          "fp": 46,
+          "tn": 868,
+          "auroc": 0.9021427150529995,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "younger_hgb",
+          "tp": 753,
+          "fn": 479,
+          "fp": 36,
+          "tn": 878,
+          "auroc": 0.9141226661740884,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "younger_xecg",
+          "tp": 767,
+          "fn": 465,
+          "fp": 31,
+          "tn": 883,
+          "auroc": 0.9155613259825514,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "younger_blend",
+          "tp": 818,
+          "fn": 414,
+          "fp": 37,
+          "tn": 877,
+          "auroc": 0.921634779334451,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "all_age_hgb",
+          "tp": 774,
+          "fn": 458,
+          "fp": 36,
+          "tn": 878,
+          "auroc": 0.9175035167239762,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "all_age_xecg",
+          "tp": 807,
+          "fn": 425,
+          "fp": 35,
+          "tn": 879,
+          "auroc": 0.9167388956776265,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "all_age_blend",
+          "tp": 825,
+          "fn": 407,
+          "fp": 35,
+          "tn": 879,
+          "auroc": 0.9232554917729974,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "ptb_baseline_hgb",
+          "tp": 963,
+          "fn": 269,
+          "fp": 43,
+          "tn": 871,
+          "auroc": 0.9465120492199267,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "ptb_baseline_xecg",
+          "tp": 912,
+          "fn": 320,
+          "fp": 34,
+          "tn": 880,
+          "auroc": 0.9430876836511409,
+          "thresholds_verified": 203
+        },
+        {
+          "model_id": "ptb_baseline_blend",
+          "tp": 960,
+          "fn": 272,
+          "fp": 41,
+          "tn": 873,
+          "auroc": 0.9501824078547273,
+          "thresholds_verified": 203
+        }
+      ]
+    }
+  ],
+  "new_model_fits": 0,
+  "closed_test_reads": 0
+}

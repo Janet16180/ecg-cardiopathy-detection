@@ -1,0 +1,325 @@
+{
+  "scope": "assignment_audit_only_no_diagnoses_predictions_or_waveforms",
+  "original_split_sha256": "5ecd82154fe9ed574b9706d9b7efbe417a578197845cf2a6a48615ca54959cc8",
+  "pr_partition_sha256": "170c01e9a74b2292177f76882e4942e3425b0357a555ec0010cfa45a1a74c23c",
+  "matched_challenge_records": 12692,
+  "counts_by_source": [
+    {
+      "source": "chapman_shaoxing",
+      "original_split": "calibration",
+      "pr_split": "test",
+      "records": 76
+    },
+    {
+      "source": "chapman_shaoxing",
+      "original_split": "calibration",
+      "pr_split": "train",
+      "records": 272
+    },
+    {
+      "source": "chapman_shaoxing",
+      "original_split": "calibration",
+      "pr_split": "val",
+      "records": 51
+    },
+    {
+      "source": "chapman_shaoxing",
+      "original_split": "test",
+      "pr_split": "test",
+      "records": 74
+    },
+    {
+      "source": "chapman_shaoxing",
+      "original_split": "test",
+      "pr_split": "train",
+      "records": 249
+    },
+    {
+      "source": "chapman_shaoxing",
+      "original_split": "test",
+      "pr_split": "val",
+      "records": 31
+    },
+    {
+      "source": "chapman_shaoxing",
+      "original_split": "train",
+      "pr_split": "test",
+      "records": 227
+    },
+    {
+      "source": "chapman_shaoxing",
+      "original_split": "train",
+      "pr_split": "train",
+      "records": 791
+    },
+    {
+      "source": "chapman_shaoxing",
+      "original_split": "train",
+      "pr_split": "val",
+      "records": 106
+    },
+    {
+      "source": "cpsc_2018",
+      "original_split": "calibration",
+      "pr_split": "test",
+      "records": 87
+    },
+    {
+      "source": "cpsc_2018",
+      "original_split": "calibration",
+      "pr_split": "train",
+      "records": 266
+    },
+    {
+      "source": "cpsc_2018",
+      "original_split": "calibration",
+      "pr_split": "val",
+      "records": 36
+    },
+    {
+      "source": "cpsc_2018",
+      "original_split": "test",
+      "pr_split": "test",
+      "records": 78
+    },
+    {
+      "source": "cpsc_2018",
+      "original_split": "test",
+      "pr_split": "train",
+      "records": 317
+    },
+    {
+      "source": "cpsc_2018",
+      "original_split": "test",
+      "pr_split": "val",
+      "records": 39
+    },
+    {
+      "source": "cpsc_2018",
+      "original_split": "train",
+      "pr_split": "test",
+      "records": 249
+    },
+    {
+      "source": "cpsc_2018",
+      "original_split": "train",
+      "pr_split": "train",
+      "records": 867
+    },
+    {
+      "source": "cpsc_2018",
+      "original_split": "train",
+      "pr_split": "val",
+      "records": 132
+    },
+    {
+      "source": "cpsc_2018_extra",
+      "original_split": "calibration",
+      "pr_split": "test",
+      "records": 25
+    },
+    {
+      "source": "cpsc_2018_extra",
+      "original_split": "calibration",
+      "pr_split": "train",
+      "records": 84
+    },
+    {
+      "source": "cpsc_2018_extra",
+      "original_split": "calibration",
+      "pr_split": "val",
+      "records": 11
+    },
+    {
+      "source": "cpsc_2018_extra",
+      "original_split": "test",
+      "pr_split": "test",
+      "records": 27
+    },
+    {
+      "source": "cpsc_2018_extra",
+      "original_split": "test",
+      "pr_split": "train",
+      "records": 82
+    },
+    {
+      "source": "cpsc_2018_extra",
+      "original_split": "test",
+      "pr_split": "val",
+      "records": 14
+    },
+    {
+      "source": "cpsc_2018_extra",
+      "original_split": "train",
+      "pr_split": "test",
+      "records": 72
+    },
+    {
+      "source": "cpsc_2018_extra",
+      "original_split": "train",
+      "pr_split": "train",
+      "records": 268
+    },
+    {
+      "source": "cpsc_2018_extra",
+      "original_split": "train",
+      "pr_split": "val",
+      "records": 37
+    },
+    {
+      "source": "georgia",
+      "original_split": "calibration",
+      "pr_split": "test",
+      "records": 98
+    },
+    {
+      "source": "georgia",
+      "original_split": "calibration",
+      "pr_split": "train",
+      "records": 381
+    },
+    {
+      "source": "georgia",
+      "original_split": "calibration",
+      "pr_split": "val",
+      "records": 46
+    },
+    {
+      "source": "georgia",
+      "original_split": "test",
+      "pr_split": "test",
+      "records": 111
+    },
+    {
+      "source": "georgia",
+      "original_split": "test",
+      "pr_split": "train",
+      "records": 371
+    },
+    {
+      "source": "georgia",
+      "original_split": "test",
+      "pr_split": "val",
+      "records": 58
+    },
+    {
+      "source": "georgia",
+      "original_split": "train",
+      "pr_split": "test",
+      "records": 330
+    },
+    {
+      "source": "georgia",
+      "original_split": "train",
+      "pr_split": "train",
+      "records": 1136
+    },
+    {
+      "source": "georgia",
+      "original_split": "train",
+      "pr_split": "val",
+      "records": 166
+    },
+    {
+      "source": "ningbo",
+      "original_split": "calibration",
+      "pr_split": "test",
+      "records": 199
+    },
+    {
+      "source": "ningbo",
+      "original_split": "calibration",
+      "pr_split": "train",
+      "records": 743
+    },
+    {
+      "source": "ningbo",
+      "original_split": "calibration",
+      "pr_split": "val",
+      "records": 109
+    },
+    {
+      "source": "ningbo",
+      "original_split": "test",
+      "pr_split": "test",
+      "records": 213
+    },
+    {
+      "source": "ningbo",
+      "original_split": "test",
+      "pr_split": "train",
+      "records": 766
+    },
+    {
+      "source": "ningbo",
+      "original_split": "test",
+      "pr_split": "val",
+      "records": 112
+    },
+    {
+      "source": "ningbo",
+      "original_split": "train",
+      "pr_split": "test",
+      "records": 674
+    },
+    {
+      "source": "ningbo",
+      "original_split": "train",
+      "pr_split": "train",
+      "records": 2290
+    },
+    {
+      "source": "ningbo",
+      "original_split": "train",
+      "pr_split": "val",
+      "records": 321
+    }
+  ],
+  "totals": [
+    {
+      "original_split": "calibration",
+      "pr_split": "test",
+      "records": 485
+    },
+    {
+      "original_split": "calibration",
+      "pr_split": "train",
+      "records": 1746
+    },
+    {
+      "original_split": "calibration",
+      "pr_split": "val",
+      "records": 253
+    },
+    {
+      "original_split": "test",
+      "pr_split": "test",
+      "records": 503
+    },
+    {
+      "original_split": "test",
+      "pr_split": "train",
+      "records": 1785
+    },
+    {
+      "original_split": "test",
+      "pr_split": "val",
+      "records": 254
+    },
+    {
+      "original_split": "train",
+      "pr_split": "test",
+      "records": 1552
+    },
+    {
+      "original_split": "train",
+      "pr_split": "train",
+      "records": 5352
+    },
+    {
+      "original_split": "train",
+      "pr_split": "val",
+      "records": 762
+    }
+  ]
+}

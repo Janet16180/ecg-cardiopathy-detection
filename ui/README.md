@@ -18,6 +18,14 @@ hit-rate claims are not imported. No missing notebooks or historical training st
 assertion. Unsupported multilabel diagnoses are unavailable. Localization is visibly work in progress;
 there is no invented interval plot or claim of improved classification.
 
+The "Where does the model look" page shows the NBR-01 normal-beat replacement study
+(`docs/nbr01-normal-beat-replacement-results-2026-10-28.md`): for 16 SPH example ECGs, how much the
+screening score falls when each wave of each lead is replaced by a normal counterpart, with the
+replaced-energy and splice controls, and the study's declared statistics. `GET /api/localization` returns
+`outputs/nbr01_normal_beat_replacement_20261028/examples.json` after a schema check. These 16 waveforms
+are the only non-aggregate data the app serves; SPH is a public development dataset. The page explains the
+model's evidence, not where disease is, and no cardiologist has reviewed it.
+
 ## Run locally
 
 Use the repository's Python 3.11 environment and existing lock. FastAPI, Uvicorn and HTTPX are already in
@@ -92,6 +100,7 @@ The default cached mode reads only these fixed local paths:
 | `outputs/cohort_age_label_priority_20261028/{receipt.json,summary.json}` | Complete secondary expanded-age scope and matching fixed manifest/summary hashes |
 | `outputs/pr74_corrective_evaluation_20261028/evaluate/{completion.json,screening_evaluation.json}` | Completed evaluate stage, matching aggregate hash and development-only schema |
 | `outputs/pr74_corrective_evaluation_20261028/evaluate/model_bundle.joblib` | Only the evaluator's fixed locally generated bundle, verified by `ecg_experiment.pr74_screening_inference.load_bundle` before deserialization |
+| `outputs/nbr01_normal_beat_replacement_20261028/examples.json` | NBR-01 page export: schema version 1, both blend models and a `summary` with `statistics`, `n` and `decisions` |
 
 The inference loader and `ecg_experiment.cuda_runtime20261028` must be present from the corrective
 evaluation implementation. The app automatically validates and configures the installed CUDA runtime

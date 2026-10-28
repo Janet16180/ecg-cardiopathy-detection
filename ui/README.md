@@ -56,7 +56,9 @@ The from-raw mode uses only these additional fixed namespaces:
 | Evaluation, completion receipt and model bundle | `outputs/pr74_from_raw_validation_20261028/evaluate/` |
 | Verified bundle loader | `ecg_experiment.pr74_raw_inference.load_bundle` |
 
-Follow the registered [raw study protocol](../docs/pr74-raw-study-protocol-2026-10-28.md) and
+Follow the [complete reproduction commands](../docs/pr74-from-raw-reproduction-2026-10-28.md),
+including the batch-shape correction and explicit baseline selection, and the registered
+[raw study protocol](../docs/pr74-raw-study-protocol-2026-10-28.md) and
 [fresh baseline protocol](../docs/pr74-fresh-baseline-protocol-2026-10-28.md). The from-raw pipeline must
 finish before its results or models are available. Run its
 receipt-producing data reconstruction and `scripts.experiments.run_pr74_raw_study` stages; do not copy or
@@ -162,7 +164,7 @@ For an optional real-browser check, start the app and a local Firefox geckodrive
 ```bash
 geckodriver --host 127.0.0.1 --port 4444
 python -m scripts.validation.check_corrected_ui_browser \
-  --app-url http://127.0.0.1:8765 --driver-url http://127.0.0.1:4444 \
+  --app-url http://127.0.0.1:8000 --driver-url http://127.0.0.1:4444 \
   --output-dir docs/figures/pr74-corrective
 ```
 

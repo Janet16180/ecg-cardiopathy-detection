@@ -214,10 +214,13 @@ The rule and its result are unchanged. The registered check stays failed; the am
 
 ## Page export
 
-`outputs/nbr01_normal_beat_replacement_20261028/examples.json` (6,225,836 bytes; schema version 1, validated
+`outputs/nbr01_normal_beat_replacement_20261028/examples.json` (6,260,421 bytes; schema version 1, validated
 by `nbr01_export.validate`): 16 examples drawn within groups without regard to any score, 4 inferior, 4
-anterior (the two lateral slots moved there), 2 RBBB, 2 LBBB, 2 ST-T and 2 normal. Each model's scores also
-carry `hgb_original` and `xecg_original`. The `counterpart` array is the operator's full counterpart; outside
+anterior (the two lateral slots moved there), 2 RBBB, 2 LBBB, 2 ST-T and 2 normal. At the lead's request,
+after the results, each model's scores also carry `hgb_original`, `xecg_original`, `self_swap_lead` (12)
+and `self_swap_full`, and a top-level `summary` holds 261 statistics with their intervals under the same
+keys as `reports/nbr01-normal-beat-replacement-2026-10-28/results.json` (checked identical), the group
+sizes and flagged counts, and the decision labels computed from the protocol's rules. The `counterpart` array is the operator's full counterpart; outside
 the replaced component ranges (record edges and gaps between beat windows) it is flattened and was never
 used.
 

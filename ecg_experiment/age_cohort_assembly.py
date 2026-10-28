@@ -14,7 +14,6 @@ from .age_cohort_inputs import POLICY, SPLIT_SHA256, load_challenge, load_ptb, r
 from .age_cohort_inputs import stored as input_stored
 from .age_priority_cohorts import select_cohort
 from .files import sha256_file, write_json_atomic
-from .paths import to_stored
 
 OUTPUT = Path("outputs/cohort_age_label_priority_20261028")
 PROTOCOL = Path("docs/cohort-age-assembly-protocol-2026-10-28.md")
@@ -171,6 +170,19 @@ def verify_unchanged(input_root: Path, hashes: dict[str, str]) -> None:
             raise ValueError(f"Assembly input changed: {name}")
 
 
+def recipe_snapshot() -> dict[str, str]:
+    """Capture policy, protocol and source bytes before any assembly interpretation or selection."""
+    paths = [POLICY, PROTOCOL, *(Path(name) for name in SOURCE_FILES)]
+    return {input_stored(path): sha256_file(ROOT / path) for path in paths}
+
+
+def verify_recipe(hashes: dict[str, str]) -> None:
+    """Reject concurrent policy, protocol or implementation changes before publishing completion."""
+    for name, digest in hashes.items():
+        if sha256_file(ROOT / name) != digest:
+            raise ValueError(f"Assembly recipe changed: {name}")
+
+
 def write_artifacts(destination: Path, tables: dict[str, pd.DataFrame],
                     summary: dict[str, Any]) -> dict[str, str]:
     """Write new manifest artifacts atomically without replacing an existing cohort directory."""
@@ -212,8 +224,10 @@ def assemble(input_root: Path, output: Path, size: int = 25_000, seed: int = 42)
     destination = input_root / output
     if destination.exists():
         raise FileExistsError(destination)
+    recipe_hashes = recipe_snapshot()
     policy = json.loads((ROOT / POLICY).read_text())
     validate_policy(policy)
+    verify_recipe(recipe_hashes)
     references, hashes = read_references(input_root)
     ptb, ptb_hashes, ptb_counts, initial_ledger = load_ptb(input_root, policy)
     challenge, challenge_hashes, challenge_counts = load_challenge(input_root, policy)
@@ -233,16 +247,20 @@ def assemble(input_root: Path, output: Path, size: int = 25_000, seed: int = 42)
         "evaluation_overlap_after_admission": evaluation_overlap(candidates, references),
     }
     verify_unchanged(input_root, hashes)
-    source_hashes = {to_stored(ROOT / name): sha256_file(ROOT / name) for name in SOURCE_FILES}
+    verify_recipe(recipe_hashes)
+    source_hashes = {input_stored(Path(name)): recipe_hashes[input_stored(Path(name))]
+                     for name in SOURCE_FILES}
     tables = {"candidates.csv": candidates, "exclusions.csv": ledger,
               "younger.csv": younger, "all_age.csv": all_age}
     outputs = write_artifacts(destination, tables, summary)
     verify_unchanged(input_root, hashes)
+    verify_recipe(recipe_hashes)
     receipt = {
         "complete": True, "scope": "new_supervised_age_label_cohorts", "size_ceiling": size, "seed": seed,
         "original_split_sha256": SPLIT_SHA256, "policy_version": policy["policy_version"],
-        "policy_path": to_stored(ROOT / POLICY), "policy_sha256": sha256_file(ROOT / POLICY),
-        "protocol_path": to_stored(ROOT / PROTOCOL), "protocol_sha256": sha256_file(ROOT / PROTOCOL),
+        "policy_path": input_stored(POLICY), "policy_sha256": recipe_hashes[input_stored(POLICY)],
+        "protocol_path": input_stored(PROTOCOL), "protocol_sha256": recipe_hashes[input_stored(PROTOCOL)],
+        "recipe_sha256": recipe_hashes,
         "input_sha256": hashes, "source_sha256": source_hashes,
         "artifacts": {input_stored(output / name): digest for name, digest in outputs.items()},
         "summary": summary, "waveforms_read": 0, "model_scores_read_or_computed": 0,

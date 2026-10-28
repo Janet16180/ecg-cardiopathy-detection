@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -131,6 +132,26 @@ def read_selected_csv(path: Path, column: str, selected: set[str],
     return pd.read_csv(path, skiprows=skip, usecols=list(columns), dtype=str, keep_default_na=False)
 
 
+def canonical_integral_id(value: str) -> str:
+    """Normalize a positive integral source identifier exactly without binary floating-point conversion."""
+    number = Decimal(value)
+    if not number.is_finite() or number <= 0 or number != number.to_integral_value():
+        raise ValueError("PTB identifiers must be positive exact integers")
+    return str(int(number))
+
+
+def canonical_ptb_identity(rows: pd.DataFrame) -> pd.DataFrame:
+    """Align legacy .0 patient IDs and current integral IDs without changing source identity."""
+    rows = rows.copy()
+    rows["ecg_id"] = rows["ecg_id"].map(canonical_integral_id)
+    rows["patient_id"] = rows["patient_id"].map(lambda value: canonical_integral_id(value) + ".0")
+    if "strat_fold" in rows:
+        rows["strat_fold"] = rows["strat_fold"].map(canonical_integral_id)
+        if not pd.to_numeric(rows["strat_fold"]).between(1, 10).all():
+            raise ValueError("Invalid official PTB fold")
+    return rows
+
+
 def ptb_roles(input_root: Path) -> tuple[pd.DataFrame, dict[str, str]]:
     """Bind current SCREEN-01 identities and explicitly restrict fitting to PTB folds one through seven."""
     receipt = json.loads((input_root / SCREEN_RECEIPT).read_text())
@@ -142,6 +163,7 @@ def ptb_roles(input_root: Path) -> tuple[pd.DataFrame, dict[str, str]]:
                        usecols=["ecg_id", "patient_id", "strat_fold", "filename_hr"])
     if rows["ecg_id"].duplicated().any():
         raise ValueError("Current PTB identities are duplicated")
+    rows = canonical_ptb_identity(rows)
     return rows, {stored(SCREEN_ROWS): SCREEN_SHA256,
                   stored(SCREEN_RECEIPT): sha256_file(input_root / SCREEN_RECEIPT)}
 
@@ -189,10 +211,20 @@ def load_ptb(input_root: Path, policy: dict[str, Any]
                                ("ecg_id", "patient_id", "filename_hr", "target"))
     metadata = read_selected_csv(input_root / PTB_RAW, "ecg_id", set(labels["ecg_id"]),
                                  PTB_EVIDENCE_COLUMNS)
+    labels = canonical_ptb_identity(labels)
+    metadata = canonical_ptb_identity(metadata)
     rows = labels.merge(metadata, on=["ecg_id", "patient_id", "filename_hr"], validate="one_to_one")
     rows = rows.merge(fit, on=["ecg_id", "patient_id", "filename_hr", "strat_fold"], validate="one_to_one")
     if len(rows) != len(labels) or not pd.to_numeric(rows["strat_fold"]).between(1, 7).all():
         raise ValueError("PTB training metadata/identity mismatch")
+    current_targets = read_selected_csv(input_root / SCREEN_ROWS, "ecg_id", allowed, ("ecg_id", "target"))
+    current_targets["ecg_id"] = current_targets["ecg_id"].map(canonical_integral_id)
+    current_targets = current_targets.rename(columns={"target": "screen_target"})
+    rows = rows.merge(current_targets, on="ecg_id", validate="one_to_one")
+    old_targets = pd.to_numeric(rows["target"], errors="raise")
+    current = pd.to_numeric(rows["screen_target"], errors="raise")
+    if len(rows) != len(labels) or not old_targets.eq(current).all():
+        raise ValueError("Original PTB targets disagree with current SCREEN-01 targets")
     rows["record_id"] = "ptbxl:" + rows["ecg_id"]
     rows = rows.merge(quality, on="record_id", suffixes=("", "_quality"), validate="one_to_one")
     if len(rows) != len(labels) or not ("ptbxl:" + rows["patient_id"]).eq(rows["patient_id_quality"]).all():
@@ -213,6 +245,7 @@ def load_ptb(input_root: Path, policy: dict[str, Any]
     counts = {"original_quality_rows": len(quality), "defined_current_fit_labels": len(rows),
               "original_quality_excluded": int(quality["exclusion_reasons"].ne("").sum()),
               "not_current_fit_or_undefined": len(ledger),
+              "screen_target_comparison_rows": len(rows), "screen_target_disagreements": 0,
               "excluded_quality": int((~rows["quality_passed"]).sum()),
               "excluded_label_evidence": int((rows["label_evidence_rank"] < 0).sum())}
     return rows, hashes, counts, ledger

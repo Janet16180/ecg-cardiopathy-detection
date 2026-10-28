@@ -155,7 +155,9 @@ def reconstructed_inputs(tmp_path, monkeypatch):
         "validated_by_human": ["True", "False", "True", "True"],
     })
     meta_hash = write_table(tmp_path, inputs.PTB_RAW, ptb)
-    role_table = ptb[["ecg_id", "patient_id", "strat_fold", "filename_hr"]]
+    role_table = ptb[["ecg_id", "patient_id", "strat_fold", "filename_hr"]].copy()
+    role_table["patient_id"] = role_table["patient_id"].str.removesuffix(".0")
+    role_table["target"] = [0, 1, 1, 0]
     screen_hash = write_table(tmp_path, inputs.SCREEN_ROWS, role_table)
     monkeypatch.setattr(inputs, "SCREEN_SHA256", screen_hash)
     (tmp_path / inputs.SCREEN_RECEIPT).write_text(json.dumps({
@@ -264,3 +266,53 @@ def test_patient_exclusions_use_namespaced_ptb_identity(reconstructed_inputs):
     selected = pd.read_csv(root / "outputs/patient_removed/candidates.csv")
     assert "ptbxl:1" not in set(selected.record_id)
     assert receipt["summary"]["exclusion_combinations"]["heldout_patient"] == 1
+
+
+def test_integral_patient_identity_normalization_is_exact_above_float_precision():
+    row = pd.DataFrame({"ecg_id": ["1"], "patient_id": ["9007199254740993.0"], "strat_fold": ["3.0"]})
+    actual = inputs.canonical_ptb_identity(row)
+    assert actual.patient_id.tolist() == ["9007199254740993.0"]
+    assert actual.strat_fold.tolist() == ["3"]
+    with pytest.raises(ValueError, match="exact integers"):
+        inputs.canonical_integral_id("12.5")
+
+
+def test_original_ptb_target_flip_against_screen01_is_rejected(reconstructed_inputs, monkeypatch):
+    root = reconstructed_inputs
+    screen = pd.read_csv(root / inputs.SCREEN_ROWS, dtype=str)
+    screen.loc[screen.ecg_id == "1", "target"] = "1"
+    checksum = write_table(root, inputs.SCREEN_ROWS, screen)
+    monkeypatch.setattr(inputs, "SCREEN_SHA256", checksum)
+    (root / inputs.SCREEN_RECEIPT).write_text(json.dumps({
+        "status": "completed", "artifacts": {str(inputs.SCREEN_ROWS): checksum},
+    }))
+    policy = json.loads((ROOT / inputs.POLICY).read_text())
+    with pytest.raises(ValueError, match="targets disagree"):
+        inputs.load_ptb(root, policy)
+
+
+@pytest.mark.parametrize("changed_file", ["policy.json", "protocol.md", "source.py"])
+def test_assembly_recipe_mutation_is_rejected_before_publication(
+    reconstructed_inputs, monkeypatch, changed_file,
+):
+    root = reconstructed_inputs
+    recipe_root = root / "recipe"
+    recipe_root.mkdir()
+    (recipe_root / "policy.json").write_bytes((ROOT / inputs.POLICY).read_bytes())
+    (recipe_root / "protocol.md").write_text("Committed protocol")
+    (recipe_root / "source.py").write_text("# committed implementation")
+    monkeypatch.setattr(assembly, "ROOT", recipe_root)
+    monkeypatch.setattr(assembly, "POLICY", Path("policy.json"))
+    monkeypatch.setattr(assembly, "PROTOCOL", Path("protocol.md"))
+    monkeypatch.setattr(assembly, "SOURCE_FILES", ("source.py",))
+    original = assembly.select_cohort
+
+    def changing_selector(*args, **kwargs):
+        selected = original(*args, **kwargs)
+        (recipe_root / changed_file).write_text("changed during selection")
+        return selected
+
+    monkeypatch.setattr(assembly, "select_cohort", changing_selector)
+    with pytest.raises(ValueError, match="Assembly recipe changed"):
+        assembly.assemble(root, Path("outputs/mutated"), size=4)
+    assert not (root / "outputs/mutated").exists()

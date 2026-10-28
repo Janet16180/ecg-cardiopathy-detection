@@ -228,11 +228,10 @@ def prepared_rows(input_root: Path) -> pd.DataFrame:
     require(input_root, "prepare")
     status = pd.read_csv(input_root / OUTPUT / "prepare/prepare.csv", dtype=str)
     rows = selection_rows(input_root)
-    keep = rows["ecg_id"].isin(status.loc[status["status"].isin(["prepared", "done"]), "ecg_id"])
-    keep &= [(WORK / "full/plans" / f"{ecg_id}.npz").exists() for ecg_id in rows["ecg_id"]]
-    prepared = [str(np.load(WORK / "full/plans" / f"{ecg_id}.npz")["status"]) == "prepared"
-                for ecg_id in rows["ecg_id"]]
-    return rows.loc[keep & np.array(prepared)].reset_index(drop=True)
+    keep = rows["ecg_id"].isin(status.loc[status["status"].isin(["prepared", "done"]), "ecg_id"]).to_numpy()
+    keep = keep & np.array([str(np.load(WORK / "full/plans" / f"{ecg_id}.npz")["status"]) == "prepared"
+                      for ecg_id in rows["ecg_id"]])
+    return rows.loc[keep].reset_index(drop=True)
 
 
 def encode(input_root: Path, device: int, shard: int, shards: int) -> dict[str, Any]:

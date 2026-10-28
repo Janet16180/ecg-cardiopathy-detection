@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 import resource
 import time
 from multiprocessing import Pool
@@ -37,16 +36,17 @@ def catalog(source_root: Path, source: str) -> tuple[list[tuple], dict[str, obje
     """Inventory raw records and require the historical known absent-file set."""
     raw = source_root / "data/raw" / RELEASES[source]
     manifest = raw / "SHA256SUMS.txt"
-    checksums = dict((name.strip(), digest) for digest, name in
-                     (line.split(maxsplit=1) for line in manifest.read_text().splitlines())
-                     if name.startswith(f"training/{source}/") and name.endswith((".hea", ".mat")))
+    checksums = {name.strip(): digest for digest, name in
+                 (line.split(maxsplit=1) for line in manifest.read_text().splitlines())
+                 if name.startswith(f"training/{source}/") and name.endswith((".hea", ".mat"))}
     present = {path.relative_to(raw).as_posix() for path in (raw / "training" / source).rglob("*")
                if path.suffix in (".hea", ".mat")}
     absent = set(checksums) - present
     expected_absent = ABSENT if source == "ningbo" else set()
     if absent != expected_absent or present - set(checksums):
         raise ValueError(f"Unexpected file inventory for {source}: "
-                         f"absent={sorted(absent ^ expected_absent)}, extra={sorted(present - set(checksums))}")
+                         f"absent={sorted(absent ^ expected_absent)}, "
+                         f"extra={sorted(present - set(checksums))}")
     jobs = []
     for header in sorted(name for name in present if name.endswith(".hea")):
         signal = str(Path(header).with_suffix(".mat"))
@@ -74,7 +74,57 @@ def scan(item: tuple[str, str, str, str, str]) -> dict[str, object]:
     return row
 
 
-def recover(source_root: Path, output: Path, workers: int, profile_records: int = 0) -> dict[str, object]:
+def bind_producer(receipt: dict[str, object], legacy: dict[str, str]) -> dict[str, object]:
+    """Require explicit source provenance when reusing a legacy checkpoint receipt."""
+    if "producer" in receipt:
+        return receipt
+    if not legacy:
+        raise ValueError("Legacy checkpoint requires an explicit preserved producer source")
+    return {**receipt, "producer": legacy}
+
+
+def verified_source(source_root: Path, output: Path, source: str, jobs: list[tuple],
+                    verification: dict[str, object], workers: int,
+                    legacy_producer: dict[str, str]) -> tuple[pd.DataFrame, dict[str, object]]:
+    """Read a completed source checkpoint or checksum-verify and hash its raw records."""
+    checkpoint = output / f"{source}_verified.parquet"
+    receipt_path = output / f"{source}_receipt.json"
+    before = time.monotonic()
+    if checkpoint.exists():
+        table = pd.read_parquet(checkpoint)
+        receipt = json.loads(receipt_path.read_text())
+        if receipt["checkpoint_sha256"] != sha256_file(checkpoint) or len(table) != len(jobs):
+            raise ValueError(f"Checkpoint differs: {source}")
+        receipt = bind_producer(receipt, legacy_producer)
+    else:
+        records = []
+        with Pool(workers, initializer=configure, initargs=(str(source_root),)) as pool:
+            for index, row in enumerate(pool.imap(scan, jobs, chunksize=16), 1):
+                records.append(row)
+                if index % 1000 == 0 or index == len(jobs):
+                    print(json.dumps({"source": source, "verified_records": index,
+                                      "records": len(jobs), "elapsed_s": time.monotonic() - before}),
+                          flush=True)
+        table = pd.DataFrame(records).set_index("record")
+        table.to_parquet(checkpoint)
+        receipt = {**verification, "verified_records": len(table), "elapsed_s": time.monotonic() - before,
+                   "worker_max_rss_kib": int(table["worker_max_rss_kib"].max()),
+                   "checkpoint_sha256": sha256_file(checkpoint),
+                   "producer": {"sha256": sha256_file(Path(__file__))}}
+        write_json_atomic(receipt_path, receipt, sort_keys=True)
+    return table, {**receipt, "receipt_sha256": sha256_file(receipt_path)}
+
+
+def producer_receipt(source_root: Path, snapshot: Path | None) -> dict[str, str]:
+    """Identify the preserved producer separately from the current assembly implementation."""
+    if snapshot is None:
+        return {}
+    logical = Path(__file__).parent.parent / snapshot.relative_to(source_root)
+    return {"source_snapshot": to_stored(logical), "sha256": sha256_file(snapshot)}
+
+
+def recover(source_root: Path, output: Path, workers: int, profile_records: int = 0,
+            checkpoint_producer: Path | None = None) -> dict[str, object]:
     """Recover verified record tables and require the original serialized split hash.
 
     Parameters
@@ -87,6 +137,8 @@ def recover(source_root: Path, output: Path, workers: int, profile_records: int 
         Bounded process count, from one to four.
     profile_records : int
         Records per source for a resource profile; zero reconstructs all records.
+    checkpoint_producer : Path or None
+        Preserved source that originally produced reused raw checkpoints.
 
     Returns
     -------
@@ -106,27 +158,8 @@ def recover(source_root: Path, output: Path, workers: int, profile_records: int 
         jobs, verification = catalog(source_root, source)
         if profile_records:
             jobs = jobs[:profile_records]
-        checkpoint = output / f"{source}_verified.parquet"
-        before = time.monotonic()
-        if checkpoint.exists():
-            table = pd.read_parquet(checkpoint)
-            receipt = json.loads((output / f"{source}_receipt.json").read_text())
-            if receipt["checkpoint_sha256"] != sha256_file(checkpoint) or len(table) != len(jobs):
-                raise ValueError(f"Checkpoint differs: {source}")
-        else:
-            records = []
-            with Pool(workers, initializer=configure, initargs=(str(source_root),)) as pool:
-                for index, row in enumerate(pool.imap(scan, jobs, chunksize=16), 1):
-                    records.append(row)
-                    if index % 1000 == 0 or index == len(jobs):
-                        print(json.dumps({"source": source, "verified_records": index,
-                                          "records": len(jobs), "elapsed_s": time.monotonic() - before}), flush=True)
-            table = pd.DataFrame(records).set_index("record")
-            table.to_parquet(checkpoint)
-            receipt = {**verification, "verified_records": len(table), "elapsed_s": time.monotonic() - before,
-                       "worker_max_rss_kib": int(table["worker_max_rss_kib"].max()),
-                       "checkpoint_sha256": sha256_file(checkpoint)}
-            write_json_atomic(output / f"{source}_receipt.json", receipt, sort_keys=True)
+        table, receipt = verified_source(source_root, output, source, jobs, verification, workers,
+                                         producer_receipt(source_root, checkpoint_producer))
         codes = table["dx"].str.split(",").apply(lambda values: [v.strip() for v in values if v])
         labels = challenge_labels.label_table(codes, official)
         rows = table[["source", "path", "duration_s", "signal_sha256", "window_sha256"]].join(labels)
@@ -144,6 +177,7 @@ def recover(source_root: Path, output: Path, workers: int, profile_records: int 
                     "ecg_experiment/challenge_recovery20261028.py", "ecg_experiment/challenge_splits.py",
                     "ecg_experiment/challenge_labels.py", "ecg_experiment/ningbo.py",
                     "ecg_experiment/eda/challenge.py", "ecg_experiment/public_sources.py")}}
+    metadata["raw_checkpoint_producer"] = producer_receipt(source_root, checkpoint_producer)
     if profile_records:
         write_json_atomic(output / "metadata.json", metadata, sort_keys=True)
         return metadata

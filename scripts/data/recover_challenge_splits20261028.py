@@ -14,8 +14,10 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--profile-records", type=int, default=0)
+    parser.add_argument("--checkpoint-producer", type=Path)
     args = parser.parse_args()
-    result = recover(args.source_root, args.output_dir, args.workers, args.profile_records)
+    result = recover(args.source_root, args.output_dir, args.workers, args.profile_records,
+                     args.checkpoint_producer)
     print(json.dumps(result, indent=2))
 
 

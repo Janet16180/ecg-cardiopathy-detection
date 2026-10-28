@@ -25,3 +25,9 @@ PTB-XL and cohort overlap audits. The new receipt describes that distinction. Th
 cannot be claimed byte-identical when its lost input artifacts have not themselves been reconstructed.
 
 Write an aggregate results report from the completed outputs. Patient and record rows stay out of Git.
+
+A resumed source checkpoint must match its saved file hash and expected record count. Legacy receipts that
+predate embedded producer hashes require the preserved producer source explicitly. The final aggregate
+receipt binds that producer and the untouched original checkpoint receipt; newly scanned sources embed
+their producer digest. This permits a behavior-preserving lint cleanup between completed source stages
+without claiming that the newer assembly implementation produced an older checkpoint.

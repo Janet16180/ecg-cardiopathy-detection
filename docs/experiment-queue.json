@@ -23,7 +23,7 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-10-19T03:10:05.941072+00:00",
+  "updated_at_utc": "2026-10-28T15:20:40.439636+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2351,5 +2351,20 @@
     },
     "data_policy": "All models/raw data/features/private predictions remain local and ignored.",
     "next_action": "Research studies and reports are complete. Preserve local artifacts and the failed grounding ranking verdict; review PR #70. No experiment, closed test or automatic merge is scheduled."
+  },
+  "heads01_token_superclass_20261028": {
+    "authorization": "User requested a bounded attempt to improve the screening models at the frozen SPH 5% normal-referral operating point (28 October 2026); no closed-test scoring, no label or age-subgroup changes.",
+    "status": "complete_not_established",
+    "protocol": "docs/heads01-token-superclass-protocol-2026-10-28.md",
+    "protocol_commit": "69c6f2b",
+    "source_commit": "4554816",
+    "output": "outputs/heads01_token_superclass_20261028",
+    "primary": "SPH sensitivity of A (xECG logistic on mean plus max pooled frozen tokens) and B (superclass-versus-normal mixture heads), each minus the all-age 25k 50:50 blend; paired 2,000-draw patient bootstrap, seed 20261028, 97.5% Bonferroni intervals; gates: gain >= 0.02, lower bound > 0, specificity drop <= 0.005.",
+    "qualification": "All 30 predecessor model/site points and the saved primary interval reproduced exactly; all-age and age-preferred refits matched saved scores with 0.0 difference; superclass labels matched all 28,568 pool targets.",
+    "profile": "48-record raw-to-token profiles passed on GPU 0 (forecast 1,858 s) and GPU 1 (forecast 4,655 s); 619,681,792 peak bytes.",
+    "results": "docs/heads01-token-superclass-results-2026-10-28.md",
+    "aggregate": "reports/heads01-token-superclass-2026-10-28/aggregate.json",
+    "primary_result": "A 0.771484 vs 0.773996, -0.002511 [-0.008251, 0.003311]; B 0.777065, +0.003069 [-0.002242, 0.008919]; both fail gates 1 and 2. B AUROC 0.939240 (+0.002470, 95% [0.001541, 0.003335]). No pipeline promoted.",
+    "next_action": "None scheduled. Follow-ups ranked in the backlog: xecg_learned_attention_readout, superclass_mixture_resampling, full_pool_fixed_heads, conduction_miss_analysis."
   }
 }

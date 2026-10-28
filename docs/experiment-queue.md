@@ -536,6 +536,19 @@ tables and the earlier Challenge training extraction were explicitly verified an
 [executed scope](pr74-from-raw-reproduction-results-2026-10-28.md) distinguishes that reuse from the
 [default uncached reproduction commands](pr74-from-raw-reproduction-2026-10-28.md).
 
+## HEADS-01 readout changes (28 October 2026)
+
+The [protocol](heads01-token-superclass-protocol-2026-10-28.md) tested two backlog readouts on the
+all-age 25k cohort against the current best (all-age 50:50 blend) at the frozen SPH 5% normal budget:
+A, xECG logistic on mean plus max pooled frozen tokens (`attention_readout`, deterministic form), and
+B, superclass-versus-normal heads combined as a mixture likelihood ratio (`multitask_head`). Complete;
+neither established an improvement. A: sensitivity 0.771484 (−0.251 pp, 97.5% [−0.825, +0.331]);
+B: 0.777065 (+0.307 pp, [−0.224, +0.892]), specificity 0.949489, AUROC 0.939240 (+0.0025, 95%
+[+0.0015, +0.0033]). The predecessor's 30 points and primary interval reproduced exactly first.
+[Results](heads01-token-superclass-results-2026-10-28.md), [aggregate](../reports/heads01-token-superclass-2026-10-28/aggregate.json),
+local outputs in `outputs/heads01_token_superclass_20261028/` (including a 4.2 GB frozen xECG token
+cache). No process is running and nothing was promoted.
+
 ## Research branches
 
 The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.md) supplies the rationale for authorized Experiments 011–013. These are independent model families, not xECG modifications. They have no measured project results yet. The additional [vision architectures](cross-domain-architecture-candidates.md) and [xECG modifications](xecg-next-experiments.md) remain research candidates outside this accepted queue.

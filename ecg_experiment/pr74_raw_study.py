@@ -45,7 +45,12 @@ PROTOCOL = Path("docs/pr74-raw-study-protocol-2026-10-28.md")
 def study_binding() -> dict[str, Any]:
     """Capture all committed successor code before touching numerical inputs."""
     receipt = source_binding()
-    paths = [ROOT / PROTOCOL, Path(__file__), ROOT / "scripts/experiments/run_pr74_raw_study.py"]
+    paths = [
+        ROOT / PROTOCOL,
+        Path(__file__),
+        ROOT / "scripts/experiments/run_pr74_raw_study.py",
+        ROOT / "ecg_experiment/pr74_raw_inference.py",
+    ]
     paths += sorted((ROOT / "tests").glob("test_pr74_raw_study*.py"))
     for path in paths:
         name = stored(path.relative_to(ROOT))
@@ -289,6 +294,59 @@ def extract(
             "wall_seconds": time.perf_counter() - started,
         },
     )
+
+
+def compare_aggregates(fresh: dict, published: dict) -> dict[str, Any]:
+    """Check all reproduced points without claiming recovery of historical serialized bytes."""
+
+    def points(artifact: dict) -> dict:
+        return {
+            (model["id"], evaluation["pool"]): evaluation
+            for model in artifact["models"]
+            for evaluation in model["evaluations"]
+        }
+
+    first, second = points(fresh), points(published)
+    if first.keys() != second.keys():
+        raise ValueError("Fresh aggregate model/site inventory differs from published evaluation")
+    maximum = 0.0
+    threshold_difference = 0.0
+    for key, point in first.items():
+        expected = second[key]
+        for count in ("tp", "tn", "fp", "fn"):
+            if point["metrics"][count] != expected["metrics"][count]:
+                raise ValueError(f"Fresh confusion matrix differs: {key}/{count}")
+        maximum = max(maximum, abs(point["metrics"]["auroc"] - expected["metrics"]["auroc"]))
+        threshold_difference = max(threshold_difference, abs(point["threshold"] - expected["threshold"]))
+        if point["calibration"]["flagged_normals"] != expected["calibration"]["flagged_normals"]:
+            raise ValueError("Fresh frozen calibration count differs")
+    if (
+        maximum > 1e-9
+        or fresh["primary"]["development_advantage"] != published["primary"]["development_advantage"]
+    ):
+        raise ValueError("Fresh AUROC or primary decision fails scientific parity")
+    return {
+        "scientific_parity_passed": True,
+        "model_site_points": len(first),
+        "all_confusion_matrices_exact": True,
+        "maximum_absolute_auroc_difference": maximum,
+        "maximum_absolute_threshold_difference": threshold_difference,
+        "historical_serialized_artifacts_recovered": False,
+    }
+
+
+def verify(input_root: Path, output: Path) -> dict[str, Any]:
+    """Bind numerical parity against the already published aggregate without extra model scoring."""
+    receipt = study_binding()
+    _, hashes = stage_inputs(input_root, output, "evaluate")
+    published = Path("reports/pr74-corrective-evaluation-2026-10-28/aggregate.json")
+    receipt["source_sha256"][str(published)] = sha256_file(ROOT / published)
+    fresh = read_json(input_root / output / "evaluate/screening_evaluation.json")
+    details = compare_aggregates(fresh, read_json(ROOT / published))
+    directory = input_root / relative(output) / "verify"
+    directory.mkdir(parents=True, exist_ok=False)
+    write_json_atomic(directory / "parity.json", details)
+    return finish_stage(input_root, output, "verify", receipt, hashes, details)
 
 
 def feature_matrix(

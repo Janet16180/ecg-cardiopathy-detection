@@ -1,0 +1,13 @@
+{
+  "examples": 16,
+  "groups": {
+    "inferior": 4,
+    "anterior": 4,
+    "rbbb": 2,
+    "lbbb": 2,
+    "stt": 2,
+    "normal": 2
+  },
+  "path": "outputs/nbr01_normal_beat_replacement_20261028/examples.json",
+  "bytes": 6225836
+}

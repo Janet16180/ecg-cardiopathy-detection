@@ -1,0 +1,19 @@
+{
+  "records": 20,
+  "prepared": 20,
+  "prepare_wall_seconds": 6.949959327001125,
+  "prepare_cpu_seconds_per_record": 3.6286881904816255,
+  "workers": 12,
+  "encode": {
+    "records": 20,
+    "wall_seconds": 70.25646786578,
+    "peak_gpu_bytes": 622368768,
+    "initial_free_gpu_bytes": 10598547456,
+    "device": 0
+  },
+  "encode_seconds_per_record": 3.5128233932889996,
+  "variants": 105,
+  "original_measurement_max_abs_difference": 0.0,
+  "original_xecg_max_abs_difference": 0.0,
+  "original_xecg_bit_identical_records": 20
+}

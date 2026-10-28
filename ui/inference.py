@@ -13,6 +13,7 @@ from ecg_experiment.ecg_quality import assess
 from ecg_experiment.waveforms import LEADS
 
 from .artifacts import EVALUATION
+from .config import CACHED, ArtifactMode
 
 BUNDLE = EVALUATION / "model_bundle.joblib"
 
@@ -25,24 +26,25 @@ class Predictor(Protocol):
         ...
 
 
-def load_predictor(root: Path) -> Predictor | None:
+def load_predictor(root: Path, mode: ArtifactMode = CACHED) -> Predictor | None:
     """Load only the evaluator's fixed locally generated, receipt-verified bundle."""
-    if not (root / BUNDLE).is_file():
+    bundle = mode.evaluation_dir / "model_bundle.joblib"
+    if not (root / bundle).is_file():
         return None
     try:
         runtime = importlib.import_module("ecg_experiment.cuda_runtime20261028")
         runtime.configure_cuda_runtime()
-        module = importlib.import_module("ecg_experiment.pr74_screening_inference")
+        module = importlib.import_module(mode.inference_module)
     except ModuleNotFoundError as error:
-        if error.name in {"ecg_experiment.pr74_screening_inference", "ecg_experiment.cuda_runtime20261028"}:
+        if error.name in {mode.inference_module, "ecg_experiment.cuda_runtime20261028"}:
             return None
         raise
-    return module.load_bundle(root, BUNDLE)
+    return module.load_bundle(root, bundle)
 
 
 def analyze(samples: list[list[float | None]], leads: list[str], sample_rate: int, units: str,
             model_id: str, root: Path, predictor: Predictor | None = None,
-            enable_inference: bool = True) -> dict[str, Any]:
+            enable_inference: bool = True, mode: ArtifactMode = CACHED) -> dict[str, Any]:
     """Validate physical units and quality before returning a development-model threshold result.
 
     Parameters
@@ -63,6 +65,8 @@ def analyze(samples: list[list[float | None]], leads: list[str], sample_rate: in
         Optional already-verified runtime, principally useful in integration tests.
     enable_inference : bool
         False until the executed aggregate evaluation receipt also passes its gate.
+    mode : ArtifactMode
+        Fixed startup namespace shared by aggregates, cohorts and the verified model loader.
 
     Returns
     -------
@@ -78,8 +82,11 @@ def analyze(samples: list[list[float | None]], leads: list[str], sample_rate: in
     quality = {"reasons": reasons, "review_flags": flags}
     if reasons:
         return {"status": "abstained", "quality": quality, "score": None,
-                "message": "Signal quality did not pass. No model score or referral result was produced."}
-    runtime = (predictor if predictor is not None else load_predictor(root)) if enable_inference else None
+                "message": "Signal quality did not pass. No model score or referral result was produced.",
+                "next_action": "repeat_acquisition_or_clinical_review"}
+    runtime = None
+    if enable_inference:
+        runtime = predictor if predictor is not None else load_predictor(root, mode)
     if runtime is None:
         return {"status": "model_unavailable", "quality": quality, "score": None,
                 "message": "The verified corrective model bundle has not been generated locally."}
@@ -87,7 +94,8 @@ def analyze(samples: list[list[float | None]], leads: list[str], sample_rate: in
     if result.get("abstained"):
         return {"status": "abstained", "quality": {"reasons": result.get("quality_reasons", []),
                                                      "review_flags": flags}, "score": None,
-                "message": "The verified model runtime abstained. No referral result was produced."}
+                "message": "The verified model runtime abstained. No referral result was produced.",
+                "next_action": "repeat_acquisition_or_clinical_review"}
     if result.get("available") is not True:
         return {"status": "model_unavailable", "quality": quality, "score": None,
                 "message": "This corrective model is unavailable in the current local runtime."}

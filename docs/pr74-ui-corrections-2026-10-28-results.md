@@ -6,9 +6,11 @@ or unrestricted dataset viewer. The local interface has English and Spanish view
 
 ## Executed checks
 
-- All 20 application tests passed on the normal host environment. They cover missing and modified
+- All 27 application tests passed on the normal host environment. They cover missing and modified
   artifacts, no raw dataset endpoints, quality abstention before model loading, missing-model behavior,
-  strict threshold ties, null rates, primary cohort contract checks, and streamed request-size rejection.
+  strict threshold ties, null rates, primary cohort contract checks, exact calibrated-cutoff availability,
+  automatic runtime-header setup before lazy model loading, streamed request-size rejection, and
+  fixed cached/from-raw namespace pairing without fallback.
   The frozen quality helper emits its existing spectral warnings for the synthetic all-flat input;
   that input still abstains and produces no score.
 - All three Node tests passed: exact saved-cutoff extremes/ties, empty and single-class denominators,
@@ -22,12 +24,24 @@ or unrestricted dataset viewer. The local interface has English and Spanish view
   Spanish switching and status-only localization. There was no horizontal mobile overflow.
 - Real API inference passed on one explicitly admitted PTB training ECG after checking its canonical
   waveform hash. The verified default blend returned a finite score and a consistent strict comparison.
-  No individual score or record identity was exported. No protected recording was read by this check.
+  The verified runtime also loaded successfully with `CUDA_HOME` initially unset, using only already
+  installed runtime headers. No individual score or record identity was exported. No protected recording was read by this check.
 
 Restricted tool sandboxes stalled even minimal synchronous FastAPI routes because their inter-thread
 wakeup sockets were blocked. The actual host tests passed; no test was silently skipped or dependency
 changed to work around that restriction. The request guard uses a bounded ASGI stream and rejects an
 oversize chunk before extending its buffer or invoking validation/inference.
+
+The fixed `cached` and `from_raw` startup modes were exercised with synthetic completed receipts,
+including rejection of cached fallback when fresh artifacts are absent. Each mode pairs its own cohort
+summaries, evaluation and verified bundle loader. Real cohort metadata passed in both namespaces, each
+with 770 strictly young and 770 matched control records. While the fresh pipeline was running, its
+results remained unavailable and the app did not substitute cached results. After completion, a real
+HTTP ASGI check returned 200 for `/api/status`, `/api/evaluation` and `/api/cohorts`, all explicitly in
+`from_raw` mode. The app verified fresh aggregate SHA-256
+`3dd9bac300ad5002dac0312a24088eefb1c6b6aaaa73e31c3aacde4710670086`, loaded all 15 models and 30
+model/site payloads, retained the fixed baseline default and displayed the unchanged failed primary
+comparison. This routing check generated no new model score or waveform read.
 
 ## Presentation contract
 
@@ -35,7 +49,10 @@ The fixed operating point comes from the 5% calibration-normal budget. The rule 
 `score > threshold`; ties are not flagged. The separate evaluation slider visits saved exact cutoff
 matrices, without interpolating counts or changing the frozen operating point. It displays TP/TN/FP/FN,
 reference denominators, sensitivity, specificity, precision, referral workload and sample prevalence.
-Scores are labeled uncalibrated. Below threshold means not flagged at that cutoff, not absence of risk.
+Offline evaluation retains all admitted reference ECGs, including difficult signals. The matrices
+describe the classifier, not a validated combined quality-abstention and referral workflow. Quality
+abstention is explicitly no result, with repeat acquisition or clinical review suggested. Scores are
+labeled uncalibrated. Below threshold means not flagged at that cutoff, not absence of risk.
 
 The primary strict-age/matched-control cohorts remain distinct from the secondary expanded-age 25,000
 selections. Source composition, label-evidence ranks, exact-age summaries and missing/censored ages are

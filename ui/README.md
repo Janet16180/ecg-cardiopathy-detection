@@ -32,6 +32,34 @@ PYTHONPATH=/tmp/ecg-pr74-ui OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THR
   ui.app:app --host 127.0.0.1 --port 8000
 ```
 
+Choose one fixed artifact mode at startup: `ECG_APP_ARTIFACT_MODE=cached` (the default) or
+`ECG_APP_ARTIFACT_MODE=from_raw`. The mode is shown in the interface and binds its evaluation,
+cohort summaries, model bundle and verified loader together. It cannot be changed through an API request.
+There is no fallback to another mode when an artifact is missing or unfinished.
+
+For a completed from-raw reproduction:
+
+```bash
+ECG_APP_ARTIFACT_MODE=from_raw OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+  uv run --no-sync --group tracking python -m uvicorn ui.app:app --host 127.0.0.1 --port 8000
+```
+
+The from-raw mode uses only these additional fixed namespaces:
+
+| Artifact | Fixed from-raw location |
+| --- | --- |
+| Primary cohort manifests and summary | `outputs/cohort25_recovery_20261028/cold_start/strict_matched/` |
+| Secondary expanded-age cohorts | `outputs/cohort25_recovery_20261028/cold_start/cohorts_25k/` |
+| Evaluation, completion receipt and model bundle | `outputs/pr74_from_raw_validation_20261028/evaluate/` |
+| Verified bundle loader | `ecg_experiment.pr74_raw_inference.load_bundle` |
+
+Follow the registered [raw study protocol](../docs/pr74-raw-study-protocol-2026-10-28.md) and
+[fresh baseline protocol](../docs/pr74-fresh-baseline-protocol-2026-10-28.md). The from-raw pipeline must
+finish before its results or models are available. Run its
+receipt-producing data reconstruction and `scripts.experiments.run_pr74_raw_study` stages; do not copy or
+rename cached completion receipts into those locations. A clean checkout without those completed
+artifacts will correctly show unavailable results.
+
 Only the operator configures that root. No API accepts a filesystem path. No raw dataset directory is
 mounted, no reserved record is sampled, and no recording history is saved. Missing or inconsistent
 artifacts produce an unavailable state rather than archived or fabricated metrics.
@@ -46,7 +74,7 @@ cohorts contain 770 hospital ECGs each, not an Italian student sample. Expanded-
 25,000 ceiling remain secondary. Selection seed is 42 and eligibility never weakens to fill a ceiling. Training and evaluation
 seeds and checkpoint hashes belong to that fixed pre-score model protocol and its executed receipts.
 
-The app reads only these fixed local paths:
+The default cached mode reads only these fixed local paths:
 
 | Artifact | Gate |
 | --- | --- |
@@ -81,7 +109,9 @@ uses their exact saved counts, without interpolation. The saved grid must includ
 threshold. The separate frozen-point matrix retains its actual fixed-threshold counts.
 
 Every matrix shows positive and negative reference denominators, sensitivity, specificity, precision,
-referral workload and sample prevalence. The slider is descriptive development exploration. It does not
+referral workload and sample prevalence. Offline evaluation retains all admitted reference ECGs, including difficult signals. These matrices
+describe classifier evaluation; they do not validate the combined quality-abstention and referral workflow.
+The slider is descriptive development exploration. It does not
 change the frozen model or select a deployment threshold. Scores are uncalibrated model scores, not disease
 probabilities. Below threshold means not flagged at that operating point; it does not establish no risk.
 
@@ -104,7 +134,8 @@ resample, crop longer records, reorder undocumented leads, parse WFDB archives o
 uploads. Blank/NaN samples remain missing and cause quality abstention; they are never replaced by zero.
 Requests are limited to 4 MiB. The frozen `ecg_experiment.ecg_quality.assess` policy runs before model
 loading, feature imputation or inference. Exclusion reasons cause abstention without a score or referral
-result; review flags are retained separately. The verified runtime can also abstain if extraction fails.
+result; the UI suggests repeat acquisition or clinical review, and never treats abstention as negative.
+Review flags are retained separately. The verified runtime can also abstain if extraction fails.
 
 ## Checks
 

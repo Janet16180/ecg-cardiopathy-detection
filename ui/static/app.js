@@ -62,7 +62,7 @@ function primaryHTML() {
 }
 
 function evaluation() {
-  const header = heading('evaluation', 'evalIntro') + notice('scope');
+  const header = heading('evaluation', 'evalIntro') + notice('scope') + `<p class="muted">${t('offlineEvaluation')}</p>`;
   if (!state.evaluation) return header + panel(`<h2>${t('noEvaluation')}</h2><p>${t('noEvaluationText')}</p>`);
   const model = state.evaluation.models[state.model], pool = selectedPool(), matrix = pool.metrics;
   const controls = `<div class="controls"><label>${t('model')}<select id="model">${state.evaluation.models.map((value, index) => `<option value="${index}" ${index === state.model ? 'selected' : ''}>${escape(value.label)}</option>`).join('')}</select></label><label>${t('pool')}<select id="pool">${model.evaluations.map((value, index) => `<option value="${index}" ${index === state.pool ? 'selected' : ''}>${escape(value.label)}</option>`).join('')}</select></label></div>`;
@@ -101,7 +101,7 @@ function localization() {
 }
 
 function methods() {
-  return heading('methodsIntro', 'scope') + `<div class="methods">${['proxy','evidence','xecg','legacy','wipMethod','privacy'].map(key => panel(`<p>${t(key)}</p>`)).join('')}</div>`;
+  return heading('methodsIntro', 'scope') + `<div class="methods">${['proxy','offlineEvaluation','evidence','xecg','legacy','wipMethod','privacy'].map(key => panel(`<p>${t(key)}</p>`)).join('')}</div>`;
 }
 
 function updateMatrix() {
@@ -133,8 +133,8 @@ function setupEvaluation() {
 function recordingResult(result) {
   const quality = result.quality;
   const warnings = quality.review_flags.length ? `<p>${t('flags')}: ${quality.review_flags.map(escape).join(', ')}</p>` : '';
-  if (result.status === 'abstained') return `<div class="notice"><h3>${t('abstained')}</h3><p>${t('noScore')}</p><p>${t('exclusions')}: ${quality.reasons.map(escape).join(', ')}</p></div>`;
-  if (result.status !== 'scored') return `<div class="notice"><h3>${t('passed')}</h3><p>${t('unavailable')}</p>${warnings}</div>`;
+  if (result.status === 'abstained') return `<div class="notice"><h3>${t('abstained')}</h3><p>${t('noScore')}</p><p>${t('exclusions')}: ${quality.reasons.map(escape).join(', ')}</p><p>${t('abstentionAction')}</p></div>`;
+  if (result.status !== 'scored') return `<div class="notice"><h3>${t('passed')}</h3><p>${t('unavailable')}</p><p>${t('noScore')}</p>${warnings}</div>`;
   return `<div class="notice"><h3>${t(result.flagged ? 'flaggedResult' : 'notFlaggedResult')}</h3><small>${t('score')}</small><div class="result-score">${decimal(result.score)}</div><p>score &gt; ${cutoff(result.threshold)}</p><p>${t('notDiagnosis')}</p><p>${t('inferenceCalibration')}</p>${warnings}</div>`;
 }
 
@@ -167,6 +167,7 @@ function render() {
   document.querySelector('#english').setAttribute('aria-pressed', state.lang === 'en');
   document.querySelector('#spanish').setAttribute('aria-pressed', state.lang === 'es');
   document.querySelector('#connection').textContent = t(state.status ? 'connected' : 'disconnected');
+  document.querySelector('#artifact-mode').textContent = state.status ? t(state.status.artifact_mode === 'from_raw' ? 'modeFromRaw' : 'modeCached') : '';
   content.innerHTML = routes[active]();
   if (active === 'evaluation') setupEvaluation();
   if (active === 'recording') document.querySelector('#analyze').addEventListener('click', analyzeRecording);

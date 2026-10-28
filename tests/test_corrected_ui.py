@@ -12,6 +12,7 @@ from ecg_experiment.files import sha256_file
 from ecg_experiment.waveforms import LEADS
 from ui import artifacts
 from ui.app import create_app
+from ui.config import CACHED, FROM_RAW
 from ui.inference import analyze
 from ui.security import MAX_BODY_BYTES, LocalSecurityMiddleware
 
@@ -42,7 +43,7 @@ def matrix(tp=2, tn=1, fp=1, fn=0):
             **artifacts.rates(result), "auroc": .875, "average_precision": .9}
 
 
-def executed_evaluation(root: Path):
+def executed_evaluation(root: Path, mode=CACHED):
     points = [matrix(2, 0, 2, 0), matrix(), matrix(0, 2, 0, 2)]
     sweep = {key: [point[key] for point in points]
              for key in (*artifacts.COUNT_KEYS, *artifacts.RATE_KEYS)}
@@ -53,7 +54,8 @@ def executed_evaluation(root: Path):
     value = {"schema_version": 1, "complete": True, "scope": "reused_development",
              "score_interpretation": "uncalibrated", "default_model_id": "younger_blend", "operating_point": {
                  "normal_budget": .05, "comparison": ">", "selection": "calibration_normals_only"},
-             "models": [{"id": "younger_blend", "label": "Younger · fixed blend", "cohort": "younger",
+             "models": [{"id": "younger_blend", "label": f"{mode.name} Younger · fixed blend",
+                         "cohort": "younger",
                          "evaluations": [pool]},
                         {"id": "all_age_blend", "label": "Matched general", "cohort": "general",
                                                  "evaluations": [pool]}],
@@ -65,12 +67,12 @@ def executed_evaluation(root: Path):
                          "interpretation": "prespecified advantage not established",
                          "uncertainty_scope": "conditional on fitted models and calibration sample"},
              "patient_predictions": ["must never be returned"]}
-    directory = root / artifacts.EVALUATION
+    directory = root / mode.evaluation_dir
     directory.mkdir(parents=True)
     path = directory / "screening_evaluation.json"
     path.write_text(json.dumps(value))
     receipt = {"status": "completed", "stage": "evaluate", "artifacts": {
-        (artifacts.EVALUATION / path.name).as_posix(): sha256_file(path)}}
+        (mode.evaluation_dir / path.name).as_posix(): sha256_file(path)}}
     (directory / "completion.json").write_text(json.dumps(receipt))
     return value
 
@@ -136,6 +138,7 @@ def test_invalid_signal_abstains_before_loading_or_calling_model(tmp_path, monke
         assert result["status"] == "abstained"
         assert result["score"] is None
         assert "flagged" not in result
+        assert result["next_action"] == "repeat_acquisition_or_clinical_review"
 
 
 def test_api_keeps_missing_values_and_abstains_instead_of_zero_imputation(tmp_path):
@@ -196,7 +199,7 @@ def test_inconsistent_rates_and_changing_sweep_denominators_fail():
         artifacts.sweep_rows(sweep, 2, 2)
 
 
-def primary_cohorts(root):
+def primary_cohorts(root, mode=CACHED):
     young = {"records": 2, "known_patients": 0, "records_without_patient_identity": 2,
              "target": {"0": 1, "1": 1}, "sources": {"synthetic_hospital": 2},
              "families": {"synthetic_hospital": 2}, "label_evidence_rank": {"1": 2},
@@ -209,13 +212,13 @@ def primary_cohorts(root):
     summary = {"strict_18_25": young, "general_matched_size": control,
                "overlap_between_training_cohorts": {
                    "records": 0, "canonical_windows": 0, "known_patients": 0}}
-    directory = root / artifacts.PRIMARY_COHORTS
+    directory = root / mode.primary_cohorts
     directory.mkdir(parents=True)
     for name in ("strict_18_25.csv", "general_matched_size.csv"):
         (directory / name).write_text("synthetic private rows must not be served\n")
     (directory / "summary.json").write_text(json.dumps(summary))
     receipt = {"complete": True, "scope": "strict_young_matched_cohorts", "seed": 42,
-               "artifacts": {(artifacts.PRIMARY_COHORTS / name).as_posix(): sha256_file(directory / name)
+               "artifacts": {(mode.primary_cohorts / name).as_posix(): sha256_file(directory / name)
                              for name in ("summary.json", "strict_18_25.csv", "general_matched_size.csv")}}
     (directory / "receipt.json").write_text(json.dumps(receipt))
     return summary, receipt
@@ -303,3 +306,69 @@ def test_runtime_headers_are_configured_before_lazy_verified_bundle_import(tmp_p
     assert load_predictor(tmp_path) is sentinel
     assert events == ["ecg_experiment.cuda_runtime20261028", "configured",
                       "ecg_experiment.pr74_screening_inference"]
+
+
+def test_from_raw_mode_cannot_fall_back_to_cached_aggregates_cohorts_or_predictor(tmp_path):
+    executed_evaluation(tmp_path)
+    primary_cohorts(tmp_path)
+    predictor = Predictor()
+    cached = ASGIClient(create_app(tmp_path, predictor, mode_name="cached"))
+    raw = ASGIClient(create_app(tmp_path, predictor, mode_name="from_raw"))
+    assert cached.get("/api/evaluation").status_code == 200
+    assert cached.get("/api/cohorts").status_code == 200
+    assert raw.get("/api/evaluation").status_code == 503
+    assert raw.get("/api/cohorts").status_code == 503
+    assert raw.get("/api/status").json()["artifact_mode"] == "from_raw"
+    result = raw.post("/api/analyze", json=payload(signal().tolist()))
+    assert result.json()["status"] == "model_unavailable"
+    assert predictor.calls == 0
+
+
+@pytest.mark.parametrize("mode", [CACHED, FROM_RAW])
+def test_startup_modes_serve_only_their_fixed_completed_namespaces(tmp_path, mode):
+    executed_evaluation(tmp_path, CACHED)
+    executed_evaluation(tmp_path, FROM_RAW)
+    primary_cohorts(tmp_path, CACHED)
+    primary_cohorts(tmp_path, FROM_RAW)
+    client = ASGIClient(create_app(tmp_path, mode_name=mode.name))
+    value = client.get("/api/evaluation?mode=other&path=../../anything").json()
+    assert value["artifact_mode"] == mode.name
+    assert value["models"][0]["label"].startswith(mode.name)
+    assert client.get("/api/cohorts").json()["artifact_mode"] == mode.name
+
+
+def test_unknown_startup_artifact_mode_is_rejected(tmp_path):
+    with pytest.raises(ValueError, match="cached or from_raw"):
+        create_app(tmp_path, mode_name="../../arbitrary")
+
+
+def test_fresh_model_loader_uses_only_fresh_bundle_and_verified_module(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+
+    from ui.inference import BUNDLE, load_predictor
+
+    cached = tmp_path / BUNDLE
+    cached.parent.mkdir(parents=True)
+    cached.write_bytes(b"not deserialized")
+    assert load_predictor(tmp_path, FROM_RAW) is None
+    bundle = FROM_RAW.evaluation_dir / "model_bundle.joblib"
+    (tmp_path / bundle).parent.mkdir(parents=True)
+    (tmp_path / bundle).write_bytes(b"also never deserialized")
+    loaded = []
+    sentinel = object()
+
+    def loader(root, relative):
+        assert root == tmp_path
+        assert relative == bundle
+        return sentinel
+
+    def imports(name):
+        loaded.append(name)
+        if name == "ecg_experiment.cuda_runtime20261028":
+            return SimpleNamespace(configure_cuda_runtime=lambda: None)
+        assert name == "ecg_experiment.pr74_raw_inference"
+        return SimpleNamespace(load_bundle=loader)
+
+    monkeypatch.setattr("ui.inference.importlib.import_module", imports)
+    assert load_predictor(tmp_path, FROM_RAW) is sentinel
+    assert loaded == ["ecg_experiment.cuda_runtime20261028", "ecg_experiment.pr74_raw_inference"]

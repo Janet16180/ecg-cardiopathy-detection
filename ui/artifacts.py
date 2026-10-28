@@ -9,9 +9,11 @@ from typing import Any
 
 from ecg_experiment.files import sha256_file
 
-EVALUATION = Path("outputs/pr74_corrective_evaluation_20261028/evaluate")
-COHORTS = Path("outputs/cohort_age_label_priority_20261028")
-PRIMARY_COHORTS = Path("outputs/cohort_strict_young_matched_20261028")
+from .config import CACHED, ArtifactMode
+
+EVALUATION = CACHED.evaluation_dir
+COHORTS = CACHED.secondary_cohorts
+PRIMARY_COHORTS = CACHED.primary_cohorts
 COUNT_KEYS = ("tp", "tn", "fp", "fn")
 RATE_KEYS = ("sensitivity", "specificity", "precision", "referral_fraction")
 
@@ -163,10 +165,10 @@ def primary_comparison(value: dict[str, Any], model_ids: set[str]) -> dict[str, 
             "uncertainty_scope": str(value["uncertainty_scope"])}
 
 
-def load_evaluation(root: Path) -> dict[str, Any]:
+def load_evaluation(root: Path, mode: ArtifactMode = CACHED) -> dict[str, Any]:
     """Require a completed corrective evaluation receipt and return only verified aggregates."""
-    receipt = read_json(root / EVALUATION / "completion.json")
-    artifact = EVALUATION / "screening_evaluation.json"
+    receipt = read_json(root / mode.evaluation_dir / "completion.json")
+    artifact = mode.evaluation_dir / "screening_evaluation.json"
     if (receipt.get("status") != "completed" or receipt.get("stage") != "evaluate" or
             receipt.get("artifacts", {}).get(artifact.as_posix()) != sha256_file(root / artifact)):
         raise ArtifactUnavailableError("The corrective evaluation has no completed artifact receipt.")
@@ -183,7 +185,7 @@ def load_evaluation(root: Path) -> dict[str, Any]:
     default_model = value["default_model_id"]
     if default_model not in {model["id"] for model in models}:
         raise ArtifactUnavailableError("The frozen default model is missing from executed results.")
-    return {"schema_version": 1, "complete": True, "scope": "reused_development",
+    return {"schema_version": 1, "complete": True, "scope": "reused_development", "artifact_mode": mode.name,
             "score_interpretation": "uncalibrated", "operating_point": {
                 "normal_budget": 0.05, "comparison": ">", "selection": "calibration_normals_only"},
             "models": models, "default_model_id": default_model,
@@ -224,9 +226,9 @@ def cohort_selection(root: Path, directory: Path, scope: str,
             "receipt_sha256": sha256_file(root / directory / "receipt.json")}
 
 
-def load_cohorts(root: Path) -> dict[str, Any]:
+def load_cohorts(root: Path, mode: ArtifactMode = CACHED) -> dict[str, Any]:
     """Expose primary strictly young matched cohorts and separate secondary expanded-age cohorts."""
-    primary = cohort_selection(root, PRIMARY_COHORTS, "strict_young_matched_cohorts",
+    primary = cohort_selection(root, mode.primary_cohorts, "strict_young_matched_cohorts",
                                ("strict_18_25", "general_matched_size"))
     young, control = (primary["cohorts"][name] for name in ("strict_18_25", "general_matched_size"))
     age = young["age"]
@@ -236,8 +238,8 @@ def load_cohorts(root: Path) -> dict[str, Any]:
     if any(young[key] != control[key] for key in ("sources", "target", "label_evidence_rank")):
         raise ArtifactUnavailableError("The primary control is not matched on declared aggregate strata.")
     try:
-        secondary = cohort_selection(root, COHORTS, "new_supervised_age_label_cohorts",
+        secondary = cohort_selection(root, mode.secondary_cohorts, "new_supervised_age_label_cohorts",
                                      ("younger", "all_age"))
     except (ArtifactUnavailableError, FileNotFoundError):
         secondary = None
-    return {"complete": True, "primary": primary, "secondary": secondary}
+    return {"complete": True, "artifact_mode": mode.name, "primary": primary, "secondary": secondary}

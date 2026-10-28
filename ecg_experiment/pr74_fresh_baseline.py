@@ -171,6 +171,7 @@ def finish_stage(input_root: Path, output: Path, stage: str, receipt: dict[str, 
     """Publish new scientific completion evidence only after rechecking all captured inputs and source."""
     verify_hashes(input_root, hashes)
     verify_hashes(ROOT, receipt["source_sha256"])
+    verify_upstream_sources(input_root, hashes)
     directory = input_root / relative(output) / stage
     artifacts = {stored(output / stage / path.name): sha256_file(path)
                  for path in directory.iterdir() if path.is_file() and path.name != "completion.json"}
@@ -178,6 +179,16 @@ def finish_stage(input_root: Path, output: Path, stage: str, receipt: dict[str, 
               "input_sha256": hashes, "artifacts": artifacts}
     write_json_atomic(directory / "completion.json", result)
     return result
+
+
+def verify_upstream_sources(input_root: Path, hashes: dict[str, str]) -> None:
+    """Recheck recipe code of captured dependency receipts, including after numerical execution."""
+    for name in hashes:
+        if Path(name).name not in {"receipt.json", "completion.json"}:
+            continue
+        receipt = read_json(input_root / relative(name))
+        for key in ("source_sha256", "recipe_sha256"):
+            verify_hashes(ROOT, receipt.get(key, {}))
 
 
 def stage_inputs(input_root: Path, output: Path, stage: str) -> tuple[dict[str, Any], dict[str, str]]:
@@ -190,6 +201,7 @@ def stage_inputs(input_root: Path, output: Path, stage: str) -> tuple[dict[str, 
     hashes = {stored(path): sha256_file(input_root / path), **receipt["artifacts"], **receipt["input_sha256"]}
     verify_hashes(input_root, hashes)
     verify_hashes(ROOT, receipt["source_sha256"])
+    verify_upstream_sources(input_root, hashes)
     return receipt, hashes
 
 

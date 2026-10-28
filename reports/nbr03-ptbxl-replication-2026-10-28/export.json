@@ -1,0 +1,14 @@
+{
+  "examples": 16,
+  "groups": {
+    "inferior": 3,
+    "anterior": 3,
+    "lateral": 2,
+    "rbbb": 2,
+    "lbbb": 2,
+    "stt": 2,
+    "normal": 2
+  },
+  "bytes": 6184850,
+  "summary_statistics": 369
+}

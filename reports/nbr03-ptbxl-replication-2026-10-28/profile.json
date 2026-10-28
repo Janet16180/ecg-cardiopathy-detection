@@ -1,0 +1,14 @@
+{
+  "records": 20,
+  "prepared": 20,
+  "prepare_wall_seconds": 7.136237695347518,
+  "prepare_cpu_seconds_per_record": 4.51114078424871,
+  "encode": {
+    "records": 20,
+    "wall_seconds": 20.15698010707274,
+    "peak_gpu_bytes": 622368768,
+    "initial_free_gpu_bytes": 10598547456,
+    "device": 0
+  },
+  "encode_seconds_per_record": 1.007849005353637
+}

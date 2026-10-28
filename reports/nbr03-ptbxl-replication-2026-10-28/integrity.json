@@ -1,0 +1,29 @@
+{
+  "max_abs_difference": {
+    "all_age_hgb": 0.0,
+    "all_age_xecg": 0.0,
+    "all_age_blend": 0.0,
+    "ptb_baseline_hgb": 0.0,
+    "ptb_baseline_xecg": 0.0,
+    "ptb_baseline_blend": 0.0
+  },
+  "tolerance": 1e-12,
+  "decisions_identical": {
+    "all_age_blend": true,
+    "ptb_baseline_blend": true
+  },
+  "thresholds_replayed_exactly": true,
+  "thresholds": {
+    "all_age_hgb": 0.9440345308302278,
+    "all_age_xecg": 0.9223847714619683,
+    "all_age_blend": 0.9007447632467718,
+    "ptb_baseline_hgb": 0.7222200091857669,
+    "ptb_baseline_xecg": 0.7560295981335929,
+    "ptb_baseline_blend": 0.6768595920359941
+  },
+  "registered_check_passed": true,
+  "records_over_tolerance": [],
+  "amendment_1": null,
+  "records": 862,
+  "passed": true
+}

@@ -1,0 +1,67 @@
+{
+  "data_rules": {
+    "all_age_csv_matches_receipt": true,
+    "ptb_rows_match_receipt": true,
+    "all_age_ptb_folds": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "ptb_baseline_fit_folds": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "ptb_threshold_calibration_folds": [
+      "8"
+    ],
+    "fold10_rows_in_table": 0,
+    "fold9_rows": 2146,
+    "fold9_patients": 1917,
+    "patients_in_all_age_training": 0,
+    "patients_in_ptb_baseline_fit": 0,
+    "patients_in_ptb_calibration": 0,
+    "patients_in_locbench_fit": 0,
+    "passed": true
+  },
+  "eligible": {
+    "inferior": {
+      "ecgs": 185,
+      "patients": 173
+    },
+    "anterior": {
+      "ecgs": 140,
+      "patients": 134
+    },
+    "lateral": {
+      "ecgs": 15,
+      "patients": 14
+    },
+    "lbbb": {
+      "ecgs": 49,
+      "patients": 42
+    },
+    "rbbb": {
+      "ecgs": 28,
+      "patients": 26
+    },
+    "stt": {
+      "ecgs": 194,
+      "patients": 184
+    },
+    "normal": {
+      "ecgs": 914,
+      "patients": 866
+    }
+  },
+  "sph_p0_rebuilt": 100,
+  "sph_p0_max_abs_difference_mv": 0.0
+}

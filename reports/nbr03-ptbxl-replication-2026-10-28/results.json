@@ -1,0 +1,5323 @@
+{
+  "statistics": {
+    "energy/territory": {
+      "point": 0.06037866247624826,
+      "low": 0.035666500183373244,
+      "high": 0.0855276122300782,
+      "valid_draws": 2000
+    },
+    "energy/bbb_lead": {
+      "point": -0.08260074308657749,
+      "low": -0.12795406942630067,
+      "high": -0.037119369609267205,
+      "valid_draws": 2000
+    },
+    "energy/qrs_bbb": {
+      "point": 0.12215350912783018,
+      "low": 0.09729741888639383,
+      "high": 0.14610236613419544,
+      "valid_draws": 2000
+    },
+    "energy/stt_stt": {
+      "point": 0.08182636876558241,
+      "low": 0.05359860651529182,
+      "high": 0.11017480772566207,
+      "valid_draws": 2000
+    },
+    "energy/wave": {
+      "point": 0.1019899389467063,
+      "low": 0.08228652862028453,
+      "high": 0.12085207028435206,
+      "valid_draws": 2000
+    },
+    "energy/top1_hit": {
+      "point": 0.4234527687296417,
+      "low": 0.369281045751634,
+      "high": 0.48333609271523176,
+      "valid_draws": 2000
+    },
+    "energy/top3_hit": {
+      "point": 0.5537459283387622,
+      "low": 0.4966881898454746,
+      "high": 0.6103448275862069,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/territory": {
+      "point": 0.08582208134009228,
+      "low": 0.04447774693486684,
+      "high": 0.12427415729704286,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/territory_minus_energy": {
+      "point": 0.02544341886384402,
+      "low": -0.015473641140550982,
+      "high": 0.06290779120815523,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/swap_territory": {
+      "point": 0.025931095388270056,
+      "low": -0.03530705684384517,
+      "high": 0.08715890692118823,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/bbb_lead": {
+      "point": 0.42638308822762716,
+      "low": 0.32766512051513735,
+      "high": 0.5163525677134012,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/bbb_lead_minus_energy": {
+      "point": 0.5089838313142047,
+      "low": 0.4031970686732716,
+      "high": 0.6081878268772748,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/qrs_bbb": {
+      "point": 0.13507737530139313,
+      "low": 0.04059105171428217,
+      "high": 0.2247197823435467,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/qrs_bbb_minus_energy": {
+      "point": 0.012923866173562948,
+      "low": -0.07945812613124113,
+      "high": 0.101073696625222,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt_stt": {
+      "point": 0.2720463400945239,
+      "low": 0.21376179741157178,
+      "high": 0.32948394539362813,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt_stt_minus_energy": {
+      "point": 0.19021997132894147,
+      "low": 0.13465359541280558,
+      "high": 0.24487673046367175,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/wave": {
+      "point": 0.2035618576979585,
+      "low": 0.14616628135102866,
+      "high": 0.2606360001798189,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/wave_minus_energy": {
+      "point": 0.10157191875125221,
+      "low": 0.04522421423600867,
+      "high": 0.15732298878064066,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/top1_hit": {
+      "point": 0.2899022801302932,
+      "low": 0.238233523205138,
+      "high": 0.34121621621621623,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/top1_hit_minus_energy": {
+      "point": -0.13355048859934854,
+      "low": -0.21222364079608264,
+      "high": -0.05603974592211161,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/top3_hit": {
+      "point": 0.6938110749185668,
+      "low": 0.6396396396396397,
+      "high": 0.7432034375765494,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/top3_hit_minus_energy": {
+      "point": 0.1400651465798045,
+      "low": 0.0551942454097627,
+      "high": 0.22222222222222227,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/flagged": {
+      "point": 0.6083788706739527,
+      "low": 0.566417853694666,
+      "high": 0.6494488642134127,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/original": {
+      "point": 0.8336045090155492,
+      "low": 0.8088020320269064,
+      "high": 0.8554738261693468,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/full_score": {
+      "point": 0.3237284023088578,
+      "low": 0.29532659201249994,
+      "high": 0.35284710466854513,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/full_drop": {
+      "point": 0.5098761067066915,
+      "low": 0.48339035876754544,
+      "high": 0.5360425061069305,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/swap_full_drop": {
+      "point": -0.009323658981308734,
+      "low": -0.014050869741478483,
+      "high": -0.0049142978437052695,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/grid_abs": {
+      "point": 0.010658281461094545,
+      "low": 0.009443072795195587,
+      "high": 0.011878889740912934,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/swap_grid_abs": {
+      "point": 0.0035893481034126977,
+      "low": 0.0029225399013631864,
+      "high": 0.004387990782332895,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/lead_abs": {
+      "point": 0.02577922071352373,
+      "low": 0.023122075821577198,
+      "high": 0.028553307972345572,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/swap_lead_abs": {
+      "point": 0.006371213116259729,
+      "low": 0.005224419685096507,
+      "high": 0.007723503393284239,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/grid_flip": {
+      "point": 0.2844311377245509,
+      "low": 0.23579137277951934,
+      "high": 0.3343108504398827,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/lead_flip": {
+      "point": 0.3203592814371258,
+      "low": 0.26992671099518756,
+      "high": 0.37110633657171654,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/component_flip": {
+      "point": 0.5568862275449101,
+      "low": 0.5014832444285876,
+      "high": 0.6107784431137725,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/full_flip": {
+      "point": 0.8473053892215568,
+      "low": 0.8071204690526396,
+      "high": 0.8825301204819277,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/swap_grid_flip": {
+      "point": 0.03592814371257485,
+      "low": 0.01759402171116942,
+      "high": 0.05705920205920204,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/swap_lead_flip": {
+      "point": 0.03592814371257485,
+      "low": 0.017189528077780226,
+      "high": 0.056549022911051204,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/abnormal/swap_full_flip": {
+      "point": 0.011976047904191617,
+      "low": 0.0028328611898017,
+      "high": 0.024924065420560738,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/flagged": {
+      "point": 0.03333333333333333,
+      "low": 0.01393607239643825,
+      "high": 0.05519480519480519,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/original": {
+      "point": 0.2567868726619377,
+      "low": 0.22379339375665533,
+      "high": 0.2900719445832092,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/full_score": {
+      "point": 0.08799231115363396,
+      "low": 0.06922887128712561,
+      "high": 0.10913240359332697,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/full_drop": {
+      "point": 0.16879456150830374,
+      "low": 0.14278990686714227,
+      "high": 0.19587528357260206,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/swap_full_drop": {
+      "point": -0.01311560483510727,
+      "low": -0.019348134685140975,
+      "high": -0.007210814892859628,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/grid_abs": {
+      "point": 0.012153414056727584,
+      "low": 0.010672543948842116,
+      "high": 0.01381892998875682,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/swap_grid_abs": {
+      "point": 0.003934751044974873,
+      "low": 0.0031885683649389806,
+      "high": 0.004805660758188594,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/lead_abs": {
+      "point": 0.027484400124656,
+      "low": 0.024046869071911347,
+      "high": 0.03129312346784629,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/swap_lead_abs": {
+      "point": 0.006909447095084937,
+      "low": 0.00565893453180435,
+      "high": 0.008277442531273244,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/grid_flip": {
+      "point": 0.4,
+      "low": 0.1111111111111111,
+      "high": 0.75,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/lead_flip": {
+      "point": 0.5,
+      "low": 0.16666666666666666,
+      "high": 0.8333333333333334,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/component_flip": {
+      "point": 0.4,
+      "low": 0.09090909090909091,
+      "high": 0.75,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/full_flip": {
+      "point": 0.6,
+      "low": 0.25,
+      "high": 0.9,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/swap_grid_flip": {
+      "point": 0.2,
+      "low": 0.0,
+      "high": 0.5,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/swap_lead_flip": {
+      "point": 0.1,
+      "low": 0.0,
+      "high": 0.3333333333333333,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/normal/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/flagged": {
+      "point": 0.4913294797687861,
+      "low": 0.41103714143591447,
+      "high": 0.563967554388597,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/original": {
+      "point": 0.7388581433800109,
+      "low": 0.684896961410525,
+      "high": 0.7852590455987025,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/full_score": {
+      "point": 0.22522716554696637,
+      "low": 0.18320267375472069,
+      "high": 0.26817229337491216,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/full_drop": {
+      "point": 0.5136309778330446,
+      "low": 0.463294456607554,
+      "high": 0.5615770798473145,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/swap_full_drop": {
+      "point": -0.01298377475606914,
+      "low": -0.02332472342684668,
+      "high": -0.0031838507158108167,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/grid_abs": {
+      "point": 0.012053090512845623,
+      "low": 0.009893777633045681,
+      "high": 0.01452405426557193,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/swap_grid_abs": {
+      "point": 0.004959475321144715,
+      "low": 0.0033365149341482384,
+      "high": 0.00702896729862834,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/lead_abs": {
+      "point": 0.028394800624515423,
+      "low": 0.02383953310519516,
+      "high": 0.0334405308964088,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/swap_lead_abs": {
+      "point": 0.008676011710524756,
+      "low": 0.00602704890961574,
+      "high": 0.012035239115804605,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/grid_flip": {
+      "point": 0.3176470588235294,
+      "low": 0.2142656500802568,
+      "high": 0.4155844155844156,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/lead_flip": {
+      "point": 0.3764705882352941,
+      "low": 0.2652999754118515,
+      "high": 0.48150326797385606,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/component_flip": {
+      "point": 0.7176470588235294,
+      "low": 0.6162567084078712,
+      "high": 0.8192951807228914,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/full_flip": {
+      "point": 0.8941176470588236,
+      "low": 0.8227707454289733,
+      "high": 0.9545454545454546,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/swap_grid_flip": {
+      "point": 0.03529411764705882,
+      "low": 0.0,
+      "high": 0.07894736842105263,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/swap_lead_flip": {
+      "point": 0.047058823529411764,
+      "low": 0.010408775252525253,
+      "high": 0.0967741935483871,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/inferior/swap_full_flip": {
+      "point": 0.011764705882352941,
+      "low": 0.0,
+      "high": 0.042124060150375835,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/flagged": {
+      "point": 0.7985074626865671,
+      "low": 0.7265625,
+      "high": 0.8652516366612112,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/original": {
+      "point": 0.9321403175908952,
+      "low": 0.903823764065178,
+      "high": 0.9562452441529075,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/full_score": {
+      "point": 0.39840560489494115,
+      "low": 0.34200929034049277,
+      "high": 0.45506795038036957,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/full_drop": {
+      "point": 0.5337347126959542,
+      "low": 0.4804792584443281,
+      "high": 0.5849433450602504,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/swap_full_drop": {
+      "point": 0.0005127333072200065,
+      "low": -0.0035433953670681415,
+      "high": 0.005101084501361315,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/grid_abs": {
+      "point": 0.006468749680649252,
+      "low": 0.004680904336526678,
+      "high": 0.008481825130357641,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/swap_grid_abs": {
+      "point": 0.0015665763311147845,
+      "low": 0.0009332194123866504,
+      "high": 0.0023219272544019644,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/lead_abs": {
+      "point": 0.016623966893668195,
+      "low": 0.012221895878822045,
+      "high": 0.021368322088269723,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/swap_lead_abs": {
+      "point": 0.0028562060089186722,
+      "low": 0.001732474613097546,
+      "high": 0.004140316579175129,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/grid_flip": {
+      "point": 0.21495327102803738,
+      "low": 0.1388888888888889,
+      "high": 0.29357798165137616,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/lead_flip": {
+      "point": 0.24299065420560748,
+      "low": 0.16346153846153846,
+      "high": 0.3260926773455377,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/component_flip": {
+      "point": 0.4766355140186916,
+      "low": 0.3833088235294118,
+      "high": 0.5684262125902992,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/full_flip": {
+      "point": 0.8691588785046729,
+      "low": 0.7983154729781822,
+      "high": 0.93,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/swap_grid_flip": {
+      "point": 0.028037383177570093,
+      "low": 0.0,
+      "high": 0.06251644736842096,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/swap_lead_flip": {
+      "point": 0.028037383177570093,
+      "low": 0.0,
+      "high": 0.06251644736842096,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/anterior/swap_full_flip": {
+      "point": 0.018691588785046728,
+      "low": 0.0,
+      "high": 0.047061598224195325,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/flagged": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/original": {
+      "point": 0.9950759919909822,
+      "low": 0.9924149796299857,
+      "high": 0.9972326254763423,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/full_score": {
+      "point": 0.6911865279882944,
+      "low": 0.6354308370870648,
+      "high": 0.7474408474014782,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/full_drop": {
+      "point": 0.3038894640026879,
+      "low": 0.2485167646225437,
+      "high": 0.35878612109751395,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/swap_full_drop": {
+      "point": -0.0014085044901126897,
+      "low": -0.0034364227661686435,
+      "high": 2.2054273253353483e-05,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/grid_abs": {
+      "point": 0.0005499279620032044,
+      "low": 0.0003165937277052564,
+      "high": 0.0008224329816130659,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/swap_grid_abs": {
+      "point": 0.000183292849004954,
+      "low": 5.643112419685868e-05,
+      "high": 0.0003451352697823676,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/lead_abs": {
+      "point": 0.0014861071466295626,
+      "low": 0.0008188784902446062,
+      "high": 0.00231470445277783,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/swap_lead_abs": {
+      "point": 0.000356678784011721,
+      "low": 0.00011042798124084863,
+      "high": 0.0006537122071777696,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/grid_flip": {
+      "point": 0.02564102564102564,
+      "low": 0.0,
+      "high": 0.08571428571428572,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/lead_flip": {
+      "point": 0.02564102564102564,
+      "low": 0.0,
+      "high": 0.08571428571428572,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/component_flip": {
+      "point": 0.07692307692307693,
+      "low": 0.0,
+      "high": 0.16675531914893568,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/full_flip": {
+      "point": 0.8717948717948718,
+      "low": 0.7608695652173914,
+      "high": 0.9687736742424241,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lbbb/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/flagged": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/original": {
+      "point": 0.9916005134708732,
+      "low": 0.9871037202261485,
+      "high": 0.9948589550152042,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/full_score": {
+      "point": 0.5821407987055832,
+      "low": 0.4716675511968049,
+      "high": 0.6901331451051052,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/full_drop": {
+      "point": 0.40945971476529014,
+      "low": 0.3014259759361581,
+      "high": 0.5189565890200563,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/swap_full_drop": {
+      "point": 0.00043186606525708293,
+      "low": -0.0008976928752457664,
+      "high": 0.0022016745684483234,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/grid_abs": {
+      "point": 0.0031059529741489294,
+      "low": 0.0014775168075318301,
+      "high": 0.004999802563839953,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/swap_grid_abs": {
+      "point": 0.0007691594656342234,
+      "low": 7.232296314764564e-05,
+      "high": 0.001954095566604751,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/lead_abs": {
+      "point": 0.011931603237876598,
+      "low": 0.0061547833374062414,
+      "high": 0.018313534610402218,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/swap_lead_abs": {
+      "point": 0.0019248706540664522,
+      "low": 0.0001581458908319522,
+      "high": 0.005420182338482409,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/grid_flip": {
+      "point": 0.391304347826087,
+      "low": 0.19226190476190477,
+      "high": 0.6,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/lead_flip": {
+      "point": 0.4782608695652174,
+      "low": 0.26666666666666666,
+      "high": 0.6923076923076923,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/component_flip": {
+      "point": 0.4782608695652174,
+      "low": 0.26666666666666666,
+      "high": 0.6923076923076923,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/full_flip": {
+      "point": 0.9130434782608695,
+      "low": 0.7824879227053141,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/swap_grid_flip": {
+      "point": 0.08695652173913043,
+      "low": 0.0,
+      "high": 0.21428571428571427,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/swap_lead_flip": {
+      "point": 0.08695652173913043,
+      "low": 0.0,
+      "high": 0.21428571428571427,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/rbbb/swap_full_flip": {
+      "point": 0.043478260869565216,
+      "low": 0.0,
+      "high": 0.14285714285714285,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/flagged": {
+      "point": 0.4444444444444444,
+      "low": 0.3734809508303484,
+      "high": 0.5229966946578524,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/original": {
+      "point": 0.7961379921674238,
+      "low": 0.7536211918552757,
+      "high": 0.8347645145215564,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/full_score": {
+      "point": 0.2501707178346872,
+      "low": 0.2043605610680341,
+      "high": 0.29955549145085314,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/full_drop": {
+      "point": 0.5459672743327365,
+      "low": 0.49981598242959746,
+      "high": 0.5919081686470906,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/swap_full_drop": {
+      "point": -0.016090018086069628,
+      "low": -0.025894353464407254,
+      "high": -0.007122154685844155,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/grid_abs": {
+      "point": 0.015591751651600344,
+      "low": 0.013384075328481466,
+      "high": 0.017773635907295325,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/swap_grid_abs": {
+      "point": 0.0048766808945854105,
+      "low": 0.0038458605697482425,
+      "high": 0.00608794861940552,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/lead_abs": {
+      "point": 0.03711386137078948,
+      "low": 0.03207720939880009,
+      "high": 0.042131404040066704,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/swap_lead_abs": {
+      "point": 0.00864406595605956,
+      "low": 0.006656816155230967,
+      "high": 0.01105687197474689,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/grid_flip": {
+      "point": 0.4375,
+      "low": 0.3253012048192771,
+      "high": 0.5432325708061001,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/lead_flip": {
+      "point": 0.4625,
+      "low": 0.3513338013338014,
+      "high": 0.5735294117647058,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/component_flip": {
+      "point": 0.75,
+      "low": 0.6533333333333333,
+      "high": 0.8441630591630591,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/full_flip": {
+      "point": 0.7375,
+      "low": 0.641,
+      "high": 0.8289553915275995,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/swap_grid_flip": {
+      "point": 0.05,
+      "low": 0.011363636363636364,
+      "high": 0.10449725058915936,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/swap_lead_flip": {
+      "point": 0.0375,
+      "low": 0.0,
+      "high": 0.08573192239858897,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/stt/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/territory": {
+      "point": 0.10423436091382784,
+      "low": 0.0489808256686568,
+      "high": 0.15856624588477808,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/territory_minus_energy": {
+      "point": 0.04385569843757958,
+      "low": -0.007795516791244387,
+      "high": 0.09366859001146291,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/swap_territory": {
+      "point": -0.0003094224861357464,
+      "low": -0.05440862299788818,
+      "high": 0.05926468974975247,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/bbb_lead": {
+      "point": 0.18310032789420208,
+      "low": 0.10582871832803897,
+      "high": 0.2576254891232005,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/bbb_lead_minus_energy": {
+      "point": 0.26570107098077955,
+      "low": 0.16560272111371857,
+      "high": 0.35708361496664887,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/qrs_bbb": {
+      "point": 0.13436266421856685,
+      "low": 0.018651564213981016,
+      "high": 0.23973302389836382,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/qrs_bbb_minus_energy": {
+      "point": 0.012209155090736667,
+      "low": -0.1078472784018833,
+      "high": 0.11784206516340831,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt_stt": {
+      "point": 0.2605582797610134,
+      "low": 0.1987399454023391,
+      "high": 0.31940506394085644,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt_stt_minus_energy": {
+      "point": 0.178731910995431,
+      "low": 0.11841267508255829,
+      "high": 0.23776165439499605,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/wave": {
+      "point": 0.19746047198979014,
+      "low": 0.12578112488550777,
+      "high": 0.2624698531835932,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/wave_minus_energy": {
+      "point": 0.09547053304308384,
+      "low": 0.023231948730071526,
+      "high": 0.16115968813796513,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/top1_hit": {
+      "point": 0.48859934853420195,
+      "low": 0.4325236135789769,
+      "high": 0.5442633326416269,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/top1_hit_minus_energy": {
+      "point": 0.06514657980456023,
+      "low": -0.023343220338983034,
+      "high": 0.1512753597546589,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/top3_hit": {
+      "point": 0.758957654723127,
+      "low": 0.7078948648122934,
+      "high": 0.8035224039829303,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/top3_hit_minus_energy": {
+      "point": 0.2052117263843648,
+      "low": 0.1296867579000851,
+      "high": 0.2781462783322451,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/flagged": {
+      "point": 0.6265938069216758,
+      "low": 0.5850048508767878,
+      "high": 0.6654681033933915,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/original": {
+      "point": 0.8160219958001623,
+      "low": 0.791743713906859,
+      "high": 0.8399589360639097,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/full_score": {
+      "point": 0.3937079692408081,
+      "low": 0.36396051598183876,
+      "high": 0.42384808624556575,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/full_drop": {
+      "point": 0.42231402655935424,
+      "low": 0.39662257191856753,
+      "high": 0.446809752867442,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/swap_full_drop": {
+      "point": -0.03800257997907328,
+      "low": -0.04481391256000976,
+      "high": -0.03153368792135555,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/grid_abs": {
+      "point": 0.011134088916284332,
+      "low": 0.010039021864663685,
+      "high": 0.012304485299544832,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/swap_grid_abs": {
+      "point": 0.002956136901576127,
+      "low": 0.0025780830143560278,
+      "high": 0.0033336445043039274,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/lead_abs": {
+      "point": 0.026278282714105004,
+      "low": 0.023691659482688743,
+      "high": 0.02893196156163854,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/swap_lead_abs": {
+      "point": 0.0061126876969521265,
+      "low": 0.005284860484267784,
+      "high": 0.006947643923639458,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/grid_flip": {
+      "point": 0.17151162790697674,
+      "low": 0.1317229971543793,
+      "high": 0.21097478657931298,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/lead_flip": {
+      "point": 0.20348837209302326,
+      "low": 0.15999361022364217,
+      "high": 0.24647123091273399,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/component_flip": {
+      "point": 0.4273255813953488,
+      "low": 0.3746147210803493,
+      "high": 0.47801224021420374,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/full_flip": {
+      "point": 0.7906976744186046,
+      "low": 0.7457894463030846,
+      "high": 0.8318846773194599,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/swap_grid_flip": {
+      "point": 0.01744186046511628,
+      "low": 0.0056022408963585435,
+      "high": 0.03188405797101449,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/swap_lead_flip": {
+      "point": 0.014534883720930232,
+      "low": 0.0029496356064549712,
+      "high": 0.028214051679861143,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/abnormal/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/flagged": {
+      "point": 0.02666666666666667,
+      "low": 0.010065436241610737,
+      "high": 0.0462102192362093,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/original": {
+      "point": 0.23776625481952213,
+      "low": 0.20798315257344,
+      "high": 0.2678312791254495,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/full_score": {
+      "point": 0.07141775458329686,
+      "low": 0.05550583692114918,
+      "high": 0.08899540204904616,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/full_drop": {
+      "point": 0.1663485002362253,
+      "low": 0.14189147709354225,
+      "high": 0.1910402040870673,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/swap_full_drop": {
+      "point": -0.06338097039559817,
+      "low": -0.07358601646278866,
+      "high": -0.05356590742892668,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/grid_abs": {
+      "point": 0.01267613554455466,
+      "low": 0.011401061628340637,
+      "high": 0.014003902571102851,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/swap_grid_abs": {
+      "point": 0.004171223680881724,
+      "low": 0.003638879406479033,
+      "high": 0.004737106658837001,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/lead_abs": {
+      "point": 0.027122672032836772,
+      "low": 0.02424628294707627,
+      "high": 0.030126754098684105,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/swap_lead_abs": {
+      "point": 0.008895228508023666,
+      "low": 0.007621783010282817,
+      "high": 0.010257057064348048,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/grid_flip": {
+      "point": 0.125,
+      "low": 0.0,
+      "high": 0.42857142857142855,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/lead_flip": {
+      "point": 0.25,
+      "low": 0.0,
+      "high": 0.6,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/component_flip": {
+      "point": 0.375,
+      "low": 0.0,
+      "high": 0.75,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/full_flip": {
+      "point": 0.625,
+      "low": 0.25,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/normal/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/flagged": {
+      "point": 0.5433526011560693,
+      "low": 0.46326898932831134,
+      "high": 0.6185034320809248,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/original": {
+      "point": 0.7416001885866945,
+      "low": 0.6873418825990586,
+      "high": 0.7919709962525202,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/full_score": {
+      "point": 0.2784238344916805,
+      "low": 0.2326023086356332,
+      "high": 0.3285962301242662,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/full_drop": {
+      "point": 0.46317635409501384,
+      "low": 0.410539919935294,
+      "high": 0.5126543100754579,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/swap_full_drop": {
+      "point": -0.04374635050707323,
+      "low": -0.05775718491014162,
+      "high": -0.03143161386913157,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/grid_abs": {
+      "point": 0.01172456916424171,
+      "low": 0.009851202380604147,
+      "high": 0.013643524132803328,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/swap_grid_abs": {
+      "point": 0.0031239375408408003,
+      "low": 0.0024929100999467073,
+      "high": 0.003823665747678375,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/lead_abs": {
+      "point": 0.028485898739992212,
+      "low": 0.024031438439564286,
+      "high": 0.03281562412388609,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/swap_lead_abs": {
+      "point": 0.006223191753079703,
+      "low": 0.004904028567741345,
+      "high": 0.007648505508717647,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/grid_flip": {
+      "point": 0.19148936170212766,
+      "low": 0.11702127659574468,
+      "high": 0.2720181818181817,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/lead_flip": {
+      "point": 0.2765957446808511,
+      "low": 0.19045112781954887,
+      "high": 0.3703894616265749,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/component_flip": {
+      "point": 0.4787234042553192,
+      "low": 0.3723404255319149,
+      "high": 0.5824202496532593,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/full_flip": {
+      "point": 0.8723404255319149,
+      "low": 0.7974683544303798,
+      "high": 0.9361870100783873,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/inferior/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/flagged": {
+      "point": 0.8059701492537313,
+      "low": 0.7364851770375026,
+      "high": 0.8707482993197279,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/original": {
+      "point": 0.9090030688394896,
+      "low": 0.8700957434095352,
+      "high": 0.9416037880255186,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/full_score": {
+      "point": 0.49454711395070916,
+      "low": 0.4325608885041145,
+      "high": 0.5567974509296884,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/full_drop": {
+      "point": 0.4144559548887804,
+      "low": 0.3593733942127569,
+      "high": 0.46737037133271125,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/swap_full_drop": {
+      "point": -0.027292395294274303,
+      "low": -0.040636116141681146,
+      "high": -0.016766108947331514,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/grid_abs": {
+      "point": 0.006493462783745424,
+      "low": 0.004688976074943883,
+      "high": 0.008414682688500938,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/swap_grid_abs": {
+      "point": 0.0017744423632890826,
+      "low": 0.0011763564371442025,
+      "high": 0.002468627779911169,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/lead_abs": {
+      "point": 0.014270120531229828,
+      "low": 0.010573897136496112,
+      "high": 0.018136526173109693,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/swap_lead_abs": {
+      "point": 0.003978898868148586,
+      "low": 0.0025421029157117227,
+      "high": 0.005656134307680306,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/grid_flip": {
+      "point": 0.1388888888888889,
+      "low": 0.07692307692307693,
+      "high": 0.20690431811121462,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/lead_flip": {
+      "point": 0.1574074074074074,
+      "low": 0.09,
+      "high": 0.22690030557677612,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/component_flip": {
+      "point": 0.35185185185185186,
+      "low": 0.2608478260869565,
+      "high": 0.44348001402524545,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/full_flip": {
+      "point": 0.8055555555555556,
+      "low": 0.725262123197903,
+      "high": 0.8785046728971962,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/swap_grid_flip": {
+      "point": 0.009259259259259259,
+      "low": 0.0,
+      "high": 0.030927835051546393,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/swap_lead_flip": {
+      "point": 0.009259259259259259,
+      "low": 0.0,
+      "high": 0.030303030303030304,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/anterior/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/flagged": {
+      "point": 0.9487179487179487,
+      "low": 0.8723267866884888,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/original": {
+      "point": 0.9867090815797008,
+      "low": 0.9747096459479191,
+      "high": 0.9955590879141673,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/full_score": {
+      "point": 0.7775134282090133,
+      "low": 0.7054250609088294,
+      "high": 0.848645486044772,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/full_drop": {
+      "point": 0.2091956533706876,
+      "low": 0.1443912429084327,
+      "high": 0.274076656590089,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/swap_full_drop": {
+      "point": -0.0042791556483774045,
+      "low": -0.007322081785710644,
+      "high": -0.00155237971949621,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/grid_abs": {
+      "point": 0.0016498335766407584,
+      "low": 0.0007495428138465462,
+      "high": 0.0027300537106405075,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/swap_grid_abs": {
+      "point": 0.0004024934895110378,
+      "low": 0.00015896204757114,
+      "high": 0.0007002858076279614,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/lead_abs": {
+      "point": 0.004015421632195225,
+      "low": 0.0019001648793332156,
+      "high": 0.006494001118822467,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/swap_lead_abs": {
+      "point": 0.0007144704406807582,
+      "low": 0.000284505908602162,
+      "high": 0.0012354733593929058,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/grid_flip": {
+      "point": 0.05405405405405406,
+      "low": 0.0,
+      "high": 0.13333333333333333,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/lead_flip": {
+      "point": 0.08108108108108109,
+      "low": 0.0,
+      "high": 0.17647058823529413,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/component_flip": {
+      "point": 0.05405405405405406,
+      "low": 0.0,
+      "high": 0.1351658476658475,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/full_flip": {
+      "point": 0.5945945945945946,
+      "low": 0.43243243243243246,
+      "high": 0.75,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lbbb/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/flagged": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/original": {
+      "point": 0.996189574105588,
+      "low": 0.9932429418051625,
+      "high": 0.998661895910112,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/full_score": {
+      "point": 0.6163891275612514,
+      "low": 0.4813314280138447,
+      "high": 0.7472450384173367,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/full_drop": {
+      "point": 0.3798004465443366,
+      "low": 0.24905123357178233,
+      "high": 0.5132191321564225,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/swap_full_drop": {
+      "point": -0.0013961846354192831,
+      "low": -0.003172375345203171,
+      "high": 5.5268802797957736e-05,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/grid_abs": {
+      "point": 0.0007364769657841107,
+      "low": 0.0002787651898004699,
+      "high": 0.0012591582373261694,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/swap_grid_abs": {
+      "point": 0.00015981966076763197,
+      "low": 5.2208049184589384e-05,
+      "high": 0.00029540781885426437,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/lead_abs": {
+      "point": 0.0020318637504783176,
+      "low": 0.0008325190991588395,
+      "high": 0.0034179665589674727,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/swap_lead_abs": {
+      "point": 0.00033253780317465476,
+      "low": 9.963961915150586e-05,
+      "high": 0.0006394407656670546,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/grid_flip": {
+      "point": 0.043478260869565216,
+      "low": 0.0,
+      "high": 0.14285714285714285,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/lead_flip": {
+      "point": 0.043478260869565216,
+      "low": 0.0,
+      "high": 0.14285714285714285,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/component_flip": {
+      "point": 0.4782608695652174,
+      "low": 0.27263986013986014,
+      "high": 0.6896551724137931,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/full_flip": {
+      "point": 0.6956521739130435,
+      "low": 0.5,
+      "high": 0.8823529411764706,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/rbbb/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/flagged": {
+      "point": 0.45555555555555555,
+      "low": 0.3820094823666948,
+      "high": 0.5301225034365651,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/original": {
+      "point": 0.758326763657014,
+      "low": 0.7158859550629171,
+      "high": 0.7998233628824792,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/full_score": {
+      "point": 0.3178281380149311,
+      "low": 0.2705118657622208,
+      "high": 0.36944493779415494,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/full_drop": {
+      "point": 0.440498625642083,
+      "low": 0.40076036570739226,
+      "high": 0.4808973633552728,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/swap_full_drop": {
+      "point": -0.052439541580296914,
+      "low": -0.06477142736793068,
+      "high": -0.04048717759500118,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/grid_abs": {
+      "point": 0.01740476587167984,
+      "low": 0.015118189173734333,
+      "high": 0.01966457845801044,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/swap_grid_abs": {
+      "point": 0.0045851643857250666,
+      "low": 0.0038574360294479143,
+      "high": 0.005320556467874949,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/lead_abs": {
+      "point": 0.0410177014829088,
+      "low": 0.035590319661738125,
+      "high": 0.04633281078380398,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/swap_lead_abs": {
+      "point": 0.009503156707513618,
+      "low": 0.007900571118880765,
+      "high": 0.01110429017923478,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/grid_flip": {
+      "point": 0.2804878048780488,
+      "low": 0.18179400386847197,
+      "high": 0.37977697408077143,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/lead_flip": {
+      "point": 0.2804878048780488,
+      "low": 0.18518518518518517,
+      "high": 0.3815789473684211,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/component_flip": {
+      "point": 0.6219512195121951,
+      "low": 0.5121951219512195,
+      "high": 0.7252880184331796,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/full_flip": {
+      "point": 0.7926829268292683,
+      "low": 0.6987910546294769,
+      "high": 0.875,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/swap_grid_flip": {
+      "point": 0.06097560975609756,
+      "low": 0.012658227848101266,
+      "high": 0.11627906976744186,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/swap_lead_flip": {
+      "point": 0.04878048780487805,
+      "low": 0.010869565217391304,
+      "high": 0.1,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/stt/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_blend/territory": {
+      "point": 0.09848614265592237,
+      "low": 0.05218514927820122,
+      "high": 0.14321569148441146,
+      "valid_draws": 2000
+    },
+    "all_age_blend/territory_minus_energy": {
+      "point": 0.03810748017967411,
+      "low": -0.00438144116464385,
+      "high": 0.07786070356182791,
+      "valid_draws": 2000
+    },
+    "all_age_blend/swap_territory": {
+      "point": 0.03944762334901522,
+      "low": -0.02035098147329681,
+      "high": 0.09966171606248059,
+      "valid_draws": 2000
+    },
+    "all_age_blend/bbb_lead": {
+      "point": 0.4139158005552983,
+      "low": 0.3235408896725396,
+      "high": 0.4979662347561372,
+      "valid_draws": 2000
+    },
+    "all_age_blend/bbb_lead_minus_energy": {
+      "point": 0.4965165436418758,
+      "low": 0.39036564480169844,
+      "high": 0.5907322786828597,
+      "valid_draws": 2000
+    },
+    "all_age_blend/qrs_bbb": {
+      "point": 0.13010443851802583,
+      "low": 0.028987122610062314,
+      "high": 0.22166603703201634,
+      "valid_draws": 2000
+    },
+    "all_age_blend/qrs_bbb_minus_energy": {
+      "point": 0.007950929390195649,
+      "low": -0.08778535906457391,
+      "high": 0.09732647337585937,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt_stt": {
+      "point": 0.2622252083669477,
+      "low": 0.20316722394802297,
+      "high": 0.3178266916315771,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt_stt_minus_energy": {
+      "point": 0.18039883960136527,
+      "low": 0.12566392338394936,
+      "high": 0.23301749271950328,
+      "valid_draws": 2000
+    },
+    "all_age_blend/wave": {
+      "point": 0.19616482344248676,
+      "low": 0.1355524083750774,
+      "high": 0.2545097298926907,
+      "valid_draws": 2000
+    },
+    "all_age_blend/wave_minus_energy": {
+      "point": 0.09417488449578046,
+      "low": 0.03612142516110412,
+      "high": 0.15045508758454343,
+      "valid_draws": 2000
+    },
+    "all_age_blend/top1_hit": {
+      "point": 0.4234527687296417,
+      "low": 0.36823961614989226,
+      "high": 0.4765203923593185,
+      "valid_draws": 2000
+    },
+    "all_age_blend/top1_hit_minus_energy": {
+      "point": 0.0,
+      "low": -0.07963059366323695,
+      "high": 0.08305698952210579,
+      "valid_draws": 2000
+    },
+    "all_age_blend/top3_hit": {
+      "point": 0.6905537459283387,
+      "low": 0.638091133004926,
+      "high": 0.7408697007816447,
+      "valid_draws": 2000
+    },
+    "all_age_blend/top3_hit_minus_energy": {
+      "point": 0.1368078175895765,
+      "low": 0.05677122672946203,
+      "high": 0.21382753759398487,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/flagged": {
+      "point": 0.6411657559198543,
+      "low": 0.5978250842291032,
+      "high": 0.6823984908186291,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/original": {
+      "point": 0.8248132524078557,
+      "low": 0.800895167321162,
+      "high": 0.8469870315079628,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/full_score": {
+      "point": 0.35871818577483294,
+      "low": 0.33055627881113275,
+      "high": 0.38697556483912193,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/full_drop": {
+      "point": 0.46609506663302286,
+      "low": 0.44118894361561267,
+      "high": 0.4889385413849696,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/swap_full_drop": {
+      "point": -0.023663119480191005,
+      "low": -0.02820601292225967,
+      "high": -0.019192293147054028,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/grid_abs": {
+      "point": 0.009910561464841787,
+      "low": 0.008943781439783076,
+      "high": 0.010900645547297179,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/swap_grid_abs": {
+      "point": 0.0028844779531202775,
+      "low": 0.0024745338747369713,
+      "high": 0.003369330004631801,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/lead_abs": {
+      "point": 0.024107157672768647,
+      "low": 0.02184295642172547,
+      "high": 0.02638521219582675,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/swap_lead_abs": {
+      "point": 0.005300613468168932,
+      "low": 0.004564442642874968,
+      "high": 0.0061550982774545146,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/grid_flip": {
+      "point": 0.1590909090909091,
+      "low": 0.12202380952380952,
+      "high": 0.19749755234391136,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/lead_flip": {
+      "point": 0.22443181818181818,
+      "low": 0.18181818181818182,
+      "high": 0.2691245369361516,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/component_flip": {
+      "point": 0.4659090909090909,
+      "low": 0.4155816246790459,
+      "high": 0.5164195505986551,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/full_flip": {
+      "point": 0.8551136363636364,
+      "low": 0.8163249938529629,
+      "high": 0.8901761284360447,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/swap_grid_flip": {
+      "point": 0.03125,
+      "low": 0.014324606731483523,
+      "high": 0.05113636363636364,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/swap_lead_flip": {
+      "point": 0.028409090909090908,
+      "low": 0.011661807580174927,
+      "high": 0.04657713966212707,
+      "valid_draws": 2000
+    },
+    "all_age_blend/abnormal/swap_full_flip": {
+      "point": 0.005681818181818182,
+      "low": 0.0,
+      "high": 0.014206574675324664,
+      "valid_draws": 2000
+    },
+    "all_age_blend/normal/flagged": {
+      "point": 0.023333333333333334,
+      "low": 0.006968641114982578,
+      "high": 0.04152972523299129,
+      "valid_draws": 2000
+    },
+    "all_age_blend/normal/original": {
+      "point": 0.24727656374072993,
+      "low": 0.2169385498754293,
+      "high": 0.2777843406154744,
+      "valid_draws": 2000
+    },
+    "all_age_blend/normal/full_score": {
+      "point": 0.0797050328684654,
+      "low": 0.06287344577689362,
+      "high": 0.09786217830881948,
+      "valid_draws": 2000
+    },
+    "all_age_blend/normal/full_drop": {
+      "point": 0.1675715308722645,
+      "low": 0.14435587294784377,
+      "high": 0.19126785270620603,
+      "valid_draws": 2000
+    },
+    "all_age_blend/normal/swap_full_drop": {
+      "point": -0.038248287615352726,
+      "low": -0.04504069526102342,
+      "high": -0.031850469580080615,
+      "valid_draws": 2000
+    },
+    "all_age_blend/normal/grid_abs": {
+      "point": 0.011074001042057654,
+      "low": 0.009933738769166972,
+      "high": 0.012208875211920586,
+      "valid_draws": 2000
+    },
+    "all_age_blend/normal/swap_grid_abs": {
+      "point": 0.003556271929942687,
+      "low": 0.0030575062638087225,
+      "high": 0.004114548316856698,
+      "valid_draws": 2000
+    },
+    "all_age_blend/normal/lead_abs": {
+      "point": 0.024554164238503987,
+      "low": 0.02191042110407261,
+      "high": 0.02723622204789397,
+      "valid_draws": 2000
+    },
+    "all_age_blend/normal/swap_lead_abs": {
+      "point": 0.006765272981423019,
+      "low": 0.005728599881438926,
+      "high": 0.007828424301622092,
+      "valid_draws": 2000
+    },
+    "all_age_blend/normal/grid_flip": {
+      "point": 0.2857142857142857,
+      "low": 0.0,
+      "high": 0.6666666666666666,
+      "valid_draws": 1995
+    },
+    "all_age_blend/normal/lead_flip": {
+      "point": 0.2857142857142857,
+      "low": 0.0,
+      "high": 0.6666666666666666,
+      "valid_draws": 1995
+    },
+    "all_age_blend/normal/component_flip": {
+      "point": 0.42857142857142855,
+      "low": 0.0,
+      "high": 0.8571428571428571,
+      "valid_draws": 1995
+    },
+    "all_age_blend/normal/full_flip": {
+      "point": 0.7142857142857143,
+      "low": 0.3333333333333333,
+      "high": 1.0,
+      "valid_draws": 1995
+    },
+    "all_age_blend/normal/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 1995
+    },
+    "all_age_blend/normal/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 1995
+    },
+    "all_age_blend/normal/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 1995
+    },
+    "all_age_blend/inferior/flagged": {
+      "point": 0.5317919075144508,
+      "low": 0.4539877300613497,
+      "high": 0.6084402828706129,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/original": {
+      "point": 0.7402291659833529,
+      "low": 0.6871471025624452,
+      "high": 0.7864262843379272,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/full_score": {
+      "point": 0.2518255000193235,
+      "low": 0.20838364427953904,
+      "high": 0.297210695147201,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/full_drop": {
+      "point": 0.48840366596402923,
+      "low": 0.4383554962562348,
+      "high": 0.5350573412646278,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/swap_full_drop": {
+      "point": -0.028365062631571184,
+      "low": -0.038007345302629815,
+      "high": -0.019414542812163475,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/grid_abs": {
+      "point": 0.010890060516068861,
+      "low": 0.009212440149922398,
+      "high": 0.01266133724473619,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/swap_grid_abs": {
+      "point": 0.0036415973032064737,
+      "low": 0.002743959460891459,
+      "high": 0.004769299308298272,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/lead_abs": {
+      "point": 0.026407103850162407,
+      "low": 0.022689358133358806,
+      "high": 0.03029631490381739,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/swap_lead_abs": {
+      "point": 0.006630226651758688,
+      "low": 0.005092152191299985,
+      "high": 0.008588935743198411,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/grid_flip": {
+      "point": 0.16304347826086957,
+      "low": 0.09345794392523364,
+      "high": 0.2413793103448276,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/lead_flip": {
+      "point": 0.25,
+      "low": 0.16455696202531644,
+      "high": 0.3421174463937621,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/component_flip": {
+      "point": 0.5434782608695652,
+      "low": 0.43617021276595747,
+      "high": 0.6476217532467533,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/full_flip": {
+      "point": 0.9130434782608695,
+      "low": 0.8526315789473684,
+      "high": 0.9674000701262271,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/swap_grid_flip": {
+      "point": 0.03260869565217391,
+      "low": 0.0,
+      "high": 0.07408392434988174,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/swap_lead_flip": {
+      "point": 0.03260869565217391,
+      "low": 0.0,
+      "high": 0.07408392434988174,
+      "valid_draws": 2000
+    },
+    "all_age_blend/inferior/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/flagged": {
+      "point": 0.8432835820895522,
+      "low": 0.7777590090090091,
+      "high": 0.902782960199005,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/original": {
+      "point": 0.9205716932151923,
+      "low": 0.8881090330271765,
+      "high": 0.9487391812508097,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/full_score": {
+      "point": 0.4464763594228251,
+      "low": 0.38866136276109403,
+      "high": 0.5037602670965003,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/full_drop": {
+      "point": 0.47409533379236724,
+      "low": 0.4242598050130642,
+      "high": 0.5236965844750759,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/swap_full_drop": {
+      "point": -0.013389830993527153,
+      "low": -0.02014788355042769,
+      "high": -0.007726261186062099,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/grid_abs": {
+      "point": 0.005899690164861401,
+      "low": 0.0043562918778858985,
+      "high": 0.007539808571059374,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/swap_grid_abs": {
+      "point": 0.001461886143731588,
+      "low": 0.0009929137284219762,
+      "high": 0.002017939175351162,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/lead_abs": {
+      "point": 0.014433113464193868,
+      "low": 0.010810372552941868,
+      "high": 0.018176151090261463,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/swap_lead_abs": {
+      "point": 0.002701647058300524,
+      "low": 0.00184021427318596,
+      "high": 0.0036957292897314637,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/grid_flip": {
+      "point": 0.1504424778761062,
+      "low": 0.08653846153846154,
+      "high": 0.21666666666666667,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/lead_flip": {
+      "point": 0.20353982300884957,
+      "low": 0.13511810129457189,
+      "high": 0.2767967644978783,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/component_flip": {
+      "point": 0.37168141592920356,
+      "low": 0.28568524970963993,
+      "high": 0.45873419290850476,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/full_flip": {
+      "point": 0.8761061946902655,
+      "low": 0.8135593220338984,
+      "high": 0.9344300597518003,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/swap_grid_flip": {
+      "point": 0.008849557522123894,
+      "low": 0.0,
+      "high": 0.030308813324080468,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_blend/anterior/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/flagged": {
+      "point": 0.9743589743589743,
+      "low": 0.9142857142857143,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/original": {
+      "point": 0.9908925367853414,
+      "low": 0.983649785500652,
+      "high": 0.9962515990348396,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/full_score": {
+      "point": 0.7343499780986538,
+      "low": 0.678657285041321,
+      "high": 0.7927501018454546,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/full_drop": {
+      "point": 0.25654255868668774,
+      "low": 0.20191202763360705,
+      "high": 0.3095516600169771,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/swap_full_drop": {
+      "point": -0.002843830069245037,
+      "low": -0.005139885700940771,
+      "high": -0.000978089666752554,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/grid_abs": {
+      "point": 0.001002604153047844,
+      "low": 0.0005125640841660007,
+      "high": 0.0015803400595168762,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/swap_grid_abs": {
+      "point": 0.00026674128972274815,
+      "low": 0.00011470198550682968,
+      "high": 0.0004573922774241885,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/lead_abs": {
+      "point": 0.0025940073572483274,
+      "low": 0.0013630309577846523,
+      "high": 0.004036743657914685,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/swap_lead_abs": {
+      "point": 0.00048137589770609737,
+      "low": 0.00020939489260317557,
+      "high": 0.0008145423011353362,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/lead_flip": {
+      "point": 0.02631578947368421,
+      "low": 0.0,
+      "high": 0.08823529411764706,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/component_flip": {
+      "point": 0.07894736842105263,
+      "low": 0.0,
+      "high": 0.17779761904761895,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/full_flip": {
+      "point": 0.7631578947368421,
+      "low": 0.6216216216216216,
+      "high": 0.8918918918918919,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lbbb/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/flagged": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/original": {
+      "point": 0.9938950437882305,
+      "low": 0.9906107998311101,
+      "high": 0.9965360940651972,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/full_score": {
+      "point": 0.5992649631334174,
+      "low": 0.4808462492925891,
+      "high": 0.7169491667959993,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/full_drop": {
+      "point": 0.3946300806548133,
+      "low": 0.2776780553752101,
+      "high": 0.5112320897226454,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/swap_full_drop": {
+      "point": -0.00048215928508110257,
+      "low": -0.0011121162692092638,
+      "high": 1.2426555631598214e-05,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/grid_abs": {
+      "point": 0.0018396747713967513,
+      "low": 0.0009175044361672272,
+      "high": 0.002891922813712,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/swap_grid_abs": {
+      "point": 0.0004508564685134443,
+      "low": 7.1150859875659e-05,
+      "high": 0.0010687373156567706,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/lead_abs": {
+      "point": 0.006764179978070636,
+      "low": 0.0036539813007404926,
+      "high": 0.010141581089846025,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/swap_lead_abs": {
+      "point": 0.0010977107567667287,
+      "low": 0.000144659636698362,
+      "high": 0.0028272078409893003,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/grid_flip": {
+      "point": 0.17391304347826086,
+      "low": 0.04,
+      "high": 0.34782608695652173,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/lead_flip": {
+      "point": 0.34782608695652173,
+      "low": 0.15,
+      "high": 0.5555555555555556,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/component_flip": {
+      "point": 0.391304347826087,
+      "low": 0.1875,
+      "high": 0.6112179487179482,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/full_flip": {
+      "point": 0.8260869565217391,
+      "low": 0.6538461538461539,
+      "high": 0.9615384615384616,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_blend/rbbb/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/flagged": {
+      "point": 0.4777777777777778,
+      "low": 0.4037239018184539,
+      "high": 0.56,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/original": {
+      "point": 0.7772323779122189,
+      "low": 0.7377247083799545,
+      "high": 0.8149139284537619,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/full_score": {
+      "point": 0.28399942792480914,
+      "low": 0.23872813493371695,
+      "high": 0.33181747095111086,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/full_drop": {
+      "point": 0.4932329499874098,
+      "low": 0.45339666024897557,
+      "high": 0.5341719090849911,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/swap_full_drop": {
+      "point": -0.03426477983318326,
+      "low": -0.04323293861624082,
+      "high": -0.02602037615885852,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/grid_abs": {
+      "point": 0.014916362283976713,
+      "low": 0.013088753067495346,
+      "high": 0.01672322134239954,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/swap_grid_abs": {
+      "point": 0.004093981724851574,
+      "low": 0.003448865623749797,
+      "high": 0.004821755905191947,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/lead_abs": {
+      "point": 0.03597567203134224,
+      "low": 0.03134190377479377,
+      "high": 0.04045714121007368,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/swap_lead_abs": {
+      "point": 0.007538699278011377,
+      "low": 0.006232838127165066,
+      "high": 0.009041494110485007,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/grid_flip": {
+      "point": 0.23255813953488372,
+      "low": 0.1444047619047619,
+      "high": 0.32558139534883723,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/lead_flip": {
+      "point": 0.27906976744186046,
+      "low": 0.1839080459770115,
+      "high": 0.37805702043506917,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/component_flip": {
+      "point": 0.6976744186046512,
+      "low": 0.5949281560041053,
+      "high": 0.7912087912087912,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/full_flip": {
+      "point": 0.813953488372093,
+      "low": 0.7241379310344828,
+      "high": 0.8902439024390244,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/swap_grid_flip": {
+      "point": 0.08139534883720931,
+      "low": 0.024096385542168676,
+      "high": 0.14285714285714285,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/swap_lead_flip": {
+      "point": 0.08139534883720931,
+      "low": 0.024096385542168676,
+      "high": 0.14285714285714285,
+      "valid_draws": 2000
+    },
+    "all_age_blend/stt/swap_full_flip": {
+      "point": 0.023255813953488372,
+      "low": 0.0,
+      "high": 0.05797522750252778,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/territory": {
+      "point": 0.189085372369953,
+      "low": 0.14260876176963372,
+      "high": 0.23264431507317557,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/territory_minus_energy": {
+      "point": 0.12870670989370472,
+      "low": 0.08189337971604775,
+      "high": 0.17194457143340336,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/swap_territory": {
+      "point": 0.06098842601447578,
+      "low": -0.00260922299957876,
+      "high": 0.11820827990473658,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/bbb_lead": {
+      "point": 0.4904789358940652,
+      "low": 0.3930473072728579,
+      "high": 0.5787696464063766,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/bbb_lead_minus_energy": {
+      "point": 0.5730796789806427,
+      "low": 0.46211484343073267,
+      "high": 0.6787476427290011,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/qrs_bbb": {
+      "point": 0.2317929378118183,
+      "low": 0.1439334929945731,
+      "high": 0.3127342106899764,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/qrs_bbb_minus_energy": {
+      "point": 0.10963942868398813,
+      "low": 0.02842213095759641,
+      "high": 0.18847088539154827,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt_stt": {
+      "point": 0.34697228571832284,
+      "low": 0.29138328091084864,
+      "high": 0.3992346862823077,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt_stt_minus_energy": {
+      "point": 0.2651459169527404,
+      "low": 0.21337661459333077,
+      "high": 0.3149048040592704,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/wave": {
+      "point": 0.2893826117650706,
+      "low": 0.23454463203497836,
+      "high": 0.34228742213696983,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/wave_minus_energy": {
+      "point": 0.18739267281836428,
+      "low": 0.13667158558081577,
+      "high": 0.23703423442379654,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/top1_hit": {
+      "point": 0.3941368078175896,
+      "low": 0.3390328104286346,
+      "high": 0.45106304985337237,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/top1_hit_minus_energy": {
+      "point": -0.02931596091205213,
+      "low": -0.10736778752815096,
+      "high": 0.05329258098223615,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/top3_hit": {
+      "point": 0.7231270358306189,
+      "low": 0.6729424202992843,
+      "high": 0.7714309366130558,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/top3_hit_minus_energy": {
+      "point": 0.16938110749185664,
+      "low": 0.09634237535819898,
+      "high": 0.24399220849920042,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/flagged": {
+      "point": 0.7814207650273224,
+      "low": 0.7445607588045355,
+      "high": 0.8154135249541735,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/original": {
+      "point": 0.8314299629000812,
+      "low": 0.8084187820181341,
+      "high": 0.8517606367605661,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/full_score": {
+      "point": 0.1596110792586934,
+      "low": 0.14401215752224386,
+      "high": 0.17764829467518053,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/full_drop": {
+      "point": 0.6718188836413878,
+      "low": 0.6478679838095946,
+      "high": 0.6935775340557586,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/swap_full_drop": {
+      "point": -0.01273586116655727,
+      "low": -0.017633441504719842,
+      "high": -0.007968712033514513,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/grid_abs": {
+      "point": 0.011983754922416871,
+      "low": 0.010962595511794647,
+      "high": 0.013062500839446916,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/swap_grid_abs": {
+      "point": 0.00363828168551063,
+      "low": 0.0029642396190429957,
+      "high": 0.004540716846499028,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/lead_abs": {
+      "point": 0.029329258151478594,
+      "low": 0.026880078483841587,
+      "high": 0.031869100443180934,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/swap_lead_abs": {
+      "point": 0.006949572692813212,
+      "low": 0.005620895061428416,
+      "high": 0.008632827501535047,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/grid_flip": {
+      "point": 0.1888111888111888,
+      "low": 0.15110907704042717,
+      "high": 0.22625185085475835,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/lead_flip": {
+      "point": 0.19114219114219114,
+      "low": 0.15330995956100607,
+      "high": 0.22858144192256336,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/component_flip": {
+      "point": 0.5524475524475524,
+      "low": 0.5057997942375806,
+      "high": 0.5985405846434588,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/full_flip": {
+      "point": 0.9463869463869464,
+      "low": 0.9239898146830565,
+      "high": 0.9664272608758631,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/swap_grid_flip": {
+      "point": 0.03496503496503497,
+      "low": 0.018015998060841112,
+      "high": 0.05336511386930371,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/swap_lead_flip": {
+      "point": 0.03263403263403263,
+      "low": 0.016546516478932,
+      "high": 0.05000284738041001,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/abnormal/swap_full_flip": {
+      "point": 0.009324009324009324,
+      "low": 0.0022727272727272726,
+      "high": 0.01905104487838299,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/flagged": {
+      "point": 0.04666666666666667,
+      "low": 0.023972602739726026,
+      "high": 0.07191842416477776,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/original": {
+      "point": 0.18479726083710243,
+      "low": 0.16095111126598596,
+      "high": 0.20990277735776508,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/full_score": {
+      "point": 0.03768339935010197,
+      "low": 0.03250973347269585,
+      "high": 0.04367485803792442,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/full_drop": {
+      "point": 0.14711386148700042,
+      "low": 0.12506820101208876,
+      "high": 0.1702247259626314,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/swap_full_drop": {
+      "point": -0.012135727628326992,
+      "low": -0.018625772226061283,
+      "high": -0.006289520295737368,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/grid_abs": {
+      "point": 0.011431069278708413,
+      "low": 0.01005837670974342,
+      "high": 0.012911513384112285,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/swap_grid_abs": {
+      "point": 0.0037861832577484257,
+      "low": 0.0030587286366025087,
+      "high": 0.004600269423998248,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/lead_abs": {
+      "point": 0.025803523366785295,
+      "low": 0.022586334604893742,
+      "high": 0.029299750728924816,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/swap_lead_abs": {
+      "point": 0.006822461693117255,
+      "low": 0.005410760602837538,
+      "high": 0.00837872116615855,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/grid_flip": {
+      "point": 0.7142857142857143,
+      "low": 0.4666666666666667,
+      "high": 0.9375919117647054,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/lead_flip": {
+      "point": 0.7142857142857143,
+      "low": 0.4666666666666667,
+      "high": 0.9375919117647054,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/component_flip": {
+      "point": 0.8571428571428571,
+      "low": 0.66625,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/full_flip": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/swap_grid_flip": {
+      "point": 0.35714285714285715,
+      "low": 0.1111111111111111,
+      "high": 0.625,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/swap_lead_flip": {
+      "point": 0.35714285714285715,
+      "low": 0.1111111111111111,
+      "high": 0.625,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/normal/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/flagged": {
+      "point": 0.6763005780346821,
+      "low": 0.6047869377524022,
+      "high": 0.7453521423307715,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/original": {
+      "point": 0.7472185916772742,
+      "low": 0.697564760305937,
+      "high": 0.7925824229919036,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/full_score": {
+      "point": 0.10493484180900313,
+      "low": 0.08315049884406306,
+      "high": 0.12838328211566416,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/full_drop": {
+      "point": 0.6422837498682712,
+      "low": 0.5932531128088175,
+      "high": 0.686032395679326,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/swap_full_drop": {
+      "point": -0.012729541957218262,
+      "low": -0.021829421533740085,
+      "high": -0.004449177216150018,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/grid_abs": {
+      "point": 0.014319743984147166,
+      "low": 0.012301431018786288,
+      "high": 0.016461437659241115,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/swap_grid_abs": {
+      "point": 0.005428739987018426,
+      "low": 0.003701025302432736,
+      "high": 0.007817963739637071,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/lead_abs": {
+      "point": 0.034963219894272146,
+      "low": 0.030387401508424103,
+      "high": 0.03999225766253795,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/swap_lead_abs": {
+      "point": 0.010363617723168014,
+      "low": 0.007191650905633706,
+      "high": 0.014823596178133103,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/grid_flip": {
+      "point": 0.21367521367521367,
+      "low": 0.1415070516485611,
+      "high": 0.288135593220339,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/lead_flip": {
+      "point": 0.21367521367521367,
+      "low": 0.1415070516485611,
+      "high": 0.288135593220339,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/component_flip": {
+      "point": 0.5641025641025641,
+      "low": 0.4672741433021807,
+      "high": 0.6554621848739496,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/full_flip": {
+      "point": 0.9743589743589743,
+      "low": 0.9411764705882353,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/swap_grid_flip": {
+      "point": 0.05128205128205128,
+      "low": 0.015370370370370373,
+      "high": 0.09566086956521734,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/swap_lead_flip": {
+      "point": 0.042735042735042736,
+      "low": 0.008620689655172414,
+      "high": 0.08547008547008547,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/inferior/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/flagged": {
+      "point": 0.917910447761194,
+      "low": 0.8676470588235294,
+      "high": 0.9615458015267175,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/original": {
+      "point": 0.9228686287809397,
+      "low": 0.8954291956173158,
+      "high": 0.94755244650475,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/full_score": {
+      "point": 0.1700525149789937,
+      "low": 0.1379702482933997,
+      "high": 0.20614069055380146,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/full_drop": {
+      "point": 0.7528161138019459,
+      "low": 0.7106745697127038,
+      "high": 0.7905926025267922,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/swap_full_drop": {
+      "point": -0.0069041252762211,
+      "low": -0.012774883928269719,
+      "high": -0.0021633261853875613,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/grid_abs": {
+      "point": 0.007274234423880211,
+      "low": 0.0057607159860902655,
+      "high": 0.008812181118799358,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/swap_grid_abs": {
+      "point": 0.0015965665612761072,
+      "low": 0.0011322426954764127,
+      "high": 0.002097761778772001,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/lead_abs": {
+      "point": 0.018526826998371132,
+      "low": 0.01484961163968686,
+      "high": 0.022279403212998528,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/swap_lead_abs": {
+      "point": 0.003002513556345034,
+      "low": 0.002057463680985663,
+      "high": 0.004013833181911277,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/grid_flip": {
+      "point": 0.12195121951219512,
+      "low": 0.06665441176470588,
+      "high": 0.1834990825688073,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/lead_flip": {
+      "point": 0.13008130081300814,
+      "low": 0.07352941176470588,
+      "high": 0.19231651376146786,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/component_flip": {
+      "point": 0.43902439024390244,
+      "low": 0.3495838172667441,
+      "high": 0.5280113821138211,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/full_flip": {
+      "point": 0.9512195121951219,
+      "low": 0.9075525210084033,
+      "high": 0.9840031746031745,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/swap_grid_flip": {
+      "point": 0.008130081300813009,
+      "low": 0.0,
+      "high": 0.02679174710424707,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/swap_lead_flip": {
+      "point": 0.008130081300813009,
+      "low": 0.0,
+      "high": 0.02679174710424707,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/anterior/swap_full_flip": {
+      "point": 0.008130081300813009,
+      "low": 0.0,
+      "high": 0.02679174710424707,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/flagged": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/original": {
+      "point": 0.9954930511195655,
+      "low": 0.9922038943330553,
+      "high": 0.9975534666202273,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/full_score": {
+      "point": 0.46041567077560547,
+      "low": 0.4072494845478629,
+      "high": 0.517928068521241,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/full_drop": {
+      "point": 0.5350773803439599,
+      "low": 0.4788668053833506,
+      "high": 0.5879986592076801,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/swap_full_drop": {
+      "point": -0.001251487426591766,
+      "low": -0.0037511120363895928,
+      "high": 0.00020887129407803,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/grid_abs": {
+      "point": 0.0005865671121486807,
+      "low": 0.0002933422406302163,
+      "high": 0.0010247613589018088,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/swap_grid_abs": {
+      "point": 0.0001932059066256995,
+      "low": 3.6019674451302514e-05,
+      "high": 0.00047197014477414156,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/lead_abs": {
+      "point": 0.0018508132319683596,
+      "low": 0.0008286918270869895,
+      "high": 0.003545038805115887,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/swap_lead_abs": {
+      "point": 0.00032819230991168057,
+      "low": 6.735040154354739e-05,
+      "high": 0.0007378397072754537,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/component_flip": {
+      "point": 0.05128205128205128,
+      "low": 0.0,
+      "high": 0.13043478260869565,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/full_flip": {
+      "point": 0.9230769230769231,
+      "low": 0.8333333333333334,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lbbb/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/flagged": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/original": {
+      "point": 0.9859363599783499,
+      "low": 0.980827273575451,
+      "high": 0.9908052847052362,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/full_score": {
+      "point": 0.33086085888431416,
+      "low": 0.25845439074899185,
+      "high": 0.40725902445472006,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/full_drop": {
+      "point": 0.6550755010940358,
+      "low": 0.5755828214754188,
+      "high": 0.7292510204702841,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/swap_full_drop": {
+      "point": -0.00023163748153536665,
+      "low": -0.002544729257839149,
+      "high": 0.0018130643480678977,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/grid_abs": {
+      "point": 0.004550691034569386,
+      "low": 0.0027695447447419765,
+      "high": 0.0065052475822512485,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/swap_grid_abs": {
+      "point": 0.0006940029204379024,
+      "low": 0.00016427660481346687,
+      "high": 0.001561879060526739,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/lead_abs": {
+      "point": 0.015971976501688922,
+      "low": 0.009856466651339517,
+      "high": 0.022669969137034552,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/swap_lead_abs": {
+      "point": 0.0018468953572949648,
+      "low": 0.00025334410661657106,
+      "high": 0.0046897502039206064,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/grid_flip": {
+      "point": 0.21739130434782608,
+      "low": 0.05263157894736842,
+      "high": 0.4002272727272715,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/lead_flip": {
+      "point": 0.21739130434782608,
+      "low": 0.05263157894736842,
+      "high": 0.4002272727272715,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/component_flip": {
+      "point": 0.34782608695652173,
+      "low": 0.15789473684210525,
+      "high": 0.5555555555555556,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/full_flip": {
+      "point": 0.9565217391304348,
+      "low": 0.8571428571428571,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/rbbb/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/flagged": {
+      "point": 0.7055555555555556,
+      "low": 0.6349206349206349,
+      "high": 0.775,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/original": {
+      "point": 0.7890059541231393,
+      "low": 0.7506528921160834,
+      "high": 0.8262211855091254,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/full_score": {
+      "point": 0.11733170532384515,
+      "low": 0.09114254438652616,
+      "high": 0.14691920057860441,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/full_drop": {
+      "point": 0.6716742487992943,
+      "low": 0.6343401385805636,
+      "high": 0.7114358218629752,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/swap_full_drop": {
+      "point": -0.021169380906195346,
+      "low": -0.03280235792800706,
+      "high": -0.010909080160577704,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/grid_abs": {
+      "point": 0.01666375732878089,
+      "low": 0.014823190536057127,
+      "high": 0.018647233859806638,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/swap_grid_abs": {
+      "point": 0.00456004228250931,
+      "low": 0.0036425186157291907,
+      "high": 0.005719572080254968,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/lead_abs": {
+      "point": 0.039616631611585136,
+      "low": 0.03526008601377106,
+      "high": 0.0441147572170294,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/swap_lead_abs": {
+      "point": 0.008693303513287847,
+      "low": 0.006769270022192254,
+      "high": 0.011043205522819146,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/grid_flip": {
+      "point": 0.28346456692913385,
+      "low": 0.2068711967545639,
+      "high": 0.3643427276310603,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/lead_flip": {
+      "point": 0.28346456692913385,
+      "low": 0.2063323201621074,
+      "high": 0.3649857575218087,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/component_flip": {
+      "point": 0.84251968503937,
+      "low": 0.7711728347068886,
+      "high": 0.9032328805885681,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/full_flip": {
+      "point": 0.9212598425196851,
+      "low": 0.871980303030303,
+      "high": 0.9626865671641791,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/swap_grid_flip": {
+      "point": 0.06299212598425197,
+      "low": 0.024188709677419356,
+      "high": 0.10909472880061112,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/swap_lead_flip": {
+      "point": 0.06299212598425197,
+      "low": 0.023990551181102365,
+      "high": 0.10687022900763359,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/stt/swap_full_flip": {
+      "point": 0.023622047244094488,
+      "low": 0.0,
+      "high": 0.05217391304347826,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/territory": {
+      "point": 0.2269479242185892,
+      "low": 0.17198104393491573,
+      "high": 0.2823965005776971,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/territory_minus_energy": {
+      "point": 0.16656926174234093,
+      "low": 0.11879167053867172,
+      "high": 0.2158749530222329,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/swap_territory": {
+      "point": 0.03728120913833542,
+      "low": -0.019681417140546775,
+      "high": 0.09608287656099218,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/bbb_lead": {
+      "point": 0.32285510581332116,
+      "low": 0.24967000339449727,
+      "high": 0.39918164834872866,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/bbb_lead_minus_energy": {
+      "point": 0.40545584889989866,
+      "low": 0.3137687416568428,
+      "high": 0.49532195511408444,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/qrs_bbb": {
+      "point": 0.27450881635808444,
+      "low": 0.17307194873148934,
+      "high": 0.36332223774883327,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/qrs_bbb_minus_energy": {
+      "point": 0.15235530723025426,
+      "low": 0.04956818346732456,
+      "high": 0.23911124057574057,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt_stt": {
+      "point": 0.3085226516884113,
+      "low": 0.25147167297928,
+      "high": 0.36220460291675705,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt_stt_minus_energy": {
+      "point": 0.2266962829228289,
+      "low": 0.17598702628087032,
+      "high": 0.27734768036705815,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/wave": {
+      "point": 0.2915157340232479,
+      "low": 0.22687387022196506,
+      "high": 0.34797660781742035,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/wave_minus_energy": {
+      "point": 0.18952579507654158,
+      "low": 0.12865342651569728,
+      "high": 0.2455991016832078,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/top1_hit": {
+      "point": 0.5928338762214984,
+      "low": 0.5374006444683137,
+      "high": 0.6486632016632016,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/top1_hit_minus_energy": {
+      "point": 0.1693811074918567,
+      "low": 0.09001777220755477,
+      "high": 0.25001984126984117,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/top3_hit": {
+      "point": 0.8403908794788274,
+      "low": 0.7971460742882562,
+      "high": 0.8817669779652264,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/top3_hit_minus_energy": {
+      "point": 0.28664495114006516,
+      "low": 0.2269718846469462,
+      "high": 0.3451641798886204,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/flagged": {
+      "point": 0.7194899817850637,
+      "low": 0.6799241088614065,
+      "high": 0.755643991036838,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/original": {
+      "point": 0.8137164212709413,
+      "low": 0.7903818625825257,
+      "high": 0.835947375576574,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/full_score": {
+      "point": 0.23879970135307993,
+      "low": 0.21611207493797188,
+      "high": 0.2628524402441484,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/full_drop": {
+      "point": 0.5749167199178613,
+      "low": 0.5492519325906426,
+      "high": 0.598216966056736,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/swap_full_drop": {
+      "point": -0.03630939785831978,
+      "low": -0.04283991645638414,
+      "high": -0.03032770974710872,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/grid_abs": {
+      "point": 0.013628114243570768,
+      "low": 0.012377527319684148,
+      "high": 0.014886425103877351,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/swap_grid_abs": {
+      "point": 0.003713965612109425,
+      "low": 0.003161824277212642,
+      "high": 0.004333452824130443,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/lead_abs": {
+      "point": 0.03395541721376389,
+      "low": 0.030917432361537486,
+      "high": 0.03687420787717922,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/swap_lead_abs": {
+      "point": 0.007676841857709861,
+      "low": 0.006466131461818679,
+      "high": 0.009040053810422494,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/grid_flip": {
+      "point": 0.1848101265822785,
+      "low": 0.14639728796428872,
+      "high": 0.2236188978310576,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/lead_flip": {
+      "point": 0.23291139240506328,
+      "low": 0.191521772580397,
+      "high": 0.27540106951871657,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/component_flip": {
+      "point": 0.4708860759493671,
+      "low": 0.42232883947884703,
+      "high": 0.5214132895450052,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/full_flip": {
+      "point": 0.8632911392405064,
+      "low": 0.8251200738916257,
+      "high": 0.8952618453865336,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/swap_grid_flip": {
+      "point": 0.005063291139240506,
+      "low": 0.0,
+      "high": 0.01272264631043257,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/swap_lead_flip": {
+      "point": 0.005063291139240506,
+      "low": 0.0,
+      "high": 0.01272264631043257,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/abnormal/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/normal/flagged": {
+      "point": 0.023333333333333334,
+      "low": 0.007090949955049446,
+      "high": 0.04152609573241059,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/normal/original": {
+      "point": 0.1904405736361219,
+      "low": 0.16668197131062112,
+      "high": 0.21255108796011443,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/normal/full_score": {
+      "point": 0.027788193601936732,
+      "low": 0.021209099284217985,
+      "high": 0.03622650729606083,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/normal/full_drop": {
+      "point": 0.1626523800341852,
+      "low": 0.14145310542393433,
+      "high": 0.18375893032811422,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/normal/swap_full_drop": {
+      "point": -0.04807937688593054,
+      "low": -0.05767288957770889,
+      "high": -0.03919334179843255,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/normal/grid_abs": {
+      "point": 0.013302797842315221,
+      "low": 0.011996067718190086,
+      "high": 0.014649278282301932,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/normal/swap_grid_abs": {
+      "point": 0.004461928975952906,
+      "low": 0.0037611488728230905,
+      "high": 0.005232673661238784,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/normal/lead_abs": {
+      "point": 0.030208185508112908,
+      "low": 0.02698280460750463,
+      "high": 0.03355020760493939,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/normal/swap_lead_abs": {
+      "point": 0.009478001848686166,
+      "low": 0.007786403745649125,
+      "high": 0.011350699727235111,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/normal/grid_flip": {
+      "point": 0.42857142857142855,
+      "low": 0.0,
+      "high": 0.8345238095238084,
+      "valid_draws": 1999
+    },
+    "ptb_baseline_xecg/normal/lead_flip": {
+      "point": 0.5714285714285714,
+      "low": 0.16666666666666666,
+      "high": 1.0,
+      "valid_draws": 1999
+    },
+    "ptb_baseline_xecg/normal/component_flip": {
+      "point": 0.8571428571428571,
+      "low": 0.5,
+      "high": 1.0,
+      "valid_draws": 1999
+    },
+    "ptb_baseline_xecg/normal/full_flip": {
+      "point": 0.8571428571428571,
+      "low": 0.5,
+      "high": 1.0,
+      "valid_draws": 1999
+    },
+    "ptb_baseline_xecg/normal/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 1999
+    },
+    "ptb_baseline_xecg/normal/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 1999
+    },
+    "ptb_baseline_xecg/normal/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 1999
+    },
+    "ptb_baseline_xecg/inferior/flagged": {
+      "point": 0.6358381502890174,
+      "low": 0.5609723835333592,
+      "high": 0.7078704026798799,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/original": {
+      "point": 0.748308309733008,
+      "low": 0.6992957197216565,
+      "high": 0.7941147533344916,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/full_score": {
+      "point": 0.15006988533459725,
+      "low": 0.11778083471625829,
+      "high": 0.1854937574434959,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/full_drop": {
+      "point": 0.5982384243984107,
+      "low": 0.5505917915396007,
+      "high": 0.6444149820258542,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/swap_full_drop": {
+      "point": -0.03739872100421848,
+      "low": -0.04926882413713836,
+      "high": -0.027038993374829883,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/grid_abs": {
+      "point": 0.01419492605603852,
+      "low": 0.012137164369518456,
+      "high": 0.016304344660345103,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/swap_grid_abs": {
+      "point": 0.00394791279150755,
+      "low": 0.0030860514456351176,
+      "high": 0.004968464286182359,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/lead_abs": {
+      "point": 0.037080287911482664,
+      "low": 0.03213205380654175,
+      "high": 0.04200830485387418,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/swap_lead_abs": {
+      "point": 0.007968656730125685,
+      "low": 0.006016325407735115,
+      "high": 0.010353200019336704,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/grid_flip": {
+      "point": 0.24545454545454545,
+      "low": 0.16822429906542055,
+      "high": 0.3333333333333333,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/lead_flip": {
+      "point": 0.35454545454545455,
+      "low": 0.26469200887902333,
+      "high": 0.4444444444444444,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/component_flip": {
+      "point": 0.509090909090909,
+      "low": 0.41225405804230203,
+      "high": 0.6036078531361551,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/full_flip": {
+      "point": 0.9363636363636364,
+      "low": 0.8859586466165413,
+      "high": 0.9802028732284993,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/inferior/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/flagged": {
+      "point": 0.8582089552238806,
+      "low": 0.7966023226616447,
+      "high": 0.9145348837209302,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/original": {
+      "point": 0.902501765866487,
+      "low": 0.8642089677906081,
+      "high": 0.9354944955166219,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/full_score": {
+      "point": 0.27084432259039065,
+      "low": 0.22654361348440843,
+      "high": 0.31934112872169673,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/full_drop": {
+      "point": 0.6316574432760963,
+      "low": 0.5828938712434629,
+      "high": 0.6785484578373097,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/swap_full_drop": {
+      "point": -0.02379057548926171,
+      "low": -0.03489028385125985,
+      "high": -0.014123471522118696,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/grid_abs": {
+      "point": 0.008485679517960221,
+      "low": 0.006345762173243025,
+      "high": 0.010821434798923286,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/swap_grid_abs": {
+      "point": 0.002222376489752133,
+      "low": 0.0013823632702397084,
+      "high": 0.003188628608680834,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/lead_abs": {
+      "point": 0.019823481423457686,
+      "low": 0.015150826955711485,
+      "high": 0.0249510916433523,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/swap_lead_abs": {
+      "point": 0.004782240902827187,
+      "low": 0.0028633476716276125,
+      "high": 0.006930799772683991,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/grid_flip": {
+      "point": 0.09565217391304348,
+      "low": 0.045861134278565474,
+      "high": 0.1538617886178861,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/lead_flip": {
+      "point": 0.12173913043478261,
+      "low": 0.06721288515406162,
+      "high": 0.18811881188118812,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/component_flip": {
+      "point": 0.3652173913043478,
+      "low": 0.2781850459482038,
+      "high": 0.4523809523809524,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/full_flip": {
+      "point": 0.8956521739130435,
+      "low": 0.8376016260162602,
+      "high": 0.9478260869565217,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/swap_grid_flip": {
+      "point": 0.008695652173913044,
+      "low": 0.0,
+      "high": 0.028043995767942125,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/swap_lead_flip": {
+      "point": 0.008695652173913044,
+      "low": 0.0,
+      "high": 0.028043995767942125,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/anterior/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/flagged": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/original": {
+      "point": 0.9963780452473256,
+      "low": 0.9907787302023308,
+      "high": 0.9993452350636481,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/full_score": {
+      "point": 0.7150705168037472,
+      "low": 0.6472496426805592,
+      "high": 0.7831315010400012,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/full_drop": {
+      "point": 0.2813075284435783,
+      "low": 0.21501483543755556,
+      "high": 0.34789504761035245,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/swap_full_drop": {
+      "point": -0.00027607528728795653,
+      "low": -0.0005033320310572156,
+      "high": -9.095950066364075e-05,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/grid_abs": {
+      "point": 0.0005249066155380306,
+      "low": 0.00014438586071731382,
+      "high": 0.001154267511885319,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/swap_grid_abs": {
+      "point": 7.582169615587636e-05,
+      "low": 2.0748924666227547e-05,
+      "high": 0.0001673132304586824,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/lead_abs": {
+      "point": 0.0011135763181648421,
+      "low": 0.00033355585046702463,
+      "high": 0.0022578437124160865,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/swap_lead_abs": {
+      "point": 0.00013979354122752017,
+      "low": 4.006590594761937e-05,
+      "high": 0.00030036601992009513,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/component_flip": {
+      "point": 0.02564102564102564,
+      "low": 0.0,
+      "high": 0.08571428571428572,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/full_flip": {
+      "point": 0.5128205128205128,
+      "low": 0.359974358974359,
+      "high": 0.6666666666666666,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lbbb/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/flagged": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/original": {
+      "point": 0.9987901948924133,
+      "low": 0.9976229609377723,
+      "high": 0.9996553742429515,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/full_score": {
+      "point": 0.5085407298675089,
+      "low": 0.40247164286724213,
+      "high": 0.615084080198645,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/full_drop": {
+      "point": 0.49024946502490463,
+      "low": 0.38408593092483867,
+      "high": 0.5957215554577925,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/swap_full_drop": {
+      "point": -0.0002449549789605987,
+      "low": -0.0005697022555864863,
+      "high": 8.456339880423327e-06,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/grid_abs": {
+      "point": 0.00042900489340709584,
+      "low": 0.00014824009204593314,
+      "high": 0.0008513605169490113,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/swap_grid_abs": {
+      "point": 5.189633083876556e-05,
+      "low": 1.7532894779980975e-05,
+      "high": 9.227049042320714e-05,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/lead_abs": {
+      "point": 0.0011556382960351992,
+      "low": 0.0004320019743988251,
+      "high": 0.0021532331274263634,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/swap_lead_abs": {
+      "point": 9.053441951580093e-05,
+      "low": 3.470035575457316e-05,
+      "high": 0.00015173216794101465,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/component_flip": {
+      "point": 0.34782608695652173,
+      "low": 0.15,
+      "high": 0.5555555555555556,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/full_flip": {
+      "point": 0.7391304347826086,
+      "low": 0.5416666666666666,
+      "high": 0.9090909090909091,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/rbbb/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/flagged": {
+      "point": 0.6,
+      "low": 0.5243114543114543,
+      "high": 0.6721357784569787,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/original": {
+      "point": 0.7472601267814218,
+      "low": 0.7081614200366015,
+      "high": 0.7853852748254586,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/full_score": {
+      "point": 0.16256455394746866,
+      "low": 0.13052573360113495,
+      "high": 0.19782963300155404,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/full_drop": {
+      "point": 0.5846955728339531,
+      "low": 0.5483450828787558,
+      "high": 0.6231388610749466,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/swap_full_drop": {
+      "point": -0.056997459301146504,
+      "low": -0.07018775232475734,
+      "high": -0.04556082606718112,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/grid_abs": {
+      "point": 0.021437183255914847,
+      "low": 0.019211468702100172,
+      "high": 0.023680836411104453,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/swap_grid_abs": {
+      "point": 0.00585571720406173,
+      "low": 0.004818492211058459,
+      "high": 0.007101249256680555,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/lead_abs": {
+      "point": 0.05277932540949616,
+      "low": 0.047269115876182946,
+      "high": 0.05828235211832605,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/swap_lead_abs": {
+      "point": 0.012153633582418834,
+      "low": 0.009803211117777525,
+      "high": 0.014872150536305024,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/grid_flip": {
+      "point": 0.32407407407407407,
+      "low": 0.23809523809523808,
+      "high": 0.4138018112156043,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/lead_flip": {
+      "point": 0.3611111111111111,
+      "low": 0.2727272727272727,
+      "high": 0.4480068965517241,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/component_flip": {
+      "point": 0.7314814814814815,
+      "low": 0.6454545454545455,
+      "high": 0.8125,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/full_flip": {
+      "point": 0.9074074074074074,
+      "low": 0.85,
+      "high": 0.9596060606060605,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/swap_grid_flip": {
+      "point": 0.009259259259259259,
+      "low": 0.0,
+      "high": 0.030927835051546393,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/swap_lead_flip": {
+      "point": 0.009259259259259259,
+      "low": 0.0,
+      "high": 0.030927835051546393,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/stt/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/territory": {
+      "point": 0.21054104868067827,
+      "low": 0.16115416901163948,
+      "high": 0.25708616985744587,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/territory_minus_energy": {
+      "point": 0.15016238620443,
+      "low": 0.10315329584925695,
+      "high": 0.19479262578668027,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/swap_territory": {
+      "point": 0.09739184899782913,
+      "low": 0.032638066677790394,
+      "high": 0.15737629429954172,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/bbb_lead": {
+      "point": 0.48434349565816903,
+      "low": 0.38942986656768774,
+      "high": 0.571085391891474,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/bbb_lead_minus_energy": {
+      "point": 0.5669442387447465,
+      "low": 0.45884237271929956,
+      "high": 0.6688011341248936,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/qrs_bbb": {
+      "point": 0.2719823187972843,
+      "low": 0.18423195253095112,
+      "high": 0.3500126277156406,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/qrs_bbb_minus_energy": {
+      "point": 0.1498288096694541,
+      "low": 0.06761818772103637,
+      "high": 0.22467358192216624,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt_stt": {
+      "point": 0.3370805290759053,
+      "low": 0.2839388639947192,
+      "high": 0.3882400272964703,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt_stt_minus_energy": {
+      "point": 0.2552541603103229,
+      "low": 0.2057611108740142,
+      "high": 0.30275874730016233,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/wave": {
+      "point": 0.3045314239365948,
+      "low": 0.2486364809369316,
+      "high": 0.3557277185364678,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/wave_minus_energy": {
+      "point": 0.20254148498988853,
+      "low": 0.15095702124240828,
+      "high": 0.2515360807190415,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/top1_hit": {
+      "point": 0.49185667752442996,
+      "low": 0.4336546948197434,
+      "high": 0.5470508939281429,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/top1_hit_minus_energy": {
+      "point": 0.06840390879478825,
+      "low": -0.01494656057253165,
+      "high": 0.1501639207333625,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/top3_hit": {
+      "point": 0.7850162866449512,
+      "low": 0.7378549757281554,
+      "high": 0.8293515358361775,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/top3_hit_minus_energy": {
+      "point": 0.23127035830618892,
+      "low": 0.1596091205211726,
+      "high": 0.30421439849497767,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/flagged": {
+      "point": 0.7741347905282332,
+      "low": 0.737043802512713,
+      "high": 0.8094374658916401,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/original": {
+      "point": 0.8225731920855113,
+      "low": 0.8003454066075508,
+      "high": 0.8424473397306862,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/full_score": {
+      "point": 0.1992053903058867,
+      "low": 0.18082470751774476,
+      "high": 0.21956314821061332,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/full_drop": {
+      "point": 0.6233678017796247,
+      "low": 0.6003754472502922,
+      "high": 0.6440280681625353,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/swap_full_drop": {
+      "point": -0.02452262951243853,
+      "low": -0.02940476840234234,
+      "high": -0.02005188006554137,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/grid_abs": {
+      "point": 0.011740098284408671,
+      "low": 0.01077768454377929,
+      "high": 0.012729944118151527,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/swap_grid_abs": {
+      "point": 0.003241126312110127,
+      "low": 0.0027608069642834775,
+      "high": 0.0037973157981380052,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/lead_abs": {
+      "point": 0.029818607479971723,
+      "low": 0.027405932176191,
+      "high": 0.0321782703638118,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/swap_lead_abs": {
+      "point": 0.006295858034508735,
+      "low": 0.005337537512567436,
+      "high": 0.007383841362633202,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/grid_flip": {
+      "point": 0.13411764705882354,
+      "low": 0.10262376843522428,
+      "high": 0.16666666666666666,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/lead_flip": {
+      "point": 0.17647058823529413,
+      "low": 0.13895058213110606,
+      "high": 0.21266473865907573,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/component_flip": {
+      "point": 0.4988235294117647,
+      "low": 0.4516109967208114,
+      "high": 0.5450500094061579,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/full_flip": {
+      "point": 0.9129411764705883,
+      "low": 0.885243132476739,
+      "high": 0.939254037746121,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/swap_grid_flip": {
+      "point": 0.011764705882352941,
+      "low": 0.002369668246445498,
+      "high": 0.022781649578040363,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/swap_lead_flip": {
+      "point": 0.01411764705882353,
+      "low": 0.004514672686230248,
+      "high": 0.026443501655629132,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/abnormal/swap_full_flip": {
+      "point": 0.004705882352941176,
+      "low": 0.0,
+      "high": 0.01196243961768384,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/flagged": {
+      "point": 0.03,
+      "low": 0.012379181454353244,
+      "high": 0.050147985911741196,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/original": {
+      "point": 0.18761891723661217,
+      "low": 0.1652679335295058,
+      "high": 0.20965595621574354,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/full_score": {
+      "point": 0.032735796476019347,
+      "low": 0.02725151281643991,
+      "high": 0.039642108625956386,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/full_drop": {
+      "point": 0.1548831207605928,
+      "low": 0.1345049744459028,
+      "high": 0.17545962077219607,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/swap_full_drop": {
+      "point": -0.030107552257128762,
+      "low": -0.037224776474210616,
+      "high": -0.023959466667263042,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/grid_abs": {
+      "point": 0.01091355965616521,
+      "low": 0.009811852917514628,
+      "high": 0.012072007255410978,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/swap_grid_abs": {
+      "point": 0.0035667993346269354,
+      "low": 0.0030161222713347385,
+      "high": 0.004166659861044675,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/lead_abs": {
+      "point": 0.024882346331670552,
+      "low": 0.022189889618816596,
+      "high": 0.027683561398469322,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/swap_lead_abs": {
+      "point": 0.006931513928082486,
+      "low": 0.0056602741782934875,
+      "high": 0.008351236324824223,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/grid_flip": {
+      "point": 0.6666666666666666,
+      "low": 0.3333333333333333,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/lead_flip": {
+      "point": 0.6666666666666666,
+      "low": 0.3333333333333333,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/component_flip": {
+      "point": 0.7777777777777778,
+      "low": 0.45454545454545453,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/full_flip": {
+      "point": 0.8888888888888888,
+      "low": 0.625,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/swap_grid_flip": {
+      "point": 0.2222222222222222,
+      "low": 0.0,
+      "high": 0.5457070707070693,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/swap_lead_flip": {
+      "point": 0.2222222222222222,
+      "low": 0.0,
+      "high": 0.5457070707070693,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/normal/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/flagged": {
+      "point": 0.6763005780346821,
+      "low": 0.6034435907046477,
+      "high": 0.744077001819836,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/original": {
+      "point": 0.7477634507051413,
+      "low": 0.6987448041780882,
+      "high": 0.7913654543579708,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/full_score": {
+      "point": 0.12750236357180017,
+      "low": 0.10204704667346125,
+      "high": 0.15624314020065364,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/full_drop": {
+      "point": 0.6202610871333409,
+      "low": 0.5739604898923121,
+      "high": 0.6634865741889917,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/swap_full_drop": {
+      "point": -0.025064131480718375,
+      "low": -0.03344647573191221,
+      "high": -0.01717573421538639,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/grid_abs": {
+      "point": 0.01308470358046127,
+      "low": 0.01141108308910197,
+      "high": 0.014867361566017175,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/swap_grid_abs": {
+      "point": 0.004169699635982239,
+      "low": 0.0031235607004140315,
+      "high": 0.005529055937342303,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/lead_abs": {
+      "point": 0.033686246282694794,
+      "low": 0.029558434861721463,
+      "high": 0.037910550308263805,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/swap_lead_abs": {
+      "point": 0.0077797884955402435,
+      "low": 0.005768421313729505,
+      "high": 0.010389384594408283,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/grid_flip": {
+      "point": 0.17094017094017094,
+      "low": 0.10809135581862855,
+      "high": 0.2432846111417538,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/lead_flip": {
+      "point": 0.24786324786324787,
+      "low": 0.17116539616539617,
+      "high": 0.33019289083557946,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/component_flip": {
+      "point": 0.5213675213675214,
+      "low": 0.42857142857142855,
+      "high": 0.6111434108527131,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/full_flip": {
+      "point": 0.9658119658119658,
+      "low": 0.9279884057971015,
+      "high": 0.9921275221456693,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/inferior/swap_full_flip": {
+      "point": 0.008547008547008548,
+      "low": 0.0,
+      "high": 0.028308625336927188,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/flagged": {
+      "point": 0.9104477611940298,
+      "low": 0.8571428571428571,
+      "high": 0.9545454545454546,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/original": {
+      "point": 0.9126851973237132,
+      "low": 0.8807968038529075,
+      "high": 0.9404053658305258,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/full_score": {
+      "point": 0.2204484187846922,
+      "low": 0.18519584895176008,
+      "high": 0.26185157125213193,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/full_drop": {
+      "point": 0.6922367785390211,
+      "low": 0.648869342607338,
+      "high": 0.7318261496478282,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/swap_full_drop": {
+      "point": -0.01534735038274141,
+      "low": -0.022486711975433133,
+      "high": -0.009044217769292463,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/grid_abs": {
+      "point": 0.007173231968013811,
+      "low": 0.005632232933976271,
+      "high": 0.008731851042343634,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/swap_grid_abs": {
+      "point": 0.0016837326729080176,
+      "low": 0.0011367349864044834,
+      "high": 0.0022823400517111765,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/lead_abs": {
+      "point": 0.018081057237693855,
+      "low": 0.01436671556522414,
+      "high": 0.0219349027702318,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/swap_lead_abs": {
+      "point": 0.0033669189181938135,
+      "low": 0.002224031664775116,
+      "high": 0.004675912430524287,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/grid_flip": {
+      "point": 0.09836065573770492,
+      "low": 0.04705422794117647,
+      "high": 0.15834051724137926,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/lead_flip": {
+      "point": 0.10655737704918032,
+      "low": 0.05404885654885655,
+      "high": 0.16666666666666666,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/component_flip": {
+      "point": 0.3770491803278688,
+      "low": 0.2878523608174771,
+      "high": 0.4645669291338583,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/full_flip": {
+      "point": 0.9344262295081968,
+      "low": 0.8888666666666666,
+      "high": 0.9743801652892561,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/swap_lead_flip": {
+      "point": 0.00819672131147541,
+      "low": 0.0,
+      "high": 0.02631578947368421,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/anterior/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/flagged": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/original": {
+      "point": 0.9959355481834455,
+      "low": 0.9914552755426584,
+      "high": 0.9984197180879061,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/full_score": {
+      "point": 0.5877430937896764,
+      "low": 0.5301280379737687,
+      "high": 0.6449294391059274,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/full_drop": {
+      "point": 0.40819245439376917,
+      "low": 0.3524707084773898,
+      "high": 0.46412906313877744,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/swap_full_drop": {
+      "point": -0.0007637813569398627,
+      "low": -0.002052963236708816,
+      "high": -5.151961873366941e-06,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/grid_abs": {
+      "point": 0.0005116915949025446,
+      "low": 0.00020940170584598226,
+      "high": 0.000994213364899039,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/swap_grid_abs": {
+      "point": 0.00011630336665030738,
+      "low": 2.9646293830462162e-05,
+      "high": 0.0002656006270920643,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/lead_abs": {
+      "point": 0.0014241813541399878,
+      "low": 0.0005702989264818818,
+      "high": 0.0027700505810752374,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/swap_lead_abs": {
+      "point": 0.00020293447541938557,
+      "low": 5.525177903499304e-05,
+      "high": 0.0004406031558996185,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/component_flip": {
+      "point": 0.02564102564102564,
+      "low": 0.0,
+      "high": 0.08571428571428572,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/full_flip": {
+      "point": 0.6923076923076923,
+      "low": 0.5383928571428571,
+      "high": 0.8333333333333334,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lbbb/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/flagged": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/original": {
+      "point": 0.9923632774353813,
+      "low": 0.9897683464028568,
+      "high": 0.9950069258120057,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/full_score": {
+      "point": 0.4197007943759114,
+      "low": 0.33558411702485486,
+      "high": 0.5054342764587925,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/full_drop": {
+      "point": 0.57266248305947,
+      "low": 0.48632080894701335,
+      "high": 0.65567892888197,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/swap_full_drop": {
+      "point": -0.00023829623024797784,
+      "low": -0.00135446860480157,
+      "high": 0.0007717042226126531,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/grid_abs": {
+      "point": 0.0024358341504013615,
+      "low": 0.0015144719778391355,
+      "high": 0.0034553583317546654,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/swap_grid_abs": {
+      "point": 0.00036355397827082114,
+      "low": 9.740261650959148e-05,
+      "high": 0.0007984353741356516,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/lead_abs": {
+      "point": 0.008464500794452356,
+      "low": 0.00539017547329782,
+      "high": 0.011901815189236874,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/swap_lead_abs": {
+      "point": 0.0009458782413457823,
+      "low": 0.00015398416794975515,
+      "high": 0.0023658898920300435,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/component_flip": {
+      "point": 0.2608695652173913,
+      "low": 0.08686594202898551,
+      "high": 0.45168621700879724,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/full_flip": {
+      "point": 0.8695652173913043,
+      "low": 0.7142857142857143,
+      "high": 1.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/swap_grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/swap_lead_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/rbbb/swap_full_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/flagged": {
+      "point": 0.6888888888888889,
+      "low": 0.6173418367346939,
+      "high": 0.757396449704142,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/original": {
+      "point": 0.7681330404522805,
+      "low": 0.7312815052166464,
+      "high": 0.8039496280517705,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/full_score": {
+      "point": 0.1399481296356569,
+      "low": 0.11184210018924487,
+      "high": 0.1706285686218164,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/full_drop": {
+      "point": 0.6281849108166236,
+      "low": 0.5935191132044823,
+      "high": 0.6653314623371578,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/swap_full_drop": {
+      "point": -0.03908342010367093,
+      "low": -0.04910947117349492,
+      "high": -0.030352849299042643,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/grid_abs": {
+      "point": 0.017469261096368215,
+      "low": 0.01575269606255411,
+      "high": 0.019219056011252855,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/swap_grid_abs": {
+      "point": 0.004552791985301483,
+      "low": 0.0037976388410982855,
+      "high": 0.005444604655220992,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/lead_abs": {
+      "point": 0.04372003688146352,
+      "low": 0.03952045954157748,
+      "high": 0.04799506574734101,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/swap_lead_abs": {
+      "point": 0.009053810400480852,
+      "low": 0.007503045904776677,
+      "high": 0.010961088004356424,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/grid_flip": {
+      "point": 0.20161290322580644,
+      "low": 0.13383212352362206,
+      "high": 0.2719315789473684,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/lead_flip": {
+      "point": 0.2661290322580645,
+      "low": 0.18704699791568616,
+      "high": 0.3467741935483871,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/component_flip": {
+      "point": 0.7903225806451613,
+      "low": 0.7142594537815127,
+      "high": 0.8615447154471545,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/full_flip": {
+      "point": 0.9193548387096774,
+      "low": 0.8666535433070867,
+      "high": 0.96296977124183,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/swap_grid_flip": {
+      "point": 0.04032258064516129,
+      "low": 0.00854341736694678,
+      "high": 0.07751937984496124,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/swap_lead_flip": {
+      "point": 0.04032258064516129,
+      "low": 0.00819672131147541,
+      "high": 0.07971014492753623,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/stt/swap_full_flip": {
+      "point": 0.008064516129032258,
+      "low": 0.0,
+      "high": 0.0256465517241379,
+      "valid_draws": 2000
+    },
+    "all_territories/energy/territory": {
+      "point": 0.05162104701910707,
+      "low": 0.019832171533945172,
+      "high": 0.08169086559872299,
+      "valid_draws": 2000
+    },
+    "all_territories/energy/top1_hit": {
+      "point": 0.4125,
+      "low": 0.36110889243876465,
+      "high": 0.4715220574343473,
+      "valid_draws": 2000
+    },
+    "all_territories/energy/top3_hit": {
+      "point": 0.553125,
+      "low": 0.49683544303797467,
+      "high": 0.6070436882397917,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_hgb/territory": {
+      "point": 0.07966555709316159,
+      "low": 0.03035332770797949,
+      "high": 0.12735905595795763,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_hgb/territory_minus_energy": {
+      "point": 0.028044510074054514,
+      "low": -0.01671727664908092,
+      "high": 0.06939217281804784,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_hgb/swap_territory": {
+      "point": 0.03282130675525103,
+      "low": -0.04325313394020082,
+      "high": 0.11485962298289479,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_hgb/top1_hit": {
+      "point": 0.290625,
+      "low": 0.24050540109135454,
+      "high": 0.34112249467632993,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_hgb/top1_hit_minus_energy": {
+      "point": -0.12187499999999996,
+      "low": -0.1988602579068325,
+      "high": -0.045157659993776605,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_hgb/top3_hit": {
+      "point": 0.6875,
+      "low": 0.6329926126941052,
+      "high": 0.7363714733542319,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_hgb/top3_hit_minus_energy": {
+      "point": 0.13437500000000002,
+      "low": 0.05313919587768664,
+      "high": 0.2152717053515933,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_xecg/territory": {
+      "point": 0.10454802928405708,
+      "low": 0.04565136429934189,
+      "high": 0.15987471937325537,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_xecg/territory_minus_energy": {
+      "point": 0.05292698226495001,
+      "low": 0.007593576882176011,
+      "high": 0.09999041435747762,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_xecg/swap_territory": {
+      "point": 0.013125814143917744,
+      "low": -0.054417324249000476,
+      "high": 0.08500128214077245,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_xecg/top1_hit": {
+      "point": 0.484375,
+      "low": 0.4294478527607362,
+      "high": 0.539522991327115,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_xecg/top1_hit_minus_energy": {
+      "point": 0.07187500000000002,
+      "low": -0.01213264722698687,
+      "high": 0.15774071283958752,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_xecg/top3_hit": {
+      "point": 0.759375,
+      "low": 0.7093722543929712,
+      "high": 0.803078125,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_xecg/top3_hit_minus_energy": {
+      "point": 0.20625000000000004,
+      "low": 0.13172669586200736,
+      "high": 0.27420599362803655,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_blend/territory": {
+      "point": 0.0952017303269194,
+      "low": 0.04711123761564436,
+      "high": 0.13971204944807106,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_blend/territory_minus_energy": {
+      "point": 0.04358068330781233,
+      "low": 0.004390073688697656,
+      "high": 0.08102646503319219,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_blend/swap_territory": {
+      "point": 0.029363985496852523,
+      "low": -0.03089860884601902,
+      "high": 0.09536428886284604,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_blend/top1_hit": {
+      "point": 0.421875,
+      "low": 0.36754125502117035,
+      "high": 0.4735099337748344,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_blend/top1_hit_minus_energy": {
+      "point": 0.009375000000000022,
+      "low": -0.0686670252341894,
+      "high": 0.09007642003340144,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_blend/top3_hit": {
+      "point": 0.690625,
+      "low": 0.6382948414863309,
+      "high": 0.7382589226187831,
+      "valid_draws": 2000
+    },
+    "all_territories/all_age_blend/top3_hit_minus_energy": {
+      "point": 0.13750000000000007,
+      "low": 0.06108765552914866,
+      "high": 0.21359833913415152,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_hgb/territory": {
+      "point": 0.15453731952909805,
+      "low": 0.09300415119686485,
+      "high": 0.21744995797563155,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_hgb/territory_minus_energy": {
+      "point": 0.10291627250999097,
+      "low": 0.04373071805802011,
+      "high": 0.16517381290163086,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_hgb/swap_territory": {
+      "point": 0.13030847973746845,
+      "low": 0.03678924761241727,
+      "high": 0.21520741988694683,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_hgb/top1_hit": {
+      "point": 0.396875,
+      "low": 0.3435477565259233,
+      "high": 0.453125,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_hgb/top1_hit_minus_energy": {
+      "point": -0.015625,
+      "low": -0.09271523178807944,
+      "high": 0.0671140939597315,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_hgb/top3_hit": {
+      "point": 0.725,
+      "low": 0.6750730583886513,
+      "high": 0.7730108785023084,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_hgb/top3_hit_minus_energy": {
+      "point": 0.171875,
+      "low": 0.10103440766550528,
+      "high": 0.2461059190031153,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_xecg/territory": {
+      "point": 0.17831545794181294,
+      "low": 0.12243876012346544,
+      "high": 0.231775070374926,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_xecg/territory_minus_energy": {
+      "point": 0.12669441092270586,
+      "low": 0.0813065771138481,
+      "high": 0.1690797270933924,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_xecg/swap_territory": {
+      "point": 0.012783080464726176,
+      "low": -0.049162357496096834,
+      "high": 0.0764511897497446,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_xecg/top1_hit": {
+      "point": 0.578125,
+      "low": 0.5235036928482001,
+      "high": 0.6325425555432739,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_xecg/top1_hit_minus_energy": {
+      "point": 0.16562500000000002,
+      "low": 0.08916660153960375,
+      "high": 0.24343308729139915,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_xecg/top3_hit": {
+      "point": 0.834375,
+      "low": 0.7911356791078188,
+      "high": 0.8754397763865831,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_xecg/top3_hit_minus_energy": {
+      "point": 0.28125,
+      "low": 0.22153846153846157,
+      "high": 0.33753943217665616,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_blend/territory": {
+      "point": 0.16491223524182924,
+      "low": 0.10761904736909611,
+      "high": 0.2203172526148359,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_blend/territory_minus_energy": {
+      "point": 0.11329118822272216,
+      "low": 0.06343815446970186,
+      "high": 0.16490211378842298,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_blend/swap_territory": {
+      "point": 0.11199276623285186,
+      "low": 0.029599154831686073,
+      "high": 0.1949007030577772,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_blend/top1_hit": {
+      "point": 0.484375,
+      "low": 0.4280826226758004,
+      "high": 0.5384674922600619,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_blend/top1_hit_minus_energy": {
+      "point": 0.07187500000000002,
+      "low": -0.007018305684122934,
+      "high": 0.1496815286624204,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_blend/top3_hit": {
+      "point": 0.7875,
+      "low": 0.7425127018689892,
+      "high": 0.8317757009345794,
+      "valid_draws": 2000
+    },
+    "all_territories/ptb_baseline_blend/top3_hit_minus_energy": {
+      "point": 0.234375,
+      "low": 0.16463119590873332,
+      "high": 0.3061330782312925,
+      "valid_draws": 2000
+    },
+    "parts/energy/inferior": {
+      "point": 0.028348552537603294,
+      "low": 0.007402492501542794,
+      "high": 0.04945794002411179,
+      "valid_draws": 2000
+    },
+    "parts/energy/anterior": {
+      "point": 0.09025948195164046,
+      "low": 0.05842052611025833,
+      "high": 0.12344948483145027,
+      "valid_draws": 2000
+    },
+    "parts/energy/lateral": {
+      "point": 0.036255106568077455,
+      "low": -0.03763845209767384,
+      "high": 0.10807388669713629,
+      "valid_draws": 2000
+    },
+    "parts/all_age_hgb/inferior": {
+      "point": 0.1132161965688725,
+      "low": 0.06486727669544218,
+      "high": 0.1563007432871338,
+      "valid_draws": 2000
+    },
+    "parts/all_age_hgb/anterior": {
+      "point": 0.05720440300407134,
+      "low": 0.005508219850116073,
+      "high": 0.10869611153310703,
+      "valid_draws": 2000
+    },
+    "parts/all_age_hgb/lateral": {
+      "point": 0.06857607170654093,
+      "low": -0.03664020408502935,
+      "high": 0.18660672358791622,
+      "valid_draws": 2000
+    },
+    "parts/all_age_xecg/inferior": {
+      "point": 0.11339847801053055,
+      "low": 0.049528980449016484,
+      "high": 0.17334898976381005,
+      "valid_draws": 2000
+    },
+    "parts/all_age_xecg/anterior": {
+      "point": 0.09752170378314956,
+      "low": 0.043086784902579625,
+      "high": 0.15033250605766363,
+      "valid_draws": 2000
+    },
+    "parts/all_age_xecg/lateral": {
+      "point": 0.10272390605849113,
+      "low": -0.025434701647198937,
+      "high": 0.2305499578210896,
+      "valid_draws": 2000
+    },
+    "parts/all_age_blend/inferior": {
+      "point": 0.13646031273336412,
+      "low": 0.08224849829699651,
+      "high": 0.18550145014686964,
+      "valid_draws": 2000
+    },
+    "parts/all_age_blend/anterior": {
+      "point": 0.05966011849926586,
+      "low": 0.0076976718677139195,
+      "high": 0.11005669373215447,
+      "valid_draws": 2000
+    },
+    "parts/all_age_blend/lateral": {
+      "point": 0.08948475974812825,
+      "low": -0.007495050160619462,
+      "high": 0.188903497837749,
+      "valid_draws": 2000
+    },
+    "parts/ptb_baseline_hgb/inferior": {
+      "point": 0.21703643390144484,
+      "low": 0.16276345674089668,
+      "high": 0.27221317083359725,
+      "valid_draws": 2000
+    },
+    "parts/ptb_baseline_hgb/anterior": {
+      "point": 0.15217084219361826,
+      "low": 0.09702840861485593,
+      "high": 0.2067287404788256,
+      "valid_draws": 2000
+    },
+    "parts/ptb_baseline_hgb/lateral": {
+      "point": 0.09440468249223105,
+      "low": -0.06127568093374388,
+      "high": 0.2554778380384039,
+      "valid_draws": 2000
+    },
+    "parts/ptb_baseline_xecg/inferior": {
+      "point": 0.24360269698248885,
+      "low": 0.18395761313401043,
+      "high": 0.30452484345818465,
+      "valid_draws": 2000
+    },
+    "parts/ptb_baseline_xecg/anterior": {
+      "point": 0.2032320865859431,
+      "low": 0.14733643296952037,
+      "high": 0.26102181968880744,
+      "valid_draws": 2000
+    },
+    "parts/ptb_baseline_xecg/lateral": {
+      "point": 0.08811159025700688,
+      "low": -0.025530995964770316,
+      "high": 0.20620730774968504,
+      "valid_draws": 2000
+    },
+    "parts/ptb_baseline_blend/inferior": {
+      "point": 0.25199778513125237,
+      "low": 0.19390233336116053,
+      "high": 0.30631786664134664,
+      "valid_draws": 2000
+    },
+    "parts/ptb_baseline_blend/anterior": {
+      "point": 0.15983164405125527,
+      "low": 0.10655922446912698,
+      "high": 0.21635426840482408,
+      "valid_draws": 2000
+    },
+    "parts/ptb_baseline_blend/lateral": {
+      "point": 0.08290727654298008,
+      "low": -0.04429006814413907,
+      "high": 0.21044669941314323,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lateral/flagged": {
+      "point": 0.38461538461538464,
+      "low": 0.1,
+      "high": 0.6666666666666666,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lateral/full_drop": {
+      "point": 0.49077377910128805,
+      "low": 0.29818652911098265,
+      "high": 0.6733792495458608,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lateral/lead_abs": {
+      "point": 0.037704291630239355,
+      "low": 0.01545570589664734,
+      "high": 0.07033936575238099,
+      "valid_draws": 2000
+    },
+    "all_age_hgb/lateral/grid_flip": {
+      "point": 0.6,
+      "low": 0.0,
+      "high": 1.0,
+      "valid_draws": 1983
+    },
+    "all_age_hgb/lateral/lead_flip": {
+      "point": 0.6,
+      "low": 0.0,
+      "high": 1.0,
+      "valid_draws": 1983
+    },
+    "all_age_hgb/lateral/component_flip": {
+      "point": 0.8,
+      "low": 0.3333333333333333,
+      "high": 1.0,
+      "valid_draws": 1983
+    },
+    "all_age_hgb/lateral/full_flip": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "valid_draws": 1983
+    },
+    "all_age_xecg/lateral/flagged": {
+      "point": 0.5384615384615384,
+      "low": 0.23055555555555557,
+      "high": 0.8181818181818182,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lateral/full_drop": {
+      "point": 0.42182925948836986,
+      "low": 0.22150155338660607,
+      "high": 0.6030169039102673,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lateral/lead_abs": {
+      "point": 0.026719222661222113,
+      "low": 0.01614513112287081,
+      "high": 0.03775144912158096,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/lateral/grid_flip": {
+      "point": 0.42857142857142855,
+      "low": 0.0,
+      "high": 0.8571428571428571,
+      "valid_draws": 1997
+    },
+    "all_age_xecg/lateral/lead_flip": {
+      "point": 0.42857142857142855,
+      "low": 0.0,
+      "high": 0.8571428571428571,
+      "valid_draws": 1997
+    },
+    "all_age_xecg/lateral/component_flip": {
+      "point": 0.7142857142857143,
+      "low": 0.3333333333333333,
+      "high": 1.0,
+      "valid_draws": 1997
+    },
+    "all_age_xecg/lateral/full_flip": {
+      "point": 0.8571428571428571,
+      "low": 0.5,
+      "high": 1.0,
+      "valid_draws": 1997
+    },
+    "all_age_blend/lateral/flagged": {
+      "point": 0.5384615384615384,
+      "low": 0.23055555555555557,
+      "high": 0.8181818181818182,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lateral/full_drop": {
+      "point": 0.456301519294829,
+      "low": 0.2674289650894287,
+      "high": 0.6303629428543397,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lateral/lead_abs": {
+      "point": 0.02886555234985621,
+      "low": 0.016028943355336597,
+      "high": 0.04479077318835212,
+      "valid_draws": 2000
+    },
+    "all_age_blend/lateral/grid_flip": {
+      "point": 0.42857142857142855,
+      "low": 0.0,
+      "high": 0.875,
+      "valid_draws": 1997
+    },
+    "all_age_blend/lateral/lead_flip": {
+      "point": 0.42857142857142855,
+      "low": 0.0,
+      "high": 0.875,
+      "valid_draws": 1997
+    },
+    "all_age_blend/lateral/component_flip": {
+      "point": 0.7142857142857143,
+      "low": 0.3333333333333333,
+      "high": 1.0,
+      "valid_draws": 1997
+    },
+    "all_age_blend/lateral/full_flip": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "valid_draws": 1997
+    },
+    "ptb_baseline_hgb/lateral/flagged": {
+      "point": 0.46153846153846156,
+      "low": 0.16666666666666666,
+      "high": 0.75,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lateral/full_drop": {
+      "point": 0.5055253579943465,
+      "low": 0.30161268530148866,
+      "high": 0.6941133017602188,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lateral/lead_abs": {
+      "point": 0.03567853232620583,
+      "low": 0.018888319751420378,
+      "high": 0.05534031218043737,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/lateral/grid_flip": {
+      "point": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "valid_draws": 1993
+    },
+    "ptb_baseline_hgb/lateral/lead_flip": {
+      "point": 0.16666666666666666,
+      "low": 0.0,
+      "high": 0.5,
+      "valid_draws": 1993
+    },
+    "ptb_baseline_hgb/lateral/component_flip": {
+      "point": 0.6666666666666666,
+      "low": 0.2,
+      "high": 1.0,
+      "valid_draws": 1993
+    },
+    "ptb_baseline_hgb/lateral/full_flip": {
+      "point": 0.8333333333333334,
+      "low": 0.4,
+      "high": 1.0,
+      "valid_draws": 1993
+    },
+    "ptb_baseline_xecg/lateral/flagged": {
+      "point": 0.5384615384615384,
+      "low": 0.2222222222222222,
+      "high": 0.8333333333333334,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lateral/full_drop": {
+      "point": 0.4931902724554637,
+      "low": 0.2799131386924436,
+      "high": 0.6789563317263653,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lateral/lead_abs": {
+      "point": 0.03857233823646988,
+      "low": 0.025248915508216153,
+      "high": 0.05139222193116559,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/lateral/grid_flip": {
+      "point": 0.5714285714285714,
+      "low": 0.14285714285714285,
+      "high": 1.0,
+      "valid_draws": 1996
+    },
+    "ptb_baseline_xecg/lateral/lead_flip": {
+      "point": 0.5714285714285714,
+      "low": 0.14285714285714285,
+      "high": 1.0,
+      "valid_draws": 1996
+    },
+    "ptb_baseline_xecg/lateral/component_flip": {
+      "point": 0.7142857142857143,
+      "low": 0.3333333333333333,
+      "high": 1.0,
+      "valid_draws": 1996
+    },
+    "ptb_baseline_xecg/lateral/full_flip": {
+      "point": 0.8571428571428571,
+      "low": 0.5,
+      "high": 1.0,
+      "valid_draws": 1996
+    },
+    "ptb_baseline_blend/lateral/flagged": {
+      "point": 0.5384615384615384,
+      "low": 0.2222222222222222,
+      "high": 0.8333333333333334,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lateral/full_drop": {
+      "point": 0.49935781522490497,
+      "low": 0.29926831022427425,
+      "high": 0.6819454075774827,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lateral/lead_abs": {
+      "point": 0.03335066787105099,
+      "low": 0.02243654395732855,
+      "high": 0.0438897503641331,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/lateral/grid_flip": {
+      "point": 0.14285714285714285,
+      "low": 0.0,
+      "high": 0.5,
+      "valid_draws": 1996
+    },
+    "ptb_baseline_blend/lateral/lead_flip": {
+      "point": 0.14285714285714285,
+      "low": 0.0,
+      "high": 0.5,
+      "valid_draws": 1996
+    },
+    "ptb_baseline_blend/lateral/component_flip": {
+      "point": 0.8571428571428571,
+      "low": 0.5,
+      "high": 1.0,
+      "valid_draws": 1996
+    },
+    "ptb_baseline_blend/lateral/full_flip": {
+      "point": 0.8571428571428571,
+      "low": 0.5,
+      "high": 1.0,
+      "valid_draws": 1996
+    },
+    "all_age_hgb/selectivity": {
+      "point": 0.9379582816652939,
+      "low": 0.8001260269738847,
+      "high": 1.112972062311986,
+      "valid_draws": 2000
+    },
+    "all_age_xecg/selectivity": {
+      "point": 0.9688677679798847,
+      "low": 0.8359851368701009,
+      "high": 1.119531060772099,
+      "valid_draws": 2000
+    },
+    "all_age_blend/selectivity": {
+      "point": 0.9817950812174507,
+      "low": 0.8514394160449503,
+      "high": 1.1410055172599196,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_hgb/selectivity": {
+      "point": 1.1366377271265087,
+      "low": 0.9772067766445394,
+      "high": 1.3248533289758575,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_xecg/selectivity": {
+      "point": 1.124046897972227,
+      "low": 0.9811629133064006,
+      "high": 1.2876205290575402,
+      "valid_draws": 2000
+    },
+    "ptb_baseline_blend/selectivity": {
+      "point": 1.1983840704772377,
+      "low": 1.0473358633562437,
+      "high": 1.3723850170644851,
+      "valid_draws": 2000
+    }
+  },
+  "decision": {
+    "primary_territories": [
+      "inferior",
+      "anterior"
+    ],
+    "territory": {
+      "point": 0.09848614265592237,
+      "low": 0.05218514927820122,
+      "high": 0.14321569148441146,
+      "valid_draws": 2000
+    },
+    "territory_minus_energy": {
+      "point": 0.03810748017967411,
+      "low": -0.00438144116464385,
+      "high": 0.07786070356182791,
+      "valid_draws": 2000
+    },
+    "localization_replicates": true,
+    "beyond_energy": false
+  },
+  "nbr01_primary_reproduced": 0.3056275517940945
+}

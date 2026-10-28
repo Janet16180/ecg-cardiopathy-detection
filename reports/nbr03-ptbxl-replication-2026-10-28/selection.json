@@ -1,0 +1,13 @@
+{
+  "sample": {
+    "anterior": 134,
+    "inferior": 173,
+    "lateral": 13,
+    "lbbb": 39,
+    "normal": 300,
+    "rbbb": 23,
+    "stt": 180
+  },
+  "cap": 300,
+  "normals": 300
+}

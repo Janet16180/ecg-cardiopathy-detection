@@ -516,6 +516,22 @@ development data. An [independent audit](audit-2026-09-30.md) on 30 September 20
 and every recomputed headline number correct. It also found that the PTB-XL test set was already read by 001-008,
 and that cohorts v2 contain Challenge test-group records.
 
+## Corrective PR 74 evaluation (28 October 2026)
+
+The user authorized reproducible label-first cohort assembly, fixed readout training/evaluation and
+descriptive threshold confusion matrices. The [prospective protocol](pr74-corrective-evaluation-protocol-2026-10-28.md)
+fixes strict 18–25 versus source/evidence/target-matched general-age training (770 ECGs each) as the
+primary comparison, with the 25k selections secondary. Every evaluation remains reused development.
+Challenge/EchoNext closed-test scoring is excluded.
+
+Live state is under `outputs/pr74_corrective_evaluation_20261028/`: qualification, the real GPU
+profile, admitted training extraction and fixed evaluation completed. The primary strict-age blend
+gain was +0.474 percentage points, paired 95% interval [−0.722, +1.638]; both gates failed and no
+pipeline was promoted. All components, cohorts, matrices and threshold curves are in the
+[results report](pr74-corrective-evaluation-results-2026-10-28.md) and its aggregate artifact. The
+fixed score and calibration/decision rules preceded the run. Fresh-from-raw bootstrap verification
+is still in progress; the cached execution alone is not a full cold reproduction.
+
 ## Research branches
 
 The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.md) supplies the rationale for authorized Experiments 011–013. These are independent model families, not xECG modifications. They have no measured project results yet. The additional [vision architectures](cross-domain-architecture-candidates.md) and [xECG modifications](xecg-next-experiments.md) remain research candidates outside this accepted queue.

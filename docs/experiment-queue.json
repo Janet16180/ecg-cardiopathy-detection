@@ -1,5 +1,19 @@
 {
   "schema_version": 1,
+  "pr74_corrective_evaluation_20261028": {
+    "authorization": "User requested a corrective PR with reproducible cohort assembly, fixed training/evaluation and threshold confusion matrices; no closed-test scoring.",
+    "status": "fixed_development_evaluation_complete_fresh_bootstrap_in_progress",
+    "protocol": "docs/pr74-corrective-evaluation-protocol-2026-10-28.md",
+    "output": "outputs/pr74_corrective_evaluation_20261028",
+    "primary": "Strict 18–25 versus source/evidence/target-matched general-age 770-record cohorts; fixed 50:50 HGB/xECG score; paired SPH sensitivity under separately fitted 5% normal calibration budgets.",
+    "secondary": "25k age-preferred/all-age cohorts, fixed components and matched original PTB-only reference; all reused development data.",
+    "qualification": "Completed exact predecessor points/matrices, saved-model scores within 1e-12, and 32 raw measurement-cache rows.",
+    "profile": "Passed actual 80-record training decode/measurement/xECG path; 622368768 peak GPU bytes; conservative 3914.6-second forecast; 32 PTB xECG vectors reproduced exactly.",
+    "results": "docs/pr74-corrective-evaluation-results-2026-10-28.md",
+    "aggregate": "reports/pr74-corrective-evaluation-2026-10-28/aggregate.json",
+    "primary_result": "Strict versus matched blend sensitivity difference +0.004743303571428603, paired 95% interval [-0.00722066887507738, 0.01638047118601283]; practical and positive-lower-bound gates failed. No pipeline promoted.",
+    "next_action": "Development evaluation and all prespecified matrices/sweeps are complete. Finish and verify fresh-from-raw baseline/bootstrap execution without historical scientific artifact prerequisites; report its actual scope separately."
+  },
   "updated_at_utc": "2026-10-19T03:10:05.941072+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",

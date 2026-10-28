@@ -1542,8 +1542,10 @@
       "cpu_hours": 0.3,
       "build_hours": 2,
       "blocked_by": [],
-      "status": "open",
-      "notes": "PTB-XL fold 9 is development data already used for evaluation; the PTB-only blend trained on folds 1-7 and the all-age blend can both be explained. Reuses the NBR-01 pipeline unchanged."
+      "status": "done",
+      "notes": "Done as NBR-03: territory contrast +0.098 [+0.052, +0.143] on fold 9, not beyond energy (+0.038 [-0.004, +0.078]); lateral had 13 patients and was only described (part +0.089 [-0.007, +0.189]). Measured about 0.3 GPU hours.",
+      "experiment": "NBR-03",
+      "protocol": "docs/nbr03-ptbxl-replication-protocol-2026-10-28.md"
     },
     {
       "id": "nbr_logit_drops",
@@ -1670,6 +1672,21 @@
       ],
       "status": "blocked",
       "notes": "A product decision for the user; both arms' examples files exist."
+    },
+    {
+      "id": "nbr_domain_localization_gap",
+      "kind": "analysis",
+      "title": "Does localization strength follow training-domain proximity?",
+      "question": "Is the PTB-only blend's territory contrast on PTB-XL fold 9 larger than the all-age blend's, and the reverse on SPH, in a declared paired comparison on the same draws?",
+      "evidence": "NBR-03: fold 9 all-age +0.098 against PTB-only +0.211 (in-domain); NBR-01: SPH all-age +0.306 against PTB-only +0.450.",
+      "value": 2,
+      "clarity": 0.7,
+      "gpu_hours": 0,
+      "cpu_hours": 0.1,
+      "build_hours": 1,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Saved scores only; needs a short protocol because it re-reads SPH and fold-9 results."
     }
   ]
 }

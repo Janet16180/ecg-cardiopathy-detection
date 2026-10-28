@@ -586,6 +586,17 @@ branch. [Results](nbr02-personal-counterpart-results-2026-10-28.md),
 [aggregate](../reports/nbr02-personal-counterpart-2026-10-28/results.json); C6 page examples in
 `outputs/nbr02_personal_counterpart_20261028/examples.json`. No process is running.
 
+## NBR-03 PTB-XL fold 9 replication of NBR-01 (28 October 2026)
+
+The [protocol](nbr03-ptbxl-replication-protocol-2026-10-28.md) repeated NBR-01 with the same P0 counterpart on
+862 PTB-XL fold-9 ECGs (fold 10 never read; fold 9 unseen by both models and patient-disjoint from every fit and
+calibration set). Complete. The territory contrast (inferior against anterior MI) replicates for
+`all_age_blend`, +0.098 [+0.052, +0.143], but is not shown beyond the energy map (+0.038 [-0.004, +0.078]);
+the in-domain PTB-only blend gives +0.211, +0.150 beyond energy. Lateral had 13 patients and was only
+described. Unreplaced scores reproduced the saved fold-9 scores exactly. Stacked on #79.
+[Results](nbr03-ptbxl-replication-results-2026-10-28.md),
+[aggregate](../reports/nbr03-ptbxl-replication-2026-10-28/results.json). No process is running.
+
 ## Research branches
 
 The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.md) supplies the rationale for authorized Experiments 011–013. These are independent model families, not xECG modifications. They have no measured project results yet. The additional [vision architectures](cross-domain-architecture-candidates.md) and [xECG modifications](xecg-next-experiments.md) remain research candidates outside this accepted queue.

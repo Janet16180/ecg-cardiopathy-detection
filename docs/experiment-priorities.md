@@ -69,7 +69,7 @@ penalty; one that ranks high earns a protocol like any other.
 | 4 | nbr_logit_drops | analysis | NBR-01 attributions with drops on the logit scale | 2 | 0.8 | 1.1 | 1.56 | - |
 | 5 | normal_score_confounders | experiment | Does the normal-reference score track noise, device, age, sex or heart rate? | 3 | 0.8 | 3.0 | 1.39 | - |
 | 6 | conduction_miss_analysis | experiment | Which conduction findings the screening blends miss at SPH | 3 | 0.7 | 2.3 | 1.38 | - |
-| 7 | nbr_lateral_territory_ptb | experiment | NBR territory test on PTB-XL fold 9, including lateral MI and territorial ischaemia | 3 | 0.7 | 2.6 | 1.30 | - |
+| 7 | nbr_domain_localization_gap | analysis | Does localization strength follow training-domain proximity? | 2 | 0.7 | 1.1 | 1.33 | - |
 | 8 | manifold_score_ablation | experiment | Ablations of the normal-reference score | 3 | 0.8 | 3.5 | 1.28 | - |
 | 9 | nbr_subspace_absorption | analysis | How much abnormality the 062 rank-6 normal subspace absorbs, by SPH group | 2 | 0.8 | 1.7 | 1.23 | - |
 | 10 | jepa_xecg_concat | experiment | Concatenated ECG-JEPA and xECG features | 3 | 0.6 | 2.5 | 1.14 | - |
@@ -147,6 +147,11 @@ counterpart, fitted on PTB-XL or on the all-age cohort's normals, sharpened lead
 because it absorbed part of the abnormality, so the page keeps the population counterpart. See
 [NBR-02](nbr02-personal-counterpart-results-2026-10-28.md). New: `nbr_subspace_absorption`,
 `nbr_bounded_personalization` and `nbr_dual_view_page`.
+
+After NBR-03 (28 October 2026): `nbr_lateral_territory_ptb` is done. On PTB-XL fold 9 the all-age blend's
+territory contrast replicates (+0.098 [+0.052, +0.143]) but not beyond the energy map, while the in-domain
+PTB-only blend localizes beyond energy (+0.150). Lateral had 13 patients. See
+[NBR-03](nbr03-ptbxl-replication-results-2026-10-28.md). New: `nbr_domain_localization_gap`.
 
 Reruns after Ningbo (`rerun_of` in the backlog): 022 as `ningbo_sph_transfer`, 024 as `rerun_024_multisource`,
 025 as `rerun_025_ningbo`, 026 as `multisource_normal_manifold` and 027 as `multisource_calibration`. 023 is

@@ -1,0 +1,5 @@
+referencia,etiquetas,AUROC val (media),desv. entre semillas
+solo dataset de origen,2000,0.6517734999999999,0.0005056829045953594
+solo dataset de origen,todo,0.6523794999999999,0.0
+solo sexo,2000,0.574,0.0
+solo sexo,todo,0.574,0.0

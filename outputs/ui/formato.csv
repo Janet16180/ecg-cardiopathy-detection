@@ -1,0 +1,9 @@
+dataset,ECGs (archivos),derivaciones,nombres de derivaciones,fs (Hz),duración mín (s),duración máx (s),fuente
+PTB-XL,21799,12,"I,II,III,AVR,AVL,AVF,V1,V2,V3,V4,V5,V6",500,10.0,10.0,cabeceras .hea
+Ningbo,34904,12,"I,II,III,aVR,aVL,aVF,V1,V2,V3,V4,V5,V6",500,10.0,10.0,cabeceras .hea
+Chapman-Shaoxing,10247,12,"I,II,III,aVR,aVL,aVF,V1,V2,V3,V4,V5,V6",500,10.0,10.0,cabeceras .hea
+Georgia,10344,12,"I,II,III,aVR,aVL,aVF,V1,V2,V3,V4,V5,V6",500,5.0,10.0,cabeceras .hea
+CPSC 2018,6877,12,"I,II,III,aVR,aVL,aVF,V1,V2,V3,V4,V5,V6",500,6.0,144.0,cabeceras .hea
+CPSC 2018 extra,3453,12,"I,II,III,aVR,aVL,aVF,V1,V2,V3,V4,V5,V6",500,8.0,98.0,cabeceras .hea
+PTB Diagnostic,549,15,"i,ii,iii,avr,avl,avf,v1,v2,v3,v4,v5,v6,vx,vy,vz",1000,32.0,120.0,cabeceras .hea
+Balanceado,20000,12,"I,II,III,aVR,aVL,aVF,V1,V2,V3,V4,V5,V6",500,10.0,10.0,forma de senales.npy; fs del notebook 29

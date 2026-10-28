@@ -1,0 +1,18 @@
+experimento,modelo,diferencia_media,semillas,semillas_mejor,semillas_peor,mejor que la SVM (regla)
+058 SVM y referencias,Gradient boosting,0.00682540000000007,5,3,0,False
+058 SVM y referencias,Gradient boosting ajustado,0.007000600000000068,5,3,0,False
+058 SVM y referencias,Regresión logística (Avance 3),-0.030156599999999957,5,0,5,False
+058 SVM y referencias,SVM ajustada,0.0018856000000000872,5,1,0,False
+059 xECG,xECG afinado,-0.03506419999999992,5,0,5,False
+059 xECG,xECG cabeza y luego todo,-0.1578587999999999,5,0,5,False
+059 xECG,xECG congelado,-0.05589239999999991,5,0,5,False
+059 xECG,xECG sin preentrenar,-0.042669499999999916,5,0,5,False
+060 SimDINOv2,SimDINOv2 047 congelado (contaminado),-0.025802799999999904,5,0,5,False
+060 SimDINOv2,SimDINOv2 afinado + intervalos,-0.020485399999999876,5,0,5,False
+060 SimDINOv2,SimDINOv2 cabeza y luego todo,-0.013635799999999865,5,0,5,False
+060 SimDINOv2,SimDINOv2 congelado,-0.026277999999999933,5,0,5,False
+060 SimDINOv2,SimDINOv2 congelado + intervalos,-0.008943199999999929,5,0,2,False
+061 Anomalías,Anomalía: máximo (1% de AnomalyDINO),-0.18711499999999998,5,0,5,False
+061 Anomalías,Anomalía: promedio de los 3 peores,-0.18713989999999986,5,0,5,False
+061 Anomalías,Anomalía: promedio de los 5 peores,-0.1880208999999999,5,0,5,False
+062 Grafo con memoria,Grafo con memoria,0.0046550000000001425,5,0,0,False

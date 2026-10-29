@@ -1693,7 +1693,7 @@
       "kind": "analysis",
       "title": "Remove a per-class disease subspace from the normal subspace, checked label-free on templates first",
       "question": "Does removing several principal directions of each superclass's residuals (especially conduction) stop LBBB template absorption, measured on template movement and clip rates before any scoring?",
-      "evidence": "NBR-04: L6D's four mean directions cut MI and ST-T template movement (inferior 0.0395 to 0.0293 mV) but not LBBB's (0.0439 to 0.0444 mV; 64% of region fits still clipped), and lost the territory gain.",
+      "evidence": "NBR-04: L6D's four mean directions cut MI and ST-T template movement (inferior 0.0395 to 0.0293 mV) but not LBBB's (0.0439 to 0.0444 mV; 64% of region fits still clipped), and lost the territory gain. NBR-04 Amendment 1: removal raised selectivity (+0.092) but cut the territory contrast (-0.091) with or without leave-out.",
       "value": 1,
       "clarity": 0.5,
       "gpu_hours": 0,

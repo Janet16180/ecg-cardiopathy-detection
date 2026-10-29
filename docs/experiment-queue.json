@@ -23,7 +23,7 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-10-29T00:49:56+00:00",
+  "updated_at_utc": "2026-10-29T01:21:00+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2438,6 +2438,11 @@
     "aggregate": "reports/nbr04-leave-region-out-2026-10-28/results.json",
     "examples": "outputs/nbr04_leave_region_out_20261028/examples.json",
     "primary_result": "L6: A -0.144 [-0.206, -0.093] failed, B +0.078 passed, C -0.076 [-0.105, -0.048] failed, D not confirmed. L6D: A -0.058 [-0.115, -0.002] failed, B -0.010 passed, C -0.048 [-0.072, -0.025] failed, D not confirmed. No arm chosen; P0 stays; export L6.",
-    "next_action": "nbr_disease_subspace_removal in the backlog, label-free first."
+    "next_action": "nbr_disease_subspace_removal in the backlog, label-free first.",
+    "amendment_commit": "fea21be",
+    "amendment_source_commit": "72cdaff",
+    "amendment": "Amendment 1 (after L6 and L6D results, before any D6 score): adds D6 and a three-arm rule with 98.33% intervals; secondary 2 x 2 factorial with C6.",
+    "amendment_result": "No arm passes. D6: A -0.060 [-0.120, -0.003] failed, B -0.011 passed, C -0.058 [-0.083, -0.032] failed, D not confirmed. Factorial (SPH, 95%): leave-out selectivity +0.008 [-0.003, +0.019]; removal selectivity +0.092 [+0.041, +0.147], territory -0.091 [-0.135, -0.051]. P0 stays; export L6.",
+    "aggregate_amendment": "reports/nbr04-leave-region-out-2026-10-28/amendment_results.json"
   }
 }

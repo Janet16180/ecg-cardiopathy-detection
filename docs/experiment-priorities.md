@@ -158,6 +158,8 @@ After NBR-04 (28 October 2026): leave-region-out personalization (L6) behaved li
 the four superclass disease directions (L6D) recovered part of the selectivity but lost the localization gain.
 Neither replaced P0. See [NBR-04](nbr04-leave-region-out-results-2026-10-28.md). `nbr_bounded_personalization`
 is lowered to value 1. New: `nbr_disease_subspace_removal`.
+Amendment 1 added D6 (removal with whole-record coordinates), which also failed; in the 2 x 2 factorial
+leave-out had no effect and removal traded localization for selectivity.
 
 Reruns after Ningbo (`rerun_of` in the backlog): 022 as `ningbo_sph_transfer`, 024 as `rerun_024_multisource`,
 025 as `rerun_025_ningbo`, 026 as `multisource_normal_manifold` and 027 as `multisource_calibration`. 023 is

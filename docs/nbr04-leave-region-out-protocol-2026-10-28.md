@@ -178,3 +178,14 @@ Integrity added: the amendment's analysis code must reproduce NBR-04's P0, L6 an
 both datasets, including the P0 primaries (SPH +0.3056275517940945, fold 9 +0.09848614265592237); variant SHA-256
 between preparation and encoding for D6 and C6. The page export follows the amended decision and replaces
 `outputs/nbr04_leave_region_out_20261028/examples.json`.
+
+### Note on Amendment 1 (added after the D6 results; no rule changes)
+
+Timing, stated neutrally. The lead sent the three-arm request at 16:17 local time (23:17 UTC) on 28 October 2026,
+and it was accepted into this agent's inbox then. That is before the NBR-03 protocol (`544fc55`, 16:26) and this
+protocol (`e0b32ee`, 17:10). The agent first saw it after committing the NBR-04 report and queue update (`34b7bfb`
+and `0c8957b`, 17:50), and committed Amendment 1 at 17:55. So the amendment was written with the L6 and L6D results
+known, and D6 is the only arm whose scores were unseen when the rule was fixed.
+
+One integrity check is added: the saved L6 and L6D scores must be reproduced exactly by re-scoring the saved
+per-record measurements and xECG features with the frozen models (stage `amendment_rescore`).

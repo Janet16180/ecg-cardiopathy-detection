@@ -604,8 +604,9 @@ set against P0, on the 1,037 SPH ECGs with confirmation on the 862 PTB-XL fold-9
 left out of the rank-6 fit) and L6D (L6 with the four superclass disease directions removed from the subspace).
 Complete. Neither replaces P0. L6 behaves like NBR-02's C6 (selectivity -0.144 [-0.206, -0.093] against P0,
 territory +0.078); L6D recovers part of the selectivity (-0.058 [-0.115, -0.002]) but loses the localization
-gain (territory -0.010). Both fail the component-flip guardrail and the PTB-XL confirmation. Amendment 1, at
-the user's request after those results, added D6 (direction removal, whole-record coordinates) and a three-arm
+gain (territory -0.010). Both fail the component-flip guardrail and the PTB-XL confirmation. Amendment 1 (the
+user's request was sent before both protocols and first seen after these results) added D6 (direction removal,
+whole-record coordinates) and a three-arm
 rule with 98.33% intervals: D6 also fails (selectivity -0.060 [-0.120, -0.003], component flips -0.058). In the
 2 x 2 factorial, leave-out has no effect on selectivity or localization, and direction removal raises
 selectivity (+0.092) while lowering the territory contrast (-0.091). P0 stays. Stacked on #79.

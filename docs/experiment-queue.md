@@ -597,6 +597,18 @@ described. Unreplaced scores reproduced the saved fold-9 scores exactly. Stacked
 [Results](nbr03-ptbxl-replication-results-2026-10-28.md),
 [aggregate](../reports/nbr03-ptbxl-replication-2026-10-28/results.json). No process is running.
 
+## NBR-04 leave-region-out personalization (28 October 2026)
+
+The [protocol](nbr04-leave-region-out-protocol-2026-10-28.md) tested two personalized counterparts on the C fit
+set against P0, on the 1,037 SPH ECGs with confirmation on the 862 PTB-XL fold-9 ECGs: L6 (each replaced region
+left out of the rank-6 fit) and L6D (L6 with the four superclass disease directions removed from the subspace).
+Complete. Neither replaces P0. L6 behaves like NBR-02's C6 (selectivity -0.144 [-0.206, -0.093] against P0,
+territory +0.078); L6D recovers part of the selectivity (-0.058 [-0.115, -0.002]) but loses the localization
+gain (territory -0.010). Both fail the component-flip guardrail and the PTB-XL confirmation. Stacked on #79.
+[Results](nbr04-leave-region-out-results-2026-10-28.md),
+[aggregate](../reports/nbr04-leave-region-out-2026-10-28/results.json); L6 page examples in
+`outputs/nbr04_leave_region_out_20261028/examples.json`. No process is running.
+
 ## Research branches
 
 The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.md) supplies the rationale for authorized Experiments 011–013. These are independent model families, not xECG modifications. They have no measured project results yet. The additional [vision architectures](cross-domain-architecture-candidates.md) and [xECG modifications](xecg-next-experiments.md) remain research candidates outside this accepted queue.

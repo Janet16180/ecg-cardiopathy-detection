@@ -23,7 +23,7 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-10-28T23:41:01+00:00",
+  "updated_at_utc": "2026-10-29T00:49:56+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
@@ -2424,5 +2424,20 @@
     "examples": "outputs/nbr03_ptbxl_replication_20261028/examples.json",
     "primary_result": "+0.098 [+0.052, +0.143], replicates; energy +0.060; model minus energy +0.038 [-0.004, +0.078], not shown beyond energy.",
     "next_action": "NBR-04 (leave-region-out personalization) follows on the same branch."
+  },
+  "nbr04_leave_region_out_20261028": {
+    "authorization": "Coordinator request on behalf of the user (28 October 2026): leave-region-out personalization after NBR-03.",
+    "status": "complete",
+    "protocol": "docs/nbr04-leave-region-out-protocol-2026-10-28.md",
+    "protocol_commit": "e0b32ee",
+    "source_commit": "ffd0e67",
+    "stacked_on": "#79 (after NBR-03 on research/nbr03-ptbxl-replication-20261028)",
+    "output": "outputs/nbr04_leave_region_out_20261028",
+    "primary": "An arm (L6, L6D) replaces P0 only if (A) SPH selectivity minus P0 lower > 0, (B) SPH territory minus P0 lower > -0.05, (C) SPH component flip rate minus P0 lower > -0.05, (D) PTB fold-9 selectivity difference point > 0 and territory difference lower > -0.05; 97.5% whole-patient intervals; tie rule L6 unless L6D selectivity exceeds L6's with lower > 0.",
+    "results": "docs/nbr04-leave-region-out-results-2026-10-28.md",
+    "aggregate": "reports/nbr04-leave-region-out-2026-10-28/results.json",
+    "examples": "outputs/nbr04_leave_region_out_20261028/examples.json",
+    "primary_result": "L6: A -0.144 [-0.206, -0.093] failed, B +0.078 passed, C -0.076 [-0.105, -0.048] failed, D not confirmed. L6D: A -0.058 [-0.115, -0.002] failed, B -0.010 passed, C -0.048 [-0.072, -0.025] failed, D not confirmed. No arm chosen; P0 stays; export L6.",
+    "next_action": "nbr_disease_subspace_removal in the backlog, label-free first."
   }
 }

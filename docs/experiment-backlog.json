@@ -1647,14 +1647,14 @@
       "title": "Smaller clip bound or rank for the personalized counterpart, chosen off SPH",
       "question": "Does a personalized counterpart with a smaller BOX or rank, chosen on PTB-XL fold 9, keep abnormal changes while shrinking normal ones, and pass the NBR-02 selectivity rule once on SPH?",
       "evidence": "NBR-02: rank 6 with BOX 2.58 lowered selectivity by 0.15 while sharpening the territory contrast by 0.08 and top-1 hits by 0.22.",
-      "value": 2,
+      "value": 1,
       "clarity": 0.5,
       "gpu_hours": 0.6,
       "cpu_hours": 0.5,
       "build_hours": 3,
       "blocked_by": [],
       "status": "open",
-      "notes": "Selection must happen on development data other than SPH, with a frozen protocol before SPH is scored."
+      "notes": "Selection must happen on development data other than SPH, with a frozen protocol before SPH is scored. Lowered after NBR-04: leaving the region out (L6) did not reduce absorption, and removing superclass directions (L6D) removed the localization gain too."
     },
     {
       "id": "nbr_dual_view_page",
@@ -1687,6 +1687,21 @@
       "blocked_by": [],
       "status": "open",
       "notes": "Saved scores only; needs a short protocol because it re-reads SPH and fold-9 results."
+    },
+    {
+      "id": "nbr_disease_subspace_removal",
+      "kind": "analysis",
+      "title": "Remove a per-class disease subspace from the normal subspace, checked label-free on templates first",
+      "question": "Does removing several principal directions of each superclass's residuals (especially conduction) stop LBBB template absorption, measured on template movement and clip rates before any scoring?",
+      "evidence": "NBR-04: L6D's four mean directions cut MI and ST-T template movement (inferior 0.0395 to 0.0293 mV) but not LBBB's (0.0439 to 0.0444 mV; 64% of region fits still clipped), and lost the territory gain.",
+      "value": 1,
+      "clarity": 0.5,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "open",
+      "notes": "Template-side diagnostics only; a scoring study would need its own protocol. Low value because three counterparts already favour P0."
     }
   ]
 }

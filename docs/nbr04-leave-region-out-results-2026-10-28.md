@@ -1,28 +1,84 @@
-# NBR-04 results: leaving the region out does not stop the absorption; neither arm replaces P0
+# NBR-04 results: no personalized counterpart replaces P0; removing disease directions trades localization for selectivity
 
 28 October 2026, under the committed [protocol](nbr04-leave-region-out-protocol-2026-10-28.md) (`e0b32ee`;
-code `ffd0e67`). Same branch as NBR-03, stacked on #79. Every number comes from
-`outputs/nbr04_leave_region_out_20261028/` (`analyze/results.json`, `score/integrity.json`,
-`fitsets/fitsets.json`, `prepare/prepare.csv`, `profile/profile.json`, `encode_*/encode.json`,
-`export/export.json`). Intervals are 97.5% whole-patient bootstraps, 2,000 draws, seed 20261028, with every
-statistic of every arm of one dataset on the same draws; no draw was skipped for any decision statistic.
-Scores are `all_age_blend` probabilities unless stated.
+code `ffd0e67`) and its Amendment 1 (`fea21be`; code `72cdaff`). Amendment 1 added a third arm, D6, at the
+user's request. It was written after the L6 and L6D scores had been read and reported (`34b7bfb`) and before
+any D6 score. Same branch as NBR-03, stacked on #79. Every number comes from
+`outputs/nbr04_leave_region_out_20261028/` (`analyze/results.json` for the original two-arm analysis,
+`amendment_analyze/results.json` for the amended three-arm analysis, `score/integrity.json`,
+`amendment_check/check.json`, `fitsets/fitsets.json`, the `prepare`, `profile`, `encode_*` and `export` stages
+and their `amendment_` counterparts). Intervals are whole-patient bootstraps, 2,000 draws, seed 20261028, with
+every statistic of every arm of one dataset on the same draws: 98.33% for the amended decision, 97.5% for the
+original two-arm decision, 95% for the factorial effects. No draw was skipped for any decision or factorial
+statistic. Scores are `all_age_blend` probabilities unless stated.
 
 ## Answer
 
-- Neither L6 nor L6D replaces P0. The page keeps NBR-01's population counterpart; the export carries L6, as
-  the protocol fixed for this case.
-- L6 behaves almost exactly like NBR-02's C6. Leaving the replaced region out of the personalization changes
-  SPH selectivity by only +0.008 [-0.004, +0.021] against C6 and the territory contrast by -0.002 [-0.010,
-  +0.007]. So the absorption does not come from the replaced region itself: the other leads and components
-  predict the abnormal shape through the subspace's correlations.
-- L6D, which also removes the four superclass directions, recovers part of the selectivity (+0.087 [+0.026,
-  +0.148] over L6) and the wave contrast, but loses the whole localization gain: its territory contrast
-  equals P0's (-0.010 [-0.032, +0.012]).
-- Both arms fail part A (selectivity below P0) and part C (component flips lost beyond the 0.05 margin), and
-  neither is confirmed on PTB-XL fold 9.
+- No arm replaces P0, under the amended three-arm rule or under the original two-arm rule. The page keeps
+  NBR-01's population counterpart; the export carries L6, as fixed for this case.
+- D6 (disease directions removed, whole-record coordinates) also fails: selectivity minus P0 -0.060 [-0.120,
+  -0.003] (A), component flips minus P0 -0.058 [-0.083, -0.032] (C), and no PTB-XL confirmation (selectivity
+  point -0.018).
+- In the 2 x 2 factorial, leaving the region out does nothing for selectivity or localization on either
+  dataset (SPH selectivity +0.008 [-0.003, +0.019] without removal, territory -0.002 [-0.009, +0.005]).
+  Removing the four superclass directions raises selectivity (SPH +0.092 [+0.041, +0.147]; PTB-XL +0.135
+  [+0.082, +0.190]) but lowers the territory contrast (SPH -0.091 [-0.135, -0.051]) and the top-1 territory hit
+  (SPH -0.192 [-0.283, -0.102]). The interactions are near zero except for component flips.
+- So the personalized template's localization gain and its absorption of the abnormality go together: what
+  removes one removes the other, and neither variant beats the population template on selectivity.
 
-## Primary decision (SPH, D on PTB-XL fold 9)
+## Amended primary decision (98.33% intervals, Bonferroni over three arms)
+
+| Part | Rule | L6 | D6 | L6D |
+| --- | --- | --- | --- | --- |
+| A. Selectivity, arm - P0 (SPH) | lower > 0 | -0.144 [-0.209, -0.089], failed | -0.060 [-0.120, -0.003], failed | -0.058 [-0.119, -0.001], failed |
+| B. Territory, arm - P0 (SPH) | lower > -0.05 | +0.078 [+0.031, +0.132], passed | -0.011 [-0.038, +0.015], passed | -0.010 [-0.034, +0.013], passed |
+| C. Component flip rate, arm - P0 (SPH) | lower > -0.05 | -0.076 [-0.107, -0.047], failed | -0.058 [-0.083, -0.032], failed | -0.048 [-0.074, -0.023], failed |
+| D. PTB-XL selectivity, arm - P0 | point > 0 | -0.148, failed | -0.018, failed | -0.022, failed |
+| D. PTB-XL territory, arm - P0 | lower > -0.05 | +0.011 [-0.020, +0.040], passed | -0.011 [-0.033, +0.010], passed | -0.003 [-0.024, +0.017], passed |
+| Replaces P0 | A, B, C and D | no | no | no |
+
+No arm passed, so the choice rule was not used; P0 stays and L6 is exported. As the amendment stated, the wider
+intervals could not change the L6 and L6D verdicts, and they did not.
+
+All five arms on SPH (`all_age_blend`, point values; selectivity and territory with 98.33% intervals):
+
+| Arm | Leave-out | Removal | Selectivity | Territory | Top-1 hit | Component flip | Full flip | Abnormal lead change | Normal lead change |
+| --- | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
+| P0 | | | 0.935 [0.786, 1.105] | +0.306 [+0.235, +0.378] | 0.490 | 0.395 | 0.763 | 0.0207 | 0.0221 |
+| C6 | no | no | 0.783 [0.656, 0.928] | +0.386 [+0.302, +0.467] | 0.712 | 0.240 | 0.362 | 0.0147 | 0.0188 |
+| L6 | yes | no | 0.791 [0.662, 0.938] | +0.384 [+0.300, +0.467] | 0.712 | 0.319 | 0.772 | 0.0150 | 0.0190 |
+| D6 | no | yes | 0.875 [0.738, 1.035] | +0.295 [+0.220, +0.371] | 0.519 | 0.337 | 0.563 | 0.0179 | 0.0204 |
+| L6D | yes | yes | 0.877 [0.738, 1.040] | +0.296 [+0.221, +0.371] | 0.538 | 0.347 | 0.772 | 0.0182 | 0.0208 |
+
+On PTB-XL fold 9: P0 0.982 / +0.098, C6 0.829 / +0.109, L6 0.834 / +0.109, D6 0.964 / +0.087, L6D 0.960 / +0.095
+(selectivity / territory). D6's full replacement unflags 56.3% of flagged abnormal SPH ECGs (C6 36.2%, P0 76.3%;
+the leave-out arms equal C0 by construction); its abnormal full drop is 0.384. At least one D6 coordinate is
+clipped for 64.7% of LBBB ECGs on SPH (C6 79.4%) and 6.7% of normals.
+
+## Factorial effects (paired, 95%)
+
+| Effect (`all_age_blend`) | Selectivity | Territory | Top-1 hit | Component flip |
+| --- | --- | --- | --- | --- |
+| SPH: leave-out without removal (L6 - C6) | +0.008 [-0.003, +0.019] | -0.002 [-0.009, +0.005] | +0.000 [-0.027, +0.028] | +0.079 [+0.057, +0.102] |
+| SPH: leave-out with removal (L6D - D6) | +0.002 [-0.014, +0.018] | +0.001 [-0.005, +0.008] | +0.019 [+0.000, +0.051] | +0.010 [-0.007, +0.028] |
+| SPH: removal without leave-out (D6 - C6) | +0.092 [+0.041, +0.147] | -0.091 [-0.135, -0.051] | -0.192 [-0.283, -0.102] | +0.097 [+0.068, +0.130] |
+| SPH: removal with leave-out (L6D - L6) | +0.087 [+0.036, +0.141] | -0.088 [-0.131, -0.048] | -0.173 [-0.260, -0.086] | +0.028 [+0.002, +0.055] |
+| SPH: interaction | -0.006 [-0.025, +0.013] | +0.003 [-0.007, +0.013] | +0.019 [-0.017, +0.061] | -0.069 [-0.096, -0.043] |
+| PTB-XL: leave-out without removal | +0.005 [-0.006, +0.017] | +0.001 [-0.008, +0.010] | -0.003 [-0.014, +0.007] | +0.071 [+0.039, +0.106] |
+| PTB-XL: leave-out with removal | -0.004 [-0.017, +0.007] | +0.008 [+0.003, +0.014] | -0.007 [-0.020, +0.006] | -0.020 [-0.042, +0.003] |
+| PTB-XL: removal without leave-out | +0.135 [+0.082, +0.190] | -0.021 [-0.045, +0.002] | -0.085 [-0.129, -0.039] | +0.136 [+0.090, +0.183] |
+| PTB-XL: removal with leave-out | +0.126 [+0.073, +0.180] | -0.014 [-0.037, +0.010] | -0.088 [-0.132, -0.043] | +0.045 [+0.005, +0.088] |
+| PTB-XL: interaction | -0.010 [-0.027, +0.006] | +0.008 [-0.003, +0.018] | -0.003 [-0.020, +0.013] | -0.091 [-0.133, -0.052] |
+
+Leaving the region out raises the whole-component flip rate only when the disease directions are kept (SPH
++0.079 against +0.010 with removal), which is what makes that interaction negative.
+
+## Original two-arm analysis (frozen protocol, 97.5% intervals)
+
+The following sections report the analysis as frozen at `e0b32ee`, unchanged.
+
+### Two-arm decision (SPH, D on PTB-XL fold 9)
 
 | Part | Rule | L6 | L6D |
 | --- | --- | --- | --- |
@@ -37,7 +93,7 @@ Scores are `all_age_blend` probabilities unless stated.
 Tie rule (not needed): L6D minus L6 selectivity is +0.087 [+0.026, +0.148]. No arm was chosen; the export is
 L6.
 
-## The arms on SPH (`all_age_blend`)
+### The arms on SPH (`all_age_blend`)
 
 | Arm | Selectivity | Abnormal lead change | Normal lead change | Territory | Minus energy | Wave | Top-1 hit | Component flip | Full flip |
 | --- | --- | ---: | ---: | --- | ---: | ---: | ---: | ---: | ---: |
@@ -67,7 +123,7 @@ Components and the secondary model, selectivity minus P0 on SPH: HGB L6 -0.061 [
 [-0.126, +0.022]; xECG L6 -0.196 [-0.260, -0.136], L6D -0.059 [-0.104, -0.016]; `ptb_baseline_blend` L6 -0.132
 [-0.186, -0.084], L6D -0.073 [-0.128, -0.021].
 
-## PTB-XL fold 9 (`all_age_blend`)
+### PTB-XL fold 9 (`all_age_blend`)
 
 | Arm | Selectivity | Territory | Minus energy | Wave | Top-1 hit | Component flip |
 | --- | --- | --- | --- | --- | ---: | ---: |
@@ -79,7 +135,7 @@ Contrasts against P0: L6 selectivity -0.148 [-0.220, -0.087], territory +0.011 [
 -0.108 [-0.155, -0.063]; L6D selectivity -0.022 [-0.066, +0.018], territory -0.003 [-0.023, +0.017], component
 flip -0.063 [-0.095, -0.031]. On PTB-XL even L6's localization gain is small.
 
-## Clipping and template movement
+### Clipping and template movement
 
 Share of a record's 51 region fits with any coordinate at the clip bound, and mean absolute template movement
 from the population (C0) template on 062's grid, by group:
@@ -111,6 +167,9 @@ pattern is not well described by one mean direction per superclass.
 | 4. Variant SHA-256 per arm between preparation and encoding | all 2 x 1,899 matched |
 | 5. 062 knots against the NBR-01 and NBR-03 plans | identical for all 1,899 ECGs |
 | Disease directions, rerun on committed code | identical arrays to the first run |
+| Amendment: NBR-02's SPH C6 counterparts rebuilt by the amendment's code path | 0.0 mV on 100 records |
+| Amendment: NBR-04's P0, L6 and L6D point statistics recomputed by the amendment's analysis | 4,974 of 4,974 identical, including both P0 primaries |
+| Amendment: D6 and C6 variant SHA-256 between preparation and encoding | all matched (1,037 SPH, 862 fold 9) |
 
 ## Run
 
@@ -118,6 +177,10 @@ Fit set and directions 343 s on the committed rerun (1,062 s on the first run). 
 CPU-seconds per record and encoding 1.25 s per record (104 variants); L6 full equal to C0 for 10 of 10.
 Preparation of 1,899 ECGs 191 s with 16 workers; encoding 949 and 950 ECGs in 1,234 and 1,275 s on the two
 GPUs in parallel, each under its lock; bootstrap and analysis 215 s.
+
+Amendment 1: profile 1.13 CPU-seconds and 0.78 s of encoding per record (20 ECGs); preparation of D6 on both
+samples and C6 on fold 9 in 129 s with 16 workers; encoding 949 and 950 ECGs in 727 and 825 s on the two GPUs;
+scoring and the three-arm analysis 332 s.
 
 ## Deviations and disclosures
 
@@ -127,18 +190,24 @@ GPUs in parallel, each under its lock; bootstrap and analysis 215 s.
 2. The `fitsets` and `profile` stages read no replacement score, and the protocol, committed before the
    `prepare` stage, quotes the fit-set numbers.
 3. The rule was reviewed before any score and kept unchanged.
+4. Amendment 1 was requested and committed after the L6 and L6D results had been read and reported. It added
+   D6, which had not been scored, and replaced the decision rule by the three-arm rule. The wider 98.33%
+   intervals could only make passing harder for L6 and L6D, so the amendment could not change their verdicts.
+5. The amendment's export replaced the first `examples.json` (the arm is L6 in both; the summary now holds all
+   five arms, the amended decision and the factorial effects).
 
 ## What it means
 
 - Personalizing the counterpart with 062's normal subspace absorbs part of an abnormal ECG's deviation even
   when the replaced region is hidden from the fit, because the abnormality in the rest of the record is
-  enough to move the coordinates. Leave-region-out is therefore not a fix.
-- Removing one mean direction per superclass reduces the absorption for MI and ST-T patterns, and with it
-  the localization gain disappears. The localization gain of C6 and L6 and their absorption look like the
-  same effect: the personalized template follows the record wherever the subspace can, which removes global
-  differences and leaves local ones, but also makes abnormal records look partly normal.
-- No arm passes the frozen rule, so P0 stays the page counterpart. Three counterparts now point the same way:
-  the population template is the most selective and keeps the most component-level flips.
+  enough to move the coordinates. Leave-region-out is therefore not a fix: in the factorial it changes neither
+  selectivity nor localization on either dataset.
+- Removing one mean direction per superclass is the only factor that moves selectivity, and it removes the
+  localization gain by about the same amount it was gained. The localization gain of C6 and L6 and their
+  absorption behave as one effect: the personalized template follows the record wherever the subspace can,
+  which removes global differences and leaves local ones, but also makes abnormal records look partly normal.
+- No arm passes either rule, so P0 stays the page counterpart. Four personalized variants now point the same
+  way: the population template is the most selective and keeps the most component-level flips.
 
 ## Limitations
 
@@ -150,12 +219,13 @@ GPUs in parallel, each under its lock; bootstrap and analysis 215 s.
 
 ## Page export
 
-`outputs/nbr04_leave_region_out_20261028/examples.json` (6,615,335 bytes; validated): arm L6 (no arm passed),
-NBR-01's 16 SPH IDs in the same order. The `counterpart` array is a composite: each lead comes from its
-whole-lead leave-region-out template (`counterpart_note`). Signals, components, unreplaced and self-swap
-scores are NBR-01's. `summary.statistics` holds 3,081 statistics with 97.5% intervals for P0, C6, L6 and L6D on
-SPH and, under `ptbxl_fold9/`, for P0, L6 and L6D on fold 9; `summary.decisions` holds parts A to D for both
-arms, the tie statistic, `chosen: null` and `exported_arm: "L6"`. The page should keep NBR-01's file as its
+`outputs/nbr04_leave_region_out_20261028/examples.json` (7,276,396 bytes; validated), written under Amendment
+1: arm L6 (no arm passed), NBR-01's 16 SPH IDs in the same order. The `counterpart` array is a composite: each
+lead comes from its whole-lead leave-region-out template (`counterpart_note`). Signals, components,
+unreplaced and self-swap scores are NBR-01's. `summary.statistics` holds 5,810 statistics, each with 98.33%
+(`low`, `high`) and 95% (`low95`, `high95`) intervals, for P0, C6, L6, D6 and L6D on SPH and, under
+`ptbxl_fold9/`, on fold 9, including the `factorial/` effects; `summary.decisions` holds parts A to D for the
+three arms, `passing: []`, `chosen: null` and `exported_arm: "L6"`. The page should keep NBR-01's file as its
 default.
 
 ## Follow-ups (added to the backlog)

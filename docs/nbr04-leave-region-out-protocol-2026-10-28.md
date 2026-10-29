@@ -136,3 +136,45 @@ or final frozen test is read. No age-subgroup analysis.
 `ecg_experiment/localization/nbr04_*.py`, `scripts/experiments/run_nbr04.py`,
 `tests/localization/test_nbr04_leave_region_out.py`. Report:
 `docs/nbr04-leave-region-out-results-2026-10-28.md`.
+
+## Amendment 1 (28 October 2026): three arms, written after the L6 and L6D results and before any D6 score
+
+The user asked, through the lead, for a three-arm design before the protocol was frozen. The request arrived
+after this protocol had been committed (`e0b32ee`) and after the L6 and L6D replacement scores had been read and
+reported (`34b7bfb`). It is therefore an amendment made with the L6 and L6D results known. It is committed before
+any score of the new arm D6 is computed. The original two-arm decision stays reported as it was.
+
+Arms, all on the C fit set at rank 6:
+
+- L6 (unchanged): leave-region-out only.
+- D6 (new): disease-direction removal only. The L6D model (the C6 basis with the four superclass directions
+  removed, refitted on the normals), with coordinates computed on the whole record by 062's
+  `subspace_coefficients`, one template per record, as NBR-02's C6 (`nbr02_templates.arm_differences`).
+- L6D (unchanged): both.
+- NBR-02's C6 (neither change) completes a 2 x 2 factorial: leave-region-out yes/no by direction removal yes/no.
+
+Additional scoring: D6 on the 1,037 SPH ECGs and the 862 PTB-XL fold-9 ECGs, and C6 on the fold-9 ECGs (NBR-02
+scored C6 on SPH only). The amendment's code path rebuilt NBR-02's SPH C6 counterparts for 100 records with a
+largest difference of 0.0 mV (stage `amendment_check`, no score). Profile (no score): preparation 1.13 CPU-seconds
+and encoding 0.78 s per record on 10 SPH and 10 fold-9 ECGs.
+
+Primary decision (replaces the two-arm decision for the page): parts A to D against P0 exactly as above, for each
+of L6, D6 and L6D, with 98.33% whole-patient intervals (Bonferroni over three arms), 2,000 draws, seed 20261028,
+every statistic of one dataset on the same draws. If more than one arm passes all four parts, choose the one with
+the highest SPH selectivity point estimate and report the paired selectivity differences between the passing
+arms. If none passes, P0 stays and L6 is exported.
+
+Because L6 and L6D already failed parts A and C with 97.5% intervals, and a 98.33% interval is wider, the
+amendment cannot make either pass; only D6 is unseen.
+
+Secondary, with 95% intervals on the same draws, on SPH and on PTB-XL fold 9, for selectivity, the territory
+contrast, the top-1 territory hit and the whole-component flip rate (and for every score):
+
+- leave-region-out effect: L6 - C6 (without removal) and L6D - D6 (with removal);
+- direction-removal effect: D6 - C6 (without leave-out) and L6D - L6 (with leave-out);
+- interaction: (L6D - D6) - (L6 - C6).
+
+Integrity added: the amendment's analysis code must reproduce NBR-04's P0, L6 and L6D point statistics exactly on
+both datasets, including the P0 primaries (SPH +0.3056275517940945, fold 9 +0.09848614265592237); variant SHA-256
+between preparation and encoding for D6 and C6. The page export follows the amended decision and replaces
+`outputs/nbr04_leave_region_out_20261028/examples.json`.

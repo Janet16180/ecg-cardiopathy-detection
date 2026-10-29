@@ -1,0 +1,11 @@
+{
+  "sph": {
+    "records": 1037
+  },
+  "ptb": {
+    "records": 862
+  },
+  "l6_full_vs_nbr02_c0_full_max_abs_difference": 0.0,
+  "l6_full_vs_nbr02_c0_full_hgb_max_abs_difference": 0.0,
+  "l6_full_scores_exact": true
+}

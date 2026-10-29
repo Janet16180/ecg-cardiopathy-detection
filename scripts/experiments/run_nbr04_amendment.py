@@ -1,4 +1,4 @@
-"""Run one NBR-04 Amendment 1 stage: check, profile, prepare, encode, score, analyze or export."""
+"""Run one NBR-04 Amendment 1 stage: check, profile, prepare, encode, score, analyze, export or rescore."""
 
 from __future__ import annotations
 
@@ -9,9 +9,9 @@ from pathlib import Path
 from threadpoolctl import threadpool_limits
 
 from ecg_experiment.cuda_runtime20261028 import configure_cuda_runtime
-from ecg_experiment.localization import nbr04_amendment, nbr04_amendment_export
+from ecg_experiment.localization import nbr04_amendment, nbr04_amendment_export, nbr04_rescore
 
-STAGES = ("check", "profile", "prepare", "encode", "score", "analyze", "export")
+STAGES = ("check", "profile", "prepare", "encode", "score", "analyze", "export", "rescore")
 
 
 def main() -> None:
@@ -40,6 +40,8 @@ def main() -> None:
             result = nbr04_amendment.score(root)
         elif args.stage == "analyze":
             result = nbr04_amendment.analyze(root)
+        elif args.stage == "rescore":
+            result = nbr04_rescore.rescore(root)
         else:
             result = nbr04_amendment_export.export(root)
     print(json.dumps(result["details"], indent=2, default=str))

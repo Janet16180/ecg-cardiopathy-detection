@@ -1,0 +1,12 @@
+{
+  "sph": {
+    "records": 1037,
+    "max_abs_score_difference": 0.0,
+    "energy_identical": true
+  },
+  "ptb": {
+    "records": 862,
+    "max_abs_score_difference": 0.0,
+    "energy_identical": true
+  }
+}

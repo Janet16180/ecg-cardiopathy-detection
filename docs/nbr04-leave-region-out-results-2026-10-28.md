@@ -1,12 +1,16 @@
 # NBR-04 results: no personalized counterpart replaces P0; removing disease directions trades localization for selectivity
 
 28 October 2026, under the committed [protocol](nbr04-leave-region-out-protocol-2026-10-28.md) (`e0b32ee`;
-code `ffd0e67`) and its Amendment 1 (`fea21be`; code `72cdaff`). Amendment 1 added a third arm, D6, at the
-user's request. It was written after the L6 and L6D scores had been read and reported (`34b7bfb`) and before
-any D6 score. Same branch as NBR-03, stacked on #79. Every number comes from
+code `ffd0e67`) and its Amendment 1 (`fea21be`, timing note `9221846`; code `72cdaff`, `3686841`).
+Amendment 1 added a third arm, D6, at the user's request. The request was sent at 16:17 local time (23:17 UTC),
+before both the NBR-03 protocol (16:26) and this protocol (17:10); the agent first saw it after committing the
+two-arm report (`34b7bfb`, `0c8957b`, 17:50) and committed the amendment at 17:55, before any D6 score. The
+amendment was therefore written with the L6 and L6D results known; D6 is the only unseen arm. Same branch as
+NBR-03, stacked on #79. Every number comes from
 `outputs/nbr04_leave_region_out_20261028/` (`analyze/results.json` for the original two-arm analysis,
 `amendment_analyze/results.json` for the amended three-arm analysis, `score/integrity.json`,
-`amendment_check/check.json`, `fitsets/fitsets.json`, the `prepare`, `profile`, `encode_*` and `export` stages
+`amendment_check/check.json`, `amendment_rescore/rescore.json`, `fitsets/fitsets.json`, the `prepare`,
+`profile`, `encode_*` and `export` stages
 and their `amendment_` counterparts). Intervals are whole-patient bootstraps, 2,000 draws, seed 20261028, with
 every statistic of every arm of one dataset on the same draws: 98.33% for the amended decision, 97.5% for the
 original two-arm decision, 95% for the factorial effects. No draw was skipped for any decision or factorial
@@ -27,7 +31,9 @@ statistic. Scores are `all_age_blend` probabilities unless stated.
 - So the personalized template's localization gain and its absorption of the abnormality go together: what
   removes one removes the other, and neither variant beats the population template on selectivity.
 
-## Amended primary decision (98.33% intervals, Bonferroni over three arms)
+## Addendum of 28 October 2026: Amendment 1, three arms
+
+### Amended primary decision (98.33% intervals, Bonferroni over three arms)
 
 | Part | Rule | L6 | D6 | L6D |
 | --- | --- | --- | --- | --- |
@@ -38,8 +44,10 @@ statistic. Scores are `all_age_blend` probabilities unless stated.
 | D. PTB-XL territory, arm - P0 | lower > -0.05 | +0.011 [-0.020, +0.040], passed | -0.011 [-0.033, +0.010], passed | -0.003 [-0.024, +0.017], passed |
 | Replaces P0 | A, B, C and D | no | no | no |
 
-No arm passed, so the choice rule was not used; P0 stays and L6 is exported. As the amendment stated, the wider
-intervals could not change the L6 and L6D verdicts, and they did not.
+No arm passed, so the choice rule was not used; P0 stays and L6 is exported. Recomputed at 98.33%, none of
+L6's or L6D's A-D outcomes changed from the 97.5% analysis: for both, A failed, B passed, C failed, the PTB-XL
+territory part passed and the PTB-XL selectivity part failed, so D stayed unconfirmed. L6D's part C lower bound
+moved from -0.072 to -0.074, and its part A lower bound from -0.115 to -0.119.
 
 All five arms on SPH (`all_age_blend`, point values; selectivity and territory with 98.33% intervals):
 
@@ -56,7 +64,7 @@ On PTB-XL fold 9: P0 0.982 / +0.098, C6 0.829 / +0.109, L6 0.834 / +0.109, D6 0.
 the leave-out arms equal C0 by construction); its abnormal full drop is 0.384. At least one D6 coordinate is
 clipped for 64.7% of LBBB ECGs on SPH (C6 79.4%) and 6.7% of normals.
 
-## Factorial effects (paired, 95%)
+### Factorial effects (paired, 95%)
 
 | Effect (`all_age_blend`) | Selectivity | Territory | Top-1 hit | Component flip |
 | --- | --- | --- | --- | --- |
@@ -170,6 +178,7 @@ pattern is not well described by one mean direction per superclass.
 | Amendment: NBR-02's SPH C6 counterparts rebuilt by the amendment's code path | 0.0 mV on 100 records |
 | Amendment: NBR-04's P0, L6 and L6D point statistics recomputed by the amendment's analysis | 4,974 of 4,974 identical, including both P0 primaries |
 | Amendment: D6 and C6 variant SHA-256 between preparation and encoding | all matched (1,037 SPH, 862 fold 9) |
+| Amendment: saved L6 and L6D scores re-scored from their saved measurements and xECG features | largest difference 0.0, energies identical, on both samples |
 
 ## Run
 
@@ -190,11 +199,13 @@ scoring and the three-arm analysis 332 s.
 2. The `fitsets` and `profile` stages read no replacement score, and the protocol, committed before the
    `prepare` stage, quotes the fit-set numbers.
 3. The rule was reviewed before any score and kept unchanged.
-4. Amendment 1 was requested and committed after the L6 and L6D results had been read and reported. It added
-   D6, which had not been scored, and replaced the decision rule by the three-arm rule. The wider 98.33%
-   intervals could only make passing harder for L6 and L6D, so the amendment could not change their verdicts.
-5. The amendment's export replaced the first `examples.json` (the arm is L6 in both; the summary now holds all
-   five arms, the amended decision and the factorial effects).
+4. Amendment 1's request was sent at 16:17 local time (23:17 UTC), before both protocols, and the agent first
+   saw it at about 17:50, after the two-arm report. The amendment was committed at 17:55 with the L6 and L6D
+   results known. It added D6, which had not been scored, and replaced the decision rule by the three-arm rule.
+   The wider 98.33% intervals could only make passing harder for L6 and L6D, and none of their outcomes changed.
+5. The amendment's export replaced the first `examples.json`. The arm (L6), the 16 examples, their counterparts
+   and scores are identical in both versions; only the summary changed (all five arms, the amended decision and
+   the factorial effects).
 
 ## What it means
 

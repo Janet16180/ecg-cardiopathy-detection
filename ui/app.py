@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
@@ -16,6 +17,7 @@ from ecg_experiment import ROOT
 from .artifacts import ArtifactUnavailableError, load_cohorts, load_evaluation
 from .config import CACHED, ArtifactMode, artifact_mode
 from .inference import Predictor, analyze
+from .localization import load_localization
 from .security import LocalSecurityMiddleware
 
 STATIC = Path(__file__).parent / "static"
@@ -95,6 +97,7 @@ def create_app(artifact_root: Path | None = None, predictor: Predictor | None = 
     application = FastAPI(title="ECG research workspace", docs_url=None, redoc_url=None, openapi_url=None)
 
     application.add_middleware(LocalSecurityMiddleware)
+    application.add_middleware(GZipMiddleware, minimum_size=4096)
 
     @application.get("/api/status")
     def status() -> dict[str, Any]:
@@ -110,6 +113,14 @@ def create_app(artifact_root: Path | None = None, predictor: Predictor | None = 
     def cohorts() -> dict[str, Any]:
         """Return completed training cohort summaries without raw labels or patient identities."""
         return public_artifact(load_cohorts, root, mode)
+
+    @application.get("/api/localization")
+    def localization() -> dict[str, Any]:
+        """Return the NBR-01 replacement examples and the study's aggregate statistics."""
+        try:
+            return load_localization(root)
+        except ARTIFACT_ERRORS as error:
+            raise unavailable(error) from error
 
     @application.post("/api/analyze")
     def new_ecg(payload: SignalRequest) -> dict[str, Any]:

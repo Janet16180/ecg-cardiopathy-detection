@@ -4,6 +4,7 @@ import {matrixAt, nearestIndex, parseCanonicalCSV} from '../ui/static/matrix.mjs
 import {ageComparisonRows} from '../ui/static/comparison.mjs';
 import {thresholdImpact, impactPlots} from '../ui/static/threshold_impact.mjs';
 import {copy} from '../ui/static/i18n.mjs';
+import {modelResults} from '../ui/static/model_results.mjs';
 
 test('saved cutoff extremes, ties and zero denominator use exact matrices', () => {
   // Strict >: score .5 ties are not referred at threshold .5.
@@ -104,4 +105,36 @@ test('threshold graphs provide translated accessible descriptions and class deno
   assert.match(html,/n = 3/);
   assert.match(html,/TP \/ 2/);
   assert.match(html,/\(TP \+ FP\) \/ 5/);
+});
+
+test('all model results rank observed sensitivity and AUROC separately without choosing a default', () => {
+  const point=(pool,sensitivity,auroc,fp=1)=>({pool,comparison:'>',threshold:.4,
+    metrics:{sensitivity,auroc,tp:8,fn:2,fp,tn:20-fp,positives:10,negatives:20,ecgs:30,referral_fraction:(8+fp)/30}});
+  const data={default_model_id:'ptb_baseline_blend',models:[
+    {id:'ptb_baseline_hgb',label:'HGB',evaluations:[point('ptb',.8,.9),point('sph',.6,.8)]},
+    {id:'ptb_baseline_blend',label:'Baseline',evaluations:[point('ptb',.7,.95),point('sph',.65,.85)]},
+    {id:'all_age_blend',label:'All age',evaluations:[point('sph',.77,.94),point('ptb',.6,.85,2)]},
+  ]};
+  const before=JSON.stringify(data),ptb=modelResults(data,'ptb');
+  assert.equal(ptb[0].id,'ptb_baseline_hgb');
+  assert.equal(ptb[0].highest_sensitivity,true);
+  assert.equal(ptb.find(row=>row.highest_auroc).id,'ptb_baseline_blend');
+  assert.equal(modelResults(data,'sph')[0].id,'all_age_blend');
+  assert.equal(modelResults(data,'ptb','auroc')[0].id,'ptb_baseline_blend');
+  assert.equal(modelResults(data,'ptb','fp','asc').at(-1).id,'all_age_blend');
+  assert.equal(ptb[0].false_positive_rate,.05);
+  assert.equal(JSON.stringify(data),before);
+});
+
+test('model comparison ties are stable and incompatible denominators are rejected', () => {
+  const model=id=>({id,label:id,evaluations:[{pool:'sph',comparison:'>',threshold:.5,
+    metrics:{sensitivity:.7,auroc:.9,tp:7,fn:3,fp:0,tn:0,positives:10,negatives:0,ecgs:10,referral_fraction:.7}}]});
+  const data={models:[model('z'),model('a')]};
+  assert.deepEqual(modelResults(data,'sph').map(row=>row.id),['a','z']);
+  assert.ok(modelResults(data,'sph').every(row=>row.highest_sensitivity && row.highest_auroc));
+  assert.equal(modelResults(data,'sph')[0].false_positive_rate,null);
+  assert.throws(()=>modelResults(data,'sph','unsupported'),RangeError);
+  assert.throws(()=>modelResults(data,'missing'),/same development site/);
+  data.models[0].evaluations[0].metrics.ecgs=11;
+  assert.throws(()=>modelResults(data,'sph'),/reference denominators/);
 });

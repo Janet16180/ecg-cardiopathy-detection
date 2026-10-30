@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - "ui/**"
-      - "tests/test_ui_matrix.mjs"
+      - "tests/test_ui_*.mjs"
       - ".github/workflows/screening-app-checks.yml"
   workflow_dispatch:
 
@@ -36,4 +36,4 @@ jobs:
       - name: Lint application Python
         run: uv run --locked --only-group dev ruff check --output-format=github ui
       - name: Check threshold matrix interaction
-        run: node --test tests/test_ui_matrix.mjs
+        run: node --test tests/test_ui_matrix.mjs tests/test_ui_prevalence.mjs tests/test_ui_replacement.mjs

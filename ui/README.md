@@ -15,7 +15,7 @@ the full ECG denominator are explicit. Keyboard slider updates are announced thr
 
 The old PR's serialized models, alternative diagnosis target, validation prediction CSVs and diagnosis
 hit-rate claims are not imported. No missing notebooks or historical training steps are reconstructed by
-assertion. Unsupported multilabel diagnoses are unavailable. Localization is visibly work in progress;
+assertion. Unsupported multilabel diagnoses are unavailable. Localization presents the executed normal-beat replacement examples;
 there is no invented interval plot or claim of improved classification.
 
 The "Where does the model look" page shows the NBR-01 normal-beat replacement study

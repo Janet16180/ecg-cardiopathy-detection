@@ -1,0 +1,13 @@
+{
+  "aggregate_validation": true,
+  "cohort_sections": [
+    "complete",
+    "artifact_mode",
+    "primary",
+    "secondary"
+  ],
+  "models": 15,
+  "localization_schema": 1,
+  "application_imported": false,
+  "model_inference_run": false
+}

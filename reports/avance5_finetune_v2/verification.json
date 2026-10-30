@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "independent_checks": 78,
+  "model_site_comparisons": 4,
+  "weights_deserialized": false,
+  "predictions_recomputed": false,
+  "patient_bootstrap_repeated": false,
+  "waveform_read": false
+}

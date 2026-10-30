@@ -1,5 +1,22 @@
 # Experiment queue
 
+**29 October delivery and authorized GPU successor:** `notebooks/Avance5.8.ipynb` completed
+sequentially. Its [results](avance5-results-2026-10-29.md) include five ensembles and the matched
+released-model comparison. The selected all-age 25k boost/xECG blend has SPH AUROC 0.937352,
+sensitivity 0.773996 and specificity 0.950657, on reused development data only.
+
+The original [full-backbone schedule study](avance5-finetune-protocol-2026-10-29.md) stopped at its
+actual FP32 resource profile: 4.873 s per update, smallest forecast 19,472 s > 7,200 s. No full
+candidate training or hospital scoring ran under that first protocol. The separately frozen
+[single-pass BF16 successor](avance5-finetune-v2-protocol-2026-10-29.md) completed, after a passing
+real GPU profile, one full pass over all 25,000 records and the fixed development comparisons.
+The [completed result](avance5-finetune-results-2026-10-29.md) is negative: SPH blend sensitivity
+fell from 0.773996 to 0.761998 (−1.200 pp, paired 95% interval [−1.837, −0.594]); FP rose from
+338 to 358. Preserve the frozen blend. Independent verification passed 78 checks. Preparation plus
+training/evaluation took 45.96 minutes; all raw data and weights remain local. No further GPU job,
+application-model change or closed test is scheduled. The user explicitly authorized publication
+of the completed delivery branch to GitHub after the initial automatic approval rejection.
+
 **18 October local CPU continuation:** The GPU driver is unavailable in `baseline`. The user
 requested autonomous multi-agent progress using existing data without cardiologist access.
 Three prospective studies are now executed; no further fit or final test is scheduled.

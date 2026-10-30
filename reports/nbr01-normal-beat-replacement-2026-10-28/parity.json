@@ -1,0 +1,27 @@
+{
+  "records_checked": 1037,
+  "bit_identical_records": 1035,
+  "differing": [
+    {
+      "ecg_id": "A25760",
+      "position": 17399,
+      "nbr01_max_abs_feature_difference": 7.152557373046875e-06,
+      "historical_batch_bit_identical": true,
+      "historical_batch_xecg_score_gap": {
+        "all_age": 0.0,
+        "ptb_baseline": 0.0
+      }
+    },
+    {
+      "ecg_id": "A25752",
+      "position": 17395,
+      "nbr01_max_abs_feature_difference": 4.172325134277344e-06,
+      "historical_batch_bit_identical": true,
+      "historical_batch_xecg_score_gap": {
+        "all_age": 0.0,
+        "ptb_baseline": 0.0
+      }
+    }
+  ],
+  "passed": true
+}

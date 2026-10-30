@@ -1,0 +1,77 @@
+{
+  "cohort_checks": {
+    "rows": 7393,
+    "challenge_rows": 4355,
+    "ptbxl_rows": 3038,
+    "challenge_rows_matched_in_split": 4355,
+    "challenge_rows_not_train": 0,
+    "challenge_full_hash_equals_split_hash": 4355,
+    "hash_overlap_with_challenge_test_or_calibration": 0,
+    "record_overlap_with_challenge_test_or_calibration": 0,
+    "sph_source_rows": 0,
+    "sph_paths": 0,
+    "hash_overlap_with_sph": 0,
+    "ptbxl_folds": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "forbidden_sources": 0,
+    "passed": true
+  },
+  "fit_sets": {
+    "P": {
+      "records": 2666,
+      "used": 2666,
+      "too_few_beats": 0,
+      "counts": {
+        "ptbxl": 2666
+      }
+    },
+    "C": {
+      "records": 7393,
+      "missing_age": 54,
+      "unknown_sex": 0,
+      "too_few_beats": 0,
+      "used": 7339,
+      "counts": {
+        "chapman_shaoxing": 819,
+        "cpsc_2018": 154,
+        "georgia": 788,
+        "ningbo": 2540,
+        "ptbxl": 3038
+      }
+    },
+    "seconds": 286.26011659018695
+  },
+  "p0_equals_nbr01_rank0": {
+    "coefficients": true,
+    "scale": true,
+    "basis": true,
+    "eigenvalues": true,
+    "noise": true,
+    "off_scale": true
+  },
+  "eigenvalues": {
+    "P6": [
+      1249.1769420379592,
+      591.7546438133177,
+      514.1233463754545,
+      416.63215147938377,
+      310.35971416192456,
+      232.70152863713588
+    ],
+    "C6": [
+      1117.8636704903736,
+      632.1943515847546,
+      508.8958263340333,
+      426.7402296385855,
+      318.6728429089722,
+      225.92126305299664
+    ]
+  }
+}

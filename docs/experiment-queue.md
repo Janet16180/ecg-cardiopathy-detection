@@ -536,6 +536,56 @@ tables and the earlier Challenge training extraction were explicitly verified an
 [executed scope](pr74-from-raw-reproduction-results-2026-10-28.md) distinguishes that reuse from the
 [default uncached reproduction commands](pr74-from-raw-reproduction-2026-10-28.md).
 
+## HEADS-01 readout changes (28 October 2026)
+
+The [protocol](heads01-token-superclass-protocol-2026-10-28.md) tested two backlog readouts on the
+all-age 25k cohort against the current best (all-age 50:50 blend) at the frozen SPH 5% normal budget:
+A, xECG logistic on mean plus max pooled frozen tokens (`attention_readout`, deterministic form), and
+B, superclass-versus-normal heads combined as a mixture likelihood ratio (`multitask_head`). Complete;
+neither established an improvement. A: sensitivity 0.771484 (−0.251 pp, 97.5% [−0.825, +0.331]);
+B: 0.777065 (+0.307 pp, [−0.224, +0.892]), specificity 0.949489, AUROC 0.939240 (+0.0025, 95%
+[+0.0015, +0.0033]). The predecessor's 30 points and primary interval reproduced exactly first.
+[Results](heads01-token-superclass-results-2026-10-28.md), [aggregate](../reports/heads01-token-superclass-2026-10-28/aggregate.json),
+local outputs in `outputs/heads01_token_superclass_20261028/` (including a 4.2 GB frozen xECG token
+cache). No process is running and nothing was promoted.
+
+## CLF-01 measurement classifiers at SPH (28 October 2026)
+
+The [protocol](clf01-measurement-classifiers-protocol-2026-10-28.md) tested PR 74's internal claim that
+boosting and the RBF SVM are the best measurement models, on the external SPH hospital at the 5% normal
+budget. All models were trained on the all-age 25k cohort and its 130 measurements, with the Avance 4.8
+hyperparameters. Complete. The frozen HGB beat every challenger: SVM −4.21 pp sensitivity (98.33%
+[−5.47, −3.02]), MLP −4.10 pp, LR −11.02 pp, and it also won inside the xECG blend.
+[Results](clf01-measurement-classifiers-results-2026-10-28.md),
+[aggregate](../reports/clf01-measurement-classifiers-2026-10-28/aggregate.json). No process is running.
+
+## NBR-01 normal-beat replacement for the screening blend (28 October 2026)
+
+The [protocol](nbr01-normal-beat-replacement-protocol-2026-10-28.md) explains the screening blend by
+replacing one lead, one wave (P, QRS, ST-T) in one lead, or one wave in all leads with Experiment 070's
+normal counterpart (062 rank-0 model refitted; 070's saved counterparts reproduced to 0.0 mV), and validates
+the lead and wave attributions against SPH labels with a disease-blind energy map as the qualifier. Complete,
+on 1,037 SPH evaluation ECGs. Primary passed: the `all_age_blend` territory contrast (inferior against
+anterior MI) is +0.306 [+0.248, +0.363], and +0.190 [+0.134, +0.246] beyond the energy map. Localization is
+coarse (inferior evidence mostly in II and aVR), and one lead removes the flag for only 12.4% of flagged
+abnormal ECGs. The registered score-reproduction check failed at 1e-12 (2 records, batch shape) and passed
+under Amendment 1. [Results](nbr01-normal-beat-replacement-results-2026-10-28.md),
+[aggregate](../reports/nbr01-normal-beat-replacement-2026-10-28/results.json); page examples in
+`outputs/nbr01_normal_beat_replacement_20261028/examples.json`. No process is running.
+
+## NBR-02 personalized normal counterpart (28 October 2026)
+
+The [protocol](nbr02-personal-counterpart-protocol-2026-10-28.md) compared NBR-01's population counterpart
+(P0) with rank-6 personalized templates (062's bounded normal subspace) and with templates fitted on the
+7,339 usable normals of the all-age 25k cohort, in a 2 x 2 of arms on the same 1,037 SPH ECGs. Complete.
+C6 did not replace P0: selectivity fell (-0.152 [-0.205, -0.104]) because the personalized template absorbed
+part of the abnormality (abnormal lead changes -29%, normal -15%; full replacement unflags 36% of flagged
+abnormal ECGs against 76%), although territory localization improved (+0.080 [+0.041, +0.123]) and the
+guardrail passed. The cohort effect was negligible; personalization drove everything. Stacked on the NBR-01
+branch. [Results](nbr02-personal-counterpart-results-2026-10-28.md),
+[aggregate](../reports/nbr02-personal-counterpart-2026-10-28/results.json); C6 page examples in
+`outputs/nbr02_personal_counterpart_20261028/examples.json`. No process is running.
+
 ## Research branches
 
 The [NLP/genomics architecture shortlist](cross-domain-architecture-candidates.md) supplies the rationale for authorized Experiments 011–013. These are independent model families, not xECG modifications. They have no measured project results yet. The additional [vision architectures](cross-domain-architecture-candidates.md) and [xECG modifications](xecg-next-experiments.md) remain research candidates outside this accepted queue.

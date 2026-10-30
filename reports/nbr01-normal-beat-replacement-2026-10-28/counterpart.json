@@ -1,0 +1,20 @@
+{
+  "fit": {
+    "fit_records": 2666,
+    "fit_used": 2666,
+    "fit_patients": 2566,
+    "seconds": 22.566290255170316
+  },
+  "reproduction_070": {
+    "A": {
+      "records": 100,
+      "max_abs_difference_mv": 0.0
+    },
+    "N": {
+      "records": 100,
+      "max_abs_difference_mv": 0.0
+    }
+  },
+  "tolerance_mv": 1e-06,
+  "passed": true
+}

@@ -1,0 +1,37 @@
+{
+  "checked": {
+    "fresh": {
+      "all_complete_evaluation_payloads_exact": true,
+      "complete_primary_exact": true,
+      "model_site_points": 30
+    },
+    "warm": {
+      "all_complete_evaluation_payloads_exact": true,
+      "complete_primary_exact": true,
+      "model_site_points": 30
+    }
+  },
+  "closed_test_reads": 0,
+  "complete": true,
+  "git_revision": "73c815eabffd279e61ab2bdd55b8ba48efa9034d",
+  "input_sha256": {
+    "outputs/pr74_corrective_evaluation_20261028/evaluate/completion.json": "2d6a0e59fac54ef9215ea2bfc3ecb1f139dc3d855f61b356b08da0cfdae0e7b6",
+    "outputs/pr74_corrective_evaluation_20261028/evaluate/screening_evaluation.json": "36389457555c74e86ca352595a36b2b51353c1f804308c65d208ad1735a52f58",
+    "outputs/pr74_from_raw_validation_20261028/evaluate/completion.json": "428bbecb81ae128e2a1c7e2a64effba005185eed73cefa0cbddd091212313e7d",
+    "outputs/pr74_from_raw_validation_20261028/evaluate/screening_evaluation.json": "3dd9bac300ad5002dac0312a24088eefb1c6b6aaaa73e31c3aacde4710670086"
+  },
+  "new_model_fits": 0,
+  "new_model_scores": 0,
+  "prediction_array_reads": 0,
+  "published_aggregate": {
+    "path": "reports/pr74-corrective-evaluation-2026-10-28/aggregate.json",
+    "sha256": "36389457555c74e86ca352595a36b2b51353c1f804308c65d208ad1735a52f58"
+  },
+  "raw_waveform_reads": 0,
+  "scope": "strict_saved_aggregate_parity",
+  "source_sha256": {
+    "ecg_experiment/pr74_strict_parity_verifier.py": "3a168ef1b3cd0286849a6a1d3bbcb8e15b05b83dfd2ad819bbedf0413eee453c",
+    "scripts/reports/verify_pr74_strict_parity.py": "e751b85f9c55ea75d9c554f7ebea015f6e18b7043b7faad3a375aae4bbf96989",
+    "tests/test_pr74_strict_parity_verifier.py": "2d39fcde8a88bee950dcaeca59e7fa9cd14e1d0df9731878cf0da1a00d0f5ad1"
+  }
+}

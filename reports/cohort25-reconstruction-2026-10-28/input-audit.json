@@ -1,0 +1,120 @@
+{
+  "kind": "availability_audit_not_experiment",
+  "code": [
+    {
+      "path": "scripts/data/build_training_dataset.py",
+      "tracked": true,
+      "sha256": "d1eae09c8a0ab0e9399d4fc1fabc1673e0a431733e28ba6ae5c2c544323cb645"
+    },
+    {
+      "path": "scripts/data/prepare_public_ecg.py",
+      "tracked": true,
+      "sha256": "2b9e698f1d894cdd28f3281b1e53c1258154ccc00b51c73e6a492ce75c3d3af1"
+    },
+    {
+      "path": "scripts/data/build_clean_cohorts.py",
+      "tracked": true,
+      "sha256": "fbba012ec1f5fbcff0e8e744be6bed1f5dae707623545c804fae502e5916eb83"
+    },
+    {
+      "path": "scripts/data/build_ningbo_clean.py",
+      "tracked": true,
+      "sha256": "05aef7eb459c461ec24429a983d1894810bd7c2ac4734441a15eb3c5006fda25"
+    },
+    {
+      "path": "scripts/data/build_challenge_splits.py",
+      "tracked": true,
+      "sha256": "a53009e2366e69ccddbf8cb241a35537b1fe0d1e41a75b007f69db85a7ae7c1e"
+    },
+    {
+      "path": "scripts/data/build_clean_cohorts_v3.py",
+      "tracked": true,
+      "sha256": "ab24f58bcb2a33512527cbde17311ea40852dd93213c31ff92e7a2fddd0d1728"
+    },
+    {
+      "path": "scripts/data/build_clean_cohorts_v4.py",
+      "tracked": true,
+      "sha256": "5fb897f6f21e55d63e00dcecc4828eaacb2e6b0ed27d6b2465b9f509e76722e4"
+    },
+    {
+      "path": "ecg_experiment/clean_cohorts_v2.py",
+      "tracked": true,
+      "sha256": "e595d6973bb1179d87a29eb00a20d188b03ac57a60ae45d0e0b351f991be3e85"
+    },
+    {
+      "path": "ecg_experiment/clean_cohorts_v3.py",
+      "tracked": true,
+      "sha256": "08b4601f22608882e0a7dcd04ed1a7e635b833e998464484a518aecf7e0287aa"
+    },
+    {
+      "path": "ecg_experiment/challenge_splits.py",
+      "tracked": true,
+      "sha256": "c802fae983820962c5977a251b7e71f1bb4782e6dc411ba4cf05e021bd56fbfa"
+    },
+    {
+      "path": "ecg_experiment/ecg_quality.py",
+      "tracked": true,
+      "sha256": "1c784ea3f558ea2016d68532905c8a050a78ca45d8fb46a454d4bb9ea86fbc71"
+    }
+  ],
+  "generated_inputs": [
+    {
+      "path": "data/processed/ptbxl/seed42_fraction1/all_train_ssl.csv",
+      "exists": false
+    },
+    {
+      "path": "data/processed/training_union_500hz_v1/metadata.json",
+      "exists": false
+    },
+    {
+      "path": "data/processed/training_union_500hz_v1/train_manifest.csv",
+      "exists": false
+    },
+    {
+      "path": "data/processed/training_union_500hz_v1/heldout_references.csv",
+      "exists": false
+    },
+    {
+      "path": "data/processed/challenge_ecg_views/chapman_strict_10s_v1/manifest.csv",
+      "exists": false
+    },
+    {
+      "path": "outputs/data_quality/clean_cohorts_v1/record_quality.csv.gz",
+      "exists": false
+    },
+    {
+      "path": "outputs/data_quality/ptbxl_reference_hashes_v2.json",
+      "exists": false
+    },
+    {
+      "path": "outputs/eda/features/challenge_headers.parquet",
+      "exists": false
+    },
+    {
+      "path": "outputs/eda/features/challenge_hashes.parquet",
+      "exists": false
+    },
+    {
+      "path": "data/processed/ningbo_clean_v1/rows.csv",
+      "exists": false
+    },
+    {
+      "path": "outputs/data_quality/ningbo_v1/exact_overlap_receipt.json",
+      "exists": false
+    },
+    {
+      "path": "data/processed/challenge_splits_v1/rows.csv",
+      "exists": false
+    },
+    {
+      "path": "data/processed/clean_25k_v3/train_manifest.csv",
+      "exists": false
+    },
+    {
+      "path": "data/processed/clean_25k_v4/train_manifest.csv",
+      "exists": false
+    }
+  ],
+  "patient_data_opened": false,
+  "training_or_scoring_performed": false
+}

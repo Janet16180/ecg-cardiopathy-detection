@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "scope": "reused_development_scientific_reproduction",
+  "complete": true,
+  "stages": {
+    "raw_administrative_roles": {
+      "receipt": "outputs/cohort25_recovery_20261028/raw_roles/receipt.json",
+      "sha256": "bebdc12bbecb800b4f6db29cf8414b893a13a4c9cb6e4e3f8ceef8d7f663682f",
+      "complete": true,
+      "scope": "administrative_roles_raw_quality",
+      "wall_seconds": 945.3712979899719
+    },
+    "cold_cohort_pipeline": {
+      "receipt": "outputs/cohort25_recovery_20261028/cold_start/pipeline_receipt.json",
+      "sha256": "d60fddd0a49c7067aefa4ba45f2fcb14d72bb9e5190c3d06d08e8ad50b338f8c",
+      "complete": true,
+      "scope": "cold_start_cohort_data_pipeline"
+    },
+    "fresh_baseline_profile": {
+      "receipt": "outputs/pr74_fresh_baseline_20261028/profile/completion.json",
+      "sha256": "15c9b65e26714cc1f4ff575d0c80d91df27fb9fdd1484d1c6a40e1c8a6b1cd07",
+      "status": "completed",
+      "complete": true,
+      "scope": "reused_development",
+      "wall_seconds": 6.816803410183638,
+      "records": 36631
+    },
+    "fresh_baseline_full_features": {
+      "receipt": "outputs/pr74_fresh_baseline_20261028/features/completion.json",
+      "sha256": "b5bfc035a0bf70bbbad6d2ba5bdb2a3c760e02d2afc3a2b284dd4e06d0abeee4",
+      "status": "completed",
+      "complete": true,
+      "scope": "reused_development",
+      "wall_seconds": 2692.8733754344285,
+      "records": {
+        "ptb": 19229,
+        "sph": 17402
+      }
+    },
+    "ptb_batch_shape_successor": {
+      "receipt": "outputs/pr74_fresh_baseline_exact_20261028/features/completion.json",
+      "sha256": "c7ed5c4f446da30b6dc796656fa7e7771637d24a195b069d92d1098f8a994002",
+      "status": "completed",
+      "complete": true,
+      "scope": "reused_development",
+      "wall_seconds": 10.54956688778475,
+      "records": {
+        "ptb": 19229,
+        "sph": 17402
+      },
+      "execution_mode": "fresh_parent_with_admitted_ptb_batch_shape_reproduction"
+    },
+    "fresh_baseline_fit": {
+      "receipt": "outputs/pr74_fresh_baseline_exact_20261028/fit/completion.json",
+      "sha256": "7fab80af6a0fb560557fb9e711d7542cd90a12166f2f8b6609aa334deed190dd",
+      "status": "completed",
+      "complete": true,
+      "scope": "reused_development"
+    },
+    "fresh_training_profile": {
+      "receipt": "outputs/pr74_from_raw_validation_20261028/profile/completion.json",
+      "sha256": "77bdf858bd4515274599eae3b7ce71d591fc460924672019897d2e7857ce7562",
+      "status": "completed",
+      "complete": true,
+      "scope": "reused_development",
+      "wall_seconds": 8.438414277043194,
+      "records": 19666
+    },
+    "verified_training_feature_reuse": {
+      "receipt": "outputs/pr74_from_raw_validation_20261028/extract/completion.json",
+      "sha256": "ea51ffc19a4fd34a9798e092616667f4beac683163bb6c4dee29eab4409bb023",
+      "status": "completed",
+      "complete": true,
+      "scope": "reused_development",
+      "records": 19666,
+      "execution_mode": "explicit_verified_warm_reuse"
+    },
+    "fresh_corrective_evaluation": {
+      "receipt": "outputs/pr74_from_raw_validation_20261028/evaluate/completion.json",
+      "sha256": "428bbecb81ae128e2a1c7e2a64effba005185eed73cefa0cbddd091212313e7d",
+      "status": "completed",
+      "complete": true,
+      "scope": "reused_development",
+      "wall_seconds": 38.48104573879391
+    },
+    "fresh_aggregate_parity": {
+      "receipt": "outputs/pr74_from_raw_validation_20261028/verify/completion.json",
+      "sha256": "0df9d0072983d50288475cecc601444e3d62bbf14cff8a6c9b0177ac57058270",
+      "status": "completed",
+      "complete": true,
+      "scope": "reused_development"
+    }
+  },
+  "fresh_aggregate": {
+    "path": "outputs/pr74_from_raw_validation_20261028/evaluate/screening_evaluation.json",
+    "sha256": "3dd9bac300ad5002dac0312a24088eefb1c6b6aaaa73e31c3aacde4710670086"
+  },
+  "published_aggregate": {
+    "path": "reports/pr74-corrective-evaluation-2026-10-28/aggregate.json",
+    "sha256": "36389457555c74e86ca352595a36b2b51353c1f804308c65d208ad1735a52f58"
+  },
+  "parity": {
+    "scientific_parity_passed": true,
+    "model_site_points": 30,
+    "all_confusion_matrices_exact": true,
+    "maximum_absolute_auroc_difference": 0.0,
+    "maximum_absolute_threshold_difference": 0.0,
+    "historical_serialized_artifacts_recovered": false,
+    "all_30_evaluation_payloads_exact_including_threshold_sweeps": true,
+    "primary_and_paired_interval_exact": true
+  },
+  "primary": {
+    "first": "strict_young_blend",
+    "second": "matched_general_blend",
+    "site": "sph",
+    "sensitivity_difference": {
+      "difference": 0.004743303571428603,
+      "ci_low": -0.00722066887507738,
+      "ci_high": 0.01638047118601283,
+      "draws": 2000,
+      "skipped_draws": 0,
+      "seed": 20261028
+    },
+    "gates": {
+      "sensitivity_gain_at_least_0.02": false,
+      "paired_95_lower_bound_positive": false
+    },
+    "development_advantage": false,
+    "pipeline_promoted": false,
+    "interpretation": "prespecified development advantage not established",
+    "uncertainty_scope": "patient bootstrap conditional on fitted models and calibration sample"
+  },
+  "numerical_amendment": {
+    "initial_failed_fit_preserved": "outputs/pr74_fresh_baseline_20261028/fit",
+    "initial_failed_fit_log_sha256": "fd5d8fa738adf941016f1d9d562ee5e16f9eccecdde45b5133ef893353bcdbd7",
+    "initial_xecg_auroc": 0.9131929418665277,
+    "published_xecg_auroc": 0.9131929011339939,
+    "initial_matrix_exact": true,
+    "recomputed_admitted_ptb_rows": 13,
+    "padding_outputs_discarded": 3,
+    "all_corrected_ptb_embedding_file_byte_sha256": "4d856f942095a79b9d5121a984e2098110da4f0dcdebf7b009e030fdc8934b02",
+    "auroc_tolerance_unchanged": 1e-09,
+    "excluded_fold10_records_read": 0
+  },
+  "execution_scope": {
+    "raw_ptb_sph_feature_records": 36631,
+    "challenge_training_records_previously_extracted_from_raw": 19666,
+    "new_raw_training_profile_records": 80,
+    "data_qc_and_hash_tables": "explicit_verified_cache_reuse",
+    "challenge_features": "explicit_verified_warm_reuse",
+    "default_uncached_graph_implemented": true,
+    "historical_screen_scientific_artifacts_required_by_default_graph": false,
+    "patient_artifacts_in_git": false,
+    "closed_challenge_or_echonext_scores": 0
+  },
+  "tests": {
+    "focused_pipeline_suite_passed": 40,
+    "batch_shape_regressions_passed": 2
+  },
+  "application": {
+    "startup_mode": "from_raw",
+    "bundle_path": "outputs/pr74_from_raw_validation_20261028/evaluate/model_bundle.joblib",
+    "bundle_sha256": "55169c6573a91d799c0a17f5e93cd296cf4a37492b9c9fd6859e96c908dc2a67",
+    "loader": "ecg_experiment.pr74_raw_inference.load_bundle",
+    "default_model": "ptb_baseline_blend"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "eligible": {
+    "inferior": {
+      "ecgs": 49,
+      "patients": 49
+    },
+    "anterior": {
+      "ecgs": 60,
+      "patients": 55
+    },
+    "lateral": {
+      "ecgs": 0,
+      "patients": 0
+    },
+    "lbbb": {
+      "ecgs": 36,
+      "patients": 34
+    },
+    "rbbb": {
+      "ecgs": 342,
+      "patients": 323
+    },
+    "stt": {
+      "ecgs": 2264,
+      "patients": 2207
+    },
+    "normal": {
+      "ecgs": 6850,
+      "patients": 6682
+    }
+  },
+  "sample": {
+    "anterior": 55,
+    "inferior": 49,
+    "lbbb": 34,
+    "normal": 300,
+    "rbbb": 300,
+    "stt": 300
+  },
+  "cap": 300,
+  "normals": 300
+}

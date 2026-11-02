@@ -1,5 +1,21 @@
 {
   "schema_version": 1,
+  "avance5_20261029": {
+    "authorization": "User requested an executed final notebook, then full-model GPU fine-tuning.",
+    "status": "notebook_and_full_backbone_gpu_successor_complete_negative_result_preserve_frozen_blend",
+    "notebook": "notebooks/Avance5.8.ipynb",
+    "results": "docs/avance5-results-2026-10-29.md",
+    "aggregate": "reports/avance5_final/summary.json",
+    "original_gpu_protocol": "docs/avance5-finetune-protocol-2026-10-29.md",
+    "original_gpu_profile": "reports/avance5_finetune/profile.json",
+    "successor_protocol": "docs/avance5-finetune-v2-protocol-2026-10-29.md",
+    "successor_output": "outputs/avance5_finetune_v2",
+    "successor_results": "docs/avance5-finetune-results-2026-10-29.md",
+    "successor_aggregate": "reports/avance5_finetune_v2/results.json",
+    "successor_verification": "reports/avance5_finetune_v2/verification.json",
+    "successor_result": "SPH fine-tuned blend versus frozen blend sensitivity -0.011997767857142794, paired 95% interval [-0.018370164602402077, -0.005944927861580036]; TP 2731 versus 2774, FP 358 versus 338. No practical improvement. Preserve frozen blend.",
+    "next_action": "Publish the completed delivery branch and open its PR against main under the user's explicit authorization. Review the executed notebook and HTML. No further training or closed-test scoring."
+  },
   "pr74_corrective_evaluation_20261028": {
     "authorization": "User requested a corrective PR with reproducible cohort assembly, fixed training/evaluation and threshold confusion matrices; no closed-test scoring.",
     "status": "fixed_development_evaluation_and_fresh_reproduction_complete",

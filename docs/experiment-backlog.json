@@ -1,7 +1,35 @@
 {
-  "updated": "2026-10-28",
+  "updated": "2026-10-29",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
+    {
+      "id": "avance5_training_only_regularized_finetune",
+      "title": "Training-only selection of regularized full-backbone xECG adaptation",
+      "question": "Can a training-only selected learning-rate/regularization schedule improve the fixed normal-budget matrix without the single-pass successor's sensitivity loss?",
+      "evidence": "The 25k BF16 full-backbone single-pass study completed: SPH blend sensitivity -1.200 pp [-1.837, -0.594], with 43 fewer positive ECGs and 20 more false referrals; docs/avance5-finetune-results-2026-10-29.md. Encoder updates are feasible but do not themselves establish improvement.",
+      "value": 3,
+      "clarity": 0.8,
+      "gpu_hours": 1,
+      "cpu_hours": 0.8,
+      "build_hours": 2,
+      "blocked_by": ["@new_training_only_protocol_and_measured_full_io_budget"],
+      "status": "open",
+      "notes": "Do not tune against the observed SPH/PTB outcomes. Require patient-group internal model selection, matched frozen control, seed variation and real raw-evaluation I/O accounting; do not automatically launch."
+    },
+    {
+      "id": "avance5_specialist_region_labels",
+      "title": "Specialist lead, wave and interval labels for the normal-reference explanation display",
+      "question": "Do normal-reference replacement highlights identify regions a cardiologist judges relevant, beyond energy and splice controls?",
+      "evidence": "Avance 5 reviews NBR-01: top-lead territory hit rate 49.0% versus 56.7% for energy on 104 hospital ECGs; SHAP background changes alter leading feature groups in 43.75% of 400 patients. Neither supplies specialist-approved interval masks.",
+      "value": 5,
+      "clarity": 0.95,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 6,
+      "blocked_by": ["@cardiologist_region_annotations_and_agreed_endpoint"],
+      "status": "open",
+      "notes": "Future annotation/evaluation design only. Do not infer lesion labels from model attribution, create clinical truth from synthetic examples, or automatically resume training. User requested this future-data limitation in the final delivery."
+    },
     {
       "id": "e022_sph",
       "title": "SPH external readout of the PTB-XL heads (022)",

@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "independent_checks": 174,
+  "model_site_comparisons": 18,
+  "sequential_code_cells": 15,
+  "existing_model_deserialization": false,
+  "new_model_fit": false,
+  "waveform_read": false
+}

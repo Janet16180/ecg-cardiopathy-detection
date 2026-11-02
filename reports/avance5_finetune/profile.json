@@ -1,0 +1,64 @@
+{
+  "protocol": "docs/avance5-finetune-protocol-2026-10-29.md",
+  "source_sha256": {
+    "docs/avance5-finetune-protocol-2026-10-29.md": "d701fa5c15c24c16cec2763cf0a0dd038fb60edfd1c15541b6467a6d9964fef2",
+    "ecg_experiment/avance5_finetune.py": "114ddd044da5d215653edc568fb20d60ed2aa44f224b7c4bb476470cc4a845fb",
+    "scripts/experiments/run_avance5_finetune.py": "9e344559a46d256b7a3f6a0c235e191e189110c36cb90745b35f7b21bd9d5c8c",
+    "ecg_experiment/pr74_screening_features.py": "af58be32b87f13986b5da7c16e4ea50157fa92848626e56cf47bcd3427184ad9",
+    "ecg_experiment/xecg.py": "69d7443fb0dc5b96b19aae91e83011905f7f32856f31eaaebc63fe59b6b6e426"
+  },
+  "training_input_sha256": {
+    "outputs/pr75_hgb_resource_successor_20261028/qualify/training_rows.csv": "67637a3a2db91c9d9b0f3204d349e418f178e54580dc83fa825cfc3ad5be259e",
+    "outputs/pr75_hgb_resource_successor_20261028/qualify/training_measurements.csv": "f904b776016841bd557094e46bc940caf3d3f1d5a468a47da8f29b0a3ee79b4e",
+    "outputs/pr75_hgb_resource_successor_20261028/qualify/training_vectors.npy": "c4c5ece9f9116e54c628c8e6472184a39240e2175780abc211ea38e4b9d07af8"
+  },
+  "scope": "reused_development",
+  "closed_test_scored": false,
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "microbatch": 8,
+  "effective_batch": 32,
+  "initial_free_bytes": 10598547456,
+  "peak_gpu_bytes": 8180807680,
+  "seconds_per_update": 4.873166389996186,
+  "inference_seconds_per_record": 0.006134056922746822,
+  "replay_max_absolute_error": 0.0,
+  "head_score_max_absolute_error": 4.2518640824829035e-07,
+  "backbone_projection_updated": true,
+  "trainable_parameters": 57022497,
+  "profile_losses": [
+    0.10314503870904446,
+    1.3745586723089218
+  ],
+  "checkpoint_sha256": "c925c3ee0f6e60c6a3c0b0a1bb3f3d4d6210475ad8ebc20ac3733165018bc337",
+  "forecasts": [
+    {
+      "rates": [
+        1e-05,
+        3e-06
+      ],
+      "epochs": 4,
+      "forecast_seconds": 52026.21504859955
+    },
+    {
+      "rates": [
+        1e-05
+      ],
+      "epochs": 4,
+      "forecast_seconds": 37945.0078031024
+    },
+    {
+      "rates": [
+        1e-05
+      ],
+      "epochs": 2,
+      "forecast_seconds": 19471.955829422775
+    }
+  ],
+  "chosen": null,
+  "passed": false,
+  "split_records": {
+    "fit": 14998,
+    "calibration": 5001,
+    "validation": 5001
+  }
+}

@@ -1,0 +1,9 @@
+modelo,parametros,AUROC_VC,desv_VC,busqueda_s
+Random forest,"{""randomforestclassifier__max_features"": ""sqrt""}",0.9735114730553298,0.0023964905842691147,241.02360964007676
+Random forest,"{""randomforestclassifier__max_features"": 0.5}",0.9715100546068728,0.0024141772141579717,241.02360964007676
+Histogram boosting,"{""learning_rate"": 0.08, ""max_leaf_nodes"": 7}",0.9740038757026067,0.002025155174842031,5.345834225881845
+Histogram boosting,"{""learning_rate"": 0.08, ""max_leaf_nodes"": 15}",0.9763846114494651,0.0016379473987572037,5.345834225881845
+Histogram boosting,"{""learning_rate"": 0.08, ""max_leaf_nodes"": 31}",0.9772775003108376,0.0019622306845248775,5.345834225881845
+xECG + logística,"{""logisticregression__C"": 0.001}",0.9738089441190557,0.0012001455400899134,4.259920339100063
+xECG + logística,"{""logisticregression__C"": 0.01}",0.976460521487299,0.0009310886424965209,4.259920339100063
+xECG + logística,"{""logisticregression__C"": 0.1}",0.9766207083406696,0.00039920264545621146,4.259920339100063

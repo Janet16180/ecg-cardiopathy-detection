@@ -1,0 +1,33 @@
+{
+  "study": "SHAP-01",
+  "status": "complete_linear_background_sensitivity",
+  "source": "outputs/shap01_linear_background/result.json",
+  "source_sha256": "d3d0e9e4ed488432d4ee5d1990622bfed6ad180120f9d3316905c4ac15414a05",
+  "counts": {
+    "cohort": 1999,
+    "defined_target": 1965,
+    "undefined_target": 34,
+    "internal_training": 1565,
+    "internal_evaluation": 400,
+    "training_positive": 877,
+    "evaluation_positive": 241,
+    "backgrounds": {
+      "all_training": 1565,
+      "strict_normal_training": 546
+    }
+  },
+  "background_sensitivity": {
+    "top_absolute_changed": 0.4375,
+    "top_positive_changed": 0.3625,
+    "top3_overlap_fraction": 0.66,
+    "group_sign_changed_fraction": 0.1426923076923077,
+    "group_l1_background_shift": 4.169553619639301,
+    "mean_absolute_rank_spearman": 0.6956593406593405,
+    "undefined_rank_correlations": 0,
+    "group_l1_shift_min_max": [
+      4.169553619639299,
+      4.169553619639302
+    ]
+  },
+  "scope": "grouped physical features of one fixed linear model; not a native waveform localization validation"
+}

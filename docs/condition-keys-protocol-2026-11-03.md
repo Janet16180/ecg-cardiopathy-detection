@@ -133,3 +133,20 @@ Write the report from executed outputs, including negative findings and exact sc
 This experiment does not test a condition with no reference examples. It also does not establish
 recognition of unseen disease categories: all four groups already exist in the reference data.
 Reference-scarce or withheld-category transfer needs a separate prospective protocol.
+
+## Notebook and descriptive clusters (user addition before scoring)
+
+The user additionally requested an executed Jupyter notebook explaining the complete method,
+clusters and prediction results. This addition is frozen before fitting/scoring KEY-01.
+Fit PCA (16 components, randomized solver, seed 20261103) on standardized unit whole-record
+training embeddings; use the first two coordinates for plots. Fit k-means with k = 5, n_init = 10,
+seed 20261103 on the 16 training PCA coordinates, then assign SPH evaluation rows without refitting.
+These unsupervised clusters are descriptive and do not enter condition keys or primary endpoints.
+Five clusters do not imply five mutually exclusive diseases. Report training cluster sizes, source-family
+composition and AMI with source family and the exact four-bit annotation combination. At SPH, report
+cluster sizes and each group's annotation prevalence by cluster; no query-driven cluster naming or
+prediction mapping. Save only aggregate cluster tables, contingency counts and PCA plot grids in
+publishable artifacts, keeping per-record coordinates and memberships local. Notebook cells load
+executed aggregate outputs and show the prototype algorithm, patient/source roles, primary and
+secondary performance, key similarities, window-selection distributions and cluster patterns.
+Its conclusions remain descriptive; project recommendations belong in the separate results report.

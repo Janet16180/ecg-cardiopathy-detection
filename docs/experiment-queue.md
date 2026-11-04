@@ -1,6 +1,6 @@
 # Experiment queue
 
-**3 November condition keys:** The user authorized [KEY-01](condition-keys-protocol-2026-11-03.md): whole-record versus automatically selected contextual-token keys for the four existing annotation groups. Prospective protocol prepared; no new condition score computed. CPU caches only, SPH reused development; no SAM segmentation or novel-disease claim. See `condition_keys_20261103` in the JSON catalog.
+**3 November condition keys completed:** [KEY-01 results](condition-keys-results-2026-11-03.md) and the [executed notebook](../notebooks/ConditionKeys.ipynb) compare whole-record and automatically selected contextual-token keys. On 10,434 SPH development ECGs, macro one-versus-rest AUROC fell from 0.896102 to 0.774030; paired patient difference -0.122072 [-0.133550, -0.111008]. Every advancement gate failed. Training-fitted descriptive clusters show overlapping annotation groups, not exclusive diseases. The 34-cell notebook executed sequentially and passed 154 saved-output checks. The successful CPU run took 148.986 seconds after a preserved pre-score parsing stop and committed correction. No SAM, new disease recognition, closed-test score or pipeline promotion. No follow-up is scheduled.
 
 **29 October delivery and authorized GPU successor:** `notebooks/Avance5.8.ipynb` completed
 sequentially. Its [results](avance5-results-2026-10-29.md) include five ensembles and the matched

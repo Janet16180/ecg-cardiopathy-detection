@@ -2428,11 +2428,45 @@
   },
   "condition_keys_20261103": {
     "authorization": "User authorized whole-ECG versus segment-based condition keys in this session.",
-    "status": "protocol_prepared",
+    "status": "complete_negative_notebook_executed",
     "protocol": "docs/condition-keys-protocol-2026-11-03.md",
-    "output": "outputs/condition_keys_20261103",
+    "output": "outputs/condition_keys_20261103_v2",
     "primary": "SPH evaluation macro one-versus-rest AUROC, selected region keys minus whole-record keys; 2000 whole-patient bootstrap draws, seed 20261103; gain >= 0.01, positive lower interval, and point not below fixed-window control.",
     "scope": "CPU cached contextual xECG tokens; existing four superclass annotations; no SAM execution, new label, closed test or GPU.",
-    "next_action": "Commit protocol and implementation, qualify predecessor and inputs, profile then execute if admitted."
+    "next_action": "Completed. Whole-record keys outperformed selected regions. No pipeline promotion or follow-up run scheduled; retain closed tests.",
+    "protocol_commit": "3aec903",
+    "source_commit": "fb33d1494fca4746351ef5008208439d08e9c302",
+    "notebook": "notebooks/ConditionKeys.ipynb",
+    "execution_correction": "docs/condition-keys-execution-v2-2026-11-03.md",
+    "failed_attempt": "outputs/condition_keys_20261103/failure.json",
+    "results": "docs/condition-keys-results-2026-11-03.md",
+    "aggregate": "reports/condition-keys-2026-11-03/aggregate.json",
+    "verification": "reports/condition-keys-2026-11-03/notebook-verification.json",
+    "primary_result": {
+      "difference": -0.12207150381777698,
+      "ci_low": -0.13355022017099533,
+      "ci_high": -0.11100802328567146,
+      "draws": 2000,
+      "skipped_draws": 0,
+      "seed": 20261103
+    },
+    "decision": {
+      "gain_at_least_0.01": false,
+      "lower_95_above_zero": false,
+      "at_least_fixed_window_point": false,
+      "advance": false,
+      "pipeline_promoted": false
+    },
+    "wall_seconds": 148.9856874071993,
+    "validation": {
+      "cpu_passed": 1557,
+      "cpu_skipped": 2,
+      "cpu_seconds": 78.16,
+      "new_tests_passed": 15,
+      "ruff": "passed",
+      "notebook_cells": 34,
+      "notebook_code_cells": 17,
+      "notebook_saved_output_checks": 154
+    }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-29",
+  "updated": "2026-11-03",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -12,7 +12,9 @@
       "gpu_hours": 1,
       "cpu_hours": 0.8,
       "build_hours": 2,
-      "blocked_by": ["@new_training_only_protocol_and_measured_full_io_budget"],
+      "blocked_by": [
+        "@new_training_only_protocol_and_measured_full_io_budget"
+      ],
       "status": "open",
       "notes": "Do not tune against the observed SPH/PTB outcomes. Require patient-group internal model selection, matched frozen control, seed variation and real raw-evaluation I/O accounting; do not automatically launch."
     },
@@ -26,7 +28,9 @@
       "gpu_hours": 0,
       "cpu_hours": 1,
       "build_hours": 6,
-      "blocked_by": ["@cardiologist_region_annotations_and_agreed_endpoint"],
+      "blocked_by": [
+        "@cardiologist_region_annotations_and_agreed_endpoint"
+      ],
       "status": "open",
       "notes": "Future annotation/evaluation design only. Do not infer lesion labels from model attribution, create clinical truth from synthetic examples, or automatically resume training. User requested this future-data limitation in the final delivery."
     },
@@ -1698,6 +1702,56 @@
       ],
       "status": "blocked",
       "notes": "A product decision for the user; both arms' examples files exist."
+    },
+    {
+      "id": "condition_keys_key01",
+      "kind": "experiment",
+      "title": "Whole-record versus selected-region condition keys",
+      "question": "Does automatic reference-region selection improve four-group prototype ranking at SPH?",
+      "evidence": "KEY-01: whole macro AUROC 0.896102 versus selected 0.774030; paired difference -0.122072 [-0.133550, -0.111008]. All gates failed.",
+      "value": 3,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.04138491316866647,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "done",
+      "protocol": "docs/condition-keys-protocol-2026-11-03.md",
+      "notes": "Completed CPU study and executed notebook with descriptive training-only clusters. No SAM execution, unseen-disease test or pipeline promotion. See docs/condition-keys-results-2026-11-03.md."
+    },
+    {
+      "id": "condition_keys_fewshot_addition",
+      "kind": "experiment",
+      "title": "Few-shot addition of condition keys without encoder retraining",
+      "question": "How many labeled reference patients are required to add a withheld annotation key, under patient-disjoint support/query roles?",
+      "evidence": "KEY-01 supports whole-record keys over selected regions but does not test withheld-category or support-scarce recognition.",
+      "value": 3,
+      "clarity": 0.7,
+      "gpu_hours": 0,
+      "cpu_hours": 0.3,
+      "build_hours": 2,
+      "blocked_by": [
+        "@prospective_key_addition_protocol"
+      ],
+      "status": "proposed",
+      "notes": "Use existing annotations and cached features; pretraining exposure must be disclosed. Freeze groups, support budgets, seeds, negatives and patient roles before scores. No zero-reference disease claim; no new clinical mappings, SPH supports or closed tests. Not scheduled."
+    },
+    {
+      "id": "condition_keys_reference_stability",
+      "kind": "experiment",
+      "title": "Patient-resampling stability of whole-record condition keys",
+      "question": "How much do reference-patient resampling and source composition alter the keys and their condition rankings?",
+      "evidence": "KEY-01 intervals condition on one fixed reference cohort; source composition varies across its descriptive clusters.",
+      "value": 2,
+      "clarity": 0.7,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 1.5,
+      "blocked_by": [
+        "@prospective_key_stability_protocol"
+      ],
+      "status": "proposed",
+      "notes": "Freeze sampling and source-control recipes on permitted training data. Preserve all draws and KEY-01 verdict; no SPH tuning or new labels. Not scheduled."
     }
   ]
 }

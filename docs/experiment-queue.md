@@ -1,5 +1,7 @@
 # Experiment queue
 
+**3 November condition keys:** The user authorized [KEY-01](condition-keys-protocol-2026-11-03.md): whole-record versus automatically selected contextual-token keys for the four existing annotation groups. Prospective protocol prepared; no new condition score computed. CPU caches only, SPH reused development; no SAM segmentation or novel-disease claim. See `condition_keys_20261103` in the JSON catalog.
+
 **29 October delivery and authorized GPU successor:** `notebooks/Avance5.8.ipynb` completed
 sequentially. Its [results](avance5-results-2026-10-29.md) include five ensembles and the matched
 released-model comparison. The selected all-age 25k boost/xECG blend has SPH AUROC 0.937352,

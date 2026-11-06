@@ -1,0 +1,13 @@
+{
+  "notebook": "notebooks/11-jr-ecg-condition-keys-and-classification.ipynb",
+  "cells": 88,
+  "executed_code_cells": 42,
+  "status": "executed_without_cell_errors",
+  "notebook_sha256": "215c78c925f0f9715aff896b4c812933fe7a701b75b9466bf3adc9b2f3f27bbf",
+  "builder_sha256": "3b053a4a08f74b66ada4a3054591e5f89df8117d4220ad9f94af4cfb995543c6",
+  "historical_notebook_sha256": {
+    "ConditionKeys.ipynb": "95d75bd46597b56ae0d94246dd9a0d22f75aa08a294175b14f29092f485283d0",
+    "LongSectionKeys.ipynb": "a908775092f38383f8e94017a84302ab2a245e87354951b79d051c2bf4a182f5",
+    "ReferenceECGAudit.ipynb": "9876368aa10c0fc871f4ef665c4b3f8bb0cf09b8b9a4f8da393d56e67b3f1da0"
+  }
+}

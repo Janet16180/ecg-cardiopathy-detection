@@ -39,7 +39,7 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-10-28T22:17:43+00:00",
+  "updated_at_utc": "2026-11-06T23:15:27.645591+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2516,12 +2516,37 @@
     "verification": "reports/reference-ecg-audit-2026-11-06/verification.json"
   },
   "condition_classifiers_20261106": {
-    "status": "protocol_and_implementation_ready",
+    "status": "completed_positive_ranking_with_rare_state_limits",
     "protocol": "docs/condition-classifier-comparison-protocol-2026-11-06.md",
     "output": "outputs/condition_classifiers_20261106",
     "notebook": "notebooks/11-jr-ecg-condition-keys-and-classification.ipynb",
     "authorization": "User requested JR consolidated notebook, multiclass comparison and deeper validation.",
     "scope": "Joint-state multinomial and independent-label logistic models on unchanged normalized xECG embeddings; grouped training-only CV; ten fixed source-family reference-group bootstrap refits.",
-    "primary": "Joint logistic minus whole-record prototype macro AUROC; gain >=0.01 and paired 95% lower bound >0; no clinical promotion."
+    "primary": "Joint logistic minus whole-record prototype macro AUROC; gain >=0.01 and paired 95% lower bound >0; no clinical promotion.",
+    "negative_control_protocol": "docs/condition-classifier-negative-control-2026-11-06.md",
+    "report": "docs/condition-classifier-comparison-results-2026-11-06.md",
+    "aggregate": "reports/condition-classifiers-2026-11-06/aggregate.json",
+    "negative_control": "reports/condition-classifiers-2026-11-06/negative-control.json",
+    "verification": "reports/condition-classifiers-2026-11-06/verification.json",
+    "control_verification": "reports/condition-classifiers-2026-11-06/control-verification.json",
+    "notebook_verification": "reports/condition-classifiers-2026-11-06/jr-notebook-verification.json",
+    "source_commit": "aec367c40a6f720ce899bd22a1f55cee45f58ba8",
+    "primary_result": {
+      "difference": 0.061647986737112165,
+      "ci_low": 0.05303135482031598,
+      "ci_high": 0.07092625375492638,
+      "draws": 2000,
+      "skipped_draws": 0,
+      "seed": 20261103
+    },
+    "decision": {
+      "gain_at_least_0.01": true,
+      "lower_95_above_zero": true,
+      "ranking_improvement": true,
+      "clinical_pipeline_promoted": false
+    },
+    "summary": "Joint macro AUROC 0.957750 vs whole keys 0.896102; independent 0.960845; all-other-negative keys 0.910448. All ten reference refits favor classifiers. Exact joint-state accuracy 83.95% but supported-state macro recall 31.97%; rare combinations remain poorly recovered.",
+    "next_action": "No clinical promotion or new run scheduled. Review rare-combination limitations and separately freeze permitted-site replication or structured-label comparisons.",
+    "delivery_verification": "reports/condition-classifiers-2026-11-06/delivery-verification.json"
   }
 }

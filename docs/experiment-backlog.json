@@ -1833,6 +1833,55 @@
       ],
       "status": "proposed",
       "notes": "Use local anonymous panels; do not remove records, redefine labels or treat model-selected regions as disease truth without separately documented review."
+    },
+    {
+      "id": "condition_classifier_key04",
+      "kind": "experiment",
+      "title": "Matched multiclass and independent-label readout comparison",
+      "question": "Do learned classifiers outperform condition-key averages on the same features and memberships?",
+      "evidence": "KEY-04: joint macro AUROC 0.957750 vs keys 0.896102; paired +0.061648 [0.053031, 0.070926]. Independent 0.960845. Ten reference resamples positive; rare joint-state macro recall only 0.319691.",
+      "value": 4,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.21051029676248112,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "100 scientific logistic fits with training-only grouped CV; negative-reference control and independent parameter audit. Consolidated JR notebook executed. No clinical promotion."
+    },
+    {
+      "id": "condition_classifier_rare_combinations",
+      "kind": "experiment",
+      "title": "Training-selected structured-label methods for rare annotation combinations",
+      "question": "Can a structured or class-weighted readout improve rare-combination recovery while preserving four-group ranking and transparent normal-error accounting?",
+      "evidence": "KEY-04 exact-state accuracy 83.95% masks 31.97% supported-state macro recall; HYP-only 3/29 and MI-only 13/40 correct under joint argmax.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 3,
+      "blocked_by": [
+        "@prospective_rare_combination_protocol"
+      ],
+      "status": "proposed",
+      "notes": "Preserve overlapping labels and all groups; choose loss/regularization using permitted training roles only, report rare-state denominators and uncertainty. No label changes or clinical referral threshold tuning. Not scheduled."
+    },
+    {
+      "id": "condition_classifier_development_site_replication",
+      "kind": "experiment",
+      "title": "Replicate learned-readout advantage on another permitted development-site role",
+      "question": "Does the KEY-04 learned-readout gain persist at a prespecified development site with matched patient/source roles and source-appropriate annotation coverage?",
+      "evidence": "KEY-04 repeatedly reused SPH for development; ten reference draws do not provide an independent site replication.",
+      "value": 4,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 3,
+      "blocked_by": [
+        "@prospective_permitted_site_and_cache_qualification"
+      ],
+      "status": "proposed",
+      "notes": "Qualify existing permitted features/roles before scoring. Do not open closed Challenge/EchoNext tests or call this the final frozen evaluation. No automatic run."
     }
   ]
 }

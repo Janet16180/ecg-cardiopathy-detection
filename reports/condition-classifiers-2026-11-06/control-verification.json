@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "scaler_and_metric_fields": 124,
+  "reference_draws_with_identical_classifier_prototype_scalers": 10,
+  "negative_control_max_manual_score_error": 4.440892098500626e-16,
+  "negative_control_sha256": "44b2f7fbf31f852ce7fb89c517f19461b23159a1f46206a327fdba2471b00b95",
+  "script_sha256": "9eb8cf8490262f23db39365dc921a16204d645a026dfdedf4825fa9dd215dadf",
+  "new_fits": 0
+}

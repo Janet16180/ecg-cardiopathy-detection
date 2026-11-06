@@ -1,0 +1,128 @@
+{
+  "study": "KEY-04-negative-control",
+  "status": "completed",
+  "exploratory": true,
+  "protocol": "docs/condition-classifier-negative-control-2026-11-06.md",
+  "source_sha256": {
+    "docs/condition-classifier-negative-control-2026-11-06.md": "f5b452c3462af1c8459aba76f270bba82f6a8e0b1052a9f6237d15973d71df3d",
+    "ecg_experiment/key_negative_control.py": "22613244661312e8c40da825842220fe6239f16711d7aacd2b5bdb52b5c76ec6",
+    "scripts/experiments/run_key_negative_control.py": "fe01d44eb1a2410b107815413f303c9019595fbc80579cc591307d79cd333f1d"
+  },
+  "parent_result_sha256": "40e8fdb8809b6e727680dac193d00c380d04ec0e51630bfb331252916174047b",
+  "input_sha256": {
+    "outputs/heads01_token_superclass_20261028/extract_training/completion.json": "e7f9cca27d3f1d9ab23e27ef298c54f0cb2dde1f74a02eb3360fc2394bea8f90",
+    "outputs/heads01_token_superclass_20261028/extract_evaluation/completion.json": "ad4e3ef90ecc7e891da4f923c5e9b9f3c7052f8b98df2a7cd79112807b56c308",
+    "outputs/heads01_token_superclass_20261028/qualify/completion.json": "22a0937d0ed1943ffe114f17d9747baaf67455b1537f43777c980733293bc959",
+    "outputs/heads01_token_superclass_20261028/evaluate/completion.json": "7f3eae88c526be01e837b7922af85aa1760f49c9c8018d3f63d7751a7b8778e2",
+    "outputs/cohort_age_label_priority_20261028/all_age.csv": "67637a3a2db91c9d9b0f3204d349e418f178e54580dc83fa825cfc3ad5be259e",
+    "outputs/pr74_fresh_baseline_exact_20261028/features/sph_rows.csv": "f58844aa0d4cff6e27058d3cced892aec9cec40e95239c4176cdf6c0c6f237e9",
+    "outputs/heads01_token_superclass_20261028/qualify/labels.csv": "d480d681a218e9314b95338811009c983d81a48cfcd2b1cfbc3fce13064b8739",
+    "outputs/heads01_token_superclass_20261028/evaluate/evaluation.json": "a8debd3b8346543ac1a3109f1a35f9c6fd2a9450d5edb3c10146625265cf1e53",
+    "outputs/heads01_token_superclass_20261028/evaluate/sph_predictions.npz": "0b227555109c7c4adc60cd38da130be05bacdf55287fea7915267dd78a49b406",
+    "outputs/heads01_token_superclass_20261028/extract_training/rows.csv": "c0054e503a9f8e1d392beccc8e310d441bd08a67fd6b980fce49c992fe2b959c",
+    "outputs/heads01_token_superclass_20261028/extract_training/pooled.npy": "ed0b3ee568cc32ffde451c5f3449a3e2ec5f278ec501140139702b14a7bb0ad1",
+    "outputs/heads01_token_superclass_20261028/extract_training/tokens.npy": "25fd00b96adfcabb657fd1cc7c287b96c25cb9e7a2655db34417ac7f3599f6d4",
+    "outputs/heads01_token_superclass_20261028/extract_evaluation/rows.csv": "b1121fc599bb2844a99eca00f54605c1e1f568d4b0fa43d2aa07c9d0e7604b9f",
+    "outputs/heads01_token_superclass_20261028/extract_evaluation/pooled.npy": "efc96cebb2950ec154e1a9a23bd70f62c3911e9b2b89d92d9d509a33cb1c3345",
+    "outputs/heads01_token_superclass_20261028/extract_evaluation/tokens.npy": "a044c5fb562ae3e771e4abffcbc0bceab81947f399e65fe91c9c4c20e220eeb0"
+  },
+  "baseline_max_score_error": 0.0,
+  "positive_keys_unchanged": true,
+  "training_counts": {
+    "MI": {
+      "positive": 2041,
+      "negative": 22959
+    },
+    "STTC": {
+      "positive": 12356,
+      "negative": 12644
+    },
+    "CD": {
+      "positive": 6049,
+      "negative": 18951
+    },
+    "HYP": {
+      "positive": 2376,
+      "negative": 22624
+    }
+  },
+  "metrics": {
+    "groups": {
+      "MI": {
+        "records": 10434,
+        "positives": 118,
+        "negatives": 10316,
+        "auroc": 0.9304987808965505,
+        "average_precision": 0.23255636319749165
+      },
+      "STTC": {
+        "records": 10434,
+        "positives": 2521,
+        "negatives": 7913,
+        "auroc": 0.9347693453093346,
+        "average_precision": 0.8308629519883296
+      },
+      "CD": {
+        "records": 10434,
+        "positives": 1166,
+        "negatives": 9268,
+        "auroc": 0.8715639160474707,
+        "average_precision": 0.5819446044132845
+      },
+      "HYP": {
+        "records": 10434,
+        "positives": 104,
+        "negatives": 10330,
+        "auroc": 0.9049603470102018,
+        "average_precision": 0.22034893851538923
+      }
+    },
+    "macro_auroc": 0.9104480973158895,
+    "macro_average_precision": 0.46642821452862376
+  },
+  "condition_vs_normal": {
+    "groups": {
+      "MI": {
+        "records": 6968,
+        "positives": 118,
+        "negatives": 6850,
+        "auroc": 0.9687702585673637,
+        "average_precision": 0.5740218433284062
+      },
+      "STTC": {
+        "records": 9371,
+        "positives": 2521,
+        "negatives": 6850,
+        "auroc": 0.9510873625053202,
+        "average_precision": 0.9068682091082209
+      },
+      "CD": {
+        "records": 8016,
+        "positives": 1166,
+        "negatives": 6850,
+        "auroc": 0.9014990422055565,
+        "average_precision": 0.7418744800869693
+      },
+      "HYP": {
+        "records": 6954,
+        "positives": 104,
+        "negatives": 6850,
+        "auroc": 0.9643556990454801,
+        "average_precision": 0.7869713406601409
+      }
+    },
+    "macro_auroc": 0.9464280905809301,
+    "macro_average_precision": 0.7524339682959343
+  },
+  "versus_whole": {
+    "difference": 0.014346311970072939,
+    "ci_low": 0.012269280193766535,
+    "ci_high": 0.016535222408007443,
+    "draws": 2000,
+    "skipped_draws": 0,
+    "seed": 20261103
+  },
+  "artifact_sha256": {
+    "outputs/condition_classifiers_negative_control_20261106/artifacts.npz": "e77792b9e3957182dd73d95f6a6d044e78eadb6bb4f5610b11d94f6f29e2ff87"
+  }
+}

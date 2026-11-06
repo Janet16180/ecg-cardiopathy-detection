@@ -1,6 +1,6 @@
 # Experiment queue
 
-**6 November KEY-04:** Frozen matched multiclass comparison and JR consolidation. Training-only grouped model selection and ten reference-resampling draws are prespecified; implementation tested, no new real model fit yet. See the JSON entry for paths.
+**6 November KEY-04 completed:** The consolidated [JR notebook](../notebooks/11-jr-ecg-condition-keys-and-classification.ipynb) includes all KEY-01–04 results and executed 88 cells. The [matched classifier report](condition-classifier-comparison-results-2026-11-06.md) records joint logistic macro AUROC 0.957750 versus whole-record keys 0.896102: gain +0.061648 [0.053031, 0.070926]. Independent logistic reached 0.960845; the negative-reference control reached 0.910448. Both classifiers gained in all ten registered reference refits. Exact joint-state accuracy was 83.95%, but supported-state macro recall only 31.97%; no clinical promotion. Independent coefficient/split/refit audit passed.
 
 **6 November KEY-03 completed:** [Reference audit](reference-ecg-audit-results-2026-11-06.md) and [aggregate notebook](../notebooks/ReferenceECGAudit.ipynb). Reconstructed 48 key entries and rendered 20 hash-verified training ECG panels in a local atlas. MI/STTC directions depend strongly on their largest source families; 60% of MI and 75% of HYP references have co-occurring groups. Short selection raises support coherence while rotating positive keys 39–48 degrees. No labels changed or new evaluation scores generated.
 

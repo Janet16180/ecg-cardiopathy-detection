@@ -339,8 +339,8 @@ Contents:
 
 All four studies concern existing ECG annotation groups on reused hospital development data.
 They do not establish clinical diagnosis or an untouched final test. Individual waveform panels
-remain in the local `outputs/reference_ecg_audit_20261106/ReferenceECGAtlas.pdf` and its
-`ReferenceWaveforms.ipynb` companion.
+remain in the [local twenty-ECG atlas](../outputs/reference_ecg_audit_20261106/ReferenceECGAtlas.pdf)
+and its [waveform notebook](../outputs/reference_ecg_audit_20261106/ReferenceWaveforms.ipynb) companion.
 
 <a id="overview"></a>
 ## All performance results at a glance

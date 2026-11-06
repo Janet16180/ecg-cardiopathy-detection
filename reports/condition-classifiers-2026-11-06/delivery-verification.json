@@ -1,0 +1,31 @@
+{
+  "status": "completed_verified",
+  "notebook": "notebooks/11-jr-ecg-condition-keys-and-classification.ipynb",
+  "cells": 88,
+  "code_cells": 42,
+  "scientific_logistic_fits": 100,
+  "reference_resampling_draws": 10,
+  "independent_metric_fields": 1310,
+  "supplementary_scaler_metric_fields": 124,
+  "cpu_tests": {
+    "passed": 1582,
+    "skipped": 2,
+    "seconds": 76.31
+  },
+  "new_file_lint": "passed",
+  "known_frozen_style_warning": {
+    "file": "ecg_experiment/reference_ecg_audit.py",
+    "code": "I001"
+  },
+  "source_and_historical_notebook_hashes_unchanged": true,
+  "published_files_sha256": {
+    "notebooks/11-jr-ecg-condition-keys-and-classification.ipynb": "215c78c925f0f9715aff896b4c812933fe7a701b75b9466bf3adc9b2f3f27bbf",
+    "docs/condition-classifier-comparison-results-2026-11-06.md": "cb33b1a99609a5c395f6217bfa695def577a6fb86673ea5dcff4857763d76e09",
+    "reports/condition-classifiers-2026-11-06/aggregate.json": "40e8fdb8809b6e727680dac193d00c380d04ec0e51630bfb331252916174047b",
+    "reports/condition-classifiers-2026-11-06/control-verification.json": "82b35d9af88a3d049c5a7b19901dddf5a3bcc48a21b5852f5f158b892a40d096",
+    "reports/condition-classifiers-2026-11-06/jr-notebook-verification.json": "a587496bdd70931c694272358e79a1cde301d3c9ca1d2b078779440483757dfc",
+    "reports/condition-classifiers-2026-11-06/negative-control.json": "44b2f7fbf31f852ce7fb89c517f19461b23159a1f46206a327fdba2471b00b95",
+    "reports/condition-classifiers-2026-11-06/verification.json": "a77512684a941de254258e9919e69f2e58e91f964b5e489e16ea5f71efd27f8c"
+  },
+  "private_data_uploaded": false
+}

@@ -2468,5 +2468,12 @@
       "notebook_code_cells": 17,
       "notebook_saved_output_checks": 154
     }
+  },
+  "long_section_keys_20261106": {
+    "status": "protocol_frozen_implementation_ready",
+    "protocol": "docs/long-section-keys-protocol-2026-11-06.md",
+    "output": "outputs/long_section_keys_20261106",
+    "authorization": "User requested bigger sections and ECG-JEPA-inspired structure.",
+    "scope": "2.5/5/7.5-second contextual xECG regions and temporal median control; direct CroPA not supported by lead-combined cache."
   }
 }

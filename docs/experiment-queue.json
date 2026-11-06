@@ -2470,10 +2470,36 @@
     }
   },
   "long_section_keys_20261106": {
-    "status": "protocol_frozen_implementation_ready",
+    "status": "completed_negative_guard",
     "protocol": "docs/long-section-keys-protocol-2026-11-06.md",
     "output": "outputs/long_section_keys_20261106",
     "authorization": "User requested bigger sections and ECG-JEPA-inspired structure.",
-    "scope": "2.5/5/7.5-second contextual xECG regions and temporal median control; direct CroPA not supported by lead-combined cache."
+    "scope": "2.5/5/7.5-second contextual xECG regions and temporal median control; direct CroPA not supported by lead-combined cache.",
+    "report": "docs/long-section-keys-results-2026-11-06.md",
+    "notebook": "notebooks/LongSectionKeys.ipynb",
+    "primary": {
+      "difference": 0.10580548272155277,
+      "ci_low": 0.09621313424922696,
+      "ci_high": 0.11589283685882013,
+      "draws": 2000,
+      "skipped_draws": 0,
+      "seed": 20261103
+    },
+    "versus_whole": {
+      "difference": -0.016266021096224215,
+      "ci_low": -0.019793460268151434,
+      "ci_high": -0.013137343271625834,
+      "draws": 2000,
+      "skipped_draws": 0,
+      "seed": 20261103
+    },
+    "decision": {
+      "gain_at_least_0.01": true,
+      "lower_95_above_zero": true,
+      "within_0.01_of_whole_point": false,
+      "advance": false
+    },
+    "next_action": "No promotion. Lead-preserving JEPA comparison requires separate prospective extraction protocol.",
+    "verification": "reports/long-section-keys-2026-11-06/verification.json"
   }
 }

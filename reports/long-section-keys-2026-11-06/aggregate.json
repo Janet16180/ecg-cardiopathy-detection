@@ -1,0 +1,589 @@
+{
+  "study": "KEY-02",
+  "status": "completed",
+  "git_commit": "0acb4693e717f39f1f7dd4592ad4f2e9cc976752",
+  "source_sha256": {
+    "ecg_experiment/condition_key_clusters.py": "5a1fd80c5b7c1e1bd07c0e36ef03e081046dbf1b8efba4f424a284ba2ba538aa",
+    "ecg_experiment/condition_key_inputs.py": "4f32cd9d1f10a8d7a4e00282ec9ad61ccf8de358cb2ffcdaa95fb445869b1671",
+    "ecg_experiment/condition_key_inputs_v2.py": "4f038214255fa805bc9cab22b72b4442efcb481f42083239785d6bbd44488824",
+    "ecg_experiment/condition_key_study.py": "71b15738ffa93b733a57be843ef8c689cb15ae771cc9b9539f806b232c979fff",
+    "ecg_experiment/condition_key_study_v2.py": "3e392e543285d289923f510a4815e40f88864623807f49bc9d506a7a32b87daa",
+    "ecg_experiment/condition_keys.py": "264f81cbad1677f688bcada7d4f87a74ba89bd43d5b91dafe9a5f1c4e7e5a1cd",
+    "docs/condition-keys-protocol-2026-11-03.md": "0bdced557508937da534c93dd127bbbff5bc67e231fdf60bcc79ac10dc2cf512",
+    "scripts/experiments/run_condition_keys.py": "938af2fa2237c081559cbc9caffe9bd9b7432aff2e4bbbf83449cf0bd3f265de",
+    "tests/test_condition_keys.py": "ff56d7f30a8097f8594efdcca4d9058d2ce756b172340282947242215accf75d",
+    "ecg_experiment/embedding_geometry.py": "b79bc7f540a92aa2e160986c154cc6b580e1fc8ea8eb46eeb8a7a41c93c3d4d0",
+    "ecg_experiment/intervals.py": "b45103664e8c2e063b90c8223b64e7bbe6394e54796e0613538bd0b53dfe99af",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "ecg_experiment/files.py": "d418732520e883994d3b72b064c03174184f606cfea4e166800bf8a096ef985b",
+    "ecg_experiment/pr74_screening_metrics.py": "9990f15b35feb8730f0af864c26d0e9355a7a522d594b6d3739ed24e7d2340cb",
+    "ecg_experiment/cpu_screening041.py": "c7171d0014ad806a5c2a5a991b5703aa57000824bd25dbcaf1d09fd5cf8a867c",
+    "docs/condition-keys-execution-v2-2026-11-03.md": "1c3de12ed3b2121572879c3fdceeba1500cebc761bd7ce15effb2da80ecf0444",
+    "tests/test_condition_key_inputs_v2.py": "5106656950d8ea37135b63dac956a4690cdf29303767a5eb120bf7f82a6827a9",
+    "scripts/experiments/run_condition_keys_v2.py": "5c0c5390642ad7e9460b88a5e66929cce660fba12b2be33dd027021b70757e97",
+    "docs/long-section-keys-protocol-2026-11-06.md": "d244a362610ab82128230b7e0e351b53d8f3da78b9e2a24a6e3860efb214618d",
+    "ecg_experiment/long_section_keys.py": "347fd4815fc3213bff39fedb531db900b65e2ad7f64a035f2790fd7b72e33761",
+    "scripts/experiments/run_long_section_keys.py": "a34a73447ffcacd1060c4a14d3a3e665bd6db7dc290302bd40baa388765225d6",
+    "tests/test_long_section_keys.py": "2a4d6deb46a3d55f727fe2666822dc273d39e6a14eb8d57d975253c0a6394030"
+  },
+  "protocol": "docs/long-section-keys-protocol-2026-11-06.md",
+  "input_sha256": {
+    "outputs/heads01_token_superclass_20261028/extract_training/completion.json": "e7f9cca27d3f1d9ab23e27ef298c54f0cb2dde1f74a02eb3360fc2394bea8f90",
+    "outputs/heads01_token_superclass_20261028/extract_evaluation/completion.json": "ad4e3ef90ecc7e891da4f923c5e9b9f3c7052f8b98df2a7cd79112807b56c308",
+    "outputs/heads01_token_superclass_20261028/qualify/completion.json": "22a0937d0ed1943ffe114f17d9747baaf67455b1537f43777c980733293bc959",
+    "outputs/heads01_token_superclass_20261028/evaluate/completion.json": "7f3eae88c526be01e837b7922af85aa1760f49c9c8018d3f63d7751a7b8778e2",
+    "outputs/cohort_age_label_priority_20261028/all_age.csv": "67637a3a2db91c9d9b0f3204d349e418f178e54580dc83fa825cfc3ad5be259e",
+    "outputs/pr74_fresh_baseline_exact_20261028/features/sph_rows.csv": "f58844aa0d4cff6e27058d3cced892aec9cec40e95239c4176cdf6c0c6f237e9",
+    "outputs/heads01_token_superclass_20261028/qualify/labels.csv": "d480d681a218e9314b95338811009c983d81a48cfcd2b1cfbc3fce13064b8739",
+    "outputs/heads01_token_superclass_20261028/evaluate/evaluation.json": "a8debd3b8346543ac1a3109f1a35f9c6fd2a9450d5edb3c10146625265cf1e53",
+    "outputs/heads01_token_superclass_20261028/evaluate/sph_predictions.npz": "0b227555109c7c4adc60cd38da130be05bacdf55287fea7915267dd78a49b406",
+    "outputs/heads01_token_superclass_20261028/extract_training/rows.csv": "c0054e503a9f8e1d392beccc8e310d441bd08a67fd6b980fce49c992fe2b959c",
+    "outputs/heads01_token_superclass_20261028/extract_training/pooled.npy": "ed0b3ee568cc32ffde451c5f3449a3e2ec5f278ec501140139702b14a7bb0ad1",
+    "outputs/heads01_token_superclass_20261028/extract_training/tokens.npy": "25fd00b96adfcabb657fd1cc7c287b96c25cb9e7a2655db34417ac7f3599f6d4",
+    "outputs/heads01_token_superclass_20261028/extract_evaluation/rows.csv": "b1121fc599bb2844a99eca00f54605c1e1f568d4b0fa43d2aa07c9d0e7604b9f",
+    "outputs/heads01_token_superclass_20261028/extract_evaluation/pooled.npy": "efc96cebb2950ec154e1a9a23bd70f62c3911e9b2b89d92d9d509a33cb1c3345",
+    "outputs/heads01_token_superclass_20261028/extract_evaluation/tokens.npy": "a044c5fb562ae3e771e4abffcbc0bceab81947f399e65fe91c9c4c20e220eeb0"
+  },
+  "integrity": {
+    "exact_metric_dictionaries": 10,
+    "primary_interval_exact": true,
+    "result_sha256": "8d8f5b92f065c2614f1fbf9c375232cb2cec2dda65344c0efc63ad72b47f5285",
+    "private_sha256": "0135113cbc65e1b1e73064c94422f74537c91aadd90a6473567726f183478619",
+    "whole_score_max_error": 0.0
+  },
+  "profile": {
+    "batch_seconds": 0.24537011794745922,
+    "forecast_seconds": 135.85069936484797
+  },
+  "metrics": {
+    "whole": {
+      "groups": {
+        "MI": {
+          "records": 10434,
+          "positives": 118,
+          "negatives": 10316,
+          "auroc": 0.9244541965418208,
+          "average_precision": 0.2148964187753332
+        },
+        "STTC": {
+          "records": 10434,
+          "positives": 2521,
+          "negatives": 7913,
+          "auroc": 0.9234248814444951,
+          "average_precision": 0.7955695423573996
+        },
+        "CD": {
+          "records": 10434,
+          "positives": 1166,
+          "negatives": 9268,
+          "auroc": 0.8408815148825408,
+          "average_precision": 0.45608571309717183
+        },
+        "HYP": {
+          "records": 10434,
+          "positives": 104,
+          "negatives": 10330,
+          "auroc": 0.8956465485144092,
+          "average_precision": 0.2047199323234564
+        }
+      },
+      "macro_auroc": 0.8961017853458164,
+      "macro_average_precision": 0.41781790163834026
+    },
+    "short_selected": {
+      "groups": {
+        "MI": {
+          "records": 10434,
+          "positives": 118,
+          "negatives": 10316,
+          "auroc": 0.75157316920893,
+          "average_precision": 0.04713947944390445
+        },
+        "STTC": {
+          "records": 10434,
+          "positives": 2521,
+          "negatives": 7913,
+          "auroc": 0.8277816775080729,
+          "average_precision": 0.6298418195141617
+        },
+        "CD": {
+          "records": 10434,
+          "positives": 1166,
+          "negatives": 9268,
+          "auroc": 0.7362139300020506,
+          "average_precision": 0.2860340736625474
+        },
+        "HYP": {
+          "records": 10434,
+          "positives": 104,
+          "negatives": 10330,
+          "auroc": 0.7805523493931045,
+          "average_precision": 0.07430438338098526
+        }
+      },
+      "macro_auroc": 0.7740302815280394,
+      "macro_average_precision": 0.2593299390003997
+    },
+    "selected_2.5s": {
+      "groups": {
+        "MI": {
+          "records": 10434,
+          "positives": 118,
+          "negatives": 10316,
+          "auroc": 0.8775532166586708,
+          "average_precision": 0.11515963791419598
+        },
+        "STTC": {
+          "records": 10434,
+          "positives": 2521,
+          "negatives": 7913,
+          "auroc": 0.880768510266322,
+          "average_precision": 0.7169782796473883
+        },
+        "CD": {
+          "records": 10434,
+          "positives": 1166,
+          "negatives": 9268,
+          "auroc": 0.822854289016006,
+          "average_precision": 0.4256992863408464
+        },
+        "HYP": {
+          "records": 10434,
+          "positives": 104,
+          "negatives": 10330,
+          "auroc": 0.8465280363392657,
+          "average_precision": 0.11958692384378283
+        }
+      },
+      "macro_auroc": 0.8569260130700661,
+      "macro_average_precision": 0.34435603193655334
+    },
+    "selected_5s": {
+      "groups": {
+        "MI": {
+          "records": 10434,
+          "positives": 118,
+          "negatives": 10316,
+          "auroc": 0.9052812481516289,
+          "average_precision": 0.15815499043587186
+        },
+        "STTC": {
+          "records": 10434,
+          "positives": 2521,
+          "negatives": 7913,
+          "auroc": 0.9057746848624969,
+          "average_precision": 0.7609676850568379
+        },
+        "CD": {
+          "records": 10434,
+          "positives": 1166,
+          "negatives": 9268,
+          "auroc": 0.8401398308127488,
+          "average_precision": 0.4573179380944882
+        },
+        "HYP": {
+          "records": 10434,
+          "positives": 104,
+          "negatives": 10330,
+          "auroc": 0.8681472931714944,
+          "average_precision": 0.16325488728007503
+        }
+      },
+      "macro_auroc": 0.8798357642495922,
+      "macro_average_precision": 0.38492387521681826
+    },
+    "whole_keys_5s_max": {
+      "groups": {
+        "MI": {
+          "records": 10434,
+          "positives": 118,
+          "negatives": 10316,
+          "auroc": 0.9236138037999225,
+          "average_precision": 0.21516694451943774
+        },
+        "STTC": {
+          "records": 10434,
+          "positives": 2521,
+          "negatives": 7913,
+          "auroc": 0.9228682028122874,
+          "average_precision": 0.7956796939315913
+        },
+        "CD": {
+          "records": 10434,
+          "positives": 1166,
+          "negatives": 9268,
+          "auroc": 0.8415475036848235,
+          "average_precision": 0.45189181739973605
+        },
+        "HYP": {
+          "records": 10434,
+          "positives": 104,
+          "negatives": 10330,
+          "auroc": 0.8938100379775114,
+          "average_precision": 0.21503334224410584
+        }
+      },
+      "macro_auroc": 0.8954598870686361,
+      "macro_average_precision": 0.4194429495237177
+    },
+    "whole_keys_5s_median": {
+      "groups": {
+        "MI": {
+          "records": 10434,
+          "positives": 118,
+          "negatives": 10316,
+          "auroc": 0.9239958005007853,
+          "average_precision": 0.2190217799288949
+        },
+        "STTC": {
+          "records": 10434,
+          "positives": 2521,
+          "negatives": 7913,
+          "auroc": 0.9225946507820344,
+          "average_precision": 0.7936593655481865
+        },
+        "CD": {
+          "records": 10434,
+          "positives": 1166,
+          "negatives": 9268,
+          "auroc": 0.8392561024451237,
+          "average_precision": 0.45242534353368274
+        },
+        "HYP": {
+          "records": 10434,
+          "positives": 104,
+          "negatives": 10330,
+          "auroc": 0.8933083252662148,
+          "average_precision": 0.2042157973876248
+        }
+      },
+      "macro_auroc": 0.8947887197485396,
+      "macro_average_precision": 0.41733057159959724
+    },
+    "selected_7.5s": {
+      "groups": {
+        "MI": {
+          "records": 10434,
+          "positives": 118,
+          "negatives": 10316,
+          "auroc": 0.9169498097409979,
+          "average_precision": 0.18931149704678618
+        },
+        "STTC": {
+          "records": 10434,
+          "positives": 2521,
+          "negatives": 7913,
+          "auroc": 0.9168170233679201,
+          "average_precision": 0.7820004524617976
+        },
+        "CD": {
+          "records": 10434,
+          "positives": 1166,
+          "negatives": 9268,
+          "auroc": 0.8428483888567683,
+          "average_precision": 0.46168139572586187
+        },
+        "HYP": {
+          "records": 10434,
+          "positives": 104,
+          "negatives": 10330,
+          "auroc": 0.8830925608757167,
+          "average_precision": 0.19208914918305062
+        }
+      },
+      "macro_auroc": 0.8899269457103507,
+      "macro_average_precision": 0.40627062360437405
+    }
+  },
+  "primary": {
+    "difference": 0.10580548272155277,
+    "ci_low": 0.09621313424922696,
+    "ci_high": 0.11589283685882013,
+    "draws": 2000,
+    "skipped_draws": 0,
+    "seed": 20261103
+  },
+  "versus_whole": {
+    "difference": -0.016266021096224215,
+    "ci_low": -0.019793460268151434,
+    "ci_high": -0.013137343271625834,
+    "draws": 2000,
+    "skipped_draws": 0,
+    "seed": 20261103
+  },
+  "decision": {
+    "gain_at_least_0.01": true,
+    "lower_95_above_zero": true,
+    "within_0.01_of_whole_point": false,
+    "advance": false
+  },
+  "condition_vs_normal": {
+    "whole": {
+      "groups": {
+        "MI": {
+          "records": 6968,
+          "positives": 118,
+          "negatives": 6850,
+          "auroc": 0.9739218112087096,
+          "average_precision": 0.6382527860831705
+        },
+        "STTC": {
+          "records": 9371,
+          "positives": 2521,
+          "negatives": 6850,
+          "auroc": 0.9483539436615639,
+          "average_precision": 0.9022269293621838
+        },
+        "CD": {
+          "records": 8016,
+          "positives": 1166,
+          "negatives": 6850,
+          "auroc": 0.8984690313129923,
+          "average_precision": 0.746920376989409
+        },
+        "HYP": {
+          "records": 6954,
+          "positives": 104,
+          "negatives": 6850,
+          "auroc": 0.9590918023582257,
+          "average_precision": 0.7918311409857914
+        }
+      },
+      "macro_auroc": 0.9449591471353728,
+      "macro_average_precision": 0.7698078083551387
+    },
+    "short_selected": {
+      "groups": {
+        "MI": {
+          "records": 6968,
+          "positives": 118,
+          "negatives": 6850,
+          "auroc": 0.8062043795620438,
+          "average_precision": 0.1119714422882741
+        },
+        "STTC": {
+          "records": 9371,
+          "positives": 2521,
+          "negatives": 6850,
+          "auroc": 0.8551340129771234,
+          "average_precision": 0.7334009108506396
+        },
+        "CD": {
+          "records": 8016,
+          "positives": 1166,
+          "negatives": 6850,
+          "auroc": 0.7873296941317875,
+          "average_precision": 0.46032337002104573
+        },
+        "HYP": {
+          "records": 6954,
+          "positives": 104,
+          "negatives": 6850,
+          "auroc": 0.8516465468837731,
+          "average_precision": 0.30290104181769223
+        }
+      },
+      "macro_auroc": 0.8250786583886819,
+      "macro_average_precision": 0.40214919124441295
+    },
+    "selected_2.5s": {
+      "groups": {
+        "MI": {
+          "records": 6968,
+          "positives": 118,
+          "negatives": 6850,
+          "auroc": 0.9336483978720772,
+          "average_precision": 0.35219357047518574
+        },
+        "STTC": {
+          "records": 9371,
+          "positives": 2521,
+          "negatives": 6850,
+          "auroc": 0.9106385775543826,
+          "average_precision": 0.8336605350404269
+        },
+        "CD": {
+          "records": 8016,
+          "positives": 1166,
+          "negatives": 6850,
+          "auroc": 0.8762038787544917,
+          "average_precision": 0.6745312170865293
+        },
+        "HYP": {
+          "records": 6954,
+          "positives": 104,
+          "negatives": 6850,
+          "auroc": 0.9130516563728243,
+          "average_precision": 0.6274099495746485
+        }
+      },
+      "macro_auroc": 0.908385627638444,
+      "macro_average_precision": 0.6219488180441975
+    },
+    "selected_5s": {
+      "groups": {
+        "MI": {
+          "records": 6968,
+          "positives": 118,
+          "negatives": 6850,
+          "auroc": 0.9586539651119634,
+          "average_precision": 0.49356133245161865
+        },
+        "STTC": {
+          "records": 9371,
+          "positives": 2521,
+          "negatives": 6850,
+          "auroc": 0.9335099326243496,
+          "average_precision": 0.8750024628674018
+        },
+        "CD": {
+          "records": 8016,
+          "positives": 1166,
+          "negatives": 6850,
+          "auroc": 0.8951136207134004,
+          "average_precision": 0.7272482828204623
+        },
+        "HYP": {
+          "records": 6954,
+          "positives": 104,
+          "negatives": 6850,
+          "auroc": 0.9320367770915218,
+          "average_precision": 0.7271499005338371
+        }
+      },
+      "macro_auroc": 0.9298285738853088,
+      "macro_average_precision": 0.70574049466833
+    },
+    "whole_keys_5s_max": {
+      "groups": {
+        "MI": {
+          "records": 6968,
+          "positives": 118,
+          "negatives": 6850,
+          "auroc": 0.9732982803414574,
+          "average_precision": 0.638668257869373
+        },
+        "STTC": {
+          "records": 9371,
+          "positives": 2521,
+          "negatives": 6850,
+          "auroc": 0.9475087802604111,
+          "average_precision": 0.901624978506175
+        },
+        "CD": {
+          "records": 8016,
+          "positives": 1166,
+          "negatives": 6850,
+          "auroc": 0.8994871730665699,
+          "average_precision": 0.7467116054170038
+        },
+        "HYP": {
+          "records": 6954,
+          "positives": 104,
+          "negatives": 6850,
+          "auroc": 0.9566718135878719,
+          "average_precision": 0.7904286234337601
+        }
+      },
+      "macro_auroc": 0.9442415118140774,
+      "macro_average_precision": 0.769358366306578
+    },
+    "whole_keys_5s_median": {
+      "groups": {
+        "MI": {
+          "records": 6968,
+          "positives": 118,
+          "negatives": 6850,
+          "auroc": 0.9739354200173204,
+          "average_precision": 0.6339060868311991
+        },
+        "STTC": {
+          "records": 9371,
+          "positives": 2521,
+          "negatives": 6850,
+          "auroc": 0.9473952231908899,
+          "average_precision": 0.9007818599490051
+        },
+        "CD": {
+          "records": 8016,
+          "positives": 1166,
+          "negatives": 6850,
+          "auroc": 0.8969297993013734,
+          "average_precision": 0.7437260623503068
+        },
+        "HYP": {
+          "records": 6954,
+          "positives": 104,
+          "negatives": 6850,
+          "auroc": 0.9569932622122403,
+          "average_precision": 0.7886073443690353
+        }
+      },
+      "macro_auroc": 0.943813426180456,
+      "macro_average_precision": 0.7667553383748866
+    },
+    "selected_7.5s": {
+      "groups": {
+        "MI": {
+          "records": 6968,
+          "positives": 118,
+          "negatives": 6850,
+          "auroc": 0.9678968204874427,
+          "average_precision": 0.5720748577023158
+        },
+        "STTC": {
+          "records": 9371,
+          "positives": 2521,
+          "negatives": 6850,
+          "auroc": 0.9428857740961327,
+          "average_precision": 0.8920489052154179
+        },
+        "CD": {
+          "records": 8016,
+          "positives": 1166,
+          "negatives": 6850,
+          "auroc": 0.8989126216023339,
+          "average_precision": 0.7421464094950192
+        },
+        "HYP": {
+          "records": 6954,
+          "positives": 104,
+          "negatives": 6850,
+          "auroc": 0.9464710836608647,
+          "average_precision": 0.762883153893364
+        }
+      },
+      "macro_auroc": 0.9390415749616935,
+      "macro_average_precision": 0.7422883315765292
+    }
+  },
+  "counts": {
+    "training": 25000,
+    "query": 10434,
+    "query_patients": 10116,
+    "training_normals": 7393,
+    "query_normals": 6850,
+    "training_multiple_groups": 4540,
+    "query_multiple_groups": 311,
+    "training_sources": {
+      "ningbo": 9952,
+      "ptbxl": 6828,
+      "georgia": 3974,
+      "chapman_shaoxing": 3050,
+      "cpsc_2018": 655,
+      "cpsc_2018_extra": 541
+    },
+    "training_positive": {
+      "MI": 2041,
+      "STTC": 12356,
+      "CD": 6049,
+      "HYP": 2376
+    }
+  },
+  "wall_seconds": 204.6520222183317,
+  "jepa_or_cropa_executed": false,
+  "gpu_used": false,
+  "artifact_sha256": {
+    "outputs/long_section_keys_20261106/artifacts.npz": "ac3bafb1364249deeebd7b045c55f18cd644d250ab711a0d11a58583db085c99"
+  }
+}

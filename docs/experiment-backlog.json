@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-03",
+  "updated": "2026-11-06",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -1752,6 +1752,38 @@
       ],
       "status": "proposed",
       "notes": "Freeze sampling and source-control recipes on permitted training data. Preserve all draws and KEY-01 verdict; no SPH tuning or new labels. Not scheduled."
+    },
+    {
+      "id": "long_section_keys_key02",
+      "kind": "experiment",
+      "title": "Longer condition-key sections and temporal agreement",
+      "question": "Do 2.5/5/7.5-second sections recover short-window prototype losses?",
+      "evidence": "KEY-02: five seconds improves short keys by 0.105805 but trails whole by 0.016266; frozen guard failed.",
+      "value": 3,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.05684778394953658,
+      "build_hours": 1,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Completed with executed supplementary notebook; no CroPA or clinical reasoning claim."
+    },
+    {
+      "id": "condition_keys_lead_preserving_jepa",
+      "kind": "experiment",
+      "title": "Lead-preserving frozen ECG-JEPA condition keys",
+      "question": "Do matched lead/time regions in released ECG-JEPA improve over its whole-record keys?",
+      "evidence": "ECG-JEPA CroPA motivates same-lead/time structure; KEY-02 longer xECG windows recover losses but do not test this structure. Local checkpoint exists; matching dense cache needs extraction.",
+      "value": 3,
+      "clarity": 0.7,
+      "gpu_hours": 1,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [
+        "@prospective_lead_preserving_protocol_and_real_profile"
+      ],
+      "status": "proposed",
+      "notes": "Freeze matched permitted IDs and whole/regional readouts, inspect native token layout, preserve synchronized lead/time coordinates, use GPU lock and actual resource profile. No new labels, pretraining, closed tests or automatic launch."
     }
   ]
 }

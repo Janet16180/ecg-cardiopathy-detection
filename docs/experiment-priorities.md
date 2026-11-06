@@ -120,13 +120,14 @@ penalty; one that ranks high earns a protocol like any other.
 | 55 | avance5_training_only_regularized_finetune | experiment | Training-only selection of regularized full-backbone xECG adaptation | 3 | 0.8 | 3.8 | 1.23 | @new_training_only_protocol_and_measured_full_io_budget |
 | 56 | nbr_page_clinician_review | analysis | Clinician review of the NBR page examples | 3 | 0.4 | 1.0 | 1.20 | @clinician_available |
 | 57 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
-| 58 | condition_keys_reference_stability | experiment | Patient-resampling stability of whole-record condition keys | 2 | 0.7 | 2.0 | 0.99 | @prospective_key_stability_protocol |
-| 59 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
-| 60 | pr74_training_sampling_uncertainty | experiment | Training-sample uncertainty for the strict young matched comparison | 3 | 0.6 | 5.0 | 0.80 | @prospective_resampling_protocol |
-| 61 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
-| 62 | pr74_prospective_student_workflow | experiment | Prospective student ECG quality and local-normal referral workflow | 5 | 0.5 | 13.0 | 0.69 | @cardiologist_target_review, @prospective_student_acquisition, @user_pipeline_freeze |
-| 63 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
-| 64 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
+| 58 | condition_keys_lead_preserving_jepa | experiment | Lead-preserving frozen ECG-JEPA condition keys | 3 | 0.7 | 4.5 | 0.99 | @prospective_lead_preserving_protocol_and_real_profile |
+| 59 | condition_keys_reference_stability | experiment | Patient-resampling stability of whole-record condition keys | 2 | 0.7 | 2.0 | 0.99 | @prospective_key_stability_protocol |
+| 60 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
+| 61 | pr74_training_sampling_uncertainty | experiment | Training-sample uncertainty for the strict young matched comparison | 3 | 0.6 | 5.0 | 0.80 | @prospective_resampling_protocol |
+| 62 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
+| 63 | pr74_prospective_student_workflow | experiment | Prospective student ECG quality and local-normal referral workflow | 5 | 0.5 | 13.0 | 0.69 | @cardiologist_target_review, @prospective_student_acquisition, @user_pipeline_freeze |
+| 64 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
+| 65 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
 
 After HEADS-01 (28 October 2026): `multitask_head` is done as arm B of
 [HEADS-01](heads01-token-superclass-results-2026-10-28.md). Superclass-versus-normal mixture heads raised

@@ -1,6 +1,6 @@
 # Experiment queue
 
-**6 November KEY-02:** Frozen longer-section comparison (2.5, 5 and 7.5 seconds) and temporal-agreement control. Implementation ready; source and result paths in the JSON catalog. This tests temporal context, not actual JEPA/CroPA.
+**6 November KEY-02 completed:** [Longer sections](long-section-keys-results-2026-11-06.md) recovered much of the short-window loss: macro AUROC 0.856926 / 0.879836 / 0.889927 at 2.5 / 5 / 7.5 seconds, against whole-record 0.896102. Five-second minus short gain +0.105805 [0.096213, 0.115893], but the whole-record guard failed; no promotion. The [supplementary notebook](../notebooks/LongSectionKeys.ipynb) explains the results and the limits of the ECG-JEPA analogy. Actual CroPA/lead-aware extraction was not run.
 
 **3 November condition keys completed:** [KEY-01 results](condition-keys-results-2026-11-03.md) and the [executed notebook](../notebooks/ConditionKeys.ipynb) compare whole-record and automatically selected contextual-token keys. On 10,434 SPH development ECGs, macro one-versus-rest AUROC fell from 0.896102 to 0.774030; paired patient difference -0.122072 [-0.133550, -0.111008]. Every advancement gate failed. Training-fitted descriptive clusters show overlapping annotation groups, not exclusive diseases. The 34-cell notebook executed sequentially and passed 154 saved-output checks. The successful CPU run took 148.986 seconds after a preserved pre-score parsing stop and committed correction. No SAM, new disease recognition, closed-test score or pipeline promotion. No follow-up is scheduled.
 

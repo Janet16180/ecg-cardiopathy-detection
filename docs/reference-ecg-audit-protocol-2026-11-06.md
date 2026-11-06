@@ -62,3 +62,9 @@ Audit aggregates against cohort denominators and saved selections, unit-key reco
 co-occurrence symmetry and source-share sums. Report missing raw waveforms or failed integrity
 checks transparently without substitution. Finish with a results report from outputs, both queue
 updates and ranked follow-ups. The existing KEY-01/02 verdicts and notebooks remain intact.
+
+Metadata feasibility disclosure: before the initial protocol commit, the existing cohort table's
+patient-identity, human-validation, label-evidence and review-flag value counts were inspected.
+They showed 6,828 known/human-validated PTB records, 18,172 unknown-identity source-process
+records, and 151 review-flagged records. These feasibility observations did not include new
+scores, geometry, example selection or waveforms; the audit repeats them with verified inputs.

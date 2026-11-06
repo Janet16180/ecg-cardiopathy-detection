@@ -2514,5 +2514,14 @@
     "atlas": "outputs/reference_ecg_audit_20261106/ReferenceECGAtlas.pdf",
     "summary": "48 key entries reconstructed; 20 training waveforms hash-verified. Large source-removal rotations and co-annotation mixtures; short selection increases coherence despite worse transfer. No new clinical labels or evaluation scores.",
     "verification": "reports/reference-ecg-audit-2026-11-06/verification.json"
+  },
+  "condition_classifiers_20261106": {
+    "status": "protocol_and_implementation_ready",
+    "protocol": "docs/condition-classifier-comparison-protocol-2026-11-06.md",
+    "output": "outputs/condition_classifiers_20261106",
+    "notebook": "notebooks/11-jr-ecg-condition-keys-and-classification.ipynb",
+    "authorization": "User requested JR consolidated notebook, multiclass comparison and deeper validation.",
+    "scope": "Joint-state multinomial and independent-label logistic models on unchanged normalized xECG embeddings; grouped training-only CV; ten fixed source-family reference-group bootstrap refits.",
+    "primary": "Joint logistic minus whole-record prototype macro AUROC; gain >=0.01 and paired 95% lower bound >0; no clinical promotion."
   }
 }

@@ -1,5 +1,7 @@
 # Experiment queue
 
+**6 November KEY-04:** Frozen matched multiclass comparison and JR consolidation. Training-only grouped model selection and ten reference-resampling draws are prespecified; implementation tested, no new real model fit yet. See the JSON entry for paths.
+
 **6 November KEY-03 completed:** [Reference audit](reference-ecg-audit-results-2026-11-06.md) and [aggregate notebook](../notebooks/ReferenceECGAudit.ipynb). Reconstructed 48 key entries and rendered 20 hash-verified training ECG panels in a local atlas. MI/STTC directions depend strongly on their largest source families; 60% of MI and 75% of HYP references have co-occurring groups. Short selection raises support coherence while rotating positive keys 39–48 degrees. No labels changed or new evaluation scores generated.
 
 **6 November KEY-02 completed:** [Longer sections](long-section-keys-results-2026-11-06.md) recovered much of the short-window loss: macro AUROC 0.856926 / 0.879836 / 0.889927 at 2.5 / 5 / 7.5 seconds, against whole-record 0.896102. Five-second minus short gain +0.105805 [0.096213, 0.115893], but the whole-record guard failed; no promotion. The [supplementary notebook](../notebooks/LongSectionKeys.ipynb) explains the results and the limits of the ECG-JEPA analogy. Actual CroPA/lead-aware extraction was not run.

@@ -1784,6 +1784,55 @@
       ],
       "status": "proposed",
       "notes": "Freeze matched permitted IDs and whole/regional readouts, inspect native token layout, preserve synchronized lead/time coordinates, use GPU lock and actual resource profile. No new labels, pretraining, closed tests or automatic launch."
+    },
+    {
+      "id": "reference_ecg_audit_key03",
+      "kind": "analysis",
+      "title": "Reference ECG composition, geometry and waveform atlas",
+      "question": "Which records and sources form condition averages, and how does region selection alter them?",
+      "evidence": "KEY-03: 48 reconstructed key entries, 20 training waveforms; MI/PTB removal 46.2 degrees and STTC/Chapman-Ningbo removal 60.7 degrees; extensive co-annotations.",
+      "value": 4,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.024247715702771934,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Completed aggregate and private waveform notebooks; no new clinical interpretation or classifier scores."
+    },
+    {
+      "id": "reference_source_coannotation_control",
+      "kind": "experiment",
+      "title": "Source and co-annotation controls for condition reference keys",
+      "question": "Do prespecified source-balanced or co-annotation-stratified reference means improve over the frozen whole-record keys?",
+      "evidence": "KEY-03: largest-source removal rotates keys strongly; 60% MI and 75% HYP references carry other abnormal groups.",
+      "value": 3,
+      "clarity": 0.7,
+      "gpu_hours": 0,
+      "cpu_hours": 0.3,
+      "build_hours": 2,
+      "blocked_by": [
+        "@prospective_reference_control_protocol"
+      ],
+      "status": "proposed",
+      "notes": "No clinical definition change; freeze comparison, support rules and patient uncertainty before scores. Not scheduled."
+    },
+    {
+      "id": "reference_atlas_quality_review",
+      "kind": "analysis",
+      "title": "Clinician quality review of the fixed reference atlas",
+      "question": "Which selected reference regions are clinically interpretable versus dominated by acquisition artifacts?",
+      "evidence": "KEY-03 Reference 16 shows a marked slow V4 level shift with no stored review flag; its short selection covers the first half-second.",
+      "value": 3,
+      "clarity": 0.5,
+      "gpu_hours": 0,
+      "cpu_hours": 0,
+      "build_hours": 1,
+      "blocked_by": [
+        "@clinician_available"
+      ],
+      "status": "proposed",
+      "notes": "Use local anonymous panels; do not remove records, redefine labels or treat model-selected regions as disease truth without separately documented review."
     }
   ]
 }

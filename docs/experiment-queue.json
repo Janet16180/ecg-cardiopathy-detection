@@ -2501,5 +2501,18 @@
     },
     "next_action": "No promotion. Lead-preserving JEPA comparison requires separate prospective extraction protocol.",
     "verification": "reports/long-section-keys-2026-11-06/verification.json"
+  },
+  "reference_ecg_audit_20261106": {
+    "status": "completed_descriptive",
+    "protocol": "docs/reference-ecg-audit-protocol-2026-11-06.md",
+    "output": "outputs/reference_ecg_audit_20261106",
+    "authorization": "User requested thorough analysis of averaging references, including ECG examples.",
+    "scope": "Training-only composition, key reconstruction, source/patient geometry and 20 anonymous waveform panels; no new evaluation scores.",
+    "report": "docs/reference-ecg-audit-results-2026-11-06.md",
+    "notebook": "notebooks/ReferenceECGAudit.ipynb",
+    "private_waveform_notebook": "outputs/reference_ecg_audit_20261106/ReferenceWaveforms.ipynb",
+    "atlas": "outputs/reference_ecg_audit_20261106/ReferenceECGAtlas.pdf",
+    "summary": "48 key entries reconstructed; 20 training waveforms hash-verified. Large source-removal rotations and co-annotation mixtures; short selection increases coherence despite worse transfer. No new clinical labels or evaluation scores.",
+    "verification": "reports/reference-ecg-audit-2026-11-06/verification.json"
   }
 }

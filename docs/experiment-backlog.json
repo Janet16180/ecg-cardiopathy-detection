@@ -1882,6 +1882,56 @@
       ],
       "status": "proposed",
       "notes": "Qualify existing permitted features/roles before scoring. Do not open closed Challenge/EchoNext tests or call this the final frozen evaluation. No automatic run."
+    },
+    {
+      "id": "mlc01_condition_dataset",
+      "kind": "experiment",
+      "title": "Condition-type dataset, roles and label states for spaces A, B and C",
+      "question": "Can the frozen MLC-01 mapping, roles and duplicate rule be built and checked against the inventory?",
+      "evidence": "MLC-01: 99,086 of 100,221 records included; all integrity checks passed; 576 inventory rows reproduced exactly; every difference attributed.",
+      "value": 4,
+      "clarity": 0.9,
+      "gpu_hours": 0,
+      "cpu_hours": 0.13,
+      "build_hours": 6,
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Dataset build only; no model or score. Report: docs/mlc01-condition-dataset-results-2026-11-10.md."
+    },
+    {
+      "id": "mlc01_label_rulings",
+      "kind": "repo",
+      "title": "Rule on the open MLC-01 label questions and rebuild if any changes",
+      "question": "Should CPSC 2018 partial negatives, PTB-XL NST_/missing axis/HVOLT, VT without PVC, ischemia without T-wave codes and zero-positive sources (CPSC-Extra LAD/LAFB, Georgia MI) become undefined?",
+      "evidence": "MLC-01 report, Questions for a ruling: e.g. 84 of 184 CPSC conflict groups conflict only on CPSC 2018 partial labels; 8,468 PTB-XL records lack heart_axis.",
+      "value": 3,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.15,
+      "build_hours": 2,
+      "blocked_by": [
+        "@user_or_coordinator_ruling"
+      ],
+      "status": "proposed",
+      "notes": "Any change is a dated amendment before the MLC-02 protocol; the cached scan makes a rebuild cheap."
+    },
+    {
+      "id": "mlc02_condition_models",
+      "kind": "experiment",
+      "title": "MLC-02: condition-type models against the independent-logistic baseline on the MLC-01 dataset",
+      "question": "Does the validation-selected model beat refit independent logistic regressions on pooled xECG embeddings in SPH macro AUROC over space B?",
+      "evidence": "Evaluation rules are frozen in the MLC-01 protocol; KEY-04 independent logistic 0.9608 at SPH is the integrity target.",
+      "value": 4,
+      "clarity": 0.6,
+      "gpu_hours": 4,
+      "cpu_hours": 4,
+      "build_hours": 8,
+      "blocked_by": [
+        "mlc01_label_rulings",
+        "@mlc02_protocol"
+      ],
+      "status": "proposed",
+      "notes": "Needs its own protocol, pretraining-overlap table and a real GPU profile before any fit."
     }
   ]
 }

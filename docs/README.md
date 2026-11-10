@@ -27,6 +27,7 @@
 - [CODE-15 source-label ID groups](code15-label-groups.md)
 - [Challenge postprocessing](challenge-postprocessing.md)
 - [Public-data strategy](public-data-strategy.md)
+- [MLC-01 condition dataset protocol](mlc01-condition-dataset-protocol-2026-11-10.md) and [build results](mlc01-condition-dataset-results-2026-11-10.md)
 
 ## Experiments and findings
 

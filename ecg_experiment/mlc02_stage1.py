@@ -338,7 +338,7 @@ def key04(output: Path) -> dict[str, object]:
     Parameters
     ----------
     output : Path
-        Directory for ``key04_reproduction.json``.
+        Directory for ``key04_reproduction_<OpenBLAS kernel>.json``.
 
     Returns
     -------
@@ -348,5 +348,6 @@ def key04(output: Path) -> dict[str, object]:
     started = time.perf_counter()
     record = key04_reproduction() | {"wall_seconds": time.perf_counter() - started, "git": git_state()}
     output.mkdir(parents=True, exist_ok=True)
-    write_json_atomic(output / "key04_reproduction.json", record)
+    name = "_".join(record["openblas_architecture"]) or "unknown"
+    write_json_atomic(output / f"key04_reproduction_{name}.json", record)
     return record

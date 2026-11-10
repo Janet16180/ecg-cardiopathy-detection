@@ -319,7 +319,8 @@ def key04_reproduction() -> dict[str, object]:
         Saved value, the recomputation from ``predictions.npz``, the refit's value, their differences, the
         largest score difference of the refit and the number of matching decimal digits.
     """
-    from threadpoolctl import threadpool_limits
+    import joblib
+    from threadpoolctl import threadpool_info, threadpool_limits
 
     from ecg_experiment.condition_keys import ranking_metrics
     from ecg_experiment.key_classifier_models import fit_package, predict_package
@@ -337,6 +338,15 @@ def key04_reproduction() -> dict[str, object]:
             raise ValueError("KEY-04 query flags differ from its saved predictions")
         package = fit_package(data["train_pooled"], data["train_flags"], "independent_logistic", KEY04_C)
         scores, _ = predict_package(package, data["query_pooled"])
+        blas = sorted(
+            {info.get("architecture", "") for info in threadpool_info() if info["internal_api"] == "openblas"}
+        )
+        saved_models = joblib.load(ROOT / KEY04 / "final_models.joblib")["independent_logistic"]
+        replay, _ = predict_package(saved_models, data["query_pooled"])
+    coefficients = max(
+        float(np.abs(new.coef_ - old.coef_).max())
+        for new, old in zip(package["models"], saved_models["models"], strict=True)
+    )
     refit = ranking_metrics(data["query_flags"], scores)["macro_auroc"]
     difference = abs(refit - saved)
     digits = int(np.floor(-np.log10(difference))) if difference > 0 else 16
@@ -352,6 +362,12 @@ def key04_reproduction() -> dict[str, object]:
             np.max(np.abs(scores - predictions["score_independent_logistic"]))
         ),
         "refit_iterations": package["iterations"],
+        "saved_iterations": saved_models["iterations"],
+        "refit_max_abs_coefficient_difference": coefficients,
+        "saved_model_replay_max_abs_score_difference": float(
+            np.max(np.abs(replay - predictions["score_independent_logistic"]))
+        ),
+        "openblas_architecture": blas,
         "chosen_c": KEY04_C,
         "query_records": len(data["query_flags"]),
         "train_records": len(data["train_flags"]),

@@ -178,3 +178,22 @@ undefined, not negative. No model had been fitted and no score computed when the
    build's own accounting (274 CPSC 2018 and CPSC-Extra groups) replaces it.
 
 The build is rerun with these rules. The results report states the counts before and after.
+
+## Amendment 2 (10 November 2026, after the second build, before any fit or score)
+
+1. ST depression in PTB-XL: a record with a subendocardial injury (`INJ*`), digitalis (`DIG`),
+   aneurysm (`ANEUR`) or electrolyte (`EL`) statement and no ST-depression code is undefined.
+   These statements describe ST changes without giving a direction we can map.
+2. Kept as built, and stated as limits:
+   - SPH code 145 (ST deviation) without code 146 or 147 stays negative for T-wave abnormality:
+     SPH has a separate code for ST deviation with T-wave change, so 145 alone says the T wave
+     was not flagged. The SPH labels do not change in either amendment.
+   - CPSC 2018 stays defined for atrial fibrillation or flutter although flutter is not one of
+     its nine classes.
+   - Space C keeps its remaining ambiguous negatives (ST elevation, right axis deviation). It is
+     exploratory, and its report says so.
+3. Ruling 6 of Amendment 1 applies to every label space, as built.
+4. The dataset is final after this rebuild (`outputs/mlc01_condition_dataset_20261110_v3/`). Any
+   later label question is logged as a limitation, not applied, so that the labels cannot be
+   adjusted after models have been scored. The first two builds stay on disk as the record of
+   what changed; their receipts pin earlier versions of the label code, which remain in Git.

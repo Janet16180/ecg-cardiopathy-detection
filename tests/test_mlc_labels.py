@@ -2,6 +2,7 @@
 
 import math
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -50,7 +51,7 @@ def test_parsers_keep_codes_modifiers_and_axis():
     assert parse_aha("22;145+362;60+310+340") == (("22", frozenset()), ("145", frozenset({"362"})),
                                                    ("60", frozenset({"310", "340"})))
     assert ptbxl_codes({"SR": 0.0}, "ALAD") == {"SR": 0.0, "axis:ALAD": 0.0}
-    assert ptbxl_codes({"SR": 0.0}, "") == {"SR": 0.0}
+    assert ptbxl_codes({"SR": 0.0}, "") == {"SR": 0.0, "axis:missing": 0.0}
 
 
 def test_spaces_have_the_protocol_sizes_and_share_definitions():
@@ -94,7 +95,7 @@ def test_cpsc_2018_partial_annotation_keeps_composite_labels_defined():
     assert snomed("cpsc_2018", "426783006")["af_or_flutter"] == 0
     groups = space_a_states("cpsc_2018", frozenset({"429622005"}), CLASSES)
     assert groups["STTC"] == 1
-    assert groups["CD"] == 0
+    assert nan(groups["CD"])
     assert nan(groups["MI"])
     assert nan(groups["HYP"])
     assert ("cpsc_2018", "af_or_flutter") in mlc_labels.PARTIAL
@@ -102,7 +103,7 @@ def test_cpsc_2018_partial_annotation_keeps_composite_labels_defined():
     assert status[("b_af_or_flutter", "cpsc_2018")] == "partial"
     assert status[("b_lvh", "cpsc_2018")] == "not annotated"
     assert status[("a_MI", "cpsc_2018")] == "not annotated"
-    assert status[("a_STTC", "cpsc_2018")] == "partial"
+    assert status[("a_STTC", "cpsc_2018")] == "positive only"
 
 
 def test_sources_that_do_not_annotate_a_condition_are_undefined():
@@ -148,7 +149,6 @@ def test_ptbxl_left_axis_deviation_uses_only_alad():
     assert ptbxl({"SR": 0.0}, "ALAD")["left_axis_deviation"] == 1
     assert nan(ptbxl({"SR": 0.0}, "LAD")["left_axis_deviation"])
     assert ptbxl({"SR": 0.0}, "MID")["left_axis_deviation"] == 0
-    assert ptbxl({"SR": 0.0}, "")["left_axis_deviation"] == 0
 
 
 def test_ptbxl_injury_alone_leaves_infarction_undefined():
@@ -171,7 +171,7 @@ def test_contradictory_pairs_make_both_undefined():
     assert nan(states["complete_rbbb"])
     assert nan(states["incomplete_rbbb"])
     assert nan(aha("104;106")["complete_rbbb"])
-    assert aha("104;105")["incomplete_rbbb"] == 1
+    assert aha("105")["incomplete_rbbb"] == 1
 
 
 def test_unstated_completeness_follows_the_official_equivalences():
@@ -192,9 +192,9 @@ def test_sph_code_153_sets_no_condition_and_counts_for_hyp_in_space_a():
         assert states[key] == 0, key
     assert aha("142;153")["lvh"] == 1
     assert aha("142;153")["t_wave_abnormality"] == 0
-    groups = space_a_states("sph", parse_aha("153"), CLASSES)
+    groups = space_a_states("sph", parse_aha("142;153"), CLASSES)
     assert groups["HYP"] == 1
-    assert groups["STTC"] == 0
+    assert nan(groups["STTC"])
     groups = space_a_states("sph", parse_aha("147;153"), CLASSES)
     assert groups["STTC"] == 1
     assert groups["HYP"] == 1
@@ -257,7 +257,8 @@ def test_every_code_exists_in_its_official_table():
     rows = pd.DataFrame(mlc_labels.mapping_rows())
     rows = rows[rows["code"] != ""]
     scp = set(pd.read_csv(PTBXL_DIR / "scp_statements.csv", index_col=0).index)
-    axis = {"axis:ALAD", "axis:LAD", "axis:ARAD", "axis:RAD"}
+    axes = set(pd.read_csv(PTBXL_DIR / "ptbxl_database.csv", usecols=["heart_axis"])["heart_axis"].dropna())
+    axis = {f"axis:{value}" for value in axes} | {"axis:missing"}
     official = challenge_labels.load_official()
     aha_codes = set(pd.read_csv(SPH_CODES, dtype=str)["Code"])
     for _, row in rows.iterrows():
@@ -278,3 +279,85 @@ def test_official_equivalence_notes_match_the_hand_written_pairs():
              for head in set(canonical.values())}
     assert pairs == {frozenset(pair) for pair in (("733534002", "164909002"), ("713427006", "59118001"),
                                                   ("284470004", "63593006"), ("427172004", "17338001"))}
+
+
+def test_ruling_1_ventricular_tachycardia_without_pvc_code_is_undefined():
+    assert nan(snomed("ningbo", "425856008")["premature_ventricular_complex"])
+    assert nan(snomed("ningbo", "164895002")["premature_ventricular_complex"])
+    assert snomed("ningbo", "425856008", "427172004")["premature_ventricular_complex"] == 1
+
+
+def test_ruling_2_nonspecific_or_ischemic_st_t_leaves_st_depression_undefined():
+    for code in mlc_labels.ST_T_NONSPECIFIC_OR_ISCHEMIC["snomed"]:
+        assert nan(snomed("ningbo", code)["st_depression"]), code
+        assert snomed("ningbo", code, "429622005")["st_depression"] == 1
+    for code in mlc_labels.ST_T_NONSPECIFIC_OR_ISCHEMIC["scp"]:
+        assert nan(ptbxl({code: 100.0})["st_depression"]), code
+        assert ptbxl({code: 100.0, "STD_": 0.0})["st_depression"] == 1
+    assert ptbxl({"NDT": 100.0})["st_depression"] == 0
+    assert snomed("ningbo", "164934002")["st_depression"] == 0
+
+
+def test_ruling_3_ischemic_or_nonspecific_st_t_leaves_t_wave_undefined():
+    for code in ("ISC_", "ISCIN", "NST_"):
+        assert nan(ptbxl({code: 100.0})["t_wave_abnormality"]), code
+        assert ptbxl({code: 100.0, "INVT": 0.0})["t_wave_abnormality"] == 1
+    for code in ("164861001", "426434006", "164930006", "428750005"):
+        assert nan(snomed("georgia", code)["t_wave_abnormality"]), code
+        assert snomed("georgia", code, "59931005")["t_wave_abnormality"] == 1
+    assert ptbxl({"STD_": 0.0})["t_wave_abnormality"] == 0
+
+
+def test_ruling_4_empty_or_axl_heart_axis_leaves_lad_undefined():
+    assert nan(ptbxl({"SR": 0.0}, "")["left_axis_deviation"])
+    assert nan(ptbxl({"SR": 0.0}, "AXL")["left_axis_deviation"])
+    assert ptbxl({"SR": 0.0}, "RAD")["left_axis_deviation"] == 0
+    assert normal_of_ptbxl({"NORM": 100.0, "SR": 0.0}, "") == 1
+
+
+def normal_of_ptbxl(codes: dict[str, float], axis: str) -> float:
+    return record_labels("ptbxl", ptbxl_codes(codes, axis), CLASSES, DIAGNOSTIC)["normal"]
+
+
+def test_ruling_5_hvolt_alone_leaves_lvh_and_hyp_undefined():
+    assert nan(ptbxl({"HVOLT": 0.0, "SR": 0.0})["lvh"])
+    assert ptbxl({"HVOLT": 0.0, "LVH": 100.0})["lvh"] == 1
+    assert nan(space_a_states("ptbxl", {"HVOLT": 0.0}, CLASSES)["HYP"])
+
+
+def test_ruling_6_sources_with_fewer_than_five_positives_do_not_annotate():
+    sources = pd.Series(["georgia"] * 6 + ["ningbo"] * 6)
+    labels = pd.DataFrame({"b_mi_any": [1.0, 1, 1, 1, 0, 0] + [1.0, 1, 1, 1, 1, 0],
+                           "b_lafb": [1.0, 1, 1, 1, 1, np.nan] + [0.0] * 6})
+    table = mlc_labels.minimum_positive_table(labels, sources).set_index(["source", "label"])
+    assert table.loc[("georgia", "b_mi_any"), "not_annotated"]
+    assert not table.loc[("ningbo", "b_mi_any"), "not_annotated"]
+    assert not table.loc[("georgia", "b_lafb"), "not_annotated"]
+    assert table.loc[("ningbo", "b_lafb"), "not_annotated"]
+    assert table.loc[("ningbo", "b_lafb"), "defined"] == 6
+    masked = mlc_labels.apply_minimum_positives(labels, sources, table.reset_index())
+    assert masked.loc[:5, "b_mi_any"].isna().all()
+    assert masked.loc[6:, "b_mi_any"].tolist() == [1.0, 1, 1, 1, 1, 0]
+    assert masked.loc[6:, "b_lafb"].isna().all()
+    assert masked.loc[:4, "b_lafb"].tolist() == [1.0] * 5
+
+
+def test_ruling_7_lbbb_with_incomplete_rbbb_makes_both_undefined():
+    states = snomed("georgia", "164909002", "713426002")
+    assert nan(states["complete_lbbb"])
+    assert nan(states["incomplete_rbbb"])
+    states = aha("104;105")
+    assert nan(states["complete_lbbb"])
+    assert nan(states["incomplete_rbbb"])
+    assert ("complete_lbbb", "incomplete_rbbb") in mlc_labels.CONTRADICTORY_PAIRS
+
+
+def test_ruling_8_space_a_sph_153_and_cpsc_2018_positive_only():
+    assert nan(space_a_states("sph", parse_aha("142;153"), CLASSES)["STTC"])
+    assert space_a_states("sph", parse_aha("142;145+362;153"), CLASSES)["STTC"] == 1
+    assert space_a_states("sph", parse_aha("142"), CLASSES)["STTC"] == 0
+    groups = space_a_states("cpsc_2018", frozenset({"426783006"}), CLASSES)
+    assert all(nan(value) for value in groups.values())
+    groups = space_a_states("cpsc_2018", frozenset({"59118001"}), CLASSES)
+    assert groups["CD"] == 1
+    assert nan(groups["STTC"])

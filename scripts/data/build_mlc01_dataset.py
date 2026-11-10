@@ -20,8 +20,10 @@ def main() -> None:
     parser.add_argument("--cache-dir", type=Path, default=Path("/var/tmp/janetrivera/mlc01_scan"))
     parser.add_argument("--workers", type=int, default=16)
     parser.add_argument("--limit", type=int, default=None, help="records per source, for a profile run")
+    parser.add_argument("--reference-dir", type=Path, default=None,
+                        help="earlier build whose records, waveform hashes and roles must be reproduced")
     args = parser.parse_args()
-    result = build(args.output_dir, args.cache_dir, args.workers, args.limit, sys.argv)
+    result = build(args.output_dir, args.cache_dir, args.workers, args.limit, sys.argv, args.reference_dir)
     print(json.dumps(result["summary"], indent=2, default=str))
 
 

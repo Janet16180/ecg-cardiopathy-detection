@@ -1888,7 +1888,7 @@
       "kind": "experiment",
       "title": "Condition-type dataset, roles and label states for spaces A, B and C",
       "question": "Can the frozen MLC-01 mapping, roles and duplicate rule be built and checked against the inventory?",
-      "evidence": "MLC-01: 99,086 of 100,221 records included; all integrity checks passed; 576 inventory rows reproduced exactly; every difference attributed.",
+      "evidence": "MLC-01 v2 (Amendment 1): 99,167 of 100,221 records included; all integrity checks passed; v1 reproduced the inventory's 576 rows exactly.",
       "value": 4,
       "clarity": 0.9,
       "gpu_hours": 0,
@@ -1903,17 +1903,15 @@
       "kind": "repo",
       "title": "Rule on the open MLC-01 label questions and rebuild if any changes",
       "question": "Should CPSC 2018 partial negatives, PTB-XL NST_/missing axis/HVOLT, VT without PVC, ischemia without T-wave codes and zero-positive sources (CPSC-Extra LAD/LAFB, Georgia MI) become undefined?",
-      "evidence": "MLC-01 report, Questions for a ruling: e.g. 84 of 184 CPSC conflict groups conflict only on CPSC 2018 partial labels; 8,468 PTB-XL records lack heart_axis.",
+      "evidence": "Amendment 1 applied in ee0481f; v2 build outputs/mlc01_condition_dataset_20261110_v2 reproduces v1 records, roles and waveform hashes; ruling 6 caught 23 pairs (3 in space B).",
       "value": 3,
       "clarity": 0.8,
       "gpu_hours": 0,
       "cpu_hours": 0.15,
       "build_hours": 2,
-      "blocked_by": [
-        "@user_or_coordinator_ruling"
-      ],
-      "status": "proposed",
-      "notes": "Any change is a dated amendment before the MLC-02 protocol; the cached scan makes a rebuild cheap."
+      "blocked_by": [],
+      "status": "done",
+      "notes": "Remaining questions (ST elevation and right axis in space C, SPH ST deviation for T-wave, PTB-XL INJ/DIG/ANEUR/EL for ST depression, CPSC 2018 AF-or-flutter) are listed in the report."
     },
     {
       "id": "mlc02_condition_models",
@@ -1927,7 +1925,6 @@
       "cpu_hours": 4,
       "build_hours": 8,
       "blocked_by": [
-        "mlc01_label_rulings",
         "@mlc02_protocol"
       ],
       "status": "proposed",

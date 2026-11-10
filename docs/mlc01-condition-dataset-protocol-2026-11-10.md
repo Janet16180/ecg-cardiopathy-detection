@@ -152,3 +152,29 @@ Leinonen et al. (2024), Comput Biol Med 183:109271. Liu et al. (2022), Sci Data 
 Reyna et al. (2022), Physiol Meas 43(8). Strodthoff et al. (2021), IEEE JBHI 25(5):1519-1528.
 Suh et al. (2021), Computing in Cardiology, doi:10.22489/CinC.2021.019. Wagner et al. (2020),
 Sci Data 7:154.
+
+## Amendment 1 (10 November 2026, after the first build, before any fit or score)
+
+The first build raised label questions the rules above did not settle. The rulings follow one
+principle: a statement that does not say whether the condition is present makes the label
+undefined, not negative. No model had been fitted and no score computed when these were written.
+
+1. Premature ventricular complexes: a record with ventricular tachycardia and no PVC code is
+   undefined.
+2. ST depression: a nonspecific or ischemic ST-T statement with no ST-depression code is
+   undefined (PTB-XL `NST_` and the ischemic statements, and their SNOMED counterparts).
+3. T-wave abnormality: an ischemic or nonspecific ST-T statement with no T-wave code is undefined.
+4. Left axis deviation in PTB-XL: an empty `heart_axis` and the value `AXL` are undefined.
+5. Left ventricular hypertrophy in PTB-XL: `HVOLT` alone is undefined, as for the other sources.
+6. A source with fewer than five positives of a condition among its opened records does not
+   annotate that condition: every record of that source is undefined for it. This covers left
+   axis deviation and left anterior fascicular block in CPSC-Extra and myocardial infarction in
+   Georgia. The check is on label counts only.
+7. LBBB with incomplete RBBB joins the contradictory pairs.
+8. Space A: SPH code 153 sets HYP positive and leaves STTC undefined unless another ST-T code is
+   present. CPSC 2018 records are undefined for STTC and CD unless positive, since that source
+   annotates only some of the conditions in those groups.
+9. The "155 CPSC-Extra copies" quoted above came from an earlier audit with another scope. The
+   build's own accounting (274 CPSC 2018 and CPSC-Extra groups) replaces it.
+
+The build is rerun with these rules. The results report states the counts before and after.

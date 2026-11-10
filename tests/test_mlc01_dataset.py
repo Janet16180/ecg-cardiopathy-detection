@@ -167,15 +167,18 @@ def test_reference_check_requires_identical_hashes_and_roles(tmp_path, monkeypat
     from ecg_experiment import mlc01_build
 
     monkeypatch.setattr(mlc01_build, "to_stored", str)
-    frame = pd.DataFrame({"role": ["train", "test_external"], "sha256_10s": ["a", np.nan],
-                          "sha256_full": ["b", np.nan]}, index=pd.Index(["x:1", "sph:2"], name="record_key"))
+    frame = pd.DataFrame({"role": ["train", "test_external"], "raw_path": ["data/a", "data/b"],
+                          "sha256_10s": ["a", np.nan], "sha256_full": ["b", np.nan]},
+                         index=pd.Index(["x:1", "sph:2"], name="record_key"))
     frame.to_csv(tmp_path / "manifest.csv")
     checks: dict = {}
     mlc01_build.check_reference(frame, tmp_path, checks)
-    assert checks["waveform_hashes_and_roles_match_reference"]["passed"]
-    changed = frame.assign(role=["validation", "test_external"])
-    with pytest.raises(ValueError, match="reference"):
-        mlc01_build.check_reference(changed, tmp_path, {})
+    assert checks["records_roles_paths_and_waveform_hashes_match_reference"]["passed"]
+    changes = (frame.assign(role=["validation", "test_external"]), frame.assign(raw_path=["data/a", "x"]),
+               frame.iloc[:1])
+    for changed in changes:
+        with pytest.raises(ValueError, match="reference"):
+            mlc01_build.check_reference(changed, tmp_path, {})
     mlc01_build.check_reference(frame, None, checks)
 
 

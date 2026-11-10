@@ -361,3 +361,12 @@ def test_ruling_8_space_a_sph_153_and_cpsc_2018_positive_only():
     groups = space_a_states("cpsc_2018", frozenset({"59118001"}), CLASSES)
     assert groups["CD"] == 1
     assert nan(groups["STTC"])
+
+
+def test_amendment_2_ptbxl_st_changes_without_direction_leave_st_depression_undefined():
+    for code in ("INJAS", "INJAL", "INJLA", "INJIN", "INJIL", "DIG", "ANEUR", "EL"):
+        assert nan(ptbxl({code: 100.0})["st_depression"]), code
+        assert ptbxl({code: 100.0, "STD_": 0.0})["st_depression"] == 1
+    assert ptbxl({"INJAS": 100.0})["t_wave_abnormality"] == 0
+    assert aha("145")["t_wave_abnormality"] == 0
+    assert snomed("cpsc_2018", "426783006")["af_or_flutter"] == 0

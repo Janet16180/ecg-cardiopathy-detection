@@ -369,7 +369,7 @@ def status_table(minimum: pd.DataFrame) -> pd.DataFrame:
 def check_reference(frame: pd.DataFrame, reference: Path | None, checks: dict[str, dict[str, object]]
                     ) -> None:
     """
-    Require the same records, waveform hashes and roles as an earlier build.
+    Require the same records, roles, raw paths and waveform hashes as an earlier build.
 
     Parameters
     ----------
@@ -382,13 +382,13 @@ def check_reference(frame: pd.DataFrame, reference: Path | None, checks: dict[st
     """
     if reference is None:
         return
-    columns = ["role", "sha256_10s", "sha256_full"]
+    columns = ["role", "raw_path", "sha256_10s", "sha256_full"]
     earlier = pd.read_csv(reference / "manifest.csv", index_col="record_key",
                           usecols=["record_key", *columns], dtype=str).fillna("")
     now = frame[columns].astype(str).where(frame[columns].notna(), "")
     same_keys = set(earlier.index) == set(now.index)
     mismatches = int((earlier.reindex(now.index) != now).any(axis=1).sum()) if same_keys else len(now)
-    check(checks, "waveform_hashes_and_roles_match_reference",
+    check(checks, "records_roles_paths_and_waveform_hashes_match_reference",
           {"reference": to_stored(reference), "records": len(earlier), "mismatches": 0},
           {"reference": to_stored(reference), "records": len(now), "mismatches": mismatches})
 

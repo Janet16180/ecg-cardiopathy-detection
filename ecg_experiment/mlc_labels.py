@@ -25,7 +25,9 @@ an empty PTB-XL ``heart_axis`` or ``AXL`` for left axis deviation; PTB-XL ``HVOL
 ventricular hypertrophy; LBBB with incomplete RBBB as a contradictory pair; in space A, SPH 153 alone leaves
 STTC undefined and CPSC 2018 is undefined for every group unless positive. A source with fewer than
 ``MIN_POSITIVES`` positives of a label among its opened records does not annotate it
-(``minimum_positive_table``); the build applies that rule from its label counts.
+(``minimum_positive_table``); the build applies that rule from its label counts. Amendment 2 adds the PTB-XL
+injury, digitalis, aneurysm and electrolyte statements (``ST_CHANGE_WITHOUT_DIRECTION_SCP``) to the
+statements that leave ST depression undefined without an ST-depression code.
 
 AHA specifications: ``"B"`` matches a statement with base code B and any modifier, ``"B+M"`` one that
 carries modifier M, and ``"B="`` one without a modifier. SCP specifications ``"axis:X"`` match PTB-XL's
@@ -93,6 +95,7 @@ def condition(name: str, positive: dict[str, frozenset[str]],
 MI_SCP = ("IMI", "ASMI", "ILMI", "AMI", "ALMI", "LMI", "IPLMI", "IPMI", "PMI")
 ISCHEMIC_SCP = ("ISC_", "ISCAL", "ISCAS", "ISCLA", "ISCAN", "ISCIN", "ISCIL")
 ISCHEMIC_SNOMED = ("164861001", "413844008", "413444003", "426434006", "425419005", "425623009")
+ST_CHANGE_WITHOUT_DIRECTION_SCP = ("INJAS", "INJAL", "INJLA", "INJIN", "INJIL", "DIG", "ANEUR", "EL")
 ST_T_NONSPECIFIC_OR_ISCHEMIC = codes(("NST_", *ISCHEMIC_SCP),
                                      ("428750005", "55930002", "164930006", *ISCHEMIC_SNOMED))
 VENTRICULAR_TACHYCARDIA_SNOMED = ("425856008", "164895002")
@@ -125,7 +128,7 @@ CONDITIONS: dict[str, dict[str, object]] = {
     "lvh": condition("Left ventricular hypertrophy", codes(("LVH",), ("164873001",), ("142",)),
                      codes(("VCLVH", "HVOLT"), ("55827005", "266249003", "370365005"))),
     "st_depression": condition("ST depression", codes(("STD_",), ("429622005", "704997005"), ("145+362",)),
-                               codes(tuple(ST_T_NONSPECIFIC_OR_ISCHEMIC["scp"]),
+                               codes((*ST_T_NONSPECIFIC_OR_ISCHEMIC["scp"], *ST_CHANGE_WITHOUT_DIRECTION_SCP),
                                      tuple(ST_T_NONSPECIFIC_OR_ISCHEMIC["snomed"]), ST_NO_DIRECTION_AHA)),
     "t_wave_abnormality": condition("T-wave abnormality", codes(
         ("NDT", "NT_", "TAB_", "INVT", "LOWT"), ("164934002", "59931005"), ("147", "146")),

@@ -1,29 +1,31 @@
 # MLC-01 results: the condition dataset
 
 10 November 2026. Executes the frozen [MLC-01 protocol](mlc01-condition-dataset-protocol-2026-11-10.md)
-(commit `d4e25c7`) and its Amendment 1 (commit `8720f86`). This is a dataset build: no model was fitted
-and no performance score of any kind was computed. Every number below is read from the executed outputs
-(local, not in Git), named in brackets.
+(commit `d4e25c7`) with its Amendment 1 (`8720f86`) and Amendment 2 (`ab833a3`). This is a dataset build:
+no model was fitted and no performance score of any kind was computed. Every number below is read from the
+executed outputs (local, not in Git), named in brackets.
 
-There are two builds. The current dataset is v2, built with Amendment 1; v1 is kept unchanged as the
-"before".
+Three builds exist. v3 is the final dataset (Amendment 2, ruling 4); v1 and v2 stay on disk as the record of
+what changed, and their receipts pin earlier versions of the label code, which remain in Git.
 
-| Build | Directory | Code commit |
-|---|---|---|
-| v1 | `outputs/mlc01_condition_dataset_20261110/` | `b6d3b6c` (labels `3044b72`) |
-| v2 (current) | `outputs/mlc01_condition_dataset_20261110_v2/` | `ee0481f` |
+| Build | Directory | Code commit | Rules |
+|---|---|---|---|
+| v1 | `outputs/mlc01_condition_dataset_20261110/` | `b6d3b6c` (labels `3044b72`) | protocol |
+| v2 | `outputs/mlc01_condition_dataset_20261110_v2/` | `ee0481f` | + Amendment 1 |
+| v3 (final) | `outputs/mlc01_condition_dataset_20261110_v3/` | `41845c2` | + Amendment 2 |
 
-- Both receipts record their commit with no modified tracked file [`receipt.json` `git`].
+- Every receipt records its commit with no modified tracked file [`receipt.json` `git`].
 - v1: `PYTHONPATH=. OPENBLAS_CORETYPE=Haswell OMP_NUM_THREADS=1 .venv/bin/python -m
-  scripts.data.build_mlc01_dataset --workers 16`, 471.4 s.
-- v2: the same command with `--output-dir outputs/mlc01_condition_dataset_20261110_v2 --reference-dir
-  outputs/mlc01_condition_dataset_20261110`, 75.2 s. The waveform scan was reused from the cache, whose
-  chunks are bound to the unchanged scan code. The build requires the v1 records, roles and waveform
-  hashes to be reproduced exactly: all 100,221 records match, with 0 mismatches
-  [`receipt.json` `integrity.waveform_hashes_and_roles_match_reference`].
-- A 100-records-per-source profile into `/var/tmp` preceded each run; neither profile is a result.
+  scripts.data.build_mlc01_dataset --workers 16` (471.4 s).
+- v2 and v3: the same command with `--output-dir <v2 or v3 directory> --reference-dir
+  outputs/mlc01_condition_dataset_20261110` (75.2 s and 75.3 s; the waveform scan was reused from the cache,
+  whose chunks are bound to the unchanged scan code).
+- Both rebuilds require the first build's records, roles and waveform hashes, and v3 also its raw paths, to
+  be reproduced exactly. All 100,221 records match, with 0 mismatches
+  [`receipt.json` `integrity`, `records_roles_paths_and_waveform_hashes_match_reference` in v3].
+- A 100-records-per-source profile into `/var/tmp` preceded the v1 and v2 runs; neither is a result.
 
-## Final dataset (v2)
+## Final dataset (v3)
 
 99,167 of the 100,221 enumerated records are included. 63 are shorter than 10 s and 991 are removed by
 the duplicate rule. No record was unreadable, had other than the twelve named leads, or was not 500 Hz
@@ -37,7 +39,8 @@ the duplicate rule. No record was unreadable, had other than the twelve named le
 | test_external | 0 | 0 | 0 | 0 | 0 | 0 | 12,698 |
 | sph_calibration | 0 | 0 | 0 | 0 | 0 | 0 | 12,883 |
 
-Only CPSC-Extra changed from v1: 59 more training records and 22 more validation records. Their copies
+v3 includes the same records as v2 [`v3/comparison_with_before/record_set_changes.csv`, empty]. Only
+CPSC-Extra changed from v1: 59 more training records and 22 more validation records. Their copies
 had conflicted in v1 on labels that ruling 8 now makes undefined at CPSC 2018
 [`comparison_with_before/record_set_changes.csv`].
 
@@ -65,7 +68,8 @@ All checks passed in both builds; the build stops on any failure [`receipt.json`
 | Challenge test-group paths scanned | 0 | 0 |
 | SPH metadata sample count equals the file | 25,770 | 25,770 |
 | Codes absent from their official table (SCP, SNOMED CT, AHA) | none | none |
-| v2 records, roles and waveform hashes equal v1 | 100,221, 0 mismatches | 100,221, 0 mismatches |
+| v2: records, roles and waveform hashes equal v1 | 100,221, 0 mismatches | 100,221, 0 mismatches |
+| v3: records, roles, raw paths and waveform hashes equal v1 | 100,221, 0 mismatches | 100,221, 0 mismatches |
 
 Raw files:
 
@@ -137,9 +141,25 @@ already undefined throughout, because the source does not annotate or cannot cod
 | C | ningbo | lpfb | 4 |
 
 In space B the rule catches exactly the three pairs the amendment names, and none at PTB-XL, SPH or CPSC
-2018.
+2018. v3 catches the same 23 pairs (Amendment 2, ruling 3: the rule applies to every label space).
 
-## Exclusion flow (v2)
+## Amendment 2 as implemented
+
+1. A PTB-XL record with a subendocardial injury (`INJAS`, `INJAL`, `INJLA`, `INJIN`, `INJIL`), digitalis
+   (`DIG`), aneurysm (`ANEUR`) or electrolyte (`EL`) statement and no ST-depression code is undefined for ST
+   depression (`ST_CHANGE_WITHOUT_DIRECTION_SCP`; test
+   `test_amendment_2_ptbxl_st_changes_without_direction_leave_st_depression_undefined`).
+2. Kept as built and stated as limits: SPH 145 without 146 or 147 stays negative for T-wave abnormality;
+   CPSC 2018 stays defined for AF or flutter; space C keeps its other ambiguous negatives (ST elevation,
+   right axis deviation). The test also checks that these states are unchanged.
+3. Ruling 6 of Amendment 1 applies to every label space, as built.
+4. The dataset is final after this rebuild.
+
+Effect on records included in both v2 and v3: 383 PTB-XL ST-depression negatives became undefined (305
+train, 41 fold 9, 37 fold 10), the same in space C; nothing else changed in spaces A, B or C
+[`v3/comparison_with_before/state_transitions.csv`, `before_after_*.csv`].
+
+## Exclusion flow (v3, identical to v2)
 
 | source | start | unreadable | wrong leads | wrong rate | short | eligible | dropped copy | dropped conflict | final |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -169,7 +189,7 @@ Per-role rows are in `exclusion_flow.csv`.
 
 The Challenge sources have no patient identifier, so each record is its own group.
 
-## Space B by evaluation set (v2)
+## Space B by evaluation set (v3)
 
 Cells are positive / negative / undefined records. `chapman_ningbo` and `cpsc` are the two-source
 families [`support_B.csv`].
@@ -187,7 +207,7 @@ families [`support_B.csv`].
 | lafb | 163 / 2,020 / 0 | 76 / 6,896 / 0 | 0 / 0 / 2,036 | 76 / 6,896 / 2,036 | 45 / 1,998 / 0 | 0 / 0 / 1,251 | 0 / 0 / 653 | 0 / 0 / 1,904 | 162 / 2,036 / 0 | 77 / 12,621 / 0 | 74 / 12,809 / 0 |
 | left_axis_deviation | 121 / 751 / 1,311 | 216 / 6,756 / 0 | 80 / 1,956 / 0 | 296 / 8,712 / 0 | 190 / 1,853 / 0 | 0 / 0 / 1,251 | 0 / 0 / 653 | 0 / 0 / 1,904 | 134 / 704 / 1,360 | 68 / 12,630 / 0 | 70 / 12,813 / 0 |
 | lvh | 210 / 1,940 / 33 | 103 / 6,097 / 772 | 4 / 1,761 / 271 | 107 / 7,858 / 1,043 | 231 / 1,803 / 9 | 0 / 0 / 1,251 | 33 / 620 / 0 | 33 / 620 / 1,251 | 214 / 1,959 / 25 | 100 / 12,598 / 0 | 107 / 12,776 / 0 |
-| st_depression | 101 / 1,813 / 269 | 231 / 5,967 / 774 | 78 / 1,807 / 151 | 309 / 7,774 / 925 | 0 / 0 / 2,043 | 161 / 1,090 / 0 | 8 / 222 / 423 | 169 / 1,312 / 423 | 101 / 1,834 / 263 | 497 / 11,293 / 908 | 513 / 11,461 / 909 |
+| st_depression | 101 / 1,772 / 310 | 231 / 5,967 / 774 | 78 / 1,807 / 151 | 309 / 7,774 / 925 | 0 / 0 / 2,043 | 161 / 1,090 / 0 | 8 / 222 / 423 | 169 / 1,312 / 423 | 101 / 1,797 / 300 | 497 / 11,293 / 908 | 513 / 11,461 / 909 |
 | t_wave_abnormality | 260 / 1,638 / 285 | 1,305 / 4,931 / 736 | 390 / 1,486 / 160 | 1,695 / 6,417 / 896 | 544 / 1,110 / 389 | 0 / 0 / 1,251 | 5 / 225 / 423 | 5 / 225 / 1,674 | 255 / 1,664 / 279 | 1,633 / 11,065 / 0 | 1,618 / 11,265 / 0 |
 | mi_any | 521 / 1,643 / 19 | 26 / 6,946 / 0 | 6 / 2,030 / 0 | 32 / 8,976 / 0 | 0 / 0 / 2,043 | 0 / 0 / 1,251 | 274 / 379 / 0 | 274 / 379 / 1,251 | 532 / 1,648 / 18 | 118 / 12,580 / 0 | 137 / 12,746 / 0 |
 
@@ -206,11 +226,11 @@ Training records, positive / negative / undefined [`label_counts_B.csv`]:
 | lafb | 1,298 / 16,120 / 0 | 227 / 20,692 / 0 | 0 / 0 / 6,097 | 102 / 6,015 / 0 | 0 / 0 / 3,763 | 0 / 0 / 1,936 |
 | left_axis_deviation | 1,127 / 6,629 / 9,662 | 708 / 20,211 / 0 | 225 / 5,872 / 0 | 556 / 5,561 / 0 | 0 / 0 / 3,763 | 0 / 0 / 1,936 |
 | lvh | 1,708 / 15,501 / 209 | 392 / 18,031 / 2,496 | 7 / 5,370 / 720 | 763 / 5,336 / 18 | 0 / 0 / 3,763 | 86 / 1,850 / 0 |
-| st_depression | 807 / 14,509 / 2,102 | 786 / 17,782 / 2,351 | 242 / 5,343 / 512 | 0 / 0 / 6,117 | 499 / 3,264 / 0 | 34 / 651 / 1,251 |
+| st_depression | 807 / 14,204 / 2,407 | 786 / 17,782 / 2,351 | 242 / 5,343 / 512 | 0 / 0 / 6,117 | 499 / 3,264 / 0 | 34 / 651 / 1,251 |
 | t_wave_abnormality | 2,079 / 13,108 / 2,231 | 3,951 / 14,753 / 2,215 | 1,156 / 4,418 / 523 | 1,621 / 3,308 / 1,188 | 0 / 0 / 3,763 | 16 / 660 / 1,260 |
 | mi_any | 4,235 / 13,039 / 144 | 97 / 20,822 / 0 | 25 / 6,072 / 0 | 0 / 0 / 6,117 | 0 / 0 / 3,763 | 827 / 1,109 / 0 |
 
-The protocol's selection rule still holds on v2: each of the 14 conditions has at least 100 positives in
+The protocol's selection rule still holds on v3: each of the 14 conditions has at least 100 positives in
 each of the three sets below.
 
 | Set | Smallest condition | Positives |
@@ -219,7 +239,7 @@ each of the three sets below.
 | SPH | left axis deviation | 138 |
 | PTB-XL folds 9-10 | complete RBBB | 108 |
 
-### Conditions below 20, 50 and 100 positives (v2)
+### Conditions below 20, 50 and 100 positives (v3)
 
 The macro rule admits a condition with at least 20 positives and 20 negatives in the set [`support_B.csv`].
 "Below 20" includes sources that do not annotate the condition, which have 0 positives.
@@ -241,13 +261,13 @@ The macro rule admits a condition with at least 20 positives and 20 negatives in
 All 14 conditions still enter the macro at PTB-XL fold 10 and at the SPH evaluation half
 [`comparison_with_before/before_after_B.csv`].
 
-Fewer than 20 negatives occurs in v2 only where a source does not annotate the condition at all (0
+Fewer than 20 negatives occurs in v3 only where a source does not annotate the condition at all (0
 positives and 0 negatives). No set has a condition with positives but fewer than 20 negatives.
 
 ### Likelihood sensitivity
 
 In the sensitivity analysis, a PTB-XL positive that rests only on diagnostic statements with likelihood
-below 50 becomes undefined. The counts are unchanged in v2 [`label_counts_B.csv` minus
+below 50 becomes undefined. The counts are unchanged in v2 and v3 [`label_counts_B.csv` minus
 `label_counts_B_lik50.csv`]:
 
 | condition | train | fold 9 | fold 10 |
@@ -262,13 +282,15 @@ below 50 becomes undefined. The counts are unchanged in v2 [`label_counts_B.csv`
 No other condition is affected. In fold 10 this leaves 391 MI and 177 LVH positives
 [`support_B_lik50.csv`].
 
-## Before and after Amendment 1
+## Before and after the amendments
 
-[`comparison_with_before/`, from `scripts/reports/compare_mlc01_builds.py`]
+[`v2/comparison_with_before/` (v1 to v2) and `v3/comparison_with_before/` (v2 to v3), from
+`scripts/reports/compare_mlc01_builds.py`; v1 to v3 below chains the two. No support flag changed between v2
+and v3.]
 
 Space B in the two test sets, positive / negative / undefined:
 
-| condition | fold 10 v1 | fold 10 v2 | SPH evaluation v1 | SPH evaluation v2 |
+| condition | fold 10 v1 | fold 10 v3 | SPH evaluation v1 | SPH evaluation v3 |
 |---|---:|---:|---:|---:|
 | sinus_tachycardia | 82 / 2,116 / 0 | 82 / 2,116 / 0 | 360 / 12,338 / 0 | 360 / 12,338 / 0 |
 | sinus_bradycardia | 64 / 2,134 / 0 | 64 / 2,134 / 0 | 1,302 / 11,396 / 0 | 1,302 / 11,396 / 0 |
@@ -281,25 +303,25 @@ Space B in the two test sets, positive / negative / undefined:
 | lafb | 162 / 2,036 / 0 | 162 / 2,036 / 0 | 77 / 12,621 / 0 | 77 / 12,621 / 0 |
 | left_axis_deviation | 134 / 1,670 / 394 | 134 / 704 / 1,360 | 68 / 12,630 / 0 | 68 / 12,630 / 0 |
 | lvh | 214 / 1,964 / 20 | 214 / 1,959 / 25 | 100 / 12,598 / 0 | 100 / 12,598 / 0 |
-| st_depression | 101 / 2,097 / 0 | 101 / 1,834 / 263 | 497 / 11,293 / 908 | 497 / 11,293 / 908 |
+| st_depression | 101 / 2,097 / 0 | 101 / 1,797 / 300 | 497 / 11,293 / 908 | 497 / 11,293 / 908 |
 | t_wave_abnormality | 255 / 1,943 / 0 | 255 / 1,664 / 279 | 1,633 / 11,065 / 0 | 1,633 / 11,065 / 0 |
 | mi_any | 532 / 1,648 / 18 | 532 / 1,648 / 18 | 118 / 12,580 / 0 | 118 / 12,580 / 0 |
 
 - No positive changed in either test set.
 - Space B at the SPH evaluation half is unchanged.
-- At fold 10, these negatives became undefined: 966 left axis deviation, 279 T-wave abnormality, 263 ST
-  depression and 5 LVH.
+- At fold 10, these negatives became undefined: 966 left axis deviation, 300 ST depression (263 under
+  Amendment 1 and 37 under Amendment 2), 279 T-wave abnormality and 5 LVH.
 - Space A in the test sets [`before_after_A.csv`]:
   - SPH evaluation-half STTC changed from 2,480 / 10,218 / 0 to 2,480 / 10,176 / 42.
   - Fold 10 HYP changed from 262 / 1,917 / 19 to 262 / 1,912 / 24.
 
 Space-B cells that changed in the other evaluation sets:
 
-| set | condition | v1 | v2 |
+| set | condition | v1 | v3 |
 |---|---|---:|---:|
 | validation ptbxl | left_axis_deviation | 121 / 1,694 / 368 | 121 / 751 / 1,311 |
 | validation ptbxl | lvh | 210 / 1,946 / 27 | 210 / 1,940 / 33 |
-| validation ptbxl | st_depression | 101 / 2,082 / 0 | 101 / 1,813 / 269 |
+| validation ptbxl | st_depression | 101 / 2,082 / 0 | 101 / 1,772 / 310 |
 | validation ptbxl | t_wave_abnormality | 260 / 1,923 / 0 | 260 / 1,638 / 285 |
 | validation ningbo | premature_ventricular_complex | 220 / 6,730 / 22 | 220 / 6,718 / 34 |
 | validation ningbo | st_depression | 231 / 6,741 / 0 | 231 / 5,967 / 774 |
@@ -334,14 +356,15 @@ Support flags that changed:
   family, and for MI at Georgia. These are the pairs that ruling 6 makes undefined throughout.
 
 State changes on records included in both builds, spaces B and A, summed over roles
-[`state_transitions.csv`]. All are negative to undefined, except 3 Georgia MI positives and 1 incomplete
+[`state_transitions.csv` of v2, plus v3 for Amendment 2]. All are negative to undefined, except 3 Georgia MI
+positives and 1 incomplete
 RBBB positive that became undefined:
 
 | label | records | by source |
 |---|---:|---|
 | left_axis_deviation | 11,077 | PTB-XL 8,569, CPSC-Extra 2,508 |
 | mi_any | 8,160 | Georgia (8,157 negatives, 3 positives) |
-| st_depression | 8,018 | Ningbo 3,125, PTB-XL 2,634, CPSC-Extra 1,596, Chapman 663 |
+| st_depression | 8,018 + 383 | Ningbo 3,125, PTB-XL 2,634 + 383 (Amendment 2), CPSC-Extra 1,596, Chapman 663 |
 | t_wave_abnormality | 4,318 | PTB-XL 2,795, CPSC-Extra 718, Georgia 449, Ningbo 356 |
 | lafb | 2,508 | CPSC-Extra |
 | lvh | 45 | PTB-XL |
@@ -352,7 +375,7 @@ RBBB positive that became undefined:
 | space-A CD | 3,056 | CPSC 2018 |
 | space-A HYP | 45 | PTB-XL |
 
-## Space A by evaluation set (v2)
+## Space A by evaluation set (v3, identical to v2)
 
 Positive / negative / undefined [`support_A.csv`]:
 
@@ -363,7 +386,7 @@ Positive / negative / undefined [`support_A.csv`]:
 | CD | 495 / 1,688 / 0 | 769 / 6,203 / 0 | 256 / 1,780 / 0 | 460 / 1,583 / 0 | 486 / 0 / 765 | 72 / 581 / 0 | 496 / 1,702 / 0 | 1,166 / 11,532 / 0 | 1,200 / 11,683 / 0 |
 | HYP | 268 / 1,882 / 33 | 129 / 6,072 / 771 | 5 / 1,760 / 271 | 425 / 1,618 / 0 | 0 / 0 / 1,251 | 45 / 608 / 0 | 262 / 1,912 / 24 | 104 / 12,594 / 0 | 123 / 12,760 / 0 |
 
-## Space C (exploratory, v2)
+## Space C (exploratory, v3)
 
 Number of the 30 conditions below each support level, and number entering a macro [`support_C.csv`]:
 
@@ -405,11 +428,12 @@ condition (including through ruling 6) or cannot code it:
 | st_elevation | 3 | - | 33 | 24 | 34 | 14 | 3 | 20 | 17 | 334 |
 | supraventricular_tachycardia | 5 | 70 | 145 | 15 | - | 6 | 5 | 5 | 8 | 681 |
 
-The other 12 conditions of space C share space B's definitions and counts.
+The other 12 conditions of space C share space B's definitions and counts. Space C is exploratory and keeps
+ambiguous negatives that spaces A and B no longer have (see Limitations).
 
 ## Normal column
 
-The per-source normal definition is kept for audits only and is unchanged in v2
+The per-source normal definition is kept for audits only and is unchanged in v2 and v3
 [`label_counts_normal.csv`]:
 
 | Source | Normal definition | Count |
@@ -422,7 +446,7 @@ The per-source normal definition is kept for audits only and is unchanged in v2
 For CPSC-Extra, the inventory found no record with sinus rhythm as the only code
 (`inventory_comparison/inventory_snapshot/label_space_A.csv` in the v1 directory).
 
-## Co-occurrence (v2)
+## Co-occurrence (v3, identical to v2)
 
 Share of records by number of positive space-B conditions. Training rows are shown, plus the SPH
 evaluation half; `cooccurrence_B_count.csv` holds every role:
@@ -468,7 +492,7 @@ Lead flags in the first 10 s of the final records [`lead_flags.csv`]:
 One CPSC-Extra validation record is flat in all twelve leads. No record was excluded for quality; the
 per-lead flags are manifest columns for the subgroup analysis.
 
-## Duplicates (v2)
+## Duplicates (v3, identical to v2)
 
 Exact duplicates are records with the same hash of the first 10 s (int32 microvolts, leads I to V6).
 There are 806 groups of more than one eligible record, holding 1,635 records; they are the same groups as
@@ -494,7 +518,7 @@ in v1 [`duplicate_accounting.csv`]. In every group the whole-record hashes are a
   hold 284 CPSC 2018 and 280 CPSC-Extra records [`supplementary/duplicates.json`]. Under ruling 9, this
   accounting replaces the protocol's earlier figure of 155 CPSC-Extra copies.
 - Conflicts [`supplementary/duplicate_conflicts.csv`, `duplicates.json`]:
-  - 162 groups conflict in v2, down from 243 in v1.
+  - 162 groups conflict in v2 and v3, down from 243 in v1.
   - 103 of them pair CPSC 2018 with CPSC-Extra, down from 184. In 3 of these every conflicting label is
     one CPSC 2018 annotates only in part, AF or flutter.
   - The labels that conflict most often are premature ventricular complexes (39 groups), premature
@@ -512,7 +536,7 @@ in v1 [`duplicate_accounting.csv`]. In every group the whole-record hashes are a
 
 This section compares the first build with the metadata inventory [`inventory_comparison/` in the v1
 directory, from `scripts/reports/compare_mlc01_inventory.py`]. The section "Before and after Amendment 1"
-gives the differences between v1 and v2.
+gives the differences between v1 and the later builds.
 
 1. Reproduction. The draft mapping (`vocabulary.py`), re-applied to the inventory's record sets,
    reproduces all 576 inventory rows exactly, with 0 mismatches in records, positives or undefined.
@@ -586,28 +610,37 @@ Two scope choices made in applying Amendment 1:
 8. Ruling 6 is applied to every label of spaces A, B and C, not only space B. Positives are counted over
    all opened records of a source, before exclusions and duplicate resolution.
 9. Rulings 2-5 are applied to the conditions they name. Their space-C relatives (ST elevation, right axis
-   deviation) are left as before; see the open questions below.
+   deviation) are left as before; Amendment 2 keeps them as limits.
+10. The v3 reference check compares raw paths with the first build as well as records, roles and waveform
+    hashes (the v2 check compared records, roles and hashes).
 
-## Open questions after Amendment 1
+## Questions settled by Amendment 2
 
-These follow the amended rules as written. The counts are final v2 records that a further ruling would
-move from negative to undefined [`supplementary/open_questions.csv` in the v2 directory]:
+The questions raised after the second build are settled; counts are final v3 records
+[`v3/supplementary/open_questions.csv`]:
 
-| Question | Records (train / validation / test) |
-|---|---|
-| ST elevation (C) with a nonspecific or ischemic ST-T statement and no ST-elevation code, counted negative; ruling 2 covers ST depression only | PTB-XL 2,542 / 323 / 316; Georgia 2,228 / 759; CPSC-Extra 1,259 / 424; Chapman 698 / 205 |
-| Right axis deviation (C) with an empty PTB-XL `heart_axis` or `AXR`, counted negative | 6,614 / 944 / 961 |
-| SPH T-wave negatives with code 145 and no 146 or 147 (ruling 3 names no SPH code) | 857 calibration half, 844 evaluation half; of these, 145 without a direction: 379 and 386 |
-| PTB-XL ST depression with subendocardial injury (`INJ*`), digitalis effect (`DIG`), aneurysm (`ANEUR`) or electrolyte (`EL`) statements and no `STD_`, counted negative; these are not in the ruling-2 list | 305 / 41 / 37 |
-| CPSC 2018 AF or flutter (B), still defined although flutter is not a CPSC 2018 class (ruling 8 covers space A only) | 3,176 / 1,038 negatives |
+- PTB-XL ST depression with injury, digitalis, aneurysm or electrolyte statements: now undefined (383
+  records); the question no longer appears in v3.
+- Kept as built, as limits (Amendment 2, ruling 2):
+  - SPH T-wave negatives with code 145 and no 146 or 147: 857 in the calibration half and 844 in the
+    evaluation half (379 and 386 with 145 without a direction).
+  - CPSC 2018 AF or flutter negatives although flutter is not a CPSC 2018 class: 3,176 training and 1,038
+    validation.
+  - Space C, ST elevation negatives with a nonspecific or ischemic ST-T statement: PTB-XL 2,542 / 323 / 316
+    (train / validation / test), Georgia 2,228 / 759, CPSC-Extra 1,259 / 424, Chapman 698 / 205.
+  - Space C, right axis deviation negatives with an empty PTB-XL `heart_axis` or `AXR`: 6,614 / 944 / 961.
 
-The v1 receipt pins the bytes of `mlc_labels.py` and `mlc01_build.py`, which Amendment 1 changed as
-instructed. v1 remains reproducible from its recorded commit `b6d3b6c`.
+The v1 and v2 receipts pin the label and build code of their own commits (`b6d3b6c`, `ee0481f`); those
+versions remain in Git. Under Amendment 2, ruling 4, any later label question is logged as a limitation and
+not applied.
 
 ## Limitations
 
 - The labels are annotation statements, not diagnoses, and coding practice differs between sources.
   Validation by a cardiologist is pending.
+- The dataset is final. The negatives kept by Amendment 2, ruling 2 (SPH 145 for T-wave abnormality, CPSC
+  2018 AF or flutter, space-C ST elevation and right axis deviation) are known to be less reliable than the
+  other negatives; counts are under "Questions settled by Amendment 2".
 - SPH and PTB-XL fold 10 have been scored by earlier experiments for other targets.
 - The Challenge validation groups can share patients with the training groups, since there is no patient
   identifier.
@@ -628,24 +661,24 @@ Each build directory (local) holds:
 - `receipt.json`: input, code and output SHA-256, git commit and integrity checks.
 - `build.log`.
 
-v2 also holds `minimum_positive_rule.csv`, `comparison_with_before/` and `supplementary/`. v1 also holds
-`inventory_comparison/` and `supplementary/`. The scan cache is `/var/tmp/janetrivera/mlc01_scan`; it is
+v2 and v3 also hold `minimum_positive_rule.csv`, `comparison_with_before/` (v1 to v2, and v2 to v3) and
+`supplementary/`. v1 also holds `inventory_comparison/` and `supplementary/`. The scan cache is `/var/tmp/janetrivera/mlc01_scan`; it is
 chunked and bound to the job and code hashes.
 
 Report scripts, run after a build from the worktree with `PYTHONPATH=.`:
 
 - `python -m scripts.reports.compare_mlc01_inventory --inventory <labelspace directory>` (v1)
-- `python -m scripts.reports.compare_mlc01_builds --before <v1> --after <v2>`
+- `python -m scripts.reports.compare_mlc01_builds --before <v1> --after <v2>` and `--before <v2> --after <v3>`
 - `python -m scripts.reports.describe_mlc01_duplicates --dataset <build>`
 - `python -m scripts.reports.count_mlc01_label_doubts` (v1)
-- `python -m scripts.reports.count_mlc01_open_questions --dataset <v2>`
+- `python -m scripts.reports.count_mlc01_open_questions --dataset <v2 or v3>`
 
 Each script records its own SHA-256 and the manifest's in its receipt.
 
 Checks:
 
 - `ruff check ecg_experiment scripts tests conftest.py` passed.
-- `pytest tests/test_mlc_labels.py tests/test_mlc01_dataset.py`: 43 passed.
+- `pytest tests/test_mlc_labels.py tests/test_mlc01_dataset.py`: 44 passed at `41845c2`.
 - The full suite in the worktree, run at the v1 commit, gave 1,616 passed, 2 skipped and 1 failed. The
   failing test is `tests/test_xecg_encoder_motion_v11.py::test_graph_rejects_missing_and_conflicting_leaves`;
   it rejects the worktree's symlinked `outputs` and passes in the main checkout.

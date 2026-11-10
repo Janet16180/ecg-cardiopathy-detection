@@ -1,0 +1,36 @@
+{
+  "status": "scientific_and_notebook_checks_passed_with_style_warning",
+  "notebooks": {
+    "notebooks/ReferenceECGAudit.ipynb": {
+      "cells": 22,
+      "code_cells": 10,
+      "sha256": "9876368aa10c0fc871f4ef665c4b3f8bb0cf09b8b9a4f8da393d56e67b3f1da0"
+    },
+    "outputs/reference_ecg_audit_20261106/ReferenceWaveforms.ipynb": {
+      "cells": 2,
+      "code_cells": 1,
+      "sha256": "a694825f64b19fca013d00ea3be9d8a04d5ebc14684a416b4900c7a74bd6b0c5"
+    }
+  },
+  "key_entries_reconstructed": 48,
+  "source_hashes_verified": 26,
+  "aggregate_checks": 150,
+  "cpu_tests_passed": 1567,
+  "cpu_tests_skipped": 2,
+  "lint": {
+    "remaining": 1,
+    "code": "I001",
+    "file": "ecg_experiment/reference_ecg_audit.py",
+    "note": "Import ordering preserved in receipt-pinned source; no numerical effect."
+  },
+  "artifact_sha256": {
+    "outputs/condition_keys_20261103_v2/result.json": "8d8f5b92f065c2614f1fbf9c375232cb2cec2dda65344c0efc63ad72b47f5285",
+    "outputs/condition_keys_20261103_v2/artifacts.npz": "0135113cbc65e1b1e73064c94422f74537c91aadd90a6473567726f183478619",
+    "outputs/long_section_keys_20261106/result.json": "83f166b759ad420e6e2466d31a7b8f4c59b651b7c44e5c5e4cbc72610e35354c",
+    "outputs/long_section_keys_20261106/artifacts.npz": "ac3bafb1364249deeebd7b045c55f18cd644d250ab711a0d11a58583db085c99",
+    "outputs/reference_ecg_audit_20261106/reference_metrics.npz": "4531ffd691b97e64eba3babd2a66c2709583e91fa04eb6ab966f6d8a4d87abaa",
+    "outputs/reference_ecg_audit_20261106/waveform_manifest.json": "c2426fbbdbcecbe6409c672e2fb46f1364ff2a24ec83b0b2a2c613ea3d9fc24e",
+    "outputs/reference_ecg_audit_20261106/ReferenceECGAtlas.pdf": "0265446bf34f615835a7814b1d00c4ef2e951e29f191cdaa7b7725f683def25a",
+    "reports/reference-ecg-audit-2026-11-06/aggregate.json": "0c4569437ff1f6932f14790dd4533a59d4f7459873222960867cc12db9cc181c"
+  }
+}

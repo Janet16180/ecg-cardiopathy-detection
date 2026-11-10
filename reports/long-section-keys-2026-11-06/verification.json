@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "metric_checks": 112,
+  "notebook_cells": 13,
+  "executed_code_cells": 6,
+  "cpu_tests_passed": 1563,
+  "cpu_tests_skipped": 2,
+  "ruff": "passed",
+  "notebook_sha256": "a908775092f38383f8e94017a84302ab2a245e87354951b79d051c2bf4a182f5",
+  "aggregate_sha256": "83f166b759ad420e6e2466d31a7b8f4c59b651b7c44e5c5e4cbc72610e35354c",
+  "source_hashes_verified": 22
+}

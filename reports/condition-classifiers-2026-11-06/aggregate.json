@@ -1,0 +1,3327 @@
+{
+  "study": "KEY-04",
+  "status": "completed",
+  "git_commit": "aec367c40a6f720ce899bd22a1f55cee45f58ba8",
+  "protocol": "docs/condition-classifier-comparison-protocol-2026-11-06.md",
+  "source_sha256": {
+    "ecg_experiment/condition_key_clusters.py": "5a1fd80c5b7c1e1bd07c0e36ef03e081046dbf1b8efba4f424a284ba2ba538aa",
+    "ecg_experiment/condition_key_inputs.py": "4f32cd9d1f10a8d7a4e00282ec9ad61ccf8de358cb2ffcdaa95fb445869b1671",
+    "ecg_experiment/condition_key_inputs_v2.py": "4f038214255fa805bc9cab22b72b4442efcb481f42083239785d6bbd44488824",
+    "ecg_experiment/condition_key_study.py": "71b15738ffa93b733a57be843ef8c689cb15ae771cc9b9539f806b232c979fff",
+    "ecg_experiment/condition_key_study_v2.py": "3e392e543285d289923f510a4815e40f88864623807f49bc9d506a7a32b87daa",
+    "ecg_experiment/condition_keys.py": "264f81cbad1677f688bcada7d4f87a74ba89bd43d5b91dafe9a5f1c4e7e5a1cd",
+    "docs/condition-keys-protocol-2026-11-03.md": "0bdced557508937da534c93dd127bbbff5bc67e231fdf60bcc79ac10dc2cf512",
+    "scripts/experiments/run_condition_keys.py": "938af2fa2237c081559cbc9caffe9bd9b7432aff2e4bbbf83449cf0bd3f265de",
+    "tests/test_condition_keys.py": "ff56d7f30a8097f8594efdcca4d9058d2ce756b172340282947242215accf75d",
+    "ecg_experiment/embedding_geometry.py": "b79bc7f540a92aa2e160986c154cc6b580e1fc8ea8eb46eeb8a7a41c93c3d4d0",
+    "ecg_experiment/intervals.py": "b45103664e8c2e063b90c8223b64e7bbe6394e54796e0613538bd0b53dfe99af",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "ecg_experiment/files.py": "d418732520e883994d3b72b064c03174184f606cfea4e166800bf8a096ef985b",
+    "ecg_experiment/pr74_screening_metrics.py": "9990f15b35feb8730f0af864c26d0e9355a7a522d594b6d3739ed24e7d2340cb",
+    "ecg_experiment/cpu_screening041.py": "c7171d0014ad806a5c2a5a991b5703aa57000824bd25dbcaf1d09fd5cf8a867c",
+    "docs/condition-keys-execution-v2-2026-11-03.md": "1c3de12ed3b2121572879c3fdceeba1500cebc761bd7ce15effb2da80ecf0444",
+    "tests/test_condition_key_inputs_v2.py": "5106656950d8ea37135b63dac956a4690cdf29303767a5eb120bf7f82a6827a9",
+    "scripts/experiments/run_condition_keys_v2.py": "5c0c5390642ad7e9460b88a5e66929cce660fba12b2be33dd027021b70757e97",
+    "docs/long-section-keys-protocol-2026-11-06.md": "d244a362610ab82128230b7e0e351b53d8f3da78b9e2a24a6e3860efb214618d",
+    "ecg_experiment/long_section_keys.py": "347fd4815fc3213bff39fedb531db900b65e2ad7f64a035f2790fd7b72e33761",
+    "scripts/experiments/run_long_section_keys.py": "a34a73447ffcacd1060c4a14d3a3e665bd6db7dc290302bd40baa388765225d6",
+    "tests/test_long_section_keys.py": "2a4d6deb46a3d55f727fe2666822dc273d39e6a14eb8d57d975253c0a6394030",
+    "docs/condition-classifier-comparison-protocol-2026-11-06.md": "120080b19d59165b160f0a8ea17e92aa35a18c9b5d79a676d5afc39f7a074a97",
+    "ecg_experiment/key_classifier_models.py": "52a1b4720736317c41458ac0cfa8f9eafb62a79b71cec670958d104ff79cddf4",
+    "ecg_experiment/key_classifier_study.py": "3a6f2c32bb76af5464d80a5ddcc8be6db234f95c4998299e2407d4923c625129",
+    "scripts/experiments/run_key_classifiers.py": "ac9d02d2382e5b266d648d109e67f010457945586e91684ad43273a8586907a8",
+    "tests/test_key_classifiers.py": "35335ebd2e897388b1316dccece0e0af75e6c6fe8fdc1c6d9bd7fded7eb203f8"
+  },
+  "predecessor_sha256": {
+    "outputs/condition_keys_20261103_v2/artifacts.npz": "0135113cbc65e1b1e73064c94422f74537c91aadd90a6473567726f183478619",
+    "outputs/condition_keys_20261103_v2/result.json": "8d8f5b92f065c2614f1fbf9c375232cb2cec2dda65344c0efc63ad72b47f5285",
+    "outputs/long_section_keys_20261106/artifacts.npz": "ac3bafb1364249deeebd7b045c55f18cd644d250ab711a0d11a58583db085c99",
+    "outputs/long_section_keys_20261106/result.json": "83f166b759ad420e6e2466d31a7b8f4c59b651b7c44e5c5e4cbc72610e35354c"
+  },
+  "qualification": {
+    "input_sha256": {
+      "outputs/heads01_token_superclass_20261028/extract_training/completion.json": "e7f9cca27d3f1d9ab23e27ef298c54f0cb2dde1f74a02eb3360fc2394bea8f90",
+      "outputs/heads01_token_superclass_20261028/extract_evaluation/completion.json": "ad4e3ef90ecc7e891da4f923c5e9b9f3c7052f8b98df2a7cd79112807b56c308",
+      "outputs/heads01_token_superclass_20261028/qualify/completion.json": "22a0937d0ed1943ffe114f17d9747baaf67455b1537f43777c980733293bc959",
+      "outputs/heads01_token_superclass_20261028/evaluate/completion.json": "7f3eae88c526be01e837b7922af85aa1760f49c9c8018d3f63d7751a7b8778e2",
+      "outputs/cohort_age_label_priority_20261028/all_age.csv": "67637a3a2db91c9d9b0f3204d349e418f178e54580dc83fa825cfc3ad5be259e",
+      "outputs/pr74_fresh_baseline_exact_20261028/features/sph_rows.csv": "f58844aa0d4cff6e27058d3cced892aec9cec40e95239c4176cdf6c0c6f237e9",
+      "outputs/heads01_token_superclass_20261028/qualify/labels.csv": "d480d681a218e9314b95338811009c983d81a48cfcd2b1cfbc3fce13064b8739",
+      "outputs/heads01_token_superclass_20261028/evaluate/evaluation.json": "a8debd3b8346543ac1a3109f1a35f9c6fd2a9450d5edb3c10146625265cf1e53",
+      "outputs/heads01_token_superclass_20261028/evaluate/sph_predictions.npz": "0b227555109c7c4adc60cd38da130be05bacdf55287fea7915267dd78a49b406",
+      "outputs/heads01_token_superclass_20261028/extract_training/rows.csv": "c0054e503a9f8e1d392beccc8e310d441bd08a67fd6b980fce49c992fe2b959c",
+      "outputs/heads01_token_superclass_20261028/extract_training/pooled.npy": "ed0b3ee568cc32ffde451c5f3449a3e2ec5f278ec501140139702b14a7bb0ad1",
+      "outputs/heads01_token_superclass_20261028/extract_training/tokens.npy": "25fd00b96adfcabb657fd1cc7c287b96c25cb9e7a2655db34417ac7f3599f6d4",
+      "outputs/heads01_token_superclass_20261028/extract_evaluation/rows.csv": "b1121fc599bb2844a99eca00f54605c1e1f568d4b0fa43d2aa07c9d0e7604b9f",
+      "outputs/heads01_token_superclass_20261028/extract_evaluation/pooled.npy": "efc96cebb2950ec154e1a9a23bd70f62c3911e9b2b89d92d9d509a33cb1c3345",
+      "outputs/heads01_token_superclass_20261028/extract_evaluation/tokens.npy": "a044c5fb562ae3e771e4abffcbc0bceab81947f399e65fe91c9c4c20e220eeb0"
+    },
+    "metric_dictionaries_exact": 24,
+    "primary_interval_exact": true,
+    "baseline_max_score_error": 0.0,
+    "training_state_counts": [
+      7393,
+      812,
+      8578,
+      375,
+      3084,
+      449,
+      1813,
+      120,
+      593,
+      62,
+      1009,
+      129,
+      219,
+      32,
+      270,
+      62
+    ],
+    "training_groups": 24531,
+    "known_identity_records": 6828,
+    "folds": [
+      {
+        "fold": 0,
+        "records": 8340,
+        "groups": 8177,
+        "state_counts": [
+          2478,
+          269,
+          2840,
+          139,
+          1021,
+          140,
+          584,
+          45,
+          210,
+          24,
+          339,
+          50,
+          81,
+          11,
+          91,
+          18
+        ]
+      },
+      {
+        "fold": 1,
+        "records": 8314,
+        "groups": 8177,
+        "state_counts": [
+          2426,
+          281,
+          2958,
+          111,
+          992,
+          136,
+          602,
+          34,
+          173,
+          21,
+          346,
+          46,
+          65,
+          14,
+          86,
+          23
+        ]
+      },
+      {
+        "fold": 2,
+        "records": 8346,
+        "groups": 8177,
+        "state_counts": [
+          2489,
+          262,
+          2780,
+          125,
+          1071,
+          173,
+          627,
+          41,
+          210,
+          17,
+          324,
+          33,
+          73,
+          7,
+          93,
+          21
+        ]
+      }
+    ]
+  },
+  "cross_validation": {
+    "fold_metrics": [
+      {
+        "family": "joint_logistic",
+        "C": 1.0,
+        "fold": 0,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8340,
+              "positives": 696,
+              "negatives": 7644,
+              "auroc": 0.8961051264006928,
+              "average_precision": 0.5149261858333084
+            },
+            "STTC": {
+              "records": 8340,
+              "positives": 4106,
+              "negatives": 4234,
+              "auroc": 0.9336593038379954,
+              "average_precision": 0.9278470256580956
+            },
+            "CD": {
+              "records": 8340,
+              "positives": 1991,
+              "negatives": 6349,
+              "auroc": 0.945438676279832,
+              "average_precision": 0.8730785925065162
+            },
+            "HYP": {
+              "records": 8340,
+              "positives": 824,
+              "negatives": 7516,
+              "auroc": 0.8989687695376078,
+              "average_precision": 0.5528093315707627
+            }
+          },
+          "macro_auroc": 0.918542969014032,
+          "macro_average_precision": 0.7171652838921707
+        },
+        "fit_seconds": 7.7745045041665435,
+        "iterations": [
+          [
+            265
+          ]
+        ]
+      },
+      {
+        "family": "independent_logistic",
+        "C": 1.0,
+        "fold": 0,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8340,
+              "positives": 696,
+              "negatives": 7644,
+              "auroc": 0.9028001452570418,
+              "average_precision": 0.5422859618834242
+            },
+            "STTC": {
+              "records": 8340,
+              "positives": 4106,
+              "negatives": 4234,
+              "auroc": 0.929208175139622,
+              "average_precision": 0.9222151364940221
+            },
+            "CD": {
+              "records": 8340,
+              "positives": 1991,
+              "negatives": 6349,
+              "auroc": 0.9430100438585701,
+              "average_precision": 0.8676070024758841
+            },
+            "HYP": {
+              "records": 8340,
+              "positives": 824,
+              "negatives": 7516,
+              "auroc": 0.9003183176860239,
+              "average_precision": 0.5503420281142236
+            }
+          },
+          "macro_auroc": 0.9188341704853145,
+          "macro_average_precision": 0.7206125322418885
+        },
+        "fit_seconds": 3.1125139351934195,
+        "iterations": [
+          [
+            101
+          ],
+          [
+            126
+          ],
+          [
+            91
+          ],
+          [
+            92
+          ]
+        ]
+      },
+      {
+        "family": "joint_logistic",
+        "C": 0.1,
+        "fold": 0,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8340,
+              "positives": 696,
+              "negatives": 7644,
+              "auroc": 0.852748869220544,
+              "average_precision": 0.4035011419477554
+            },
+            "STTC": {
+              "records": 8340,
+              "positives": 4106,
+              "negatives": 4234,
+              "auroc": 0.9222149412786018,
+              "average_precision": 0.9153674059243384
+            },
+            "CD": {
+              "records": 8340,
+              "positives": 1991,
+              "negatives": 6349,
+              "auroc": 0.9333592756631491,
+              "average_precision": 0.8531867233770923
+            },
+            "HYP": {
+              "records": 8340,
+              "positives": 824,
+              "negatives": 7516,
+              "auroc": 0.8582259141662836,
+              "average_precision": 0.449630381867248
+            }
+          },
+          "macro_auroc": 0.8916372500821447,
+          "macro_average_precision": 0.6554214132791085
+        },
+        "fit_seconds": 2.541260794736445,
+        "iterations": [
+          [
+            100
+          ]
+        ]
+      },
+      {
+        "family": "joint_logistic",
+        "C": 0.1,
+        "fold": 1,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8314,
+              "positives": 666,
+              "negatives": 7648,
+              "auroc": 0.8576865961149434,
+              "average_precision": 0.40470299548978456
+            },
+            "STTC": {
+              "records": 8314,
+              "positives": 4206,
+              "negatives": 4108,
+              "auroc": 0.9281081044791115,
+              "average_precision": 0.9286043081311253
+            },
+            "CD": {
+              "records": 8314,
+              "positives": 1952,
+              "negatives": 6362,
+              "auroc": 0.9337073898042167,
+              "average_precision": 0.8519423810831223
+            },
+            "HYP": {
+              "records": 8314,
+              "positives": 774,
+              "negatives": 7540,
+              "auroc": 0.8608444883104065,
+              "average_precision": 0.4252605248831389
+            }
+          },
+          "macro_auroc": 0.8950866446771695,
+          "macro_average_precision": 0.6526275523967927
+        },
+        "fit_seconds": 2.567185332067311,
+        "iterations": [
+          [
+            102
+          ]
+        ]
+      },
+      {
+        "family": "joint_logistic",
+        "C": 0.1,
+        "fold": 2,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8346,
+              "positives": 679,
+              "negatives": 7667,
+              "auroc": 0.8716673585108261,
+              "average_precision": 0.4372881076993551
+            },
+            "STTC": {
+              "records": 8346,
+              "positives": 4044,
+              "negatives": 4302,
+              "auroc": 0.9246419326966364,
+              "average_precision": 0.9180319703215651
+            },
+            "CD": {
+              "records": 8346,
+              "positives": 2106,
+              "negatives": 6240,
+              "auroc": 0.9357443324323668,
+              "average_precision": 0.858927318502097
+            },
+            "HYP": {
+              "records": 8346,
+              "positives": 778,
+              "negatives": 7568,
+              "auroc": 0.8600929974401756,
+              "average_precision": 0.45913406629043924
+            }
+          },
+          "macro_auroc": 0.8980366552700012,
+          "macro_average_precision": 0.6683453657033641
+        },
+        "fit_seconds": 2.578999782912433,
+        "iterations": [
+          [
+            98
+          ]
+        ]
+      },
+      {
+        "family": "joint_logistic",
+        "C": 1.0,
+        "fold": 1,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8314,
+              "positives": 666,
+              "negatives": 7648,
+              "auroc": 0.889766466257052,
+              "average_precision": 0.49477037948702596
+            },
+            "STTC": {
+              "records": 8314,
+              "positives": 4206,
+              "negatives": 4108,
+              "auroc": 0.9389186912932375,
+              "average_precision": 0.9394123571249869
+            },
+            "CD": {
+              "records": 8314,
+              "positives": 1952,
+              "negatives": 6362,
+              "auroc": 0.944770209646415,
+              "average_precision": 0.8729269736577713
+            },
+            "HYP": {
+              "records": 8314,
+              "positives": 774,
+              "negatives": 7540,
+              "auroc": 0.8985998875934721,
+              "average_precision": 0.5045560797326947
+            }
+          },
+          "macro_auroc": 0.9180138136975441,
+          "macro_average_precision": 0.7029164475006198
+        },
+        "fit_seconds": 6.5814959411509335,
+        "iterations": [
+          [
+            271
+          ]
+        ]
+      },
+      {
+        "family": "joint_logistic",
+        "C": 1.0,
+        "fold": 2,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8346,
+              "positives": 679,
+              "negatives": 7667,
+              "auroc": 0.901416145126302,
+              "average_precision": 0.5199046331011526
+            },
+            "STTC": {
+              "records": 8346,
+              "positives": 4044,
+              "negatives": 4302,
+              "auroc": 0.9336755245990066,
+              "average_precision": 0.927765538626485
+            },
+            "CD": {
+              "records": 8346,
+              "positives": 2106,
+              "negatives": 6240,
+              "auroc": 0.9464232991209488,
+              "average_precision": 0.8807605614857346
+            },
+            "HYP": {
+              "records": 8346,
+              "positives": 778,
+              "negatives": 7568,
+              "auroc": 0.8937739134333711,
+              "average_precision": 0.5344045790440429
+            }
+          },
+          "macro_auroc": 0.9188222205699071,
+          "macro_average_precision": 0.7157088280643538
+        },
+        "fit_seconds": 6.336012315005064,
+        "iterations": [
+          [
+            264
+          ]
+        ]
+      },
+      {
+        "family": "joint_logistic",
+        "C": 10.0,
+        "fold": 0,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8340,
+              "positives": 696,
+              "negatives": 7644,
+              "auroc": 0.9113116289840428,
+              "average_precision": 0.5641709472633993
+            },
+            "STTC": {
+              "records": 8340,
+              "positives": 4106,
+              "negatives": 4234,
+              "auroc": 0.9378523910882169,
+              "average_precision": 0.9330199926518188
+            },
+            "CD": {
+              "records": 8340,
+              "positives": 1991,
+              "negatives": 6349,
+              "auroc": 0.9498965220638882,
+              "average_precision": 0.880559591573214
+            },
+            "HYP": {
+              "records": 8340,
+              "positives": 824,
+              "negatives": 7516,
+              "auroc": 0.9111510331357828,
+              "average_precision": 0.5860936557241779
+            }
+          },
+          "macro_auroc": 0.9275528938179828,
+          "macro_average_precision": 0.7409610468031526
+        },
+        "fit_seconds": 17.139678477309644,
+        "iterations": [
+          [
+            745
+          ]
+        ]
+      },
+      {
+        "family": "joint_logistic",
+        "C": 10.0,
+        "fold": 1,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8314,
+              "positives": 666,
+              "negatives": 7648,
+              "auroc": 0.9031038753188333,
+              "average_precision": 0.5379824409946592
+            },
+            "STTC": {
+              "records": 8314,
+              "positives": 4206,
+              "negatives": 4108,
+              "auroc": 0.9421830847664648,
+              "average_precision": 0.9417789888396829
+            },
+            "CD": {
+              "records": 8314,
+              "positives": 1952,
+              "negatives": 6362,
+              "auroc": 0.9479261953659277,
+              "average_precision": 0.879767734305611
+            },
+            "HYP": {
+              "records": 8314,
+              "positives": 774,
+              "negatives": 7540,
+              "auroc": 0.9115657064133407,
+              "average_precision": 0.5332996427533282
+            }
+          },
+          "macro_auroc": 0.9261947154661416,
+          "macro_average_precision": 0.7232072017233204
+        },
+        "fit_seconds": 17.9378603938967,
+        "iterations": [
+          [
+            740
+          ]
+        ]
+      },
+      {
+        "family": "joint_logistic",
+        "C": 10.0,
+        "fold": 2,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8346,
+              "positives": 679,
+              "negatives": 7667,
+              "auroc": 0.9145816097257474,
+              "average_precision": 0.5516485745119619
+            },
+            "STTC": {
+              "records": 8346,
+              "positives": 4044,
+              "negatives": 4302,
+              "auroc": 0.9368511919788876,
+              "average_precision": 0.9313463165276811
+            },
+            "CD": {
+              "records": 8346,
+              "positives": 2106,
+              "negatives": 6240,
+              "auroc": 0.9490306237368202,
+              "average_precision": 0.8872459978351418
+            },
+            "HYP": {
+              "records": 8346,
+              "positives": 778,
+              "negatives": 7568,
+              "auroc": 0.9039642969722332,
+              "average_precision": 0.5525594788020165
+            }
+          },
+          "macro_auroc": 0.9261069306034221,
+          "macro_average_precision": 0.7307000919192004
+        },
+        "fit_seconds": 17.080277507193387,
+        "iterations": [
+          [
+            728
+          ]
+        ]
+      },
+      {
+        "family": "independent_logistic",
+        "C": 0.1,
+        "fold": 0,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8340,
+              "positives": 696,
+              "negatives": 7644,
+              "auroc": 0.8714046626608203,
+              "average_precision": 0.4518860884400991
+            },
+            "STTC": {
+              "records": 8340,
+              "positives": 4106,
+              "negatives": 4234,
+              "auroc": 0.917629039706171,
+              "average_precision": 0.9089055695858606
+            },
+            "CD": {
+              "records": 8340,
+              "positives": 1991,
+              "negatives": 6349,
+              "auroc": 0.9309806398441752,
+              "average_precision": 0.8457226456539039
+            },
+            "HYP": {
+              "records": 8340,
+              "positives": 824,
+              "negatives": 7516,
+              "auroc": 0.8682130225744948,
+              "average_precision": 0.4618313391037676
+            }
+          },
+          "macro_auroc": 0.8970568411964153,
+          "macro_average_precision": 0.6670864106959078
+        },
+        "fit_seconds": 1.3380143619142473,
+        "iterations": [
+          [
+            39
+          ],
+          [
+            48
+          ],
+          [
+            50
+          ],
+          [
+            41
+          ]
+        ]
+      },
+      {
+        "family": "independent_logistic",
+        "C": 0.1,
+        "fold": 1,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8314,
+              "positives": 666,
+              "negatives": 7648,
+              "auroc": 0.8697765495621144,
+              "average_precision": 0.44437411068165716
+            },
+            "STTC": {
+              "records": 8314,
+              "positives": 4206,
+              "negatives": 4108,
+              "auroc": 0.9233323309168847,
+              "average_precision": 0.9233191985111119
+            },
+            "CD": {
+              "records": 8314,
+              "positives": 1952,
+              "negatives": 6362,
+              "auroc": 0.9310567740838278,
+              "average_precision": 0.8455637107195515
+            },
+            "HYP": {
+              "records": 8314,
+              "positives": 774,
+              "negatives": 7540,
+              "auroc": 0.8688500263881178,
+              "average_precision": 0.4339288229779828
+            }
+          },
+          "macro_auroc": 0.8982539202377362,
+          "macro_average_precision": 0.6617964607225758
+        },
+        "fit_seconds": 1.351938578300178,
+        "iterations": [
+          [
+            40
+          ],
+          [
+            44
+          ],
+          [
+            43
+          ],
+          [
+            45
+          ]
+        ]
+      },
+      {
+        "family": "independent_logistic",
+        "C": 0.1,
+        "fold": 2,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8346,
+              "positives": 679,
+              "negatives": 7667,
+              "auroc": 0.8883603639183516,
+              "average_precision": 0.48141996541461796
+            },
+            "STTC": {
+              "records": 8346,
+              "positives": 4044,
+              "negatives": 4302,
+              "auroc": 0.9185336818014395,
+              "average_precision": 0.9092218756603363
+            },
+            "CD": {
+              "records": 8346,
+              "positives": 2106,
+              "negatives": 6240,
+              "auroc": 0.9341936652299901,
+              "average_precision": 0.8543541061413193
+            },
+            "HYP": {
+              "records": 8346,
+              "positives": 778,
+              "negatives": 7568,
+              "auroc": 0.8742825969988641,
+              "average_precision": 0.47209081199926267
+            }
+          },
+          "macro_auroc": 0.9038425769871613,
+          "macro_average_precision": 0.6792716898038841
+        },
+        "fit_seconds": 1.4647693997249007,
+        "iterations": [
+          [
+            41
+          ],
+          [
+            46
+          ],
+          [
+            47
+          ],
+          [
+            46
+          ]
+        ]
+      },
+      {
+        "family": "independent_logistic",
+        "C": 1.0,
+        "fold": 1,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8314,
+              "positives": 666,
+              "negatives": 7648,
+              "auroc": 0.8952694849661377,
+              "average_precision": 0.5158100448126128
+            },
+            "STTC": {
+              "records": 8314,
+              "positives": 4206,
+              "negatives": 4108,
+              "auroc": 0.9335797240553556,
+              "average_precision": 0.9327991242379517
+            },
+            "CD": {
+              "records": 8314,
+              "positives": 1952,
+              "negatives": 6362,
+              "auroc": 0.9433735170659809,
+              "average_precision": 0.8681023942428051
+            },
+            "HYP": {
+              "records": 8314,
+              "positives": 774,
+              "negatives": 7540,
+              "auroc": 0.8984240810423648,
+              "average_precision": 0.5043720853132246
+            }
+          },
+          "macro_auroc": 0.9176617017824598,
+          "macro_average_precision": 0.7052709121516485
+        },
+        "fit_seconds": 3.2161521557718515,
+        "iterations": [
+          [
+            95
+          ],
+          [
+            143
+          ],
+          [
+            103
+          ],
+          [
+            105
+          ]
+        ]
+      },
+      {
+        "family": "independent_logistic",
+        "C": 1.0,
+        "fold": 2,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8346,
+              "positives": 679,
+              "negatives": 7667,
+              "auroc": 0.9097349868696879,
+              "average_precision": 0.5380266389165514
+            },
+            "STTC": {
+              "records": 8346,
+              "positives": 4044,
+              "negatives": 4302,
+              "auroc": 0.9281379948414948,
+              "average_precision": 0.9204097681474874
+            },
+            "CD": {
+              "records": 8346,
+              "positives": 2106,
+              "negatives": 6240,
+              "auroc": 0.9448936341831641,
+              "average_precision": 0.876042122233337
+            },
+            "HYP": {
+              "records": 8346,
+              "positives": 778,
+              "negatives": 7568,
+              "auroc": 0.8985102338625086,
+              "average_precision": 0.5273744825675765
+            }
+          },
+          "macro_auroc": 0.9203192124392139,
+          "macro_average_precision": 0.715463252966238
+        },
+        "fit_seconds": 3.147258352022618,
+        "iterations": [
+          [
+            94
+          ],
+          [
+            129
+          ],
+          [
+            106
+          ],
+          [
+            102
+          ]
+        ]
+      },
+      {
+        "family": "independent_logistic",
+        "C": 10.0,
+        "fold": 0,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8340,
+              "positives": 696,
+              "negatives": 7644,
+              "auroc": 0.9129502817926464,
+              "average_precision": 0.5818524084036015
+            },
+            "STTC": {
+              "records": 8340,
+              "positives": 4106,
+              "negatives": 4234,
+              "auroc": 0.9333488603035157,
+              "average_precision": 0.9267602378374513
+            },
+            "CD": {
+              "records": 8340,
+              "positives": 1991,
+              "negatives": 6349,
+              "auroc": 0.947933443447158,
+              "average_precision": 0.8772266819890879
+            },
+            "HYP": {
+              "records": 8340,
+              "positives": 824,
+              "negatives": 7516,
+              "auroc": 0.9099881418023427,
+              "average_precision": 0.5815985264016094
+            }
+          },
+          "macro_auroc": 0.9260551818364157,
+          "macro_average_precision": 0.7418594636579375
+        },
+        "fit_seconds": 8.514198101125658,
+        "iterations": [
+          [
+            271
+          ],
+          [
+            340
+          ],
+          [
+            312
+          ],
+          [
+            273
+          ]
+        ]
+      },
+      {
+        "family": "independent_logistic",
+        "C": 10.0,
+        "fold": 1,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8314,
+              "positives": 666,
+              "negatives": 7648,
+              "auroc": 0.9078176633746716,
+              "average_precision": 0.5490447493452433
+            },
+            "STTC": {
+              "records": 8314,
+              "positives": 4206,
+              "negatives": 4108,
+              "auroc": 0.9378974071908217,
+              "average_precision": 0.9361418698668948
+            },
+            "CD": {
+              "records": 8314,
+              "positives": 1952,
+              "negatives": 6362,
+              "auroc": 0.9479042122541111,
+              "average_precision": 0.8774542633139446
+            },
+            "HYP": {
+              "records": 8314,
+              "positives": 774,
+              "negatives": 7540,
+              "auroc": 0.9089133578708558,
+              "average_precision": 0.5311769493733224
+            }
+          },
+          "macro_auroc": 0.925633160172615,
+          "macro_average_precision": 0.7234544579748513
+        },
+        "fit_seconds": 8.475957308895886,
+        "iterations": [
+          [
+            258
+          ],
+          [
+            399
+          ],
+          [
+            268
+          ],
+          [
+            302
+          ]
+        ]
+      },
+      {
+        "family": "independent_logistic",
+        "C": 10.0,
+        "fold": 2,
+        "metrics": {
+          "groups": {
+            "MI": {
+              "records": 8346,
+              "positives": 679,
+              "negatives": 7667,
+              "auroc": 0.9186418161110879,
+              "average_precision": 0.5605738473331722
+            },
+            "STTC": {
+              "records": 8346,
+              "positives": 4044,
+              "negatives": 4302,
+              "auroc": 0.9321590238662485,
+              "average_precision": 0.9251375410676793
+            },
+            "CD": {
+              "records": 8346,
+              "positives": 2106,
+              "negatives": 6240,
+              "auroc": 0.9488670952346165,
+              "average_precision": 0.8840747685378566
+            },
+            "HYP": {
+              "records": 8346,
+              "positives": 778,
+              "negatives": 7568,
+              "auroc": 0.9040570294624369,
+              "average_precision": 0.5447525052889243
+            }
+          },
+          "macro_auroc": 0.9259312411685974,
+          "macro_average_precision": 0.7286346655569081
+        },
+        "fit_seconds": 8.210912957787514,
+        "iterations": [
+          [
+            225
+          ],
+          [
+            383
+          ],
+          [
+            285
+          ],
+          [
+            297
+          ]
+        ]
+      }
+    ],
+    "selection_table": [
+      {
+        "family": "joint_logistic",
+        "C": 0.1,
+        "mean_fold_macro_auroc": 0.8949201833431051
+      },
+      {
+        "family": "joint_logistic",
+        "C": 1.0,
+        "mean_fold_macro_auroc": 0.9184596677604944
+      },
+      {
+        "family": "joint_logistic",
+        "C": 10.0,
+        "mean_fold_macro_auroc": 0.9266181799625155
+      },
+      {
+        "family": "independent_logistic",
+        "C": 0.1,
+        "mean_fold_macro_auroc": 0.8997177794737709
+      },
+      {
+        "family": "independent_logistic",
+        "C": 1.0,
+        "mean_fold_macro_auroc": 0.918938361568996
+      },
+      {
+        "family": "independent_logistic",
+        "C": 10.0,
+        "mean_fold_macro_auroc": 0.9258731943925427
+      }
+    ],
+    "chosen_C": {
+      "joint_logistic": 10.0,
+      "independent_logistic": 10.0
+    }
+  },
+  "metrics": {
+    "whole": {
+      "groups": {
+        "MI": {
+          "records": 10434,
+          "positives": 118,
+          "negatives": 10316,
+          "auroc": 0.9244541965418208,
+          "average_precision": 0.2148964187753332
+        },
+        "STTC": {
+          "records": 10434,
+          "positives": 2521,
+          "negatives": 7913,
+          "auroc": 0.9234248814444951,
+          "average_precision": 0.7955695423573996
+        },
+        "CD": {
+          "records": 10434,
+          "positives": 1166,
+          "negatives": 9268,
+          "auroc": 0.8408815148825408,
+          "average_precision": 0.45608571309717183
+        },
+        "HYP": {
+          "records": 10434,
+          "positives": 104,
+          "negatives": 10330,
+          "auroc": 0.8956465485144092,
+          "average_precision": 0.2047199323234564
+        }
+      },
+      "macro_auroc": 0.8961017853458164,
+      "macro_average_precision": 0.41781790163834026
+    },
+    "joint_logistic": {
+      "groups": {
+        "MI": {
+          "records": 10434,
+          "positives": 118,
+          "negatives": 10316,
+          "auroc": 0.9776347092881883,
+          "average_precision": 0.597851529044938
+        },
+        "STTC": {
+          "records": 10434,
+          "positives": 2521,
+          "negatives": 7913,
+          "auroc": 0.959902545898667,
+          "average_precision": 0.9055789179164795
+        },
+        "CD": {
+          "records": 10434,
+          "positives": 1166,
+          "negatives": 9268,
+          "auroc": 0.9164112336959055,
+          "average_precision": 0.7519988524008978
+        },
+        "HYP": {
+          "records": 10434,
+          "positives": 104,
+          "negatives": 10330,
+          "auroc": 0.9770505994489538,
+          "average_precision": 0.3885831854694916
+        }
+      },
+      "macro_auroc": 0.9577497720829287,
+      "macro_average_precision": 0.6610031212079517
+    },
+    "independent_logistic": {
+      "groups": {
+        "MI": {
+          "records": 10434,
+          "positives": 118,
+          "negatives": 10316,
+          "auroc": 0.9824215797740551,
+          "average_precision": 0.6122139718975891
+        },
+        "STTC": {
+          "records": 10434,
+          "positives": 2521,
+          "negatives": 7913,
+          "auroc": 0.9590391300714589,
+          "average_precision": 0.902742752826159
+        },
+        "CD": {
+          "records": 10434,
+          "positives": 1166,
+          "negatives": 9268,
+          "auroc": 0.9254954060930805,
+          "average_precision": 0.761954957088245
+        },
+        "HYP": {
+          "records": 10434,
+          "positives": 104,
+          "negatives": 10330,
+          "auroc": 0.9764222950331372,
+          "average_precision": 0.39802524388218813
+        }
+      },
+      "macro_auroc": 0.9608446027429329,
+      "macro_average_precision": 0.6687342314235454
+    }
+  },
+  "condition_vs_normal": {
+    "whole": {
+      "groups": {
+        "MI": {
+          "records": 6968,
+          "positives": 118,
+          "negatives": 6850,
+          "auroc": 0.9739218112087096,
+          "average_precision": 0.6382527860831705
+        },
+        "STTC": {
+          "records": 9371,
+          "positives": 2521,
+          "negatives": 6850,
+          "auroc": 0.9483539436615639,
+          "average_precision": 0.9022269293621838
+        },
+        "CD": {
+          "records": 8016,
+          "positives": 1166,
+          "negatives": 6850,
+          "auroc": 0.8984690313129923,
+          "average_precision": 0.746920376989409
+        },
+        "HYP": {
+          "records": 6954,
+          "positives": 104,
+          "negatives": 6850,
+          "auroc": 0.9590918023582257,
+          "average_precision": 0.7918311409857914
+        }
+      },
+      "macro_auroc": 0.9449591471353728,
+      "macro_average_precision": 0.7698078083551387
+    },
+    "joint_logistic": {
+      "groups": {
+        "MI": {
+          "records": 6968,
+          "positives": 118,
+          "negatives": 6850,
+          "auroc": 0.9843127551651614,
+          "average_precision": 0.7202831069104697
+        },
+        "STTC": {
+          "records": 9371,
+          "positives": 2521,
+          "negatives": 6850,
+          "auroc": 0.9637051685549413,
+          "average_precision": 0.9267115007311533
+        },
+        "CD": {
+          "records": 8016,
+          "positives": 1166,
+          "negatives": 6850,
+          "auroc": 0.9236448773647505,
+          "average_precision": 0.7926853453166718
+        },
+        "HYP": {
+          "records": 6954,
+          "positives": 104,
+          "negatives": 6850,
+          "auroc": 0.9923554183043234,
+          "average_precision": 0.8030928825798882
+        }
+      },
+      "macro_auroc": 0.9660045548472942,
+      "macro_average_precision": 0.8106932088845458
+    },
+    "independent_logistic": {
+      "groups": {
+        "MI": {
+          "records": 6968,
+          "positives": 118,
+          "negatives": 6850,
+          "auroc": 0.9905802301125819,
+          "average_precision": 0.8085338977915397
+        },
+        "STTC": {
+          "records": 9371,
+          "positives": 2521,
+          "negatives": 6850,
+          "auroc": 0.9631371515763933,
+          "average_precision": 0.9274289317894281
+        },
+        "CD": {
+          "records": 8016,
+          "positives": 1166,
+          "negatives": 6850,
+          "auroc": 0.9328886579609621,
+          "average_precision": 0.8076557130680945
+        },
+        "HYP": {
+          "records": 6954,
+          "positives": 104,
+          "negatives": 6850,
+          "auroc": 0.9918893879842785,
+          "average_precision": 0.8374995117961572
+        }
+      },
+      "macro_auroc": 0.9696238569085539,
+      "macro_average_precision": 0.8452795136113048
+    }
+  },
+  "primary": {
+    "difference": 0.061647986737112165,
+    "ci_low": 0.05303135482031598,
+    "ci_high": 0.07092625375492638,
+    "draws": 2000,
+    "skipped_draws": 0,
+    "seed": 20261103
+  },
+  "exploratory_independent_contrast": {
+    "difference": 0.06474281739711643,
+    "ci_low": 0.05662835505522873,
+    "ci_high": 0.07363325591398753,
+    "draws": 2000,
+    "skipped_draws": 0,
+    "seed": 20261103
+  },
+  "decision": {
+    "gain_at_least_0.01": true,
+    "lower_95_above_zero": true,
+    "ranking_improvement": true,
+    "clinical_pipeline_promoted": false
+  },
+  "multiclass": {
+    "state_names": [
+      "normal_proxy",
+      "MI",
+      "STTC",
+      "MI+STTC",
+      "CD",
+      "MI+CD",
+      "STTC+CD",
+      "MI+STTC+CD",
+      "HYP",
+      "MI+HYP",
+      "STTC+HYP",
+      "MI+STTC+HYP",
+      "CD+HYP",
+      "MI+CD+HYP",
+      "STTC+CD+HYP",
+      "MI+STTC+CD+HYP"
+    ],
+    "confusion": [
+      [
+        6232,
+        20,
+        456,
+        0,
+        136,
+        0,
+        3,
+        0,
+        2,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        6,
+        13,
+        17,
+        1,
+        2,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        275,
+        9,
+        1881,
+        3,
+        17,
+        1,
+        15,
+        0,
+        4,
+        0,
+        19,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        17,
+        23,
+        10,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        335,
+        1,
+        74,
+        0,
+        549,
+        0,
+        19,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        2,
+        0,
+        0,
+        4,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        5,
+        1,
+        74,
+        0,
+        31,
+        1,
+        44,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        0,
+        1,
+        2,
+        2,
+        1,
+        1,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        8,
+        0,
+        13,
+        0,
+        0,
+        0,
+        1,
+        0,
+        3,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        38,
+        0,
+        1,
+        0,
+        2,
+        0,
+        1,
+        0,
+        25,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "support": [
+      6850,
+      40,
+      2224,
+      55,
+      980,
+      11,
+      159,
+      11,
+      29,
+      0,
+      69,
+      1,
+      3,
+      0,
+      2,
+      0
+    ],
+    "predicted_count": [
+      6862,
+      65,
+      2581,
+      16,
+      742,
+      4,
+      93,
+      0,
+      11,
+      0,
+      53,
+      2,
+      1,
+      0,
+      4,
+      0
+    ],
+    "precision": [
+      0.9081900320606238,
+      0.2,
+      0.7287872917473848,
+      0.625,
+      0.7398921832884097,
+      0.25,
+      0.4731182795698925,
+      null,
+      0.2727272727272727,
+      null,
+      0.4716981132075472,
+      0.0,
+      0.0,
+      null,
+      0.25,
+      null
+    ],
+    "recall": [
+      0.9097810218978102,
+      0.325,
+      0.845773381294964,
+      0.18181818181818182,
+      0.560204081632653,
+      0.09090909090909091,
+      0.27672955974842767,
+      0.0,
+      0.10344827586206896,
+      null,
+      0.36231884057971014,
+      0.0,
+      0.0,
+      null,
+      0.5,
+      null
+    ],
+    "f1": [
+      0.9089848308051343,
+      0.24761904761904763,
+      0.7829344432882414,
+      0.28169014084507044,
+      0.6376306620209058,
+      0.13333333333333333,
+      0.34920634920634924,
+      0.0,
+      0.15,
+      null,
+      0.4098360655737705,
+      0.0,
+      0.0,
+      null,
+      0.3333333333333333,
+      null
+    ],
+    "supported_states": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      10,
+      11,
+      12,
+      14
+    ],
+    "exact_state_accuracy": 0.8394671267011693,
+    "macro_recall_supported_states": 0.31969095644176204,
+    "top_two_accuracy": 0.9574468085106383,
+    "log_loss": 0.4774959343706827,
+    "training_majority_state": 2,
+    "training_majority_accuracy": 0.21314931953229826
+  },
+  "error_subsets": {
+    "MI": {
+      "exclusive": {
+        "positives": 40,
+        "normals": 6850,
+        "models": {
+          "whole": {
+            "auroc": 0.9527773722627737,
+            "average_precision": 0.3325200834112415
+          },
+          "joint_logistic": {
+            "auroc": 0.9846970802919708,
+            "average_precision": 0.5131806068816767
+          },
+          "independent_logistic": {
+            "auroc": 0.9869233576642336,
+            "average_precision": 0.5915850238654599
+          }
+        }
+      },
+      "cooccurring": {
+        "positives": 78,
+        "normals": 6850,
+        "models": {
+          "whole": {
+            "auroc": 0.9847651132322665,
+            "average_precision": 0.6683875747079823
+          },
+          "joint_logistic": {
+            "auroc": 0.9841156653565413,
+            "average_precision": 0.6816569221622536
+          },
+          "independent_logistic": {
+            "auroc": 0.9924555493168632,
+            "average_precision": 0.8084964667375484
+          }
+        }
+      }
+    },
+    "STTC": {
+      "exclusive": {
+        "positives": 2224,
+        "normals": 6850,
+        "models": {
+          "whole": {
+            "auroc": 0.9440442025941291,
+            "average_precision": 0.8840835818859824
+          },
+          "joint_logistic": {
+            "auroc": 0.9642290474189991,
+            "average_precision": 0.9225868248712688
+          },
+          "independent_logistic": {
+            "auroc": 0.9633317360709971,
+            "average_precision": 0.9220626009472733
+          }
+        }
+      },
+      "cooccurring": {
+        "positives": 297,
+        "normals": 6850,
+        "models": {
+          "whole": {
+            "auroc": 0.9806262134729288,
+            "average_precision": 0.875464042078191
+          },
+          "joint_logistic": {
+            "auroc": 0.9597822507311559,
+            "average_precision": 0.6539125409066923
+          },
+          "independent_logistic": {
+            "auroc": 0.9616800609501339,
+            "average_precision": 0.71026579378216
+          }
+        }
+      }
+    },
+    "CD": {
+      "exclusive": {
+        "positives": 980,
+        "normals": 6850,
+        "models": {
+          "whole": {
+            "auroc": 0.8855754506182036,
+            "average_precision": 0.6945563542837128
+          },
+          "joint_logistic": {
+            "auroc": 0.9207567406524654,
+            "average_precision": 0.7739631876285059
+          },
+          "independent_logistic": {
+            "auroc": 0.9309115149709519,
+            "average_precision": 0.785933838650541
+          }
+        }
+      },
+      "cooccurring": {
+        "positives": 186,
+        "normals": 6850,
+        "models": {
+          "whole": {
+            "auroc": 0.9664029511027391,
+            "average_precision": 0.746883524095192
+          },
+          "joint_logistic": {
+            "auroc": 0.938861941762813,
+            "average_precision": 0.5338133834683721
+          },
+          "independent_logistic": {
+            "auroc": 0.9433058629620908,
+            "average_precision": 0.6151984563186389
+          }
+        }
+      }
+    },
+    "HYP": {
+      "exclusive": {
+        "positives": 29,
+        "normals": 6850,
+        "models": {
+          "whole": {
+            "auroc": 0.8660307072741003,
+            "average_precision": 0.428751828236037
+          },
+          "joint_logistic": {
+            "auroc": 0.9877120563805688,
+            "average_precision": 0.4982604461797218
+          },
+          "independent_logistic": {
+            "auroc": 0.9841731688900075,
+            "average_precision": 0.5211933461758843
+          }
+        }
+      },
+      "cooccurring": {
+        "positives": 75,
+        "normals": 6850,
+        "models": {
+          "whole": {
+            "auroc": 0.9950754257907543,
+            "average_precision": 0.9055934033528747
+          },
+          "joint_logistic": {
+            "auroc": 0.9941508515815085,
+            "average_precision": 0.8038232677309292
+          },
+          "independent_logistic": {
+            "auroc": 0.9948729927007298,
+            "average_precision": 0.8520255035840226
+          }
+        }
+      }
+    }
+  },
+  "reference_sensitivity": [
+    {
+      "seed": 20261206,
+      "training_rows": 25012,
+      "training_state_counts": [
+        7363,
+        799,
+        8668,
+        413,
+        3064,
+        440,
+        1775,
+        115,
+        584,
+        59,
+        1016,
+        132,
+        194,
+        31,
+        296,
+        63
+      ],
+      "unique_training_groups": 15503,
+      "metrics": {
+        "whole": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9265703761147732,
+              "average_precision": 0.22706645788777954
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9213330129778557,
+              "average_precision": 0.7920286414926652
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.8409254699584175,
+              "average_precision": 0.4555690385149559
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.89058474197632,
+              "average_precision": 0.19199040239601223
+            }
+          },
+          "macro_auroc": 0.8948534002568416,
+          "macro_average_precision": 0.4166636350728532
+        },
+        "joint_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9728100498813756,
+              "average_precision": 0.5761485629475042
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.958502202126427,
+              "average_precision": 0.9018823065260476
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.917888679467372,
+              "average_precision": 0.7509797807869547
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9744489537567951,
+              "average_precision": 0.3556901926248459
+            }
+          },
+          "macro_auroc": 0.9559124713079925,
+          "macro_average_precision": 0.6461752107213381
+        },
+        "independent_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9803916575206525,
+              "average_precision": 0.5806660821591282
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9579528924054247,
+              "average_precision": 0.8989511748417045
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9237043524223596,
+              "average_precision": 0.7596360293655947
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9746481495271428,
+              "average_precision": 0.3689159001406648
+            }
+          },
+          "macro_auroc": 0.9591742629688949,
+          "macro_average_precision": 0.6520422966267732
+        }
+      },
+      "differences": {
+        "joint_logistic": {
+          "macro_auroc": 0.06105907105115094,
+          "macro_average_precision": 0.2295115756484849
+        },
+        "independent_logistic": {
+          "macro_auroc": 0.06432086271205328,
+          "macro_average_precision": 0.23537866155391995
+        }
+      },
+      "fit_seconds": {
+        "joint_logistic": 31.257308908738196,
+        "independent_logistic": 14.463494603987783
+      }
+    },
+    {
+      "seed": 20261207,
+      "training_rows": 24980,
+      "training_state_counts": [
+        7545,
+        801,
+        8446,
+        367,
+        3068,
+        474,
+        1861,
+        107,
+        598,
+        60,
+        980,
+        118,
+        204,
+        35,
+        247,
+        69
+      ],
+      "unique_training_groups": 15526,
+      "metrics": {
+        "whole": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9224628847076451,
+              "average_precision": 0.20844796476129326
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9220676483092386,
+              "average_precision": 0.790932601369025
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.840503408693,
+              "average_precision": 0.4522861132896828
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.8902468538238142,
+              "average_precision": 0.19436768752814138
+            }
+          },
+          "macro_auroc": 0.8938201988834245,
+          "macro_average_precision": 0.4115085917370356
+        },
+        "joint_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.976630838388286,
+              "average_precision": 0.5953816186741089
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9576196872844625,
+              "average_precision": 0.9015688091438108
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9109604341391948,
+              "average_precision": 0.7429023514978695
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9762575396529899,
+              "average_precision": 0.3688438870398674
+            }
+          },
+          "macro_auroc": 0.9553671248662333,
+          "macro_average_precision": 0.6521741665889141
+        },
+        "independent_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9808114431424609,
+              "average_precision": 0.6150171841528338
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9572463792453764,
+              "average_precision": 0.8993829621188437
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9227002334153334,
+              "average_precision": 0.7556060387360615
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9745829920321692,
+              "average_precision": 0.38453630056533195
+            }
+          },
+          "macro_auroc": 0.958835261958835,
+          "macro_average_precision": 0.6636356213932678
+        }
+      },
+      "differences": {
+        "joint_logistic": {
+          "macro_auroc": 0.061546925982808864,
+          "macro_average_precision": 0.24066557485187856
+        },
+        "independent_logistic": {
+          "macro_auroc": 0.0650150630754105,
+          "macro_average_precision": 0.25212702965623224
+        }
+      },
+      "fit_seconds": {
+        "joint_logistic": 29.80106245400384,
+        "independent_logistic": 14.40618884889409
+      }
+    },
+    {
+      "seed": 20261208,
+      "training_rows": 25011,
+      "training_state_counts": [
+        7333,
+        779,
+        8437,
+        420,
+        3135,
+        454,
+        1892,
+        117,
+        596,
+        77,
+        1024,
+        129,
+        231,
+        30,
+        298,
+        59
+      ],
+      "unique_training_groups": 15552,
+      "metrics": {
+        "whole": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9242044610642676,
+              "average_precision": 0.22546768407812573
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9226007163484007,
+              "average_precision": 0.7932072235709896
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.8422905758096432,
+              "average_precision": 0.46179131026498166
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.8950014893141708,
+              "average_precision": 0.20314563286853007
+            }
+          },
+          "macro_auroc": 0.8960243106341206,
+          "macro_average_precision": 0.42090296269565675
+        },
+        "joint_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9718924363010233,
+              "average_precision": 0.5517381240089088
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9567617354798488,
+              "average_precision": 0.8976354168990431
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9157779104552746,
+              "average_precision": 0.7489488038767131
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9750660883163303,
+              "average_precision": 0.4087175575683374
+            }
+          },
+          "macro_auroc": 0.9548745426381192,
+          "macro_average_precision": 0.6517599755882506
+        },
+        "independent_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.977074447460256,
+              "average_precision": 0.5836100019856071
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9561839025583304,
+              "average_precision": 0.8964866351485478
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9224435357722139,
+              "average_precision": 0.7566516827559853
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9760555514185717,
+              "average_precision": 0.39468173227244413
+            }
+          },
+          "macro_auroc": 0.9579393593023431,
+          "macro_average_precision": 0.6578575130406461
+        }
+      },
+      "differences": {
+        "joint_logistic": {
+          "macro_auroc": 0.05885023200399864,
+          "macro_average_precision": 0.23085701289259386
+        },
+        "independent_logistic": {
+          "macro_auroc": 0.061915048668222505,
+          "macro_average_precision": 0.23695455034498936
+        }
+      },
+      "fit_seconds": {
+        "joint_logistic": 29.949704030994326,
+        "independent_logistic": 14.836152706295252
+      }
+    },
+    {
+      "seed": 20261209,
+      "training_rows": 24960,
+      "training_state_counts": [
+        7305,
+        843,
+        8706,
+        384,
+        3039,
+        446,
+        1824,
+        100,
+        604,
+        57,
+        972,
+        129,
+        213,
+        35,
+        242,
+        61
+      ],
+      "unique_training_groups": 15467,
+      "metrics": {
+        "whole": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9254128850362445,
+              "average_precision": 0.21767208326670925
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.92399359095214,
+              "average_precision": 0.7969243659257905
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.8436805741143655,
+              "average_precision": 0.4672155042430541
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.8956297937299872,
+              "average_precision": 0.20106610890487525
+            }
+          },
+          "macro_auroc": 0.8971792109581842,
+          "macro_average_precision": 0.4207195155851073
+        },
+        "joint_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.976515007130605,
+              "average_precision": 0.5601623433576799
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9583152222706742,
+              "average_precision": 0.9016529024190749
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9091030314381509,
+              "average_precision": 0.7454055239080646
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9748501377615609,
+              "average_precision": 0.37825397803023353
+            }
+          },
+          "macro_auroc": 0.9546958496502477,
+          "macro_average_precision": 0.6463686869287633
+        },
+        "independent_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.976869894388181,
+              "average_precision": 0.5863002856107576
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9554352312056045,
+              "average_precision": 0.896004988978102
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.918606488990688,
+              "average_precision": 0.7518484454424194
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9733356914141037,
+              "average_precision": 0.37371909599565495
+            }
+          },
+          "macro_auroc": 0.9560618264996443,
+          "macro_average_precision": 0.6519682040067335
+        }
+      },
+      "differences": {
+        "joint_logistic": {
+          "macro_auroc": 0.05751663869206347,
+          "macro_average_precision": 0.22564917134365597
+        },
+        "independent_logistic": {
+          "macro_auroc": 0.058882615541460126,
+          "macro_average_precision": 0.23124868842162621
+        }
+      },
+      "fit_seconds": {
+        "joint_logistic": 31.248381193261594,
+        "independent_logistic": 15.108280892949551
+      }
+    },
+    {
+      "seed": 20261210,
+      "training_rows": 24991,
+      "training_state_counts": [
+        7442,
+        816,
+        8578,
+        375,
+        2964,
+        435,
+        1860,
+        111,
+        597,
+        44,
+        1066,
+        121,
+        207,
+        37,
+        270,
+        68
+      ],
+      "unique_training_groups": 15518,
+      "metrics": {
+        "whole": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9262064523761017,
+              "average_precision": 0.22211454787037824
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9230099164992078,
+              "average_precision": 0.7946236636108216
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.8417401657226657,
+              "average_precision": 0.4545513730907421
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.896923635415891,
+              "average_precision": 0.21354569136567206
+            }
+          },
+          "macro_auroc": 0.8969700425034667,
+          "macro_average_precision": 0.42120881898440354
+        },
+        "joint_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9726753241632218,
+              "average_precision": 0.6089118424504945
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9577803496001964,
+              "average_precision": 0.8998631704741044
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.908853181533168,
+              "average_precision": 0.7429217192710541
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9749869685010053,
+              "average_precision": 0.3740410399106455
+            }
+          },
+          "macro_auroc": 0.9535739559493979,
+          "macro_average_precision": 0.6564344430265746
+        },
+        "independent_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9784488140850809,
+              "average_precision": 0.6022088056667523
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9566674434936098,
+              "average_precision": 0.8985175348889658
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9196780674720593,
+              "average_precision": 0.7564780072700451
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9732696030977736,
+              "average_precision": 0.38371141749749976
+            }
+          },
+          "macro_auroc": 0.9570159820371309,
+          "macro_average_precision": 0.6602289413308157
+        }
+      },
+      "differences": {
+        "joint_logistic": {
+          "macro_auroc": 0.05660391344593119,
+          "macro_average_precision": 0.23522562404217107
+        },
+        "independent_logistic": {
+          "macro_auroc": 0.06004593953366422,
+          "macro_average_precision": 0.23902012234641212
+        }
+      },
+      "fit_seconds": {
+        "joint_logistic": 29.95435847574845,
+        "independent_logistic": 14.309739094227552
+      }
+    },
+    {
+      "seed": 20261211,
+      "training_rows": 25016,
+      "training_state_counts": [
+        7237,
+        815,
+        8697,
+        354,
+        3101,
+        455,
+        1909,
+        108,
+        590,
+        60,
+        961,
+        151,
+        208,
+        29,
+        276,
+        65
+      ],
+      "unique_training_groups": 15565,
+      "metrics": {
+        "whole": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9253422361840419,
+              "average_precision": 0.21887534028677838
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.922879582015305,
+              "average_precision": 0.7941825922128114
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.8423293488134166,
+              "average_precision": 0.4614652684473945
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.8969515600565939,
+              "average_precision": 0.20618190035713857
+            }
+          },
+          "macro_auroc": 0.8968756817673393,
+          "macro_average_precision": 0.42017627532603075
+        },
+        "joint_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.972573458376325,
+              "average_precision": 0.5659225594082155
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.957787818768697,
+              "average_precision": 0.9004679886564882
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9132794114054446,
+              "average_precision": 0.7458816177754346
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9736391391764092,
+              "average_precision": 0.3592950099976759
+            }
+          },
+          "macro_auroc": 0.9543199569317189,
+          "macro_average_precision": 0.6428917939594536
+        },
+        "independent_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9802076419056132,
+              "average_precision": 0.5921813281283166
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9580060789005865,
+              "average_precision": 0.8996653606079444
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9232639688305767,
+              "average_precision": 0.7600779148956097
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9727036637128602,
+              "average_precision": 0.3715980880660831
+            }
+          },
+          "macro_auroc": 0.9585453383374092,
+          "macro_average_precision": 0.6558806729244885
+        }
+      },
+      "differences": {
+        "joint_logistic": {
+          "macro_auroc": 0.057444275164379555,
+          "macro_average_precision": 0.22271551863342287
+        },
+        "independent_logistic": {
+          "macro_auroc": 0.06166965657006984,
+          "macro_average_precision": 0.23570439759845774
+        }
+      },
+      "fit_seconds": {
+        "joint_logistic": 30.486642389092594,
+        "independent_logistic": 14.594983519986272
+      }
+    },
+    {
+      "seed": 20261212,
+      "training_rows": 25015,
+      "training_state_counts": [
+        7343,
+        843,
+        8529,
+        365,
+        3159,
+        453,
+        1825,
+        136,
+        600,
+        80,
+        988,
+        123,
+        203,
+        34,
+        280,
+        54
+      ],
+      "unique_training_groups": 15456,
+      "metrics": {
+        "whole": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9227619100820842,
+              "average_precision": 0.2089283612807226
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.922273977822986,
+              "average_precision": 0.7930632284685826
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.8402976989378974,
+              "average_precision": 0.4579148495452665
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.8962543748603768,
+              "average_precision": 0.20948566012618336
+            }
+          },
+          "macro_auroc": 0.8953969904258361,
+          "macro_average_precision": 0.4173480248551888
+        },
+        "joint_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9687921017869231,
+              "average_precision": 0.5243434897480909
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.953049508606412,
+              "average_precision": 0.8909176093086182
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9112243496684584,
+              "average_precision": 0.7446341755226605
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9710803112666617,
+              "average_precision": 0.36207165238901917
+            }
+          },
+          "macro_auroc": 0.9510365678321138,
+          "macro_average_precision": 0.6304917317420972
+        },
+        "independent_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9747323558599116,
+              "average_precision": 0.532463464167711
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9538473561624876,
+              "average_precision": 0.892584372091399
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9228369105670594,
+              "average_precision": 0.758285659967504
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9734473899769156,
+              "average_precision": 0.368370106465412
+            }
+          },
+          "macro_auroc": 0.9562160031415936,
+          "macro_average_precision": 0.6379259006730065
+        }
+      },
+      "differences": {
+        "joint_logistic": {
+          "macro_auroc": 0.055639577406277674,
+          "macro_average_precision": 0.21314370688690837
+        },
+        "independent_logistic": {
+          "macro_auroc": 0.060819012715757514,
+          "macro_average_precision": 0.22057787581781768
+        }
+      },
+      "fit_seconds": {
+        "joint_logistic": 29.886723023839295,
+        "independent_logistic": 15.432036560028791
+      }
+    },
+    {
+      "seed": 20261213,
+      "training_rows": 25030,
+      "training_state_counts": [
+        7414,
+        832,
+        8573,
+        366,
+        3039,
+        442,
+        1883,
+        116,
+        599,
+        53,
+        978,
+        138,
+        216,
+        33,
+        285,
+        63
+      ],
+      "unique_training_groups": 15492,
+      "metrics": {
+        "whole": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9288327823818193,
+              "average_precision": 0.2296503700242812
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9237725737446295,
+              "average_precision": 0.7949952823462249
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.8406312948295507,
+              "average_precision": 0.44904478644978685
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.8978349095241641,
+              "average_precision": 0.21032822357762468
+            }
+          },
+          "macro_auroc": 0.8977678901200409,
+          "macro_average_precision": 0.4210046655994794
+        },
+        "joint_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9697253238346226,
+              "average_precision": 0.5535310877825533
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9580643785178091,
+              "average_precision": 0.9004276032714139
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.906959781938406,
+              "average_precision": 0.736885389944502
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9711277831558568,
+              "average_precision": 0.376824702161497
+            }
+          },
+          "macro_auroc": 0.9514693168616736,
+          "macro_average_precision": 0.6419171957899916
+        },
+        "independent_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9825111230867305,
+              "average_precision": 0.5949549866817773
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9567759720157827,
+              "average_precision": 0.8979210701331782
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9175991311885972,
+              "average_precision": 0.7487589945635933
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9756078263459677,
+              "average_precision": 0.3979150396730218
+            }
+          },
+          "macro_auroc": 0.9581235131592696,
+          "macro_average_precision": 0.6598875227628926
+        }
+      },
+      "differences": {
+        "joint_logistic": {
+          "macro_auroc": 0.053701426741632696,
+          "macro_average_precision": 0.2209125301905122
+        },
+        "independent_logistic": {
+          "macro_auroc": 0.0603556230392287,
+          "macro_average_precision": 0.23888285716341323
+        }
+      },
+      "fit_seconds": {
+        "joint_logistic": 30.94795315898955,
+        "independent_logistic": 15.004326742142439
+      }
+    },
+    {
+      "seed": 20261214,
+      "training_rows": 24984,
+      "training_state_counts": [
+        7406,
+        842,
+        8577,
+        361,
+        3027,
+        436,
+        1779,
+        130,
+        640,
+        51,
+        1034,
+        126,
+        221,
+        21,
+        271,
+        62
+      ],
+      "unique_training_groups": 15568,
+      "metrics": {
+        "whole": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9244353020813482,
+              "average_precision": 0.22141913064795488
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9219441814500643,
+              "average_precision": 0.7920449132073094
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.84191034126906,
+              "average_precision": 0.4614975431744299
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.8962208652915332,
+              "average_precision": 0.21576254628672792
+            }
+          },
+          "macro_auroc": 0.8961276725230014,
+          "macro_average_precision": 0.4226810333291055
+        },
+        "joint_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9764887191855994,
+              "average_precision": 0.6116765041755845
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9563462191194372,
+              "average_precision": 0.8973901939782062
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9138372244525697,
+              "average_precision": 0.7425933211542263
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9768653659989575,
+              "average_precision": 0.3953023268573287
+            }
+          },
+          "macro_auroc": 0.955884382189141,
+          "macro_average_precision": 0.6617405865413364
+        },
+        "independent_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9790789032669344,
+              "average_precision": 0.619545155369101
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9560217865118146,
+              "average_precision": 0.897192291325795
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9233986101682619,
+              "average_precision": 0.756918374021702
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.97433818601534,
+              "average_precision": 0.4005965688121392
+            }
+          },
+          "macro_auroc": 0.9582093714905877,
+          "macro_average_precision": 0.6685630973821844
+        }
+      },
+      "differences": {
+        "joint_logistic": {
+          "macro_auroc": 0.05975670966613955,
+          "macro_average_precision": 0.23905955321223088
+        },
+        "independent_logistic": {
+          "macro_auroc": 0.06208169896758631,
+          "macro_average_precision": 0.24588206405307894
+        }
+      },
+      "fit_seconds": {
+        "joint_logistic": 31.632447462994605,
+        "independent_logistic": 14.410755550023168
+      }
+    },
+    {
+      "seed": 20261215,
+      "training_rows": 24982,
+      "training_state_counts": [
+        7420,
+        818,
+        8541,
+        398,
+        3054,
+        432,
+        1829,
+        130,
+        583,
+        62,
+        978,
+        142,
+        227,
+        28,
+        266,
+        74
+      ],
+      "unique_training_groups": 15544,
+      "metrics": {
+        "whole": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.924971740459119,
+              "average_precision": 0.21768435724458357
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9216948415566288,
+              "average_precision": 0.7916695214728645
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.839285899359718,
+              "average_precision": 0.45217922819595435
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.89622179611289,
+              "average_precision": 0.20485666679082684
+            }
+          },
+          "macro_auroc": 0.895543569372089,
+          "macro_average_precision": 0.4165974434260573
+        },
+        "joint_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9722908629675147,
+              "average_precision": 0.5475280976608202
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9582131603440489,
+              "average_precision": 0.9011221208266759
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9120312723245517,
+              "average_precision": 0.73986585543109
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.9730964703254151,
+              "average_precision": 0.3574131660195385
+            }
+          },
+          "macro_auroc": 0.9539079414903826,
+          "macro_average_precision": 0.636482309984531
+        },
+        "independent_logistic": {
+          "groups": {
+            "MI": {
+              "records": 10434,
+              "positives": 118,
+              "negatives": 10316,
+              "auroc": 0.9762184462510104,
+              "average_precision": 0.5977980434963982
+            },
+            "STTC": {
+              "records": 10434,
+              "positives": 2521,
+              "negatives": 7913,
+              "auroc": 0.9597856960209834,
+              "average_precision": 0.901805544090525
+            },
+            "CD": {
+              "records": 10434,
+              "positives": 1166,
+              "negatives": 9268,
+              "auroc": 0.9238748055797592,
+              "average_precision": 0.75733030840855
+            },
+            "HYP": {
+              "records": 10434,
+              "positives": 104,
+              "negatives": 10330,
+              "auroc": 0.971428438454092,
+              "average_precision": 0.3554526187815492
+            }
+          },
+          "macro_auroc": 0.9578268465764612,
+          "macro_average_precision": 0.6530966286942556
+        }
+      },
+      "differences": {
+        "joint_logistic": {
+          "macro_auroc": 0.058364372118293595,
+          "macro_average_precision": 0.21988486655847372
+        },
+        "independent_logistic": {
+          "macro_auroc": 0.06228327720437221,
+          "macro_average_precision": 0.23649918526819824
+        }
+      },
+      "fit_seconds": {
+        "joint_logistic": 31.415747402701527,
+        "independent_logistic": 14.818868012167513
+      }
+    }
+  ],
+  "final_fit_seconds": {
+    "joint_logistic": 32.30984265403822,
+    "independent_logistic": 13.950686189346015
+  },
+  "wall_seconds": 757.837068344932,
+  "versions": {
+    "python": "3.11.13",
+    "numpy": "2.4.6",
+    "sklearn": "1.9.1"
+  },
+  "gpu_used": false,
+  "encoder_fitted": false,
+  "scope": "reused_external_development",
+  "artifact_sha256": {
+    "outputs/condition_classifiers_20261106/cross_validation.json": "5427c8f663fb00af0ba87ea8844e81e1e81ea2bbdaefaa4ea04fb10853ad8205",
+    "outputs/condition_classifiers_20261106/cv_models.joblib": "67c9f46e780f83342ed7bcb028dd22de47682b7a072ba1db9db4e51730f214e9",
+    "outputs/condition_classifiers_20261106/cv_predictions.npz": "b9da55dead9a2bf54152e450883a657010a8772f94cafd8be5aaa6fb69e2f186",
+    "outputs/condition_classifiers_20261106/final_models.joblib": "e08017a2986c82fc15c3c3932862f371d40639a462668c800b934c48dc55a9bf",
+    "outputs/condition_classifiers_20261106/predictions.npz": "3893fd19afa8c3d475ae4fb7020785703a70601cc66460e1b941a74710aa9fc3",
+    "outputs/condition_classifiers_20261106/profile.json": "8f1602cc0d1cb761f573c58bf2a54220020275fb7b071ead1d5aa9c1c007a5c6",
+    "outputs/condition_classifiers_20261106/qualification.json": "4eb8e9f48ee343077d16e4160c4dd1a2c737b9abd9dbcb592713e82cbf883f7a",
+    "outputs/condition_classifiers_20261106/reference_draws.npz": "872e0a03da027effbecaa0c161578e94763690fd76ab9887bd5d29b7ba5af23a",
+    "outputs/condition_classifiers_20261106/reference_models.joblib": "24f458e89aac23da39ca8bee746c662d8f38ec442d7d0532c30a9c06e8d4ac5c",
+    "outputs/condition_classifiers_20261106/started.json": "a4aef14ccfcd90875af7b4f112208304d5927d8c9ca4c518cd58c9c01e55afb7"
+  }
+}

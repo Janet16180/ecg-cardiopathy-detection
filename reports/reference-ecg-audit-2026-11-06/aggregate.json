@@ -1,0 +1,3712 @@
+{
+  "study": "KEY-03",
+  "status": "completed",
+  "source_sha256": {
+    "docs/reference-ecg-audit-protocol-2026-11-06.md": "27f20cc2d3071837558c44b03861461ee456a7e1868889830c6ca5e806c83ae5",
+    "ecg_experiment/reference_ecg_audit.py": "31abc27c0e6cc43c68112d40217a51b4a38eef5b3c7e0e8bc01388309033686c",
+    "scripts/experiments/run_reference_ecg_audit.py": "600983e254b848a329a9f72eb8e4e42db25d588ebf6299d49ddf4f214b97c920",
+    "ecg_experiment/condition_key_clusters.py": "5a1fd80c5b7c1e1bd07c0e36ef03e081046dbf1b8efba4f424a284ba2ba538aa",
+    "ecg_experiment/condition_key_inputs.py": "4f32cd9d1f10a8d7a4e00282ec9ad61ccf8de358cb2ffcdaa95fb445869b1671",
+    "ecg_experiment/condition_key_inputs_v2.py": "4f038214255fa805bc9cab22b72b4442efcb481f42083239785d6bbd44488824",
+    "ecg_experiment/condition_key_study.py": "71b15738ffa93b733a57be843ef8c689cb15ae771cc9b9539f806b232c979fff",
+    "ecg_experiment/condition_key_study_v2.py": "3e392e543285d289923f510a4815e40f88864623807f49bc9d506a7a32b87daa",
+    "ecg_experiment/condition_keys.py": "264f81cbad1677f688bcada7d4f87a74ba89bd43d5b91dafe9a5f1c4e7e5a1cd",
+    "docs/condition-keys-protocol-2026-11-03.md": "0bdced557508937da534c93dd127bbbff5bc67e231fdf60bcc79ac10dc2cf512",
+    "scripts/experiments/run_condition_keys.py": "938af2fa2237c081559cbc9caffe9bd9b7432aff2e4bbbf83449cf0bd3f265de",
+    "tests/test_condition_keys.py": "ff56d7f30a8097f8594efdcca4d9058d2ce756b172340282947242215accf75d",
+    "ecg_experiment/embedding_geometry.py": "b79bc7f540a92aa2e160986c154cc6b580e1fc8ea8eb46eeb8a7a41c93c3d4d0",
+    "ecg_experiment/intervals.py": "b45103664e8c2e063b90c8223b64e7bbe6394e54796e0613538bd0b53dfe99af",
+    "ecg_experiment/paths.py": "8eee1da7579b23b06edbf5d6d76e4cd9a7ced4e8b17d2dd757f20bff7a1e80ee",
+    "ecg_experiment/files.py": "d418732520e883994d3b72b064c03174184f606cfea4e166800bf8a096ef985b",
+    "ecg_experiment/pr74_screening_metrics.py": "9990f15b35feb8730f0af864c26d0e9355a7a522d594b6d3739ed24e7d2340cb",
+    "ecg_experiment/cpu_screening041.py": "c7171d0014ad806a5c2a5a991b5703aa57000824bd25dbcaf1d09fd5cf8a867c",
+    "docs/condition-keys-execution-v2-2026-11-03.md": "1c3de12ed3b2121572879c3fdceeba1500cebc761bd7ce15effb2da80ecf0444",
+    "tests/test_condition_key_inputs_v2.py": "5106656950d8ea37135b63dac956a4690cdf29303767a5eb120bf7f82a6827a9",
+    "scripts/experiments/run_condition_keys_v2.py": "5c0c5390642ad7e9460b88a5e66929cce660fba12b2be33dd027021b70757e97",
+    "docs/long-section-keys-protocol-2026-11-06.md": "d244a362610ab82128230b7e0e351b53d8f3da78b9e2a24a6e3860efb214618d",
+    "ecg_experiment/long_section_keys.py": "347fd4815fc3213bff39fedb531db900b65e2ad7f64a035f2790fd7b72e33761",
+    "scripts/experiments/run_long_section_keys.py": "a34a73447ffcacd1060c4a14d3a3e665bd6db7dc290302bd40baa388765225d6",
+    "tests/test_long_section_keys.py": "2a4d6deb46a3d55f727fe2666822dc273d39e6a14eb8d57d975253c0a6394030",
+    "ecg_experiment/pr74_screening_features.py": "af58be32b87f13986b5da7c16e4ea50157fa92848626e56cf47bcd3427184ad9"
+  },
+  "metric_dictionaries_reproduced": 24,
+  "git_commit": "438adfbce29a6f5aa279fe1edb577e80b15bf23d",
+  "input_sha256": {
+    "outputs/heads01_token_superclass_20261028/extract_training/completion.json": "e7f9cca27d3f1d9ab23e27ef298c54f0cb2dde1f74a02eb3360fc2394bea8f90",
+    "outputs/heads01_token_superclass_20261028/extract_evaluation/completion.json": "ad4e3ef90ecc7e891da4f923c5e9b9f3c7052f8b98df2a7cd79112807b56c308",
+    "outputs/heads01_token_superclass_20261028/qualify/completion.json": "22a0937d0ed1943ffe114f17d9747baaf67455b1537f43777c980733293bc959",
+    "outputs/heads01_token_superclass_20261028/evaluate/completion.json": "7f3eae88c526be01e837b7922af85aa1760f49c9c8018d3f63d7751a7b8778e2",
+    "outputs/cohort_age_label_priority_20261028/all_age.csv": "67637a3a2db91c9d9b0f3204d349e418f178e54580dc83fa825cfc3ad5be259e",
+    "outputs/pr74_fresh_baseline_exact_20261028/features/sph_rows.csv": "f58844aa0d4cff6e27058d3cced892aec9cec40e95239c4176cdf6c0c6f237e9",
+    "outputs/heads01_token_superclass_20261028/qualify/labels.csv": "d480d681a218e9314b95338811009c983d81a48cfcd2b1cfbc3fce13064b8739",
+    "outputs/heads01_token_superclass_20261028/evaluate/evaluation.json": "a8debd3b8346543ac1a3109f1a35f9c6fd2a9450d5edb3c10146625265cf1e53",
+    "outputs/heads01_token_superclass_20261028/evaluate/sph_predictions.npz": "0b227555109c7c4adc60cd38da130be05bacdf55287fea7915267dd78a49b406",
+    "outputs/heads01_token_superclass_20261028/extract_training/rows.csv": "c0054e503a9f8e1d392beccc8e310d441bd08a67fd6b980fce49c992fe2b959c",
+    "outputs/heads01_token_superclass_20261028/extract_training/pooled.npy": "ed0b3ee568cc32ffde451c5f3449a3e2ec5f278ec501140139702b14a7bb0ad1",
+    "outputs/heads01_token_superclass_20261028/extract_training/tokens.npy": "25fd00b96adfcabb657fd1cc7c287b96c25cb9e7a2655db34417ac7f3599f6d4",
+    "outputs/heads01_token_superclass_20261028/extract_evaluation/rows.csv": "b1121fc599bb2844a99eca00f54605c1e1f568d4b0fa43d2aa07c9d0e7604b9f",
+    "outputs/heads01_token_superclass_20261028/extract_evaluation/pooled.npy": "efc96cebb2950ec154e1a9a23bd70f62c3911e9b2b89d92d9d509a33cb1c3345",
+    "outputs/heads01_token_superclass_20261028/extract_evaluation/tokens.npy": "a044c5fb562ae3e771e4abffcbc0bceab81947f399e65fe91c9c4c20e220eeb0"
+  },
+  "composition": {
+    "MI": {
+      "records": 2041,
+      "sources": {
+        "ptbxl": 1626,
+        "cpsc_2018_extra": 290,
+        "ningbo": 97,
+        "chapman_shaoxing": 25,
+        "georgia": 3
+      },
+      "families": {
+        "ptbxl": 1626,
+        "cpsc": 290,
+        "chapman_ningbo": 122,
+        "georgia": 3
+      },
+      "known_identity_records": 1626,
+      "known_patients": 1501,
+      "unknown_identity_records": 415,
+      "known_patient_extra_record_count": 125,
+      "duplicate_canonical_records": 0,
+      "duplicate_full_signal_records": 0,
+      "label_evidence": {
+        "record_human_validated": 1626,
+        "human_read_source_no_per_record_reader_count_proof": 290,
+        "source_process_physician_label_secondary_validation_senior_adjudication": 122,
+        "human_overread_source_no_per_record_reader_count_proof": 3
+      },
+      "individual_human_validation": {
+        "True": 1626,
+        "": 415
+      },
+      "review_flags": {
+        "": 2038,
+        "amplitude_over_10mv": 3
+      }
+    },
+    "STTC": {
+      "records": 12356,
+      "sources": {
+        "ningbo": 6107,
+        "georgia": 2277,
+        "ptbxl": 1789,
+        "chapman_shaoxing": 1765,
+        "cpsc_2018_extra": 350,
+        "cpsc_2018": 68
+      },
+      "families": {
+        "chapman_ningbo": 7872,
+        "georgia": 2277,
+        "ptbxl": 1789,
+        "cpsc": 418
+      },
+      "known_identity_records": 1789,
+      "known_patients": 1662,
+      "unknown_identity_records": 10567,
+      "known_patient_extra_record_count": 127,
+      "duplicate_canonical_records": 0,
+      "duplicate_full_signal_records": 0,
+      "label_evidence": {
+        "source_process_physician_label_secondary_validation_senior_adjudication": 7872,
+        "human_overread_source_no_per_record_reader_count_proof": 2277,
+        "record_human_validated": 1789,
+        "human_read_source_no_per_record_reader_count_proof": 418
+      },
+      "individual_human_validation": {
+        "": 10567,
+        "True": 1789
+      },
+      "review_flags": {
+        "": 12249,
+        "amplitude_over_10mv": 106,
+        "strong_baseline_wander": 1
+      }
+    },
+    "CD": {
+      "records": 6049,
+      "sources": {
+        "ningbo": 2297,
+        "ptbxl": 1537,
+        "georgia": 999,
+        "chapman_shaoxing": 728,
+        "cpsc_2018": 436,
+        "cpsc_2018_extra": 52
+      },
+      "families": {
+        "chapman_ningbo": 3025,
+        "ptbxl": 1537,
+        "georgia": 999,
+        "cpsc": 488
+      },
+      "known_identity_records": 1537,
+      "known_patients": 1428,
+      "unknown_identity_records": 4512,
+      "known_patient_extra_record_count": 109,
+      "duplicate_canonical_records": 0,
+      "duplicate_full_signal_records": 0,
+      "label_evidence": {
+        "source_process_physician_label_secondary_validation_senior_adjudication": 3025,
+        "record_human_validated": 1537,
+        "human_overread_source_no_per_record_reader_count_proof": 999,
+        "human_read_source_no_per_record_reader_count_proof": 488
+      },
+      "individual_human_validation": {
+        "": 4512,
+        "True": 1537
+      },
+      "review_flags": {
+        "": 6006,
+        "amplitude_over_10mv": 43
+      }
+    },
+    "HYP": {
+      "records": 2376,
+      "sources": {
+        "georgia": 1036,
+        "ptbxl": 843,
+        "ningbo": 453,
+        "cpsc_2018_extra": 32,
+        "chapman_shaoxing": 12
+      },
+      "families": {
+        "georgia": 1036,
+        "ptbxl": 843,
+        "chapman_ningbo": 465,
+        "cpsc": 32
+      },
+      "known_identity_records": 843,
+      "known_patients": 809,
+      "unknown_identity_records": 1533,
+      "known_patient_extra_record_count": 34,
+      "duplicate_canonical_records": 0,
+      "duplicate_full_signal_records": 0,
+      "label_evidence": {
+        "human_overread_source_no_per_record_reader_count_proof": 1036,
+        "record_human_validated": 843,
+        "source_process_physician_label_secondary_validation_senior_adjudication": 465,
+        "human_read_source_no_per_record_reader_count_proof": 32
+      },
+      "individual_human_validation": {
+        "": 1533,
+        "True": 843
+      },
+      "review_flags": {
+        "": 2369,
+        "amplitude_over_10mv": 5,
+        "strong_baseline_wander": 2
+      }
+    },
+    "normal": {
+      "records": 7393,
+      "sources": {
+        "ptbxl": 3038,
+        "ningbo": 2581,
+        "chapman_shaoxing": 819,
+        "georgia": 801,
+        "cpsc_2018": 154
+      },
+      "families": {
+        "chapman_ningbo": 3400,
+        "ptbxl": 3038,
+        "georgia": 801,
+        "cpsc": 154
+      },
+      "known_identity_records": 3038,
+      "known_patients": 2941,
+      "unknown_identity_records": 4355,
+      "known_patient_extra_record_count": 97,
+      "duplicate_canonical_records": 0,
+      "duplicate_full_signal_records": 0,
+      "label_evidence": {
+        "source_process_physician_label_secondary_validation_senior_adjudication": 3400,
+        "record_human_validated": 3038,
+        "human_overread_source_no_per_record_reader_count_proof": 801,
+        "human_read_source_no_per_record_reader_count_proof": 154
+      },
+      "individual_human_validation": {
+        "": 4355,
+        "True": 3038
+      },
+      "review_flags": {
+        "": 7372,
+        "amplitude_over_10mv": 20,
+        "strong_baseline_wander": 1
+      }
+    }
+  },
+  "overall": {
+    "records": 25000,
+    "sources": {
+      "ningbo": 9952,
+      "ptbxl": 6828,
+      "georgia": 3974,
+      "chapman_shaoxing": 3050,
+      "cpsc_2018": 655,
+      "cpsc_2018_extra": 541
+    },
+    "families": {
+      "chapman_ningbo": 13002,
+      "ptbxl": 6828,
+      "georgia": 3974,
+      "cpsc": 1196
+    },
+    "known_identity_records": 6828,
+    "known_patients": 6359,
+    "unknown_identity_records": 18172,
+    "known_patient_extra_record_count": 469,
+    "duplicate_canonical_records": 0,
+    "duplicate_full_signal_records": 0,
+    "label_evidence": {
+      "source_process_physician_label_secondary_validation_senior_adjudication": 13002,
+      "record_human_validated": 6828,
+      "human_overread_source_no_per_record_reader_count_proof": 3974,
+      "human_read_source_no_per_record_reader_count_proof": 1196
+    },
+    "individual_human_validation": {
+      "": 18172,
+      "True": 6828
+    },
+    "review_flags": {
+      "": 24849,
+      "amplitude_over_10mv": 148,
+      "strong_baseline_wander": 3
+    }
+  },
+  "cooccurrence": [
+    [
+      2041,
+      686,
+      663,
+      285
+    ],
+    [
+      686,
+      12356,
+      2265,
+      1470
+    ],
+    [
+      663,
+      2265,
+      6049,
+      583
+    ],
+    [
+      285,
+      1470,
+      583,
+      2376
+    ]
+  ],
+  "exclusive_counts": {
+    "MI": 812,
+    "STTC": 8578,
+    "CD": 3084,
+    "HYP": 593
+  },
+  "geometry": {
+    "whole": {
+      "key_max_error": 5.759281940243e-16,
+      "groups": {
+        "positive_MI": {
+          "records": 2041,
+          "resultant_length": 0.22847841464581367,
+          "cosine_quantiles": [
+            -0.39671269725898867,
+            -0.0849608024087057,
+            0.10295951137228682,
+            0.23939819787671124,
+            0.36170612737317204,
+            0.5093484062281906,
+            0.7064045559575713
+          ],
+          "top50_sources": {
+            "ptbxl": 45,
+            "ningbo": 2,
+            "cpsc_2018_extra": 2,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 2.0982201333922554,
+          "whole_key_rotation_degrees": 0.0,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 5.635510049907176,
+            "cpsc": 8.137186207183662,
+            "georgia": 0.1849115630872485,
+            "ptbxl": 46.20437959361261
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 59.76965162800022
+        },
+        "positive_STTC": {
+          "records": 12356,
+          "resultant_length": 0.15517519030607946,
+          "cosine_quantiles": [
+            -0.5611190587136952,
+            -0.23361834427503558,
+            0.01509059872629358,
+            0.16164611973129916,
+            0.3085457545267185,
+            0.5084647648246325,
+            0.6816998018493181
+          ],
+          "top50_sources": {
+            "ningbo": 37,
+            "chapman_shaoxing": 10,
+            "ptbxl": 3
+          },
+          "equal_patient_rotation_degrees": 0.8400501081557535,
+          "whole_key_rotation_degrees": 0.0,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 60.70440276336706,
+            "cpsc": 2.7778880935419594,
+            "georgia": 15.943584479704406,
+            "ptbxl": 11.211595213107008
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 66.61919695397432
+        },
+        "positive_CD": {
+          "records": 6049,
+          "resultant_length": 0.2294549915840803,
+          "cosine_quantiles": [
+            -0.4142439247366224,
+            -0.08510683467939083,
+            0.10211766193622404,
+            0.2414539819424181,
+            0.36970584804952733,
+            0.5092626924468526,
+            0.698931554568631
+          ],
+          "top50_sources": {
+            "ptbxl": 20,
+            "ningbo": 15,
+            "georgia": 7,
+            "chapman_shaoxing": 5,
+            "cpsc_2018": 3
+          },
+          "equal_patient_rotation_degrees": 0.953312561119321,
+          "whole_key_rotation_degrees": 0.0,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 33.19580373423115,
+            "cpsc": 4.546019045773311,
+            "georgia": 8.857215509372024,
+            "ptbxl": 17.51470373820874
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 51.708826382323636
+        },
+        "positive_HYP": {
+          "records": 2376,
+          "resultant_length": 0.1864717378610315,
+          "cosine_quantiles": [
+            -0.3244759136289983,
+            -0.09901248010853442,
+            0.05063269285319377,
+            0.18332090243545518,
+            0.3154468682226698,
+            0.48679236503817386,
+            0.6695053442474279
+          ],
+          "top50_sources": {
+            "georgia": 24,
+            "ptbxl": 13,
+            "ningbo": 11,
+            "cpsc_2018_extra": 2
+          },
+          "equal_patient_rotation_degrees": 1.0011084457281105,
+          "whole_key_rotation_degrees": 0.0,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 25.02467473879015,
+            "cpsc": 1.0627088005212044,
+            "georgia": 32.83017270406733,
+            "ptbxl": 20.17264864230062
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 89.98760926831105
+        },
+        "normal_MI": {
+          "records": 7393,
+          "resultant_length": 0.38593444215597794,
+          "cosine_quantiles": [
+            -0.291991140747342,
+            0.1463001782221707,
+            0.2969907639278524,
+            0.3975481186485891,
+            0.48762788044304106,
+            0.588785089127311,
+            0.7235066443538951
+          ],
+          "top50_sources": {
+            "ningbo": 25,
+            "ptbxl": 19,
+            "chapman_shaoxing": 6
+          },
+          "equal_patient_rotation_degrees": 0.4582341603358359,
+          "whole_key_rotation_degrees": 0.0,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 17.73127914578493,
+            "cpsc": 0.6512209525109507,
+            "georgia": 3.678389318526067,
+            "ptbxl": 15.31433002529549
+          }
+        },
+        "normal_STTC": {
+          "records": 7393,
+          "resultant_length": 0.38593444215597794,
+          "cosine_quantiles": [
+            -0.291991140747342,
+            0.1463001782221707,
+            0.2969907639278524,
+            0.3975481186485891,
+            0.48762788044304106,
+            0.588785089127311,
+            0.7235066443538951
+          ],
+          "top50_sources": {
+            "ningbo": 25,
+            "ptbxl": 19,
+            "chapman_shaoxing": 6
+          },
+          "equal_patient_rotation_degrees": 0.4582341603358359,
+          "whole_key_rotation_degrees": 0.0,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 17.73127914578493,
+            "cpsc": 0.6512209525109507,
+            "georgia": 3.678389318526067,
+            "ptbxl": 15.31433002529549
+          }
+        },
+        "normal_CD": {
+          "records": 7393,
+          "resultant_length": 0.38593444215597794,
+          "cosine_quantiles": [
+            -0.291991140747342,
+            0.1463001782221707,
+            0.2969907639278524,
+            0.3975481186485891,
+            0.48762788044304106,
+            0.588785089127311,
+            0.7235066443538951
+          ],
+          "top50_sources": {
+            "ningbo": 25,
+            "ptbxl": 19,
+            "chapman_shaoxing": 6
+          },
+          "equal_patient_rotation_degrees": 0.4582341603358359,
+          "whole_key_rotation_degrees": 0.0,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 17.73127914578493,
+            "cpsc": 0.6512209525109507,
+            "georgia": 3.678389318526067,
+            "ptbxl": 15.31433002529549
+          }
+        },
+        "normal_HYP": {
+          "records": 7393,
+          "resultant_length": 0.38593444215597794,
+          "cosine_quantiles": [
+            -0.291991140747342,
+            0.1463001782221707,
+            0.2969907639278524,
+            0.3975481186485891,
+            0.48762788044304106,
+            0.588785089127311,
+            0.7235066443538951
+          ],
+          "top50_sources": {
+            "ningbo": 25,
+            "ptbxl": 19,
+            "chapman_shaoxing": 6
+          },
+          "equal_patient_rotation_degrees": 0.4582341603358359,
+          "whole_key_rotation_degrees": 0.0,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 17.73127914578493,
+            "cpsc": 0.6512209525109507,
+            "georgia": 3.678389318526067,
+            "ptbxl": 15.31433002529549
+          }
+        }
+      }
+    },
+    "short": {
+      "key_max_error": 0.0,
+      "groups": {
+        "positive_MI": {
+          "records": 2041,
+          "resultant_length": 0.4192678923574905,
+          "cosine_quantiles": [
+            -0.24203785314817805,
+            0.13651130988044824,
+            0.31117150219038014,
+            0.4359520691152664,
+            0.5381393676485102,
+            0.6588246284407613,
+            0.7889214536774698
+          ],
+          "top50_sources": {
+            "ptbxl": 49,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 1.0184317387948452,
+          "whole_key_rotation_degrees": 45.71735870989139,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 2.591623494509234,
+            "cpsc": 3.9617650901096337,
+            "georgia": 0.09373713988837616,
+            "ptbxl": 25.222829201788187
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 25.691378630721175,
+          "start_counts": [
+            78,
+            36,
+            31,
+            27,
+            36,
+            25,
+            41,
+            22,
+            40,
+            30,
+            38,
+            51,
+            60,
+            62,
+            55,
+            43,
+            66,
+            53,
+            56,
+            61,
+            55,
+            57,
+            64,
+            59,
+            58,
+            56,
+            58,
+            58,
+            45,
+            40,
+            53,
+            37,
+            94,
+            36,
+            39,
+            47,
+            75,
+            39,
+            160,
+            0
+          ],
+          "length_counts": {
+            "2": 1173,
+            "4": 449,
+            "8": 419
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 5.868852459016393,
+            "cpsc": 5.006896551724138,
+            "georgia": 8.166666666666666,
+            "ptbxl": 5.250461254612546
+          }
+        },
+        "positive_STTC": {
+          "records": 12356,
+          "resultant_length": 0.26571177051133765,
+          "cosine_quantiles": [
+            -0.33865282611062997,
+            0.005685013091841993,
+            0.17924370217412894,
+            0.28026227785230473,
+            0.3699376062564997,
+            0.4720110125611108,
+            0.6481165770310007
+          ],
+          "top50_sources": {
+            "ningbo": 31,
+            "chapman_shaoxing": 10,
+            "ptbxl": 8,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 0.394314002426088,
+          "whole_key_rotation_degrees": 44.666184105842305,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 31.508308480234668,
+            "cpsc": 1.3522673610941993,
+            "georgia": 8.73659953211769,
+            "ptbxl": 6.073725103281305
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 34.441874209041174,
+          "start_counts": [
+            1080,
+            143,
+            118,
+            108,
+            147,
+            139,
+            192,
+            197,
+            205,
+            225,
+            279,
+            260,
+            278,
+            292,
+            349,
+            306,
+            332,
+            363,
+            356,
+            374,
+            373,
+            343,
+            352,
+            353,
+            367,
+            350,
+            359,
+            340,
+            333,
+            301,
+            285,
+            298,
+            445,
+            159,
+            172,
+            201,
+            313,
+            273,
+            996,
+            0
+          ],
+          "length_counts": {
+            "2": 5832,
+            "4": 1961,
+            "8": 4563
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 5.084603658536586,
+            "cpsc": 4.217703349282297,
+            "georgia": 5.0564339042599915,
+            "ptbxl": 5.066098378982672
+          }
+        },
+        "positive_CD": {
+          "records": 6049,
+          "resultant_length": 0.3364314223600472,
+          "cosine_quantiles": [
+            -0.2687424137231691,
+            0.10539884819409838,
+            0.24591596392198878,
+            0.34613211605344374,
+            0.43752436080157586,
+            0.5439097934346782,
+            0.6461141295009425
+          ],
+          "top50_sources": {
+            "ptbxl": 21,
+            "ningbo": 19,
+            "georgia": 7,
+            "chapman_shaoxing": 2,
+            "cpsc_2018": 1
+          },
+          "equal_patient_rotation_degrees": 0.5603752671501958,
+          "whole_key_rotation_degrees": 38.96090554984873,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 19.345160446463055,
+            "cpsc": 2.5798717984628454,
+            "georgia": 4.883011220884829,
+            "ptbxl": 10.465804175703214
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 28.081373857111625,
+          "start_counts": [
+            579,
+            165,
+            116,
+            122,
+            129,
+            142,
+            149,
+            154,
+            151,
+            164,
+            183,
+            142,
+            162,
+            171,
+            154,
+            166,
+            167,
+            163,
+            141,
+            174,
+            174,
+            155,
+            151,
+            148,
+            151,
+            132,
+            158,
+            118,
+            105,
+            93,
+            87,
+            94,
+            190,
+            65,
+            63,
+            64,
+            162,
+            67,
+            378,
+            0
+          ],
+          "length_counts": {
+            "2": 2645,
+            "4": 1384,
+            "8": 2020
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 4.408512396694215,
+            "cpsc": 3.7663934426229506,
+            "georgia": 4.41066066066066,
+            "ptbxl": 4.219095640858816
+          }
+        },
+        "positive_HYP": {
+          "records": 2376,
+          "resultant_length": 0.3056126512605177,
+          "cosine_quantiles": [
+            -0.3400882339468843,
+            0.023079202456838803,
+            0.21732690855780232,
+            0.32015831368768244,
+            0.41264034574959113,
+            0.5335030190962313,
+            0.6912566166423811
+          ],
+          "top50_sources": {
+            "ptbxl": 30,
+            "georgia": 19,
+            "ningbo": 1
+          },
+          "equal_patient_rotation_degrees": 0.566733364421007,
+          "whole_key_rotation_degrees": 47.83625109285554,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 13.576928711263877,
+            "cpsc": 0.6615927935274841,
+            "georgia": 18.14266822597491,
+            "ptbxl": 10.703562598023197
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 49.681103238870705,
+          "start_counts": [
+            137,
+            23,
+            19,
+            19,
+            24,
+            32,
+            40,
+            26,
+            26,
+            43,
+            37,
+            45,
+            54,
+            50,
+            59,
+            50,
+            63,
+            61,
+            68,
+            58,
+            58,
+            64,
+            64,
+            67,
+            71,
+            86,
+            67,
+            62,
+            80,
+            55,
+            54,
+            64,
+            104,
+            32,
+            27,
+            44,
+            107,
+            63,
+            273,
+            0
+          ],
+          "length_counts": {
+            "2": 1049,
+            "4": 398,
+            "8": 929
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 5.363440860215054,
+            "cpsc": 5.6796875,
+            "georgia": 5.74203667953668,
+            "ptbxl": 5.505338078291815
+          }
+        },
+        "normal_MI": {
+          "records": 7393,
+          "resultant_length": 0.49733895546406043,
+          "cosine_quantiles": [
+            -0.21277960850438316,
+            0.31465998044476573,
+            0.43272578307311127,
+            0.5053364399348552,
+            0.5723484594471138,
+            0.6503347025392251,
+            0.8088470735203045
+          ],
+          "top50_sources": {
+            "ningbo": 27,
+            "ptbxl": 15,
+            "chapman_shaoxing": 6,
+            "georgia": 2
+          },
+          "equal_patient_rotation_degrees": 0.2756466556990942,
+          "whole_key_rotation_degrees": 39.709967962962246,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 11.219173981706291,
+            "cpsc": 0.3942192424816887,
+            "georgia": 2.28545670046742,
+            "ptbxl": 9.552077944401807
+          },
+          "start_counts": [
+            6,
+            38,
+            55,
+            93,
+            172,
+            175,
+            233,
+            237,
+            244,
+            254,
+            258,
+            286,
+            277,
+            293,
+            240,
+            275,
+            263,
+            270,
+            231,
+            242,
+            232,
+            251,
+            255,
+            218,
+            231,
+            251,
+            259,
+            227,
+            231,
+            220,
+            198,
+            172,
+            131,
+            111,
+            92,
+            91,
+            46,
+            27,
+            8,
+            0
+          ],
+          "length_counts": {
+            "2": 2133,
+            "4": 1314,
+            "8": 3946
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 4.373455882352941,
+            "cpsc": 4.209415584415584,
+            "georgia": 4.5424469413233455,
+            "ptbxl": 4.6923140223831465
+          }
+        },
+        "normal_STTC": {
+          "records": 7393,
+          "resultant_length": 0.4327593706612799,
+          "cosine_quantiles": [
+            -0.2176411012542805,
+            0.23605590382743077,
+            0.3581490901242814,
+            0.4395096283731741,
+            0.5149820130459567,
+            0.6060439642430092,
+            0.7511270964164121
+          ],
+          "top50_sources": {
+            "ptbxl": 19,
+            "ningbo": 18,
+            "chapman_shaoxing": 9,
+            "georgia": 4
+          },
+          "equal_patient_rotation_degrees": 0.35318264212854344,
+          "whole_key_rotation_degrees": 23.61934110940404,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 13.5652925851357,
+            "cpsc": 0.4720357400830019,
+            "georgia": 2.901206721395971,
+            "ptbxl": 11.676102777128033
+          },
+          "start_counts": [
+            6,
+            62,
+            125,
+            203,
+            271,
+            310,
+            296,
+            319,
+            340,
+            316,
+            316,
+            326,
+            266,
+            281,
+            262,
+            228,
+            214,
+            219,
+            236,
+            239,
+            228,
+            212,
+            196,
+            216,
+            211,
+            205,
+            233,
+            207,
+            226,
+            195,
+            146,
+            113,
+            62,
+            38,
+            30,
+            25,
+            5,
+            8,
+            2,
+            0
+          ],
+          "length_counts": {
+            "2": 494,
+            "4": 607,
+            "8": 6292
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 3.8261029411764707,
+            "cpsc": 3.7857142857142856,
+            "georgia": 3.8792134831460676,
+            "ptbxl": 4.001481237656352
+          }
+        },
+        "normal_CD": {
+          "records": 7393,
+          "resultant_length": 0.48362881552977854,
+          "cosine_quantiles": [
+            -0.2135957719609506,
+            0.30599742610323966,
+            0.41704262074710025,
+            0.48864836856023736,
+            0.5575214043593346,
+            0.6435839818924487,
+            0.7885494009261655
+          ],
+          "top50_sources": {
+            "ningbo": 22,
+            "ptbxl": 16,
+            "chapman_shaoxing": 8,
+            "georgia": 4
+          },
+          "equal_patient_rotation_degrees": 0.3004458264863786,
+          "whole_key_rotation_degrees": 35.42188745192369,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 11.947275703594281,
+            "cpsc": 0.40266232133726587,
+            "georgia": 2.494159326607307,
+            "ptbxl": 10.074575356005175
+          },
+          "start_counts": [
+            3,
+            10,
+            27,
+            61,
+            117,
+            149,
+            175,
+            209,
+            255,
+            252,
+            258,
+            261,
+            288,
+            309,
+            273,
+            271,
+            276,
+            276,
+            251,
+            278,
+            274,
+            272,
+            251,
+            260,
+            283,
+            250,
+            277,
+            247,
+            284,
+            242,
+            214,
+            176,
+            99,
+            87,
+            63,
+            63,
+            33,
+            14,
+            5,
+            0
+          ],
+          "length_counts": {
+            "2": 1252,
+            "4": 844,
+            "8": 5297
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 4.532205882352941,
+            "cpsc": 4.657467532467533,
+            "georgia": 4.629213483146067,
+            "ptbxl": 4.723173140223832
+          }
+        },
+        "normal_HYP": {
+          "records": 7393,
+          "resultant_length": 0.45126601598099636,
+          "cosine_quantiles": [
+            -0.20890234089346227,
+            0.24874855542735722,
+            0.37477074575361974,
+            0.4580939826308254,
+            0.5353365448664881,
+            0.6318776282062275,
+            0.7922956621187299
+          ],
+          "top50_sources": {
+            "ningbo": 26,
+            "ptbxl": 14,
+            "chapman_shaoxing": 9,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 0.34967187208990475,
+          "whole_key_rotation_degrees": 30.428641630255424,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 13.69563889493911,
+            "cpsc": 0.4426432104718588,
+            "georgia": 2.741337323863537,
+            "ptbxl": 11.498747377597395
+          },
+          "start_counts": [
+            18,
+            78,
+            145,
+            229,
+            269,
+            302,
+            312,
+            324,
+            347,
+            333,
+            321,
+            312,
+            301,
+            295,
+            278,
+            269,
+            268,
+            267,
+            231,
+            235,
+            238,
+            228,
+            225,
+            221,
+            189,
+            181,
+            194,
+            156,
+            178,
+            148,
+            92,
+            77,
+            50,
+            27,
+            27,
+            20,
+            2,
+            4,
+            2,
+            0
+          ],
+          "length_counts": {
+            "2": 766,
+            "4": 756,
+            "8": 5871
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 3.6641176470588235,
+            "cpsc": 3.456168831168831,
+            "georgia": 3.7578027465667914,
+            "ptbxl": 3.764400921658986
+          }
+        }
+      }
+    },
+    "fixed_1s": {
+      "key_max_error": 0.0,
+      "groups": {
+        "positive_MI": {
+          "records": 2041,
+          "resultant_length": 0.3408215156320213,
+          "cosine_quantiles": [
+            -0.36584691853074713,
+            0.042366658114414,
+            0.23006353563953735,
+            0.3502344822821567,
+            0.4690484462635417,
+            0.6032782357032315,
+            0.8035436133026095
+          ],
+          "top50_sources": {
+            "ptbxl": 48,
+            "ningbo": 1,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 1.1564379893228478,
+          "whole_key_rotation_degrees": 39.20933117162039,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 3.311094587466448,
+            "cpsc": 5.119308347649643,
+            "georgia": 0.13173011676406907,
+            "ptbxl": 33.64779112023499
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 32.32644837047728,
+          "start_counts": [
+            196,
+            0,
+            0,
+            0,
+            128,
+            0,
+            0,
+            0,
+            129,
+            0,
+            0,
+            0,
+            182,
+            0,
+            0,
+            0,
+            206,
+            0,
+            0,
+            0,
+            218,
+            0,
+            0,
+            0,
+            198,
+            0,
+            0,
+            0,
+            207,
+            0,
+            0,
+            0,
+            168,
+            0,
+            0,
+            0,
+            409,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "4": 2041
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 5.89344262295082,
+            "cpsc": 4.686206896551724,
+            "georgia": 7.666666666666667,
+            "ptbxl": 5.170356703567036
+          }
+        },
+        "positive_STTC": {
+          "records": 12356,
+          "resultant_length": 0.21702995879157883,
+          "cosine_quantiles": [
+            -0.4832752657998644,
+            -0.09441934769417533,
+            0.11811084082700476,
+            0.23266461391897494,
+            0.33474858199478186,
+            0.4664021063723053,
+            0.6450039999201307
+          ],
+          "top50_sources": {
+            "ningbo": 29,
+            "ptbxl": 11,
+            "chapman_shaoxing": 8,
+            "georgia": 2
+          },
+          "equal_patient_rotation_degrees": 0.4749656267269765,
+          "whole_key_rotation_degrees": 39.11949637340499,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 38.133425956117016,
+            "cpsc": 1.6330590538497909,
+            "georgia": 10.413631004601553,
+            "ptbxl": 7.437031083745554
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 41.419285768486375,
+          "start_counts": [
+            1645,
+            0,
+            0,
+            0,
+            476,
+            0,
+            0,
+            0,
+            771,
+            0,
+            0,
+            0,
+            1014,
+            0,
+            0,
+            0,
+            1204,
+            0,
+            0,
+            0,
+            1322,
+            0,
+            0,
+            0,
+            1284,
+            0,
+            0,
+            0,
+            1225,
+            0,
+            0,
+            0,
+            1140,
+            0,
+            0,
+            0,
+            2275,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "4": 12356
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 5.126143292682927,
+            "cpsc": 4.19377990430622,
+            "georgia": 4.927536231884058,
+            "ptbxl": 5.049748462828396
+          }
+        },
+        "positive_CD": {
+          "records": 6049,
+          "resultant_length": 0.28954408856429276,
+          "cosine_quantiles": [
+            -0.33860442346441544,
+            0.036674616498887695,
+            0.1871714234784861,
+            0.296263509082848,
+            0.4005135400691656,
+            0.5215620536923219,
+            0.6579333207565996
+          ],
+          "top50_sources": {
+            "ningbo": 24,
+            "ptbxl": 14,
+            "georgia": 6,
+            "chapman_shaoxing": 4,
+            "cpsc_2018": 2
+          },
+          "equal_patient_rotation_degrees": 0.6526601439569445,
+          "whole_key_rotation_degrees": 33.06616605078123,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 22.607731894691323,
+            "cpsc": 3.2968881735248243,
+            "georgia": 5.797660195328906,
+            "ptbxl": 12.45453723619371
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 34.11685137655661,
+          "start_counts": [
+            1096,
+            0,
+            0,
+            0,
+            484,
+            0,
+            0,
+            0,
+            554,
+            0,
+            0,
+            0,
+            607,
+            0,
+            0,
+            0,
+            582,
+            0,
+            0,
+            0,
+            571,
+            0,
+            0,
+            0,
+            544,
+            0,
+            0,
+            0,
+            427,
+            0,
+            0,
+            0,
+            375,
+            0,
+            0,
+            0,
+            809,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "4": 6049
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 4.352066115702479,
+            "cpsc": 3.3586065573770494,
+            "georgia": 4.225225225225225,
+            "ptbxl": 3.9720234222511386
+          }
+        },
+        "positive_HYP": {
+          "records": 2376,
+          "resultant_length": 0.26639372035303527,
+          "cosine_quantiles": [
+            -0.5096263990508959,
+            -0.07184714446457857,
+            0.1648148602662057,
+            0.2858996449246968,
+            0.3953379456465963,
+            0.5323070479585728,
+            0.6608111332563578
+          ],
+          "top50_sources": {
+            "georgia": 26,
+            "ptbxl": 20,
+            "ningbo": 4
+          },
+          "equal_patient_rotation_degrees": 0.6255405998317821,
+          "whole_key_rotation_degrees": 43.58244125218931,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 15.24251123264912,
+            "cpsc": 0.762866591910528,
+            "georgia": 19.90149370275071,
+            "ptbxl": 12.342844445526024
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 55.380731859701164,
+          "start_counts": [
+            213,
+            0,
+            0,
+            0,
+            80,
+            0,
+            0,
+            0,
+            112,
+            0,
+            0,
+            0,
+            160,
+            0,
+            0,
+            0,
+            206,
+            0,
+            0,
+            0,
+            231,
+            0,
+            0,
+            0,
+            271,
+            0,
+            0,
+            0,
+            217,
+            0,
+            0,
+            0,
+            239,
+            0,
+            0,
+            0,
+            647,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "4": 2376
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 5.823655913978494,
+            "cpsc": 6.0625,
+            "georgia": 5.7528957528957525,
+            "ptbxl": 5.67141162514828
+          }
+        },
+        "normal_MI": {
+          "records": 7393,
+          "resultant_length": 0.43306960971314357,
+          "cosine_quantiles": [
+            -0.23303568613373257,
+            0.1938121498105121,
+            0.34720563218888356,
+            0.44437496426969214,
+            0.5314582767466339,
+            0.6324185232497206,
+            0.7687233345113933
+          ],
+          "top50_sources": {
+            "ningbo": 25,
+            "ptbxl": 16,
+            "chapman_shaoxing": 7,
+            "georgia": 2
+          },
+          "equal_patient_rotation_degrees": 0.3374847941985893,
+          "whole_key_rotation_degrees": 34.63626471695859,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 13.047266036381185,
+            "cpsc": 0.46124020962133516,
+            "georgia": 2.606524157634987,
+            "ptbxl": 11.284395921736397
+          },
+          "start_counts": [
+            87,
+            0,
+            0,
+            0,
+            561,
+            0,
+            0,
+            0,
+            945,
+            0,
+            0,
+            0,
+            1018,
+            0,
+            0,
+            0,
+            996,
+            0,
+            0,
+            0,
+            934,
+            0,
+            0,
+            0,
+            914,
+            0,
+            0,
+            0,
+            949,
+            0,
+            0,
+            0,
+            844,
+            0,
+            0,
+            0,
+            145,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "4": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 4.562352941176471,
+            "cpsc": 4.571428571428571,
+            "georgia": 4.595505617977528,
+            "ptbxl": 4.755102040816326
+          }
+        },
+        "normal_STTC": {
+          "records": 7393,
+          "resultant_length": 0.39651863342885224,
+          "cosine_quantiles": [
+            -0.22591893120878087,
+            0.18390251623710366,
+            0.3208319118598806,
+            0.40664926218988573,
+            0.4833242815879452,
+            0.5735450727945791,
+            0.7073801295196798
+          ],
+          "top50_sources": {
+            "ptbxl": 24,
+            "ningbo": 21,
+            "chapman_shaoxing": 3,
+            "georgia": 2
+          },
+          "equal_patient_rotation_degrees": 0.3635943656541595,
+          "whole_key_rotation_degrees": 24.096326351783617,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 13.626979542974052,
+            "cpsc": 0.48011473931878323,
+            "georgia": 2.977788116840924,
+            "ptbxl": 11.865644291724056
+          },
+          "start_counts": [
+            18,
+            0,
+            0,
+            0,
+            722,
+            0,
+            0,
+            0,
+            1107,
+            0,
+            0,
+            0,
+            1104,
+            0,
+            0,
+            0,
+            939,
+            0,
+            0,
+            0,
+            869,
+            0,
+            0,
+            0,
+            805,
+            0,
+            0,
+            0,
+            882,
+            0,
+            0,
+            0,
+            898,
+            0,
+            0,
+            0,
+            49,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "4": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 4.382058823529412,
+            "cpsc": 4.266233766233766,
+            "georgia": 4.473158551810237,
+            "ptbxl": 4.555299539170507
+          }
+        },
+        "normal_CD": {
+          "records": 7393,
+          "resultant_length": 0.4322092018831301,
+          "cosine_quantiles": [
+            -0.23344313744955025,
+            0.2080473842442018,
+            0.3515100481700286,
+            0.442631987070928,
+            0.523907096408486,
+            0.6206024720855279,
+            0.7580767437621072
+          ],
+          "top50_sources": {
+            "ptbxl": 20,
+            "ningbo": 16,
+            "chapman_shaoxing": 10,
+            "georgia": 4
+          },
+          "equal_patient_rotation_degrees": 0.34014261774819027,
+          "whole_key_rotation_degrees": 33.2882654307375,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 12.733054005327496,
+            "cpsc": 0.45310743250842384,
+            "georgia": 2.648141537014266,
+            "ptbxl": 10.946916008526443
+          },
+          "start_counts": [
+            11,
+            0,
+            0,
+            0,
+            337,
+            0,
+            0,
+            0,
+            764,
+            0,
+            0,
+            0,
+            987,
+            0,
+            0,
+            0,
+            1026,
+            0,
+            0,
+            0,
+            978,
+            0,
+            0,
+            0,
+            985,
+            0,
+            0,
+            0,
+            1142,
+            0,
+            0,
+            0,
+            1052,
+            0,
+            0,
+            0,
+            111,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "4": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 4.898823529411764,
+            "cpsc": 5.1103896103896105,
+            "georgia": 5.134831460674158,
+            "ptbxl": 5.1293614219881505
+          }
+        },
+        "normal_HYP": {
+          "records": 7393,
+          "resultant_length": 0.41957097014573796,
+          "cosine_quantiles": [
+            -0.24586470940017063,
+            0.17577322936709439,
+            0.3320729239470128,
+            0.4318233309179812,
+            0.5179491388064278,
+            0.6234306771994962,
+            0.7481184736680451
+          ],
+          "top50_sources": {
+            "ningbo": 25,
+            "ptbxl": 19,
+            "chapman_shaoxing": 4,
+            "georgia": 2
+          },
+          "equal_patient_rotation_degrees": 0.36225323796096065,
+          "whole_key_rotation_degrees": 32.07156863629409,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 13.690685746848857,
+            "cpsc": 0.4828509577389196,
+            "georgia": 2.763956265812598,
+            "ptbxl": 11.67656297998787
+          },
+          "start_counts": [
+            48,
+            0,
+            0,
+            0,
+            867,
+            0,
+            0,
+            0,
+            1158,
+            0,
+            0,
+            0,
+            1156,
+            0,
+            0,
+            0,
+            1047,
+            0,
+            0,
+            0,
+            966,
+            0,
+            0,
+            0,
+            854,
+            0,
+            0,
+            0,
+            719,
+            0,
+            0,
+            0,
+            551,
+            0,
+            0,
+            0,
+            27,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "4": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 4.126176470588235,
+            "cpsc": 4.201298701298701,
+            "georgia": 4.056179775280899,
+            "ptbxl": 4.131665569453588
+          }
+        }
+      }
+    },
+    "2.5s": {
+      "key_max_error": 0.0,
+      "groups": {
+        "positive_MI": {
+          "records": 2041,
+          "resultant_length": 0.302407262377933,
+          "cosine_quantiles": [
+            -0.3463791341154652,
+            -0.012538373221540344,
+            0.1827146865716867,
+            0.3181814007103424,
+            0.43701564804476845,
+            0.5841751547080283,
+            0.7515361687199937
+          ],
+          "top50_sources": {
+            "ptbxl": 49,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 1.3902115964454609,
+          "whole_key_rotation_degrees": 29.685961843042246,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 4.02619110525737,
+            "cpsc": 5.731356943036229,
+            "georgia": 0.1415984792167679,
+            "ptbxl": 40.307496984612214
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 40.875957527537516,
+          "start_counts": [
+            163,
+            49,
+            40,
+            31,
+            40,
+            31,
+            40,
+            37,
+            51,
+            39,
+            45,
+            53,
+            53,
+            64,
+            67,
+            62,
+            67,
+            83,
+            56,
+            57,
+            68,
+            52,
+            60,
+            61,
+            60,
+            58,
+            53,
+            53,
+            55,
+            67,
+            326,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "10": 2041
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 4.811475409836065,
+            "cpsc": 4.014655172413793,
+            "georgia": 3.5833333333333335,
+            "ptbxl": 4.278444034440344
+          }
+        },
+        "positive_STTC": {
+          "records": 12356,
+          "resultant_length": 0.19576079569310426,
+          "cosine_quantiles": [
+            -0.5410402259667448,
+            -0.17646523855836146,
+            0.07649154700836114,
+            0.2095414428962778,
+            0.33840038042477383,
+            0.5001243213374783,
+            0.6659082922327164
+          ],
+          "top50_sources": {
+            "ningbo": 38,
+            "chapman_shaoxing": 9,
+            "ptbxl": 2,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 0.6017144799349042,
+          "whole_key_rotation_degrees": 29.1589331116187,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 47.038979423649316,
+            "cpsc": 1.978360204977747,
+            "georgia": 12.064338147996715,
+            "ptbxl": 9.137815380541745
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 50.1930918785374,
+          "start_counts": [
+            1304,
+            135,
+            152,
+            130,
+            172,
+            196,
+            247,
+            256,
+            305,
+            262,
+            324,
+            314,
+            389,
+            320,
+            374,
+            369,
+            407,
+            425,
+            390,
+            423,
+            380,
+            394,
+            376,
+            368,
+            368,
+            334,
+            367,
+            335,
+            326,
+            445,
+            1769,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "10": 12356
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 4.30760924796748,
+            "cpsc": 3.6088516746411483,
+            "georgia": 4.111989459815547,
+            "ptbxl": 4.194242593627725
+          }
+        },
+        "positive_CD": {
+          "records": 6049,
+          "resultant_length": 0.26589209686661186,
+          "cosine_quantiles": [
+            -0.4116421710936411,
+            -0.022142327128635543,
+            0.15178917201362024,
+            0.274097772205966,
+            0.389160927480679,
+            0.5200150708802224,
+            0.6792056221532904
+          ],
+          "top50_sources": {
+            "ningbo": 22,
+            "ptbxl": 14,
+            "chapman_shaoxing": 7,
+            "georgia": 5,
+            "cpsc_2018": 2
+          },
+          "equal_patient_rotation_degrees": 0.8086554445071724,
+          "whole_key_rotation_degrees": 23.3050318117933,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 27.202019840948147,
+            "cpsc": 3.7799015793833273,
+            "georgia": 6.839325733116888,
+            "ptbxl": 15.25129434587435
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 41.935893590854626,
+          "start_counts": [
+            1006,
+            177,
+            161,
+            141,
+            144,
+            144,
+            152,
+            167,
+            171,
+            163,
+            194,
+            190,
+            193,
+            166,
+            163,
+            160,
+            160,
+            182,
+            164,
+            169,
+            155,
+            170,
+            136,
+            178,
+            120,
+            111,
+            122,
+            84,
+            88,
+            118,
+            600,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "10": 6049
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 3.4287603305785126,
+            "cpsc": 2.665983606557377,
+            "georgia": 3.414664664664665,
+            "ptbxl": 3.3404359141184123
+          }
+        },
+        "positive_HYP": {
+          "records": 2376,
+          "resultant_length": 0.2407063491109763,
+          "cosine_quantiles": [
+            -0.45082572505150853,
+            -0.10126775583325091,
+            0.1377084737904283,
+            0.25666228151213777,
+            0.3720903742173964,
+            0.49841901668310157,
+            0.6659112102230217
+          ],
+          "top50_sources": {
+            "georgia": 26,
+            "ptbxl": 13,
+            "ningbo": 11
+          },
+          "equal_patient_rotation_degrees": 0.7439692841728546,
+          "whole_key_rotation_degrees": 34.4597711731197,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 18.426803371258348,
+            "cpsc": 0.8616288946827272,
+            "georgia": 23.998244668879373,
+            "ptbxl": 15.403608457025346
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 67.1537985001751,
+          "start_counts": [
+            180,
+            16,
+            30,
+            18,
+            37,
+            32,
+            32,
+            44,
+            46,
+            43,
+            56,
+            49,
+            59,
+            64,
+            76,
+            60,
+            75,
+            79,
+            82,
+            76,
+            74,
+            73,
+            80,
+            88,
+            54,
+            82,
+            58,
+            59,
+            72,
+            83,
+            499,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "10": 2376
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 4.632795698924731,
+            "cpsc": 4.84375,
+            "georgia": 4.77195945945946,
+            "ptbxl": 4.562277580071174
+          }
+        },
+        "normal_MI": {
+          "records": 7393,
+          "resultant_length": 0.4396814658005648,
+          "cosine_quantiles": [
+            -0.24296870312462568,
+            0.19079868591244553,
+            0.35243461568492984,
+            0.4548163228294848,
+            0.5431824676472048,
+            0.6379310414760591,
+            0.7733981882843235
+          ],
+          "top50_sources": {
+            "ningbo": 27,
+            "ptbxl": 18,
+            "chapman_shaoxing": 5
+          },
+          "equal_patient_rotation_degrees": 0.36750201299751667,
+          "whole_key_rotation_degrees": 25.74017881665553,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 14.66941723469793,
+            "cpsc": 0.4940058603056193,
+            "georgia": 2.9554723987685456,
+            "ptbxl": 12.49509615892821
+          },
+          "start_counts": [
+            85,
+            159,
+            178,
+            189,
+            231,
+            242,
+            292,
+            277,
+            290,
+            288,
+            321,
+            303,
+            284,
+            269,
+            288,
+            298,
+            249,
+            229,
+            252,
+            260,
+            237,
+            237,
+            228,
+            236,
+            238,
+            240,
+            277,
+            199,
+            200,
+            194,
+            123,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "10": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 3.6393382352941175,
+            "cpsc": 3.3603896103896105,
+            "georgia": 3.632646691635456,
+            "ptbxl": 3.890882159315339
+          }
+        },
+        "normal_STTC": {
+          "records": 7393,
+          "resultant_length": 0.42637422286322924,
+          "cosine_quantiles": [
+            -0.22698722249325698,
+            0.19563276692454593,
+            0.3455329636103365,
+            0.43974693135053333,
+            0.5214990110574051,
+            0.6158246869138697,
+            0.736942996412954
+          ],
+          "top50_sources": {
+            "ningbo": 27,
+            "ptbxl": 17,
+            "chapman_shaoxing": 5,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 0.3730170128407345,
+          "whole_key_rotation_degrees": 19.978333726203676,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 14.715536469289404,
+            "cpsc": 0.49824986809678,
+            "georgia": 3.071221038311419,
+            "ptbxl": 12.571686180309396
+          },
+          "start_counts": [
+            38,
+            134,
+            204,
+            283,
+            316,
+            325,
+            344,
+            369,
+            377,
+            318,
+            312,
+            297,
+            283,
+            250,
+            223,
+            240,
+            234,
+            228,
+            231,
+            216,
+            192,
+            220,
+            239,
+            221,
+            222,
+            248,
+            247,
+            193,
+            191,
+            129,
+            69,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "10": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 3.43625,
+            "cpsc": 3.392857142857143,
+            "georgia": 3.4909488139825218,
+            "ptbxl": 3.5841836734693877
+          }
+        },
+        "normal_CD": {
+          "records": 7393,
+          "resultant_length": 0.4463088378234129,
+          "cosine_quantiles": [
+            -0.23444025594962634,
+            0.20831251700118236,
+            0.36157738690560115,
+            0.46080417981600796,
+            0.5449551068025746,
+            0.6374719521433387,
+            0.7939184463087195
+          ],
+          "top50_sources": {
+            "ningbo": 28,
+            "ptbxl": 16,
+            "chapman_shaoxing": 5,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 0.36132037416786583,
+          "whole_key_rotation_degrees": 26.308130122670907,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 14.223173025336429,
+            "cpsc": 0.47702865914014325,
+            "georgia": 2.9461086896593014,
+            "ptbxl": 12.057689053731762
+          },
+          "start_counts": [
+            17,
+            43,
+            85,
+            115,
+            168,
+            180,
+            228,
+            264,
+            269,
+            253,
+            303,
+            301,
+            288,
+            293,
+            280,
+            299,
+            278,
+            289,
+            255,
+            260,
+            277,
+            281,
+            301,
+            289,
+            281,
+            331,
+            310,
+            268,
+            273,
+            207,
+            107,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "10": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 4.1,
+            "cpsc": 4.189935064935065,
+            "georgia": 4.131086142322097,
+            "ptbxl": 4.195358788676761
+          }
+        },
+        "normal_HYP": {
+          "records": 7393,
+          "resultant_length": 0.4284091932767371,
+          "cosine_quantiles": [
+            -0.22638338617731596,
+            0.18984333330493267,
+            0.34493183122843973,
+            0.4418845634452909,
+            0.5258073006971775,
+            0.6196175443480285,
+            0.7660990177289138
+          ],
+          "top50_sources": {
+            "ningbo": 25,
+            "ptbxl": 15,
+            "chapman_shaoxing": 8,
+            "georgia": 2
+          },
+          "equal_patient_rotation_degrees": 0.38624196004054223,
+          "whole_key_rotation_degrees": 22.606063559199246,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 15.166915593183855,
+            "cpsc": 0.49185496916346994,
+            "georgia": 3.0531924570809927,
+            "ptbxl": 12.81055521849923
+          },
+          "start_counts": [
+            62,
+            169,
+            256,
+            306,
+            354,
+            328,
+            366,
+            343,
+            358,
+            326,
+            360,
+            320,
+            292,
+            282,
+            249,
+            279,
+            254,
+            249,
+            242,
+            251,
+            215,
+            214,
+            206,
+            207,
+            184,
+            194,
+            161,
+            152,
+            107,
+            75,
+            32,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "10": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 3.228235294117647,
+            "cpsc": 2.9123376623376624,
+            "georgia": 3.199438202247191,
+            "ptbxl": 3.3128703094140883
+          }
+        }
+      }
+    },
+    "5s": {
+      "key_max_error": 0.0,
+      "groups": {
+        "positive_MI": {
+          "records": 2041,
+          "resultant_length": 0.2607701100362186,
+          "cosine_quantiles": [
+            -0.4179316109257194,
+            -0.06355159650021276,
+            0.1378017143342076,
+            0.2758602047950397,
+            0.39128117778255517,
+            0.5537267763122313,
+            0.7216393522036397
+          ],
+          "top50_sources": {
+            "ptbxl": 48,
+            "georgia": 1,
+            "ningbo": 1
+          },
+          "equal_patient_rotation_degrees": 1.7027162637564237,
+          "whole_key_rotation_degrees": 19.386150070934104,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 4.818967249349559,
+            "cpsc": 6.861249720310584,
+            "georgia": 0.16564488514124695,
+            "ptbxl": 43.617253913478
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 50.45835214138614,
+          "start_counts": [
+            303,
+            68,
+            52,
+            44,
+            56,
+            69,
+            61,
+            61,
+            62,
+            62,
+            56,
+            65,
+            71,
+            61,
+            71,
+            58,
+            83,
+            53,
+            64,
+            89,
+            532,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "20": 2041
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 3.122950819672131,
+            "cpsc": 2.6982758620689653,
+            "georgia": 4.0,
+            "ptbxl": 2.8465559655596557
+          }
+        },
+        "positive_STTC": {
+          "records": 12356,
+          "resultant_length": 0.1749205629472906,
+          "cosine_quantiles": [
+            -0.5628715014289594,
+            -0.20537705859202027,
+            0.04113973938532198,
+            0.18299821663037846,
+            0.3264744691876349,
+            0.5098503218067312,
+            0.685831944588284
+          ],
+          "top50_sources": {
+            "ningbo": 33,
+            "chapman_shaoxing": 12,
+            "ptbxl": 4,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 0.706065593368576,
+          "whole_key_rotation_degrees": 20.870980140585914,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 54.09430478147012,
+            "cpsc": 2.3459982678359026,
+            "georgia": 13.701379617361589,
+            "ptbxl": 10.040273636486077
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 58.33297577610812,
+          "start_counts": [
+            2091,
+            269,
+            239,
+            262,
+            275,
+            307,
+            292,
+            342,
+            360,
+            368,
+            426,
+            369,
+            424,
+            409,
+            422,
+            397,
+            440,
+            428,
+            488,
+            721,
+            3027,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "20": 12356
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 2.9321963922764227,
+            "cpsc": 2.513755980861244,
+            "georgia": 2.8051163812033377,
+            "ptbxl": 2.8439072107322527
+          }
+        },
+        "positive_CD": {
+          "records": 6049,
+          "resultant_length": 0.24184522514393605,
+          "cosine_quantiles": [
+            -0.42873414163016355,
+            -0.06050937383270005,
+            0.11876045960721351,
+            0.25097795347858154,
+            0.37637967354216884,
+            0.5134212313034828,
+            0.6909982301893565
+          ],
+          "top50_sources": {
+            "ningbo": 23,
+            "ptbxl": 13,
+            "chapman_shaoxing": 8,
+            "cpsc_2018": 3,
+            "georgia": 3
+          },
+          "equal_patient_rotation_degrees": 0.9162118396245461,
+          "whole_key_rotation_degrees": 13.173489774910808,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 30.865815589413867,
+            "cpsc": 4.269948713867343,
+            "georgia": 7.9815900425807556,
+            "ptbxl": 16.630272296284684
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 47.77306748930826,
+          "start_counts": [
+            1767,
+            304,
+            219,
+            166,
+            178,
+            168,
+            182,
+            175,
+            169,
+            165,
+            166,
+            149,
+            149,
+            169,
+            141,
+            119,
+            146,
+            143,
+            134,
+            188,
+            1052,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "20": 6049
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 2.12801652892562,
+            "cpsc": 1.5957991803278688,
+            "georgia": 2.1516516516516515,
+            "ptbxl": 2.1662329212752116
+          }
+        },
+        "positive_HYP": {
+          "records": 2376,
+          "resultant_length": 0.21637697093106772,
+          "cosine_quantiles": [
+            -0.3804850801636989,
+            -0.08959828014296142,
+            0.10086264290545979,
+            0.22406715691315443,
+            0.34568624982976104,
+            0.4861239186953179,
+            0.6647960041000452
+          ],
+          "top50_sources": {
+            "georgia": 22,
+            "ptbxl": 17,
+            "ningbo": 10,
+            "cpsc_2018_extra": 1
+          },
+          "equal_patient_rotation_degrees": 0.8502317174190658,
+          "whole_key_rotation_degrees": 26.002823494877354,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 21.16452826558802,
+            "cpsc": 0.9190077661868636,
+            "georgia": 27.47268584760066,
+            "ptbxl": 17.415953298283416
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 76.79842743852923,
+          "start_counts": [
+            284,
+            47,
+            45,
+            41,
+            53,
+            62,
+            45,
+            58,
+            50,
+            53,
+            65,
+            68,
+            79,
+            73,
+            77,
+            69,
+            74,
+            76,
+            81,
+            130,
+            846,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "20": 2376
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 3.2650537634408603,
+            "cpsc": 2.9609375,
+            "georgia": 3.330357142857143,
+            "ptbxl": 3.2069988137603795
+          }
+        },
+        "normal_MI": {
+          "records": 7393,
+          "resultant_length": 0.41479174675958874,
+          "cosine_quantiles": [
+            -0.24533893923767203,
+            0.16305037002589828,
+            0.3221370496885124,
+            0.4291751421331972,
+            0.5208022407477291,
+            0.6225938298660187,
+            0.7569202424728528
+          ],
+          "top50_sources": {
+            "ningbo": 27,
+            "ptbxl": 16,
+            "chapman_shaoxing": 7
+          },
+          "equal_patient_rotation_degrees": 0.4177378005876877,
+          "whole_key_rotation_degrees": 16.523711300673337,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 16.196038784517715,
+            "cpsc": 0.5483532202520662,
+            "georgia": 3.2924694140618573,
+            "ptbxl": 13.624274599846352
+          },
+          "start_counts": [
+            384,
+            445,
+            412,
+            384,
+            364,
+            374,
+            346,
+            387,
+            320,
+            360,
+            317,
+            321,
+            296,
+            306,
+            286,
+            319,
+            329,
+            319,
+            342,
+            377,
+            405,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "20": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 2.3451470588235295,
+            "cpsc": 2.1136363636363638,
+            "georgia": 2.393258426966292,
+            "ptbxl": 2.5176102699144174
+          }
+        },
+        "normal_STTC": {
+          "records": 7393,
+          "resultant_length": 0.4122094779306391,
+          "cosine_quantiles": [
+            -0.25462944332279663,
+            0.16973789498886407,
+            0.3235792243973047,
+            0.42633450775674253,
+            0.513516484414749,
+            0.6128995219124442,
+            0.7435689451084451
+          ],
+          "top50_sources": {
+            "ningbo": 26,
+            "ptbxl": 16,
+            "chapman_shaoxing": 7,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 0.41698908169652943,
+          "whole_key_rotation_degrees": 14.114165990891195,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 16.068696556705717,
+            "cpsc": 0.5447817532675371,
+            "georgia": 3.3419834537928432,
+            "ptbxl": 13.64311359169355
+          },
+          "start_counts": [
+            254,
+            548,
+            575,
+            542,
+            467,
+            397,
+            387,
+            346,
+            312,
+            311,
+            288,
+            254,
+            260,
+            259,
+            244,
+            294,
+            311,
+            335,
+            344,
+            379,
+            286,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "20": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 2.2299264705882353,
+            "cpsc": 2.0568181818181817,
+            "georgia": 2.2397003745318353,
+            "ptbxl": 2.322004608294931
+          }
+        },
+        "normal_CD": {
+          "records": 7393,
+          "resultant_length": 0.42015670805728844,
+          "cosine_quantiles": [
+            -0.27010654327533523,
+            0.17209921924254354,
+            0.3301206840936125,
+            0.43455837140020476,
+            0.5232154758299539,
+            0.6231562600182511,
+            0.7613803555594205
+          ],
+          "top50_sources": {
+            "ningbo": 25,
+            "ptbxl": 18,
+            "chapman_shaoxing": 6,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 0.40687956926258084,
+          "whole_key_rotation_degrees": 18.133932646009846,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 15.884636972106573,
+            "cpsc": 0.5344090789593633,
+            "georgia": 3.2737271236961574,
+            "ptbxl": 13.343026794634781
+          },
+          "start_counts": [
+            122,
+            240,
+            302,
+            314,
+            280,
+            336,
+            334,
+            379,
+            327,
+            354,
+            353,
+            341,
+            335,
+            387,
+            345,
+            415,
+            419,
+            418,
+            495,
+            475,
+            422,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "20": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 2.7861029411764706,
+            "cpsc": 2.6574675324675323,
+            "georgia": 2.7659176029962547,
+            "ptbxl": 2.8165734035549703
+          }
+        },
+        "normal_HYP": {
+          "records": 7393,
+          "resultant_length": 0.4107495500587637,
+          "cosine_quantiles": [
+            -0.24675159074015302,
+            0.16810951605968288,
+            0.32300061990439105,
+            0.4242558595599548,
+            0.5116206011153568,
+            0.612643398341161,
+            0.7512159441148227
+          ],
+          "top50_sources": {
+            "ningbo": 27,
+            "ptbxl": 15,
+            "chapman_shaoxing": 8
+          },
+          "equal_patient_rotation_degrees": 0.4219346596059326,
+          "whole_key_rotation_degrees": 14.864358761639444,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 16.429779850983273,
+            "cpsc": 0.5462679654702159,
+            "georgia": 3.354594896861362,
+            "ptbxl": 13.82144370523437
+          },
+          "start_counts": [
+            375,
+            599,
+            614,
+            589,
+            489,
+            463,
+            386,
+            405,
+            356,
+            344,
+            319,
+            285,
+            272,
+            272,
+            215,
+            239,
+            277,
+            253,
+            224,
+            216,
+            201,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "20": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 1.9758088235294118,
+            "cpsc": 1.6883116883116882,
+            "georgia": 1.9269662921348314,
+            "ptbxl": 2.097103357472021
+          }
+        }
+      }
+    },
+    "7.5s": {
+      "key_max_error": 0.0,
+      "groups": {
+        "positive_MI": {
+          "records": 2041,
+          "resultant_length": 0.24280907215400305,
+          "cosine_quantiles": [
+            -0.4183328778538966,
+            -0.07384279730907789,
+            0.11906027922278659,
+            0.25565515947950357,
+            0.3732125155532938,
+            0.5252116426111799,
+            0.7080711365164731
+          ],
+          "top50_sources": {
+            "ptbxl": 47,
+            "ningbo": 1,
+            "georgia": 1,
+            "cpsc_2018_extra": 1
+          },
+          "equal_patient_rotation_degrees": 1.919618026996719,
+          "whole_key_rotation_degrees": 13.635853490886719,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 5.256147684903774,
+            "cpsc": 7.564663671683822,
+            "georgia": 0.1790484096539826,
+            "ptbxl": 44.62973092829105
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 55.454547003724905,
+          "start_counts": [
+            450,
+            118,
+            94,
+            87,
+            79,
+            89,
+            82,
+            80,
+            84,
+            136,
+            742,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "30": 2041
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 1.6618852459016393,
+            "cpsc": 1.3379310344827586,
+            "georgia": 2.5,
+            "ptbxl": 1.430350553505535
+          }
+        },
+        "positive_STTC": {
+          "records": 12356,
+          "resultant_length": 0.16489751569577968,
+          "cosine_quantiles": [
+            -0.552775853449182,
+            -0.2114075509775093,
+            0.029272471446726213,
+            0.17027802482910204,
+            0.31653381481050225,
+            0.5105681874177973,
+            0.6637748294849566
+          ],
+          "top50_sources": {
+            "ningbo": 37,
+            "chapman_shaoxing": 11,
+            "ptbxl": 2
+          },
+          "equal_patient_rotation_degrees": 0.7749751415169503,
+          "whole_key_rotation_degrees": 16.001732339163432,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 57.532677501729175,
+            "cpsc": 2.590752353442152,
+            "georgia": 14.789154912614732,
+            "ptbxl": 10.592121685350476
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 62.82496753447103,
+          "start_counts": [
+            3358,
+            417,
+            356,
+            352,
+            403,
+            443,
+            456,
+            539,
+            567,
+            896,
+            4569,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "30": 12356
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 1.4716717479674797,
+            "cpsc": 1.1638755980861244,
+            "georgia": 1.3780193236714975,
+            "ptbxl": 1.3937954164337618
+          }
+        },
+        "positive_CD": {
+          "records": 6049,
+          "resultant_length": 0.23400923790467176,
+          "cosine_quantiles": [
+            -0.39361178526828133,
+            -0.07614873764686331,
+            0.10943859035036933,
+            0.2453667803775282,
+            0.37266258367365834,
+            0.5092708933077558,
+            0.6828024703965123
+          ],
+          "top50_sources": {
+            "ningbo": 22,
+            "ptbxl": 15,
+            "chapman_shaoxing": 5,
+            "georgia": 5,
+            "cpsc_2018": 3
+          },
+          "equal_patient_rotation_degrees": 0.941292906977954,
+          "whole_key_rotation_degrees": 9.558493064500775,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 32.3810144665016,
+            "cpsc": 4.47508305150552,
+            "georgia": 8.50439129322683,
+            "ptbxl": 17.249290726217048
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 50.22801522491062,
+          "start_counts": [
+            2657,
+            383,
+            280,
+            223,
+            192,
+            180,
+            165,
+            187,
+            182,
+            219,
+            1381,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "30": 6049
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 0.9514876033057851,
+            "cpsc": 0.6214139344262295,
+            "georgia": 0.9934934934934935,
+            "ptbxl": 0.9954456733897202
+          }
+        },
+        "positive_HYP": {
+          "records": 2376,
+          "resultant_length": 0.20125543066420545,
+          "cosine_quantiles": [
+            -0.2692653511253265,
+            -0.0896168936101846,
+            0.0799342029411917,
+            0.20975829080630393,
+            0.32349158231656633,
+            0.48358571207346607,
+            0.6845614912795297
+          ],
+          "top50_sources": {
+            "georgia": 25,
+            "ptbxl": 13,
+            "ningbo": 10,
+            "cpsc_2018_extra": 2
+          },
+          "equal_patient_rotation_degrees": 0.9345205361149436,
+          "whole_key_rotation_degrees": 18.771677477997546,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 23.048031670404214,
+            "cpsc": 0.9753075387831551,
+            "georgia": 30.219988250800437,
+            "ptbxl": 18.61672846499562
+          },
+          "exclusive_vs_cooccurring_angle_degrees": 83.14826032804083,
+          "start_counts": [
+            477,
+            76,
+            63,
+            56,
+            54,
+            77,
+            70,
+            91,
+            92,
+            155,
+            1165,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "30": 2376
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 1.7118279569892474,
+            "cpsc": 1.5,
+            "georgia": 1.6947393822393821,
+            "ptbxl": 1.6043890865954924
+          }
+        },
+        "normal_MI": {
+          "records": 7393,
+          "resultant_length": 0.4033834714329747,
+          "cosine_quantiles": [
+            -0.2780649530782068,
+            0.1541201171643435,
+            0.31215659186967404,
+            0.4173005868314207,
+            0.5065637700140009,
+            0.6095991335782509,
+            0.7512415386309511
+          ],
+          "top50_sources": {
+            "ningbo": 26,
+            "ptbxl": 19,
+            "chapman_shaoxing": 5
+          },
+          "equal_patient_rotation_degrees": 0.433207947088766,
+          "whole_key_rotation_degrees": 11.527754523218997,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 16.834759017986553,
+            "cpsc": 0.5836016394602035,
+            "georgia": 3.4618920494720853,
+            "ptbxl": 14.25149532578861
+          },
+          "start_counts": [
+            790,
+            783,
+            720,
+            584,
+            685,
+            630,
+            671,
+            660,
+            662,
+            628,
+            580,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "30": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 1.1527941176470589,
+            "cpsc": 1.0860389610389611,
+            "georgia": 1.1860174781523096,
+            "ptbxl": 1.2435813034891376
+          }
+        },
+        "normal_STTC": {
+          "records": 7393,
+          "resultant_length": 0.4035394052315079,
+          "cosine_quantiles": [
+            -0.2841248814596612,
+            0.16136567726565942,
+            0.3143530678957919,
+            0.4170900074404795,
+            0.5040842542643069,
+            0.606647178107842,
+            0.743816256990574
+          ],
+          "top50_sources": {
+            "ningbo": 27,
+            "ptbxl": 17,
+            "chapman_shaoxing": 5,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 0.4302284548362838,
+          "whole_key_rotation_degrees": 10.812312713605904,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 16.739477105309557,
+            "cpsc": 0.5819589073657756,
+            "georgia": 3.4662474177701825,
+            "ptbxl": 14.240700298993866
+          },
+          "start_counts": [
+            637,
+            994,
+            869,
+            707,
+            672,
+            624,
+            629,
+            615,
+            624,
+            545,
+            477,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "30": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 1.1003676470588235,
+            "cpsc": 1.0616883116883118,
+            "georgia": 1.1495006242197254,
+            "ptbxl": 1.1607142857142858
+          }
+        },
+        "normal_CD": {
+          "records": 7393,
+          "resultant_length": 0.40720056122000026,
+          "cosine_quantiles": [
+            -0.2895612409599013,
+            0.160500209100206,
+            0.31615599771527936,
+            0.42135318451741244,
+            0.5092686776948531,
+            0.6094897447046255,
+            0.745587841627137
+          ],
+          "top50_sources": {
+            "ningbo": 29,
+            "ptbxl": 16,
+            "chapman_shaoxing": 4,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 0.427552471097645,
+          "whole_key_rotation_degrees": 13.431469563530406,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 16.60658567104549,
+            "cpsc": 0.5795544749671698,
+            "georgia": 3.4341452287126093,
+            "ptbxl": 14.067428185396109
+          },
+          "start_counts": [
+            259,
+            472,
+            554,
+            580,
+            638,
+            684,
+            728,
+            829,
+            990,
+            909,
+            750,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "30": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 1.43,
+            "cpsc": 1.4772727272727273,
+            "georgia": 1.4897003745318351,
+            "ptbxl": 1.4757241606319946
+          }
+        },
+        "normal_HYP": {
+          "records": 7393,
+          "resultant_length": 0.40187093119157075,
+          "cosine_quantiles": [
+            -0.27241574591290346,
+            0.1576872171275488,
+            0.3137132434656541,
+            0.4150340691399856,
+            0.5040986851497085,
+            0.6051554734733459,
+            0.7455374793177718
+          ],
+          "top50_sources": {
+            "ningbo": 27,
+            "ptbxl": 18,
+            "chapman_shaoxing": 4,
+            "georgia": 1
+          },
+          "equal_patient_rotation_degrees": 0.4338337823736911,
+          "whole_key_rotation_degrees": 10.726842993332957,
+          "source_removed_rotation_degrees": {
+            "chapman_ningbo": 16.929161524239703,
+            "cpsc": 0.5827915682075039,
+            "georgia": 3.4751600862684913,
+            "ptbxl": 14.351355280300146
+          },
+          "start_counts": [
+            937,
+            1106,
+            957,
+            811,
+            721,
+            628,
+            601,
+            540,
+            447,
+            364,
+            281,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "length_counts": {
+            "30": 7393
+          },
+          "source_mean_start_seconds": {
+            "chapman_ningbo": 0.9349264705882353,
+            "cpsc": 0.8831168831168831,
+            "georgia": 0.9438202247191011,
+            "ptbxl": 1.0074061882817644
+          }
+        }
+      }
+    }
+  },
+  "waveform_review": {
+    "panels": 20,
+    "unique_waveforms": 20,
+    "all_finite": true,
+    "panels_with_flat_leads": 0
+  },
+  "wall_seconds": 87.29177652997896,
+  "clinical_review_performed": false,
+  "new_evaluation_scores": false
+}

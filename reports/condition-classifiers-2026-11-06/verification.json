@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "metric_and_denominator_fields": 1310,
+  "cv_packages_verified": 18,
+  "reference_draws_verified": 10,
+  "max_parameter_prediction_error": 0.0,
+  "primary_interval_exact": true,
+  "known_patient_fold_separation_verified": true,
+  "bootstrap_group_multiplicities_exact": true,
+  "result_sha256": "40e8fdb8809b6e727680dac193d00c380d04ec0e51630bfb331252916174047b",
+  "audit_source_sha256": "5d97807bd59d9139f817de64999d419c29c0bc8a37544b99aa0c933eb0bd6f7a",
+  "new_fits": 0
+}

@@ -21,7 +21,7 @@
     "status": "fixed_development_evaluation_and_fresh_reproduction_complete",
     "protocol": "docs/pr74-corrective-evaluation-protocol-2026-10-28.md",
     "output": "outputs/pr74_corrective_evaluation_20261028",
-    "primary": "Strict 18–25 versus source/evidence/target-matched general-age 770-record cohorts; fixed 50:50 HGB/xECG score; paired SPH sensitivity under separately fitted 5% normal calibration budgets.",
+    "primary": "Strict 18\u201325 versus source/evidence/target-matched general-age 770-record cohorts; fixed 50:50 HGB/xECG score; paired SPH sensitivity under separately fitted 5% normal calibration budgets.",
     "secondary": "25k age-preferred/all-age cohorts, fixed components and matched original PTB-only reference; all reused development data.",
     "qualification": "Completed exact predecessor points/matrices, saved-model scores within 1e-12, and 32 raw measurement-cache rows.",
     "profile": "Passed actual 80-record training decode/measurement/xECG path; 622368768 peak GPU bytes; conservative 3914.6-second forecast; 32 PTB xECG vectors reproduced exactly.",
@@ -39,13 +39,13 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-10-28T22:17:43+00:00",
+  "updated_at_utc": "2026-11-06T23:15:27.645591+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
-  "authorization": "User authorized 011–013 previously and all four Astra proposals (014–017), with the cheapest likely experiment first.",
+  "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
   "nlp_25k_study": {
     "requested_at_utc_date": "2026-09-26",
-    "authorization": "User resumed the 25k NLP-inspired architecture studies after EDA on 27 September 2026. Run 011–013 sequentially under fresh GPU profiles and cost gates; no calibration/test.",
+    "authorization": "User resumed the 25k NLP-inspired architecture studies after EDA on 27 September 2026. Run 011\u2013013 sequentially under fresh GPU profiles and cost gates; no calibration/test.",
     "common_protocol": "docs/nlp-inspired-25k-study.md",
     "results_summary": "docs/nlp-inspired-25k-study-results.md",
     "experiments": [
@@ -59,7 +59,7 @@
     "initial_exposures_per_arm": 115359,
     "initial_updates_per_arm": 902,
     "status": "011_012_013_25k_development_screens_complete_audited",
-    "next_action": "Review the completed 011–013 development-only results and decide a separately frozen second-seed replication or new study; no successor GPU queue is scheduled. Calibration/test remain closed.",
+    "next_action": "Review the completed 011\u2013013 development-only results and decide a separately frozen second-seed replication or new study; no successor GPU queue is scheduled. Calibration/test remain closed.",
     "last_profile_attempt": {
       "manifest": "outputs/experiment_queue_nlp25k_011_profile_v1/queue.json",
       "manifest_sha256": "be3bfcc825e6b8ac03a97d1e33a4d9c13f2a55008efc60399a4df93fef94d1f0",
@@ -315,7 +315,7 @@
       "constraints": [
         "Preserve fixed patient splits and train-only fitting.",
         "Distinguish compact CPC from released S4 ECG-CPC and frozen from fine-tuned readouts.",
-        "Do not automatically resume deferred Experiment 010 or displace 011–013.",
+        "Do not automatically resume deferred Experiment 010 or displace 011\u2013013.",
         "One experiment at a time; require complete-path profile and 7200-second gate before GPU training.",
         "No calibration or test access in the evidence-review stage."
       ],
@@ -366,7 +366,7 @@
         "Development-selected blend"
       ],
       "primary_comparison": "Development-selected blend versus both constituents; fixed equal blend as an untuned control.",
-      "cost_estimate": "Initial cache-only screen approximately 1–15 CPU minutes if saved caches/probes verify; inferred, not measured.",
+      "cost_estimate": "Initial cache-only screen approximately 1\u201315 CPU minutes if saved caches/probes verify; inferred, not measured.",
       "cost_estimate_measured": false,
       "next_action": "Completed negative development screen at both label budgets; continue independent Experiment 015.",
       "constraints": [
@@ -499,7 +499,7 @@
         "Probe-initialized short fine-tune"
       ],
       "primary_comparison": "Probe-initialized versus random-head fine-tuning with identical backbone, schedule, sample order and optimizer settings.",
-      "cost_estimate": "Target 30–90 minutes for an initial full-label pilot including extraction; inferred and conditional on actual I/O.",
+      "cost_estimate": "Target 30\u201390 minutes for an initial full-label pilot including extraction; inferred and conditional on actual I/O.",
       "cost_estimate_measured": true,
       "next_action": "The separately frozen v9 moving/frozen encoder intervention completed; retain released probe. No automatic calibration/test or further xECG training.",
       "constraints": [
@@ -2425,5 +2425,128 @@
     "examples": "outputs/nbr02_personal_counterpart_20261028/examples.json",
     "primary_result": "A failed: -0.152 [-0.205, -0.104]; B passed: +0.080 [+0.041, +0.123]; C passed: 0.245 [0.227, 0.261]. C6 does not replace P0; the page keeps NBR-01's counterpart.",
     "next_action": "Follow-ups nbr_subspace_absorption, nbr_bounded_personalization and nbr_dual_view_page in the backlog."
+  },
+  "condition_keys_20261103": {
+    "authorization": "User authorized whole-ECG versus segment-based condition keys in this session.",
+    "status": "complete_negative_notebook_executed",
+    "protocol": "docs/condition-keys-protocol-2026-11-03.md",
+    "output": "outputs/condition_keys_20261103_v2",
+    "primary": "SPH evaluation macro one-versus-rest AUROC, selected region keys minus whole-record keys; 2000 whole-patient bootstrap draws, seed 20261103; gain >= 0.01, positive lower interval, and point not below fixed-window control.",
+    "scope": "CPU cached contextual xECG tokens; existing four superclass annotations; no SAM execution, new label, closed test or GPU.",
+    "next_action": "Completed. Whole-record keys outperformed selected regions. No pipeline promotion or follow-up run scheduled; retain closed tests.",
+    "protocol_commit": "3aec903",
+    "source_commit": "fb33d1494fca4746351ef5008208439d08e9c302",
+    "notebook": "notebooks/ConditionKeys.ipynb",
+    "execution_correction": "docs/condition-keys-execution-v2-2026-11-03.md",
+    "failed_attempt": "outputs/condition_keys_20261103/failure.json",
+    "results": "docs/condition-keys-results-2026-11-03.md",
+    "aggregate": "reports/condition-keys-2026-11-03/aggregate.json",
+    "verification": "reports/condition-keys-2026-11-03/notebook-verification.json",
+    "primary_result": {
+      "difference": -0.12207150381777698,
+      "ci_low": -0.13355022017099533,
+      "ci_high": -0.11100802328567146,
+      "draws": 2000,
+      "skipped_draws": 0,
+      "seed": 20261103
+    },
+    "decision": {
+      "gain_at_least_0.01": false,
+      "lower_95_above_zero": false,
+      "at_least_fixed_window_point": false,
+      "advance": false,
+      "pipeline_promoted": false
+    },
+    "wall_seconds": 148.9856874071993,
+    "validation": {
+      "cpu_passed": 1557,
+      "cpu_skipped": 2,
+      "cpu_seconds": 78.16,
+      "new_tests_passed": 15,
+      "ruff": "passed",
+      "notebook_cells": 34,
+      "notebook_code_cells": 17,
+      "notebook_saved_output_checks": 154
+    }
+  },
+  "long_section_keys_20261106": {
+    "status": "completed_negative_guard",
+    "protocol": "docs/long-section-keys-protocol-2026-11-06.md",
+    "output": "outputs/long_section_keys_20261106",
+    "authorization": "User requested bigger sections and ECG-JEPA-inspired structure.",
+    "scope": "2.5/5/7.5-second contextual xECG regions and temporal median control; direct CroPA not supported by lead-combined cache.",
+    "report": "docs/long-section-keys-results-2026-11-06.md",
+    "notebook": "notebooks/LongSectionKeys.ipynb",
+    "primary": {
+      "difference": 0.10580548272155277,
+      "ci_low": 0.09621313424922696,
+      "ci_high": 0.11589283685882013,
+      "draws": 2000,
+      "skipped_draws": 0,
+      "seed": 20261103
+    },
+    "versus_whole": {
+      "difference": -0.016266021096224215,
+      "ci_low": -0.019793460268151434,
+      "ci_high": -0.013137343271625834,
+      "draws": 2000,
+      "skipped_draws": 0,
+      "seed": 20261103
+    },
+    "decision": {
+      "gain_at_least_0.01": true,
+      "lower_95_above_zero": true,
+      "within_0.01_of_whole_point": false,
+      "advance": false
+    },
+    "next_action": "No promotion. Lead-preserving JEPA comparison requires separate prospective extraction protocol.",
+    "verification": "reports/long-section-keys-2026-11-06/verification.json"
+  },
+  "reference_ecg_audit_20261106": {
+    "status": "completed_descriptive",
+    "protocol": "docs/reference-ecg-audit-protocol-2026-11-06.md",
+    "output": "outputs/reference_ecg_audit_20261106",
+    "authorization": "User requested thorough analysis of averaging references, including ECG examples.",
+    "scope": "Training-only composition, key reconstruction, source/patient geometry and 20 anonymous waveform panels; no new evaluation scores.",
+    "report": "docs/reference-ecg-audit-results-2026-11-06.md",
+    "notebook": "notebooks/ReferenceECGAudit.ipynb",
+    "private_waveform_notebook": "outputs/reference_ecg_audit_20261106/ReferenceWaveforms.ipynb",
+    "atlas": "outputs/reference_ecg_audit_20261106/ReferenceECGAtlas.pdf",
+    "summary": "48 key entries reconstructed; 20 training waveforms hash-verified. Large source-removal rotations and co-annotation mixtures; short selection increases coherence despite worse transfer. No new clinical labels or evaluation scores.",
+    "verification": "reports/reference-ecg-audit-2026-11-06/verification.json"
+  },
+  "condition_classifiers_20261106": {
+    "status": "completed_positive_ranking_with_rare_state_limits",
+    "protocol": "docs/condition-classifier-comparison-protocol-2026-11-06.md",
+    "output": "outputs/condition_classifiers_20261106",
+    "notebook": "notebooks/11-jr-ecg-condition-keys-and-classification.ipynb",
+    "authorization": "User requested JR consolidated notebook, multiclass comparison and deeper validation.",
+    "scope": "Joint-state multinomial and independent-label logistic models on unchanged normalized xECG embeddings; grouped training-only CV; ten fixed source-family reference-group bootstrap refits.",
+    "primary": "Joint logistic minus whole-record prototype macro AUROC; gain >=0.01 and paired 95% lower bound >0; no clinical promotion.",
+    "negative_control_protocol": "docs/condition-classifier-negative-control-2026-11-06.md",
+    "report": "docs/condition-classifier-comparison-results-2026-11-06.md",
+    "aggregate": "reports/condition-classifiers-2026-11-06/aggregate.json",
+    "negative_control": "reports/condition-classifiers-2026-11-06/negative-control.json",
+    "verification": "reports/condition-classifiers-2026-11-06/verification.json",
+    "control_verification": "reports/condition-classifiers-2026-11-06/control-verification.json",
+    "notebook_verification": "reports/condition-classifiers-2026-11-06/jr-notebook-verification.json",
+    "source_commit": "aec367c40a6f720ce899bd22a1f55cee45f58ba8",
+    "primary_result": {
+      "difference": 0.061647986737112165,
+      "ci_low": 0.05303135482031598,
+      "ci_high": 0.07092625375492638,
+      "draws": 2000,
+      "skipped_draws": 0,
+      "seed": 20261103
+    },
+    "decision": {
+      "gain_at_least_0.01": true,
+      "lower_95_above_zero": true,
+      "ranking_improvement": true,
+      "clinical_pipeline_promoted": false
+    },
+    "summary": "Joint macro AUROC 0.957750 vs whole keys 0.896102; independent 0.960845; all-other-negative keys 0.910448. All ten reference refits favor classifiers. Exact joint-state accuracy 83.95% but supported-state macro recall 31.97%; rare combinations remain poorly recovered.",
+    "next_action": "No clinical promotion or new run scheduled. Review rare-combination limitations and separately freeze permitted-site replication or structured-label comparisons.",
+    "delivery_verification": "reports/condition-classifiers-2026-11-06/delivery-verification.json"
   }
 }

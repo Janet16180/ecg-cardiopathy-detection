@@ -24,6 +24,7 @@ derived from these notebooks is described in [clean cohorts v1](../docs/clean-co
 | `08-jr-echonext.ipynb` | EchoNext (credentialed) | Splits, echo-based labels and missing values, partially filled leads, filtering |
 | `09-jr-ningbo.ipynb` | Ningbo (Challenge 2021) | SNOMED codes and the binary label, age placeholders, zero precordial leads in children, filtering, copies of Chapman records |
 | `10-jr-cohorts-v2.ipynb` | Training candidates | CODE-15 cleaning and amplitude, and the source, age, sex, label and pending composition of the nested 25k-1M cohorts |
+| [`11-jr-ecg-condition-keys-and-classification.ipynb`](11-jr-ecg-condition-keys-and-classification.ipynb) | Frozen 25k training pool and SPH development | Consolidated KEY-01–04: condition keys, longer sections, clusters, reference audit, multiclass comparison, grouped model selection and reference-sampling stability |
 
 The MIMIC and EchoNext notebooks show aggregate statistics only (credentialed data), so their outputs can
 be kept in Git. Findings for the project from notebooks 07 and 08 are in

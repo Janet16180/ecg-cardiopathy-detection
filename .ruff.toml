@@ -2,3 +2,7 @@ extend = "pyproject.toml"
 
 [lint.isort]
 known-third-party = ["conftest"]
+
+[lint.extend-per-file-ignores]
+# KEY-03's receipt pins these exact bytes; preserve its recorded import order.
+"ecg_experiment/reference_ecg_audit.py" = ["I001"]

@@ -315,34 +315,39 @@ Space B in the two test sets, positive / negative / undefined:
   - SPH evaluation-half STTC changed from 2,480 / 10,218 / 0 to 2,480 / 10,176 / 42.
   - Fold 10 HYP changed from 262 / 1,917 / 19 to 262 / 1,912 / 24.
 
-Space-B cells that changed in the other evaluation sets:
+History v1 -> v2 -> v3 of every space-B cell that changed in a test set or a per-source validation set
+(positive / negative / undefined). The SPH evaluation half changed in no build.
 
-| set | condition | v1 | v3 |
-|---|---|---:|---:|
-| validation ptbxl | left_axis_deviation | 121 / 1,694 / 368 | 121 / 751 / 1,311 |
-| validation ptbxl | lvh | 210 / 1,946 / 27 | 210 / 1,940 / 33 |
-| validation ptbxl | st_depression | 101 / 2,082 / 0 | 101 / 1,772 / 310 |
-| validation ptbxl | t_wave_abnormality | 260 / 1,923 / 0 | 260 / 1,638 / 285 |
-| validation ningbo | premature_ventricular_complex | 220 / 6,730 / 22 | 220 / 6,718 / 34 |
-| validation ningbo | st_depression | 231 / 6,741 / 0 | 231 / 5,967 / 774 |
-| validation ningbo | t_wave_abnormality | 1,305 / 5,020 / 647 | 1,305 / 4,931 / 736 |
-| validation chapman_shaoxing | st_depression | 78 / 1,958 / 0 | 78 / 1,807 / 151 |
-| validation georgia | mi_any | 0 / 2,043 / 0 | 0 / 0 / 2,043 |
-| validation georgia | t_wave_abnormality | 544 / 1,218 / 281 | 544 / 1,110 / 389 |
-| validation cpsc_2018_extra | af_or_flutter | 38 / 593 / 0 | 49 / 604 / 0 |
-| validation cpsc_2018_extra | complete_rbbb | 18 / 606 / 7 | 20 / 625 / 8 |
-| validation cpsc_2018_extra | first_degree_av_block | 18 / 613 / 0 | 20 / 633 / 0 |
-| validation cpsc_2018_extra | incomplete_rbbb | 5 / 619 / 7 | 5 / 639 / 9 |
-| validation cpsc_2018_extra | lafb | 0 / 631 / 0 | 0 / 0 / 653 |
-| validation cpsc_2018_extra | left_axis_deviation | 0 / 631 / 0 | 0 / 0 / 653 |
-| validation cpsc_2018_extra | lvh | 30 / 601 / 0 | 33 / 620 / 0 |
-| validation cpsc_2018_extra | mi_any | 267 / 364 / 0 | 274 / 379 / 0 |
-| validation cpsc_2018_extra | premature_ventricular_complex | 25 / 606 / 0 | 27 / 626 / 0 |
-| validation cpsc_2018_extra | sinus_arrhythmia | 2 / 629 / 0 | 2 / 651 / 0 |
-| validation cpsc_2018_extra | sinus_bradycardia | 6 / 576 / 49 | 6 / 598 / 49 |
-| validation cpsc_2018_extra | sinus_tachycardia | 65 / 566 / 0 | 65 / 588 / 0 |
-| validation cpsc_2018_extra | st_depression | 8 / 623 / 0 | 8 / 222 / 423 |
-| validation cpsc_2018_extra | t_wave_abnormality | 5 / 410 / 216 | 5 / 225 / 423 |
+| set | condition | v1 | v2 | v3 |
+|---|---|---:|---:|---:|
+| test ptbxl (fold 10) | left_axis_deviation | 134 / 1,670 / 394 | 134 / 704 / 1,360 | 134 / 704 / 1,360 |
+| test ptbxl (fold 10) | lvh | 214 / 1,964 / 20 | 214 / 1,959 / 25 | 214 / 1,959 / 25 |
+| test ptbxl (fold 10) | st_depression | 101 / 2,097 / 0 | 101 / 1,834 / 263 | 101 / 1,797 / 300 |
+| test ptbxl (fold 10) | t_wave_abnormality | 255 / 1,943 / 0 | 255 / 1,664 / 279 | 255 / 1,664 / 279 |
+| validation ptbxl | left_axis_deviation | 121 / 1,694 / 368 | 121 / 751 / 1,311 | 121 / 751 / 1,311 |
+| validation ptbxl | lvh | 210 / 1,946 / 27 | 210 / 1,940 / 33 | 210 / 1,940 / 33 |
+| validation ptbxl | st_depression | 101 / 2,082 / 0 | 101 / 1,813 / 269 | 101 / 1,772 / 310 |
+| validation ptbxl | t_wave_abnormality | 260 / 1,923 / 0 | 260 / 1,638 / 285 | 260 / 1,638 / 285 |
+| validation ningbo | premature_ventricular_complex | 220 / 6,730 / 22 | 220 / 6,718 / 34 | 220 / 6,718 / 34 |
+| validation ningbo | st_depression | 231 / 6,741 / 0 | 231 / 5,967 / 774 | 231 / 5,967 / 774 |
+| validation ningbo | t_wave_abnormality | 1,305 / 5,020 / 647 | 1,305 / 4,931 / 736 | 1,305 / 4,931 / 736 |
+| validation chapman_shaoxing | st_depression | 78 / 1,958 / 0 | 78 / 1,807 / 151 | 78 / 1,807 / 151 |
+| validation georgia | mi_any | 0 / 2,043 / 0 | 0 / 0 / 2,043 | 0 / 0 / 2,043 |
+| validation georgia | t_wave_abnormality | 544 / 1,218 / 281 | 544 / 1,110 / 389 | 544 / 1,110 / 389 |
+| validation cpsc_2018_extra | af_or_flutter | 38 / 593 / 0 | 49 / 604 / 0 | 49 / 604 / 0 |
+| validation cpsc_2018_extra | complete_rbbb | 18 / 606 / 7 | 20 / 625 / 8 | 20 / 625 / 8 |
+| validation cpsc_2018_extra | first_degree_av_block | 18 / 613 / 0 | 20 / 633 / 0 | 20 / 633 / 0 |
+| validation cpsc_2018_extra | incomplete_rbbb | 5 / 619 / 7 | 5 / 639 / 9 | 5 / 639 / 9 |
+| validation cpsc_2018_extra | lafb | 0 / 631 / 0 | 0 / 0 / 653 | 0 / 0 / 653 |
+| validation cpsc_2018_extra | left_axis_deviation | 0 / 631 / 0 | 0 / 0 / 653 | 0 / 0 / 653 |
+| validation cpsc_2018_extra | lvh | 30 / 601 / 0 | 33 / 620 / 0 | 33 / 620 / 0 |
+| validation cpsc_2018_extra | mi_any | 267 / 364 / 0 | 274 / 379 / 0 | 274 / 379 / 0 |
+| validation cpsc_2018_extra | premature_ventricular_complex | 25 / 606 / 0 | 27 / 626 / 0 | 27 / 626 / 0 |
+| validation cpsc_2018_extra | sinus_arrhythmia | 2 / 629 / 0 | 2 / 651 / 0 | 2 / 651 / 0 |
+| validation cpsc_2018_extra | sinus_bradycardia | 6 / 576 / 49 | 6 / 598 / 49 | 6 / 598 / 49 |
+| validation cpsc_2018_extra | sinus_tachycardia | 65 / 566 / 0 | 65 / 588 / 0 | 65 / 588 / 0 |
+| validation cpsc_2018_extra | st_depression | 8 / 623 / 0 | 8 / 222 / 423 | 8 / 222 / 423 |
+| validation cpsc_2018_extra | t_wave_abnormality | 5 / 410 / 216 | 5 / 225 / 423 | 5 / 225 / 423 |
 
 The `chapman_ningbo` and `cpsc` family rows change accordingly [`before_after_B.csv`]. The CPSC-Extra
 positive increases come from the 22 validation records the duplicate rule now keeps; no label rule added a
@@ -679,6 +684,7 @@ Checks:
 
 - `ruff check ecg_experiment scripts tests conftest.py` passed.
 - `pytest tests/test_mlc_labels.py tests/test_mlc01_dataset.py`: 44 passed at `41845c2`.
-- The full suite in the worktree, run at the v1 commit, gave 1,616 passed, 2 skipped and 1 failed. The
-  failing test is `tests/test_xecg_encoder_motion_v11.py::test_graph_rejects_missing_and_conflicting_leaves`;
-  it rejects the worktree's symlinked `outputs` and passes in the main checkout.
+- The full suite, run once from the worktree at `41845c2` with the final report: 1,629 passed, 2 skipped,
+  1 failed. The failing test is `tests/test_xecg_encoder_motion_v11.py::test_graph_rejects_missing_and_conflicting_leaves`;
+  it rejects the worktree's symlinked `outputs` (it failed the same way at the v1 commit and passes in the main
+  checkout).

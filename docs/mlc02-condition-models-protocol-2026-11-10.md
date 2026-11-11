@@ -128,3 +128,20 @@ Logistic fits run with the default OpenBLAS kernel, which reproduces KEY-04's co
 exactly on this machine; the receipt records the kernel and thread settings. The features and
 waveform cache cover all 100,158 candidate records; models use the 99,167 included in the final
 dataset build (`included_v4`).
+
+## Addendum 2 (10 November 2026, after validation scores, before any test prediction)
+
+The calibration fit of the scoring code (`mlc02_evaluation.logistic_fit`, full Newton steps from
+the null model) does not converge when a score separates the classes well, although the maximum
+likelihood estimate exists. On validation it fails for 13 of the 140 pooled candidate-condition
+Platt fits and for 80 of 610 entering source-level calibration slopes. The scoring module stays
+as it is. A new module (`ecg_experiment/mlc02_calibration.py`) fits the same model by damped
+Newton steps; it agrees with the scoring code wherever that converges and with scikit-learn's
+unpenalised fit.
+
+1. The validation Platt calibration and the SPH calibration-half refit use the damped fit.
+2. The calibration slope and joint intercept reported as the result are those of the damped
+   fit, with bootstrap intervals on the same resamples. The scoring code's values are listed
+   beside them, with the number that failed.
+3. Nothing else changes. Calibration is a secondary reading; the selection metric, the
+   confirmatory comparison and the thresholds do not use it.

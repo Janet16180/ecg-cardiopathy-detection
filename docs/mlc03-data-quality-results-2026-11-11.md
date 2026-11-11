@@ -22,7 +22,8 @@ is pending (validación pendiente).
      Most are noise flags, which describe real defects of degree [Part A].
    - Four defects mean the stored samples are not a measurement: missing samples (87 records, 82 of them
      Ningbo), a held start or end (15), samples at the 16-bit rail (116), and derived leads inconsistent with
-     I and II (47, mostly 16-bit wrap-around in CPSC 2018 and CPSC-Extra) [Part A].
+     I and II (47, of which 41 in CPSC 2018 and CPSC-Extra, where most plotted cases were a 16-bit wrap-around)
+     [Part A].
    - Defects specific to one source:
      - Ningbo: constant chest leads in 4.3% of its records, and most of the contact loss.
      - PTB-XL: every record holds all leads for the last 90-130 ms.

@@ -969,7 +969,9 @@ def train_and_record(seed: int, family: str | None, device: str, work: Path = WO
             device,
         )
         np.savez(
-            directory / "held_out.npz", record_key=scores["record_key"], probability=scores["probability"]
+            directory / "held_out.npz",
+            record_key=np.asarray(scores["record_key"], dtype=str),
+            probability=scores["probability"],
         )
         record |= {"held_out_records": int(selected["held_out"].sum()), "held_out": scores["table"]}
     record |= {

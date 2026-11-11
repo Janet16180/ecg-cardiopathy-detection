@@ -502,3 +502,49 @@ def review_sample(flags: pd.DataFrame, flag: str, seed: int, size: int) -> tuple
     pick = rng.choice(len(flagged), size=min(size, len(flagged)), replace=False)
     control = rng.choice(len(unflagged), size=min(size, len(unflagged)), replace=False)
     return flagged[pick].tolist(), unflagged[control].tolist()
+
+
+def draw_pair_sheet(pairs: list[dict[str, Any]], path: Path, title: str,
+                    leads: tuple[str, ...] = ("I", "II", "V2"), columns: int = 2, rows: int = 4) -> None:
+    """
+    Overlay candidate near-duplicate pairs: a few leads of both records, the second shifted by the lag.
+
+    Parameters
+    ----------
+    pairs : list[dict[str, Any]]
+        ``first`` and ``second`` (float ``(12, samples)`` mV), ``lag`` (samples to add to a time of the first
+        record to reach the same beat in the second) and ``title``.
+    path : Path
+        Destination PNG.
+    title : str
+        Sheet title.
+    leads : tuple[str, ...]
+        Leads drawn.
+    columns, rows : int
+        Grid of pair panels.
+    """
+    figure = plt.figure(figsize=SHEET_INCHES)
+    grid = figure.add_gridspec(rows, columns, hspace=0.3, wspace=0.08, left=0.03, right=0.995, top=0.96,
+                               bottom=0.02)
+    for number, pair in enumerate(pairs[: columns * rows]):
+        cell = GridSpecFromSubplotSpec(len(leads), 1, subplot_spec=grid[number // columns, number % columns],
+                                       hspace=0.0)
+        first, second, lag = pair["first"], pair["second"], int(pair["lag"])
+        time = np.arange(first.shape[1]) / FS
+        for row, lead in enumerate(leads):
+            axis = figure.add_subplot(cell[row, 0])
+            position = LEADS.index(lead)
+            axis.plot(time, first[position] - np.nanmedian(first[position]), lw=0.6, color="black")
+            index = np.arange(first.shape[1]) + lag
+            valid = (index >= 0) & (index < second.shape[1])
+            shifted = np.full(first.shape[1], np.nan)
+            shifted[valid] = second[position, index[valid]]
+            axis.plot(time, shifted - np.nanmedian(shifted), lw=0.6, color="crimson", ls="--")
+            axis.text(0.002, 0.5, lead, transform=axis.transAxes, fontsize=7, va="center", fontweight="bold")
+            axis.tick_params(labelsize=5, length=2, labelbottom=row == len(leads) - 1)
+            if row == 0:
+                axis.set_title(pair["title"], fontsize=7, loc="left")
+    figure.suptitle(title, fontsize=10, x=0.01, ha="left")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    figure.savefig(path, dpi=SHEET_DPI)
+    plt.close(figure)

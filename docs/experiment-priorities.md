@@ -77,85 +77,97 @@ penalty; one that ranks high earns a protocol like any other.
 | 12 | mlc02_incomplete_rbbb_sph | analysis | Incomplete RBBB at SPH against the training sources | 3 | 0.6 | 2.5 | 1.14 | - |
 | 13 | mlc02_local_refit_intervals | analysis | Intervals for SPH-refitted condition thresholds that include the refit | 2 | 0.8 | 2.0 | 1.13 | - |
 | 14 | cohorts_v3_cpc_caches | repo | 250 Hz CPC caches of cohorts v3 tiers 25k-200k | 3 | 0.8 | 7.0 | 1.09 | - |
-| 15 | s4_supervised | experiment | Supervised S4 from scratch at matched labels (100 Hz, 2.5 s crops) | 4 | 0.8 | 9.0 | 1.07 | - |
-| 16 | hybrid_rare_conditions | experiment | Distance-from-normal as a safety net only for conditions with few labels | 3 | 0.6 | 3.0 | 1.04 | - |
-| 17 | attention_readout | experiment | Attention-pooling frozen head on encoder tokens (CPC, released ECG-CPC, xECG) | 4 | 0.7 | 8.0 | 0.99 | - |
-| 18 | challenge_data_quality_note | repo | Short write-up of the Challenge 2021 and CODE-15 data problems | 3 | 0.8 | 6.0 | 0.98 | - |
-| 19 | ecgad_benchmark_readout | experiment | The 026 score on the public PTB-XL anomaly-detection split | 3 | 0.6 | 3.5 | 0.96 | - |
-| 20 | nbr_timing_counterpart | experiment | Counterpart that also normalizes QRS duration and QT | 3 | 0.6 | 3.6 | 0.95 | - |
-| 21 | shared_readout_module | repo | One shared frozen-readout module for new experiments | 2 | 0.8 | 3.0 | 0.92 | - |
-| 22 | echo_multitask_transfer | experiment | Do ECG-abnormality labels reduce the echo labels needed? | 3 | 0.6 | 4.0 | 0.90 | - |
-| 23 | key06_undefined_labels_in_normals | analysis | Undefined labels among the records used as normal ECGs | 3 | 0.6 | 4.0 | 0.90 | - |
-| 24 | ningbo_record_number_structure | analysis | What the Ningbo record numbers encode | 3 | 0.6 | 4.0 | 0.90 | - |
-| 25 | near_duplicates | repo | Near-duplicate pass across Challenge sources | 3 | 0.7 | 6.0 | 0.86 | - |
-| 26 | mlc02_logistic_wider_c | experiment | Wider C grid for the MLC-02 logistic candidates | 2 | 0.5 | 1.5 | 0.82 | - |
-| 27 | quality_policy_v2 | repo | Quality policy v2 review flags (edge zero runs, short dropouts) | 2 | 0.8 | 4.0 | 0.80 | - |
-| 28 | device_control | experiment | Device-controlled probes (drop or balance CS100 3) | 2 | 0.6 | 2.3 | 0.79 | - |
-| 29 | nbr_limb_lead_consistent | experiment | Limb-lead-consistent replacement for NBR attributions | 2 | 0.6 | 2.4 | 0.77 | - |
-| 30 | full_pool_fixed_heads | experiment | Fixed heads on the full 28,568-record admitted pool | 2 | 0.5 | 1.7 | 0.77 | - |
-| 31 | prototype_head | experiment | Learned prototype head anchored to real training ECGs | 4 | 0.6 | 10.0 | 0.76 | - |
-| 32 | ecg_age_gap | wild | ECG heart age: predicted minus real age as a risk signal | 3 | 0.5 | 4.0 | 0.75 | - |
-| 33 | highpass_ablation | experiment | Zero-phase 0.5 Hz high-pass as a harmonization arm | 3 | 0.6 | 6.5 | 0.71 | - |
-| 34 | vcg_qrst_angle | wild | Vectorcardiogram features: spatial QRS-T angle and loop shape | 3 | 0.6 | 7.0 | 0.68 | - |
-| 35 | superclass_mixture_resampling | experiment | Training-resampling stability of the superclass mixture heads | 2 | 0.6 | 3.5 | 0.64 | - |
-| 36 | domain_adversarial | wild | Device-adversarial readout (gradient reversal against source) | 3 | 0.5 | 6.0 | 0.61 | - |
-| 37 | crop_tta | experiment | 2.5 s crops with test-time averaging for frozen readouts | 2 | 0.6 | 4.0 | 0.60 | - |
-| 38 | e017_second_seed | experiment | 017 morphology-template second-seed replication | 2 | 0.6 | 4.0 | 0.60 | - |
-| 39 | key06_baseline_drift_covariate | analysis | A baseline-drift measure below the baseline_wander flag threshold | 2 | 0.6 | 4.0 | 0.60 | - |
-| 40 | mlc03_rule_effect_by_rule | analysis | Which v5 rules move validation scores, and through training or through scoring | 2 | 0.6 | 4.2 | 0.59 | - |
-| 41 | mlc03_long_record_window_labels | analysis | Window-based labels and flags for recordings longer than 10 s | 2 | 0.6 | 5.0 | 0.54 | - |
-| 42 | mlc03_input_gap_masking | experiment | Interpolate or mask missing samples and flat leads in the model input pipelines | 3 | 0.6 | 12.0 | 0.52 | - |
-| 43 | nbr_bounded_personalization | experiment | Smaller clip bound or rank for the personalized counterpart, chosen off SPH | 2 | 0.5 | 4.1 | 0.49 | - |
-| 44 | xecg_learned_attention_readout | experiment | Learned attention pooling over the cached frozen xECG tokens | 2 | 0.5 | 4.8 | 0.46 | - |
-| 45 | mlc03_p_wave_pr_measurement | analysis | Better P-wave detection and PR measurement in the Challenge sources | 3 | 0.5 | 13.0 | 0.42 | - |
-| 46 | mlc03_electrode_reversal_rules | analysis | Electrode-reversal rules, including right arm-left leg and precordial swaps | 2 | 0.5 | 7.0 | 0.38 | - |
-| 47 | llm_measurement_reader | wild | LLM reading PTB-XL measurements as text | 2 | 0.4 | 6.0 | 0.33 | - |
-| 48 | cpc_pretrain_cohorts_v2 | experiment | CPC continued pretraining on quality-first cohorts v2 | 2 | 0.5 | 11.0 | 0.30 | - |
-| 49 | raw_signal_detector_baseline | experiment | A raw-signal one-class detector trained on the same normals | 2 | 0.5 | 11.5 | 0.29 | - |
-| 50 | tsfm_transfer | wild | Frozen general time-series or audio foundation models as ECG encoders | 2 | 0.4 | 8.0 | 0.28 | - |
-| 51 | vcg_rotation_ssl | wild | Heart-axis rotation augmentation via VCG projection | 3 | 0.3 | 16.0 | 0.22 | - |
-| 52 | core_lead_masking | experiment | CoRe-style lead-drop masking in CPC pretraining | 2 | 0.4 | 14.0 | 0.21 | - |
-| 53 | clustering_multisource | experiment | Source-controlled clustering of multi-source embeddings | 1 | 0.4 | 7.0 | 0.15 | - |
-| 54 | report_alignment | experiment | ECG-report alignment with PTB-XL cardiologist reports | 2 | 0.3 | 25.0 | 0.12 | - |
-| 55 | cpc_simdino_resource_plan040 | repo | Prospective resource plan for the fixed Transformer objective factorial | 3 | 0.9 | 0.6 | 3.49 | @fresh_compute_budget_authorization |
-| 56 | final_frozen_test | experiment | One-time confirmatory test of the frozen pipeline on untouched data | 5 | 0.9 | 3.0 | 3.12 | @user_freeze_decision |
-| 57 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
-| 58 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
-| 59 | mlc03_clinical_review | analysis | Clinical review of the MLC-03 suspected label errors and source-coding differences | 5 | 0.7 | 4.5 | 1.98 | @clinician_available |
-| 60 | wave_grounding_context_control | repo | Qualify time-grounding semantics and strong context/option controls | 4 | 0.7 | 2.1 | 1.93 | @prospective_time_grounding_qualification |
-| 61 | avance5_specialist_region_labels | experiment | Specialist lead, wave and interval labels for the normal-reference explanation display | 5 | 0.9 | 7.0 | 1.80 | @cardiologist_region_annotations_and_agreed_endpoint |
-| 62 | nbr_dual_view_page | analysis | Page design: population counterpart for flips, personalized ranking for leads | 2 | 0.6 | 0.5 | 1.70 | @user_decision |
-| 63 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
-| 64 | measurement_multisource_training | experiment | Human-read multisource training for the CPU measurement screen | 4 | 0.8 | 4.0 | 1.60 | @prospective_multisource_protocol, @local_challenge_training_manifests |
-| 65 | reference_atlas_quality_review | analysis | Clinician quality review of the fixed reference atlas | 3 | 0.5 | 1.0 | 1.50 | @clinician_available |
-| 66 | lead_grounding_membership_followup | experiment | Prospective exact-membership test of frozen lead-grounding models | 3 | 0.6 | 1.6 | 1.45 | @prospective_membership_protocol_and_patient_role |
-| 67 | condition_keys_fewshot_addition | experiment | Few-shot addition of condition keys without encoder retraining | 3 | 0.7 | 2.3 | 1.38 | @prospective_key_addition_protocol |
-| 68 | reference_source_coannotation_control | experiment | Source and co-annotation controls for condition reference keys | 3 | 0.7 | 2.3 | 1.38 | @prospective_reference_control_protocol |
-| 69 | mlc03_sph_storage_check | analysis | SPH aggregate check of identity residuals and large values | 3 | 0.7 | 2.5 | 1.33 | @user_approval_sph_aggregate_check |
-| 70 | avance5_training_only_regularized_finetune | experiment | Training-only selection of regularized full-backbone xECG adaptation | 3 | 0.8 | 3.8 | 1.23 | @new_training_only_protocol_and_measured_full_io_budget |
-| 71 | nbr_page_clinician_review | analysis | Clinician review of the NBR page examples | 3 | 0.4 | 1.0 | 1.20 | @clinician_available |
-| 72 | condition_classifier_development_site_replication | experiment | Replicate learned-readout advantage on another permitted development-site role | 4 | 0.6 | 4.0 | 1.20 | @prospective_permitted_site_and_cache_qualification |
-| 73 | mlc02_space_a_key04 | experiment | MLC-02 condition outputs mapped to space A beside KEY-04 | 3 | 0.6 | 2.3 | 1.19 | @prospective_space_a_mapping_rule |
-| 74 | mlc03_cleaned_pipeline_final_test | experiment | One final test of the frozen cleaned 14-condition pipeline on the Challenge test groups | 5 | 0.7 | 10.5 | 1.08 | @user_freeze_decision |
-| 75 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
-| 76 | condition_keys_lead_preserving_jepa | experiment | Lead-preserving frozen ECG-JEPA condition keys | 3 | 0.7 | 4.5 | 0.99 | @prospective_lead_preserving_protocol_and_real_profile |
-| 77 | condition_keys_reference_stability | experiment | Patient-resampling stability of whole-record condition keys | 2 | 0.7 | 2.0 | 0.99 | @prospective_key_stability_protocol |
-| 78 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
-| 79 | condition_classifier_rare_combinations | experiment | Training-selected structured-label methods for rare annotation combinations | 3 | 0.6 | 4.0 | 0.90 | @prospective_rare_combination_protocol |
-| 80 | pr74_training_sampling_uncertainty | experiment | Training-sample uncertainty for the strict young matched comparison | 3 | 0.6 | 5.0 | 0.80 | @prospective_resampling_protocol |
-| 81 | mlc03_sph_rhythm_code_evidence | repo | SPH sinus and paced-rhythm evidence in the label-quality code | 2 | 0.7 | 3.2 | 0.78 | mlc03_clinical_review |
-| 82 | mlc02_source_shift_analysis | experiment | Why the MLC-02 waveform models lose at SPH while winning at PTB-XL fold 10 | 3 | 0.5 | 4.0 | 0.75 | @prospective_source_shift_analysis_protocol |
-| 83 | key06_artefact_rule_minimum | analysis | A minimum flagged-member count for the cluster artefact rule | 2 | 0.7 | 3.5 | 0.75 | @prospective_key06_amendment |
-| 84 | mlc02_finetune_lofo | experiment | Leave-one-family-out for the fine-tuned xECG candidate F | 3 | 0.6 | 8.5 | 0.74 | @prospective_f_lofo_protocol_and_real_profile |
-| 85 | key06_labels_outside_14 | experiment | Labels outside the 14 conditions that the xECG embedding already separates | 4 | 0.6 | 10.5 | 0.74 | @clinician_available |
-| 86 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
-| 87 | pr74_prospective_student_workflow | experiment | Prospective student ECG quality and local-normal referral workflow | 5 | 0.5 | 13.0 | 0.69 | @cardiologist_target_review, @prospective_student_acquisition, @user_pipeline_freeze |
-| 88 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
-| 89 | condition_keys_deep_key05 | experiment | In-depth condition keys on xECG embeddings for the 14 conditions | 4 | 0.6 | 19.0 | 0.55 | @mlc03_dataset_v5, @prospective_key05_protocol |
-| 90 | mlc02_per_seed_test | experiment | Per-seed test results of the MLC-02 network candidates | 1 | 0.8 | 2.6 | 0.50 | @user_ruling_on_further_test_scoring |
-| 91 | mlc02_sph_window_mean | experiment | Window mean over SPH recordings longer than 10 s for the MLC-02 candidates | 2 | 0.6 | 6.5 | 0.47 | @prospective_window_mean_protocol |
-| 92 | mlc02_lofo_selection_rule | experiment | Leave-one-family-out as the selection metric for a new-hospital target | 4 | 0.4 | 14.0 | 0.43 | @prospective_selection_protocol, mlc02_finetune_lofo |
-| 93 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
+| 15 | key05_v5_flat_record_and_bradycardia_negatives | analysis | Two cleaning gaps of v5 seen in the KEY-05 review sheets | 2 | 0.8 | 2.2 | 1.08 | - |
+| 16 | s4_supervised | experiment | Supervised S4 from scratch at matched labels (100 Hz, 2.5 s crops) | 4 | 0.8 | 9.0 | 1.07 | - |
+| 17 | hybrid_rare_conditions | experiment | Distance-from-normal as a safety net only for conditions with few labels | 3 | 0.6 | 3.0 | 1.04 | - |
+| 18 | attention_readout | experiment | Attention-pooling frozen head on encoder tokens (CPC, released ECG-CPC, xECG) | 4 | 0.7 | 8.0 | 0.99 | - |
+| 19 | challenge_data_quality_note | repo | Short write-up of the Challenge 2021 and CODE-15 data problems | 3 | 0.8 | 6.0 | 0.98 | - |
+| 20 | ecgad_benchmark_readout | experiment | The 026 score on the public PTB-XL anomaly-detection split | 3 | 0.6 | 3.5 | 0.96 | - |
+| 21 | key05_validation_macro_rule | analysis | One project rule for the validation macro AUROC: within-source mean or pooled | 3 | 0.6 | 3.5 | 0.96 | - |
+| 22 | nbr_timing_counterpart | experiment | Counterpart that also normalizes QRS duration and QT | 3 | 0.6 | 3.6 | 0.95 | - |
+| 23 | shared_readout_module | repo | One shared frozen-readout module for new experiments | 2 | 0.8 | 3.0 | 0.92 | - |
+| 24 | echo_multitask_transfer | experiment | Do ECG-abnormality labels reduce the echo labels needed? | 3 | 0.6 | 4.0 | 0.90 | - |
+| 25 | key06_undefined_labels_in_normals | analysis | Undefined labels among the records used as normal ECGs | 3 | 0.6 | 4.0 | 0.90 | - |
+| 26 | ningbo_record_number_structure | analysis | What the Ningbo record numbers encode | 3 | 0.6 | 4.0 | 0.90 | - |
+| 27 | near_duplicates | repo | Near-duplicate pass across Challenge sources | 3 | 0.7 | 6.0 | 0.86 | - |
+| 28 | mlc02_logistic_wider_c | experiment | Wider C grid for the MLC-02 logistic candidates | 2 | 0.5 | 1.5 | 0.82 | - |
+| 29 | quality_policy_v2 | repo | Quality policy v2 review flags (edge zero runs, short dropouts) | 2 | 0.8 | 4.0 | 0.80 | - |
+| 30 | device_control | experiment | Device-controlled probes (drop or balance CS100 3) | 2 | 0.6 | 2.3 | 0.79 | - |
+| 31 | nbr_limb_lead_consistent | experiment | Limb-lead-consistent replacement for NBR attributions | 2 | 0.6 | 2.4 | 0.77 | - |
+| 32 | full_pool_fixed_heads | experiment | Fixed heads on the full 28,568-record admitted pool | 2 | 0.5 | 1.7 | 0.77 | - |
+| 33 | prototype_head | experiment | Learned prototype head anchored to real training ECGs | 4 | 0.6 | 10.0 | 0.76 | - |
+| 34 | ecg_age_gap | wild | ECG heart age: predicted minus real age as a risk signal | 3 | 0.5 | 4.0 | 0.75 | - |
+| 35 | highpass_ablation | experiment | Zero-phase 0.5 Hz high-pass as a harmonization arm | 3 | 0.6 | 6.5 | 0.71 | - |
+| 36 | vcg_qrst_angle | wild | Vectorcardiogram features: spatial QRS-T angle and loop shape | 3 | 0.6 | 7.0 | 0.68 | - |
+| 37 | superclass_mixture_resampling | experiment | Training-resampling stability of the superclass mixture heads | 2 | 0.6 | 3.5 | 0.64 | - |
+| 38 | domain_adversarial | wild | Device-adversarial readout (gradient reversal against source) | 3 | 0.5 | 6.0 | 0.61 | - |
+| 39 | crop_tta | experiment | 2.5 s crops with test-time averaging for frozen readouts | 2 | 0.6 | 4.0 | 0.60 | - |
+| 40 | e017_second_seed | experiment | 017 morphology-template second-seed replication | 2 | 0.6 | 4.0 | 0.60 | - |
+| 41 | key06_baseline_drift_covariate | analysis | A baseline-drift measure below the baseline_wander flag threshold | 2 | 0.6 | 4.0 | 0.60 | - |
+| 42 | mlc03_rule_effect_by_rule | analysis | Which v5 rules move validation scores, and through training or through scoring | 2 | 0.6 | 4.2 | 0.59 | - |
+| 43 | mlc03_long_record_window_labels | analysis | Window-based labels and flags for recordings longer than 10 s | 2 | 0.6 | 5.0 | 0.54 | - |
+| 44 | key05_k7_subtype_reading | analysis | What the K7 centres of a condition separate: forms of the condition, sources or noise | 2 | 0.5 | 3.5 | 0.53 | - |
+| 45 | mlc03_input_gap_masking | experiment | Interpolate or mask missing samples and flat leads in the model input pipelines | 3 | 0.6 | 12.0 | 0.52 | - |
+| 46 | nbr_bounded_personalization | experiment | Smaller clip bound or rank for the personalized counterpart, chosen off SPH | 2 | 0.5 | 4.1 | 0.49 | - |
+| 47 | xecg_learned_attention_readout | experiment | Learned attention pooling over the cached frozen xECG tokens | 2 | 0.5 | 4.8 | 0.46 | - |
+| 48 | mlc03_p_wave_pr_measurement | analysis | Better P-wave detection and PR measurement in the Challenge sources | 3 | 0.5 | 13.0 | 0.42 | - |
+| 49 | mlc03_electrode_reversal_rules | analysis | Electrode-reversal rules, including right arm-left leg and precordial swaps | 2 | 0.5 | 7.0 | 0.38 | - |
+| 50 | key05_st_depression_gap | analysis | Why keys fall behind P0 for ST depression and incomplete RBBB | 2 | 0.4 | 5.0 | 0.36 | - |
+| 51 | llm_measurement_reader | wild | LLM reading PTB-XL measurements as text | 2 | 0.4 | 6.0 | 0.33 | - |
+| 52 | cpc_pretrain_cohorts_v2 | experiment | CPC continued pretraining on quality-first cohorts v2 | 2 | 0.5 | 11.0 | 0.30 | - |
+| 53 | raw_signal_detector_baseline | experiment | A raw-signal one-class detector trained on the same normals | 2 | 0.5 | 11.5 | 0.29 | - |
+| 54 | condition_keys_token_level_key05 | experiment | Token-level condition keys on xECG time tokens for the 14 conditions | 3 | 0.4 | 18.0 | 0.28 | - |
+| 55 | tsfm_transfer | wild | Frozen general time-series or audio foundation models as ECG encoders | 2 | 0.4 | 8.0 | 0.28 | - |
+| 56 | vcg_rotation_ssl | wild | Heart-axis rotation augmentation via VCG projection | 3 | 0.3 | 16.0 | 0.22 | - |
+| 57 | core_lead_masking | experiment | CoRe-style lead-drop masking in CPC pretraining | 2 | 0.4 | 14.0 | 0.21 | - |
+| 58 | clustering_multisource | experiment | Source-controlled clustering of multi-source embeddings | 1 | 0.4 | 7.0 | 0.15 | - |
+| 59 | report_alignment | experiment | ECG-report alignment with PTB-XL cardiologist reports | 2 | 0.3 | 25.0 | 0.12 | - |
+| 60 | cpc_simdino_resource_plan040 | repo | Prospective resource plan for the fixed Transformer objective factorial | 3 | 0.9 | 0.6 | 3.49 | @fresh_compute_budget_authorization |
+| 61 | final_frozen_test | experiment | One-time confirmatory test of the frozen pipeline on untouched data | 5 | 0.9 | 3.0 | 3.12 | @user_freeze_decision |
+| 62 | clinician_review | repo | Cardiologist review of the 024 reference ECGs and label-audit list | 3 | 0.7 | 1.0 | 2.52 | @clinician_available |
+| 63 | young_subgroup_readout | experiment | Performance and false-alarm rate in ages 18-35 | 4 | 0.8 | 2.0 | 2.26 | @cardiologist_meeting |
+| 64 | mlc03_clinical_review | analysis | Clinical review of the MLC-03 suspected label errors and source-coding differences | 5 | 0.7 | 4.5 | 1.98 | @clinician_available |
+| 65 | wave_grounding_context_control | repo | Qualify time-grounding semantics and strong context/option controls | 4 | 0.7 | 2.1 | 1.93 | @prospective_time_grounding_qualification |
+| 66 | avance5_specialist_region_labels | experiment | Specialist lead, wave and interval labels for the normal-reference explanation display | 5 | 0.9 | 7.0 | 1.80 | @cardiologist_region_annotations_and_agreed_endpoint |
+| 67 | nbr_dual_view_page | analysis | Page design: population counterpart for flips, personalized ranking for leads | 2 | 0.6 | 0.5 | 1.70 | @user_decision |
+| 68 | enriched_positive_sensitivity | experiment | Sensitivity on confirmed young patients from the cardiologist's clinic | 5 | 0.6 | 3.5 | 1.60 | @clinic_ecgs, final_frozen_test |
+| 69 | measurement_multisource_training | experiment | Human-read multisource training for the CPU measurement screen | 4 | 0.8 | 4.0 | 1.60 | @prospective_multisource_protocol, @local_challenge_training_manifests |
+| 70 | reference_atlas_quality_review | analysis | Clinician quality review of the fixed reference atlas | 3 | 0.5 | 1.0 | 1.50 | @clinician_available |
+| 71 | lead_grounding_membership_followup | experiment | Prospective exact-membership test of frozen lead-grounding models | 3 | 0.6 | 1.6 | 1.45 | @prospective_membership_protocol_and_patient_role |
+| 72 | condition_keys_fewshot_addition | experiment | Few-shot addition of condition keys without encoder retraining | 3 | 0.7 | 2.3 | 1.38 | @prospective_key_addition_protocol |
+| 73 | reference_source_coannotation_control | experiment | Source and co-annotation controls for condition reference keys | 3 | 0.7 | 2.3 | 1.38 | @prospective_reference_control_protocol |
+| 74 | mlc03_sph_storage_check | analysis | SPH aggregate check of identity residuals and large values | 3 | 0.7 | 2.5 | 1.33 | @user_approval_sph_aggregate_check |
+| 75 | avance5_training_only_regularized_finetune | experiment | Training-only selection of regularized full-backbone xECG adaptation | 3 | 0.8 | 3.8 | 1.23 | @new_training_only_protocol_and_measured_full_io_budget |
+| 76 | nbr_page_clinician_review | analysis | Clinician review of the NBR page examples | 3 | 0.4 | 1.0 | 1.20 | @clinician_available |
+| 77 | condition_classifier_development_site_replication | experiment | Replicate learned-readout advantage on another permitted development-site role | 4 | 0.6 | 4.0 | 1.20 | @prospective_permitted_site_and_cache_qualification |
+| 78 | mlc02_space_a_key04 | experiment | MLC-02 condition outputs mapped to space A beside KEY-04 | 3 | 0.6 | 2.3 | 1.19 | @prospective_space_a_mapping_rule |
+| 79 | mlc03_cleaned_pipeline_final_test | experiment | One final test of the frozen cleaned 14-condition pipeline on the Challenge test groups | 5 | 0.7 | 10.5 | 1.08 | @user_freeze_decision |
+| 80 | student_criteria_label | experiment | Readout trained on a label mapped to the 2017 international athlete criteria | 5 | 0.5 | 5.5 | 1.07 | @cardiologist_meeting |
+| 81 | condition_keys_lead_preserving_jepa | experiment | Lead-preserving frozen ECG-JEPA condition keys | 3 | 0.7 | 4.5 | 0.99 | @prospective_lead_preserving_protocol_and_real_profile |
+| 82 | condition_keys_reference_stability | experiment | Patient-resampling stability of whole-record condition keys | 2 | 0.7 | 2.0 | 0.99 | @prospective_key_stability_protocol |
+| 83 | cpc_transformer_simdino040 | experiment | Causal Transformer CPC, SimDINOv2-style and their fixed hybrid | 4 | 0.6 | 6.5 | 0.94 | @prospective_resource_reauthorization |
+| 84 | condition_classifier_rare_combinations | experiment | Training-selected structured-label methods for rare annotation combinations | 3 | 0.6 | 4.0 | 0.90 | @prospective_rare_combination_protocol |
+| 85 | pr74_training_sampling_uncertainty | experiment | Training-sample uncertainty for the strict young matched comparison | 3 | 0.6 | 5.0 | 0.80 | @prospective_resampling_protocol |
+| 86 | mlc03_sph_rhythm_code_evidence | repo | SPH sinus and paced-rhythm evidence in the label-quality code | 2 | 0.7 | 3.2 | 0.78 | mlc03_clinical_review |
+| 87 | mlc02_source_shift_analysis | experiment | Why the MLC-02 waveform models lose at SPH while winning at PTB-XL fold 10 | 3 | 0.5 | 4.0 | 0.75 | @prospective_source_shift_analysis_protocol |
+| 88 | key06_artefact_rule_minimum | analysis | A minimum flagged-member count for the cluster artefact rule | 2 | 0.7 | 3.5 | 0.75 | @prospective_key06_amendment |
+| 89 | mlc02_finetune_lofo | experiment | Leave-one-family-out for the fine-tuned xECG candidate F | 3 | 0.6 | 8.5 | 0.74 | @prospective_f_lofo_protocol_and_real_profile |
+| 90 | key06_labels_outside_14 | experiment | Labels outside the 14 conditions that the xECG embedding already separates | 4 | 0.6 | 10.5 | 0.74 | @clinician_available |
+| 91 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
+| 92 | pr74_prospective_student_workflow | experiment | Prospective student ECG quality and local-normal referral workflow | 5 | 0.5 | 13.0 | 0.69 | @cardiologist_target_review, @prospective_student_acquisition, @user_pipeline_freeze |
+| 93 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
+| 94 | mlc02_per_seed_test | experiment | Per-seed test results of the MLC-02 network candidates | 1 | 0.8 | 2.6 | 0.50 | @user_ruling_on_further_test_scoring |
+| 95 | mlc02_sph_window_mean | experiment | Window mean over SPH recordings longer than 10 s for the MLC-02 candidates | 2 | 0.6 | 6.5 | 0.47 | @prospective_window_mean_protocol |
+| 96 | key05_local_reference_keys | analysis | Keys from a small local reference set, against keys built on the multi-source train set | 2 | 0.5 | 5.0 | 0.45 | @local_student_ecg_collection |
+| 97 | mlc02_lofo_selection_rule | experiment | Leave-one-family-out as the selection metric for a new-hospital target | 4 | 0.4 | 14.0 | 0.43 | @prospective_selection_protocol, mlc02_finetune_lofo |
+| 98 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
+
+After KEY-05 (11 November 2026): `condition_keys_deep_key05` is done as
+[KEY-05](key05-condition-keys-results-2026-11-11.md). The selected single key K6, the shrunk linear discriminant
+direction on source-centred xECG embeddings, is equivalent to P0 for ranking at the SPH evaluation half by the
+protocol's rule (macro AUROC difference -0.0045 [-0.0060, -0.0032]); P0 stays the reference. New:
+`condition_keys_token_level_key05`, `key05_validation_macro_rule`, `key05_local_reference_keys`,
+`key05_k7_subtype_reading`, `key05_st_depression_gap` and `key05_v5_flat_record_and_bradycardia_negatives`.
 
 After MLC-02 (11 November 2026): `mlc02_condition_models` is done as
 [MLC-02](mlc02-condition-models-results-2026-11-10.md). The validation-selected ensemble E did not beat the

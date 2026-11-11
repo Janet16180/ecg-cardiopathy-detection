@@ -66,7 +66,8 @@ def draw_record(figure: plt.Figure, cell: Any, record: dict[str, Any]) -> None:
         ``window`` (float ``(12, 5000)`` mV), ``title`` (text), and optionally ``highlight`` (lead names),
         ``spans`` (list of ``(lead or None, start_s, stop_s)`` to shade; None shades every lead),
         ``overlays`` (list of ``(lead, values)`` drawn dashed in grey) and ``inset``
-        (``(lead, start_s, stop_s)``).
+        (``(lead, start_s, stop_s)`` for a zoom on one lead, or ``(label, values)`` for a whole-record trace
+        such as a residual).
     """
     inset = record.get("inset")
     rows = len(LEADS) + (3 if inset else 0)
@@ -102,12 +103,16 @@ def draw_record(figure: plt.Figure, cell: Any, record: dict[str, Any]) -> None:
     axes[-1].set_xticks(np.arange(0, 11, 1))
     axes[0].set_title(record["title"], fontsize=8, loc="left")
     if inset:
-        lead, start, stop = inset
         axis = figure.add_subplot(grid[len(LEADS) + 1 :, 0])
-        part = (time >= start) & (time <= stop)
-        values = window[LEADS.index(lead), part]
-        axis.plot(time[part], values, lw=0.6, color="crimson")
-        axis.set_title(f"{lead}, {start:.2f}-{stop:.2f} s (mV)", fontsize=6, loc="left")
+        if isinstance(inset[1], np.ndarray):
+            label, values = inset
+            axis.plot(time, values, lw=0.6, color="crimson")
+            axis.set_title(label, fontsize=6, loc="left")
+        else:
+            lead, start, stop = inset
+            part = (time >= start) & (time <= stop)
+            axis.plot(time[part], window[LEADS.index(lead), part], lw=0.6, color="crimson")
+            axis.set_title(f"{lead}, {start:.2f}-{stop:.2f} s (mV)", fontsize=6, loc="left")
         axis.tick_params(labelsize=5, length=2)
 
 
@@ -308,9 +313,10 @@ def note_identity(window: np.ndarray, measures: pd.Series, flags: pd.Series, bla
     residual = {lead: float(measures[f"res_{lead}_max"]) for lead in expected}
     lead = max(residual, key=residual.get)
     peak = int(np.nanargmax(np.abs(window[LEADS.index(lead)] - expected[lead])))
+    stored_minus_recomputed = window[LEADS.index(lead)] - expected[lead]
     return {"overlays": list(expected.items()), "highlight": [lead],
             "spans": [(lead, peak / FS - 0.15, peak / FS + 0.15)],
-            "inset": (lead, max(peak / FS - 1.0, 0.0), min(peak / FS + 1.0, window.shape[1] / FS)),
+            "inset": (f"{lead} stored minus recomputed, 0-10 s (mV)", stored_minus_recomputed),
             "value": f"largest residual {residual[lead]:.3f} mV in {lead} (dashed: recomputed)"}
 
 

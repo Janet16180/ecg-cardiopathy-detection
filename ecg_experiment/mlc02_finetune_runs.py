@@ -19,6 +19,7 @@ No step reads a test role: the loaders of ``mlc02_finetune_data`` refuse them be
 
 from __future__ import annotations
 
+import gc
 import importlib.metadata
 import os
 import shutil
@@ -251,6 +252,8 @@ def free_memory(required: int) -> dict[str, Any]:
     """
     Free memory of the visible GPU, required to cover a job's peak plus headroom.
 
+    Memory this process holds in its allocator cache, released first, counts as available.
+
     Parameters
     ----------
     required : int
@@ -259,18 +262,23 @@ def free_memory(required: int) -> dict[str, Any]:
     Returns
     -------
     dict[str, Any]
-        ``free_bytes``, ``total_bytes``, ``required_bytes`` and the ``nvidia_smi`` lines.
+        ``free_bytes``, ``reserved_bytes`` (this process), ``total_bytes``, ``required_bytes`` and the
+        ``nvidia_smi`` lines.
 
     Raises
     ------
     RuntimeError
-        If less is free.
+        If less is available.
     """
+    gc.collect()
+    torch.cuda.empty_cache()
     free, total = torch.cuda.mem_get_info()
-    if free < required:
-        raise RuntimeError(f"{free} bytes free on the GPU, {required} required")
-    return {"free_bytes": int(free), "total_bytes": int(total), "required_bytes": int(required),
-            "nvidia_smi": nvidia_smi(), "device": torch.cuda.get_device_name()}
+    reserved = torch.cuda.memory_reserved()
+    if free + reserved < required:
+        raise RuntimeError(f"{free + reserved} bytes available on the GPU, {required} required")
+    return {"free_bytes": int(free), "reserved_bytes": int(reserved), "total_bytes": int(total),
+            "required_bytes": int(required), "nvidia_smi": nvidia_smi(),
+            "device": torch.cuda.get_device_name()}
 
 
 def stride_positions(records: int, limit: int | None) -> np.ndarray:
@@ -712,6 +720,7 @@ def one_run(rate: float, seed: int, context: dict[str, Any]) -> dict[str, Any]:
                    "memory_before": memory, "peak_allocated_bytes": int(torch.cuda.max_memory_allocated()),
                    "peak_reserved_bytes": int(torch.cuda.max_memory_reserved()), "ue_count_before": before,
                    "ue_count_after": ue_count(), "pid": os.getpid()}
+        gc.collect()
         torch.cuda.empty_cache()
     append_session(published / "sessions.json", session)
     return result

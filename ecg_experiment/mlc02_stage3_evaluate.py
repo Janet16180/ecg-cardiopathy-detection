@@ -589,6 +589,7 @@ def evaluate_sets(
             "selected": selected,
             "reference": REFERENCE,
             "selected_is_reference": False,
+            "better": result["comparisons"][CONFIRMATORY_SET][selected]["macro"]["better"],
             **result["comparisons"][CONFIRMATORY_SET][selected],
         }
     result["not_implemented"] = NOT_IMPLEMENTED

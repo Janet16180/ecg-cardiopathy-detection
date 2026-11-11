@@ -479,7 +479,7 @@ def test_evaluate_sets_runs_on_synthetic_sets():
     result = evaluate_sets(sets, predictions, operating, "E", draws=40, workers=2)
     assert set(result["comparisons"]["test_external"]) == {"H-All", "E"}
     assert result["confirmatory"]["selected"] == "E"
-    assert "macro" in result["confirmatory"]
+    assert result["confirmatory"]["better"] == result["confirmatory"]["macro"]["better"]
     assert set(result["candidates"]["test_same_source"]["P0"]) == {
         "raw",
         "platt",

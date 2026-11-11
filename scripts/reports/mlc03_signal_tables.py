@@ -23,6 +23,7 @@ from ecg_experiment.mlc03_signal_runs import OUTPUT
 
 REVIEW = OUTPUT.parent / "review/signal"
 STATUSES = ("ok", "sin_latidos", "derivacion_plana")
+NEAR = OUTPUT / "near_duplicates"
 MEASUREMENT_STATUS = OUTPUT.parents[1] / "mlc02_condition_models_20261110/features/measurements_status.csv"
 SOURCES = ("ptbxl", "ningbo", "chapman_shaoxing", "georgia", "cpsc_2018", "cpsc_2018_extra", "sph")
 FINAL_REVIEW = {"reversal_la_ra": "reversal_la_ra__v2", "reversal_neutral": "reversal_neutral__v2",
@@ -255,6 +256,62 @@ def measurement_status() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def long_records() -> pd.DataFrame:
+    """
+    Count defects beyond the first 10 s of the long train and validation recordings.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per source: long records, median and largest duration, records with missing samples, with
+        rail samples only after 10 s, with a lead constant only after 10 s, with any constant run of 1 s or
+        more, and with every lead held at the end for 150 ms or more.
+    """
+    full = pd.read_parquet(OUTPUT / "full_records_train_validation.parquet")
+    window = pd.read_parquet(OUTPUT / "measures_train_validation.parquet",
+                             columns=["record_key", "rail_samples"])
+    flags = pd.read_parquet(OUTPUT / "flags_train_validation.parquet", columns=["record_key", "source"])
+    frame = full.merge(window, on="record_key").merge(flags, on="record_key")
+    rows = []
+    for source, group in frame.groupby("source"):
+        seconds = group["full_samples"] / 500.0
+        late_rail = (group["full_rail_samples"] > 0) & (group["rail_samples"] == 0)
+        rows.append({"source": source, "long records": len(group),
+                     "median s": round(float(seconds.median()), 1), "max s": round(float(seconds.max()), 1),
+                     "missing samples": int((group["full_missing_samples"] > 0).sum()),
+                     "rail only after 10 s": int(late_rail.sum()),
+                     "lead constant only after 10 s": int((group["after10_flat_leads"] > 0).sum()),
+                     "constant run >= 1 s": int((group["full_const_run_max"] >= 500).sum()),
+                     "all-lead end hold >= 150 ms": int((group["full_tail_run_min"] >= 75).sum())})
+    return pd.DataFrame(rows)
+
+
+def near_train() -> pd.DataFrame:
+    """
+    Count train and validation candidate pairs of both searches by score band.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per search and band: pairs with the same first-10-s hash, other pairs, and other pairs
+        across train and validation.
+    """
+    dense = pd.read_parquet(NEAR / "dense_pairs_train_validation.parquet")
+    shifted = pd.read_parquet(NEAR / "shifted_pairs_train_validation.parquet")
+    shifted = shifted[shifted["overlap_s"] >= 4.0].rename(columns={"correlation": "score"})
+    bands = [0.8, 0.9, 0.95, 0.98, 0.99, 0.999, 1.01]
+    rows = []
+    for search, frame in (("zero_lag", dense), ("shifted", shifted)):
+        frame = frame.assign(band=pd.cut(frame["score"], bands, right=False))
+        for band, group in frame.groupby("band", observed=False):
+            other = group[~group["same_hash"]]
+            crossing = int((other["role_a"] != other["role_b"]).sum())
+            rows.append({"search": search, "score band": str(band),
+                         "same hash": int(group["same_hash"].sum()), "other pairs": len(other),
+                         "other pairs across train and validation": crossing})
+    return pd.DataFrame(rows)
+
+
 def rules_section() -> str:
     """
     Write ``proposed_rule_counts.csv`` and format the rule counts.
@@ -327,6 +384,8 @@ def main(argv: list[str] | None = None) -> None:
         "pipelines": lambda args: pipelines_section(),
         "near": lambda args: optional_table("near_duplicates_test_roles_counts.csv"),
         "measurement-status": lambda args: markdown(measurement_status()),
+        "long-records": lambda args: markdown(long_records()),
+        "near-train": lambda args: markdown(near_train()),
     }
     parser.add_argument("--section", choices=tuple(sections))
     args = parser.parse_args(argv)

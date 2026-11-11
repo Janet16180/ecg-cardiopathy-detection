@@ -27,7 +27,15 @@ STTC undefined and CPSC 2018 is undefined for every group unless positive. A sou
 ``MIN_POSITIVES`` positives of a label among its opened records does not annotate it
 (``minimum_positive_table``); the build applies that rule from its label counts. Amendment 2 adds the PTB-XL
 injury, digitalis, aneurysm and electrolyte statements (``ST_CHANGE_WITHOUT_DIRECTION_SCP``) to the
-statements that leave ST depression undefined without an ST-depression code.
+statements that leave ST depression undefined without an ST-depression code. Amendment 3 adds:
+
+- left anterior fascicular block without a left-axis code leaves left axis deviation undefined;
+- SNOMED AV block of unstated degree without a first-degree code leaves first-degree AV block undefined;
+- the same PTB-XL statements leave the T wave undefined without a T-wave code;
+- abnormal Q waves or poor R-wave progression without an infarction code leave myocardial infarction
+  undefined, in space A too;
+- SPH 153 without an ST or T code (145, 146, 147) leaves ST depression and T-wave abnormality undefined;
+- the likelihood flag ignores diagnostic statements with likelihood 0 (unknown).
 
 AHA specifications: ``"B"`` matches a statement with base code B and any modifier, ``"B+M"`` one that
 carries modifier M, and ``"B="`` one without a modifier. SCP specifications ``"axis:X"`` match PTB-XL's
@@ -99,6 +107,12 @@ ST_CHANGE_WITHOUT_DIRECTION_SCP = ("INJAS", "INJAL", "INJLA", "INJIN", "INJIL", 
 ST_T_NONSPECIFIC_OR_ISCHEMIC = codes(("NST_", *ISCHEMIC_SCP),
                                      ("428750005", "55930002", "164930006", *ISCHEMIC_SNOMED))
 VENTRICULAR_TACHYCARDIA_SNOMED = ("425856008", "164895002")
+AV_BLOCK_UNSTATED_SNOMED = ("233917008",)
+Q_WAVE_OR_POOR_R_PROGRESSION = {"scp": frozenset({"QWAVE"}), "snomed": frozenset({"164917005", "365413008"}),
+                                "aha": frozenset()}
+LAFB_CODES = ("LAFB", "445118002", "101")
+SPH_ST_T_SPECIFIC = frozenset({"145", "146", "147"})
+SPH_153_UNDEFINED = ("st_depression", "t_wave_abnormality")
 AXIS_MISSING = "axis:missing"
 MI_SNOMED = ("164865005", "164867002", "54329005", "57054005")
 INJURY_SCP = ("INJAS", "INJAL", "INJLA", "INJIN", "INJIL")
@@ -117,14 +131,15 @@ CONDITIONS: dict[str, dict[str, object]] = {
         ("PVC",), ("427172004", "17338001", "164884008", "11157007", "251180001", "251182009"), ("60",)),
         codes(PREMATURE_UNKNOWN_SCP, ("13640000", *VENTRICULAR_TACHYCARDIA_SNOMED))),
     "first_degree_av_block": condition("First-degree AV block or prolonged PR", codes(
-        ("1AVB", "LPR"), ("270492004", "164947007"), ("82",))),
+        ("1AVB", "LPR"), ("270492004", "164947007"), ("82",)), codes(snomed=AV_BLOCK_UNSTATED_SNOMED)),
     "complete_rbbb": condition("Complete right bundle branch block", codes(
         ("CRBBB",), ("713427006", "59118001"), ("106",)), codes(snomed=("6374002",))),
     "incomplete_rbbb": condition("Incomplete right bundle branch block", codes(
         ("IRBBB",), ("713426002",), ("105",))),
     "lafb": condition("Left anterior fascicular block", codes(("LAFB",), ("445118002",), ("101",))),
     "left_axis_deviation": condition("Left axis deviation", codes(("axis:ALAD",), ("39732003",), ("121",)),
-                                     codes(scp=("axis:LAD", "axis:AXL", AXIS_MISSING))),
+                                     codes(("axis:LAD", "axis:AXL", AXIS_MISSING, LAFB_CODES[0]),
+                                           (LAFB_CODES[1],), (LAFB_CODES[2],))),
     "lvh": condition("Left ventricular hypertrophy", codes(("LVH",), ("164873001",), ("142",)),
                      codes(("VCLVH", "HVOLT"), ("55827005", "266249003", "370365005"))),
     "st_depression": condition("ST depression", codes(("STD_",), ("429622005", "704997005"), ("145+362",)),
@@ -132,10 +147,12 @@ CONDITIONS: dict[str, dict[str, object]] = {
                                      tuple(ST_T_NONSPECIFIC_OR_ISCHEMIC["snomed"]), ST_NO_DIRECTION_AHA)),
     "t_wave_abnormality": condition("T-wave abnormality", codes(
         ("NDT", "NT_", "TAB_", "INVT", "LOWT"), ("164934002", "59931005"), ("147", "146")),
-        codes(tuple(ST_T_NONSPECIFIC_OR_ISCHEMIC["scp"]), tuple(ST_T_NONSPECIFIC_OR_ISCHEMIC["snomed"]))),
+        codes((*ST_T_NONSPECIFIC_OR_ISCHEMIC["scp"], *ST_CHANGE_WITHOUT_DIRECTION_SCP),
+              tuple(ST_T_NONSPECIFIC_OR_ISCHEMIC["snomed"]))),
     "mi_any": condition("Myocardial infarction, any territory", codes(MI_SCP, MI_SNOMED,
                                                                       ("160", "161", "165", "166")),
-                        codes(scp=INJURY_SCP)),
+                        codes((*INJURY_SCP, *Q_WAVE_OR_POOR_R_PROGRESSION["scp"]),
+                              tuple(Q_WAVE_OR_POOR_R_PROGRESSION["snomed"]))),
     "atrial_fibrillation": condition("Atrial fibrillation", codes(
         ("AFIB",), ("164889003", "426749004", "282825002", "314208002"), ("50",)),
         codes(snomed=("195080001",))),
@@ -386,6 +403,10 @@ def condition_states(source: str, record: object) -> dict[str, float]:
     for pair in CONTRADICTORY_PAIRS:
         if all(listed(CONDITIONS[key]["positive"][vocabulary], record, vocabulary) for key in pair):
             states[pair[0]] = states[pair[1]] = np.nan
+    bases = {base for base, _ in record} if vocabulary == "aha" else set()
+    if "153" in bases and not bases & SPH_ST_T_SPECIFIC:
+        for key in SPH_153_UNDEFINED:
+            states[key] = np.nan
     return states
 
 
@@ -407,10 +428,11 @@ def low_likelihood_only(key: str, record: dict[str, float], diagnostic: frozense
     -------
     bool
         True when the record lists positive statements of the condition and each one is diagnostic with a
-        likelihood below ``LIKELIHOOD_THRESHOLD``.
+        likelihood above 0 and below ``LIKELIHOOD_THRESHOLD``. Likelihood 0 means unknown, so such a statement
+        never counts as low likelihood (Amendment 3).
     """
     hits = [(code, value) for code, value in record.items() if code in CONDITIONS[key]["positive"]["scp"]]
-    return bool(hits) and all(code in diagnostic and value < LIKELIHOOD_THRESHOLD for code, value in hits)
+    return bool(hits) and all(code in diagnostic and 0 < value < LIKELIHOOD_THRESHOLD for code, value in hits)
 
 
 def group_flags(source: str, record: object, classes: dict[str, str]) -> dict[str, float]:
@@ -469,6 +491,8 @@ def space_a_states(source: str, record: object, classes: dict[str, str]) -> dict
     states = group_flags(source, record, classes)
     if states["HYP"] == 0.0 and listed(LV_HIGH_VOLTAGE[vocabulary], record, vocabulary):
         states["HYP"] = np.nan
+    if states["MI"] == 0.0 and listed(Q_WAVE_OR_POOR_R_PROGRESSION[vocabulary], record, vocabulary):
+        states["MI"] = np.nan
     if vocabulary == "aha" and states["STTC"] == 0.0 and aha_match("153", record):
         states["STTC"] = np.nan
     if source == "cpsc_2018":

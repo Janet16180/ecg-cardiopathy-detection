@@ -189,9 +189,10 @@ def test_unstated_completeness_follows_the_official_equivalences():
 def test_sph_code_153_sets_no_condition_and_counts_for_hyp_in_space_a():
     states = aha("153")
     for key in SPACE_B:
-        assert states[key] == 0, key
+        if key not in mlc_labels.SPH_153_UNDEFINED:
+            assert states[key] == 0, key
     assert aha("142;153")["lvh"] == 1
-    assert aha("142;153")["t_wave_abnormality"] == 0
+    assert aha("142;147;153")["t_wave_abnormality"] == 1
     groups = space_a_states("sph", parse_aha("142;153"), CLASSES)
     assert groups["HYP"] == 1
     assert nan(groups["STTC"])
@@ -367,6 +368,64 @@ def test_amendment_2_ptbxl_st_changes_without_direction_leave_st_depression_unde
     for code in ("INJAS", "INJAL", "INJLA", "INJIN", "INJIL", "DIG", "ANEUR", "EL"):
         assert nan(ptbxl({code: 100.0})["st_depression"]), code
         assert ptbxl({code: 100.0, "STD_": 0.0})["st_depression"] == 1
-    assert ptbxl({"INJAS": 100.0})["t_wave_abnormality"] == 0
     assert aha("145")["t_wave_abnormality"] == 0
     assert snomed("cpsc_2018", "426783006")["af_or_flutter"] == 0
+
+
+def test_amendment_3_ruling_1_lafb_without_left_axis_code_leaves_lad_undefined():
+    assert nan(snomed("ningbo", "445118002")["left_axis_deviation"])
+    assert snomed("ningbo", "445118002", "39732003")["left_axis_deviation"] == 1
+    assert nan(aha("101")["left_axis_deviation"])
+    assert aha("101;121")["left_axis_deviation"] == 1
+    assert ptbxl({"LAFB": 100.0}, "ALAD")["left_axis_deviation"] == 1
+    assert nan(ptbxl({"LAFB": 100.0}, "MID")["left_axis_deviation"])
+    assert ptbxl({"SR": 0.0}, "MID")["left_axis_deviation"] == 0
+    labels = record_labels("sph", parse_aha("101"), CLASSES, DIAGNOSTIC)
+    assert nan(labels["c_left_axis_deviation"])
+
+
+def test_amendment_3_ruling_2_av_block_of_unstated_degree_leaves_first_degree_undefined():
+    assert nan(snomed("georgia", "233917008")["first_degree_av_block"])
+    assert snomed("georgia", "233917008", "270492004")["first_degree_av_block"] == 1
+    assert snomed("georgia", "233917008", "164947007")["first_degree_av_block"] == 1
+
+
+def test_amendment_3_ruling_3_ptbxl_st_changes_without_direction_leave_t_wave_undefined():
+    for code in mlc_labels.ST_CHANGE_WITHOUT_DIRECTION_SCP:
+        assert nan(ptbxl({code: 100.0})["t_wave_abnormality"]), code
+        assert ptbxl({code: 100.0, "INVT": 0.0})["t_wave_abnormality"] == 1
+
+
+def test_amendment_3_ruling_4_q_wave_or_poor_r_progression_leaves_infarction_undefined():
+    assert nan(ptbxl({"QWAVE": 0.0})["mi_any"])
+    assert ptbxl({"QWAVE": 0.0, "IMI": 100.0})["mi_any"] == 1
+    for code in ("164917005", "365413008"):
+        assert nan(snomed("ningbo", code)["mi_any"]), code
+        assert snomed("ningbo", code, "164865005")["mi_any"] == 1
+        assert nan(space_a_states("ningbo", frozenset({code}), CLASSES)["MI"])
+    assert space_a_states("ningbo", frozenset({"164917005", "164865005"}), CLASSES)["MI"] == 1
+    assert nan(space_a_states("ptbxl", {"QWAVE": 0.0}, CLASSES)["MI"])
+    assert snomed("georgia", "164917005")["anterior_mi"] == 0
+
+
+def test_amendment_3_ruling_5_sph_153_without_st_or_t_code_leaves_st_and_t_undefined():
+    for text in ("153", "142;153", "142;148;153"):
+        assert nan(aha(text)["st_depression"]), text
+        assert nan(aha(text)["t_wave_abnormality"]), text
+    assert aha("142;145+363;153")["st_depression"] == 0
+    assert aha("142;145+363;153")["t_wave_abnormality"] == 0
+    assert aha("142;147;153")["st_depression"] == 0
+    assert aha("142;145+362;153")["st_depression"] == 1
+    assert aha("142")["st_depression"] == 0
+
+
+def test_amendment_3_ruling_6_likelihood_zero_is_unknown_not_low():
+    classes = {**CLASSES, "LVH": "HYP"}
+
+    def flag(value: float) -> bool:
+        labels = record_labels("ptbxl", ptbxl_codes({"LVH": value}, ""), classes, frozenset(classes))
+        return labels["lik50_lvh"]
+
+    assert flag(0.0) is False
+    assert flag(35.0) is True
+    assert flag(50.0) is False

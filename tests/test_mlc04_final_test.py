@@ -102,7 +102,8 @@ def test_marker_refuses_a_second_read(tmp_path: Path, monkeypatch: pytest.Monkey
 
 
 def test_primary_reading_boundaries() -> None:
-    bound = me.VALIDATION_METRIC - me.CONFIRMATION_MARGIN
+    bound = me.LIKE_FOR_LIKE_METRIC - me.CONFIRMATION_MARGIN
+    assert bound == pytest.approx(0.9511, abs=1e-4)
     assert me.primary_reading(bound + 1e-6, bound + 0.02) == "confirmed"
     assert me.primary_reading(bound - 0.02, bound - 1e-6) == "not confirmed"
     assert me.primary_reading(bound - 0.01, bound + 0.01) == "undecided"

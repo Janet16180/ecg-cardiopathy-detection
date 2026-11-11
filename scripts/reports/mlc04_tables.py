@@ -168,8 +168,10 @@ def primary() -> str:
     if test is not None:
         found = test["primary"]
         text += (
-            f"\n\nFrozen validation value {found['validation_value']!r} (six validation sources, entry 20); "
-            f"bound {found['bound']!r}; reading: **{found['reading']}**."
+            f"\n\nLike-for-like validation value {found['validation_value']!r} (five sources, entry 100, "
+            f"protocol Amendment 1); bound {found['bound']!r}; reading: **{found['reading']}**. "
+            f"Six-source validation value {found['six_source_validation_value']!r} (entry 20) and its bound "
+            f"{found['six_source_bound']!r}, printed without a reading."
         )
     return text
 

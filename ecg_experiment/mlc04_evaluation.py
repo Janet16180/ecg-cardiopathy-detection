@@ -12,8 +12,11 @@ Metrics, intervals, comparisons and readings of MLC-04.
   an entering condition loses its positives or negatives), shared by every model; the metric's resample is
   the mean over sources of each draw's within-source macro AUROC, and its interval the 2.5 and 97.5
   percentiles.
-- Primary reading: confirmed if the lower bound is above the validation value minus ``CONFIRMATION_MARGIN``,
-  not confirmed if the upper bound is below that value, undecided otherwise.
+- Primary reading (protocol Amendment 1): confirmed if the lower bound is above the like-for-like validation
+  value (``LIKE_FOR_LIKE_METRIC``, the same five-source, entry-100 metric of P0-v5 on the validation groups in
+  the dry run) minus ``CONFIRMATION_MARGIN``, not confirmed if the upper bound is below that bound, undecided
+  otherwise. The six-source validation value (``VALIDATION_METRIC``) and its bound are printed beside it
+  without a reading.
 - Secondary comparisons, paired on the same resamples, Holm-adjusted over the three: the two-sided bootstrap
   p-value of each difference against its null value (0, 0 and ``KEY_MARGIN``) is
   ``mlc02_bootstrap.bootstrap_p_value`` of the resampled differences minus the null.
@@ -46,6 +49,7 @@ from ecg_experiment.mlc02_evaluation import auroc_by_condition, check_scores, co
 PRIMARY_MINIMUM = 100
 VALIDATION_MINIMUM = 20
 VALIDATION_METRIC = 0.9697697420282113
+LIKE_FOR_LIKE_METRIC = 0.9610687901468651
 CONFIRMATION_MARGIN = 0.010
 KEY_MARGIN = -0.010
 ALPHA = 0.05
@@ -306,7 +310,7 @@ def compare(
 
 
 def primary_reading(
-    low: float, high: float, validation: float = VALIDATION_METRIC, margin: float = CONFIRMATION_MARGIN
+    low: float, high: float, validation: float = LIKE_FOR_LIKE_METRIC, margin: float = CONFIRMATION_MARGIN
 ) -> str:
     """
     Read the test interval of the metric against the validation value.
@@ -662,9 +666,11 @@ def evaluate(
             "model": "P0-v5",
             "value": value["value"],
             "ci": value["ci"],
-            "validation_value": VALIDATION_METRIC,
-            "bound": VALIDATION_METRIC - CONFIRMATION_MARGIN,
+            "validation_value": LIKE_FOR_LIKE_METRIC,
+            "bound": LIKE_FOR_LIKE_METRIC - CONFIRMATION_MARGIN,
             "reading": primary_reading(*value["ci"]),
+            "six_source_validation_value": VALIDATION_METRIC,
+            "six_source_bound": VALIDATION_METRIC - CONFIRMATION_MARGIN,
             "entering_by_source": {s: v["entering"] for s, v in value["macro_by_source"].items()},
         },
         "models_primary_rule": primary["summary"],

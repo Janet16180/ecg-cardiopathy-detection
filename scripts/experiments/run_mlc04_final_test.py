@@ -49,7 +49,7 @@ from ecg_experiment.mlc02_feature_data import PUBLISHED
 from ecg_experiment.mlc02_feature_models import CANDIDATES
 from ecg_experiment.mlc02_features import CHECKPOINTS
 from ecg_experiment.mlc04_checks import run_checks
-from ecg_experiment.mlc04_evaluation import evaluate, json_ready
+from ecg_experiment.mlc04_evaluation import LIKE_FOR_LIKE_METRIC, evaluate, json_ready
 from ecg_experiment.paths import to_stored
 
 CODE = (
@@ -473,6 +473,9 @@ def score_step(role: str, rerun_after_crash: bool) -> None:
     v5 = role_labels(md.OUTPUT / role / "manifest_v5.csv")
     thresholds = read_json(THRESHOLDS)
     if role == "challenge_test":
+        dry_run = read_json(md.OUTPUT / "validation" / "score" / "evaluation.json")["primary"]["value"]
+        if dry_run != LIKE_FOR_LIKE_METRIC:
+            raise ValueError(f"the dry run's like-for-like value {dry_run!r} is not the frozen constant")
         md.open_marker(target, rerun_after_crash)
     target.mkdir(parents=True, exist_ok=True)
     outputs = outputs_for(role, v4)

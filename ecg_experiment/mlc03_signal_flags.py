@@ -26,7 +26,7 @@ RAIL_SAMPLES = 1
 NEAR_FLAT_MV = 0.05
 IDENTITY_MV = 0.05
 REVERSAL_P_MV = 0.05
-NEUTRAL_MV = 0.10
+NEUTRAL_MV = 0.06
 NEUTRAL_RATIO = 0.10
 AMPLITUDE_REFERENCE_MV = 0.93
 AMPLITUDE_FACTOR = 4.0
@@ -39,6 +39,10 @@ DROPOUT_BEATS = 3
 INTERIOR_HOLD_MS = 500.0
 AGREEMENT = 0.8
 MIN_BEATS = 3
+SPECTRAL_SPIKE_MV = 2.0
+REVERSAL_P_FLOOR_MV = -0.3
+REVERSAL_QRS_MS = 120.0
+REVERSAL_SIMILARITY = 0.8
 
 FLAGS: dict[str, dict[str, str]] = {
     "missing_samples": {
@@ -98,12 +102,15 @@ FLAGS: dict[str, dict[str, str]] = {
     },
     "reversal_la_ra": {
         "item": "3 lead consistency",
-        "definition": "Median beat with lead I fully inverted (P below -0.05 mV, QRS area below 0, T below "
-                      "0), an upright QRS in aVR (area above 0) and an upright QRS in V6 (area above 0): the "
-                      "pattern of left-right arm electrode reversal with normal precordial progression.",
-        "threshold": "all five conditions",
-        "reason": "Stated rule from the electrode-reversal pattern; the V6 condition separates it from "
-                  "dextrocardia, the P condition from a right-axis QRS.",
+        "definition": "Median beat with lead I fully inverted (P between -0.3 and -0.05 mV, QRS area "
+                      "below 0, T below 0), an upright QRS in aVR (area above 0) and in V6 (area above 0), "
+                      "a QRS narrower than 120 ms and a beat similarity of at least 0.8: the pattern of "
+                      "left-right arm electrode reversal with normal precordial progression.",
+        "threshold": "all eight conditions",
+        "reason": "Stated rule from the electrode-reversal pattern; V6 separates it from dextrocardia, P "
+                  "from a right-axis QRS. The first version (the first five conditions) showed the pattern "
+                  "on 7 of its 15 records; the misses were pacing spikes read as P waves (below -0.3 mV), "
+                  "wide complexes (120 ms is the usual wide-QRS limit) and unstable beats.",
     },
     "reversal_ra_ll": {
         "item": "3 lead consistency",
@@ -111,17 +118,20 @@ FLAGS: dict[str, dict[str, str]] = {
                       "0) and aVR upright (QRS area above 0, P above 0.05 mV): the pattern of right arm and "
                       "left leg electrode reversal.",
         "threshold": "all five conditions",
-        "reason": "Stated rule from the electrode-reversal pattern.",
+        "reason": "Stated rule from the electrode-reversal pattern. Unreliable: 1 of the first 12 plots "
+                  "showed the pattern; most were left-axis or inferior-Q morphologies. Not used for any "
+                  "rule.",
     },
     "reversal_neutral": {
         "item": "3 lead consistency",
         "definition": "One of the bipolar limb leads I, II or III is nearly a flat line: its 1-99 percentile "
-                      "range of the 0.5-40 Hz signal is below 0.10 mV and below 10% of the largest of the "
+                      "range of the 0.5-40 Hz signal is below 0.06 mV and below 10% of the largest of the "
                       "three; the pattern of a limb electrode swapped with the right-leg (neutral) "
                       "electrode.",
         "threshold": f"below {NEUTRAL_MV} mV and below {NEUTRAL_RATIO:.0%} of the largest",
-        "reason": "A physiologically small limb lead still shows a biphasic QRS; the ratio is below 10% in "
-                  "about 1 in 2,000 records.",
+        "reason": "A physiologically small limb lead still shows a biphasic QRS. The first version (below "
+                  "0.10 mV) showed a flat lead on 8 of 11 records; the 3 misses (0.064-0.084 mV) kept small "
+                  "QRS deflections.",
     },
     "amplitude_outlier": {
         "item": "4 amplitude and units",
@@ -143,19 +153,22 @@ FLAGS: dict[str, dict[str, str]] = {
     "mains_interference": {
         "item": "5 noise",
         "definition": "Amplitude of a 50 Hz or 60 Hz sinusoid above the neighbouring spectrum in a "
-                      "non-constant lead.",
+                      "non-constant lead whose largest absolute second difference is below 2 mV.",
         "threshold": f"at least {MAINS_MV} mV (0.1 mV peak to peak)",
         "reason": "0.1 mV peak to peak is one small box at standard gain, visible on paper; it lies above "
-                  "the "
-                  "99th percentile of PTB-XL and Georgia at 50 Hz.",
+                  "the 99th percentile of PTB-XL and Georgia at 50 Hz. The first version (any lead) showed "
+                  "mains on 19 of 24 plots; pacing spikes put broadband power at 50 and 60 Hz, so leads with "
+                  "a second difference of 2 mV or more are left out.",
     },
     "hf_noise": {
         "item": "5 noise",
         "definition": "Median over time of the 50 ms moving RMS above 40 Hz (mains lines removed) of a "
-                      "non-constant lead.",
+                      "non-constant lead whose largest absolute second difference is below 2 mV.",
         "threshold": f"at least {HF_NOISE_MV} mV",
         "reason": "Medians lie at 0.007-0.013 mV and 99th percentiles at 0.028-0.066 mV; 0.05 mV RMS "
-                  "between beats is visible fuzz.",
+                  "between beats is visible fuzz. The first version (any lead) showed noise on 5 of the "
+                  "first 12 plots: removing the mains bins of a lead with 10 mV pacing spikes spreads their "
+                  "energy over the whole lead, so such leads are left out.",
     },
     "baseline_step": {
         "item": "5 noise",
@@ -191,12 +204,15 @@ FLAGS: dict[str, dict[str, str]] = {
     },
     "rhythm_unmeasurable": {
         "item": "6 beats",
-        "definition": "Fewer than three beats from the multi-lead detector, or no two of the three beat "
-                      "lists "
-                      "(multi-lead detector, XQRS on II, XQRS on V5) agree.",
-        "threshold": f"fewer than {MIN_BEATS} beats, or every pairwise F1 below {AGREEMENT}",
+        "definition": "The multi-lead detector finds at least three beats, but no two of the three beat "
+                      "lists (multi-lead detector, XQRS on II, XQRS on V5) that each hold at least three "
+                      "beats agree.",
+        "threshold": f"every such pairwise F1 below {AGREEMENT}",
         "reason": "Two independent detections that agree to F1 0.8 (matching within 75 ms) give a usable "
-                  "rhythm; when none agree, no rate or RR measure can be trusted.",
+                  "rhythm. The first version also flagged records where the multi-lead detector found fewer "
+                  "than three beats and counted lists of one beat; it showed an unreadable rhythm on 4 of "
+                  "the first 12 plots, because one large artefact sets the multi-lead detector's relative "
+                  "threshold and hides real beats. Those records carry an artefact flag.",
     },
 }
 
@@ -320,8 +336,10 @@ def morphology_rules(measures: pd.DataFrame) -> dict[str, np.ndarray]:
         return measures[name].to_numpy(dtype=np.float64)
 
     with np.errstate(invalid="ignore"):
-        la_ra = ((column("p_amp__I") < -REVERSAL_P_MV) & (column("qrs_area__I") < 0)
-                 & (column("t_amp__I") < 0) & (column("qrs_area__aVR") > 0) & (column("qrs_area__V6") > 0))
+        la_ra = ((column("p_amp__I") < -REVERSAL_P_MV) & (column("p_amp__I") >= REVERSAL_P_FLOOR_MV)
+                 & (column("qrs_area__I") < 0) & (column("t_amp__I") < 0) & (column("qrs_area__aVR") > 0)
+                 & (column("qrs_area__V6") > 0) & (column("qrs_duration_ms") < REVERSAL_QRS_MS)
+                 & (column("beat_similarity") >= REVERSAL_SIMILARITY))
         ra_ll = ((column("p_amp__II") < -REVERSAL_P_MV) & (column("qrs_area__II") < 0)
                  & (column("t_amp__II") < 0) & (column("qrs_area__aVR") > 0)
                  & (column("p_amp__aVR") > REVERSAL_P_MV))
@@ -373,7 +391,7 @@ def amplitude_ratio(measures: pd.DataFrame) -> np.ndarray:
 
 def best_agreement(measures: pd.DataFrame) -> np.ndarray:
     """
-    Best of the three pairwise agreements between beat lists.
+    Best pairwise agreement between beat lists that each hold at least ``MIN_BEATS`` beats.
 
     Parameters
     ----------
@@ -383,10 +401,17 @@ def best_agreement(measures: pd.DataFrame) -> np.ndarray:
     Returns
     -------
     np.ndarray
-        Largest F1 per record; -1 when none is defined.
+        Largest F1 per record over the qualifying pairs; -1 when no pair qualifies.
     """
-    pairs = measures[["agree_detectors", "agree_leads", "agree_multi_V5"]].to_numpy(dtype=np.float64)
-    return np.nan_to_num(pairs, nan=-1.0).max(axis=1)
+    counts = {name: measures[f"n_beats_{name}"].to_numpy(dtype=np.float64) >= MIN_BEATS
+              for name in ("multi", "II", "V5")}
+    pairs = (("agree_detectors", "multi", "II"), ("agree_leads", "II", "V5"),
+             ("agree_multi_V5", "multi", "V5"))
+    values = []
+    for column, first, second in pairs:
+        agreement = np.nan_to_num(measures[column].to_numpy(dtype=np.float64), nan=-1.0)
+        values.append(np.where(counts[first] & counts[second], agreement, -1.0))
+    return np.max(values, axis=0)
 
 
 def lead_threshold(measures: pd.DataFrame, name: str, threshold: float, above: bool = True,
@@ -417,6 +442,32 @@ def lead_threshold(measures: pd.DataFrame, name: str, threshold: float, above: b
         mask = (values >= threshold) if above else (values < threshold)
     mask &= ~constant_leads(measures, leads)
     return mask.any(axis=1), blame(mask, leads)
+
+
+def spectral_threshold(measures: pd.DataFrame, name: str, threshold: float) -> tuple[np.ndarray, list[str]]:
+    """
+    Flag records where a spectral noise measure crosses a threshold in a lead without large spikes.
+
+    Parameters
+    ----------
+    measures : pd.DataFrame
+        Measures table.
+    name : str
+        Per-lead spectral measure (``mains50``, ``mains60`` or ``hf_noise``).
+    threshold : float
+        Threshold, inclusive.
+
+    Returns
+    -------
+    tuple[np.ndarray, list[str]]
+        Flag per record and the blamed leads; a lead whose largest absolute second difference is at least
+        ``SPECTRAL_SPIKE_MV`` is never blamed.
+    """
+    with np.errstate(invalid="ignore"):
+        mask = lead_matrix(measures, name) >= threshold
+        mask &= lead_matrix(measures, "spike") < SPECTRAL_SPIKE_MV
+    mask &= ~constant_leads(measures)
+    return mask.any(axis=1), blame(mask, LEADS)
 
 
 def compute_flags(measures: pd.DataFrame) -> pd.DataFrame:
@@ -458,12 +509,12 @@ def compute_flags(measures: pd.DataFrame) -> pd.DataFrame:
                                        | (result["amplitude_ratio"] <= 1.0 / AMPLITUDE_FACTOR))
     result["baseline_wander"], result["baseline_wander__leads"] = lead_threshold(measures, "baseline_ptp",
                                                                                  BASELINE_MV)
-    mains50, leads50 = lead_threshold(measures, "mains50", MAINS_MV)
-    mains60, leads60 = lead_threshold(measures, "mains60", MAINS_MV)
+    mains50, leads50 = spectral_threshold(measures, "mains50", MAINS_MV)
+    mains60, leads60 = spectral_threshold(measures, "mains60", MAINS_MV)
     result["mains_interference"] = mains50 | mains60
     result["mains_interference__leads"] = [";".join(dict.fromkeys(filter(None, f"{a};{b}".split(";"))))
                                            for a, b in zip(leads50, leads60, strict=True)]
-    result["hf_noise"], result["hf_noise__leads"] = lead_threshold(measures, "hf_noise", HF_NOISE_MV)
+    result["hf_noise"], result["hf_noise__leads"] = spectral_threshold(measures, "hf_noise", HF_NOISE_MV)
     result["baseline_step"], result["baseline_step__leads"] = lead_threshold(measures, "step", STEP_MV)
     result["isolated_spike"], result["isolated_spike__leads"] = lead_threshold(
         measures, "spike_isolated", ISOLATED_SPIKE_MV, leads=INDEPENDENT)
@@ -473,8 +524,8 @@ def compute_flags(measures: pd.DataFrame) -> pd.DataFrame:
     result["contact_loss__leads"] = [";".join(dict.fromkeys(filter(None, f"{a};{b}".split(";"))))
                                      for a, b in zip(dropout_leads, hold_leads, strict=True)]
     result["best_agreement"] = best_agreement(measures)
-    result["rhythm_unmeasurable"] = ((measures["n_beats_multi"].to_numpy() < MIN_BEATS)
-                                     | (result["best_agreement"].to_numpy() < AGREEMENT))
+    result["rhythm_unmeasurable"] = ((measures["n_beats_multi"].to_numpy() >= MIN_BEATS)
+                                     & (result["best_agreement"].to_numpy() < AGREEMENT))
     flags = list(FLAGS)
     result["n_flags"] = result[flags].sum(axis=1)
     result["any_flag"] = result["n_flags"] > 0

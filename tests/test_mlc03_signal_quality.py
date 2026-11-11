@@ -458,3 +458,13 @@ def test_every_flag_has_a_test_and_a_definition() -> None:
     assert set(FLAGS) == set(PLANTS)
     for spec in FLAGS.values():
         assert set(spec) == {"item", "definition", "threshold", "reason"}
+
+
+def test_spectral_flags_ignore_pacing_spikes(clean: np.ndarray) -> None:
+    window = clean.copy()
+    for start in range(300, SAMPLES - 300, 400):
+        window[:, start] += 8.0
+        window[:, start + 1] -= 4.0
+    row = flags_of(window)
+    assert not row["mains_interference"]
+    assert not row["hf_noise"]

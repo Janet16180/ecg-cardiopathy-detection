@@ -307,6 +307,24 @@ def long_records() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def short_records() -> pd.DataFrame:
+    """
+    Count train and validation records of the v4 manifest by length, per source.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per source: records, records shorter than 10 s (excluded by MLC-01, never measured here),
+        records of exactly 10 s and longer records.
+    """
+    manifest = pd.read_csv(MANIFEST, usecols=["source", "role", "n_samples"], low_memory=False)
+    manifest = manifest[manifest["role"].isin(["train", "validation"])]
+    samples = manifest["n_samples"].astype(int)
+    frame = pd.DataFrame({"source": manifest["source"], "records": 1, "shorter than 10 s": samples < 5000,
+                          "exactly 10 s": samples == 5000, "longer": samples > 5000})
+    return frame.groupby("source").sum().astype(int).reset_index()
+
+
 def near_train() -> pd.DataFrame:
     """
     Count train and validation candidate pairs of both searches by score band.
@@ -496,6 +514,7 @@ def main(argv: list[str] | None = None) -> None:
         "pipelines": lambda args: pipelines_section(),
         "near": lambda args: optional_table("near_duplicates_test_roles_counts.csv"),
         "measurement-status": lambda args: markdown(measurement_status()),
+        "short-records": lambda args: markdown(short_records()),
         "long-records": lambda args: markdown(long_records()),
         "near-train": lambda args: markdown(near_train()),
         "lead-amplitude": lambda args: markdown(lead_amplitude()),

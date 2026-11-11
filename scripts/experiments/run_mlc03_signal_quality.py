@@ -125,7 +125,8 @@ def measure(args: argparse.Namespace, command: list[str]) -> None:
         "step": "measure", "command": command, "smoke": args.smoke, "limit": args.limit,
         "roles": list(DEVELOPMENT_ROLES), "records": len(frame), "columns": len(frame.columns),
         "summary": summary, "inputs": input_hashes(), "code": code_hashes(MEASURE_CODE),
-        "table": {"path": str(target), "csv_sha256": frame_sha256(frame)}})
+        "table": {"path": str(target) if args.smoke else to_stored(target),
+                  "csv_sha256": frame_sha256(frame)}})
     print(json.dumps({**summary, "table": str(target)}, indent=1))
 
 

@@ -14,10 +14,13 @@ supervised baseline for the pretrained encoders.
 - Code and tests, committed before any run: `3b62a6e` (`ecg_experiment/mlc02_scratch_network.py`,
   `ecg_experiment/mlc02_scratch_runs.py`, `scripts/experiments/run_mlc02_scratch_network.py`,
   `tests/test_mlc02_scratch_network.py`). Later commits: `d437d5f` switched TF32 off after the first profile;
-  `89c488c` stored the held-out record keys as text (departure 7).
+  `89c488c` stored the held-out record keys as text (departure 4); `60b0598` and `c948c59` added the
+  published-file check and the memory error counters.
 - Commits of the runs, each with no modified tracked file: input preparation and first profile `3b62a6e`;
-  second profile, overfit check, all seven trainings and the main publication `d437d5f`; held-out rescoring of
-  the four leave-one-family-out runs, their publication and the `predict` check `89c488c`.
+  second profile, overfit check, all seven trainings and the first main publication `d437d5f`; held-out
+  rescoring of the four leave-one-family-out runs, their first publication and the first `predict` check
+  `89c488c`; republication of both directories (same files, receipts with the memory error counters) and the
+  second `predict` check `60b0598`; the published-file check `c948c59`.
 - Commands, from the worktree, with `CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=4 PYTHONPATH=<worktree>`:
   `.venv/bin/python -m scripts.experiments.run_mlc02_scratch_network <step>` with steps `prepare`, `profile`,
   `overfit`, `plan` (three main seeds, four leave-one-family-out runs, publication) and `check-predict`.
@@ -29,9 +32,9 @@ supervised baseline for the pretrained encoders.
 The benchmark sources were read on 10 November 2026: `helme/ecg_ptbxl_benchmarking` (branch `master`:
 `code/models/fastai_model.py`, `xresnet1d.py`, `basic_conv1d.py`, `timeseries_utils.py`,
 `code/utils/utils.py`, `code/configs/fastai_configs.py`, `ecg_env.yml`, which pins fastai 1.0.61 and PyTorch
-1.4.0) and `fastai/fastai1` (branch `master`: `fastai/train.py`, `callbacks/one_cycle.py`, `basic_train.py`,
-`basic_data.py`, `callback.py`, `torch_core.py`). fastai is not installed here, so the schedule is
-`torch.optim.lr_scheduler.OneCycleLR`; the mapping is below.
+1.4.0) and `fastai/fastai1` at tag `1.0.61` (`fastai/train.py`, `callbacks/one_cycle.py`,
+`callbacks/lr_finder.py`, `basic_train.py`, `basic_data.py`, `callback.py`, `torch_core.py`, `layers.py`).
+fastai is not installed here, so the schedule is `torch.optim.lr_scheduler.OneCycleLR`; the mapping is below.
 
 | Item | As run | Source |
 |---|---|---|
@@ -42,17 +45,18 @@ The benchmark sources were read on 10 November 2026: `helme/ecg_ptbxl_benchmarki
 | Normalization | One mean and one standard deviation over every sample and lead of the run's training records: mean 0.000260 mV, SD 0.25547 mV for the main runs (675,000,000 values) | Benchmark `utils.preprocess_signals`: `StandardScaler().fit(np.vstack(X_train).flatten()[:, np.newaxis])` |
 | Architecture | `xresnet1d101(input_channels=12, num_classes=14, kernel_size=5, ps_head=0.5, lin_ftrs_head=[128])` from `third_party/ecg-fm-benchmarking/code/clinical_ts/models/xresnet1d.py`, imported through `sys.path` | Benchmark `fastai_model._get_learner`: `xresnet1d101(num_classes=..., input_channels=..., kernel_size=self.kernel_size, ps_head=self.ps_head, lin_ftrs_head=self.lin_ftrs_head)` with defaults `kernel_size=5`, `ps_head=0.5`, `lin_ftrs_head=[128]`, `input_channels=12`; the config `conf_fastai_xresnet1d101` sets no parameter |
 | Body | Stem of three convolutions (32, 32, 64 channels, kernel 5, first stride 2) and a max pool; bottleneck blocks [3, 4, 23, 3], expansion 4, width 64 in every stage (256 output channels), stride 2 from stage 2, average-pool shortcut | Both files: `block_szs = [int(o*widen) for o in [64,64,64,64] + ...]` (the `[64,128,256,512]` line is commented out in both) |
-| Head | Concat pooling (max, mean) of 256 channels, BatchNorm(512), Dropout 0.25, Linear 512 to 128, ReLU, BatchNorm(128), Dropout 0.5, Linear 128 to 14 | `create_head1d` with `ps=0.5` expanded to `[0.25, 0.5]`, `bn=True`, `bn_final=False` |
+| Head | Concat pooling (max, mean) of 256 channels, BatchNorm(512), Dropout 0.25, Linear 512 to 128, ReLU, BatchNorm(128), Dropout 0.5, Linear 128 to 14 | `create_head1d` with `ps=0.5` expanded to `[0.25, 0.5]`, `bn=True`, `bn_final=False`; the benchmark takes `bn_drop_lin` from fastai 1.0.61 `layers.py` (batch norm, dropout, linear, activation), the order of the vendored copy |
 | Parameters | 1,873,422 (unit test) | Counted on the built model |
 | Initialization | `model.apply(weight_init)` after construction: Kaiming-normal convolution and linear weights, zero biases, every batch-norm weight 1 and bias 0 (this undoes the zero init of each block's last batch norm) | Benchmark `fastai_model.fit`, from scratch: `learn.model.apply(weight_init)` |
 | Training crops | One random 2.5 s crop (250 samples) per record and epoch, start uniform in [0, 749] | `chunkify_train=False` (one entry per record), `TimeseriesDatasetCrops`: `random.randint(0, timesteps - self.output_size - 1)` |
 | Batches | 128, shuffled per epoch, last partial batch dropped: 439 updates per epoch | `bs=128`; fastai `DataBunch.create` builds the training loader with `drop_last=True` |
 | Loss | Binary cross-entropy with logits, averaged over the defined label entries of the batch; undefined entries contribute neither value nor gradient | Benchmark `loss="binary_cross_entropy"` (`F.binary_cross_entropy_with_logits`); masking from MLC-01 decision 4 |
-| Optimizer | `torch.optim.AdamW(lr=1e-2, betas=(0.9, 0.99), eps=1e-8, weight_decay=1e-2)` on every parameter, biases and batch norms included | fastai v1 `Learner` defaults: `opt_func=AdamW = partial(optim.Adam, betas=(0.9,0.99))`, `true_wd=True` (decay `p *= 1 - lr*wd` outside the Adam step, as in torch AdamW), `bn_wd=True`; `wd=1e-2` |
+| Optimizer | `torch.optim.AdamW(lr=1e-2, betas=(0.9, 0.99), eps=1e-8, weight_decay=1e-2)` on every parameter, biases and batch norms included | fastai 1.0.61 `Learner` defaults: `opt_func=AdamW = partial(optim.Adam, betas=(0.9,0.99))` (eps is torch's default, 1e-8), `true_wd=True` (decay `p *= 1 - lr*wd` on every parameter outside the Adam step, as in torch AdamW), `bn_wd=True`; `wd=1e-2` |
 | Schedule | `OneCycleLR(max_lr=1e-2, total_steps=50*439, pct_start=0.3, anneal_strategy="cos", div_factor=25, final_div_factor=1e4, cycle_momentum=True, max_momentum=0.95, base_momentum=0.85, three_phase=False)`: rate 4e-4 to 1e-2 over 30% of updates, then to 4e-8; Adam beta1 0.95 to 0.85 and back, by cosine | `learn.fit_one_cycle(self.epochs, self.lr)` with fastai v1 defaults `moms=(0.95,0.85)`, `div_factor=25`, `pct_start=0.3`, `final_div=div_factor*1e4`, `annealing_cos` in both phases. A unit test reproduces the fastai rule step by step within 1e-3 of the peak rate and 1e-3 in momentum; torch reaches the peak one update earlier |
 | Epochs | 50 | Benchmark `epochs=50` |
-| Epoch choice | Highest validation selection metric (`mlc02_evaluation.selection_metric`), the earliest on equality | Protocol. The benchmark keeps the last epoch (`early_stopping=None`) |
-| Evaluation | Mean of float64 sigmoid probabilities over the windows starting at 0, 2.5, 5 and 7.5 s; batch norm in evaluation mode | Protocol. The benchmark default is the maximum (`aggregate_fn="max"`) over 2.5 s windows with a 1.25 s stride |
+| Learning-rate finder | Not run | The benchmark calls `lr_find` before `fit_one_cycle` but only plots it. In fastai 1.0.61 `LRFinder` saves the model and optimizer state when it starts and reloads them when it ends, so its only lasting effect is on the random number streams |
+| Epoch choice | Highest validation selection metric (`mlc02_evaluation.selection_metric`), the earliest on equality | Protocol (documented difference, below) |
+| Evaluation | Mean of float64 sigmoid probabilities over the windows starting at 0, 2.5, 5 and 7.5 s; batch norm in evaluation mode | Protocol (documented difference, below) |
 | Seeds | 20261110, 20261111, 20261112: initialization, shuffling and crops (`np.random.default_rng([seed, epoch])`), dropout; the candidate is the mean probability of the three | Protocol |
 | Precision | float32 throughout, TF32 off for convolutions and matrix products, no mixed precision | Benchmark trained in float32; see the profile |
 | Augmentation, weights | Random crop only; no class weights | Protocol |
@@ -65,6 +69,13 @@ no such files, so one method is needed for all sources from 500 Hz. Polyphase de
 factor 5 applies an anti-aliasing low-pass FIR filter and does not treat the 10 s as periodic, as FFT
 resampling does; it is the project's helper for new manifests (`ecg_experiment/resample.py`). The S-R input
 therefore differs from the benchmark's PTB-XL input by this filter.
+
+Documented differences from the benchmark, set by the protocol and followed as written:
+
+- Epoch: the epoch with the highest validation selection metric. The benchmark keeps the final epoch
+  (`early_stopping=None`, `learn.save` after `fit_one_cycle`).
+- Evaluation: the mean probability over the four consecutive, non-overlapping 2.5 s windows. The benchmark
+  default is the maximum (`aggregate_fn="max"`) over 2.5 s windows with a 1.25 s stride, seven windows on 10 s.
 
 Architecture check. The vendored file is the later `clinical_ts` copy of the benchmark's `xresnet1d.py`. For
 these arguments the two build the same network: same stem, block sizes, `ResBlock` (1x1, kxk, 1x1 convolutions
@@ -86,7 +97,7 @@ plus one validation pass, gated the full run [`profile.json`, `profile_tf32_firs
 
 Full float32 costs a factor of two and the whole plan still fits in under 1.5 hours, so TF32 was switched
 off and mixed precision was not used. The plan (three main seeds, then the four leave-one-family-out runs, in
-one process holding the GPU lock) ran from 17:23 to 18:42, when its last step failed (departure 7)
+one process holding the GPU lock) ran from 17:23 to 18:42, when its last step failed (departure 4)
 [`epochs.csv`, `run.json` of each run]:
 
 | run | training records | updates per epoch | training s per epoch | validation s per epoch | epoch time, 50 epochs | peak allocated |
@@ -211,8 +222,14 @@ any MI 0.81-0.95 and sinus arrhythmia 0.80-0.83, while rate, AF, complete RBBB a
   `test_read_windows_refuses_test_records_before_opening_any_file`). The input preparation opened only the 12
   train and validation block files [`prepare.json` `blocks_opened`].
 - `predict` reproduces the saved three-seed validation predictions from the 500 Hz cache: on the GPU for all
-  15,138 records the largest difference is 0 (21 s) [`predict_check.json`]; on the CPU for 48 records it is
-  within 1e-5 (`test_predict_reproduces_the_saved_validation_predictions_on_cpu`).
+  15,138 records the largest difference is 0, at `89c488c` and again at `60b0598` after the republication
+  [`predict_check.json`]; on the CPU for 48 records it is within 1e-5
+  (`test_predict_reproduces_the_saved_validation_predictions_on_cpu`).
+- Published files [`files_check.json`, in both directories, `c948c59`, on the CPU because another job held
+  the GPU lock]: every checkpoint matches its recorded SHA-256 and loads; recomputed from the prepared inputs,
+  each seed reproduces its validation prediction file within 1.3e-6 and each leave-one-family-out model its
+  held-out file within 2.0e-6 (CPU against the GPU that wrote them); the mean file equals the mean of the seed
+  files exactly. The kernel's memory error counters at the check: `mc0/ue_count` 1, `mc0/ce_count` 0.
 - Schedule: `test_one_cycle_follows_the_fastai_v1_schedule` (above); architecture:
   `test_model_matches_the_benchmark_configuration` (parameter count, head layers, dropout, batch-norm init).
 - Tests: `tests/test_mlc02_scratch_network.py` 19 passed, with `tests/test_mlc02_evaluation.py` 55 passed;
@@ -241,23 +258,16 @@ the three checkpoints and their SHA-256.
 
 ## Departures and doubts
 
-All dated 10 November 2026. No rule of the protocol was changed; the items below are departures from the
-benchmark recipe that the protocol or the data force, and points to keep in mind.
+All dated 10 November 2026. No rule of the protocol was changed. The two protocol differences from the
+benchmark are listed under the recipe; the items below are departures from the benchmark that the data or the
+software force, and points to keep in mind.
 
-1. Epoch choice and window rule follow the protocol, not the benchmark: the best validation epoch instead of
-   the last, and the mean over four consecutive windows instead of the maximum over seven overlapping ones.
-2. 100 Hz input by polyphase decimation instead of PTB-XL's distributed 100 Hz files (see the recipe).
-3. One-cycle schedule from `torch.optim.lr_scheduler.OneCycleLR` (fastai is not installed). Its peak comes one
-   update earlier than fastai's; otherwise it follows fastai v1 within 1e-3 of the peak rate.
-4. The masked loss averages over the defined entries of each batch. With every entry defined it is the
-   benchmark's loss (unit test).
-5. TF32 was off for all training runs; the first profile ran with the torch default (TF32 on for
-   convolutions). Runs are not bit-reproducible: cuDNN may choose nondeterministic kernels. A resumed run sees
-   the same batches and crops (seeded per epoch) but not bit-identical numerics. No run was interrupted.
-6. Missing samples (3,511 at 500 Hz in 87 train and validation records) enter as the rail value -32.768 mV,
-   the Stage 1 rule. They are a tiny share of the standardizer's 675 million values; their effect on it was
-   not measured separately.
-7. The leave-one-family-out models were trained at `d437d5f` in the plan process. Its publication step failed
+1. 100 Hz input by polyphase decimation instead of PTB-XL's distributed 100 Hz files (see the recipe).
+2. One-cycle schedule from `torch.optim.lr_scheduler.OneCycleLR` (fastai is not installed). Its peak comes one
+   update earlier than fastai's; otherwise it follows fastai 1.0.61 within 1e-3 of the peak rate.
+3. The masked loss averages over the defined entries of each batch. With every entry defined it is the
+   benchmark's loss (unit test). The learning-rate finder is not run (see the recipe).
+4. The leave-one-family-out models were trained at `d437d5f` in the plan process. Its publication step failed
    because the held-out archives stored record keys as an object array, which loads only with pickle. The keys
    are now stored as text (`89c488c`), and the held-out scoring was repeated at that commit from the same chosen
    checkpoints (no epoch retrained). This overwrote the first `run.json` of these four runs, so their receipts
@@ -265,11 +275,23 @@ benchmark recipe that the protocol or the data force, and points to keep in mind
    (PTB-XL 0.9314; Chapman 0.9585 and Ningbo 0.9522) the repeated held-out macros are equal at four decimals;
    Georgia and CPSC were not printed before the repeat. Training histories, chosen epochs and checkpoints are
    those of the plan process.
-8. Metadata read: the record table reads the identity columns of every manifest row and the cache index, and
+5. TF32 was off for all training runs; the first profile ran with the torch default (TF32 on for
+   convolutions). Runs are not bit-reproducible: cuDNN may choose nondeterministic kernels. A resumed run sees
+   the same batches and crops (seeded per epoch) but not bit-identical numerics. No run was interrupted.
+6. Missing samples (3,511 at 500 Hz in 87 train and validation records) enter as the rail value -32.768 mV,
+   the Stage 1 rule. They are a tiny share of the standardizer's 675 million values; their effect on it was
+   not measured separately.
+7. Metadata read: the record table reads the identity columns of every manifest row and the cache index, and
    the scoring library's `load_manifest` reads the label states of every role; test-role rows were dropped
    before any use. No test-role waveform file was opened.
-9. The overfit check reached an evaluation loss of 0.017 rather than exactly zero, with 300 updates under the
+8. The overfit check reached an evaluation loss of 0.017 rather than exactly zero, with 300 updates under the
    one-cycle schedule. Longer training was not tried.
+9. Memory error. The kernel logged one uncorrectable ECC memory error at 17:36:20 (`EDAC MC0: 1 UE`), the
+   second at which epoch 43 of seed 20261110 was logged; it killed another agent's process. None of the S-R
+   processes failed, and seed 20261110's chosen epoch (27) was written before it. ECC
+   detected the error, and the file check and both `predict` checks above ran after it. The counters
+   (`/sys/devices/system/edac/mc/mc0/ue_count` 1, `ce_count` 0) are in both receipts and in
+   `files_check.json`, so a later error will be visible.
 
 ## Files
 
@@ -277,12 +299,11 @@ benchmark recipe that the protocol or the data force, and points to keep in mind
   chosen checkpoints with SHA-256 and commit), `normalization.json`, `seed-<seed>/model_epoch-<NNN>.pt`
   (`state_dict`), `validation__seeds-<seed>.npz` and `validation__seeds-20261110-20261111-20261112.npz`
   (library convention), `results.json` (selection tables and per-source, per-condition tables for each seed and
-  the mean),
-  `epochs.csv` (every epoch of the three seeds), `profile.json`, `profile_tf32_first.json`,
-  `overfit_check.json`, `predict_check.json`, `receipt.json` (input hashes: manifest `25d75f8f...`, `rows.csv`,
-  `index_all.csv`, cache receipts, prepared signals; each run's commit, code SHA-256, environment, timings,
-  memory).
+  the mean), `epochs.csv` (every epoch of the three seeds), `profile.json`, `profile_tf32_first.json`,
+  `overfit_check.json`, `predict_check.json`, `files_check.json`, `receipt.json` (input hashes: manifest
+  `25d75f8f...`, `rows.csv`, `index_all.csv`, cache receipts, prepared signals; each run's commit, code
+  SHA-256, environment, timings, memory; the publication's commit and memory error counters).
 - `outputs/mlc02_condition_models_20261110/lofo/S-R/`: `<family>/model_epoch-<NNN>.pt`,
-  `<family>/held_out__seeds-20261110.npz`, `lofo.json`, `epochs.csv`, `receipt.json`.
+  `<family>/held_out__seeds-20261110.npz`, `lofo.json`, `epochs.csv`, `files_check.json`, `receipt.json`.
 - Local only (`/var/tmp/janetrivera/mlc02/scratch_network/`): prepared 100 Hz inputs (`inputs/`), every run's
   per-epoch weights, validation probabilities, `state.pt` and logs (`runs/`), and step logs (`logs/`).

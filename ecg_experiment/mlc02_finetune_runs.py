@@ -350,8 +350,8 @@ def start_check(seed: int, validation: dict[str, Any], cached: np.ndarray) -> Ca
     -------
     Callable[..., dict[str, Any]]
         Called with the step-0 probabilities and pooled features; returns the record and raises when the
-        features differ from Stage 1 by more than 1e-4 relative per record or a probability differs from H-X's
-        by more than 1e-4.
+        features differ from Stage 1 by more than 1e-4 relative per record (a record whose cached features are
+        all zero must match exactly) or a probability differs from H-X's by more than 1e-4.
     """
     base = load_candidate(BASE)
     scaler, weights = base["artefacts"]["scaler.npz"], base["artefacts"][f"weights__seed-{seed}.npz"]
@@ -362,7 +362,8 @@ def start_check(seed: int, validation: dict[str, Any], cached: np.ndarray) -> Ca
 
     def check(probability: np.ndarray, pooled: np.ndarray) -> dict[str, Any]:
         difference = np.abs(np.asarray(pooled, dtype=np.float64) - cached)
-        relative = difference.max(axis=1) / np.abs(cached).max(axis=1)
+        largest, scale = difference.max(axis=1), np.abs(cached).max(axis=1)
+        relative = np.divide(largest, scale, out=np.where(largest > 0, np.inf, 0.0), where=scale > 0)
         new_head = network_probability(standardize(pooled, scaler), weights)
         old_head = network_probability(standardize(cached, scaler), weights)
         record = {
@@ -371,7 +372,8 @@ def start_check(seed: int, validation: dict[str, Any], cached: np.ndarray) -> Ca
             "feature_max_abs_difference": float(difference.max()),
             "feature_max_relative_difference": float(relative.max()),
             "feature_records_above_tolerance": int((relative > FEATURE_TOLERANCE).sum()),
-            "feature_bit_identical_records": int((difference.max(axis=1) == 0).sum()),
+            "feature_bit_identical_records": int((largest == 0).sum()),
+            "zero_feature_records": int((scale == 0).sum()),
             "probability_max_abs_difference": float(np.abs(probability - expected).max()),
             "float64_head_new_features_max_abs_difference": float(np.abs(new_head - expected).max()),
             "float64_head_cached_features_max_abs_difference": float(np.abs(old_head - expected).max()),

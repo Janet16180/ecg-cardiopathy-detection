@@ -348,3 +348,28 @@ def test_sessions_are_recorded_at_start_and_completed_at_the_end(tmp_path):
     sessions = fr.read_json(path)
     assert [item["status"] for item in sessions] == ["started", "finished"]
     assert sessions[1]["wall_seconds"] == 5.0
+
+
+@needs_data
+def test_start_check_passes_cached_features_and_refuses_a_changed_record():
+    data, _, _ = fdata.cache_rows(("validation",))
+    validation = {"labels": data["labels"], "sources": data["source"], "keys": data["record_key"],
+                  "positions": np.arange(len(data["record_key"]))}
+    cached = fdata.cached_xecg_features(data)
+    seed = fr.SEEDS[0]
+    path = md.prediction_path(ft.CANDIDATES, ft.BASE, "validation", (seed,))
+    expected = md.load_predictions(path, data["record_key"])["probability"]
+    check = fr.start_check(seed, validation, cached)
+    record = check(expected, cached)
+    assert record["feature_max_abs_difference"] == 0
+    assert record["probability_max_abs_difference"] == 0
+    assert record["step0_selection_metric"] == record["hx_selection_metric"]
+    zero = int(np.flatnonzero(np.abs(cached).max(axis=1) == 0)[0]) if record["zero_feature_records"] else 0
+    changed = cached.copy()
+    changed[zero] += 1e-3
+    with pytest.raises(RuntimeError, match="step-0 check failed"):
+        check(expected, changed)
+    shifted = expected.copy()
+    shifted[1, 2] = min(1.0, shifted[1, 2] + 2e-4)
+    with pytest.raises(RuntimeError, match="step-0 check failed"):
+        check(shifted, cached)

@@ -243,8 +243,8 @@ the full runs took 220-302 s.
 
 - Inputs: the local feature copy (`/var/tmp/janetrivera/mlc02/features/final/`) has the SHA-256 of every
   array and of `rows.csv` recorded in the Stage 1 receipt; every run checks this when it writes its receipt,
-  and stores the hashes there. `rows.csv` was checked against the manifest by record key, first-10-s hash, role, source and
-  inclusion (`included_v4` equal to the manifest's `included`).
+  and stores the hashes there. `rows.csv` was checked against the manifest by record key, first-10-s hash,
+  role, source and inclusion (`included_v4` equal to the manifest's `included`).
 - Role guard: `mlc02_feature_data.load_split` raises `PermissionError` for `test_same_source`,
   `test_external` and `sph_calibration` before any file is opened (tested). After the runs, all 32 saved
   prediction files were checked against the manifest: they hold train and validation records only (executed

@@ -14,8 +14,10 @@ import json
 import sys
 import time
 
+import numpy as np
 import pandas as pd
 
+from ecg_experiment.eda.signals import LEADS
 from ecg_experiment.mlc03_near_duplicates import (
     dense_pairs,
     key_table,
@@ -25,6 +27,14 @@ from ecg_experiment.mlc03_near_duplicates import (
     shifted_candidates,
     verify_candidates,
 )
+from ecg_experiment.mlc03_pipeline_effects import (
+    PIPELINES,
+    RATES,
+    defect_measures,
+    edge_ringing,
+    missing_spread,
+    pipeline_inputs,
+)
 from ecg_experiment.mlc03_signal_flags import (
     FLAGS,
     compute_flags,
@@ -32,6 +42,7 @@ from ecg_experiment.mlc03_signal_flags import (
     record_summaries,
     summary_quantiles,
 )
+from ecg_experiment.mlc03_signal_quality import fill_missing
 from ecg_experiment.mlc03_signal_review import annotate, draw_pair_sheet, draw_sheet, review_sample
 from ecg_experiment.mlc03_signal_runs import (
     DEVELOPMENT_ROLES,
@@ -53,10 +64,27 @@ from ecg_experiment.paths import to_stored
 
 REVIEW = OUTPUT.parent / "review/signal"
 NEAR = OUTPUT / "near_duplicates"
+PIPE = OUTPUT / "pipeline_effects"
 DENSE_FLOOR = 0.8
 NEAR_REVIEW = 0.95
 NEAR_CONTROL = (0.90, 0.95)
 MIN_OVERLAP_S = 4.0
+PIPELINE_FLAGS = {"missing_samples": ("missing_samples", "range_mv"),
+                  "edge_hold": ("edge_hold", "range_mv"),
+                  "adc_rail": ("adc_rail", "peak_abs_mv"), "flat_lead": ("flat_lead", "range_mv"),
+                  "near_flat_lead": ("near_flat_lead", "range_mv"),
+                  "identity_violation": ("identity_violation", "peak_abs_mv"),
+                  "amplitude_outlier": ("amplitude_outlier", "range_mv"),
+                  "baseline_wander": ("baseline_wander", "baseline_mv"),
+                  "mains_interference": ("mains_interference__v2", "mains50_mv"),
+                  "hf_noise": ("hf_noise__v2", "hf_rms_mv"),
+                  "baseline_step": ("baseline_step", "baseline_mv"),
+                  "isolated_spike": ("isolated_spike", "peak_abs_mv"),
+                  "contact_loss": ("contact_loss", "range_mv")}
+PIPELINE_RECORDS = 8
+EDGE_SAMPLE = 100
+PIPELINE_CODE = ["ecg_experiment/mlc03_pipeline_effects.py",
+                 "scripts/experiments/run_mlc03_signal_quality.py"]
 NEAR_CODE = ["ecg_experiment/mlc03_near_duplicates.py", "ecg_experiment/resample.py",
              "scripts/experiments/run_mlc03_signal_quality.py"]
 SEED = 20261111
@@ -322,8 +350,6 @@ def near_review_step(args: argparse.Namespace, command: list[str]) -> None:
     command : list[str]
         Command line, for the receipt.
     """
-    import numpy as np
-
     candidates = near_duplicate_candidates()
     high = candidates[candidates["score"] >= NEAR_REVIEW].sort_values("score", ascending=False)
     band = candidates[(candidates["score"] >= NEAR_CONTROL[0]) & (candidates["score"] < NEAR_CONTROL[1])]
@@ -361,6 +387,108 @@ def near_review_step(args: argparse.Namespace, command: list[str]) -> None:
     print(json.dumps({"high": len(high), "band": len(band), "control": len(control)}))
 
 
+def blamed_lead(flag: str, window: np.ndarray, flags_row: pd.Series) -> str:
+    """
+    Lead whose defect is compared across pipelines.
+
+    Parameters
+    ----------
+    flag : str
+        Flag name.
+    window : np.ndarray
+        Float ``(12, 5000)`` mV.
+    flags_row : pd.Series
+        The record's row of the flags table.
+
+    Returns
+    -------
+    str
+        The first blamed lead, else the lead with missing or rail samples, else the derived lead with the
+        largest identity residual, else lead II.
+    """
+    blamed = [lead for lead in str(flags_row.get(f"{flag}__leads", "")).split(";") if lead]
+    if blamed:
+        return blamed[0]
+    if flag == "missing_samples":
+        return LEADS[int(np.isnan(window).sum(axis=1).argmax())]
+    if flag == "adc_rail":
+        return LEADS[int((np.abs(np.nan_to_num(window)) >= 32.7).sum(axis=1).argmax())]
+    if flag == "identity_violation":
+        lead_i, lead_ii = window[0], window[1]
+        expected = {"III": lead_ii - lead_i, "aVR": -(lead_i + lead_ii) / 2, "aVL": lead_i - lead_ii / 2,
+                    "aVF": lead_ii - lead_i / 2}
+        residual = {lead: np.nanmax(np.abs(window[LEADS.index(lead)] - value))
+                    for lead, value in expected.items()}
+        return max(residual, key=residual.get)
+    return "II"
+
+
+def pipelines_step(args: argparse.Namespace, command: list[str]) -> None:
+    """
+    Measure what each input pipeline does to confirmed defects and to the record edges.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed arguments (``seed``).
+    command : list[str]
+        Command line, for the receipt.
+    """
+    flags = pd.read_parquet(OUTPUT / "flags_train_validation.parquet").set_index("record_key")
+    index = read_index(DEVELOPMENT_ROLES).set_index("record_key")
+
+    def window(key: str) -> np.ndarray:
+        place = index.loc[key]
+        return read_checked(open_block(place["block"], False), int(place["row"]), place["sha256_10s"], key)
+
+    rows, spreads = [], []
+    for flag, (review, measure) in PIPELINE_FLAGS.items():
+        tally = pd.read_csv(REVIEW / review / "tally.csv")
+        keys = tally.loc[(tally["group"] == "flagged") & (tally["defect_visible"] == "yes"), "record_key"]
+        for key in keys.head(PIPELINE_RECORDS):
+            signal = window(key)
+            lead = blamed_lead(flag, signal, flags.loc[key])
+            stored = np.where(np.isnan(signal), -32.768, signal) if flag == "missing_samples" else signal
+            base = defect_measures(fill_missing(stored)[LEADS.index(lead)], RATES["window"])
+            inputs = pipeline_inputs(signal)
+            row = {"flag": flag, "record_key": key, "lead": lead, "measure": measure, "window": base[measure]}
+            for name in PIPELINES:
+                values, names = inputs[name]
+                if lead in names:
+                    row[name] = defect_measures(values[names.index(lead)], RATES[name])[measure]
+                else:
+                    row[name] = np.nan
+            rows.append(row)
+            if flag == "missing_samples":
+                spreads.append({"record_key": key, "lead": lead, **missing_spread(signal, lead)})
+    records = pd.DataFrame(rows)
+    for name in PIPELINES:
+        records[f"{name}_ratio"] = records[name] / records["window"].replace(0.0, np.nan)
+    PIPE.mkdir(parents=True, exist_ok=True)
+    records.to_csv(PIPE / "pipeline_effects_records.csv", index=False)
+    columns = [f"{name}_ratio" for name in PIPELINES] + ["window"]
+    summary = records.groupby(["flag", "measure"])[columns].median()
+    summary.reset_index().to_csv(PIPE / "pipeline_effects_summary.csv", index=False)
+    pd.DataFrame(spreads).to_csv(PIPE / "missing_sample_spread.csv", index=False)
+    identity = read_identity(DEVELOPMENT_ROLES)
+    identity = identity[identity["included"]]
+    rng = np.random.default_rng(args.seed)
+    edges = []
+    for source, group in identity.groupby("source"):
+        keys = np.sort(group["record_key"].to_numpy(dtype=str))
+        for key in keys[rng.choice(len(keys), size=min(EDGE_SAMPLE, len(keys)), replace=False)]:
+            edges.append({"source": source, "record_key": key, **edge_ringing(window(key))})
+    edges = pd.DataFrame(edges)
+    edges.to_csv(PIPE / "edge_ringing_records.csv", index=False)
+    edge_summary = edges.groupby("source").quantile([0.5, 0.9]).reset_index()
+    edge_summary.to_csv(PIPE / "edge_ringing_by_source.csv", index=False)
+    write_receipt(PIPE / "pipeline_effects.receipt.json", {
+        "step": "pipelines", "command": command, "seed": args.seed, "records": len(records),
+        "edge_records": len(edges), "code": code_hashes(PIPELINE_CODE + MEASURE_CODE[:1])})
+    print(summary.round(3).to_string())
+    print(edge_summary.round(3).to_string())
+
+
 def main(argv: list[str] | None = None) -> None:
     """
     Parse the command line and run one step.
@@ -372,7 +500,7 @@ def main(argv: list[str] | None = None) -> None:
     """
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("step", choices=("measure", "full-records", "flags", "review", "near-duplicates",
-                                         "near-review"))
+                                         "near-review", "pipelines"))
     parser.add_argument("--flag", choices=tuple(FLAGS), help="review: flag to review")
     parser.add_argument("--seed", type=int, default=SEED, help="review: sampling seed")
     parser.add_argument("--tag", help="review: suffix of the review directory (for a re-sample)")
@@ -395,6 +523,8 @@ def main(argv: list[str] | None = None) -> None:
         near_duplicates_step(args, command)
     elif args.step == "near-review":
         near_review_step(args, command)
+    elif args.step == "pipelines":
+        pipelines_step(args, command)
 
 
 if __name__ == "__main__":

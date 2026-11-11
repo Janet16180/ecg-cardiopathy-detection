@@ -1,7 +1,9 @@
 # MLC-02 Stage 1 results: inputs (no score)
 
-10 November 2026. Executes Stage 1 of the frozen [MLC-02 protocol](mlc02-condition-models-protocol-2026-11-10.md)
-on the final MLC-01 build (`outputs/mlc01_condition_dataset_20261110_v3/`). This stage builds a local waveform
+10 November 2026. Executes Stage 1 of the frozen [MLC-02 protocol](mlc02-condition-models-protocol-2026-11-10.md).
+The cache was built from the v3 MLC-01 manifest (`outputs/mlc01_condition_dataset_20261110_v3/`). The protocol
+now names v4 (commit `1a020b6`), which has the same 99,167 included records and the same identity columns, so
+the cache and features apply to v4 unchanged (see Other builds). This stage builds a local waveform
 cache and extracts features. No classifier was fitted and no performance score was computed on the MLC-01
 records. The only fit is the protocol's integrity check: KEY-04's own logistic regressions refitted on
 KEY-04's own cached features. Every number below is read from the executed outputs named in brackets.
@@ -10,8 +12,9 @@ KEY-04's own cached features. Every number below is read from the executed outpu
   `mlc02_cache_build.py`, `mlc02_cpc.py`, `mlc02_features.py`, `mlc02_integrity.py`, `mlc02_stage1.py`,
   `scripts/experiments/run_mlc02_inputs.py`, `tests/test_mlc02_inputs.py`). Later commits added the BLAS
   kernel to the KEY-04 record (`9d2f3e8`) and the PTB-XL float64 attribution check (`846875e`,
-  `ecg_experiment/mlc02_attribution.py`) and vendored package versions to the receipt (`f4b5400`). Every run
-  records its commit and whether tracked files were modified (none were).
+  `ecg_experiment/mlc02_attribution.py`), vendored package versions to the receipt (`f4b5400`) and the v4
+  comparison (`aad7c97`, after which the receipt was rewritten with identical file hashes). Every run records
+  its commit and whether tracked files were modified (none were).
 - Run: `PYTHONPATH=. OPENBLAS_CORETYPE=Haswell .venv/bin/python -m scripts.experiments.run_mlc02_inputs <step>`
   with steps `cache`, `profile`, `extract`, `publish`, `integrity`, `attribution` and `key04`. CPU threads were
   limited to 1 per reader or measurement process and 2 per GPU process.
@@ -45,9 +48,9 @@ caches (`public_sources.signal_sha256`), missing samples and flat leads [`receip
   of every record from the written files; all 99,167 matched again, and the float32 window hashes were
   identical [`receipt.json` `sha256_cache_ok`]. Float32 storage therefore does not break hash equality: a
   value of k/1000 mV rounds back to k microvolts, and SPH's float16 samples are exact in float32.
-- Other builds. On all 100,221 manifest rows, v1 (`outputs/mlc01_condition_dataset_20261110/`) and v2 agree
-  with v3 on record key, source, role, raw path and `sha256_10s`. v2 includes the same 99,167 records as v3.
-  v1 includes 99,086: the 81 CPSC-Extra records it lacks (59 train, 22 validation) were duplicate conflicts
+- Other builds. On all 100,221 manifest rows, v1 (`outputs/mlc01_condition_dataset_20261110/`), v2 and v4
+  (SHA-256 `25d75f8f...`) agree with v3 on record key, source, role, raw path and `sha256_10s`. v2 and v4
+  include the same 99,167 records as v3 [`features/receipt.json` `other_manifests`]. v1 includes 99,086: the 81 CPSC-Extra records it lacks (59 train, 22 validation) were duplicate conflicts
   in v1 and became kept copies after the label amendments [`receipt.json` `plan.other_manifests`].
 - Missing samples: 87 records (82 Ningbo, 5 Georgia; all train or validation) hold 3,511 samples that WFDB
   reads as missing. Each one was checked to be the stored format-16 value -32768 at gain 1000 and baseline 0,
@@ -198,8 +201,9 @@ iteration counts and coefficients reproduced. Both runs limited threads to 2, as
 All dated 10 November 2026. None changes a decision of the protocol.
 
 1. Manifest. The brief named the first build and said that only label columns would differ in the rebuild.
-   The protocol (commit `fddeb71`) names v3 as the final build, and v3 includes 81 more records (above).
-   Stage 1 used v3; v1 and v2 were compared row by row and agree on every identity column.
+   During the stage the protocol was pointed first at v3 (`fddeb71`), then at v4 (`1a020b6`). v3 and v4
+   include 81 more records than v1 (above). The cache was built from v3; v1, v2 and v4 were compared row by
+   row, agree on every identity column, and v4's included set equals v3's.
 2. Missing samples. The protocol does not say how a model sees a missing sample. The earlier Challenge path
    rejected nonfinite windows, and none of the 87 records is in the HEADS-01 caches. Each of the 3,511 is the
    stored rail value, so every extractor received -32.768 mV there and the cache keeps NaN. 53 of the 87
@@ -222,7 +226,7 @@ All dated 10 November 2026. None changes a decision of the protocol.
 ## Checks
 
 `ruff check ecg_experiment scripts tests conftest.py` passed. `pytest tests/test_mlc02_inputs.py`: 16 passed.
-The full suite in the worktree: 1,633 passed, 2 skipped (on commit `f4b5400`), with
+The full suite in the worktree: 1,633 passed, 2 skipped (on commit `f4b5400`; `aad7c97` only adds a path), with
 `tests/test_xecg_encoder_motion_v11.py::test_graph_rejects_missing_and_conflicting_leaves` deselected because
 it rejects the worktree's symlinked `outputs` (MLC-01 report).
 

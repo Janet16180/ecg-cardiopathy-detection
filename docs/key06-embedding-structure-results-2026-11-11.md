@@ -489,6 +489,7 @@ Added after the full run:
     rules.
 21. The cross-encoder check cannot tell a finding from an artefact: both are waveform properties that ECG-CPC
     also represents.
+22. The experiment used dataset v4 because v5 did not exist when the protocol was frozen.
 
 ## Follow-up ideas
 

@@ -1375,6 +1375,48 @@ def describe(args: argparse.Namespace) -> None:
     )
 
 
+def flags_step(args: argparse.Namespace) -> None:
+    """
+    Write the train flag rates of every cluster to ``describe/flag_rates.csv``.
+
+    They are the inputs of the artefact rule, kept so the report can name every failing flag.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed arguments.
+    """
+    started = time.time()
+    output, _ = paths(args)
+    records = key06.load_records()
+    if args.smoke:
+        records = smoke_sample(records)
+    flags = key06.load_flags(records)
+    data = {
+        "records": records,
+        "train": (records["role"] == "train").to_numpy(),
+        "labels": key06.label_matrix(records),
+    }
+    frames = []
+    for subset, space, method in solutions():
+        combo = output / "clusters" / f"{subset}__{space}"
+        assignment = pd.read_parquet(combo / method / "assignment.parquet")
+        member = membership(records, assignment, "train")
+        rows = np.flatnonzero(data["train"] & subset_mask(data, subset))
+        values = member[member != -2]
+        subset_flags = flags.iloc[rows].reset_index(drop=True)
+        for cluster in range(int(values.max()) + 1):
+            frames.append(
+                key06.flag_rates(values == cluster, subset_flags).assign(
+                    solution=f"{subset}/{space}/{method}", cluster=cluster
+                )
+            )
+    table = pd.concat(frames, ignore_index=True)
+    table.to_csv(output / "describe" / "flag_rates.csv", index=False)
+    print(f"{table[['solution', 'cluster']].drop_duplicates().shape[0]} clusters")
+    receipt(args, "flags", started, {"rows": len(table)}, [key06.MANIFEST, key06.FLAGS_TABLE])
+
+
 def captions_for(data: dict[str, Any], rows: np.ndarray) -> list[str]:
     """
     Sheet captions of some records.
@@ -1913,6 +1955,7 @@ STEPS = {
     "cluster": cluster,
     "assemble": assemble,
     "describe": describe,
+    "flags": flags_step,
     "review": review,
     "detail": detail,
     "cross-encoder": cross_encoder,

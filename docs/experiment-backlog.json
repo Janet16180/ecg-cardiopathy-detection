@@ -1888,7 +1888,7 @@
       "kind": "experiment",
       "title": "Condition-type dataset, roles and label states for spaces A, B and C",
       "question": "Can the frozen MLC-01 mapping, roles and duplicate rule be built and checked against the inventory?",
-      "evidence": "MLC-01 final v3 (Amendments 1 and 2): 99,167 of 100,221 records included; all integrity checks passed; v1 reproduced the inventory's 576 rows exactly.",
+      "evidence": "MLC-01 final v4 (Amendments 1-3): 99,167 of 100,221 records included; all integrity checks passed; an independent audit of v3 agreed on 1,402,829 of 1,403,094 space-B cells.",
       "value": 4,
       "clarity": 0.9,
       "gpu_hours": 0,
@@ -1903,7 +1903,7 @@
       "kind": "repo",
       "title": "Rule on the open MLC-01 label questions and rebuild if any changes",
       "question": "Should CPSC 2018 partial negatives, PTB-XL NST_/missing axis/HVOLT, VT without PVC, ischemia without T-wave codes and zero-positive sources (CPSC-Extra LAD/LAFB, Georgia MI) become undefined?",
-      "evidence": "Amendments 1 and 2 applied in ee0481f and 41845c2; final v3 build reproduces the first build's records, roles, raw paths and waveform hashes; ruling 6 caught 23 pairs (3 in space B).",
+      "evidence": "Amendments 1-3 applied in ee0481f, 41845c2 and 3475e13; final v4 reproduces the first build's records, roles, raw paths and waveform hashes; ruling 6 catches 23 pairs (3 in space B).",
       "value": 3,
       "clarity": 0.8,
       "gpu_hours": 0,
@@ -1911,7 +1911,7 @@
       "build_hours": 2,
       "blocked_by": [],
       "status": "done",
-      "notes": "Dataset final. Kept limits (SPH 145 for T-wave, CPSC 2018 AF or flutter, space-C ST elevation and right axis) are in the report; later questions are logged, not applied."
+      "notes": "Dataset final; no label rule changes from the first model fit onward. Kept limits are in the report."
     },
     {
       "id": "mlc02_condition_models",

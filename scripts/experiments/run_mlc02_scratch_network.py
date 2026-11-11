@@ -20,6 +20,7 @@ from ecg_experiment.files import read_json
 from ecg_experiment.gpu import gpu_lock
 from ecg_experiment.mlc02_scratch_network import CANDIDATE_DIR, FAMILIES, SEEDS, full_precision
 from ecg_experiment.mlc02_scratch_runs import (
+    check_files,
     check_predict,
     overfit_check,
     prepare,
@@ -31,7 +32,17 @@ from ecg_experiment.mlc02_scratch_runs import (
 )
 
 GPU_LOCK = Path("/tmp/ecg_project_gpu.lock")
-STEPS = ("prepare", "profile", "overfit", "train", "plan", "publish", "publish-lofo", "check-predict")
+STEPS = (
+    "prepare",
+    "profile",
+    "overfit",
+    "train",
+    "plan",
+    "publish",
+    "publish-lofo",
+    "check-predict",
+    "check-files",
+)
 
 
 def needed_mib() -> float:
@@ -84,18 +95,23 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--family", choices=FAMILIES, default=None)
     parser.add_argument("--updates", type=int, default=300)
     parser.add_argument("--threads", type=int, default=4)
+    parser.add_argument("--device", choices=("cuda", "cpu"), default="cuda", help="check-files only")
     args = parser.parse_args(argv)
     torch.set_num_threads(args.threads)
     full_precision()
     if args.step == "prepare":
         result = prepare()
-    elif args.step in ("profile", "overfit", "check-predict"):
+    elif args.step == "check-files" and args.device == "cpu":
+        result = check_files("cpu")
+    elif args.step in ("profile", "overfit", "check-predict", "check-files"):
         with gpu_lock("cuda", path=GPU_LOCK):
             require_free_gpu(needed_mib())
             if args.step == "profile":
                 result = profile("cuda", args.updates)
             elif args.step == "overfit":
                 result = overfit_check("cuda")
+            elif args.step == "check-files":
+                result = check_files("cuda")
             else:
                 result = check_predict("cuda")
     elif args.step == "train":

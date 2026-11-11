@@ -370,8 +370,8 @@ All dated 10 November 2026.
 2. **E's rule**, fixed by Addendum 3 (item 1). The family definition is the lead's: same input features,
    different head. H-All also reads the xECG features, but its inputs are not the same as H-X's, so it is its
    own family. Inside E, the best member and the family ranking use the exact metric (earlier in the table on
-   exact equality), not the 0.001 margin. E's validation metric is optimistic twice, since its members are chosen on the same validation
-   records it is scored on. Without F, E is the mean of H-X, H-All and S-R.
+   exact equality), not the 0.001 margin. E's validation metric is optimistic twice, since its members are
+   chosen on the same validation records it is scored on. Without F, E is the mean of H-X, H-All and S-R.
 3. **Where test predictions go.** `stage3/predictions/<id>/<role>__seeds-<...>.npz`, not `candidates/<id>/`,
    so that Stage 3 outputs stay together and Stage 2 directories stay as written. The once-only guard scans the
    whole `outputs/mlc02_condition_models_20261110/` tree, so either location would be caught.

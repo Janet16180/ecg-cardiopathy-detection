@@ -142,6 +142,20 @@ def committed_code() -> dict[str, Any]:
     return {**state, "code_sha256": code_sha256(CODE)}
 
 
+def write_rows(path: Path, rows: list[dict[str, Any]]) -> None:
+    """
+    Write rows as CSV, with the union of their keys as columns in first-seen order.
+
+    Parameters
+    ----------
+    path : Path
+        Destination file.
+    rows : list[dict[str, Any]]
+        Rows; a missing key is written empty.
+    """
+    write_csv_atomic(path, rows, list(dict.fromkeys(key for row in rows for key in row)))
+
+
 def blas_info() -> list[dict[str, Any]]:
     """
     BLAS and OpenMP libraries loaded, with kernel and thread settings.
@@ -420,7 +434,7 @@ def write_validation(
     path = prediction_path(CANDIDATES, candidate, "validation", seeds)
     save_predictions(path, validation["record_key"], probability, candidate, seeds)
     rows = validation_rows(validation["labels"], probability, validation["source"])
-    write_csv_atomic(CANDIDATES / candidate / f"validation_by_source{suffix}.csv", rows)
+    write_rows(CANDIDATES / candidate / f"validation_by_source{suffix}.csv", rows)
     selection = selection_metric(validation["labels"], probability, validation["source"])
     return {**selection, "prediction_file": to_stored(path), "prediction_sha256": sha256_file(path)}
 
@@ -611,7 +625,7 @@ def run_logistic(candidate: str, workers: int, threads: int, command: list[str])
         coef=np.stack([[found[(col, c)]["coef"] for col in columns] for c in LOGISTIC_C]),
         intercept=np.array([[found[(col, c)]["intercept"] for col in columns] for c in LOGISTIC_C]),
     )
-    write_csv_atomic(
+    write_rows(
         folder / "training_log.csv",
         [{key: r[key] for key in ("column", "c", "iterations", "records", "seconds")} for r in results],
     )
@@ -824,7 +838,7 @@ def run_boosting(workers: int, threads: int, command: list[str]) -> dict[str, An
         folder / "curves.npz",
         **{f"{CONDITIONS[r['column']]}__rate-{r['rate']}__leaves-{r['leaves']}": r["curve"] for r in results},
     )
-    write_csv_atomic(
+    write_rows(
         folder / "training_log.csv",
         [
             {key: r[key] for key in ("column", "rate", "leaves", "fitted", "iterations", "metric", "seconds")}
@@ -1252,7 +1266,7 @@ def run_network(
             {seed: run["weights"] for seed, run in seeds.items()},
             {**record["chosen"], "epoch_by_seed": record["epoch_by_seed"]},
         )
-        write_csv_atomic(
+        write_rows(
             folder / "training_log.csv",
             [
                 row
@@ -1472,7 +1486,7 @@ def run_lofo(candidate: str, workers: int, threads: int, device: str, command: l
             model_id=np.array(candidate),
         )
         rows += source_rows(candidate, held, part(data, mask), probability)
-    write_csv_atomic(folder / "lofo.csv", rows)
+    write_rows(folder / "lofo.csv", rows)
     summary = {
         "candidate": candidate,
         "families": list(FAMILIES),
@@ -1551,7 +1565,7 @@ def run_source_identification(threads: int, command: list[str]) -> dict[str, Any
                 "warnings": sorted({str(w.message)[:200] for w in caught}),
             }
     write_json_atomic(SOURCE_IDENTIFICATION / "source_identification.json", results)
-    write_csv_atomic(
+    write_rows(
         SOURCE_IDENTIFICATION / "source_identification.csv",
         [
             {

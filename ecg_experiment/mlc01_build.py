@@ -303,9 +303,12 @@ def identity_frame(inputs: dict[str, object], scan: pd.DataFrame) -> pd.DataFram
     return frame.loc[frame.index.isin(scan["record_key"])]
 
 
-def assemble(inputs: dict[str, object], scan: pd.DataFrame) -> pd.DataFrame:
+def assemble(inputs: dict[str, object], scan: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Manifest of every scanned record: identity, scan, labels, exclusions, duplicates and inclusion.
+
+    The minimum-positive rule (Amendment 1, ruling 6) is applied to the label states of every opened record
+    before duplicates are resolved.
 
     Parameters
     ----------
@@ -316,12 +319,15 @@ def assemble(inputs: dict[str, object], scan: pd.DataFrame) -> pd.DataFrame:
 
     Returns
     -------
-    pd.DataFrame
-        Indexed by record key.
+    tuple[pd.DataFrame, pd.DataFrame]
+        The manifest indexed by record key, and ``mlc_labels.minimum_positive_table`` of its labels.
     """
     frame = identity_frame(inputs, scan)
     classes = ptbxl_eda.diagnostic_classes(inputs["statements"])
     labels = mlc01_dataset.label_frame(frame, classes, frozenset(classes))
+    states = [name for name in labels.columns if name.startswith(("a_", "b_", "c_"))]
+    minimum = mlc_labels.minimum_positive_table(labels[states], frame["source"])
+    labels[states] = mlc_labels.apply_minimum_positives(labels[states], frame["source"], minimum)
     scanned = scan.set_index("record_key").drop(columns=["header_age", "header_sex", "header_dx"],
                                                 errors="ignore")
     frame = frame.join(scanned).join(labels)
@@ -333,7 +339,58 @@ def assemble(inputs: dict[str, object], scan: pd.DataFrame) -> pd.DataFrame:
     frame["included"] = frame["duplicate_status"].isin(mlc01_dataset.KEPT)
     frame["n_flat_leads"] = frame[FLAG_COLUMNS[:12]].fillna(False).sum(axis=1)
     frame["n_missing_leads"] = frame[FLAG_COLUMNS[12:]].fillna(False).sum(axis=1)
-    return frame
+    return frame, minimum
+
+
+def status_table(minimum: pd.DataFrame) -> pd.DataFrame:
+    """
+    Annotation status of every label and source, with the minimum-positive rule.
+
+    Parameters
+    ----------
+    minimum : pd.DataFrame
+        Output of ``mlc_labels.minimum_positive_table``.
+
+    Returns
+    -------
+    pd.DataFrame
+        ``mlc_labels.status_rows`` where pairs that the rule newly makes undefined read ``not annotated
+        (fewer than 5 positives)``.
+    """
+    status = pd.DataFrame(mlc_labels.status_rows())
+    caught = minimum[minimum["not_annotated"] & (minimum["defined"] > 0)]
+    keys = set(zip(caught["label"], caught["source"], strict=True))
+    pairs = zip(status["label"], status["source"], strict=True)
+    flagged = [(label, source) in keys for label, source in pairs]
+    status.loc[flagged, "status"] = f"not annotated (fewer than {mlc_labels.MIN_POSITIVES} positives)"
+    return status
+
+
+def check_reference(frame: pd.DataFrame, reference: Path | None, checks: dict[str, dict[str, object]]
+                    ) -> None:
+    """
+    Require the same records, roles, raw paths and waveform hashes as an earlier build.
+
+    Parameters
+    ----------
+    frame : pd.DataFrame
+        Output of ``assemble``.
+    reference : Path | None
+        Earlier build directory, or None to skip the check.
+    checks : dict[str, dict[str, object]]
+        Collected integrity checks; updated in place.
+    """
+    if reference is None:
+        return
+    columns = ["role", "raw_path", "sha256_10s", "sha256_full"]
+    earlier = pd.read_csv(reference / "manifest.csv", index_col="record_key",
+                          usecols=["record_key", *columns], dtype=str).fillna("")
+    now = frame[columns].astype(str).where(frame[columns].notna(), "")
+    same_keys = set(earlier.index) == set(now.index)
+    mismatches = int((earlier.reindex(now.index) != now).any(axis=1).sum()) if same_keys else len(now)
+    check(checks, "records_roles_paths_and_waveform_hashes_match_reference",
+          {"reference": to_stored(reference), "records": len(earlier), "mismatches": 0},
+          {"reference": to_stored(reference), "records": len(now), "mismatches": mismatches})
 
 
 def code_coverage(frame: pd.DataFrame, inputs: dict[str, object]) -> dict[str, list[str]]:
@@ -477,7 +534,6 @@ def write_outputs(inputs: dict[str, object], frame: pd.DataFrame, scan: pd.DataF
                                           inputs["official"]["name"].to_dict(),
                                           inputs["aha"]["Description"].to_dict())
     mapping.to_csv(stage / "mapping.csv", index=False)
-    pd.DataFrame(mlc_labels.status_rows()).to_csv(stage / "annotation_status.csv", index=False)
     return write_tables(frame, stage)
 
 
@@ -566,8 +622,34 @@ def receipt(inputs: dict[str, object], frame: pd.DataFrame, checks: dict[str, di
     }
 
 
-def build(output: Path, cache: Path, workers: int, limit: int | None, command: list[str]
-          ) -> dict[str, object]:
+def amendment_record(minimum: pd.DataFrame) -> dict[str, object]:
+    """
+    Receipt entry of Amendment 1: the code lists of rulings 2 and 3 and the pairs caught by ruling 6.
+
+    Parameters
+    ----------
+    minimum : pd.DataFrame
+        Output of ``mlc_labels.minimum_positive_table``.
+
+    Returns
+    -------
+    dict[str, object]
+        Threshold, newly undefined pairs (with their positives and defined records before the rule) and the
+        number of flagged pairs that were already undefined throughout.
+    """
+    flagged = minimum[minimum["not_annotated"]]
+    caught = flagged[flagged["defined"] > 0]
+    return {"st_t_nonspecific_or_ischemic": {name: sorted(codes) for name, codes in
+                                             mlc_labels.ST_T_NONSPECIFIC_OR_ISCHEMIC.items()},
+            "ventricular_tachycardia_snomed": list(mlc_labels.VENTRICULAR_TACHYCARDIA_SNOMED),
+            "minimum_positives": mlc_labels.MIN_POSITIVES,
+            "minimum_positive_pairs_newly_undefined": caught[["source", "label", "positives", "defined"]]
+            .to_dict(orient="records"),
+            "minimum_positive_pairs_already_undefined": int((flagged["defined"] == 0).sum())}
+
+
+def build(output: Path, cache: Path, workers: int, limit: int | None, command: list[str],
+          reference: Path | None = None) -> dict[str, object]:
     """
     Run the whole build into a staging directory and rename it into place.
 
@@ -583,6 +665,8 @@ def build(output: Path, cache: Path, workers: int, limit: int | None, command: l
         Records per source for a profile run.
     command : list[str]
         The command line, recorded in the receipt.
+    reference : Path | None
+        Earlier build whose records, waveform hashes and roles must be reproduced exactly.
 
     Returns
     -------
@@ -613,7 +697,8 @@ def build(output: Path, cache: Path, workers: int, limit: int | None, command: l
     if scanned & inputs["closed"]:
         raise PermissionError("A closed Challenge record was scanned")
     log(log_path, "assembling")
-    frame = assemble(inputs, scan)
+    frame, minimum = assemble(inputs, scan)
+    check_reference(frame, reference, checks)
     check(checks, "patients_in_several_roles", {"ptbxl": 0, "sph": 0},
           mlc01_tables.patients_in_several_roles(frame))
     check(checks, "challenge_scanned_paths_in_closed_groups", 0, len(scanned & inputs["closed"]))
@@ -622,6 +707,8 @@ def build(output: Path, cache: Path, workers: int, limit: int | None, command: l
     matched = int((sph_rows["metadata_samples"] == sph_rows["n_samples"]).sum())
     checks["sph_metadata_samples_match_file"] = {"observed": matched, "records": len(sph_rows)}
     summary = write_outputs(inputs, frame, scan, stage)
+    status_table(minimum).to_csv(stage / "annotation_status.csv", index=False)
+    minimum.to_csv(stage / "minimum_positive_rule.csv", index=False)
     usage = {who: resource.getrusage(kind).ru_maxrss for who, kind in
              (("parent", resource.RUSAGE_SELF), ("children", resource.RUSAGE_CHILDREN))}
     run = {"command": command, "workers": workers, "limit_per_source": limit,
@@ -629,6 +716,7 @@ def build(output: Path, cache: Path, workers: int, limit: int | None, command: l
            "seconds": round(time.monotonic() - started, 1), "max_rss_kib": usage, "scan_cache": str(cache)}
     log(log_path, "writing receipt")
     result = receipt(inputs, frame, checks, summary, run)
+    result["amendment_1"] = amendment_record(minimum)
     result["outputs_sha256"] = {path.name: sha256_file(path) for path in sorted(stage.iterdir())
                                 if path.name != "build.log"}
     write_json_atomic(stage / "receipt.json", result, sort_keys=True)

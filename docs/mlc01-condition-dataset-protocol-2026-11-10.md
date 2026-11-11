@@ -178,3 +178,78 @@ undefined, not negative. No model had been fitted and no score computed when the
    build's own accounting (274 CPSC 2018 and CPSC-Extra groups) replaces it.
 
 The build is rerun with these rules. The results report states the counts before and after.
+
+## Amendment 2 (10 November 2026, after the second build, before any fit or score)
+
+1. ST depression in PTB-XL: a record with a subendocardial injury (`INJ*`), digitalis (`DIG`),
+   aneurysm (`ANEUR`) or electrolyte (`EL`) statement and no ST-depression code is undefined.
+   These statements describe ST changes without giving a direction we can map.
+2. Kept as built, and stated as limits:
+   - SPH code 145 (ST deviation) without code 146 or 147 stays negative for T-wave abnormality:
+     SPH has a separate code for ST deviation with T-wave change, so 145 alone says the T wave
+     was not flagged. The SPH labels do not change in either amendment.
+   - CPSC 2018 stays defined for atrial fibrillation or flutter although flutter is not one of
+     its nine classes.
+   - Space C keeps its remaining ambiguous negatives (ST elevation, right axis deviation). It is
+     exploratory, and its report says so.
+3. Ruling 6 of Amendment 1 applies to every label space, as built.
+4. The dataset is final after this rebuild (`outputs/mlc01_condition_dataset_20261110_v3/`). Any
+   later label question is logged as a limitation, not applied, so that the labels cannot be
+   adjusted after models have been scored. The first two builds stay on disk as the record of
+   what changed; their receipts pin earlier versions of the label code, which remain in Git.
+
+## Amendment 3 (10 November 2026, after an independent audit, before any fit or score)
+
+A second agent, which did not build the dataset, re-derived every label from the raw metadata
+and the text above, re-hashed every waveform, and compared labels with simple measurements
+(heart rate, QRS axis, QRS width). It agreed with the build on 1,402,829 of 1,403,094 label
+cells, found no closed record, no patient or waveform shared between roles, and no error in the
+report's numbers. It also found label problems that the rules above did not foresee. Ruling 4 of
+Amendment 2 closed the labels so that they could not be tuned against model scores. No model has
+been fitted or scored, so that purpose is intact, and we apply the audit's findings once.
+
+Applied (each makes an unstated label undefined; none creates a positive):
+
+1. Left axis deviation: a record with left anterior fascicular block and no left-axis code is
+   undefined in every source. The block implies a left axis, and SPH, Ningbo and Georgia do not
+   code the axis separately: at the SPH evaluation half 76 such records were negatives beside 68
+   positives.
+2. First-degree AV block: SNOMED 233917008 (AV block, degree unstated) without a first-degree or
+   prolonged-PR code is undefined (265 records, none in a test set).
+3. T-wave abnormality in PTB-XL: an `INJ*`, `DIG`, `ANEUR` or `EL` statement with no T-wave
+   code is undefined, as Amendment 2 did for ST depression.
+4. Myocardial infarction: an abnormal Q-wave or poor R-wave progression statement with no
+   infarction code is undefined (PTB-XL `QWAVE`, and the SNOMED codes for abnormal Q wave and
+   poor R-wave progression).
+5. SPH code 153 without a specific ST or T code leaves ST depression and T-wave abnormality
+   undefined, matching ruling 8 of Amendment 1.
+6. The likelihood sensitivity flag ignores diagnostic statements whose likelihood is 0, which
+   PTB-XL uses for "unknown".
+
+Not changed, and reported as limitations with the audit's numbers:
+
+- SPH code 146 (ST deviation with T-wave change) stays T-wave positive; 521 of the 1,633 T-wave
+  positives at the SPH evaluation half rest on it alone. The SNOMED sources code the comparable
+  free-text statement as a nonspecific ST-T change, which is undefined here.
+- PTB-XL codes sinus bradycardia at about 50 beats per minute and the other sources at about
+  60: 13.4% of PTB-XL bradycardia negatives are sinus-rhythm records below 60. We do not relabel
+  from measurements.
+- Complete RBBB in CPSC 2018 and Chapman probably includes incomplete blocks (62% and 76% of
+  positives have a measured QRS of at least 120 ms, against 86-96% elsewhere).
+- The Challenge train and validation groups share patients: the audit estimates 6-13% of
+  validation records in Ningbo, Georgia and the Chapman-Ningbo family have a same-patient
+  training record. This affects model choice, early stopping and thresholds, not the test sets.
+  PTB-XL fold 9 has no such overlap.
+
+The build is rerun as `outputs/mlc01_condition_dataset_20261110_v4/`, which is final. The audit's
+scripts and tables are copied to `outputs/mlc01_condition_dataset_20261110_v4/audit/`. From the
+first model fit onward no label rule changes.
+
+### Erratum to Amendment 3 (10 November 2026)
+
+The complete-RBBB figures quoted above (62% and 76% against 86-96%) came from an unsaved run of
+a width measure that is not a QRS duration, and they are withdrawn. A remeasurement at 500 Hz
+(`outputs/mlc01_condition_dataset_20261110_v4/audit_addendum/`) gives only a relative width
+index: complete-RBBB positives are narrowest in CPSC 2018 and Chapman at every threshold tried,
+with Ningbo and SPH in between. That CPSC 2018 and Chapman include incomplete blocks under
+"complete RBBB" is therefore possible and unverified. No label rule depends on it.

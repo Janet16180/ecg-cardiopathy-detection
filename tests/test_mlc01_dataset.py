@@ -161,3 +161,33 @@ def test_state_counts_split_by_role_and_source():
     assert counts.loc[("train", "chapman_shaoxing"), "undefined"] == 1
     assert counts.loc[("train", "chapman_ningbo"), "records"] == 2
     assert counts.loc[("validation", "ningbo"), "negative"] == 1
+
+
+def test_reference_check_requires_identical_hashes_and_roles(tmp_path, monkeypatch):
+    from ecg_experiment import mlc01_build
+
+    monkeypatch.setattr(mlc01_build, "to_stored", str)
+    frame = pd.DataFrame({"role": ["train", "test_external"], "raw_path": ["data/a", "data/b"],
+                          "sha256_10s": ["a", np.nan], "sha256_full": ["b", np.nan]},
+                         index=pd.Index(["x:1", "sph:2"], name="record_key"))
+    frame.to_csv(tmp_path / "manifest.csv")
+    checks: dict = {}
+    mlc01_build.check_reference(frame, tmp_path, checks)
+    assert checks["records_roles_paths_and_waveform_hashes_match_reference"]["passed"]
+    changes = (frame.assign(role=["validation", "test_external"]), frame.assign(raw_path=["data/a", "x"]),
+               frame.iloc[:1])
+    for changed in changes:
+        with pytest.raises(ValueError, match="reference"):
+            mlc01_build.check_reference(changed, tmp_path, {})
+    mlc01_build.check_reference(frame, None, checks)
+
+
+def test_status_table_marks_pairs_caught_by_the_minimum_positive_rule():
+    from ecg_experiment import mlc01_build
+
+    minimum = pd.DataFrame({"source": ["georgia", "sph"], "label": ["b_mi_any", "c_paced_rhythm"],
+                            "positives": [3, 0], "defined": [8160, 0], "not_annotated": [True, True]})
+    status = mlc01_build.status_table(minimum).set_index(["label", "source"])["status"]
+    assert status[("b_mi_any", "georgia")] == "not annotated (fewer than 5 positives)"
+    assert status[("c_paced_rhythm", "sph")] == "not codable"
+    assert status[("b_mi_any", "ningbo")] == "annotated"

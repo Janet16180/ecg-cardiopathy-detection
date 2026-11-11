@@ -39,7 +39,7 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-11-10T23:17:46+00:00",
+  "updated_at_utc": "2026-11-11T00:17:27+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2550,17 +2550,33 @@
     "delivery_verification": "reports/condition-classifiers-2026-11-06/delivery-verification.json"
   },
   "mlc01_condition_dataset_20261110": {
-    "status": "complete_dataset_build",
+    "status": "complete_dataset_final",
     "protocol": "docs/mlc01-condition-dataset-protocol-2026-11-10.md",
     "protocol_commit": "d4e25c7",
     "label_commit": "3044b72",
-    "source_commit": "b6d3b6c15854ce052764722a649e79d2d4983e2d",
-    "output": "outputs/mlc01_condition_dataset_20261110",
-    "receipt": "outputs/mlc01_condition_dataset_20261110/receipt.json",
+    "source_commit": "3475e13d481950ee117951fc0b26ee7abf1b5fa9",
+    "output": "outputs/mlc01_condition_dataset_20261110_v4",
+    "receipt": "outputs/mlc01_condition_dataset_20261110_v4/receipt.json",
     "report": "docs/mlc01-condition-dataset-results-2026-11-10.md",
     "authorization": "User asked for a carefully built dataset, test sets and evaluation rules for a condition-type classifier (10 November 2026).",
     "scope": "Manifest, label states for spaces A, B and C, roles, duplicate resolution and count tables; no model fitted and no score computed; Challenge test groups and EchoNext not opened.",
-    "summary": "99,086 of 100,221 records included: train 56,191, validation 15,116, PTB-XL fold 10 2,198, SPH evaluation half 12,698, SPH calibration half 12,883. Inventory counts reproduced exactly (576 rows); no unexplained difference.",
-    "next_action": "Rule on the open label questions in the report, then freeze the MLC-02 model protocol before any fit."
+    "summary": "Final v4: 99,167 of 100,221 records included: train 56,250, validation 15,138, PTB-XL fold 10 2,198, SPH evaluation half 12,698, SPH calibration half 12,883. Records, roles, raw paths and waveform hashes equal v1. Independent audit of v3 agreed on 1,402,829 of 1,403,094 space-B cells; Amendment 3 applied its findings. Ruling 6 still catches the same 23 pairs. All 14 space-B conditions enter the macro at both test sets.",
+    "next_action": "Dataset final; no label rule changes from the first model fit onward. MLC-02 proceeds under its own protocol.",
+    "amendment": "Amendments 1 (8720f86), 2 (ab833a3) and 3 (4a17ca1) in the protocol",
+    "earlier_builds": {
+      "v1": {
+        "output": "outputs/mlc01_condition_dataset_20261110",
+        "commit": "b6d3b6c15854ce052764722a649e79d2d4983e2d"
+      },
+      "v2": {
+        "output": "outputs/mlc01_condition_dataset_20261110_v2",
+        "commit": "ee0481f12310a959b25dbec3b48edce95896d349"
+      },
+      "v3": {
+        "output": "outputs/mlc01_condition_dataset_20261110_v3",
+        "commit": "41845c286fad2d6017a82d3e537dd87c574bf9e7"
+      }
+    },
+    "audit": "outputs/mlc01_condition_dataset_20261110_v4/audit"
   }
 }

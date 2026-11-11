@@ -13,9 +13,29 @@ masked in a loss and left out of that condition's metrics; they are never negati
   high voltage for left ventricular hypertrophy, SPH ST deviation without a direction modifier for ST
   depression, PTB-XL ``heart_axis`` LAD for left axis deviation, and PTB-XL subendocardial injury for
   myocardial infarction.
-- Contradictory pairs on one record (complete with incomplete RBBB, LBBB with RBBB) make both undefined.
+- Contradictory pairs on one record (complete with incomplete RBBB, LBBB with RBBB, LBBB with incomplete
+  RBBB) make both undefined.
 - SPH code 153 sets no condition of spaces B and C. In space A it counts for HYP, not STTC.
 - Negative otherwise.
+
+Amendment 1 of the protocol adds, on the principle that a statement which does not say whether the condition
+is present makes the label undefined: ventricular tachycardia without a PVC code; nonspecific or ischemic
+ST-T statements (``ST_T_NONSPECIFIC_OR_ISCHEMIC``) without an ST-depression code, or without a T-wave code;
+an empty PTB-XL ``heart_axis`` or ``AXL`` for left axis deviation; PTB-XL ``HVOLT`` alone for left
+ventricular hypertrophy; LBBB with incomplete RBBB as a contradictory pair; in space A, SPH 153 alone leaves
+STTC undefined and CPSC 2018 is undefined for every group unless positive. A source with fewer than
+``MIN_POSITIVES`` positives of a label among its opened records does not annotate it
+(``minimum_positive_table``); the build applies that rule from its label counts. Amendment 2 adds the PTB-XL
+injury, digitalis, aneurysm and electrolyte statements (``ST_CHANGE_WITHOUT_DIRECTION_SCP``) to the
+statements that leave ST depression undefined without an ST-depression code. Amendment 3 adds:
+
+- left anterior fascicular block without a left-axis code leaves left axis deviation undefined;
+- SNOMED AV block of unstated degree without a first-degree code leaves first-degree AV block undefined;
+- the same PTB-XL statements leave the T wave undefined without a T-wave code;
+- abnormal Q waves or poor R-wave progression without an infarction code leave myocardial infarction
+  undefined, in space A too;
+- SPH 153 without an ST or T code (145, 146, 147) leaves ST depression and T-wave abnormality undefined;
+- the likelihood flag ignores diagnostic statements with likelihood 0 (unknown).
 
 AHA specifications: ``"B"`` matches a statement with base code B and any modifier, ``"B+M"`` one that
 carries modifier M, and ``"B="`` one without a modifier. SCP specifications ``"axis:X"`` match PTB-XL's
@@ -27,6 +47,7 @@ from __future__ import annotations
 import math
 
 import numpy as np
+import pandas as pd
 
 from ecg_experiment import challenge_labels, challenge_splits, sph
 
@@ -80,6 +101,19 @@ def condition(name: str, positive: dict[str, frozenset[str]],
 
 
 MI_SCP = ("IMI", "ASMI", "ILMI", "AMI", "ALMI", "LMI", "IPLMI", "IPMI", "PMI")
+ISCHEMIC_SCP = ("ISC_", "ISCAL", "ISCAS", "ISCLA", "ISCAN", "ISCIN", "ISCIL")
+ISCHEMIC_SNOMED = ("164861001", "413844008", "413444003", "426434006", "425419005", "425623009")
+ST_CHANGE_WITHOUT_DIRECTION_SCP = ("INJAS", "INJAL", "INJLA", "INJIN", "INJIL", "DIG", "ANEUR", "EL")
+ST_T_NONSPECIFIC_OR_ISCHEMIC = codes(("NST_", *ISCHEMIC_SCP),
+                                     ("428750005", "55930002", "164930006", *ISCHEMIC_SNOMED))
+VENTRICULAR_TACHYCARDIA_SNOMED = ("425856008", "164895002")
+AV_BLOCK_UNSTATED_SNOMED = ("233917008",)
+Q_WAVE_OR_POOR_R_PROGRESSION = {"scp": frozenset({"QWAVE"}), "snomed": frozenset({"164917005", "365413008"}),
+                                "aha": frozenset()}
+LAFB_CODES = ("LAFB", "445118002", "101")
+SPH_ST_T_SPECIFIC = frozenset({"145", "146", "147"})
+SPH_153_UNDEFINED = ("st_depression", "t_wave_abnormality")
+AXIS_MISSING = "axis:missing"
 MI_SNOMED = ("164865005", "164867002", "54329005", "57054005")
 INJURY_SCP = ("INJAS", "INJAL", "INJLA", "INJIN", "INJIL")
 PREMATURE_UNKNOWN_SCP = ("PRC(S)", "BIGU", "TRIGU")
@@ -95,26 +129,30 @@ CONDITIONS: dict[str, dict[str, object]] = {
         ("50", "51"))),
     "premature_ventricular_complex": condition("Premature ventricular complex(es)", codes(
         ("PVC",), ("427172004", "17338001", "164884008", "11157007", "251180001", "251182009"), ("60",)),
-        codes(PREMATURE_UNKNOWN_SCP, ("13640000",))),
+        codes(PREMATURE_UNKNOWN_SCP, ("13640000", *VENTRICULAR_TACHYCARDIA_SNOMED))),
     "first_degree_av_block": condition("First-degree AV block or prolonged PR", codes(
-        ("1AVB", "LPR"), ("270492004", "164947007"), ("82",))),
+        ("1AVB", "LPR"), ("270492004", "164947007"), ("82",)), codes(snomed=AV_BLOCK_UNSTATED_SNOMED)),
     "complete_rbbb": condition("Complete right bundle branch block", codes(
         ("CRBBB",), ("713427006", "59118001"), ("106",)), codes(snomed=("6374002",))),
     "incomplete_rbbb": condition("Incomplete right bundle branch block", codes(
         ("IRBBB",), ("713426002",), ("105",))),
     "lafb": condition("Left anterior fascicular block", codes(("LAFB",), ("445118002",), ("101",))),
     "left_axis_deviation": condition("Left axis deviation", codes(("axis:ALAD",), ("39732003",), ("121",)),
-                                     codes(scp=("axis:LAD",))),
+                                     codes(("axis:LAD", "axis:AXL", AXIS_MISSING, LAFB_CODES[0]),
+                                           (LAFB_CODES[1],), (LAFB_CODES[2],))),
     "lvh": condition("Left ventricular hypertrophy", codes(("LVH",), ("164873001",), ("142",)),
-                     codes(("VCLVH",), ("55827005", "266249003", "370365005"))),
+                     codes(("VCLVH", "HVOLT"), ("55827005", "266249003", "370365005"))),
     "st_depression": condition("ST depression", codes(("STD_",), ("429622005", "704997005"), ("145+362",)),
-                               codes(aha=ST_NO_DIRECTION_AHA)),
+                               codes((*ST_T_NONSPECIFIC_OR_ISCHEMIC["scp"], *ST_CHANGE_WITHOUT_DIRECTION_SCP),
+                                     tuple(ST_T_NONSPECIFIC_OR_ISCHEMIC["snomed"]), ST_NO_DIRECTION_AHA)),
     "t_wave_abnormality": condition("T-wave abnormality", codes(
         ("NDT", "NT_", "TAB_", "INVT", "LOWT"), ("164934002", "59931005"), ("147", "146")),
-        codes(snomed=("428750005", "55930002"))),
+        codes((*ST_T_NONSPECIFIC_OR_ISCHEMIC["scp"], *ST_CHANGE_WITHOUT_DIRECTION_SCP),
+              tuple(ST_T_NONSPECIFIC_OR_ISCHEMIC["snomed"]))),
     "mi_any": condition("Myocardial infarction, any territory", codes(MI_SCP, MI_SNOMED,
                                                                       ("160", "161", "165", "166")),
-                        codes(scp=INJURY_SCP)),
+                        codes((*INJURY_SCP, *Q_WAVE_OR_POOR_R_PROGRESSION["scp"]),
+                              tuple(Q_WAVE_OR_POOR_R_PROGRESSION["snomed"]))),
     "atrial_fibrillation": condition("Atrial fibrillation", codes(
         ("AFIB",), ("164889003", "426749004", "282825002", "314208002"), ("50",)),
         codes(snomed=("195080001",))),
@@ -144,9 +182,7 @@ CONDITIONS: dict[str, dict[str, object]] = {
     "st_elevation": condition("ST elevation", codes(("STE_",), ("164931005",), ("145+363",)),
                               codes(aha=ST_NO_DIRECTION_AHA)),
     "long_qt": condition("Prolonged QT interval", codes(("LNGQT",), ("111975006",), ("148",))),
-    "ischemic_st_t": condition("ST-T change labelled ischemic", codes(
-        ("ISC_", "ISCAL", "ISCAS", "ISCLA", "ISCAN", "ISCIN", "ISCIL"),
-        ("164861001", "413844008", "413444003", "426434006", "425419005", "425623009"))),
+    "ischemic_st_t": condition("ST-T change labelled ischemic", codes(ISCHEMIC_SCP, ISCHEMIC_SNOMED)),
     "inferior_mi": condition("Inferior myocardial infarction", codes(("IMI", "ILMI", "IPLMI", "IPMI"),
                                                                      aha=("161",)),
                              codes(scp=("INJIN", "INJIL"))),
@@ -173,18 +209,22 @@ NOT_ANNOTATED = {
     "atrial_fibrillation": frozenset({"ningbo"}),
     "st_depression": frozenset({"georgia"}),
 }
-CONTRADICTORY_PAIRS = (("complete_rbbb", "incomplete_rbbb"), ("complete_lbbb", "complete_rbbb"))
+CONTRADICTORY_PAIRS = (("complete_rbbb", "incomplete_rbbb"), ("complete_lbbb", "complete_rbbb"),
+                       ("complete_lbbb", "incomplete_rbbb"))
 PARTIAL = {
     ("cpsc_2018", "af_or_flutter"): "atrial fibrillation is a CPSC 2018 class, atrial flutter is not",
-    ("cpsc_2018", "STTC"): "only ST depression and ST elevation are CPSC 2018 classes",
-    ("cpsc_2018", "CD"): "only first-degree AV block, LBBB and RBBB are CPSC 2018 classes",
+    ("cpsc_2018", "STTC"): "only ST depression and ST elevation are CPSC 2018 classes; positive or undefined",
+    ("cpsc_2018", "CD"): "only first-degree AV block, LBBB and RBBB are CPSC 2018 classes; positive or "
+                         "undefined",
 }
 SPACE_A_CODES = {
     "snomed": {name: frozenset(members) for name, members in challenge_labels.SUPERCLASSES.items()},
     "aha": {"MI": frozenset(sph.SUPERCLASSES["MI"]), "STTC": frozenset(sph.SUPERCLASSES["STTC"] - {"153"}),
             "CD": frozenset(sph.SUPERCLASSES["CD"]), "HYP": frozenset(sph.SUPERCLASSES["HYP"] | {"153"})},
 }
-LV_HIGH_VOLTAGE = {"scp": frozenset({"VCLVH"}), "snomed": frozenset({"55827005"}), "aha": frozenset()}
+LV_HIGH_VOLTAGE = {"scp": frozenset({"VCLVH", "HVOLT"}), "snomed": frozenset({"55827005"}),
+                   "aha": frozenset()}
+MIN_POSITIVES = 5
 NORMAL_UNDEFINED = frozenset({"cpsc_2018_extra"})
 
 
@@ -225,7 +265,7 @@ def parse_aha(text: str) -> tuple[tuple[str, frozenset[str]], ...]:
 
 def ptbxl_codes(scp_codes: dict[str, float], heart_axis: str) -> dict[str, float]:
     """
-    PTB-XL statements with the heart axis added as an ``axis:X`` pseudo-statement.
+    PTB-XL statements with the heart axis added as an ``axis:X`` pseudo-statement (``axis:missing`` if empty).
 
     Parameters
     ----------
@@ -239,7 +279,7 @@ def ptbxl_codes(scp_codes: dict[str, float], heart_axis: str) -> dict[str, float
     dict[str, float]
         Statement to likelihood; the axis pseudo-statement has likelihood 0 (no information).
     """
-    return {**scp_codes, **({f"axis:{heart_axis}": 0.0} if heart_axis else {})}
+    return {**scp_codes, (f"axis:{heart_axis}" if heart_axis else AXIS_MISSING): 0.0}
 
 
 def aha_match(spec: str, statements: tuple[tuple[str, frozenset[str]], ...]) -> bool:
@@ -363,6 +403,10 @@ def condition_states(source: str, record: object) -> dict[str, float]:
     for pair in CONTRADICTORY_PAIRS:
         if all(listed(CONDITIONS[key]["positive"][vocabulary], record, vocabulary) for key in pair):
             states[pair[0]] = states[pair[1]] = np.nan
+    bases = {base for base, _ in record} if vocabulary == "aha" else set()
+    if "153" in bases and not bases & SPH_ST_T_SPECIFIC:
+        for key in SPH_153_UNDEFINED:
+            states[key] = np.nan
     return states
 
 
@@ -384,10 +428,11 @@ def low_likelihood_only(key: str, record: dict[str, float], diagnostic: frozense
     -------
     bool
         True when the record lists positive statements of the condition and each one is diagnostic with a
-        likelihood below ``LIKELIHOOD_THRESHOLD``.
+        likelihood above 0 and below ``LIKELIHOOD_THRESHOLD``. Likelihood 0 means unknown, so such a statement
+        never counts as low likelihood (Amendment 3).
     """
     hits = [(code, value) for code, value in record.items() if code in CONDITIONS[key]["positive"]["scp"]]
-    return bool(hits) and all(code in diagnostic and value < LIKELIHOOD_THRESHOLD for code, value in hits)
+    return bool(hits) and all(code in diagnostic and 0 < value < LIKELIHOOD_THRESHOLD for code, value in hits)
 
 
 def group_flags(source: str, record: object, classes: dict[str, str]) -> dict[str, float]:
@@ -424,8 +469,9 @@ def space_a_states(source: str, record: object, classes: dict[str, str]) -> dict
 
     The existing definitions (PTB-XL diagnostic superclasses at any likelihood, the Challenge and SPH
     superclass code sets) are kept, with SPH code 153 moved from STTC to HYP. A group is undefined at CPSC
-    2018 when none of its codes is one of the nine classes (MI and HYP), and HYP is undefined when the only
-    hypertrophy evidence is left ventricular high voltage.
+    2018 unless positive, since that source annotates only some conditions of each group (MI and HYP have
+    no code among its nine classes). HYP is undefined when the only hypertrophy evidence is left ventricular
+    high voltage, and SPH STTC is undefined when code 153 is its only ST-T evidence.
 
     Parameters
     ----------
@@ -445,10 +491,12 @@ def space_a_states(source: str, record: object, classes: dict[str, str]) -> dict
     states = group_flags(source, record, classes)
     if states["HYP"] == 0.0 and listed(LV_HIGH_VOLTAGE[vocabulary], record, vocabulary):
         states["HYP"] = np.nan
+    if states["MI"] == 0.0 and listed(Q_WAVE_OR_POOR_R_PROGRESSION[vocabulary], record, vocabulary):
+        states["MI"] = np.nan
+    if vocabulary == "aha" and states["STTC"] == 0.0 and aha_match("153", record):
+        states["STTC"] = np.nan
     if source == "cpsc_2018":
-        for name, members in SPACE_A_CODES["snomed"].items():
-            if not members & CPSC_2018_CLASSES:
-                states[name] = np.nan
+        states = {name: value if value == 1.0 else np.nan for name, value in states.items()}
     return states
 
 
@@ -582,7 +630,8 @@ def status_rows() -> list[dict[str, str]]:
     -------
     list[dict[str, str]]
         ``label`` (``b_``, ``c_`` or ``a_`` column name), ``source`` and ``status``: ``annotated``,
-        ``partial`` (labels are still defined; see ``PARTIAL``), ``not annotated`` or ``not codable``.
+        ``partial`` (labels are still defined; see ``PARTIAL``), ``positive only`` (space A at CPSC 2018),
+        ``not annotated`` or ``not codable``. The minimum-positive rule is applied by the build.
     """
     rows = []
     keys = [f"b_{key}" for key in SPACE_B] + [f"c_{key}" for key in SPACE_C if key not in SPACE_B]
@@ -598,6 +647,61 @@ def status_rows() -> list[dict[str, str]]:
     for name in SPACE_A:
         for source in SOURCES:
             outside = source == "cpsc_2018" and not SPACE_A_CODES["snomed"][name] & CPSC_2018_CLASSES
-            status = "not annotated" if outside else "partial" if (source, name) in PARTIAL else "annotated"
+            status = "positive only" if (source, name) in PARTIAL else "annotated"
+            status = "not annotated" if outside else status
             rows.append({"label": f"a_{name}", "source": source, "status": status})
     return rows
+
+
+def minimum_positive_table(labels: pd.DataFrame, sources: pd.Series) -> pd.DataFrame:
+    """
+    Positives and defined records of every label in every source, with the minimum-positive rule.
+
+    Parameters
+    ----------
+    labels : pd.DataFrame
+        Label states (1.0, 0.0, NaN) of every opened record, one column per label.
+    sources : pd.Series
+        Source of each record, on the same index.
+
+    Returns
+    -------
+    pd.DataFrame
+        ``source``, ``label``, ``positives``, ``defined`` and ``not_annotated``: True when the source has
+        fewer than ``MIN_POSITIVES`` positives of the label, so that it does not annotate it (Amendment 1,
+        ruling 6).
+    """
+    rows = []
+    for source in sorted(set(sources)):
+        part = labels.loc[(sources == source).to_numpy()].astype(float)
+        for column in labels.columns:
+            positives = int((part[column] == 1).sum())
+            rows.append({"source": source, "label": column, "positives": positives,
+                         "defined": int(part[column].notna().sum()),
+                         "not_annotated": positives < MIN_POSITIVES})
+    return pd.DataFrame(rows)
+
+
+def apply_minimum_positives(labels: pd.DataFrame, sources: pd.Series, table: pd.DataFrame) -> pd.DataFrame:
+    """
+    Make every record of a source undefined for each label the source does not annotate.
+
+    Parameters
+    ----------
+    labels : pd.DataFrame
+        Label states, one column per label.
+    sources : pd.Series
+        Source of each record, on the same index.
+    table : pd.DataFrame
+        Output of ``minimum_positive_table``.
+
+    Returns
+    -------
+    pd.DataFrame
+        A copy of ``labels`` with the flagged (source, label) cells set to NaN.
+    """
+    masked = labels.astype(float)
+    flagged = table[table["not_annotated"]]
+    for source, label in zip(flagged["source"], flagged["label"], strict=True):
+        masked.loc[(sources == source).to_numpy(), label] = np.nan
+    return masked

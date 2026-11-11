@@ -15,7 +15,13 @@ from ecg_experiment import ROOT
 from ecg_experiment import mlc02_stage3 as s3
 from ecg_experiment.files import write_json_atomic
 from ecg_experiment.mlc02_calibration import calibration_report, damped_logistic_fit, fit_platt_damped
-from ecg_experiment.mlc02_data import CONDITIONS, VALIDATION_SOURCES, prediction_path, save_predictions
+from ecg_experiment.mlc02_data import (
+    CONDITIONS,
+    MANIFEST,
+    VALIDATION_SOURCES,
+    prediction_path,
+    save_predictions,
+)
 from ecg_experiment.mlc02_evaluation import (
     logistic_fit,
     logit,
@@ -113,6 +119,8 @@ def _write_candidates(directory: Path, data: dict[str, np.ndarray], names: tuple
 
 @pytest.fixture
 def stage3(tmp_path: Path) -> dict[str, object]:
+    if not MANIFEST.exists():
+        pytest.skip("the MLC-01 v4 manifest is local only")
     data = _validation()
     candidates = tmp_path / "candidates"
     _write_candidates(candidates, data, tuple(STRENGTH))

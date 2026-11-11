@@ -23,6 +23,7 @@ from ecg_experiment.mlc02_scratch_network import (
     PEAK_LR,
     RECORD_SAMPLES,
     SEEDS,
+    VENDORED,
     WINDOW_STARTS,
     build_model,
     check_roles,
@@ -176,6 +177,7 @@ def test_window_probabilities_average_four_consecutive_windows():
     assert WINDOW_STARTS == (0, 250, 500, 750)
 
 
+@pytest.mark.skipif(not VENDORED.exists(), reason="needs the vendored benchmark code")
 def test_model_matches_the_benchmark_configuration():
     torch.manual_seed(0)
     model = build_model()

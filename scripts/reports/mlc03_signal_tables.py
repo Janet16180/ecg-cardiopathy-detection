@@ -387,6 +387,22 @@ def first_version_pools() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def near_test_maximum() -> pd.DataFrame:
+    """
+    Candidate pairs and their highest score per search and role pair, across roles with a test role.
+
+    Returns
+    -------
+    pd.DataFrame
+        ``search``, ``role_a``, ``role_b``, ``candidates``, ``highest score`` and ``same hash``.
+    """
+    pairs = pd.read_csv(OUTPUT / "near_duplicates_test_roles_pairs.csv",
+                        usecols=["search", "role_a", "role_b", "score", "same_hash"])
+    table = pairs.groupby(["search", "role_a", "role_b"]).agg(
+        candidates=("score", "size"), highest=("score", "max"), same_hash=("same_hash", "sum")).reset_index()
+    return table.rename(columns={"highest": "highest score", "same_hash": "same hash"}).round(4)
+
+
 def rules_section() -> str:
     """
     Write ``proposed_rule_counts.csv`` and format the rule counts.
@@ -464,6 +480,7 @@ def main(argv: list[str] | None = None) -> None:
         "lead-amplitude": lambda args: markdown(lead_amplitude()),
         "paced-spikes": lambda args: markdown(paced_spikes()),
         "pools": lambda args: markdown(first_version_pools()),
+        "near-test-max": lambda args: markdown(near_test_maximum()),
     }
     parser.add_argument("--section", choices=tuple(sections))
     args = parser.parse_args(argv)

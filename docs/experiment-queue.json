@@ -39,7 +39,7 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-11-11T09:36:54+00:00",
+  "updated_at_utc": "2026-11-11T15:22:00+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2625,6 +2625,36 @@
       "Window mean over SPH recordings longer than 10 s (Addendum 3)",
       "Leave-one-family-out for F (not required by the protocol)",
       "Per-seed test results (test-predict wrote seed means only)"
+    ]
+  },
+  "mlc03_data_quality_20261111": {
+    "status": "complete_v5_built_no_demonstrated_training_effect",
+    "protocol": "docs/mlc03-data-quality-protocol-2026-11-11.md",
+    "amendment": "Addendum 1 (PTB-XL+ and LUDB references), Amendment 1 (cleaning rules C1-C12, 64cb3e7) and Amendment 2 (readings of C10 and C11, recorded after the build, 44b22af) in the protocol",
+    "source_commit": "61b1131d973aba96fa52dcb00ed9cdc4e23dfa13",
+    "dataset_in": "outputs/mlc01_condition_dataset_20261110_v4",
+    "dataset_out": "outputs/mlc01_condition_dataset_20261111_v5",
+    "output": "outputs/mlc03_data_quality_20261111",
+    "receipt": "outputs/mlc01_condition_dataset_20261111_v5/receipt.json",
+    "report": "docs/mlc03-data-quality-results-2026-11-11.md",
+    "stage_reports": [
+      "docs/mlc03-signal-quality-results-2026-11-11.md",
+      "docs/mlc03-label-quality-results-2026-11-11.md",
+      "docs/mlc03-dataset-v5-results-2026-11-11.md"
+    ],
+    "tables": "scripts/reports/mlc03_v5_tables.py",
+    "authorization": "User instruction of 11 November 2026: make the investigation of cleaning and data quality the most important part; every available dataset may be used.",
+    "scope": "Part A signal quality and Part B label quality on train and validation; Part C rules C1-C12 and dataset v5, applied mechanically to PTB-XL fold 10 and both SPH halves (counts only); Part D refits of P0 and H-All on v5 train, scored on v5 validation only. No test role scored; Challenge test groups, EchoNext and MIMIC not opened.",
+    "summary": "v5 includes 99,008 of v4's 99,167 records (159 excluded: 117 train, 41 validation, 1 fold 10, 0 SPH) and makes 21,276 labels undefined (1,435 positives, 19,841 negatives); every Part A and Part B count reproduced on train and validation; v5 equals v4 on every untouched cell (21,595 of 12,226,962 cells changed); no label created or flipped; no condition loses macro eligibility. Part D, v5-trained minus v4-trained on v5 validation: P0 +0.0008 (-0.0003, +0.0019), H-All +0.0001 (-0.0006, +0.0010); no per-condition difference survives Holm. Scoring on v5 labels alone raises the v4-trained metrics (P0 0.9643 to 0.9690, H-All 0.9706 to 0.9751).",
+    "readings": {
+      "C10": "B-R3 code: consensus rate below 60 per minute, no tolerance (2,595 train and validation labels; the literal 'beyond tolerance' reading gives 884, all inside C11)",
+      "C11_negatives_at_sph": "not applied: the sinus-evidence code does not parse SPH's AHA codes"
+    },
+    "next_action": "Dataset v5 is built and frozen with its rules. No test scoring is scheduled: the one final test of the frozen cleaned pipeline (Challenge test groups, with these rules) needs its own protocol and the user's approval. Follow-ups are in the backlog: input-pipeline masking of missing samples and flat leads, SPH storage check (user approval), P-wave and PR measurement, electrode-reversal rules, window labels for long records, clinical review of the suspected label errors and of the source-coding differences, SPH sinus and paced-rhythm evidence.",
+    "not_done": [
+      "Clinical review of any rule or suspected label error (pending)",
+      "SPH aggregate check of identity residuals and large values (needs user approval)",
+      "Test-role scoring of v5-trained models (not part of MLC-03)"
     ]
   }
 }

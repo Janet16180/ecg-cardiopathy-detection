@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-06",
+  "updated": "2026-11-11",
   "rubric": "docs/experiment-priorities.md",
   "candidates": [
     {
@@ -1918,7 +1918,7 @@
       "kind": "experiment",
       "title": "MLC-02: condition-type models against the independent-logistic baseline on the MLC-01 dataset",
       "question": "Does the validation-selected model beat refit independent logistic regressions on pooled xECG embeddings in SPH macro AUROC over space B?",
-      "evidence": "Evaluation rules are frozen in the MLC-01 protocol; KEY-04 independent logistic 0.9608 at SPH is the integrity target.",
+      "evidence": "MLC-02 (docs/mlc02-condition-models-results-2026-11-10.md): selected E (mean of H-All, S-R, F; validation 0.9728) minus P0 at the SPH evaluation half -0.00123 (-0.00259, +0.00006); no demonstrated gain, P0 stays the reference model. E leads at PTB-XL fold 10 (0.9738 against 0.9632); H-X leads at SPH (0.9748).",
       "value": 4,
       "clarity": 0.6,
       "gpu_hours": 4,
@@ -1927,8 +1927,156 @@
       "blocked_by": [
         "@mlc02_protocol"
       ],
+      "status": "done",
+      "notes": "Measured: F 5.74 GPU hours, S-R plan about 1.3 GPU hours (17:23-18:42 on 10 November), test-predict 684 s, evaluate 976 s on 8 CPU threads; feature candidates 133-302 s each. Follow-ups: mlc02_space_a_key04, mlc02_sph_window_mean, mlc02_logistic_wider_c, mlc02_finetune_lofo, mlc02_source_shift_analysis, mlc02_lofo_selection_rule, mlc02_incomplete_rbbb_sph, mlc02_local_refit_intervals, mlc02_per_seed_test."
+    },
+    {
+      "id": "mlc02_space_a_key04",
+      "kind": "experiment",
+      "title": "MLC-02 condition outputs mapped to space A beside KEY-04",
+      "question": "Mapped to MI, STTC, CD and HYP by a rule fixed before scoring, do the frozen MLC-02 outputs match KEY-04's SPH space-A macro AUROC (0.9608)?",
+      "evidence": "Deferred by MLC-02 Addendum 3: the models output the 14 space-B conditions only and no mapping rule was fixed before test-predict. Space-A label counts are in the MLC-01 report.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.3,
+      "build_hours": 2,
+      "blocked_by": [
+        "@prospective_space_a_mapping_rule"
+      ],
       "status": "proposed",
-      "notes": "Needs its own protocol, pretraining-overlap table and a real GPU profile before any fit."
+      "notes": "Uses the saved MLC-02 test predictions. Commit the mapping (for example the maximum over each group's member conditions, with the member lists) before any space-A score. SPH is development data; not a confirmatory test."
+    },
+    {
+      "id": "mlc02_sph_window_mean",
+      "kind": "experiment",
+      "title": "Window mean over SPH recordings longer than 10 s for the MLC-02 candidates",
+      "question": "Does averaging scores over consecutive 10 s windows change SPH per-condition AUROC against the first 10 s alone?",
+      "evidence": "Required by the MLC-01 protocol as a sensitivity analysis; deferred by MLC-02 Addendum 3 because it needs encoder features and waveform passes for every window from the raw SPH files.",
+      "value": 2,
+      "clarity": 0.6,
+      "gpu_hours": 1.5,
+      "cpu_hours": 2,
+      "build_hours": 3,
+      "blocked_by": [
+        "@prospective_window_mean_protocol"
+      ],
+      "status": "proposed",
+      "notes": "The screening device records 10 s, so this is a sensitivity analysis, not a deployment change. Needs a real GPU profile for S-R, F and the three encoders."
+    },
+    {
+      "id": "mlc02_logistic_wider_c",
+      "kind": "experiment",
+      "title": "Wider C grid for the MLC-02 logistic candidates",
+      "question": "Does extending C above 100 change the validation choice or selection metric of P0, L-J and L-C?",
+      "evidence": "17 of the 42 per-condition C choices sit at C = 100, the grid edge; there C = 100 gained 0.0002-0.0039 over C = 10 on validation (MLC-02 feature report).",
+      "value": 2,
+      "clarity": 0.5,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 1,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Validation only. P0 is the reference model, so a refit P0 needs its own protocol before any test score; SPH and fold 10 are reused test sets."
+    },
+    {
+      "id": "mlc02_finetune_lofo",
+      "kind": "experiment",
+      "title": "Leave-one-family-out for the fine-tuned xECG candidate F",
+      "question": "Does F's validation gain over H-X and P0 survive when a whole source family is held out, and what does fine-tuning on Chapman-Ningbo labels cost on that arm?",
+      "evidence": "F was third on validation (0.9685, after E and H-All) but below P0 at SPH (0.9706 against 0.9737; -0.0031 (-0.0044, -0.0019)). The protocol required leave-one-family-out for P0, L-C, H-All and S-R only; one F run took about 5,000 s on GPU 0.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 6,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [
+        "@prospective_f_lofo_protocol_and_real_profile"
+      ],
+      "status": "proposed",
+      "notes": "Train and validation records only. The Chapman-Ningbo arm is not clean for xECG, which was pretrained on those waveforms."
+    },
+    {
+      "id": "mlc02_source_shift_analysis",
+      "kind": "experiment",
+      "title": "Why the MLC-02 waveform models lose at SPH while winning at PTB-XL fold 10",
+      "question": "Which conditions and which signal differences make S-R and F rank third and fourth at fold 10 but ninth and fifth at SPH?",
+      "evidence": "S-R minus P0: +0.0062 at fold 10, -0.0111 at SPH; F minus P0: +0.0050 and -0.0031. S-R's leave-one-family-out mean is 0.9292 against P0's 0.9405.",
+      "value": 3,
+      "clarity": 0.5,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 3,
+      "blocked_by": [
+        "@prospective_source_shift_analysis_protocol"
+      ],
+      "status": "proposed",
+      "notes": "Descriptive: per-condition differences from the saved predictions, leave-one-family-out per condition, and SPH signal properties (filtering, amplitude). No model choice from SPH."
+    },
+    {
+      "id": "mlc02_lofo_selection_rule",
+      "kind": "experiment",
+      "title": "Leave-one-family-out as the selection metric for a new-hospital target",
+      "question": "Does a leave-one-family-out selection metric rank candidates at a new hospital better than in-distribution validation?",
+      "evidence": "For P0, H-All, S-R and L-C the held-out mean (0.9405, 0.9322, 0.9292, 0.9120) orders them as SPH does; validation and fold 10 order them H-All, S-R, P0, L-C. Four candidates only.",
+      "value": 4,
+      "clarity": 0.4,
+      "gpu_hours": 8,
+      "cpu_hours": 2,
+      "build_hours": 4,
+      "blocked_by": [
+        "@prospective_selection_protocol",
+        "mlc02_finetune_lofo"
+      ],
+      "status": "proposed",
+      "notes": "Needs leave-one-family-out for every candidate and an external set not used for this observation; SPH can no longer test it cleanly and the Challenge test groups stay closed."
+    },
+    {
+      "id": "mlc02_incomplete_rbbb_sph",
+      "kind": "analysis",
+      "title": "Incomplete RBBB at SPH against the training sources",
+      "question": "Why does incomplete RBBB fall to AUROC 0.84-0.85 at SPH (0.97-0.98 at fold 10), with calibration in the large near +3 and the condition almost never ranked first?",
+      "evidence": "MLC-02: E 0.843 and P0 0.852 at SPH against 0.980 and 0.966 at fold 10; CITL +3.14 and +3.02; top-1 0.004 and 0.099 on 446 single-condition records; not usable for L-J and L-C there.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Label-code and measurement audit (QRS duration, code definitions per source); no label change without the cardiologist. SPH is development data."
+    },
+    {
+      "id": "mlc02_local_refit_intervals",
+      "kind": "analysis",
+      "title": "Intervals for SPH-refitted condition thresholds that include the refit",
+      "question": "How variable are per-condition thresholds and Platt fits refitted on the SPH calibration half when that half is resampled too?",
+      "evidence": "Local thresholds hold SPH specificity at 0.893-0.908 for every MLC-02 candidate; their intervals hold the local fit fixed (Addendum 3, item 4) and are too narrow.",
+      "value": 2,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 1.5,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Uses the saved SPH calibration-half and evaluation-half predictions; descriptive."
+    },
+    {
+      "id": "mlc02_per_seed_test",
+      "kind": "experiment",
+      "title": "Per-seed test results of the MLC-02 network candidates",
+      "question": "How much do the H, S-R and F test results vary across their three seeds?",
+      "evidence": "The MLC-02 protocol reports each seed; test-predict wrote seed means only, so no per-seed test number exists. Validation seed spreads are 0.0002-0.0005 for the H candidates, 0.0004 for S-R and 0.0009 for F (Stage 2 reports).",
+      "value": 1,
+      "clarity": 0.8,
+      "gpu_hours": 0.3,
+      "cpu_hours": 0.3,
+      "build_hours": 2,
+      "blocked_by": [
+        "@user_ruling_on_further_test_scoring"
+      ],
+      "status": "proposed",
+      "notes": "test-predict refuses a second run by design; per-seed scoring needs a new guarded step and a decision to score the test sets again."
     }
   ]
 }

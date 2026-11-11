@@ -39,7 +39,7 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-11-11T00:17:27+00:00",
+  "updated_at_utc": "2026-11-11T09:36:54+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2578,5 +2578,53 @@
       }
     },
     "audit": "outputs/mlc01_condition_dataset_20261110_v4/audit"
+  },
+  "mlc02_condition_models_20261110": {
+    "status": "completed_no_demonstrated_gain",
+    "protocol": "docs/mlc02-condition-models-protocol-2026-11-10.md",
+    "protocol_commit": "2516880",
+    "amendment": "Addenda 1 (b093b61), 2 (788db81) and 3 (b8c5719) in the protocol",
+    "source_commit": "7f4271c6391d445e9f2354f3c14b5a2e648c4baf",
+    "dataset": "outputs/mlc01_condition_dataset_20261110_v4",
+    "output": "outputs/mlc02_condition_models_20261110",
+    "selection_record": "docs/mlc02-selection-record-2026-11-10.md",
+    "receipt": "outputs/mlc02_condition_models_20261110/stage3/test_predictions_receipt.json",
+    "evaluation": "outputs/mlc02_condition_models_20261110/stage3/evaluation/evaluation.json",
+    "report": "docs/mlc02-condition-models-results-2026-11-10.md",
+    "tables": "scripts/reports/mlc02_results_tables.py",
+    "stage_reports": [
+      "docs/mlc02-inputs-results-2026-11-10.md",
+      "docs/mlc02-evaluation-code-2026-11-10.md",
+      "docs/mlc02-feature-candidates-validation-2026-11-10.md",
+      "docs/mlc02-scratch-network-validation-2026-11-10.md",
+      "docs/mlc02-finetune-validation-2026-11-10.md",
+      "docs/mlc02-stage3-code-2026-11-10.md"
+    ],
+    "authorization": "Model stage of the user's 10 November 2026 request for a carefully built dataset, test sets and a serious evaluation of a condition-type classifier; run under its own frozen protocol.",
+    "scope": "Ten candidates (P0, L-J, L-C, G-M, H-X, H-J, H-C, H-All, S-R, F) and their ensemble E, fitted on train and chosen on validation only; test predictions computed once on PTB-XL fold 10, the SPH evaluation half and the SPH calibration half; Challenge test groups and EchoNext not opened.",
+    "primary": "Selected model minus P0, macro AUROC over 14 conditions, SPH evaluation half, paired patient bootstrap (2,000); better only if the lower 95% end is above zero.",
+    "primary_result": {
+      "selected": "E",
+      "reference": "P0",
+      "difference": -0.001226049658349937,
+      "ci_low": -0.0025887788491599922,
+      "ci_high": 5.7708175675202884e-05,
+      "draws": 2000,
+      "redraws": 0,
+      "seed": 20261110
+    },
+    "decision": {
+      "lower_95_above_zero": false,
+      "better": false,
+      "reference_model": "P0"
+    },
+    "summary": "E (mean of H-All, S-R and F; validation metric 0.9728) minus P0 at the SPH evaluation half: -0.00123 (-0.00259, +0.00006); no demonstrated gain, P0 stays the reference model. Secondary: E leads at PTB-XL fold 10 (0.9738 against P0 0.9632), H-X leads at SPH (0.9748, +0.0011 (0.0004, 0.0018) over P0, unadjusted). Validation thresholds give SPH specificity 0.431-0.985; refitted on the SPH calibration half 0.893-0.908. Incomplete RBBB is the weakest condition at SPH (AUROC 0.843 E, 0.852 P0).",
+    "next_action": "No promotion and no further test scoring scheduled. Follow-ups are in the backlog: space A beside KEY-04 with a pre-stated mapping, SPH window mean, wider logistic C grid, F leave-one-family-out, the source-shift question, leave-one-family-out selection, incomplete RBBB at SPH, refit-aware local intervals, per-seed test results.",
+    "not_done": [
+      "Space A beside KEY-04 (Addendum 3)",
+      "Window mean over SPH recordings longer than 10 s (Addendum 3)",
+      "Leave-one-family-out for F (not required by the protocol)",
+      "Per-seed test results (test-predict wrote seed means only)"
+    ]
   }
 }

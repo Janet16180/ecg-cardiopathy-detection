@@ -31,25 +31,47 @@ from ecg_experiment.paths import to_stored
 
 OUTPUT = ROOT / "outputs/mlc02_condition_models_20261110"
 PUBLISHED = OUTPUT / "features"
-PACKAGES = ("numpy", "scipy", "pandas", "torch", "wfdb", "h5py", "resampy", "numba", "xlstm", "scikit-learn")
+PACKAGES = (
+    "numpy",
+    "scipy",
+    "pandas",
+    "torch",
+    "wfdb",
+    "h5py",
+    "resampy",
+    "numba",
+    "xlstm",
+    "einops",
+    "scikit-learn",
+)
 MARGIN = 1024**3
+VENDORED = ("third_party/xecg-deps", "third_party/jepa-deps", "third_party/ecg-cpc-deps")
 
 
 def package_versions() -> dict[str, str]:
     """
-    Versions of the packages that shape the features, where installed.
+    Versions of the packages that shape the features, in the environment or the vendored dependency folders.
 
     Returns
     -------
     dict[str, str]
-        Version per package; ``absent`` when not importable by metadata.
+        Version per package, with ``(third_party/...)`` for a vendored one; ``absent`` when not found.
     """
     versions = {}
     for name in PACKAGES:
         try:
             versions[name] = importlib.metadata.version(name)
+            continue
         except importlib.metadata.PackageNotFoundError:
             versions[name] = "absent"
+        for folder in VENDORED:
+            found = [
+                dist.version
+                for dist in importlib.metadata.distributions(name=name, path=[str(ROOT / folder)])
+            ]
+            if found:
+                versions[name] = f"{found[0]} ({folder})"
+                break
     return versions
 
 

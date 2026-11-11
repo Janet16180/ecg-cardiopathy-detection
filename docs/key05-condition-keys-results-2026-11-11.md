@@ -126,7 +126,10 @@ Challenge sources; no redraw was needed) and the paired difference from P0 on th
 - Every construction is below P0 on both metrics, with the whole interval below zero.
 - The two metrics order K4 and K6 differently: K6 is first on the selection metric (0.9643 against 0.9634), K4 on
   the pooled one (0.9734 against 0.9637). Among K7, m = 4 leads on the selection metric and m = 2 on the pooled
-  one. The selection used the selection metric (section 10).
+  one. The two readings of the protocol's "validation macro AUROC" therefore select different constructions:
+  K6 and K7-m4 under the selection metric, K4 and K7-m2 under the pooled macro. Both are shown for every
+  construction; the selection used the selection metric (section 10), and only K6 and K7-m4 were scored on a test
+  role.
 - The `keys` step took 138 s on 8 threads, about 105 s of it the 20-neighbour search of N1 (`receipts/keys.json`,
   `keys.log`). The Ledoit-Wolf shrinkage of the within-class covariance was 0.0007-0.0009
   for every condition (`keys_summary.json`), so K4 is close to the unshrunk linear discriminant.
@@ -455,9 +458,13 @@ before the test step ran; the test step refuses to open a test role unless that 
 
 - Single key: the highest validation selection metric among K1 to K6 is K6 (0.9643; K4 0.9634).
 - K7: K7-m4 (0.9617; K7-m2 0.9602, K7-m8 0.9542).
-- The protocol's "validation macro AUROC" can be read as either metric of section 2. The selection metric was
-  stated as the rule in a message to the orchestrator before any key was scored; the pooled reading would have
-  selected K4 and K7-m2. No reply had arrived when the record was committed.
+- The protocol's "validation macro AUROC" can be read as either metric of section 2, and the two select different
+  constructions: the pooled reading would have selected K4 and K7-m2. The selection metric was stated as the rule
+  in a message to the orchestrator before any key was scored, and no reply had arrived when the record was
+  committed. The orchestrator's ruling for the same reading, with the pooled value reported beside it and the
+  seven readings of the Departures section accepted, reached this agent after the test read; it is recorded as
+  Amendment 1 of the protocol (`4a9ae78`), whose first paragraph states that it was written after the selection
+  record and the test read.
 
 ## 11. The test read [sections `test`, `test-conditions`]
 
@@ -466,8 +473,9 @@ stored v5-trained P0, at PTB-XL fold 10 and the SPH evaluation half. The SPH cal
 Conditions with at least 100 positives and 100 negatives in the role enter: 9 at fold 10 (AF or flutter, PVC,
 incomplete RBBB, LAFB, left axis deviation, LVH, ST depression, T-wave abnormality, any MI) and 12 at SPH (all but
 LAFB and left axis deviation). 2,000 patient-cluster resamples, no redraw needed; 1,903 patients at fold 10 and
-12,246 at SPH. For K6 at SPH, which has no train mean, the records were centred on the evaluation half's own mean;
-a constant shift leaves the within-role ranking unchanged.
+12,246 at SPH. For K6 at SPH, which has no train mean, the records were centred on the unlabelled mean of the
+scored evaluation half: this uses test-role features but no test-role labels, and a constant shift leaves the
+within-role ranking unchanged.
 
 The macro table and the decision are at the top of this report. Per condition (the protocol's reading applied
 without a decision; "equivalent" means the lower bound is above -0.010):
@@ -506,14 +514,15 @@ without a decision; "equivalent" means the lower bound is above -0.010):
 
 - **Metric reading.** Selection used the within-source selection metric (section 10); the orchestrator was told
   before any score; its ruling for the same reading did not arrive before the run ended, and the reading is
-  recorded as Amendment 1 of the protocol, written after the run. The pooled reading would have selected K4 and K7-m2. Neither K4 nor K7-m2
-  was scored on a test role.
+  recorded as Amendment 1 of the protocol, written after the run. The pooled reading would have selected K4 and
+  K7-m2. Neither K4 nor K7-m2 was scored on a test role.
 - **Readings stated to the orchestrator before any score**, followed as written:
   - K3's "records with no positive label" are train records with no positive among the 14 conditions, undefined
     labels allowed.
   - K5 averages the train sources with at least 20 positives and 20 negatives of the condition (3 to 6 sources,
     `keys_summary.json`).
-  - K6 centres every record on its train source's mean; SPH, which has no train mean, on its own unlabelled mean.
+  - K6 centres every record on its train source's mean; SPH, which has no train mean, on the unlabelled mean of the
+    scored half (test-role features, no labels).
   - K4, K6 and K7 use Ledoit-Wolf on the class-centred residuals of the defined train records, both classes
     pooled (tested against scikit-learn's estimator on repeated rows).
   - N1 uses the 20 nearest train records among those where the condition is defined.

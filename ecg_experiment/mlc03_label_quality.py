@@ -27,6 +27,7 @@ import numpy as np
 import pandas as pd
 
 from ecg_experiment import ROOT, mlc_labels
+from ecg_experiment.files import sha256_file
 from ecg_experiment.measurement_extractor042 import FEATURE_NAMES
 from ecg_experiment.mlc02_data import CONDITIONS, MANIFEST
 from ecg_experiment.mlc02_feature_data import LOCAL, aligned_rows
@@ -39,7 +40,27 @@ OUTPUT = ROOT / "outputs/mlc03_data_quality_20261111/labels"
 REVIEW = ROOT / "outputs/mlc03_data_quality_20261111/review/labels"
 SCRATCH = Path("/var/tmp/janetrivera/mlc03")
 PTBXL_PLUS = ROOT / "data/raw/ptb-xl-plus/1.0.1/features"
+PTBXL_DATABASE = ROOT / "data/raw/ptb-xl/1.0.3/ptbxl_database.csv"
+OPEN_PTBXL_FOLDS = tuple(range(1, 10))
 LUDB = ROOT / "data/raw/ludb/1.0.1"
+REFERENCES = {
+    "ptbxl_plus": {
+        "url": "https://physionet.org/content/ptb-xl-plus/1.0.1/",
+        "version": "1.0.1",
+        "root": PTBXL_PLUS.parent,
+        "files": (
+            "features/12sl_features.csv",
+            "features/unig_features.csv",
+            "features/feature_description.csv",
+        ),
+    },
+    "ludb": {
+        "url": "https://physionet.org/content/ludb/1.0.1/",
+        "version": "1.0.1",
+        "root": LUDB,
+        "files": None,
+    },
+}
 SEED = 20261111
 SOURCES = ("ptbxl", "ningbo", "chapman_shaoxing", "georgia", "cpsc_2018", "cpsc_2018_extra")
 EXTRA_LABELS = (
@@ -1986,11 +2007,32 @@ PLUS_COLUMNS = {
 }
 
 
-def load_ptbxl_plus(keys: np.ndarray, directory: Path = PTBXL_PLUS) -> pd.DataFrame:
+def open_ptbxl_ids(database: Path = PTBXL_DATABASE) -> set[int]:
+    """
+    PTB-XL record numbers of the folds this experiment may read.
+
+    Parameters
+    ----------
+    database : Path
+        ``ptbxl_database.csv``.
+
+    Returns
+    -------
+    set[int]
+        ``ecg_id`` of folds ``OPEN_PTBXL_FOLDS`` (1-9); fold 10 is left out.
+    """
+    folds = pd.read_csv(database, usecols=["ecg_id", "strat_fold"])
+    return set(folds.loc[folds["strat_fold"].isin(OPEN_PTBXL_FOLDS), "ecg_id"].astype(int))
+
+
+def load_ptbxl_plus(
+    keys: np.ndarray, directory: Path = PTBXL_PLUS, database: Path = PTBXL_DATABASE
+) -> pd.DataFrame:
     """
     PTB-XL+ 12SL and Uni-G measurements of open PTB-XL records.
 
-    Rows of other records (including PTB-XL fold 10) are skipped by the reader.
+    The requested records are cut to PTB-XL folds 1-9 by ``ecg_id`` before any row is parsed (Addendum 1 of
+    the protocol); the rows of every other record, fold 10 included, are skipped by the reader.
 
     Parameters
     ----------
@@ -1998,6 +2040,8 @@ def load_ptbxl_plus(keys: np.ndarray, directory: Path = PTBXL_PLUS) -> pd.DataFr
         Open record keys; non-PTB-XL keys are ignored.
     directory : Path
         PTB-XL+ ``features`` directory.
+    database : Path
+        ``ptbxl_database.csv`` holding ``strat_fold``.
 
     Returns
     -------
@@ -2005,6 +2049,7 @@ def load_ptbxl_plus(keys: np.ndarray, directory: Path = PTBXL_PLUS) -> pd.DataFr
         ``record_key`` and ``<column>_<program>`` for ``PLUS_COLUMNS``.
     """
     wanted = {int(key.split(":")[1]) for key in np.asarray(keys, dtype=str) if key.startswith("ptbxl:")}
+    wanted &= open_ptbxl_ids(database)
     tables = []
     for program, columns in PLUS_COLUMNS.items():
         path = Path(directory) / f"{program}_features.csv"
@@ -2017,6 +2062,45 @@ def load_ptbxl_plus(keys: np.ndarray, directory: Path = PTBXL_PLUS) -> pd.DataFr
     joined = tables[0].join(tables[1], how="outer")
     joined.insert(0, "record_key", "ptbxl:" + joined.index.astype(str))
     return joined.reset_index(drop=True)
+
+
+def reference_receipt() -> dict[str, dict[str, object]]:
+    """
+    URL, version and SHA-256 of the downloaded measurement references, verified against PhysioNet's manifest.
+
+    Returns
+    -------
+    dict[str, dict[str, object]]
+        Per reference in ``REFERENCES``: URL, version, the SHA-256 of its ``SHA256SUMS.txt``, the number of
+        files verified, their bytes and, for PTB-XL+, each file's SHA-256.
+
+    Raises
+    ------
+    ValueError
+        If a file is missing or its SHA-256 differs from the manifest.
+    """
+    receipt = {}
+    for name, spec in REFERENCES.items():
+        root = Path(spec["root"])
+        manifest = {}
+        for line in (root / "SHA256SUMS.txt").read_text().splitlines():
+            digest, relative = line.split(" ", 1)
+            manifest[relative.strip()] = digest
+        files = spec["files"] or sorted(manifest)
+        digests = {}
+        for relative in files:
+            if not (root / relative).is_file() or sha256_file(root / relative) != manifest[relative]:
+                raise ValueError(f"{name}: {relative} is missing or differs from SHA256SUMS.txt")
+            digests[relative] = manifest[relative]
+        receipt[name] = {
+            "url": spec["url"],
+            "version": spec["version"],
+            "sha256sums_sha256": sha256_file(root / "SHA256SUMS.txt"),
+            "files_verified": len(digests),
+            "bytes": int(sum((root / relative).stat().st_size for relative in digests)),
+            **({"file_sha256": digests} if spec["files"] else {}),
+        }
+    return receipt
 
 
 def error_summary(

@@ -75,49 +75,36 @@ def validation() -> str:
     str
         Markdown tables.
     """
-    plus = pd.read_csv(OUT / "measurement_validation/ptbxl_plus_summary.csv")
-    part = plus[plus["subset"] == "validation outside calibration"]
-    rows = []
-    for (quantity, method), r in part.groupby(["quantity", "method"], sort=False):
-        r = r.iloc[0]
-        rows.append(
-            {
-                "quantity": quantity,
-                "method": method,
-                "tolerance": r["tolerance"],
-                "pairs": int(r["pairs"]),
-                "measured": percent(r["measured"]),
-                "median difference": f"{r['bias']:.3g}",
-                "median absolute": f"{r['median_abs']:.3g}",
-                "90th percentile absolute": f"{r['p90_abs']:.3g}",
-                "within tolerance": percent(r["within"]),
-            }
-        )
-    text = [
-        "PTB-XL+ reference, PTB-XL validation records outside the calibration sample:",
-        markdown(pd.DataFrame(rows)),
-    ]
-    for name, label in (
-        ("ludb_summary.csv", "LUDB manual delineation (200 records):"),
-        ("synthetic_summary.csv", "Synthetic records (all noise levels):"),
+    text = []
+    for name, subset, label in (
+        (
+            "ptbxl_plus_summary.csv",
+            "validation outside calibration",
+            "PTB-XL+ reference (12SL and Uni-G where they agree), PTB-XL validation records outside the "
+            "calibration sample:",
+        ),
+        ("ludb_summary.csv", None, "LUDB manual delineation (200 records):"),
+        ("synthetic_summary.csv", None, "Synthetic records (all noise levels):"),
     ):
         table = pd.read_csv(OUT / "measurement_validation" / name)
+        if subset is not None:
+            table = table[table["subset"] == subset]
         if "noise_mv" in table:
             table = table[table["noise_mv"].astype(str) == "all"]
-        table = table.assign(
-            measured=table["measured"].map(percent),
-            within=table["within"].map(percent),
-            bias=table["bias"].map(lambda v: f"{v:.3g}"),
-            median_abs=table["median_abs"].map(lambda v: f"{v:.3g}"),
+        shown = pd.DataFrame(
+            {
+                "quantity": table["quantity"],
+                "method": table["method"],
+                "tolerance": table["tolerance"],
+                "pairs": table["pairs"].astype(int),
+                "failed": (1 - table["measured"]).map(percent),
+                "bias (median difference)": table["bias"].map(lambda v: f"{v:.3g}"),
+                "median absolute": table["median_abs"].map(lambda v: f"{v:.3g}"),
+                "90th percentile absolute": table["p90_abs"].map(lambda v: f"{v:.3g}"),
+                "within tolerance": table["within"].map(percent),
+            }
         )
-        text += [
-            label,
-            markdown(
-                table[
-                    ["quantity", "method", "tolerance", "pairs", "measured", "bias", "median_abs", "within"]
-                ]
-            ),
-        ]
+        text += [label, markdown(shown)]
     detection = pd.read_csv(OUT / "measurement_validation/synthetic_detection.csv")
     detection = detection.assign(
         flagged_with=detection["flagged_with"].map(percent),
@@ -220,6 +207,51 @@ def item1() -> str:
             }
         )
     return markdown(pd.DataFrame(rows))
+
+
+def records() -> str:
+    """
+    Open records by source and role, records longer than 10 s, and method B's status.
+
+    Returns
+    -------
+    str
+        Markdown tables read from ``analysis.parquet``.
+    """
+    table = pd.read_parquet(OUT / "analysis.parquet", columns=["source", "role", "duration_s", "status_b"])
+    counts = pd.crosstab(table["source"], table["role"]).reindex(list(SHORT))
+    counts["records"] = counts.sum(axis=1)
+    counts["longer than 10 s"] = (table["duration_s"] > 10.0 + 1e-6).groupby(table["source"]).sum()
+    counts.loc["total"] = counts.sum()
+    counts = counts.reset_index().assign(source=lambda f: f["source"].map({**SHORT, "total": "total"}))
+    status = table["status_b"].value_counts().rename_axis("method B status").reset_index(name="records")
+    return "\n\n".join([markdown(counts), markdown(status)])
+
+
+def definitions() -> str:
+    """
+    Measured definition of each condition used by item 1.
+
+    Returns
+    -------
+    str
+        Markdown table of ``item1_definitions.csv``.
+    """
+    table = pd.read_csv(OUT / "item1_definitions.csv")
+    return markdown(table[["condition", "measure", "population", "bound", "tolerance", "reference"]])
+
+
+def whole() -> str:
+    """
+    Count the findings of the records longer than 10 s by 10 s window.
+
+    Returns
+    -------
+    str
+        Markdown table of ``item1_whole_record_summary.csv``.
+    """
+    table = pd.read_csv(OUT / "item1_whole_record_summary.csv")
+    return markdown(table.assign(source=table["source"].map(SHORT)))
 
 
 def item2() -> str:
@@ -361,7 +393,14 @@ def review() -> str:
     by_source["source"] = by_source["source"].map(SHORT)
     rhythm = pd.read_csv(OUT / "item4_review_rhythm_statement.csv")
     signal = pd.read_csv(OUT / "item4_review_signal_flags.csv")
-    columns = ["any_flag", "baseline_wander", "baseline_step", "isolated_spike", "flat_lead", "contact_loss"]
+    columns = [
+        "any_reliable_flag",
+        "baseline_wander",
+        "baseline_step",
+        "isolated_spike",
+        "flat_lead",
+        "contact_loss",
+    ]
     signal = signal.assign(**{column: signal[column].map(percent) for column in columns})
     counted = ["label error", "model error", "cannot tell", "sheets"]
     totals = tally.groupby("kind")[counted].sum().reset_index()
@@ -470,9 +509,12 @@ def integrity() -> str:
 
 
 SECTIONS = {
+    "records": records,
     "validation": validation,
     "agreement": agreement,
+    "definitions": definitions,
     "item1": item1,
+    "whole": whole,
     "item2": item2,
     "item3": item3,
     "item4": item4,

@@ -126,3 +126,23 @@ synthetic data; no pinned file is edited. Outputs in `outputs/key05_condition_ke
 Report `docs/key05-condition-keys-results-2026-11-11.md` written from the outputs, with the
 construction table, the ladder, the pair table, the reference-count curves, stability, the
 measurement agreement, the review reading, departures and doubts. Queue and backlog updates.
+
+## Amendment 1: selection metric and readings (11 November 2026)
+
+Timing, stated plainly: this text was added after the experiment had finished, including the
+selection record (`83c9fe7`) and the one test read. It records decisions; it is not a
+prospective commit. The agent announced the reading of the selection metric and its other
+readings to the orchestrator before any key score was computed. The orchestrator ruled for the
+same readings, but its messages did not reach the agent before the run ended, and the agent
+followed its announced defaults. By the time of the selection record, validation numbers under
+both metrics had been seen; the choice of metric was not changed after seeing them.
+
+1. "Validation macro AUROC" in the selection rule means the MLC-02 selection metric: the macro
+   AUROC within each validation source (conditions with at least 20 positives and 20 negatives
+   in the source), averaged over the six sources. The pooled value is reported beside it. The
+   two metrics select different constructions (within-source: K6 and K7 with m = 4; pooled: K4
+   and K7 with m = 2); only the first pair was scored on a test role.
+2. The primary comparison at the SPH evaluation half is unchanged.
+3. The readings of K3, K5, K6, the covariance of K4, K6 and K7, N1, and "n = all" in analysis
+   5 are those listed under "Departures and doubts" in the results report. K6 at SPH centres on
+   the unlabelled mean of the scored half, which uses test-role features and no labels.

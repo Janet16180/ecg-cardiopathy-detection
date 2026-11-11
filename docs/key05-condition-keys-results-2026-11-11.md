@@ -505,7 +505,8 @@ without a decision; "equivalent" means the lower bound is above -0.010):
 ## Departures and doubts
 
 - **Metric reading.** Selection used the within-source selection metric (section 10); the orchestrator was told
-  before any score and had not replied. The pooled reading would have selected K4 and K7-m2. Neither K4 nor K7-m2
+  before any score; its ruling for the same reading did not arrive before the run ended, and the reading is
+  recorded as Amendment 1 of the protocol, written after the run. The pooled reading would have selected K4 and K7-m2. Neither K4 nor K7-m2
   was scored on a test role.
 - **Readings stated to the orchestrator before any score**, followed as written:
   - K3's "records with no positive label" are train records with no positive among the 14 conditions, undefined

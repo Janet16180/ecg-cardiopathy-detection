@@ -28,6 +28,11 @@
 - [Challenge postprocessing](challenge-postprocessing.md)
 - [Public-data strategy](public-data-strategy.md)
 - [MLC-01 condition dataset protocol](mlc01-condition-dataset-protocol-2026-11-10.md) and [build results](mlc01-condition-dataset-results-2026-11-10.md)
+- [MLC-02 condition models protocol](mlc02-condition-models-protocol-2026-11-10.md), [selection record](mlc02-selection-record-2026-11-10.md) and [results](mlc02-condition-models-results-2026-11-10.md)
+- [MLC-03 data quality protocol](mlc03-data-quality-protocol-2026-11-11.md) and [results](mlc03-data-quality-results-2026-11-11.md), with the [signal](mlc03-signal-quality-results-2026-11-11.md), [label](mlc03-label-quality-results-2026-11-11.md) and [dataset v5](mlc03-dataset-v5-results-2026-11-11.md) reports
+- [MLC-04 final test protocol](mlc04-final-test-protocol-2026-11-11.md), [freeze record](mlc04-freeze-record-2026-11-11.md) and [results](mlc04-final-test-results-2026-11-11.md); the Challenge test groups were read once for the 14-condition task
+- [KEY-05 condition keys protocol](key05-condition-keys-protocol-2026-11-11.md), [selection record](key05-selection-record-2026-11-11.md) and [results](key05-condition-keys-results-2026-11-11.md)
+- [KEY-06 embedding structure protocol](key06-embedding-structure-protocol-2026-11-11.md) and [results](key06-embedding-structure-results-2026-11-11.md)
 
 ## Experiments and findings
 

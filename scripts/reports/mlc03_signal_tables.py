@@ -1,0 +1,340 @@
+"""Print the tables of the MLC-03 signal-quality report from its outputs, and write the proposed-rule counts.
+
+Nothing is measured here: the script reads the flag tables, visual-check tallies, quantiles, pipeline and
+near-duplicate outputs written by ``scripts.experiments.run_mlc03_signal_quality``, counts and formats.
+
+Example
+-------
+PYTHONPATH=. .venv/bin/python -m scripts.reports.mlc03_signal_tables
+PYTHONPATH=. .venv/bin/python -m scripts.reports.mlc03_signal_tables --section rules
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+
+import numpy as np
+import pandas as pd
+
+from ecg_experiment.eda.signals import LEADS
+from ecg_experiment.mlc03_signal_flags import FLAGS
+from ecg_experiment.mlc03_signal_runs import OUTPUT
+
+REVIEW = OUTPUT.parent / "review/signal"
+STATUSES = ("ok", "sin_latidos", "derivacion_plana")
+MEASUREMENT_STATUS = OUTPUT.parents[1] / "mlc02_condition_models_20261110/features/measurements_status.csv"
+SOURCES = ("ptbxl", "ningbo", "chapman_shaoxing", "georgia", "cpsc_2018", "cpsc_2018_extra", "sph")
+FINAL_REVIEW = {"reversal_la_ra": "reversal_la_ra__v2", "reversal_neutral": "reversal_neutral__v2",
+                "mains_interference": "mains_interference__v2", "hf_noise": "hf_noise__v2",
+                "rhythm_unmeasurable": "rhythm_unmeasurable__v2"}
+RULES = (
+    ("R1", "exclude record", "missing_samples", None),
+    ("R2", "exclude record", "adc_rail", None),
+    ("R3", "exclude record", "edge_hold", None),
+    ("R4", "mark lead unusable", "flat_lead", "flat_lead__leads"),
+    ("R5", "mark lead unusable", "near_flat_lead", "near_flat_lead__leads"),
+    ("R6", "mark lead unusable", "contact_loss", "contact_loss__leads"),
+    ("R7", "mark derived lead unusable", "identity_violation", None),
+    ("R8", "exclude record", "reversal_la_ra", None),
+    ("R9", "exclude record", "reversal_neutral", None),
+    ("R10", "exclude record", "amplitude_high", None),
+)
+
+
+def markdown(frame: pd.DataFrame) -> str:
+    """
+    Format a table as Markdown.
+
+    Parameters
+    ----------
+    frame : pd.DataFrame
+        Table.
+
+    Returns
+    -------
+    str
+        Markdown text.
+    """
+    header = "| " + " | ".join(str(column) for column in frame.columns) + " |"
+    rule = "|" + "|".join("---" for _ in frame.columns) + "|"
+    rows = ["| " + " | ".join(str(value) for value in row) + " |" for row in frame.itertuples(index=False)]
+    return "\n".join([header, rule, *rows])
+
+
+def flag_table(path: str) -> pd.DataFrame:
+    """
+    Count flagged included records per flag and source (all roles of the file summed).
+
+    Parameters
+    ----------
+    path : str
+        Counts CSV name under the signal output directory.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per flag, one column per source, and a total.
+    """
+    counts = pd.read_csv(OUTPUT / path)
+    pivot = counts.groupby(["flag", "source"])["flagged"].sum().unstack(fill_value=0)
+    pivot = pivot.reindex([*FLAGS, "any_flag"])[[s for s in SOURCES if s in pivot.columns]]
+    records = counts.drop_duplicates(["source", "role"]).groupby("source")["records"].sum()
+    pivot.loc["records"] = records.reindex(pivot.columns).to_numpy()
+    pivot["total"] = pivot.sum(axis=1)
+    return pivot.reset_index()
+
+
+def tally_table() -> pd.DataFrame:
+    """
+    Collect the visual-check result of every review directory.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per review: drawn, showing the defect, share, controls viewed and showing it, reliable.
+    """
+    rows = []
+    for path in sorted(REVIEW.glob("*/tally.json")):
+        tally = json.loads(path.read_text())
+        verdicts = pd.read_csv(path.with_name("tally.csv"))
+        flagged = verdicts[verdicts["group"] == "flagged"]
+        viewed = int((flagged["defect_visible"] != "not reviewed").sum())
+        shown = tally["flagged_showing_defect"]
+        rows.append({"review": tally["review"], "flagged drawn": tally["flagged_drawn"], "viewed": viewed,
+                     "show the defect": shown, "share of viewed": f"{shown / max(viewed, 1):.2f}",
+                     "controls viewed": tally["unflagged_viewed"],
+                     "controls with defect": tally["unflagged_showing_defect"],
+                     "reliable": tally["reliable"]})
+    return pd.DataFrame(rows)
+
+
+def rule_masks(flags: pd.DataFrame) -> dict[str, np.ndarray]:
+    """
+    Record masks of the proposed rules.
+
+    Parameters
+    ----------
+    flags : pd.DataFrame
+        Flags table (train and validation, or the test roles).
+
+    Returns
+    -------
+    dict[str, np.ndarray]
+        Flag or derived name to boolean mask; ``amplitude_high`` is the high side of ``amplitude_outlier``.
+    """
+    masks = {name: flags[name].to_numpy(dtype=bool) for name in FLAGS}
+    masks["amplitude_high"] = (flags["amplitude_ratio"].to_numpy(dtype=float) >= 4.0)
+    return masks
+
+
+def lead_count(flags: pd.DataFrame, column: str | None, mask: np.ndarray) -> int:
+    """
+    Count the lead-records a lead rule would mark.
+
+    Parameters
+    ----------
+    flags : pd.DataFrame
+        Flags table.
+    column : str | None
+        Column of blamed leads, or None for a record rule.
+    mask : np.ndarray
+        Records the rule affects.
+
+    Returns
+    -------
+    int
+        Blamed leads summed over the affected records (0 for a record rule).
+    """
+    if column is None:
+        return 0
+    return int(sum(len([lead for lead in str(text).split(";") if lead]) for text in flags.loc[mask, column]))
+
+
+def rule_counts() -> pd.DataFrame:
+    """
+    Count the records each proposed rule affects, per role and source, on included records of every role.
+
+    Returns
+    -------
+    pd.DataFrame
+        Long table: ``rule``, ``action``, ``flag``, ``role``, ``source``, ``records`` (denominator),
+        ``affected`` and ``leads`` (lead-records for lead rules).
+    """
+    frames = [pd.read_parquet(OUTPUT / "flags_train_validation.parquet")]
+    if (OUTPUT / "flags_test_roles.parquet").exists():
+        frames.append(pd.read_parquet(OUTPUT / "flags_test_roles.parquet"))
+    rows = []
+    for frame in frames:
+        frame = frame[frame["included"]].reset_index(drop=True)
+        masks = rule_masks(frame)
+        for (role, source), group in frame.groupby(["role", "source"]):
+            positions = group.index.to_numpy()
+            for rule, action, flag, column in RULES:
+                mask = np.zeros(len(frame), dtype=bool)
+                mask[positions] = masks[flag][positions]
+                rows.append({"rule": rule, "action": action, "flag": flag, "role": role, "source": source,
+                             "records": len(group), "affected": int(mask.sum()),
+                             "leads": lead_count(frame, column, mask)})
+            union = np.zeros(len(frame), dtype=bool)
+            for _, action, flag, _ in RULES:
+                if action.startswith("exclude"):
+                    union[positions] |= masks[flag][positions]
+            rows.append({"rule": "R1-R3, R8-R10", "action": "exclude record (union)", "flag": "",
+                         "role": role, "source": source, "records": len(group), "affected": int(union.sum()),
+                         "leads": 0})
+    return pd.DataFrame(rows)
+
+
+def lead_distribution(flag: str) -> pd.DataFrame:
+    """
+    Blamed leads of a lead flag on included train and validation records.
+
+    Parameters
+    ----------
+    flag : str
+        Flag with a ``__leads`` column.
+
+    Returns
+    -------
+    pd.DataFrame
+        Records per lead and source.
+    """
+    flags = pd.read_parquet(OUTPUT / "flags_train_validation.parquet")
+    flags = flags[flags["included"] & flags[flag]]
+    rows = []
+    for source, group in flags.groupby("source"):
+        counts = dict.fromkeys(LEADS, 0)
+        for text in group[f"{flag}__leads"]:
+            for lead in filter(None, str(text).split(";")):
+                counts[lead] += 1
+        rows.append({"source": source, **counts})
+    return pd.DataFrame(rows)
+
+
+def quantile_table(measure: str) -> pd.DataFrame:
+    """
+    Per-source quantiles of one record summary.
+
+    Parameters
+    ----------
+    measure : str
+        Summary name of ``record_summaries``.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per source.
+    """
+    table = pd.read_csv(OUTPUT / "measure_quantiles_train_validation.csv")
+    table = table[table["measure"] == measure].drop(columns="measure")
+    return table.round(4)
+
+
+def measurement_status() -> pd.DataFrame:
+    """
+    Status of the MLC-02 measurement extractor on included train and validation records, per flag.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per flag: flagged records and the share of each extractor status among them.
+    """
+    status = pd.read_csv(MEASUREMENT_STATUS, usecols=["record_key", "status"])
+    flags = pd.read_parquet(OUTPUT / "flags_train_validation.parquet")
+    flags = flags[flags["included"]].merge(status, on="record_key", how="left", validate="one_to_one")
+    rows = []
+    for flag in [*FLAGS, "any_flag"]:
+        group = flags[flags[flag]]
+        shares = group["status"].value_counts(normalize=True)
+        rows.append({"flag": flag, "records": len(group),
+                     **{name: f"{shares.get(name, 0.0):.3f}" for name in STATUSES}})
+    unflagged = flags[~flags["any_flag"]]["status"].value_counts(normalize=True)
+    rows.append({"flag": "no flag", "records": int((~flags["any_flag"]).sum()),
+                 **{name: f"{unflagged.get(name, 0.0):.3f}" for name in STATUSES}})
+    return pd.DataFrame(rows)
+
+
+def rules_section() -> str:
+    """
+    Write ``proposed_rule_counts.csv`` and format the rule counts.
+
+    Returns
+    -------
+    str
+        Markdown: records affected per rule, role and source, then lead-records per lead rule and role.
+    """
+    counts = rule_counts()
+    counts.to_csv(OUTPUT / "proposed_rule_counts.csv", index=False)
+    wide = counts.pivot_table(index=["rule", "action", "flag"], columns=["role", "source"], values="affected",
+                              aggfunc="sum", fill_value=0)
+    leads = counts[counts["leads"] > 0].groupby(["rule", "role"])["leads"].sum().reset_index()
+    return markdown(wide.reset_index()) + "\n\n" + markdown(leads)
+
+
+def pipelines_section() -> str:
+    """
+    Format the pipeline-effect tables.
+
+    Returns
+    -------
+    str
+        Markdown of the summary, the edge ringing by source and the missing-sample spread.
+    """
+    names = ("pipeline_effects_summary", "edge_ringing_by_source", "missing_sample_spread")
+    tables = [markdown(pd.read_csv(OUTPUT / f"pipeline_effects/{name}.csv").round(3)) for name in names]
+    return "\n\n".join(tables)
+
+
+def optional_table(name: str) -> str:
+    """
+    Format a CSV of the signal outputs if it exists.
+
+    Parameters
+    ----------
+    name : str
+        File name under the signal output directory.
+
+    Returns
+    -------
+    str
+        Markdown, or a note that the file is absent.
+    """
+    path = OUTPUT / name
+    return markdown(pd.read_csv(path)) if path.exists() else f"({name} not written yet)"
+
+
+def main(argv: list[str] | None = None) -> None:
+    """
+    Print the requested sections and write the rule counts.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Arguments, or None for ``sys.argv``.
+    """
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--measure", default="max_baseline_ptp", help="quantiles: summary name")
+    parser.add_argument("--flag", default="flat_lead", help="leads: flag name")
+    sections = {
+        "flags": lambda args: markdown(flag_table("flag_counts_train_validation.csv")),
+        "flags-test": lambda args: (markdown(flag_table("flag_counts_test_roles.csv"))
+                                    if (OUTPUT / "flag_counts_test_roles.csv").exists() else "(not run yet)"),
+        "tallies": lambda args: markdown(tally_table()),
+        "rules": lambda args: rules_section(),
+        "leads": lambda args: markdown(lead_distribution(args.flag)),
+        "quantiles": lambda args: markdown(quantile_table(args.measure)),
+        "pipelines": lambda args: pipelines_section(),
+        "near": lambda args: optional_table("near_duplicates_test_roles_counts.csv"),
+        "measurement-status": lambda args: markdown(measurement_status()),
+    }
+    parser.add_argument("--section", choices=tuple(sections))
+    args = parser.parse_args(argv)
+    default = [name for name in sections if name not in ("leads", "quantiles")]
+    chosen = [args.section] if args.section else default
+    for name in chosen:
+        print(f"\n## {name}\n\n{sections[name](args)}")
+
+
+if __name__ == "__main__":
+    main()

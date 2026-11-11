@@ -87,6 +87,26 @@ def flag_table(path: str) -> pd.DataFrame:
     return pivot.reset_index()
 
 
+def flag_role_table() -> pd.DataFrame:
+    """
+    Count flagged included records per flag, role and source, over train, validation and the test roles.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per flag; columns ``<role> <source>`` in role order, with the denominators in a last row.
+    """
+    names = ["flag_counts_train_validation.csv", "flag_counts_test_roles.csv"]
+    counts = pd.concat([pd.read_csv(OUTPUT / name) for name in names if (OUTPUT / name).exists()])
+    order = ["train", "validation", "test_same_source", "test_external", "sph_calibration"]
+    counts = counts.assign(column=counts["role"] + " " + counts["source"])
+    columns = sorted(counts["column"].unique(), key=lambda text: (order.index(text.split()[0]), text))
+    pivot = counts.pivot_table(index="flag", columns="column", values="flagged", aggfunc="sum")
+    pivot = pivot.reindex([*FLAGS, "any_flag"])[columns].astype(int)
+    pivot.loc["records"] = counts.drop_duplicates("column").set_index("column")["records"].reindex(columns)
+    return pivot.reset_index()
+
+
 def tally_table() -> pd.DataFrame:
     """
     Collect the visual-check result of every review directory.
@@ -469,6 +489,7 @@ def main(argv: list[str] | None = None) -> None:
         "flags-test": lambda args: (markdown(flag_table("flag_counts_test_roles.csv"))
                                     if (OUTPUT / "flag_counts_test_roles.csv").exists() else "(not run yet)"),
         "tallies": lambda args: markdown(tally_table()),
+        "flags-role": lambda args: markdown(flag_role_table()),
         "rules": lambda args: rules_section(),
         "leads": lambda args: markdown(lead_distribution(args.flag)),
         "quantiles": lambda args: markdown(quantile_table(args.measure)),

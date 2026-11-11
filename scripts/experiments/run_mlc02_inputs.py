@@ -20,7 +20,16 @@ import pandas as pd
 
 from ecg_experiment.mlc02_cache_build import build, verify
 from ecg_experiment.mlc02_features import FEATURES, profile_positions
-from ecg_experiment.mlc02_stage1 import OUTPUT, PUBLISHED, extract, integrity, key04, profile, publish
+from ecg_experiment.mlc02_stage1 import (
+    OUTPUT,
+    PUBLISHED,
+    attribution,
+    extract,
+    integrity,
+    key04,
+    profile,
+    publish,
+)
 from ecg_experiment.mlc02_waveforms import CACHE
 
 
@@ -34,7 +43,9 @@ def main(argv: list[str] | None = None) -> None:
         Arguments, or None for ``sys.argv``.
     """
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("step", choices=("cache", "profile", "extract", "publish", "integrity", "key04"))
+    parser.add_argument(
+        "step", choices=("cache", "profile", "extract", "publish", "integrity", "attribution", "key04")
+    )
     parser.add_argument("--extractor", choices=("xecg", "jepa", "cpc", "measurements"))
     parser.add_argument("--gpu", type=int, choices=(0, 1))
     parser.add_argument("--workers", type=int, default=16)
@@ -65,6 +76,13 @@ def main(argv: list[str] | None = None) -> None:
             table = integrity(PUBLISHED, OUTPUT / "integrity", None)
         with pd.option_context("display.width", 250, "display.max_columns", 30):
             print(table.drop(columns=["features_sha256"]).to_string())
+    elif args.step == "attribution":
+        if args.gpu is None:
+            parser.error("attribution needs --gpu")
+        record = attribution(args.gpu, args.workers, OUTPUT / "integrity")
+        print(
+            json.dumps({key: value for key, value in record.items() if key != "git"}, indent=1, default=str)
+        )
     else:
         record = key04(OUTPUT / "integrity")
         print(

@@ -331,6 +331,60 @@ def integrity(features: Path, output: Path, positions: np.ndarray | None) -> pd.
     return table
 
 
+def attribution(gpu: int, workers: int, output: Path) -> dict[str, object]:
+    """
+    Recompute PTB-XL measurements and the first xECG shard from raw float64 samples and write the record.
+
+    Parameters
+    ----------
+    gpu : int
+        Physical GPU for xECG; ``CUDA_VISIBLE_DEVICES`` must name it alone.
+    workers : int
+        Processes for the measurements.
+    output : Path
+        Directory for ``attribution.json``.
+
+    Returns
+    -------
+    dict[str, object]
+        Outputs of ``measurement_attribution`` and ``xecg_attribution`` with timing.
+
+    Raises
+    ------
+    RuntimeError
+        If the visible GPU is not ``gpu``.
+    """
+    import os
+
+    import torch
+
+    from ecg_experiment.gpu import gpu_lock
+    from ecg_experiment.mlc02_attribution import measurement_attribution, xecg_attribution
+    from ecg_experiment.mlc02_features import GPU_LOCKS, SHARD, load_model
+
+    if os.environ.get("CUDA_VISIBLE_DEVICES") != str(gpu):
+        raise RuntimeError(f"Set CUDA_VISIBLE_DEVICES={gpu} for GPU {gpu}")
+    started = time.perf_counter()
+    index = pd.read_csv(CACHE / "index.csv", dtype={"record_key": str, "raw_path": str})
+    record = {
+        "measurements": measurement_attribution(
+            index, assemble("measurements", FEATURES / "measurements")[0], workers
+        )
+    }
+    with gpu_lock("cuda", blocking=False, path=GPU_LOCKS[gpu]):
+        torch.set_num_threads(2)
+        model = load_model("xecg")
+        record["xecg"] = xecg_attribution(
+            index, assemble("xecg", FEATURES / "xecg")[0], np.arange(SHARD), model
+        )
+        del model
+        torch.cuda.empty_cache()
+    record |= {"wall_seconds": time.perf_counter() - started, "git": git_state()}
+    output.mkdir(parents=True, exist_ok=True)
+    write_json_atomic(output / "attribution.json", record)
+    return record
+
+
 def key04(output: Path) -> dict[str, object]:
     """
     Reproduce KEY-04's SPH macro AUROC and write the record.

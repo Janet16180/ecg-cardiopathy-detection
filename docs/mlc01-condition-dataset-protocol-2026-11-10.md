@@ -244,3 +244,12 @@ Not changed, and reported as limitations with the audit's numbers:
 The build is rerun as `outputs/mlc01_condition_dataset_20261110_v4/`, which is final. The audit's
 scripts and tables are copied to `outputs/mlc01_condition_dataset_20261110_v4/audit/`. From the
 first model fit onward no label rule changes.
+
+### Erratum to Amendment 3 (10 November 2026)
+
+The complete-RBBB figures quoted above (62% and 76% against 86-96%) came from an unsaved run of
+a width measure that is not a QRS duration, and they are withdrawn. A remeasurement at 500 Hz
+(`outputs/mlc01_condition_dataset_20261110_v4/audit_addendum/`) gives only a relative width
+index: complete-RBBB positives are narrowest in CPSC 2018 and Chapman at every threshold tried,
+with Ningbo and SPH in between. That CPSC 2018 and Chapman include incomplete blocks under
+"complete RBBB" is therefore possible and unverified. No label rule depends on it.

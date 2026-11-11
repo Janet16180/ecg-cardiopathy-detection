@@ -1034,7 +1034,7 @@ def run_finalize(gpu: int, command: list[str], limits: dict[str, int | None], ou
         "predict_on_waveforms": {"records": count, "max_abs_difference_from_mean": direct_difference},
         "comparison": compared_candidates(), "test_roles_scored": False,
     }
-    write_json_atomic(output / "candidate.json", candidate)
+    write_json_atomic(output / "candidate.json", candidate, allow_nan=smoke)
     write_receipt(output, work, command, git, started, records, index, weights, memory, summary)
     return candidate
 

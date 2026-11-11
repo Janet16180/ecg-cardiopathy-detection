@@ -151,3 +151,76 @@ Part B, beside the two-method agreement named there:
 
 Neither supplies a label for the 14 conditions, and neither enters training. A measurement whose
 error against these references is too large to judge a label is reported as such.
+
+## Amendment 1: cleaning rules for dataset v5 (11 November 2026, after Parts A and B, before any refit)
+
+Evidence: `docs/mlc03-signal-quality-results-2026-11-11.md` (Part A, rule numbers "A-R") and
+`docs/mlc03-label-quality-results-2026-11-11.md` (Part B, rule numbers "B-R"). Counts are train
+plus validation. No model score was used. Every rule excludes a record or sets a label to
+undefined; none creates or flips a positive, and no label definition changes.
+
+Principles used to decide:
+
+- A record is excluded only when the stored signal is not a measurement.
+- A measurement alone overrides a human label only where the condition is defined by that
+  measurement and the measurement was shown reliable (heart rate; voltage for the project's
+  existing rule on high voltage alone).
+- A model's disagreement never changes a label.
+- A flag that failed, or did not independently pass, the visual check supports no rule.
+
+### Records excluded (every role)
+
+| Rule | Definition | Train + validation | Evidence |
+|---|---|---:|---|
+| C1 | Missing samples in the first 10 s | 87 | A-R1; they reach every model as -32.768 mV |
+| C2 | Constant head or tail (`edge_hold`) | 15 | A-R3 |
+| C3 | Samples at the 16-bit rail (`adc_rail`), sources stored as 16-bit integers | 116 | A-R2 |
+| C4 | Derived leads inconsistent with I and II (`identity_violation`), sources stored as 16-bit integers | 47 | A-R7; includes 16-bit wrap-around in CPSC |
+
+C3 and C4 do not apply to SPH: it stores float16 samples, both definitions were made for integer
+storage, and the cause of its counts was not examined (test roles gave counts only).
+
+### Labels set to undefined (every role, same code logic)
+
+| Rule | Definition | Evidence |
+|---|---|---|
+| C5 | A lead on which the condition is read is flat, near-flat or loses contact (reliable Part A flags; lead map of Part B) | B-R5, B-R11 first part |
+| C6 | Both labels of a contradictory pair inside one record | B-R4 |
+| C7 | Conduction, axis, hypertrophy, ST, T and MI labels of a record with a paced rhythm statement | B-R8 |
+| C8 | PVC or AF-or-flutter positive of a recording longer than 10 s whose finding is measured only after the first 10 s | B-R1 |
+| C9 | Complete RBBB positive with a measured QRS below 110 ms beyond tolerance, in the sources with one RBBB code (Chapman, CPSC 2018) | B-R2 |
+| C10 | Sinus bradycardia negative with a measured rate below 60 per minute beyond tolerance, in the sources that code bradycardia from about 50 (PTB-XL, CPSC-Extra) | B-R3 |
+| C11 | Sinus tachycardia or bradycardia label contradicted by the consensus heart rate beyond tolerance | B-R6, rate conditions only |
+| C12 | LVH negative that meets a voltage criterion | B-R10; extends "left ventricular high voltage alone stays undefined" from the code to the measurement |
+
+### Not adopted, with the reason
+
+- Lead masking in the model input (A-R4 to A-R7): it changes the input pipeline, not the
+  dataset. C5 covers the labels; a pipeline that interpolates or masks goes to the backlog.
+- Limb-electrode reversal (A-R8, A-R9; reversal part of B-R11): the passing check reused the
+  first viewing; `reversal_ra_ll` failed.
+- Amplitude outliers (A-R10; amplitude part of B-R11): the sample includes plausible large
+  complexes.
+- Noise flags (wander, mains, high frequency, steps, spikes): real, but a matter of degree. The
+  flags stay in the manifest for stratified reporting.
+- Complete RBBB undefined in all of Chapman and CPSC 2018 (B-R2b): it removes 13,116 labels,
+  most of them consistent with the measurement. C9 removes the measurably narrow positives.
+- Rhythm negatives where no rhythm is stated (B-R9, B-R9b): 6,600 to 10,100 negatives on the
+  evidence of 27 reviewed sheets, and the measurements that could test it (P wave, RR
+  irregularity) are unreliable. C11 covers the rate labels by measurement.
+- Measurement against label for complete RBBB, LAFB, left axis deviation and first-degree AV
+  block in sources that code them separately (B-R6), and every rule that needs a model flag
+  (B-R7).
+
+These, and the source-coding differences that no rule here removes (left axis deviation,
+first-degree AV block, complete against incomplete RBBB by QRS band), are listed for clinical
+review, which is pending.
+
+### Build
+
+`outputs/mlc01_condition_dataset_20261111_v5/`: v4's manifest plus one column per rule, the
+resulting label states, the 18 signal flags, and the exclusion flow from v4 by rule, source and
+role. On the test roles the rules are applied by the same code with no use of their labels to
+choose anything; only counts are reported. Integrity: v5 equals v4 on every record and label
+that no rule touches; counts per rule on train and validation equal those of Parts A and B, or
+the difference is explained. Part D then runs as written.

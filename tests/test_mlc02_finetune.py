@@ -373,3 +373,22 @@ def test_start_check_passes_cached_features_and_refuses_a_changed_record():
     shifted[1, 2] = min(1.0, shifted[1, 2] + 2e-4)
     with pytest.raises(RuntimeError, match="step-0 check failed"):
         check(shifted, cached)
+
+
+def _profile(directory, microbatch, seconds, reserved, free):
+    profile = {"microbatch": microbatch, "seconds_per_update": seconds,
+               "peak_bytes": {"reserved": reserved},
+               "memory_before": {"free_bytes": free, "reserved_bytes": 0},
+               "forecast": {"full_plan_hours": 1.0}}
+    fr.write_json_atomic(directory / f"profile__microbatch-{microbatch}.json", profile)
+
+
+def test_microbatch_choice_takes_the_fastest_profile_that_fits(tmp_path):
+    gib = 1024**3
+    _profile(tmp_path, 8, 0.7, 5 * gib, 10 * gib)
+    _profile(tmp_path, 16, 0.5, 9 * gib, 10 * gib)
+    assert fr.choose_microbatch(tmp_path)["microbatch"] == 16
+    _profile(tmp_path, 16, 0.5, int(9.5 * gib), 10 * gib)
+    chosen = fr.choose_microbatch(tmp_path)
+    assert chosen["microbatch"] == 8
+    assert fr.read_json(tmp_path / "profile.json")["microbatch_choice"]["profiles"][1]["fits"] is False

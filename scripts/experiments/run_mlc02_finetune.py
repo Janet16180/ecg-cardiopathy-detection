@@ -1,8 +1,8 @@
 """Run candidate F of MLC-02 (fine-tuned xECG) on train and validation records only.
 
-Steps: ``prepare`` (CPU), then ``profile``, ``train`` and ``finalize`` on one GPU under its project lock. No
-step reads a test role. ``--smoke`` runs on a few records into a scratch directory; its outputs are not
-results.
+Steps: ``prepare`` (CPU), then ``profile`` (one or more microbatches), ``choose-microbatch``, ``train`` and
+``finalize`` on one GPU under its project lock. No step reads a test role. ``--smoke`` runs on a few records
+into a scratch directory; its outputs are not results.
 
 Examples
 --------
@@ -25,6 +25,7 @@ from ecg_experiment.mlc02_finetune import CANDIDATE, DIRECTORY
 from ecg_experiment.mlc02_finetune_data import WORK
 from ecg_experiment.mlc02_finetune_runs import (
     PROFILE_UPDATES,
+    choose_microbatch,
     run_finalize,
     run_prepare,
     run_profile,
@@ -42,7 +43,7 @@ def main(argv: list[str] | None = None) -> None:
         Arguments, or None for ``sys.argv``.
     """
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("step", choices=("prepare", "profile", "train", "finalize"))
+    parser.add_argument("step", choices=("prepare", "profile", "choose-microbatch", "train", "finalize"))
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--gpu", type=int, default=0)
     parser.add_argument("--microbatch", type=int, default=8)
@@ -61,6 +62,8 @@ def main(argv: list[str] | None = None) -> None:
         result = run_prepare(args.workers, command)
     elif args.step == "profile":
         result = run_profile(args.gpu, args.microbatch, args.updates, command, limits, output, work)
+    elif args.step == "choose-microbatch":
+        result = choose_microbatch(output)
     elif args.step == "train":
         result = run_train(args.gpu, command, limits, output, work)
     else:

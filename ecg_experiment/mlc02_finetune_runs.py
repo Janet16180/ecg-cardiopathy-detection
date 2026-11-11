@@ -641,6 +641,49 @@ def run_profile(gpu: int, microbatch: int, updates: int, command: list[str], lim
     return profile
 
 
+def choose_microbatch(output: Path = DIRECTORY) -> dict[str, Any]:
+    """
+    Keep the fastest profiled microbatch whose peak fits the GPU with headroom.
+
+    The rule was fixed before either profile ran: a profile qualifies when its reserved peak plus 1 GiB is at
+    most the memory available when it started (free plus this process's cache); among those, the lowest
+    seconds per update wins. Microbatches change memory and speed only; every update still sums the same 32
+    records.
+
+    Parameters
+    ----------
+    output : Path
+        Candidate directory holding ``profile__microbatch-<m>.json``.
+
+    Returns
+    -------
+    dict[str, Any]
+        The chosen profile, also written to ``profile.json`` with the comparison.
+
+    Raises
+    ------
+    RuntimeError
+        If no profile qualifies.
+    """
+    profiles = [read_json(path) for path in sorted(output.glob("profile__microbatch-*.json"))]
+    table = [{"microbatch": item["microbatch"], "seconds_per_update": item["seconds_per_update"],
+              "peak_reserved_bytes": item["peak_bytes"]["reserved"],
+              "available_bytes": item["memory_before"]["free_bytes"]
+              + item["memory_before"].get("reserved_bytes", 0),
+              "full_plan_hours": item["forecast"]["full_plan_hours"]} for item in profiles]
+    for row in table:
+        row["fits"] = row["peak_reserved_bytes"] + HEADROOM <= row["available_bytes"]
+    fitting = [row for row in table if row["fits"]]
+    if not fitting:
+        raise RuntimeError(f"no profiled microbatch fits with headroom: {table}")
+    best = min(fitting, key=lambda row: row["seconds_per_update"])
+    chosen = next(item for item in profiles if item["microbatch"] == best["microbatch"])
+    chosen = {**chosen, "microbatch_choice": {"rule": "fastest profile whose reserved peak plus 1 GiB fits",
+                                              "profiles": table}}
+    write_json_atomic(output / "profile.json", chosen)
+    return chosen
+
+
 def run_name(rate: float, seed: int) -> str:
     """
     Directory name of one run.

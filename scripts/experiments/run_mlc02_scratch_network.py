@@ -95,11 +95,14 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--family", choices=FAMILIES, default=None)
     parser.add_argument("--updates", type=int, default=300)
     parser.add_argument("--threads", type=int, default=4)
+    parser.add_argument("--device", choices=("cuda", "cpu"), default="cuda", help="check-files only")
     args = parser.parse_args(argv)
     torch.set_num_threads(args.threads)
     full_precision()
     if args.step == "prepare":
         result = prepare()
+    elif args.step == "check-files" and args.device == "cpu":
+        result = check_files("cpu")
     elif args.step in ("profile", "overfit", "check-predict", "check-files"):
         with gpu_lock("cuda", path=GPU_LOCK):
             require_free_gpu(needed_mib())

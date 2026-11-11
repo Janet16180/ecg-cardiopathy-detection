@@ -459,6 +459,74 @@ def effect_sources() -> pd.DataFrame:
     return table.assign(source=table["source"].map(SOURCE_NAMES))
 
 
+def effect_sources_excluding_zero() -> pd.DataFrame:
+    """
+    Part D source and condition cells whose 95% interval of the difference excludes zero.
+
+    Returns
+    -------
+    pd.DataFrame
+        The rows of ``difference_by_source.csv`` with the interval entirely above or below zero.
+    """
+    table = effect_sources()
+    return table[(table["ci_low"] > 0) | (table["ci_high"] < 0)]
+
+
+def effect_reference() -> pd.DataFrame:
+    """
+    Part D per-condition metric: v4-trained on v4 and on v5 validation, and v5-trained on v5 validation.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per model and condition.
+    """
+    data = json.loads((EFFECT / "effect.json").read_text())
+    rows = []
+    for model in ("P0", "H-All"):
+        reference = data[model]["reference_v4_on_v4"]["per_condition"]
+        for row in data[model]["conditions"]:
+            rows.append(
+                {
+                    "model": model,
+                    "condition": row["condition"],
+                    "v4 on v4": reference[row["condition"]],
+                    "v4 on v5": row["v4"],
+                    "v5 on v5": row["v5"],
+                    "v5 minus v4": row["difference"],
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def effect_macro_by_source() -> pd.DataFrame:
+    """
+    Part D within-source macro AUROC of each model, for the three training and scoring combinations.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per model and validation source.
+    """
+    data = json.loads((EFFECT / "effect.json").read_text())
+    rows = []
+    for model in ("P0", "H-All"):
+        reference = data[model]["reference_v4_on_v4"]["macro_auroc_by_source"]
+        macro = data[model]["macro_by_source"]
+        for source in reference:
+            rows.append(
+                {
+                    "model": model,
+                    "source": SOURCE_NAMES[source],
+                    "v4 on v4": reference[source],
+                    "v4 on v5": macro["v4"][source],
+                    "v5 on v5": macro["v5"][source],
+                    "v5 minus v4": macro["v5"][source] - macro["v4"][source],
+                }
+            )
+    return pd.DataFrame(rows)
+
+
 SECTIONS = {
     "rules": rules,
     "label-rules": label_rules_by_kind,
@@ -475,6 +543,9 @@ SECTIONS = {
     "effect": effect,
     "effect-conditions": effect_conditions,
     "effect-sources": effect_sources,
+    "effect-sources-nonzero": effect_sources_excluding_zero,
+    "effect-reference": effect_reference,
+    "effect-macro-source": effect_macro_by_source,
 }
 
 

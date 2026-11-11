@@ -145,3 +145,20 @@ unpenalised fit.
    beside them, with the number that failed.
 3. Nothing else changes. Calibration is a secondary reading; the selection metric, the
    confirmatory comparison and the thresholds do not use it.
+
+## Addendum 3 (10 November 2026, after validation scores, before any test prediction)
+
+Readings fixed while the Stage 3 code was written (`docs/mlc02-stage3-code-2026-11-10.md`):
+
+1. "Not variants of each other" in E means one member per family. The families are: P0, H-X and
+   F (xECG); L-J and H-J (ECG-JEPA); L-C and H-C (ECG-CPC); G-M; H-All; S-R. E is the mean of the
+   best member of the three best families. Its validation metric is optimistic, because its
+   members are chosen on the records it is scored on. E can be the selected model.
+2. Two audits of Stage 3 are not run in this experiment and go to the backlog: space A beside
+   KEY-04 (the models have no space-A output, and no mapping rule was fixed in advance) and the
+   window mean over SPH recordings longer than 10 s (it needs new features for every window).
+   The results report lists them as not done.
+3. The likelihood audit is at PTB-XL fold 10 only; SPH statements carry no likelihood. The sex,
+   flat-lead, one-against-several and top-k audits are point estimates.
+4. The interval of the SPH calibration-half secondary analysis resamples the evaluation half
+   with the local thresholds and calibration held fixed.

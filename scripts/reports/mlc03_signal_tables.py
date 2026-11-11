@@ -307,6 +307,35 @@ def long_records() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def mlc01_agreement() -> pd.DataFrame:
+    """
+    Compare the flat-lead and missing-sample flags with the MLC-01 v4 manifest on train and validation.
+
+    Every train and validation candidate is compared.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per check: candidates, records flagged here, records flagged by MLC-01, and disagreements.
+    """
+    manifest = pd.read_csv(MANIFEST, usecols=["record_key", "n_flat_leads", "missing_samples_full"],
+                           dtype={"record_key": str}, low_memory=False)
+    flags = pd.read_parquet(OUTPUT / "flags_train_validation.parquet",
+                            columns=["record_key", "flat_lead", "flat_lead__leads", "missing_samples"])
+    frame = flags.merge(manifest, on="record_key", validate="one_to_one")
+    leads = frame["flat_lead__leads"].fillna("").map(lambda text: len([lead for lead in str(text).split(";")
+                                                                        if lead]))
+    checks = (("flat lead (record)", frame["flat_lead"], frame["n_flat_leads"] > 0),
+              ("missing samples (record)", frame["missing_samples"] > 0, frame["missing_samples_full"] > 0))
+    rows = [{"check": name, "candidates": len(frame), "flagged here": int(here.sum()),
+             "flagged by MLC-01": int(there.sum()), "disagreements": int((here != there).sum())}
+            for name, here, there in checks]
+    rows.append({"check": "flat leads per record (count)", "candidates": len(frame),
+                 "flagged here": int(leads.sum()), "flagged by MLC-01": int(frame["n_flat_leads"].sum()),
+                 "disagreements": int((leads != frame["n_flat_leads"]).sum())})
+    return pd.DataFrame(rows)
+
+
 def short_records() -> pd.DataFrame:
     """
     Count train and validation records of the v4 manifest by length, per source.
@@ -515,6 +544,7 @@ def main(argv: list[str] | None = None) -> None:
         "near": lambda args: optional_table("near_duplicates_test_roles_counts.csv"),
         "measurement-status": lambda args: markdown(measurement_status()),
         "short-records": lambda args: markdown(short_records()),
+        "mlc01-agreement": lambda args: markdown(mlc01_agreement()),
         "long-records": lambda args: markdown(long_records()),
         "near-train": lambda args: markdown(near_train()),
         "lead-amplitude": lambda args: markdown(lead_amplitude()),

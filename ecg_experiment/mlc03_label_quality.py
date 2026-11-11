@@ -421,7 +421,8 @@ def derived_b(table: pd.DataFrame) -> pd.DataFrame:
         (Sokolow-Lyon at least 3.5 mV, or Cornell above 2.8 mV in men and 2.0 mV in women), ``st_min_mv``
         (lowest ST 60 ms after the QRS, aVR excluded), ``st_dep_group`` (most leads of one group with ST at
         most -0.05 mV), ``t_inverted``, ``t_low`` (leads of ``UPRIGHT_T`` with T at most -0.1 mV, or between
-        -0.1 and 0.05 mV), ``q_group`` (most qualifying Q leads in one group), ``rbbb_morphology`` (V1 with
+        -0.1 and 0.05 mV), ``q_group`` (most qualifying Q leads in one group), ``n_premature_aberrant_any``
+        (complete and edge beats), ``rbbb_morphology`` (V1 with
         two positive peaks or a positive terminal 40 ms, and a negative terminal 40 ms in I or V6),
         ``p_present`` and ``irregular``.
     """
@@ -443,6 +444,7 @@ def derived_b(table: pd.DataFrame) -> pd.DataFrame:
     out["rbbb_morphology"] = v1 & ((table["term_I"] < 0.0) | (table["term_V6"] < 0.0))
     out["p_present"] = (table["p_snr"] >= P_SNR_MIN) & (table["p_amp_mv"] >= P_AMP_MIN)
     out["irregular"] = table["rr_nrmssd_b"] >= IRREGULAR_NRMSSD
+    out["n_premature_aberrant_any"] = table["n_premature_aberrant"] + table["n_premature_aberrant_edge"]
     measured = table["status_b"] == "ok"
     for column in out.columns:
         if out[column].dtype == bool:
@@ -653,7 +655,7 @@ CHECKS: dict[str, dict[str, object]] = {
         "reference": "AF: irregular RR and no distinct P waves (Hindricks et al. 2021, ESC)",
     },
     "premature_ventricular_complex": {
-        "measure": "n_premature_aberrant",
+        "measure": "n_premature_aberrant_any",
         "low": 1.0,
         "high": np.inf,
         "tolerance": 0.0,
@@ -956,13 +958,13 @@ MATCHED: dict[str, dict[str, object]] = {
     },
     "premature_ventricular_complex|10s": {
         "label": "b_premature_ventricular_complex",
-        "measure": "n_premature_aberrant",
+        "measure": "n_premature_aberrant_any",
         "population": "ten_seconds",
         "bins": (0, 1, 2, 3, np.inf),
     },
     "premature_ventricular_complex|longer": {
         "label": "b_premature_ventricular_complex",
-        "measure": "n_premature_aberrant",
+        "measure": "n_premature_aberrant_any",
         "population": "longer",
         "bins": (0, 1, 2, 3, np.inf),
     },
@@ -2045,7 +2047,10 @@ def whole_record_windows(job: tuple[str, str, str]) -> dict[str, object]:
     results = [
         measure_record(signal[:, start : start + 5000]) for start in range(0, signal.shape[1] - 4999, 5000)
     ]
-    ectopy = [float(r.get("n_premature_aberrant", np.nan)) for r in results]
+    ectopy = [
+        float(r.get("n_premature_aberrant", np.nan)) + float(r.get("n_premature_aberrant_edge", 0.0))
+        for r in results
+    ]
     af = [
         bool(
             r.get("rr_nrmssd", 0.0) >= IRREGULAR_NRMSSD

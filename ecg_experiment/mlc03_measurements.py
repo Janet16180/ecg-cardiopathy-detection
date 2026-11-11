@@ -330,7 +330,58 @@ def classify_beats(beats: np.ndarray, leads: np.ndarray, rr_before: np.ndarray) 
         "correlation": correlation,
         "dominant": dominant,
         "premature_aberrant": premature & (correlation < ABERRANT_CORRELATION),
+        "typical_rr": typical_rr,
     }
+
+
+def edge_ectopy(
+    clean: np.ndarray,
+    peaks: np.ndarray,
+    kept: np.ndarray,
+    beats: np.ndarray,
+    classes: dict[str, np.ndarray],
+    leads: np.ndarray,
+) -> float:
+    """
+    Premature aberrant beats among the detected beats too close to the record edge for a full beat window.
+
+    Each such beat is compared with the dominant template over the QRS core only (60 ms before to 80 ms after
+    the R peak), with the thresholds of ``classify_beats``.
+
+    Parameters
+    ----------
+    clean : np.ndarray
+        Band-passed ``[12, samples]``.
+    peaks : np.ndarray
+        All R peaks.
+    kept : np.ndarray
+        Index into ``peaks`` of the complete beats.
+    beats : np.ndarray
+        Complete beats.
+    classes : dict[str, np.ndarray]
+        Output of ``classify_beats``.
+    leads : np.ndarray
+        Non-flat independent leads.
+
+    Returns
+    -------
+    float
+        Count of edge beats that are premature and correlate below ``ABERRANT_CORRELATION``; 0 without a
+        dominant template.
+    """
+    if classes["dominant"].sum() < 2:
+        return 0.0
+    template = np.median(beats[classes["dominant"]], axis=0)
+    core = slice(PRE - samples(60), PRE + samples(80))
+    count = 0
+    for index in sorted(set(range(1, len(peaks))) - set(kept.tolist())):
+        start, stop = peaks[index] - samples(60), peaks[index] + samples(80)
+        if start < 0 or stop > clean.shape[1]:
+            continue
+        correlation = segment_correlation(clean[None, leads, start:stop], template[leads, core])[0]
+        rr = (peaks[index] - peaks[index - 1]) * 1000.0 / FS
+        count += int(rr < PREMATURE_FRACTION * classes["typical_rr"] and correlation < ABERRANT_CORRELATION)
+    return float(count)
 
 
 def region(velocity: np.ndarray, start: int, low: int, high: int, threshold: float) -> tuple[int, int]:
@@ -774,6 +825,7 @@ def measure_record(
         "n_dominant": float(classes["dominant"].sum()),
         "n_premature_aberrant": float(classes["premature_aberrant"].sum()),
         "n_aberrant": float((classes["correlation"] < ABERRANT_CORRELATION).sum()),
+        "n_premature_aberrant_edge": edge_ectopy(clean, peaks, kept, beats, classes, leads),
     }
     result |= rhythm(peaks, kept, classes)
     if classes["dominant"].sum() < 2:

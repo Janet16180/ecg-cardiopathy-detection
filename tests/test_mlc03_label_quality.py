@@ -276,3 +276,11 @@ def test_real_manifest_loads_train_and_validation_only():
     frame = lq.load_open_records()
     assert set(frame["role"]) == {"train", "validation"}
     assert len(frame) == 71388
+
+
+def test_premature_wide_beat_at_the_record_edge_is_counted():
+    signal, truth = mm.synthetic_record(seed=3, pvc_every=4)
+    ectopic = truth["onsets"][truth["ectopic"]]
+    onset = int(ectopic[ectopic > 3000][0])
+    result = mm.measure_record(signal[:, : onset + mm.samples(350)])
+    assert result["n_premature_aberrant_edge"] >= 1

@@ -997,7 +997,7 @@ def oof(workers: int) -> None:
     }
     np.savez(
         lq.OUTPUT / "oof_p0.npz",
-        record_key=keys,
+        record_key=np.asarray(keys, dtype=str),
         fold=folds,
         probability=probability,
         condition=np.asarray(CONDITIONS),
@@ -1024,7 +1024,13 @@ RELEVANT = {
     "sinus_bradycardia": ("hr_a", "hr_b", "hr", "p_present", "p_snr", "sinus_codes"),
     "sinus_arrhythmia": ("rr_range_dominant_b", "rr_range_a", "hr", "p_present", "p_consistency"),
     "af_or_flutter": ("rr_nrmssd_b", "rr_nrmssd_a", "p_present", "p_snr", "p_consistency", "hr"),
-    "premature_ventricular_complex": ("n_premature_aberrant", "n_aberrant", "n_beats", "rr_nrmssd_b"),
+    "premature_ventricular_complex": (
+        "n_premature_aberrant",
+        "n_premature_aberrant_edge",
+        "n_aberrant",
+        "n_beats",
+        "rr_nrmssd_b",
+    ),
     "first_degree_av_block": ("pr_a", "pr_b", "pr", "p_present", "hr"),
     "complete_rbbb": (
         "qrs_a",

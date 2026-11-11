@@ -471,7 +471,7 @@ def time_updates(model: Any, train: dict[str, Any], rate: float, microbatch: int
         set_rates(optimizer, rate_factor(update + 1, schedule["total"], schedule["warmup"]))
         started = time.perf_counter()
         loss, norm = train_update(model, optimizer, train["inputs"], train["labels"],
-                                  order[update * BATCH:(update + 1) * BATCH], microbatch, "cuda")
+                                  order[(update * BATCH + np.arange(BATCH)) % len(order)], microbatch, "cuda")
         torch.cuda.synchronize()
         seconds.append(time.perf_counter() - started)
         losses.append(loss)

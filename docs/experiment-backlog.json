@@ -2113,6 +2113,149 @@
       ],
       "status": "proposed",
       "notes": "Scope to fix in the protocol: remove or control known factors first (source, heart rate, signal-quality flags of MLC-03, age, sex), then cluster the residual and the records all 14 labels call negative; characterise each cluster by raw codes outside the 14 conditions, measurements and plotted ECGs; require a cluster to appear in at least two source families before reading it as cardiac; cluster-stability checks under resampling. Extends clustering_multisource. Findings are descriptive; clinical reading is pending."
+    },
+    {
+      "id": "mlc03_input_gap_masking",
+      "kind": "experiment",
+      "title": "Interpolate or mask missing samples and flat leads in the model input pipelines",
+      "question": "Does an input pipeline that interpolates missing samples and masks flat, near-flat or contact-lost leads (instead of feeding -32.768 mV and constant leads) change validation results of the 14-condition models, and does it let the 87 records of rule C1 and the C5 labels be kept?",
+      "evidence": "MLC-03 Part A: missing samples enter every MLC-02 pipeline as the rail value, and FFT resampling spreads it over up to 24% of the lead's xECG input; flat chest leads in 4.3% of Ningbo; FFT resampling rings at the record edges in every source. Amendment 1 did not adopt lead masking (A-R4 to A-R7) because it changes the pipeline, not the dataset; v5 excludes 87 records by C1 and makes 3,136 train and validation labels undefined by C5.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 1,
+      "cpu_hours": 3,
+      "build_hours": 8,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "A new pipeline version per encoder, each pretrained encoder keeping its own pipeline otherwise; also resampling that does not ring at the edges. Validation only until a frozen test protocol; compare on v5."
+    },
+    {
+      "id": "mlc03_sph_storage_check",
+      "kind": "analysis",
+      "title": "SPH aggregate check of identity residuals and large values",
+      "question": "Why do 174 SPH records exceed the derived-lead identity tolerance and 64 reach 32.7 mV or more: float16 rounding, stored derived leads, saturation, or another defect that rules C3 and C4 should cover at SPH?",
+      "evidence": "MLC-03 Part A counted these on the test roles only; SPH stores float16 samples and both definitions were made for 16-bit integer storage, so Amendment 1 does not apply C3 or C4 to SPH. In v5 no SPH record is excluded.",
+      "value": 3,
+      "clarity": 0.7,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 2,
+      "blocked_by": [
+        "@user_approval_sph_aggregate_check"
+      ],
+      "status": "proposed",
+      "notes": "SPH holds two test roles: aggregate statistics only, no plot and no label, and only with the user's approval. Any resulting rule needs a new protocol and is applied first where no score has been read."
+    },
+    {
+      "id": "mlc03_p_wave_pr_measurement",
+      "kind": "analysis",
+      "title": "Better P-wave detection and PR measurement in the Challenge sources",
+      "question": "Can P-wave presence and the PR interval be measured reliably enough in Chapman, Ningbo, CPSC 2018, CPSC-Extra and Georgia to judge first-degree AV block and rhythm labels?",
+      "evidence": "MLC-03 Part B: the PR consensus exists for only 45.9-59.6% of records in the five Challenge sources (69.2% in PTB-XL); method B finds a P wave in 298 of 1,566 PTB-XL+ records without one and in only 60.5% of synthetic records with one. For this reason B-R6 for AV block and the rhythm rules B-R9 and B-R9b were not adopted.",
+      "value": 3,
+      "clarity": 0.5,
+      "gpu_hours": 0,
+      "cpu_hours": 3,
+      "build_hours": 10,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Validate against PTB-XL+ folds 1-9 and LUDB as in Addendum 1 before any label check; no label changes without clinical review."
+    },
+    {
+      "id": "mlc03_electrode_reversal_rules",
+      "kind": "analysis",
+      "title": "Electrode-reversal rules, including right arm-left leg and precordial swaps",
+      "question": "Can right arm-left leg reversal (P axis and precordial leads) and precordial lead swaps (R-wave progression) be flagged with an independent visual check of 20 of 24?",
+      "evidence": "MLC-03 Part A: reversal_ra_ll failed its check (1 of 12 flagged plots showed the defect); reversal_la_ra and reversal_neutral passed only on a re-viewing, so Amendment 1 adopted no reversal rule; no flag detects precordial swaps. Part B found five reviewed records with a negative lead I and an axis beyond 120 degrees without a reversal flag.",
+      "value": 2,
+      "clarity": 0.5,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 6,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "New draw and seed for the check, viewed independently of the development viewing."
+    },
+    {
+      "id": "mlc03_long_record_window_labels",
+      "kind": "analysis",
+      "title": "Window-based labels and flags for recordings longer than 10 s",
+      "question": "For CPSC 2018, CPSC-Extra and SPH recordings longer than 10 s, which window carries each rhythm or ectopy finding, and should models read or be scored on windows other than the first?",
+      "evidence": "MLC-03 Part B: 95 CPSC 2018 and 40 CPSC-Extra PVC positives show no premature beat in any 10 s window; C8 selects 76 train and validation positives because the finding is measured only after the first 10 s, and 19 at SPH. Part A: 30 long CPSC records reach the rail only after 10 s. SPH has 6,877 records longer than 10 s.",
+      "value": 2,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 4,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Per-window Part A flags as well; relevant only if a model reads crops beyond the first 10 s (MLC-02 Addendum 3 window mean at SPH is not done)."
+    },
+    {
+      "id": "mlc03_clinical_review",
+      "kind": "analysis",
+      "title": "Clinical review of the MLC-03 suspected label errors and source-coding differences",
+      "question": "Does a cardiologist agree with the 149 measurement-based label-error judgements of Part B, with the rules C1-C12, and with how each source codes sinus bradycardia, complete against incomplete RBBB, left axis deviation and first-degree AV block?",
+      "evidence": "MLC-03 Part B review: of 336 suspect sheets read by a non-clinician, the measurement contradicted the label beyond tolerance in 149; 16 of 17 matched-prevalence analyses find an inconsistent pair of sources. Amendment 1 left the coding differences and several rules (B-R2b, B-R6 beyond the rate conditions, B-R9) for clinical review.",
+      "value": 5,
+      "clarity": 0.7,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 4,
+      "blocked_by": [
+        "@clinician_available"
+      ],
+      "status": "proposed",
+      "notes": "Sheets and reading list are in outputs/mlc03_data_quality_20261111/review/labels/. Label definitions change only after this review, through a new protocol. Related: clinician_review."
+    },
+    {
+      "id": "mlc03_sph_rhythm_code_evidence",
+      "kind": "repo",
+      "title": "SPH sinus and paced-rhythm evidence in the label-quality code",
+      "question": "Can the sinus-evidence and paced-rhythm parts of rules C7 and C11 be stated for SPH's AHA codes, so that SPH is cleaned like the training sources?",
+      "evidence": "MLC-03 v5: mlc03_label_quality.record_codes does not parse SPH's AHA codes, so C11's negatives were not applied at SPH, and c_paced_rhythm is undefined for every SPH record, so C7 cannot act there. SPH is cleaned only by C5, C8, C11 positives and C12.",
+      "value": 2,
+      "clarity": 0.7,
+      "gpu_hours": 0,
+      "cpu_hours": 0.2,
+      "build_hours": 3,
+      "blocked_by": [
+        "mlc03_clinical_review"
+      ],
+      "status": "proposed",
+      "notes": "SPH rule counts under the current rules are already read, so any new SPH evidence needs a new protocol written before it is applied, and the code mapping should come from the AHA statement list, not from SPH data."
+    },
+    {
+      "id": "mlc03_rule_effect_by_rule",
+      "kind": "analysis",
+      "title": "Which v5 rules move validation scores, and through training or through scoring",
+      "question": "MLC-03 Part D found that scoring on v5 labels raises the v4-trained selection metric by 0.0045-0.0047 while training on v5 adds 0.0001-0.0008; which rules drive each part, condition by condition?",
+      "evidence": "MLC-03 Part D: P0 0.9643 on v4 validation, 0.9690 on v5 validation, 0.9698 when trained on v5; H-All 0.9706, 0.9751, 0.9752. Unadjusted per-condition gains after training on v5 for LVH (both models), sinus bradycardia (P0) and complete RBBB (H-All); a loss for H-All incomplete RBBB.",
+      "value": 2,
+      "clarity": 0.6,
+      "gpu_hours": 0.2,
+      "cpu_hours": 1,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Leave-one-rule-out on validation only, using the per-record rule columns of the v5 manifest; descriptive, decides no rule."
+    },
+    {
+      "id": "mlc03_cleaned_pipeline_final_test",
+      "kind": "experiment",
+      "title": "One final test of the frozen cleaned 14-condition pipeline on the Challenge test groups",
+      "question": "With the rules C1-C12 applied to the Challenge test groups, how does the frozen 14-condition pipeline (dataset v5, chosen model) perform on human-read labels no model of ours has been scored on?",
+      "evidence": "MLC-03 protocol: the user allowed the Challenge test groups' use on 11 November 2026 and they are kept for one final test of the frozen cleaned pipeline, in a later experiment with its own protocol. MLC-02: no demonstrated gain over P0 at SPH; MLC-03 Part D: no demonstrated effect of training on v5.",
+      "value": 5,
+      "clarity": 0.7,
+      "gpu_hours": 0.5,
+      "cpu_hours": 2,
+      "build_hours": 8,
+      "blocked_by": [
+        "@user_freeze_decision"
+      ],
+      "status": "proposed",
+      "notes": "One-time use; the protocol fixes the model, the rules, the metrics and the decision before the groups are opened. Related: final_frozen_test (the binary screening pipeline)."
     }
   ]
 }

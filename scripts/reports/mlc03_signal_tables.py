@@ -19,7 +19,8 @@ import pandas as pd
 
 from ecg_experiment.eda.signals import LEADS
 from ecg_experiment.mlc03_signal_flags import FLAGS
-from ecg_experiment.mlc03_signal_runs import OUTPUT
+from ecg_experiment.mlc03_signal_quality import INDEPENDENT
+from ecg_experiment.mlc03_signal_runs import MANIFEST, OUTPUT
 
 REVIEW = OUTPUT.parent / "review/signal"
 STATUSES = ("ok", "sin_latidos", "derivacion_plana")
@@ -312,6 +313,80 @@ def near_train() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def lead_amplitude() -> pd.DataFrame:
+    """
+    Low percentiles of every lead's 1-99 percentile range (``amp_robust``) over included train and validation.
+
+    Constant leads are left out.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per percentile (0.01%, 0.1%, 1%, 5%, 50%), one column per lead, in mV.
+    """
+    measures = pd.read_parquet(OUTPUT / "measures_train_validation.parquet",
+                               columns=["record_key", *[f"{name}__{lead}" for name in ("amp_robust", "flat")
+                                                        for lead in LEADS]])
+    flags = pd.read_parquet(OUTPUT / "flags_train_validation.parquet", columns=["record_key", "included"])
+    measures = measures[flags.set_index("record_key").loc[measures["record_key"], "included"].to_numpy()]
+    rows = []
+    for percentile in (0.01, 0.1, 1.0, 5.0, 50.0):
+        row = {"percentile": percentile}
+        for lead in LEADS:
+            values = measures.loc[measures[f"flat__{lead}"] == 0, f"amp_robust__{lead}"]
+            row[lead] = round(float(np.percentile(values, percentile)), 3)
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+def paced_spikes() -> pd.DataFrame:
+    """
+    Paced-rhythm labels among train and validation records with a 2 mV spike, isolated or not.
+
+    Only the space-C paced-rhythm column of train and validation rows is read (labels of the test roles are
+    never opened); the spike measures come from the measures table.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per spike measure: records with a spike of at least 2 mV and how many carry the paced label
+        (positive, negative, undefined).
+    """
+    manifest = pd.read_csv(MANIFEST, usecols=["record_key", "role", "included", "c_paced_rhythm"],
+                           dtype={"included": str}, low_memory=False)
+    manifest = manifest[manifest["role"].isin(["train", "validation"]) & (manifest["included"] == "True")]
+    columns = [f"spike__{lead}" for lead in LEADS] + [f"spike_isolated__{lead}" for lead in INDEPENDENT]
+    measures = pd.read_parquet(OUTPUT / "measures_train_validation.parquet", columns=["record_key", *columns])
+    frame = measures.merge(manifest, on="record_key", validate="one_to_one")
+    rows = []
+    for name, leads in (("spike", LEADS), ("spike_isolated", INDEPENDENT)):
+        spiky = frame[[f"{name}__{lead}" for lead in leads]].max(axis=1) >= 2.0
+        paced = frame.loc[spiky, "c_paced_rhythm"]
+        rows.append({"measure": name, "records with a 2 mV spike": int(spiky.sum()),
+                     "paced positive": int((paced == 1).sum()), "paced negative": int((paced == 0).sum()),
+                     "paced undefined": int(paced.isna().sum()),
+                     "paced positive in all records": int((frame["c_paced_rhythm"] == 1).sum())})
+    return pd.DataFrame(rows)
+
+
+def first_version_pools() -> pd.DataFrame:
+    """
+    Included flagged records of the first and second version of the tightened flags, from review receipts.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per review directory with ``flagged_pool``.
+    """
+    rows = []
+    for path in sorted(REVIEW.glob("*/receipt.json")):
+        receipt = json.loads(path.read_text())
+        if "flagged_pool" in receipt:
+            rows.append({"review": path.parent.name, "seed": receipt["seed"],
+                         "flagged included records": receipt["flagged_pool"]})
+    return pd.DataFrame(rows)
+
+
 def rules_section() -> str:
     """
     Write ``proposed_rule_counts.csv`` and format the rule counts.
@@ -386,6 +461,9 @@ def main(argv: list[str] | None = None) -> None:
         "measurement-status": lambda args: markdown(measurement_status()),
         "long-records": lambda args: markdown(long_records()),
         "near-train": lambda args: markdown(near_train()),
+        "lead-amplitude": lambda args: markdown(lead_amplitude()),
+        "paced-spikes": lambda args: markdown(paced_spikes()),
+        "pools": lambda args: markdown(first_version_pools()),
     }
     parser.add_argument("--section", choices=tuple(sections))
     args = parser.parse_args(argv)

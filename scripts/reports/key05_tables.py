@@ -667,6 +667,51 @@ def section_review() -> None:
         print(markdown(pd.read_csv(reading)))
 
 
+BOUNDS = {
+    "sinus_tachycardia": ("hr", "above 100 per minute", lambda v: v > 100),
+    "sinus_bradycardia": ("hr", "below 60 per minute", lambda v: v < 60),
+    "sinus_arrhythmia": ("rr_range_dominant_b", "RR range above 120 ms (unreliable)", lambda v: v > 120),
+    "af_or_flutter": ("rr_nrmssd_b", "normalized RMSSD at least 0.10 (unreliable)", lambda v: v >= 0.10),
+    "first_degree_av_block": ("pr", "PR above 200 ms (unreliable)", lambda v: v > 200),
+    "complete_rbbb": ("qrs", "QRS at least 120 ms", lambda v: v >= 120),
+    "incomplete_rbbb": ("qrs", "QRS 110-119 ms", lambda v: (v >= 110) & (v < 120)),
+    "lafb": ("axis", "axis -45 to -90 degrees", lambda v: (v <= -45) & (v >= -90)),
+    "left_axis_deviation": ("axis", "axis -30 to -90 degrees", lambda v: (v <= -30) & (v >= -90)),
+    "lvh": ("sokolow_mv", "Sokolow-Lyon at least 3.5 mV", lambda v: v >= 3.5),
+    "st_depression": ("st_min_mv", "lowest ST at most -0.05 mV", lambda v: v <= -0.05),
+    "t_wave_abnormality": ("t_min_mv", "lowest upright-lead T below 0.05 mV", lambda v: v < 0.05),
+    "mi_any": ("q_max_ms", "longest Q at least 30 ms", lambda v: v >= 30),
+}
+
+
+def section_review_measured() -> None:
+    """Count, per review sheet, the records whose measurement meets the condition's measured bound."""
+    records = pd.read_csv(OUT / "review/records.csv")
+    rows = []
+    for (condition, kind), part in records.groupby(["condition", "kind"], sort=False):
+        if condition not in BOUNDS:
+            rows.append(
+                {"condition": SHORT[condition], "kind": kind, "bound": "none", "measured": "", "meets": ""}
+            )
+            continue
+        measure, words, rule = BOUNDS[condition]
+        values = part[measure].dropna()
+        rows.append(
+            {
+                "condition": SHORT[condition],
+                "kind": kind,
+                "bound": f"{measure}: {words}",
+                "measured": len(values),
+                "meets": int(rule(values).sum()),
+                "min": float(values.min()),
+                "max": float(values.max()),
+                "QRS min-max": f"{part.qrs.min():.0f}-{part.qrs.max():.0f}",
+                "QRS >= 120": int((part.qrs >= 120).sum()),
+            }
+        )
+    print(markdown(pd.DataFrame(rows)))
+
+
 def section_selection() -> None:
     """Print the committed selection."""
     print(json.dumps(selection(), indent=2))

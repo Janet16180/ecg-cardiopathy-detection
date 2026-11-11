@@ -52,6 +52,44 @@ def lead_limits(values: np.ndarray) -> tuple[float, float]:
     return centre - half, centre + half
 
 
+def draw_inset(axis: plt.Axes, window: np.ndarray, time: np.ndarray, inset: tuple) -> None:
+    """
+    Draw the inset of a record panel.
+
+    Parameters
+    ----------
+    axis : plt.Axes
+        Inset axes.
+    window : np.ndarray
+        Float ``(12, samples)`` mV.
+    time : np.ndarray
+        Seconds of each sample.
+    inset : tuple
+        ``(lead, start_s, stop_s)``, ``((lead, ...), (start_s, stop_s))`` or ``(label, values)``.
+    """
+    if isinstance(inset[1], np.ndarray):
+        label, values = inset
+        axis.plot(time, values, lw=0.6, color="crimson")
+        axis.set_title(label, fontsize=6, loc="left")
+    elif isinstance(inset[0], tuple):
+        leads, (start, stop) = inset
+        part = (time >= start) & (time <= stop)
+        offset = 0.0
+        for lead in leads:
+            values = window[LEADS.index(lead), part]
+            values = values - np.nanmedian(values)
+            axis.plot(time[part], values + offset, lw=0.7)
+            axis.text(time[part][0], offset, f" {lead}", fontsize=6, va="bottom")
+            offset -= 1.1 * max(np.nanmax(values) - np.nanmin(values), 0.3)
+        axis.set_title(f"{', '.join(leads)} stacked, {start:.1f}-{stop:.1f} s (mV)", fontsize=6, loc="left")
+    else:
+        lead, start, stop = inset
+        part = (time >= start) & (time <= stop)
+        axis.plot(time[part], window[LEADS.index(lead), part], lw=0.6, color="crimson")
+        axis.set_title(f"{lead}, {start:.2f}-{stop:.2f} s (mV)", fontsize=6, loc="left")
+    axis.tick_params(labelsize=5, length=2)
+
+
 def draw_record(figure: plt.Figure, cell: Any, record: dict[str, Any]) -> None:
     """
     Draw one record panel into a cell of the sheet grid.
@@ -66,11 +104,11 @@ def draw_record(figure: plt.Figure, cell: Any, record: dict[str, Any]) -> None:
         ``window`` (float ``(12, 5000)`` mV), ``title`` (text), and optionally ``highlight`` (lead names),
         ``spans`` (list of ``(lead or None, start_s, stop_s)`` to shade; None shades every lead),
         ``overlays`` (list of ``(lead, values)`` drawn dashed in grey) and ``inset``
-        (``(lead, start_s, stop_s)`` for a zoom on one lead, or ``(label, values)`` for a whole-record trace
-        such as a residual).
+        (``(lead, start_s, stop_s)`` for a zoom on one lead, ``((lead, ...), (start_s, stop_s))`` for several
+        leads stacked, or ``(label, values)`` for a whole-record trace such as a residual).
     """
     inset = record.get("inset")
-    rows = len(LEADS) + (3 if inset else 0)
+    rows = len(LEADS) + ((6 if isinstance(inset[0], tuple) else 3) if inset else 0)
     grid = GridSpecFromSubplotSpec(rows, 1, subplot_spec=cell, hspace=0.0)
     window = record["window"]
     time = np.arange(window.shape[1]) / FS
@@ -103,17 +141,7 @@ def draw_record(figure: plt.Figure, cell: Any, record: dict[str, Any]) -> None:
     axes[-1].set_xticks(np.arange(0, 11, 1))
     axes[0].set_title(record["title"], fontsize=8, loc="left")
     if inset:
-        axis = figure.add_subplot(grid[len(LEADS) + 1 :, 0])
-        if isinstance(inset[1], np.ndarray):
-            label, values = inset
-            axis.plot(time, values, lw=0.6, color="crimson")
-            axis.set_title(label, fontsize=6, loc="left")
-        else:
-            lead, start, stop = inset
-            part = (time >= start) & (time <= stop)
-            axis.plot(time[part], window[LEADS.index(lead), part], lw=0.6, color="crimson")
-            axis.set_title(f"{lead}, {start:.2f}-{stop:.2f} s (mV)", fontsize=6, loc="left")
-        axis.tick_params(labelsize=5, length=2)
+        draw_inset(figure.add_subplot(grid[len(LEADS) + 1 :, 0]), window, time, inset)
 
 
 def draw_sheet(records: list[dict[str, Any]], path: Path, title: str, columns: int = 2,
@@ -323,7 +351,7 @@ def note_identity(window: np.ndarray, measures: pd.Series, flags: pd.Series, bla
 def note_la_ra(window: np.ndarray, measures: pd.Series, flags: pd.Series,
         blamed: list[str]) -> dict[str, Any]:
     """Highlight I, aVR and V6 (see ``annotate``)."""
-    return {"highlight": ["I", "aVR", "V6"], "inset": ("I", 0.0, 3.0),
+    return {"highlight": ["I", "aVR", "V6"], "inset": (("I", "II", "aVR", "V6"), (1.0, 3.5)),
             "value": (f"I: P {measures['p_amp__I']:.2f} mV, QRS area {measures['qrs_area__I']:.0f}; "
                       f"aVR QRS area {measures['qrs_area__aVR']:.0f}")}
 
@@ -331,7 +359,7 @@ def note_la_ra(window: np.ndarray, measures: pd.Series, flags: pd.Series,
 def note_ra_ll(window: np.ndarray, measures: pd.Series, flags: pd.Series,
         blamed: list[str]) -> dict[str, Any]:
     """Highlight II and aVR (see ``annotate``)."""
-    return {"highlight": ["II", "aVR"], "inset": ("II", 0.0, 3.0),
+    return {"highlight": ["II", "aVR"], "inset": (("I", "II", "aVR", "aVF"), (1.0, 3.5)),
             "value": (f"II: P {measures['p_amp__II']:.2f} mV, QRS area {measures['qrs_area__II']:.0f}; "
                       f"aVR P {measures['p_amp__aVR']:.2f} mV")}
 

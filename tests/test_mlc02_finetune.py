@@ -336,3 +336,15 @@ def test_predict_reproduces_the_saved_validation_predictions():
         path = md.prediction_path(ft.CANDIDATES, ft.CANDIDATE, "validation", seeds)
         expected = md.load_predictions(path, data["record_key"])["probability"][positions]
         assert np.abs(probability - expected).max() < fr.PREDICT_TOLERANCE
+
+
+def test_sessions_are_recorded_at_start_and_completed_at_the_end(tmp_path):
+    path = tmp_path / "sessions.json"
+    killed = {"pid": 1, "started_unix": 10.0, "status": "started"}
+    fr.record_session(path, killed)
+    session = {"pid": 2, "started_unix": 20.0, "status": "started"}
+    fr.record_session(path, session)
+    fr.record_session(path, {**session, "status": "finished", "wall_seconds": 5.0})
+    sessions = fr.read_json(path)
+    assert [item["status"] for item in sessions] == ["started", "finished"]
+    assert sessions[1]["wall_seconds"] == 5.0

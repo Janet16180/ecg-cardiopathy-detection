@@ -658,19 +658,28 @@ def run_name(rate: float, seed: int) -> str:
     return f"rate-{rate:g}__seed-{seed}"
 
 
-def append_session(path: Path, session: dict[str, Any]) -> None:
+def record_session(path: Path, session: dict[str, Any]) -> None:
     """
-    Add one process session to a run's ``sessions.json``.
+    Add or complete one process session in a run's ``sessions.json``.
+
+    A session is written when it starts and completed when it ends, so that a killed process leaves its
+    start behind.
 
     Parameters
     ----------
     path : Path
         ``sessions.json``.
     session : dict[str, Any]
-        Session record.
+        Session record with ``pid`` and ``started_unix``; an existing entry with both is updated.
     """
     sessions = read_json(path) if path.exists() else []
-    write_json_atomic(path, [*sessions, session])
+    same = [item for item in sessions
+            if (item["pid"], item["started_unix"]) == (session["pid"], session["started_unix"])]
+    if same:
+        same[0].update(session)
+    else:
+        sessions.append(session)
+    write_json_atomic(path, sessions)
 
 
 def one_run(rate: float, seed: int, context: dict[str, Any]) -> dict[str, Any]:
@@ -711,18 +720,21 @@ def one_run(rate: float, seed: int, context: dict[str, Any]) -> dict[str, Any]:
         memory = free_memory(profile["peak_bytes"]["reserved"] + HEADROOM)
         torch.set_num_threads(4)
         torch.cuda.reset_peak_memory_stats()
-        started, before = time.time(), ue_count()
+        started = time.time()
+        session = {"pid": os.getpid(), "started_unix": started, "status": "started", "git": context["git"],
+                   "memory_before": memory, "ue_count_before": ue_count()}
+        record_session(published / "sessions.json", session)
         log(f"start {name}: {memory['nvidia_smi']}")
         check = start_check(seed, context["validation"], context["cached"])
         result = train_run(rate, seed, context["train"], context["validation"], setting, fingerprint, check,
                            log)
-        session = {"started_unix": started, "wall_seconds": time.time() - started, "git": context["git"],
-                   "memory_before": memory, "peak_allocated_bytes": int(torch.cuda.max_memory_allocated()),
-                   "peak_reserved_bytes": int(torch.cuda.max_memory_reserved()), "ue_count_before": before,
-                   "ue_count_after": ue_count(), "pid": os.getpid()}
+        session.update({"status": "finished", "wall_seconds": time.time() - started,
+                        "peak_allocated_bytes": int(torch.cuda.max_memory_allocated()),
+                        "peak_reserved_bytes": int(torch.cuda.max_memory_reserved()),
+                        "ue_count_after": ue_count()})
         gc.collect()
         torch.cuda.empty_cache()
-    append_session(published / "sessions.json", session)
+    record_session(published / "sessions.json", session)
     return result
 
 
@@ -1053,15 +1065,22 @@ def run_sessions(output: Path, summary: dict[str, Any]) -> dict[str, Any]:
     Returns
     -------
     dict[str, Any]
-        Per run: its sessions, total wall seconds and the peak memory over sessions.
+        Per run: its sessions (a killed one has no end), the wall seconds of finished sessions, the training
+        and evaluation seconds of every evaluation point, the peak memory and the commits.
     """
     names = sorted({*summary["grid"], *(entry["run"] for entry in summary["seeds"].values())})
     result = {}
     for name in names:
         sessions = read_json(output / "runs" / name / "sessions.json")
-        result[name] = {"sessions": sessions, "wall_seconds": sum(item["wall_seconds"] for item in sessions),
-                        "peak_allocated_bytes": max(item["peak_allocated_bytes"] for item in sessions),
-                        "commits": sorted({item["git"]["commit"] for item in sessions})}
+        history = read_json(output / "runs" / name / "run.json")["history"]
+        finished = [item for item in sessions if item["status"] == "finished"]
+        result[name] = {
+            "sessions": sessions, "killed_sessions": len(sessions) - len(finished),
+            "finished_wall_seconds": sum(item["wall_seconds"] for item in finished),
+            "train_seconds": sum(row.get("train_seconds", 0.0) for row in history),
+            "evaluation_seconds": sum(row["evaluation_seconds"] for row in history),
+            "peak_allocated_bytes": max(item["peak_allocated_bytes"] for item in finished),
+            "commits": sorted({item["git"]["commit"] for item in sessions})}
     return result
 
 

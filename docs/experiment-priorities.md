@@ -137,10 +137,12 @@ penalty; one that ranks high earns a protocol like any other.
 | 72 | cpc_local_transformer_followup | experiment | Bounded local Transformer front end crossed with CPC contexts | 3 | 0.6 | 6.5 | 0.71 | @experiment040_outcome |
 | 73 | pr74_prospective_student_workflow | experiment | Prospective student ECG quality and local-normal referral workflow | 5 | 0.5 | 13.0 | 0.69 | @cardiologist_target_review, @prospective_student_acquisition, @user_pipeline_freeze |
 | 74 | label_audit_sensitivity | experiment | Probe sensitivity to the 024 label-audit candidates | 2 | 0.5 | 2.3 | 0.66 | clinician_review |
-| 75 | mlc02_per_seed_test | experiment | Per-seed test results of the MLC-02 network candidates | 1 | 0.8 | 2.6 | 0.50 | @user_ruling_on_further_test_scoring |
-| 76 | mlc02_sph_window_mean | experiment | Window mean over SPH recordings longer than 10 s for the MLC-02 candidates | 2 | 0.6 | 6.5 | 0.47 | @prospective_window_mean_protocol |
-| 77 | mlc02_lofo_selection_rule | experiment | Leave-one-family-out as the selection metric for a new-hospital target | 4 | 0.4 | 14.0 | 0.43 | @prospective_selection_protocol, mlc02_finetune_lofo |
-| 78 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
+| 75 | condition_keys_deep_key05 | experiment | In-depth condition keys on xECG embeddings for the 14 conditions | 4 | 0.6 | 19.0 | 0.55 | @mlc03_dataset_v5, @prospective_key05_protocol |
+| 76 | mlc02_per_seed_test | experiment | Per-seed test results of the MLC-02 network candidates | 1 | 0.8 | 2.6 | 0.50 | @user_ruling_on_further_test_scoring |
+| 77 | mlc02_sph_window_mean | experiment | Window mean over SPH recordings longer than 10 s for the MLC-02 candidates | 2 | 0.6 | 6.5 | 0.47 | @prospective_window_mean_protocol |
+| 78 | mlc02_lofo_selection_rule | experiment | Leave-one-family-out as the selection metric for a new-hospital target | 4 | 0.4 | 14.0 | 0.43 | @prospective_selection_protocol, mlc02_finetune_lofo |
+| 79 | pretraining_scaling_curve_v3 | experiment | CPC pretraining data-scaling curve on cohorts v3 | 3 | 0.5 | 16.0 | 0.38 | cohorts_v3_cpc_caches, training_io_local_prefetch |
+| 80 | embedding_structure_discovery_key06 | experiment | Structure of the xECG embedding space beyond the labelled conditions | 4 | 0.4 | 26.0 | 0.31 | @mlc03_signal_flags, @prospective_key06_protocol |
 
 After MLC-02 (11 November 2026): `mlc02_condition_models` is done as
 [MLC-02](mlc02-condition-models-results-2026-11-10.md). The validation-selected ensemble E did not beat the

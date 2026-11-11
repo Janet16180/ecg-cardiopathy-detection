@@ -1232,7 +1232,7 @@
       "kind": "experiment",
       "title": "Replace CPC GRU context with mLSTM-xLSTM on clean cohorts v3",
       "question": "Does matrix memory improve a matched fresh CPC development readout at 25k, and does a conditional 50k tier help?",
-      "evidence": "Audited full CPC comparison: primary xLSTM minus GRU\u22120.00897[\u22120.01840,+0.00094] at25k and\u22120.00737[\u22120.01652,+0.00117] at50k; xLSTM scaling+0.00231[\u22120.00707,+0.01136]. Neither frozen improvement rule passed.",
+      "evidence": "Audited full CPC comparison: primary xLSTM minus GRU−0.00897[−0.01840,+0.00094] at25k and−0.00737[−0.01652,+0.00117] at50k; xLSTM scaling+0.00231[−0.00707,+0.01136]. Neither frozen improvement rule passed.",
       "value": 3,
       "clarity": 0.6,
       "gpu_hours": 4,
@@ -2077,6 +2077,42 @@
       ],
       "status": "proposed",
       "notes": "test-predict refuses a second run by design; per-seed scoring needs a new guarded step and a decision to score the test sets again."
+    },
+    {
+      "id": "condition_keys_deep_key05",
+      "kind": "experiment",
+      "title": "In-depth condition keys on xECG embeddings for the 14 conditions",
+      "question": "Can one vector key per condition, built on the embeddings of the best binary detector's encoder (xECG), identify each of the 14 conditions, and where and why do keys fall short of trained classifiers?",
+      "evidence": "User request of 11 November 2026 for a deeper study than KEY-01 to KEY-04. KEY-04: key averages reached macro AUROC 0.896102 against 0.957750 for a joint classifier on four groups at SPH. MLC-02: logistic regressions on pooled xECG reached 0.9737 on 14 conditions at SPH, so the information is in the embedding; whether a single key direction per condition carries it is untested for the 14 conditions.",
+      "value": 4,
+      "clarity": 0.6,
+      "gpu_hours": 1,
+      "cpu_hours": 6,
+      "build_hours": 12,
+      "blocked_by": [
+        "@mlc03_dataset_v5",
+        "@prospective_key05_protocol"
+      ],
+      "status": "proposed",
+      "notes": "Scope to fix in the protocol: key constructions (class mean, mean difference against normal, whitened or LDA direction, several keys per condition, token-level keys), similarity measures, co-occurring conditions, number of reference ECGs needed, stability under patient and source resampling, transfer across hospitals, agreement of each key with the measurement that defines the condition, and comparison with P0 on the same records. Use the cleaned v5 labels; no test role tuned on."
+    },
+    {
+      "id": "embedding_structure_discovery_key06",
+      "kind": "experiment",
+      "title": "Structure of the xECG embedding space beyond the labelled conditions",
+      "question": "Which clusters or directions of the xECG embedding space are not explained by the 14 labels, and do they correspond to unlabelled cardiac findings or to something else (source, device, noise, heart rate, age, sex)?",
+      "evidence": "User request of 11 November 2026. Experiment 024: k-means clusters followed device (AMI 0.22-0.23) and heart rate more than diagnosis (0.06-0.09); 024b: pooled clusters followed the label more than the hospital but none was a pure diagnosis. MLC-02: source is identifiable from xECG features with accuracy 0.852. The raw code lists of the sources hold many statements outside the 14 conditions that can name a cluster.",
+      "value": 4,
+      "clarity": 0.4,
+      "gpu_hours": 2,
+      "cpu_hours": 10,
+      "build_hours": 14,
+      "blocked_by": [
+        "@mlc03_signal_flags",
+        "@prospective_key06_protocol"
+      ],
+      "status": "proposed",
+      "notes": "Scope to fix in the protocol: remove or control known factors first (source, heart rate, signal-quality flags of MLC-03, age, sex), then cluster the residual and the records all 14 labels call negative; characterise each cluster by raw codes outside the 14 conditions, measurements and plotted ECGs; require a cluster to appear in at least two source families before reading it as cardiac; cluster-stability checks under resampling. Extends clustering_multisource. Findings are descriptive; clinical reading is pending."
     }
   ]
 }

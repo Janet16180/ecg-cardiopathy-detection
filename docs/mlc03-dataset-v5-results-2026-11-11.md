@@ -83,12 +83,14 @@ Readings, stated where the amendment's wording and the code could differ:
 - C10: the B-R3 code has no tolerance (consensus rate below 60). Read literally, "beyond tolerance" would mean a
   rate of 55 or less. That reading gives 884 labels instead of 2,595, and all 884 are already among C11's 927
   bradycardia negatives, so C10 would add nothing. The code was followed, and the orchestrator was told before the
-  test-role pass.
+  test-role pass. Amendment 2 of the protocol, written after the build, records this reading.
 - C11 negatives at SPH: Part B's sinus evidence (`sinus_by_codes`, no non-sinus rhythm code) knows SCP and SNOMED
   codes only. It does not parse SPH's AHA codes, so it would call every SPH record sinus, atrial fibrillation
   included. C11 negatives were therefore not applied at SPH, the same reasoning that keeps C3 and C4 away from SPH.
   C11 positives need no sinus evidence and were applied there. This reading was fixed and reported to the
-  orchestrator before any test-role count existed.
+  orchestrator before any test-role count existed, and Amendment 2 records it, with C7 at SPH as its point 4.
+  The labels C6 reads (its 14 pair labels, mapped by `mlc_labels`) all have SPH codes and are annotated at SPH, so
+  C6 runs there unchanged; the paced-rhythm label has no SPH code, so C7 has nothing to read.
 - C5 is the union of B-R5 and the first part of B-R11. On train and validation the union, 3,173 labels, equals
   B-R11's count, so every B-R5 label (2,774) is also a B-R11 label [sections `rules`, `part-b-totals`].
 - C6: the 13 Part B pair rows sum to 273 labels on train and validation. Seven labels sit in two pairs, so C6

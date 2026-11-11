@@ -2083,7 +2083,7 @@
       "kind": "experiment",
       "title": "In-depth condition keys on xECG embeddings for the 14 conditions",
       "question": "Can one vector key per condition, built on the embeddings of the best binary detector's encoder (xECG), identify each of the 14 conditions, and where and why do keys fall short of trained classifiers?",
-      "evidence": "User request of 11 November 2026 for a deeper study than KEY-01 to KEY-04. KEY-04: key averages reached macro AUROC 0.896102 against 0.957750 for a joint classifier on four groups at SPH. MLC-02: logistic regressions on pooled xECG reached 0.9737 on 14 conditions at SPH, so the information is in the embedding; whether a single key direction per condition carries it is untested for the 14 conditions.",
+      "evidence": "KEY-05 (docs/key05-condition-keys-results-2026-11-11.md): selected K6 (shrunk LDA direction on source-centred xECG) reached 0.9643 on validation against P0 0.9698; primary K6 minus P0 at the SPH evaluation half -0.0045 (-0.0060, -0.0032), equivalent for ranking by the protocol's rule (lower bound above -0.010) with P0 slightly better; whitening by the within-class covariance is the step that matters (+0.0443); mean keys 0.897-0.924.",
       "value": 4,
       "clarity": 0.6,
       "gpu_hours": 1,
@@ -2093,8 +2093,8 @@
         "@mlc03_dataset_v5",
         "@prospective_key05_protocol"
       ],
-      "status": "proposed",
-      "notes": "Scope to fix in the protocol: key constructions (class mean, mean difference against normal, whitened or LDA direction, several keys per condition, token-level keys), similarity measures, co-occurring conditions, number of reference ECGs needed, stability under patient and source resampling, transfer across hospitals, agreement of each key with the measurement that defines the condition, and comparison with P0 on the same records. Use the cleaned v5 labels; no test role tuned on."
+      "status": "done",
+      "notes": "Measured: CPU only, 8 threads; keys 138 s, evaluate 113 s, references 301 s, stability 3,163 s, test read about 20 s. Nothing promoted; P0 stays the reference. Follow-ups: condition_keys_token_level_key05, key05_validation_macro_rule, key05_local_reference_keys, key05_k7_subtype_reading, key05_st_depression_gap, key05_v5_flat_record_and_bradycardia_negatives."
     },
     {
       "id": "embedding_structure_discovery_key06",
@@ -2256,6 +2256,98 @@
       ],
       "status": "proposed",
       "notes": "One-time use; the protocol fixes the model, the rules, the metrics and the decision before the groups are opened. Related: final_frozen_test (the binary screening pipeline)."
+    },
+    {
+      "id": "condition_keys_token_level_key05",
+      "kind": "experiment",
+      "title": "Token-level condition keys on xECG time tokens for the 14 conditions",
+      "question": "Do keys built on xECG's time tokens (per-token whitened discriminants, pooled by maximum or attention over time) close the remaining gap of pooled keys to P0 for ST depression and incomplete RBBB, and do they localize the finding in time?",
+      "evidence": "KEY-05 (docs/key05-condition-keys-results-2026-11-11.md): the pooled whitened key K6 is equivalent to P0 for ranking at SPH (-0.0045 (-0.0060, -0.0032)) but clearly worse for ST depression (-0.0264 (-0.0354, -0.0180)) and undecided for incomplete RBBB (-0.0191). KEY-01 found token keys worse than whole-record keys on four groups, but without whitening; KEY-05 shows whitening is the step that matters (+0.0443).",
+      "value": 3,
+      "clarity": 0.4,
+      "gpu_hours": 2,
+      "cpu_hours": 4,
+      "build_hours": 12,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Needs new feature extraction of xECG tokens for v5 train and validation (GPU, shared lock, profile first). Whiten per token position or with one shared covariance; compare with K6 on validation only until a frozen protocol names a test read. Out of scope in KEY-05 by protocol."
+    },
+    {
+      "id": "key05_validation_macro_rule",
+      "kind": "analysis",
+      "title": "One project rule for the validation macro AUROC: within-source mean or pooled",
+      "question": "Which validation macro (mean over sources of within-source macro AUROC, or pooled over all validation records) predicts the SPH and fold-10 ranking of candidates better across MLC-02, MLC-03 and KEY-05, and should protocols name one explicitly?",
+      "evidence": "KEY-05: the two readings selected different constructions (selection metric K6 0.9643 > K4 0.9634; pooled K4 0.9734 > K6 0.9637; K7-m4 against K7-m2). Source centring (K4 to K6) changed the MI AUROC by +0.0046 within sources and from 0.953 to 0.856 pooled. MLC-02 used the within-source mean throughout.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Stored predictions only (MLC-02 candidates, KEY-05 constructions); test-role numbers already read may be compared, nothing new is scored. Write the rule into the next protocol template."
+    },
+    {
+      "id": "key05_local_reference_keys",
+      "kind": "analysis",
+      "title": "Keys from a small local reference set, against keys built on the multi-source train set",
+      "question": "With the few labelled ECGs a screening site could collect (tens per condition), does a mean-difference key, or a whitened key with a covariance estimated on unlabelled local ECGs, match keys built on the full train set?",
+      "evidence": "KEY-05 reference-count curves: K2 reaches a mean within-source AUROC of 0.900 with 50 per class against 0.913 with all records; a whitened key needs the full train set (500 per class 0.942 against 0.9635), and whitening with the covariance of all train records is worse than none below 500 per class (0.599 at 5).",
+      "value": 2,
+      "clarity": 0.5,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 4,
+      "blocked_by": [
+        "@local_student_ecg_collection"
+      ],
+      "status": "proposed",
+      "notes": "Until local ECGs exist, the simulation can treat one validation source as the local site (covariance from its unlabelled records, keys from n drawn labels). Clinical relevance needs the cardiologist."
+    },
+    {
+      "id": "key05_k7_subtype_reading",
+      "kind": "analysis",
+      "title": "What the K7 centres of a condition separate: forms of the condition, sources or noise",
+      "question": "For conditions where several keys help (complete RBBB, K6 to K7-m4 +0.0054 on validation), do the k-means centres of the positives correspond to measurable forms (QRS width, axis), to sources, or to signal quality?",
+      "evidence": "KEY-05: K7 loses against K6 on average (-0.0026 (-0.0047, -0.0001) with m = 4; -0.0101 with m = 8) and gains only for complete RBBB; KEY-05 section 9 shows that CPSC 2018's complete-RBBB positives include QRS of 110-114 ms.",
+      "value": 2,
+      "clarity": 0.5,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Train and validation only, from outputs/key05_condition_keys_20261111/keys.npz and the Part B measurements; cluster membership by source and measurement, plotted examples per centre. Non-clinical reading."
+    },
+    {
+      "id": "key05_st_depression_gap",
+      "kind": "analysis",
+      "title": "Why keys fall behind P0 for ST depression and incomplete RBBB",
+      "question": "Is the ST-depression and incomplete-RBBB gap of keys to P0 a matter of source coding (the key built without CPSC loses 0.168 on CPSC), of the measurement (ST level, QRS band), or of directions a single key cannot hold?",
+      "evidence": "KEY-05: at SPH, K6 minus P0 is -0.0264 for ST depression and -0.0191 for incomplete RBBB; leaving a family out costs the ST-depression key -0.168 (CPSC) and -0.144 (Chapman-Ningbo), the incomplete-RBBB key -0.053 (PTB-XL); top negatives of the ST-depression key all have measured ST at most -0.05 mV.",
+      "value": 2,
+      "clarity": 0.4,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 4,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Validation only; per-source keys against measurement-matched records; wait for the cardiologist before reading ST-depression definitions."
+    },
+    {
+      "id": "key05_v5_flat_record_and_bradycardia_negatives",
+      "kind": "analysis",
+      "title": "Two cleaning gaps of v5 seen in the KEY-05 review sheets",
+      "question": "Why does a validation record flat in all 12 leads keep a positive MI label in v5, and why do PTB-XL sinus-bradycardia negatives at a consensus rate of 41-55 per minute escape rule C10; how many train and validation labels share each pattern?",
+      "evidence": "KEY-05 section 9: cpsc_2018_extra:Q0400 has n_flat_leads 12 (the only such included train or validation record) and b_mi_any 1; 9 of the 12 top-scoring sinus-bradycardia negatives are PTB-XL records with consensus rate 41-55 per minute.",
+      "value": 2,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.2,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Train and validation only; C5's lead lists and C10's sinus-evidence condition are the likely places. Any new rule needs its own protocol and a new dataset version; v5 stays frozen."
     }
   ]
 }

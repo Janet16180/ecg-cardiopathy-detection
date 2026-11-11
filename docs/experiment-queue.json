@@ -39,7 +39,7 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-11-11T15:22:00+00:00",
+  "updated_at_utc": "2026-11-11T17:05:00+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2655,6 +2655,33 @@
       "Clinical review of any rule or suspected label error (pending)",
       "SPH aggregate check of identity residuals and large values (needs user approval)",
       "Test-role scoring of v5-trained models (not part of MLC-03)"
+    ]
+  },
+  "key05_condition_keys_20261111": {
+    "status": "complete_single_key_equivalent_for_ranking_p0_stays_reference",
+    "protocol": "docs/key05-condition-keys-protocol-2026-11-11.md",
+    "selection_record": "docs/key05-selection-record-2026-11-11.md",
+    "selection_commit": "83c9fe75523d341ca3b402e8c28e0b482e5031bb",
+    "source_commit": "fad4ef5",
+    "dataset": "outputs/mlc01_condition_dataset_20261111_v5",
+    "features": "outputs/mlc02_condition_models_20261110/features/xecg.npy",
+    "reference": "outputs/mlc03_data_quality_20261111/effect/candidates/P0",
+    "output": "outputs/key05_condition_keys_20261111",
+    "receipts": "outputs/key05_condition_keys_20261111/receipts",
+    "report": "docs/key05-condition-keys-results-2026-11-11.md",
+    "tables": "scripts/reports/key05_tables.py",
+    "authorization": "User request of 11 November 2026 for an in-depth study of vector keys per cardiopathy on xECG; protocol frozen by the orchestrator before any analysis.",
+    "scope": "K1-K7 keys and the N1 neighbour bound fitted on v5 train, every validation analysis of the protocol (constructions, ladder, pairs, source, reference counts, stability, measurement agreement, review sheets), then one test read of K6, K7-m4 and P0 at PTB-XL fold 10 and the SPH evaluation half. CPU only. SPH calibration half, Challenge test groups, EchoNext and MIMIC not opened.",
+    "summary": "Validation selection metric: K6 (shrunk LDA direction on source-centred xECG) 0.9643 against P0 0.9698, difference -0.0054 (-0.0083, -0.0029); mean keys 0.897-0.924; whitening is the main step (+0.0443). Primary test comparison, K6 minus P0 at the SPH evaluation half over 12 conditions: -0.0045 (-0.0060, -0.0032); lower bound above -0.010, so equivalent for ranking by the protocol's rule, although P0 ranks slightly better. K7-m4 minus P0 at SPH -0.0071 (-0.0085, -0.0058); fold 10 K6 minus P0 -0.0031 (-0.0059, -0.0006). Largest per-condition loss at SPH: ST depression -0.0264 (-0.0354, -0.0180). Whitened keys need the full train set (500 per class: 0.942 against 0.9635), change direction under resampling (pairwise cosine 0.73-0.93) at stable AUROC, and follow their defining measurements less than mean keys or P0.",
+    "readings": {
+      "selection_metric": "within-source selection metric (MLC-02 convention), stated to the orchestrator before any score; the pooled macro would have selected K4 and K7-m2",
+      "test_role_support_check": "done at the start of the test read, after the selection commit, so no test label was parsed earlier"
+    },
+    "next_action": "Nothing is promoted: P0 stays the reference. Follow-ups are in the backlog: token-level keys, one project rule for the validation macro, few-reference local keys, K7 subtype reading, ST-depression and incomplete-RBBB gaps, the all-flat record with a positive MI label and the PTB-XL bradycardia negatives below 60 per minute.",
+    "not_done": [
+      "Clinical review of any key, sheet or label (pending)",
+      "Token-level keys (out of scope by protocol)",
+      "Stability resamples of K7 (centres have no fixed order)"
     ]
   }
 }

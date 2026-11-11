@@ -391,4 +391,5 @@ def test_microbatch_choice_takes_the_fastest_profile_that_fits(tmp_path):
     _profile(tmp_path, 16, 0.5, int(9.5 * gib), 10 * gib)
     chosen = fr.choose_microbatch(tmp_path)
     assert chosen["microbatch"] == 8
-    assert fr.read_json(tmp_path / "profile.json")["microbatch_choice"]["profiles"][1]["fits"] is False
+    table = fr.read_json(tmp_path / "profile.json")["microbatch_choice"]["profiles"]
+    assert {row["microbatch"]: row["fits"] for row in table} == {8: True, 16: False}

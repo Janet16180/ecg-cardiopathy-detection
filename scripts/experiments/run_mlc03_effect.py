@@ -142,7 +142,9 @@ def receipt(step: str, started: float, git: dict[str, Any], extra: dict[str, Any
         "code_sha256": code_sha256(CODE),
         "inputs": {
             "v5_manifest": to_stored(mv.V5 / "manifest.csv"),
-            "v5_manifest_sha256": sha256_file(mv.V5 / "manifest.csv"),
+            "v5_manifest_sha256": sha256_file(mv.V5 / "manifest.csv")
+            if (mv.V5 / "manifest.csv").exists()
+            else None,
             "features": feature_hashes(),
             "stored_predictions_sha256": {name: sha256_file(path) for name, path in me.STORED.items()},
         },

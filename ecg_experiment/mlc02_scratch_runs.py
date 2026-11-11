@@ -62,6 +62,7 @@ from ecg_experiment.mlc02_scratch_network import (
     choose_epoch,
     epoch_batches,
     fit_standardizer,
+    load_network,
     log_loss_defined,
     make_optimizer,
     predict,
@@ -78,6 +79,8 @@ from ecg_experiment.paths import to_stored
 
 CHUNK = 2048
 HEADROOM_MIB = 1024
+EDAC = Path("/sys/devices/system/edac/mc")
+TOLERANCE = 1e-5
 CODE = (
     "ecg_experiment/mlc02_scratch_network.py",
     "ecg_experiment/mlc02_scratch_runs.py",
@@ -148,6 +151,21 @@ def clean(value: Any) -> Any:
     return value
 
 
+def edac_counts() -> dict[str, int]:
+    """
+    Read the kernel's corrected and uncorrected memory error counters.
+
+    Returns
+    -------
+    dict[str, int]
+        ``mc<N>/ce_count`` and ``mc<N>/ue_count`` of every memory controller; empty without EDAC.
+    """
+    return {
+        f"{path.parent.name}/{path.name}": int(path.read_text())
+        for path in sorted(EDAC.glob("mc*/[cu]e_count"))
+    }
+
+
 def environment() -> dict[str, Any]:
     """
     Describe the packages, devices, torch flags and environment variables of this process.
@@ -168,6 +186,7 @@ def environment() -> dict[str, Any]:
         "torch_threads": torch.get_num_threads(),
         "torch_flags": torch_flags(),
         "variables": {name: os.environ.get(name) for name in ENVIRONMENT},
+        "edac": edac_counts(),
     }
 
 
@@ -1326,3 +1345,137 @@ def write_receipt(directory: Path, runs: list[str], work: Path = WORK) -> dict[s
     }
     write_json_atomic(directory / "receipt.json", clean(receipt))
     return receipt
+
+
+def check_main_files(records: pd.DataFrame, signals: np.ndarray, device: str, output: Path) -> dict[str, Any]:
+    """
+    Reload each published main checkpoint and recompute its validation predictions from the prepared inputs.
+
+    Parameters
+    ----------
+    records, signals
+        Output of ``load_inputs``.
+    device : str
+        Torch device.
+    output : Path
+        Candidate directory.
+
+    Returns
+    -------
+    dict[str, Any]
+        Per seed: SHA-256 match and largest absolute difference to its prediction file; and the largest
+        difference between the mean file and the mean of the seed files.
+    """
+    settings = read_json(output / "settings.json")
+    mask = masks(records, None)["validation"]
+    keys = records["record_key"].to_numpy()[mask]
+    signals = standardize(np.asarray(signals[mask]), settings["normalization"])
+    seeds, saved = [], []
+    for entry in settings["seeds"]:
+        path = output / entry["checkpoint"]
+        stored = load_predictions(
+            prediction_path(output.parent, MODEL_ID, "validation", (entry["seed"],)), keys
+        )
+        recomputed = window_probabilities(load_network(path, device), signals, device)
+        saved.append(stored["probability"])
+        seeds.append(
+            {
+                "seed": entry["seed"],
+                "checkpoint": entry["checkpoint"],
+                "sha256_matches": sha256_file(path) == entry["sha256"],
+                "max_abs_difference": float(np.abs(recomputed - stored["probability"]).max()),
+            }
+        )
+    mean = load_predictions(prediction_path(output.parent, MODEL_ID, "validation", SEEDS), keys)[
+        "probability"
+    ]
+    return {
+        "records": len(keys),
+        "seeds": seeds,
+        "mean_file_vs_seed_mean": float(np.abs(mean - np.mean(saved, axis=0)).max()),
+    }
+
+
+def check_lofo_files(records: pd.DataFrame, signals: np.ndarray, device: str, lofo: Path) -> dict[str, Any]:
+    """
+    Reload each published leave-one-family-out checkpoint and recompute its held-out predictions.
+
+    Parameters
+    ----------
+    records, signals
+        Output of ``load_inputs``.
+    device : str
+        Torch device.
+    lofo : Path
+        ``LOFO_DIR``.
+
+    Returns
+    -------
+    dict[str, Any]
+        Per family: records, SHA-256 match and largest absolute difference to the held-out prediction file.
+    """
+    summary = read_json(lofo / "lofo.json")
+    families = {}
+    for family, row in summary["families"].items():
+        held = masks(records, family)["held_out"]
+        path = lofo / family / f"model_epoch-{row['chosen_epoch']:03d}.pt"
+        stored = load_predictions(
+            lofo / family / f"held_out__seeds-{summary['seed']}.npz", records["record_key"].to_numpy()[held]
+        )
+        recomputed = window_probabilities(
+            load_network(path, device), standardize(np.asarray(signals[held]), row["normalization"]), device
+        )
+        families[family] = {
+            "records": int(held.sum()),
+            "sha256_matches": sha256_file(path) == row["checkpoint_sha256"],
+            "max_abs_difference": float(np.abs(recomputed - stored["probability"]).max()),
+        }
+    return families
+
+
+def check_files(
+    device: str, work: Path = WORK, output: Path = CANDIDATE_DIR, lofo: Path = LOFO_DIR
+) -> dict[str, Any]:
+    """
+    Check that every published checkpoint and prediction file loads and reproduces its predictions.
+
+    Parameters
+    ----------
+    device : str
+        Torch device.
+    work : Path
+        Local work directory.
+    output : Path
+        Candidate directory.
+    lofo : Path
+        ``LOFO_DIR``.
+
+    Returns
+    -------
+    dict[str, Any]
+        The check, written to ``files_check.json`` in both directories, with the memory error counters.
+
+    Raises
+    ------
+    ValueError
+        If a digest differs or a recomputed prediction differs by more than ``TOLERANCE``.
+    """
+    origin = provenance()
+    started = time.time()
+    records, signals, _ = load_inputs(work)
+    record = {
+        "main": check_main_files(records, signals, device, output),
+        "lofo": check_lofo_files(records, signals, device, lofo),
+        "tolerance": TOLERANCE,
+        "edac": edac_counts(),
+        "seconds": time.time() - started,
+        **origin,
+    }
+    write_json_atomic(output / "files_check.json", clean(record))
+    write_json_atomic(lofo / "files_check.json", clean(record))
+    checks = [*record["main"]["seeds"], *record["lofo"].values()]
+    if not all(item["sha256_matches"] and item["max_abs_difference"] <= TOLERANCE for item in checks):
+        raise ValueError("a published file does not reproduce its predictions")
+    if record["main"]["mean_file_vs_seed_mean"] > TOLERANCE:
+        raise ValueError("the mean prediction file is not the mean of the seed files")
+    return record

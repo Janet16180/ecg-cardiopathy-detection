@@ -5,9 +5,12 @@ Every metric comes from the tested scoring library (``mlc02_evaluation``, ``mlc0
 only arranges the calls. For PTB-XL fold 10 and the SPH evaluation half:
 
 - per candidate, raw probabilities: per-condition and macro AUROC, average precision with prevalence,
-  sensitivity and specificity at the validation thresholds, calibration slope, calibration in the large and
-  the joint-fit intercept, Brier score, the imprecise flag (< 100 positives) and the usability rule, with
-  2,000 patient-cluster bootstrap intervals shared by every model of the set (``interval_report``);
+  sensitivity and specificity at the validation thresholds, calibration in the large, Brier score, the
+  imprecise flag (< 100 positives) and the usability rule, with 2,000 patient-cluster bootstrap intervals
+  shared by every model of the set (``interval_report``);
+- the calibration slope and joint-fit intercept by damped Newton (``raw_calibration_damped``), primary under
+  Addendum 2 of the MLC-02 protocol, with intervals on the same resamples; the library's slope and intercept
+  stay in the ``raw`` table beside them, and ``library_calibration_failures`` counts where they are NaN;
 - the same after the validation-fitted Platt calibration (no thresholds, which were fixed on raw scores);
 - paired comparisons of every candidate against P0 (macro AUROC difference, per-condition differences with
   Holm over the entering conditions). Only the selected model against P0 on the SPH evaluation half is
@@ -78,6 +81,12 @@ REFERENCE = "P0"
 LIKELIHOOD_SET = "test_same_source"
 WORKERS = 8
 EVALUATION = "evaluation"
+CALIBRATION_RULE = (
+    "Addendum 2 of the MLC-02 protocol: the reported calibration slope and joint intercept are the "
+    "damped-Newton fits (*_calibration_damped tables); the library's values in the raw and platt tables are "
+    "listed beside them, with library_calibration_failures counting where they are NaN. Calibration in the "
+    "large is the library's."
+)
 TABLE_KINDS = ("raw", "platt", "raw_calibration_damped", "platt_calibration_damped")
 NOT_IMPLEMENTED = {
     "space_a_beside_key04": (
@@ -592,6 +601,7 @@ def evaluate_sets(
             "better": result["comparisons"][CONFIRMATORY_SET][selected]["macro"]["better"],
             **result["comparisons"][CONFIRMATORY_SET][selected],
         }
+    result["calibration_rule"] = CALIBRATION_RULE
     result["not_implemented"] = NOT_IMPLEMENTED
     return result
 

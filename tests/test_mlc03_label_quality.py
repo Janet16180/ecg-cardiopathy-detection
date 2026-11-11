@@ -244,11 +244,13 @@ def test_loader_never_parses_closed_rows(tmp_path: Path):
             "n_flat_leads": "0",
             "n_missing_leads": "0",
         }
+        row |= {f"flat_{lead}": "False" for lead in mm.LEADS} | {"flat_V1": "True" if key == "a" else "False"}
         rows.append(row)
     path = tmp_path / "manifest.csv"
     pd.DataFrame(rows, columns=columns).to_csv(path, index=False)
     frame = lq.load_open_records(path)
     assert frame["record_key"].tolist() == ["a", "c"]
+    assert frame["flat_V1"].tolist() == [True, False]
     assert frame["b_lvh"].iloc[0] == 1.0
     assert np.isnan(frame["b_lvh"].iloc[1])
 
@@ -259,7 +261,8 @@ def test_undefined_reasons_follow_the_label_rules():
         "not annotated"
     )
     ptb = lq.record_codes("ptbxl", "{'SR': 0.0}", "LAD")
-    assert lq.undefined_reason("left_axis_deviation", "ptbxl", ptb, none) == "ambiguous: axis:LAD"
+    reason = lq.undefined_reason("left_axis_deviation", "ptbxl", ptb, none)
+    assert reason == "ambiguous: PTB-XL heart_axis LAD"
     both = frozenset({"713427006", "713426002"})
     assert (
         lq.undefined_reason("complete_rbbb", "georgia", both, none) == "contradictory pair: incomplete_rbbb"

@@ -203,7 +203,7 @@ def load_open_records(path: Path = MANIFEST, roles: tuple[str, ...] = OPEN_ROLES
     for column in ("age", "duration_s", "n_flat_leads", "n_missing_leads"):
         frame[column] = pd.to_numeric(frame[column].replace("", np.nan))
     for column in flats:
-        frame[column] = frame[column] == "True"
+        frame[column] = frame[column].astype(str) == "True"
     return frame.reset_index(drop=True)
 
 
@@ -1443,15 +1443,36 @@ def contradiction_rows(table: pd.DataFrame) -> list[dict[str, object]]:
 
 
 MINIMUM_POSITIVE = ROOT / "outputs/mlc01_condition_dataset_20261110_v4/minimum_positive_rule.csv"
+AMBIGUOUS_FAMILY = {
+    **dict.fromkeys(
+        mlc_labels.ST_T_NONSPECIFIC_OR_ISCHEMIC["scp"] | mlc_labels.ST_T_NONSPECIFIC_OR_ISCHEMIC["snomed"],
+        "nonspecific or ischemic ST-T statement",
+    ),
+    **dict.fromkeys(("DIG", "ANEUR", "EL"), "digitalis, aneurysm or electrolyte statement"),
+    **dict.fromkeys(mlc_labels.LAFB_CODES, "LAFB without a left-axis code"),
+    "axis:LAD": "PTB-XL heart_axis LAD",
+    "axis:AXL": "PTB-XL heart_axis empty or AXL",
+    mlc_labels.AXIS_MISSING: "PTB-XL heart_axis empty or AXL",
+    **dict.fromkeys(("VCLVH", "HVOLT", "55827005"), "left ventricular high voltage"),
+    "266249003": "ventricular hypertrophy of unstated side",
+    "370365005": "ventricular hypertrophy of unstated side",
+    "233917008": "AV block of unstated degree",
+    "426627000": "bradycardia of unstated origin",
+    **dict.fromkeys((*mlc_labels.PREMATURE_UNKNOWN_SCP, "13640000"), "premature complex of unstated origin"),
+    **dict.fromkeys(mlc_labels.VENTRICULAR_TACHYCARDIA_SNOMED, "ventricular tachycardia without a PVC code"),
+    "6374002": "bundle branch block of unstated side",
+    **dict.fromkeys(mlc_labels.INJURY_SCP, "subendocardial injury statement"),
+    **dict.fromkeys(("QWAVE", "164917005", "365413008"), "Q wave or poor R-wave progression"),
+}
 
 
 def undefined_reason(condition: str, source: str, codes: object, minimum: frozenset[tuple[str, str]]) -> str:
     """
     Name the MLC-01 rule that makes one label undefined.
 
-    The rules are tried in a fixed order: the minimum-positive rule (Amendment 1, ruling 6), a source or
-    vocabulary that does not annotate the condition, a contradictory pair, then ambiguous codes. This follows
-    ``mlc_labels`` and the build, which apply the minimum-positive rule last over the other states.
+    The rules are tried in a fixed order: a source or vocabulary that does not annotate the condition, the
+    minimum-positive rule (Amendment 1, ruling 6; it also flags every non-annotating source, which has no
+    positive), a contradictory pair, then ambiguous codes.
 
     Parameters
     ----------
@@ -1471,25 +1492,27 @@ def undefined_reason(condition: str, source: str, codes: object, minimum: frozen
         <codes>`` or ``unexplained``.
     """
     vocabulary_name = vocabulary(source)
-    if (source, f"b_{condition}") in minimum:
-        return "minimum positives"
     if not mlc_labels.annotated(condition, source):
         listed_elsewhere = (
             condition in mlc_labels.NOT_ANNOTATED and source in mlc_labels.NOT_ANNOTATED[condition]
         )
         return "not annotated: " + ("source list" if listed_elsewhere else "outside CPSC 2018 classes")
+    if (source, f"b_{condition}") in minimum:
+        return "minimum positives"
     for pair in mlc_labels.CONTRADICTORY_PAIRS:
         if condition in pair and all(
             mlc_labels.listed(mlc_labels.CONDITIONS[key]["positive"][vocabulary_name], codes, vocabulary_name)
             for key in pair
         ):
             return "contradictory pair: " + next(key for key in pair if key != condition)
-    ambiguous = sorted(
-        code
-        for code in mlc_labels.CONDITIONS[condition]["ambiguous"][vocabulary_name]
-        if mlc_labels.listed(frozenset({code}), codes, vocabulary_name)
+    families = sorted(
+        {
+            AMBIGUOUS_FAMILY.get(code, code)
+            for code in mlc_labels.CONDITIONS[condition]["ambiguous"][vocabulary_name]
+            if mlc_labels.listed(frozenset({code}), codes, vocabulary_name)
+        }
     )
-    return "ambiguous: " + " ".join(ambiguous) if ambiguous else "unexplained"
+    return "ambiguous: " + " + ".join(families) if families else "unexplained"
 
 
 def minimum_positive_pairs(path: Path = MINIMUM_POSITIVE) -> frozenset[tuple[str, str]]:

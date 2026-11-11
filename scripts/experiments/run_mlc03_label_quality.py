@@ -386,6 +386,9 @@ def synthetic_chunk(cases: list[dict[str, float]]) -> list[dict[str, object]]:
     return rows
 
 
+NAMES = {"hr_bpm": "hr", "qrs_ms": "qrs", "pr_ms": "pr"}
+
+
 def ludb_chunk(ids: list[int]) -> list[dict[str, object]]:
     """
     Methods A and B on LUDB records against the manual delineation.
@@ -412,7 +415,7 @@ def ludb_chunk(ids: list[int]) -> list[dict[str, object]]:
         rows.append(
             {
                 "id": number,
-                **{f"{k}_ref": v for k, v in mm.ludb_reference(path).items()},
+                **{f"{NAMES.get(k, k)}_ref": v for k, v in mm.ludb_reference(path).items()},
                 "hr_a": a.get("hr_bpm", np.nan),
                 "qrs_a": a.get("qrs_dur_ms", np.nan),
                 "pr_a": a.get("pr_ms", np.nan),
@@ -424,9 +427,54 @@ def ludb_chunk(ids: list[int]) -> list[dict[str, object]]:
                 "p_snr": b.get("p_snr", np.nan),
                 "p_amp_mv": b.get("p_amp_mv", np.nan),
                 "rr_nrmssd_b": b.get("rr_nrmssd", np.nan),
+                "n_premature_aberrant": b.get("n_premature_aberrant", np.nan),
             }
         )
     return rows
+
+
+def ludb_findings(ludb: pd.DataFrame) -> pd.DataFrame:
+    """
+    Compare method B's rhythm findings on LUDB with its stated rhythm and extrasystoles.
+
+    Parameters
+    ----------
+    ludb : pd.DataFrame
+        ``ludb_chunk`` rows with LUDB's ``Rhythms`` and ``Extrasystolies`` text.
+
+    Returns
+    -------
+    pd.DataFrame
+        Records with and without each stated finding (atrial fibrillation or flutter; ventricular
+        extrasystole) and the share method B flags (irregular RR without a P wave; at least one premature
+        aberrant beat).
+    """
+    rhythm = ludb["Rhythms"].fillna("").str.lower()
+    extra = ludb["Extrasystolies"].fillna("").str.lower()
+    measured = ludb["status_b"] == "ok"
+    no_p = ~((ludb["p_snr"] >= lq.P_SNR_MIN) & (ludb["p_amp_mv"] >= lq.P_AMP_MIN))
+    flags = {
+        "af_or_flutter": (
+            rhythm.str.contains("atrial fibrillation|atrial flutter"),
+            (ludb["rr_nrmssd_b"] >= lq.IRREGULAR_NRMSSD) & no_p,
+        ),
+        "ventricular extrasystole": (
+            extra.str.contains("ventricular extrasystole"),
+            ludb["n_premature_aberrant"] >= 1,
+        ),
+    }
+    rows = []
+    for name, (stated, flagged) in flags.items():
+        rows.append(
+            {
+                "finding": name,
+                "with_finding": int((stated & measured).sum()),
+                "flagged_with": float(flagged[stated & measured].mean()),
+                "without_finding": int((~stated & measured).sum()),
+                "flagged_without": float(flagged[~stated & measured].mean()),
+            }
+        )
+    return pd.DataFrame(rows)
 
 
 SYNTHETIC_CHECKS = (
@@ -731,9 +779,11 @@ def validate(workers: int) -> None:
         ]
     )
     ludb = ludb.merge(
-        pd.read_csv(lq.LUDB / "ludb.csv").rename(columns={"ID": "id"})[["id", "Rhythms"]], on="id"
+        pd.read_csv(lq.LUDB / "ludb.csv").rename(columns={"ID": "id"})[["id", "Rhythms", "Extrasystolies"]],
+        on="id",
     )
     write_csv(ludb, out + "ludb_records.csv")
+    write_csv(ludb_findings(ludb), out + "ludb_findings.csv")
     rows = [
         {
             "quantity": q,
@@ -1251,13 +1301,24 @@ def windows(workers: int) -> None:
     summary = []
     for condition, first, later in (
         ("premature_ventricular_complex", result["ectopy_first"] >= 1, result["ectopy_later"] >= 1),
-        ("af_or_flutter", result["af_first"], result["af_later_windows"] >= 1),
+        ("af_or_flutter", result["af_first"].astype(bool), result["af_later_windows"] >= 1),
     ):
-        pattern = np.select([first, later], ["in first 10 s", "only after 10 s"], "in no window")
+        pattern = pd.Series(
+            np.select([first, later], ["in_first_10s", "only_after_10s"], "in_no_window"), index=result.index
+        )
         label = result[f"b_{condition}"].map({1.0: "positive", 0.0: "negative"}).fillna("undefined")
-        counts = pd.crosstab([result["source"], label], pattern).reset_index()
-        summary.append(counts.assign(condition=condition))
-    write_csv(pd.concat(summary, ignore_index=True), "item1_whole_record_summary.csv")
+        for (source, state), part in pattern.groupby([result["source"], label]):
+            counts = part.value_counts()
+            summary.append(
+                {
+                    "condition": condition,
+                    "source": source,
+                    "label": state,
+                    "records": len(part),
+                    **{k: int(counts.get(k, 0)) for k in ("in_first_10s", "only_after_10s", "in_no_window")},
+                }
+            )
+    write_csv(pd.DataFrame(summary), "item1_whole_record_summary.csv")
     receipt("windows", started, {"records": len(result), "windows": int(result["windows"].sum())})
 
 
@@ -1378,11 +1439,14 @@ def candidate_rules(
                 cutoff_mask(table, condition, cutoffs),
             )
         )
-    for first, second, _ in lq.CONTRADICTIONS[:7]:
+    for first, second, _ in lq.CONTRADICTIONS:
         both = (table[first] == 1) & (table[second] == 1)
         for column in (first, second):
             if column.startswith("b_"):
                 rules.append((f"R4 contradictory pair {first[2:]} + {second[2:]}", column[2:], both))
+    paced = table["c_paced_rhythm"] == 1
+    for column in lq.UNREADABLE:
+        rules.append(("R8 paced rhythm with a conduction or repolarization label", column[2:], paced))
     for condition, leads in lq.REQUIRED_LEADS.items():
         rules.append(
             (

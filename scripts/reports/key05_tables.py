@@ -222,6 +222,15 @@ def section_average_precision() -> None:
         print()
 
 
+def section_support() -> None:
+    """Print validation positives per condition and source, from the per-source table."""
+    table = pd.read_csv(OUT / "per_source.csv")
+    table = table[(table.model == "P0") & (table.source != "pooled")]
+    wide = table.pivot(index="condition", columns="source", values="positives").loc[list(SHORT)]
+    wide.index = [SHORT[c] for c in wide.index]
+    print(markdown(wide.reset_index(names="condition")))
+
+
 def section_per_source() -> None:
     """Macro AUROC of every construction within each validation source."""
     table = pd.read_csv(OUT / "per_source.csv")
@@ -386,7 +395,7 @@ def section_projected_own() -> None:
 def section_sources() -> None:
     """Source classifier, cosines of keys with source directions and between-source score variance."""
     summary = read_json("sources.json")
-    print(json.dumps({k: v for k, v in summary.items() if k != "iterations"}, indent=2))
+    print(json.dumps(summary, indent=2))
     cosines = pd.read_csv(OUT / "source_cosines.csv")
     cosines["abs"] = cosines.cosine.abs()
     largest = cosines.groupby(["construction", "condition", "centre"])["abs"].max().groupby("construction")
@@ -710,6 +719,21 @@ def section_review_measured() -> None:
             }
         )
     print(markdown(pd.DataFrame(rows)))
+
+
+def section_data_quality() -> None:
+    """Count included train and validation records by flat leads in the first 10 s, from the v5 manifest."""
+    columns = ["record_key", "role", "source", "included", "n_flat_leads", "b_mi_any"]
+    manifest = pd.read_csv(
+        ROOT / "outputs/mlc01_condition_dataset_20261111_v5/manifest.csv",
+        usecols=columns,
+        dtype={"record_key": str},
+        low_memory=False,
+    )
+    manifest = manifest[manifest.role.isin(["train", "validation"]) & manifest.included.astype(bool)]
+    print(markdown(manifest.n_flat_leads.value_counts().sort_index().rename("records").reset_index()))
+    print()
+    print(markdown(manifest[manifest.n_flat_leads == 12]))
 
 
 def section_selection() -> None:

@@ -1,8 +1,8 @@
 # MLC-04 freeze record
 
 11 November 2026. Step 2 of the frozen [MLC-04 protocol](mlc04-final-test-protocol-2026-11-11.md) (commit
-`fbf26bf`). The code, the frozen files and the dry run are fixed here, before any Challenge test-group record
-is opened. Until this file is committed, every loader of the runner refuses the role `challenge_test`
+`fbf26bf`, Amendment 1 `deaefa2`). The code, the frozen files and the dry run are fixed here, before any
+Challenge test-group record is opened. Until this file is committed, every loader of the runner refuses the role `challenge_test`
 (`mlc04_data.check_role`): the file must be tracked by Git, the tracked tree clean, and the code commit named
 in the JSON block below an ancestor of `HEAD`. No header, waveform, label or feature row of a test-group record
 has been opened. The runner has read only the identity columns of the split table (`read_split_table`), to
@@ -13,7 +13,9 @@ validation is pending.
 
 ## Code
 
-Code commit `89e2f3a`:
+Code commits `89e2f3a` (runner, checks, evaluation, tables, tests) and `e9df26e` (Amendment 1: the primary
+reading against the like-for-like validation value, and a check in the score step that this value equals the
+dry run's). The guard checks `e9df26e`. The files are:
 
 - `ecg_experiment/mlc04_data.py`: role guard, records, MLC-01 scan and labels, cache, Part A, method B, windows,
   rules C1-C12, marker;
@@ -24,7 +26,7 @@ Code commit `89e2f3a`:
 - `scripts/reports/mlc04_tables.py`: the report tables;
 - `tests/test_mlc04_final_test.py`: 17 tests, synthetic data, one skipped without the local split table.
 
-At that commit, `ruff check ecg_experiment scripts tests conftest.py` passes, and the 17 tests pass. Every
+At `e9df26e`, `ruff check ecg_experiment scripts tests conftest.py` passes, and the 17 tests pass. Every
 frozen module is imported, not copied. Two pieces restate frozen orchestration that could not be called
 directly, and the dry run checks both:
 
@@ -33,7 +35,8 @@ directly, and the dry run checks both:
 
 ## Dry run (validation, the Challenge calibration groups)
 
-The dry run ran at `89e2f3a` with no modified tracked file (receipts in
+The dry run ran at `89e2f3a` with no modified tracked file. Its `check` and `score` steps and the freeze draft
+ran again at `e9df26e`, which changed none of the earlier steps' code (receipts in
 `outputs/mlc04_final_test_20261111/receipts/`). Its output is
 `outputs/mlc04_final_test_20261111/validation/check.json`, printed by
 `python -m scripts.reports.mlc04_tables --section check`. Every check passed (`failed: []`):
@@ -67,7 +70,7 @@ code commit.
 No calibration record shares its first-10-s hash with a v4 train record (the scan's cross-role count is 0 for
 every source).
 
-## The test metric on validation, and the protocol's comparator
+## The test metric on validation, and Amendment 1
 
 On the calibration groups, the evaluation the test read will run gives (`--section models`, `--section
 sources`):
@@ -83,14 +86,25 @@ sources`):
 Under the 100-positive rule, CPSC-Extra enters with any MI alone (P0-v5 0.8914), Chapman and CPSC 2018 with
 four conditions each, Georgia with eight and Ningbo with eleven.
 
-The protocol reads the test metric (five Challenge sources, entry 100) against 0.9698, the six-source
-metric with entry 20 that includes PTB-XL fold 9. These are not the same quantity: the same five-source,
-entry-100 metric is 0.9611 on the calibration groups. The bound of the reading, 0.9598, therefore lies inside
-the like-for-like validation interval. An "undecided" or "not confirmed" reading can follow from the change of
-definition alone, without any optimism of the validation numbers. The protocol is explicit here: it names the
-value (0.9698) and the rule. The test read therefore applies it as written, and the report prints the
-like-for-like validation value (0.9611) beside it, with no second reading. The orchestrator was told before
-this record was committed, and no amendment arrived.
+As first written, the protocol read the test metric (five Challenge sources, entry 100) against 0.9698, the
+six-source metric with entry 20 that includes PTB-XL fold 9. These are not the same quantity: the same
+five-source, entry-100 metric is 0.9611 on the calibration groups, and the bound 0.9598 lay inside its
+interval. This was reported to the orchestrator after the dry run, which wrote Amendment 1 of the
+protocol (`deaefa2`, 12:16 PST), before any test-group record was opened and before any test value existed:
+
+- the primary reading uses the like-for-like value: confirmed if the test interval's lower bound is above
+  0.9611 minus 0.010, not confirmed if its upper bound is below that bound, undecided otherwise;
+- the comparison with 0.9698 is printed beside it without a reading.
+
+The amendment landed on this branch a few seconds before the code commit `89e2f3a` and was missed when this
+record was first written and committed (`0e7797b`). That version still applied 0.9698 and said that no
+amendment had arrived. It was corrected by `e9df26e` and by this version of the record, before any test-group
+record was opened: the guard had opened at `0e7797b`, but no runner step was started on the test groups.
+
+Reading of the amendment's bound: the exact dry-run value 0.9610687901468651 minus 0.010, that is
+0.9510687901468651 (0.9511 to four decimals, as the amendment writes it). The two differ by 3.1e-5. If the
+test interval's lower bound fell between them, the report would say so. The score step refuses to run unless
+the dry run's stored value equals the frozen constant `LIKE_FOR_LIKE_METRIC`.
 
 ## Readings made before the freeze
 
@@ -120,12 +134,11 @@ Where the protocol's wording leaves a choice, the reading closest to the MLC-02 
    - the MLC-03 steps (`measure`, `rules`) use the machine's default kernel, as their receipts record;
    - the MLC-02 extractors and every model score (`features`, `check`, `score`) use
      `OPENBLAS_CORETYPE=Haswell`.
-7. **Primary reading.** "Below it" is read as below the validation value minus 0.010, the same bound as the
-   confirmation rule; otherwise the three outcomes would overlap. The bound is 0.9697697420282113 - 0.010 =
-   0.9597697420282113.
+7. **Primary reading** (Amendment 1). The bound is the like-for-like dry-run value minus 0.010,
+   0.9510687901468651. "Below" means below that bound, as the amendment writes. The six-source bound,
+   0.9697697420282113 - 0.010 = 0.9597697420282113, is printed without a reading.
 8. **Metric.** The metric is averaged over the Challenge sources where at least one condition has 100 positives
-   and 100 negatives in that source's test records. The validation value (0.9698) is the six-source metric
-   with the 20-positive rule, as the protocol states (see the section above).
+   and 100 negatives in that source's test records.
 9. **Intervals.** They come from `mlc02_bootstrap.cluster_resamples`, built on `intervals.patient_groups` and
    `patient_resample`:
    - within each source, each record its own group;
@@ -190,13 +203,13 @@ left out). They cover:
 ```json
 {
   "experiment": "MLC-04",
-  "code_commit": "89e2f3af8189e2db7c387248d86b1e3e4075660a",
+  "code_commit": "e9df26ed08ba66d3bc4298cea390bd84338d92f6",
   "code_sha256": {
     "ecg_experiment/mlc04_data.py": "8854cb33fa9aa68dcd426f021870922679cb28cb18e74babd81ba55addb39d7b",
     "ecg_experiment/mlc04_models.py": "86b5a5cf9e78b4160f7511e3921a1c3fb0599f35ed063ac31136776c67ef4be2",
-    "ecg_experiment/mlc04_evaluation.py": "a696674c2ef409e55278a35f0fd34bfdda89d539748dbba3cc100dbe9d0c8a4b",
+    "ecg_experiment/mlc04_evaluation.py": "6fe10c8ba990ae0c1edfbae97880119e9c1659b344bf025f0b7952bc2ad3fc74",
     "ecg_experiment/mlc04_checks.py": "207768a31e95315282bed7106b71259317f881ee331f5bc2621768c69a6165e0",
-    "scripts/experiments/run_mlc04_final_test.py": "c2ffd9ce7d066b66a4154e9f74f717a2d89e714616bd7d4af0cb3ee7e5c8bae4",
+    "scripts/experiments/run_mlc04_final_test.py": "26c67c270097f0d9855fd1d64ce885683feb9e2f7703170b08050fcbac24bdde",
     "ecg_experiment/mlc_labels.py": "a4221dc76ef1e04ff8447c93e0116c379085fe240d9c9638e7b9e4788cf68a84",
     "ecg_experiment/mlc01_dataset.py": "c421be0778fcbfcc8d95cf01a9758bdabfbd82b7daef5384396d4b12460f7e36",
     "ecg_experiment/mlc01_build.py": "a36fc4f10ecdff1081265811904cf5cdbdbd9090466bd436b3b40dfdddb4eb54",
@@ -300,8 +313,10 @@ left out). They cover:
         0.9556842122563732,
         0.9663166848638087
       ],
-      "validation_value": 0.9697697420282113,
-      "bound": 0.9597697420282113
+      "validation_value": 0.9610687901468651,
+      "bound": 0.9510687901468651,
+      "six_source_validation_value": 0.9697697420282113,
+      "six_source_bound": 0.9597697420282113
     }
   },
   "test_groups": {

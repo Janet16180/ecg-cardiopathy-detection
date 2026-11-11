@@ -1,7 +1,7 @@
 # MLC-02: models for the 14-condition classifier
 
 Prospective, 10 November 2026. Frozen before any fit or score. It runs on the MLC-01 dataset
-(`outputs/mlc01_condition_dataset_20261110_v3/`, the final build; protocol and Amendments 1 and 2 in
+(`outputs/mlc01_condition_dataset_20261110_v4/`, the final build; protocol and Amendments 1 to 3 in
 `docs/mlc01-condition-dataset-protocol-2026-11-10.md`). The roles, label states and evaluation
 rules of that document bind this one and are not repeated. No Challenge test group and no
 EchoNext record is opened.

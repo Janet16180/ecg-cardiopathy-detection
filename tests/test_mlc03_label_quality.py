@@ -248,6 +248,19 @@ def test_open_roles_refuse_test_roles(role):
         lq.load_open_records(roles=("validation", role))
 
 
+def test_ptbxl_plus_loader_drops_fold_ten(tmp_path: Path):
+    pd.DataFrame({"ecg_id": [1, 2, 3], "strat_fold": [1, 9, 10]}).to_csv(
+        tmp_path / "database.csv", index=False
+    )
+    for program, columns in lq.PLUS_COLUMNS.items():
+        table = pd.DataFrame({"ecg_id": [1, 2, 3], **{column: [1.0, 2.0, 3.0] for column in columns}})
+        table.to_csv(tmp_path / f"{program}_features.csv", index=False)
+    keys = np.array(["ptbxl:1", "ptbxl:2", "ptbxl:3", "georgia:E00001"])
+    loaded = lq.load_ptbxl_plus(keys, directory=tmp_path, database=tmp_path / "database.csv")
+    assert sorted(loaded["record_key"]) == ["ptbxl:1", "ptbxl:2"]
+    assert 3.0 not in loaded.drop(columns="record_key").to_numpy()
+
+
 def test_loader_never_parses_closed_rows(tmp_path: Path):
     columns = [
         *lq.STRUCTURE,

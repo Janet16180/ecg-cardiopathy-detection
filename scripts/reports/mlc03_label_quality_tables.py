@@ -75,49 +75,36 @@ def validation() -> str:
     str
         Markdown tables.
     """
-    plus = pd.read_csv(OUT / "measurement_validation/ptbxl_plus_summary.csv")
-    part = plus[plus["subset"] == "validation outside calibration"]
-    rows = []
-    for (quantity, method), r in part.groupby(["quantity", "method"], sort=False):
-        r = r.iloc[0]
-        rows.append(
-            {
-                "quantity": quantity,
-                "method": method,
-                "tolerance": r["tolerance"],
-                "pairs": int(r["pairs"]),
-                "measured": percent(r["measured"]),
-                "median difference": f"{r['bias']:.3g}",
-                "median absolute": f"{r['median_abs']:.3g}",
-                "90th percentile absolute": f"{r['p90_abs']:.3g}",
-                "within tolerance": percent(r["within"]),
-            }
-        )
-    text = [
-        "PTB-XL+ reference, PTB-XL validation records outside the calibration sample:",
-        markdown(pd.DataFrame(rows)),
-    ]
-    for name, label in (
-        ("ludb_summary.csv", "LUDB manual delineation (200 records):"),
-        ("synthetic_summary.csv", "Synthetic records (all noise levels):"),
+    text = []
+    for name, subset, label in (
+        (
+            "ptbxl_plus_summary.csv",
+            "validation outside calibration",
+            "PTB-XL+ reference (12SL and Uni-G where they agree), PTB-XL validation records outside the "
+            "calibration sample:",
+        ),
+        ("ludb_summary.csv", None, "LUDB manual delineation (200 records):"),
+        ("synthetic_summary.csv", None, "Synthetic records (all noise levels):"),
     ):
         table = pd.read_csv(OUT / "measurement_validation" / name)
+        if subset is not None:
+            table = table[table["subset"] == subset]
         if "noise_mv" in table:
             table = table[table["noise_mv"].astype(str) == "all"]
-        table = table.assign(
-            measured=table["measured"].map(percent),
-            within=table["within"].map(percent),
-            bias=table["bias"].map(lambda v: f"{v:.3g}"),
-            median_abs=table["median_abs"].map(lambda v: f"{v:.3g}"),
+        shown = pd.DataFrame(
+            {
+                "quantity": table["quantity"],
+                "method": table["method"],
+                "tolerance": table["tolerance"],
+                "pairs": table["pairs"].astype(int),
+                "failed": (1 - table["measured"]).map(percent),
+                "bias (median difference)": table["bias"].map(lambda v: f"{v:.3g}"),
+                "median absolute": table["median_abs"].map(lambda v: f"{v:.3g}"),
+                "90th percentile absolute": table["p90_abs"].map(lambda v: f"{v:.3g}"),
+                "within tolerance": table["within"].map(percent),
+            }
         )
-        text += [
-            label,
-            markdown(
-                table[
-                    ["quantity", "method", "tolerance", "pairs", "measured", "bias", "median_abs", "within"]
-                ]
-            ),
-        ]
+        text += [label, markdown(shown)]
     detection = pd.read_csv(OUT / "measurement_validation/synthetic_detection.csv")
     detection = detection.assign(
         flagged_with=detection["flagged_with"].map(percent),
@@ -361,7 +348,14 @@ def review() -> str:
     by_source["source"] = by_source["source"].map(SHORT)
     rhythm = pd.read_csv(OUT / "item4_review_rhythm_statement.csv")
     signal = pd.read_csv(OUT / "item4_review_signal_flags.csv")
-    columns = ["any_flag", "baseline_wander", "baseline_step", "isolated_spike", "flat_lead", "contact_loss"]
+    columns = [
+        "any_reliable_flag",
+        "baseline_wander",
+        "baseline_step",
+        "isolated_spike",
+        "flat_lead",
+        "contact_loss",
+    ]
     signal = signal.assign(**{column: signal[column].map(percent) for column in columns})
     counted = ["label error", "model error", "cannot tell", "sheets"]
     totals = tally.groupby("kind")[counted].sum().reset_index()

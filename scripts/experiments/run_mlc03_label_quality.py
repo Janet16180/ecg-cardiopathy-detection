@@ -256,7 +256,7 @@ def calibrate(workers: int) -> None:
     write_csv(summary, "measurement_validation/calibration_grid.csv")
     chosen = {"qrs_fraction": q_best, "p_fraction": p_best, "train_records": 1500, "validation_records": 800}
     write_json_atomic(lq.OUTPUT / "measurement_validation/calibration.json", chosen)
-    receipt("calibrate", started, {"chosen": chosen})
+    receipt("calibrate", started, {"chosen": chosen, "references": lq.reference_receipt()})
     print(json.dumps(chosen))
 
 
@@ -814,10 +814,8 @@ def validate(workers: int) -> None:
             "synthetic_cases": len(synthetic),
             "ludb_records": len(ludb),
             "ptbxl_records": len(joined),
-            "ludb_sha256sums": sha256_file(lq.LUDB / "SHA256SUMS.txt"),
-            "ptbxl_plus_sha256": {
-                name: sha256_file(lq.PTBXL_PLUS / f"{name}_features.csv") for name in lq.PLUS_COLUMNS
-            },
+            "ptbxl_folds_read": list(lq.OPEN_PTBXL_FOLDS),
+            "references": lq.reference_receipt(),
         },
     )
 
@@ -1523,19 +1521,18 @@ def candidate_rules(
 
 
 LEAD_LOSS = ("flat_lead__leads", "near_flat_lead__leads", "contact_loss__leads")
-REVERSAL = ("reversal_la_ra", "reversal_ra_ll", "reversal_neutral")
-BEAT_CONDITIONS = (
-    "sinus_tachycardia",
-    "sinus_bradycardia",
-    "sinus_arrhythmia",
-    "af_or_flutter",
-    "premature_ventricular_complex",
-)
+REVERSAL = ("reversal_la_ra", "reversal_neutral")
+AXIS_LEADS = ("I", "II", "III", "aVF")
 
 
 def part_a_unreadable(table: pd.DataFrame) -> list[tuple[str, str, pd.Series]]:
     """
     Select the records whose Part A signal flags make a condition unreadable (item 3, rules R11).
+
+    Only flags the Part A report found reliable are used (``docs/mlc03-signal-quality-results-2026-11-11.md``
+    on branch ``research/mlc03-signal-quality-20261111``, commit ``e6869ff``): ``reversal_ra_ll`` (1 of 12
+    flagged plots) and ``rhythm_unmeasurable`` (3 of 12) are left out; ``reversal_la_ra`` and
+    ``reversal_neutral`` pass, though their check reused the first viewing.
 
     Parameters
     ----------
@@ -1545,28 +1542,28 @@ def part_a_unreadable(table: pd.DataFrame) -> list[tuple[str, str, pd.Series]]:
     Returns
     -------
     list[tuple[str, str, pd.Series]]
-        ``(rule, condition, mask)``: a lead the condition is read on (``lq.REQUIRED_LEADS``) is flat,
-        near-flat or loses contact; a limb-electrode reversal pattern for the axis conditions; no measurable
-        rhythm for the rate, rhythm and ectopy conditions; an amplitude outlier for LVH.
+        ``(rule, condition, mask)``: a lead the condition is read on (``lq.REQUIRED_LEADS``; for the two axis
+        conditions I, II, III or aVF, from which the frontal axis is derived) is flat, near-flat or loses
+        contact; a limb-electrode reversal pattern for the axis conditions; an amplitude outlier for LVH.
     """
-    flags = signal_flags(["record_key", *LEAD_LOSS, *REVERSAL, "rhythm_unmeasurable", "amplitude_outlier"])
-    flags = flags.reindex(table["record_key"].to_numpy())
+    flags = signal_flags(["record_key", "included", *LEAD_LOSS, *REVERSAL, "amplitude_outlier"])
+    flags = flags[flags["included"]].reindex(table["record_key"].to_numpy())
     flags.index = table.index
     lost = pd.Series([set() for _ in range(len(flags))], index=flags.index)
     for column in LEAD_LOSS:
         lost = lost.combine(flags[column].fillna("").str.split(";").map(set), lambda a, b: a | b)
+    leads_read = {**lq.REQUIRED_LEADS, "lafb": AXIS_LEADS, "left_axis_deviation": AXIS_LEADS}
     rules = []
-    for condition, leads in lq.REQUIRED_LEADS.items():
+    for condition, leads in leads_read.items():
         mask = lost.map(lambda found, leads=leads: bool(found & set(leads)))
         rules.append(
             ("R11 Part A: a lead the condition is read on is flat or loses contact", condition, mask)
         )
     reversed_limbs = flags[list(REVERSAL)].fillna(False).astype(bool).any(axis=1)
     for condition in ("lafb", "left_axis_deviation"):
-        rules.append(("R11 Part A: limb-electrode reversal pattern", condition, reversed_limbs))
-    unmeasurable = flags["rhythm_unmeasurable"].fillna(False).astype(bool)
-    for condition in BEAT_CONDITIONS:
-        rules.append(("R11 Part A: no rhythm measurable", condition, unmeasurable))
+        rules.append(
+            ("R11 Part A: limb-electrode reversal pattern (LA-RA or neutral)", condition, reversed_limbs)
+        )
     rules.append(
         ("R11 Part A: amplitude outlier", "lvh", flags["amplitude_outlier"].fillna(False).astype(bool))
     )
@@ -1728,20 +1725,22 @@ def rhythm_statement_tally(judgements: pd.DataFrame) -> pd.DataFrame:
 
 
 SIGNAL_FLAGS = ROOT / "outputs/mlc03_data_quality_20261111/signal/flags_train_validation.parquet"
-SIGNAL_COLUMNS = (
-    "any_flag",
+RELIABLE_FLAGS = (
+    "missing_samples",
+    "edge_hold",
+    "adc_rail",
     "flat_lead",
     "near_flat_lead",
+    "identity_violation",
     "reversal_la_ra",
-    "reversal_ra_ll",
     "reversal_neutral",
     "amplitude_outlier",
     "baseline_wander",
+    "mains_interference",
     "hf_noise",
     "baseline_step",
-    "contact_loss",
     "isolated_spike",
-    "rhythm_unmeasurable",
+    "contact_loss",
 )
 
 
@@ -1774,6 +1773,9 @@ def signal_flag_overlap(judgements: pd.DataFrame) -> pd.DataFrame:
     """
     Share of Part A signal flags among all open records, the listed suspects and each review judgement.
 
+    Only the flags the Part A report found reliable (``RELIABLE_FLAGS``) are counted; ``any_reliable_flag``
+    is their union (Part A's own ``any_flag`` also counts the unreliable ones).
+
     Parameters
     ----------
     judgements : pd.DataFrame
@@ -1783,14 +1785,16 @@ def signal_flag_overlap(judgements: pd.DataFrame) -> pd.DataFrame:
     -------
     pd.DataFrame
         One row per group (all, suspects, suspects flagged by confident learning, each judgement) with its
-        record count and the share carrying each flag of ``SIGNAL_COLUMNS``.
+        record count and the share carrying each flag.
 
     Raises
     ------
     ValueError
         If the Part A table holds a role other than train or validation, or misses a reviewed record.
     """
-    flags = signal_flags(["record_key", *SIGNAL_COLUMNS])
+    flags = signal_flags(["record_key", "included", *RELIABLE_FLAGS])
+    flags = flags[flags["included"]].drop(columns="included").astype(bool)
+    flags.insert(0, "any_reliable_flag", flags.any(axis=1))
     if not judgements["record_key"].isin(flags.index).all():
         raise ValueError("a reviewed record has no Part A flags")
     table = pd.read_parquet(lq.OUTPUT / "analysis.parquet", columns=["record_key"])
@@ -1811,8 +1815,8 @@ def signal_flag_overlap(judgements: pd.DataFrame) -> pd.DataFrame:
             {
                 "group": name,
                 "records": len(part),
-                "with_part_a_row": int(part["any_flag"].notna().sum()),
-                **{column: float(part[column].astype(float).mean()) for column in SIGNAL_COLUMNS},
+                "with_part_a_row": int(part["any_reliable_flag"].notna().sum()),
+                **{column: float(part[column].astype(float).mean()) for column in flags.columns},
             }
         )
     return pd.DataFrame(rows)

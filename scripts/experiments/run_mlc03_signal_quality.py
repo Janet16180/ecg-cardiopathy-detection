@@ -47,10 +47,12 @@ from ecg_experiment.mlc03_signal_review import annotate, draw_pair_sheet, draw_s
 from ecg_experiment.mlc03_signal_runs import (
     DEVELOPMENT_ROLES,
     OUTPUT,
+    TEST_ROLES,
     WORK,
     assemble,
     code_hashes,
     frame_sha256,
+    git_state,
     input_hashes,
     open_block,
     read_checked,
@@ -480,13 +482,118 @@ def pipelines_step(args: argparse.Namespace, command: list[str]) -> None:
             edges.append({"source": source, "record_key": key, **edge_ringing(window(key))})
     edges = pd.DataFrame(edges)
     edges.to_csv(PIPE / "edge_ringing_records.csv", index=False)
-    edge_summary = edges.groupby("source").quantile([0.5, 0.9]).reset_index()
+    edge_summary = edges.drop(columns="record_key").groupby("source").quantile([0.5, 0.9]).reset_index()
     edge_summary.to_csv(PIPE / "edge_ringing_by_source.csv", index=False)
     write_receipt(PIPE / "pipeline_effects.receipt.json", {
         "step": "pipelines", "command": command, "seed": args.seed, "records": len(records),
         "edge_records": len(edges), "code": code_hashes(PIPELINE_CODE + MEASURE_CODE[:1])})
     print(summary.round(3).to_string())
     print(edge_summary.round(3).to_string())
+
+
+def cross_role_pairs(pairs: pd.DataFrame, first: pd.DataFrame, second: pd.DataFrame, a: str, b: str,
+                     score: str) -> pd.DataFrame:
+    """
+    Name the records of candidate pairs and keep those whose roles differ.
+
+    Parameters
+    ----------
+    pairs : pd.DataFrame
+        Pairs with row numbers in columns ``a`` and ``b``.
+    first, second : pd.DataFrame
+        Identity tables the row numbers refer to (``record_key``, ``source``, ``role``, ``sha256_10s``).
+    a, b : str
+        Columns of the row numbers.
+    score : str
+        Column of the score.
+
+    Returns
+    -------
+    pd.DataFrame
+        ``record_key_a``, ``source_a``, ``role_a``, the same for ``b``, ``score`` and ``same_hash``.
+    """
+    columns = ["record_key", "source", "role", "sha256_10s"]
+    left = first.iloc[pairs[a].to_numpy()][columns].reset_index(drop=True).add_suffix("_a")
+    right = second.iloc[pairs[b].to_numpy()][columns].reset_index(drop=True).add_suffix("_b")
+    table = pd.concat([left, right], axis=1).assign(score=pairs[score].to_numpy())
+    table = table.assign(same_hash=table["sha256_10s_a"] == table["sha256_10s_b"])
+    return table[table["role_a"] != table["role_b"]].drop(columns=["sha256_10s_a", "sha256_10s_b"])
+
+
+def final_step(args: argparse.Namespace, command: list[str]) -> None:
+    """
+    Apply the frozen flags and the near-duplicate searches once to the three test roles; counts only.
+
+    Labels are never read: the identity columns of the manifest and the cached windows are the only inputs.
+    The step refuses to run with modified tracked files, so the code it runs is the committed code.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed arguments (``workers``).
+    command : list[str]
+        Command line, for the receipt.
+    """
+    state = git_state()
+    if state["modified_tracked"]:
+        raise SystemExit(f"refusing the final run with modified tracked files: {state['modified_tracked']}")
+    start = time.perf_counter()
+    summary = run_measures(WORK / "measures_test_chunks", TEST_ROLES, args.workers, allow_test=True,
+                           log=WORK / "measures_test.log")
+    index = read_index(TEST_ROLES, allow_test=True)
+    measures = assemble(WORK / "measures_test_chunks", index)
+    identity = read_identity(TEST_ROLES, allow_test=True).set_index("record_key")
+    identity = identity.loc[measures["record_key"]].reset_index()
+    flags = compute_flags(measures)
+    table = flags.merge(identity[["record_key", "source", "role", "included"]], on="record_key",
+                        validate="one_to_one")
+    table.to_parquet(OUTPUT / "flags_test_roles.parquet", index=False)
+    counts = flag_counts(flags, identity)
+    counts.to_csv(OUTPUT / "flag_counts_test_roles.csv", index=False)
+    run_fingerprints(WORK / "fingerprints_test_roles", index, args.workers, allow_test=True)
+    test_prints = load_fingerprints(WORK / "fingerprints_test_roles", index)
+    dev_index = read_index(DEVELOPMENT_ROLES)
+    dev_prints = load_fingerprints(WORK / "fingerprints_train_validation", dev_index)
+    dev_identity = read_identity(DEVELOPMENT_ROLES).set_index("record_key").loc[dev_index["record_key"]]
+    dev_identity = dev_identity.reset_index()
+    test_dev, _, _ = dense_pairs(test_prints["dense"], dev_prints["dense"], 0.9, same_set=False)
+    test_test, _, _ = dense_pairs(test_prints["dense"], test_prints["dense"], 0.9, same_set=True)
+    dense = pd.concat([cross_role_pairs(test_dev, identity, dev_identity, "query", "reference", "score"),
+                       cross_role_pairs(test_test, identity, identity, "query", "reference", "score")],
+                      ignore_index=True).assign(search="zero_lag")
+    offset = len(identity)
+    keys = key_table(test_prints["rr"], {})
+    dev_keys = key_table(dev_prints["rr"], {})
+    keys.update({row + offset: value for row, value in dev_keys.items()})
+    candidates = shifted_candidates(keys)
+    both = pd.concat([identity, dev_identity], ignore_index=True)
+    roles = both["role"].to_numpy()
+    crossing = roles[candidates["first"]] != roles[candidates["second"]]
+    candidates = candidates[(candidates["first"] < offset) & crossing]
+    prints = {row: test_prints["verify"][row] for row in range(offset)}
+    prints.update({row + offset: dev_prints["verify"][row] for row in range(len(dev_identity))})
+    verified = verify_candidates(candidates, prints)
+    verified = verified[verified["overlap_s"] >= MIN_OVERLAP_S]
+    shifted = cross_role_pairs(verified, both, both, "first", "second", "correlation")
+    shifted = shifted.assign(search="shifted")
+    pairs = pd.concat([dense, shifted], ignore_index=True)
+    pairs.to_csv(OUTPUT / "near_duplicates_test_roles_pairs.csv", index=False)
+    rows = []
+    for (search, role_a, role_b), group in pairs.groupby(["search", "role_a", "role_b"]):
+        for threshold in (0.90, 0.95, 0.98):
+            selected = group[group["score"] >= threshold]
+            rows.append({"search": search, "role_a": role_a, "role_b": role_b, "threshold": threshold,
+                         "pairs": len(selected), "same_hash": int(selected["same_hash"].sum()),
+                         "test_records": int(selected["record_key_a"].nunique())})
+    pd.DataFrame(rows).to_csv(OUTPUT / "near_duplicates_test_roles_counts.csv", index=False)
+    write_receipt(OUTPUT / "final_test_roles.receipt.json", {
+        "step": "final", "command": command, "roles": list(TEST_ROLES), "records": len(flags),
+        "included": int(identity["included"].sum()), "measure_summary": summary,
+        "labels_read": False, "wall_seconds": time.perf_counter() - start, "inputs": input_hashes(),
+        "code": code_hashes(MEASURE_CODE + FLAG_CODE + NEAR_CODE)})
+    pivot = counts.groupby(["flag", "source", "role"])["flagged"].sum().unstack(["source", "role"])
+    print(pivot.reindex([*FLAGS, "any_flag"]).to_string())
+    print(pd.DataFrame(rows).to_string())
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -500,7 +607,7 @@ def main(argv: list[str] | None = None) -> None:
     """
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("step", choices=("measure", "full-records", "flags", "review", "near-duplicates",
-                                         "near-review", "pipelines"))
+                                         "near-review", "pipelines", "final"))
     parser.add_argument("--flag", choices=tuple(FLAGS), help="review: flag to review")
     parser.add_argument("--seed", type=int, default=SEED, help="review: sampling seed")
     parser.add_argument("--tag", help="review: suffix of the review directory (for a re-sample)")
@@ -525,6 +632,8 @@ def main(argv: list[str] | None = None) -> None:
         near_review_step(args, command)
     elif args.step == "pipelines":
         pipelines_step(args, command)
+    elif args.step == "final":
+        final_step(args, command)
 
 
 if __name__ == "__main__":

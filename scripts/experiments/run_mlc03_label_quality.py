@@ -1482,6 +1482,7 @@ def candidate_rules(
             (table["b_lvh"] == 0) & (table["status_b"] == "ok") & table["voltage_criterion"],
         )
     )
+    rules.extend(part_a_unreadable(table))
     paced = table["c_paced_rhythm"] == 1
     for column in lq.UNREADABLE:
         rules.append(("R8 paced rhythm with a conduction or repolarization label", column[2:], paced))
@@ -1518,6 +1519,57 @@ def candidate_rules(
                 negative & flags[f"fn_{condition}"],
             )
         )
+    return rules
+
+
+LEAD_LOSS = ("flat_lead__leads", "near_flat_lead__leads", "contact_loss__leads")
+REVERSAL = ("reversal_la_ra", "reversal_ra_ll", "reversal_neutral")
+BEAT_CONDITIONS = (
+    "sinus_tachycardia",
+    "sinus_bradycardia",
+    "sinus_arrhythmia",
+    "af_or_flutter",
+    "premature_ventricular_complex",
+)
+
+
+def part_a_unreadable(table: pd.DataFrame) -> list[tuple[str, str, pd.Series]]:
+    """
+    Select the records whose Part A signal flags make a condition unreadable (item 3, rules R11).
+
+    Parameters
+    ----------
+    table : pd.DataFrame
+        Analysis table.
+
+    Returns
+    -------
+    list[tuple[str, str, pd.Series]]
+        ``(rule, condition, mask)``: a lead the condition is read on (``lq.REQUIRED_LEADS``) is flat,
+        near-flat or loses contact; a limb-electrode reversal pattern for the axis conditions; no measurable
+        rhythm for the rate, rhythm and ectopy conditions; an amplitude outlier for LVH.
+    """
+    flags = signal_flags(["record_key", *LEAD_LOSS, *REVERSAL, "rhythm_unmeasurable", "amplitude_outlier"])
+    flags = flags.reindex(table["record_key"].to_numpy())
+    flags.index = table.index
+    lost = pd.Series([set() for _ in range(len(flags))], index=flags.index)
+    for column in LEAD_LOSS:
+        lost = lost.combine(flags[column].fillna("").str.split(";").map(set), lambda a, b: a | b)
+    rules = []
+    for condition, leads in lq.REQUIRED_LEADS.items():
+        mask = lost.map(lambda found, leads=leads: bool(found & set(leads)))
+        rules.append(
+            ("R11 Part A: a lead the condition is read on is flat or loses contact", condition, mask)
+        )
+    reversed_limbs = flags[list(REVERSAL)].fillna(False).astype(bool).any(axis=1)
+    for condition in ("lafb", "left_axis_deviation"):
+        rules.append(("R11 Part A: limb-electrode reversal pattern", condition, reversed_limbs))
+    unmeasurable = flags["rhythm_unmeasurable"].fillna(False).astype(bool)
+    for condition in BEAT_CONDITIONS:
+        rules.append(("R11 Part A: no rhythm measurable", condition, unmeasurable))
+    rules.append(
+        ("R11 Part A: amplitude outlier", "lvh", flags["amplitude_outlier"].fillna(False).astype(bool))
+    )
     return rules
 
 
@@ -1577,7 +1629,7 @@ def rules(workers: int) -> None:
     counts = pd.DataFrame(rows)
     counts = counts[(counts["positives_to_undefined"] + counts["negatives_to_undefined"]) > 0]
     write_csv(counts, "rules_candidate_counts.csv")
-    receipt("rules", started, {"rows": len(counts)})
+    receipt("rules", started, {"rows": len(counts), "signal_flags_sha256": sha256_file(SIGNAL_FLAGS)})
 
 
 JUDGEMENTS = ("label error", "model error", "cannot tell")
@@ -1693,6 +1745,31 @@ SIGNAL_COLUMNS = (
 )
 
 
+def signal_flags(columns: list[str]) -> pd.DataFrame:
+    """
+    Read the Part A flag table of the train and validation records.
+
+    Parameters
+    ----------
+    columns : list[str]
+        Columns to read, with ``record_key``.
+
+    Returns
+    -------
+    pd.DataFrame
+        The columns, indexed by record key.
+
+    Raises
+    ------
+    ValueError
+        If the table holds a role other than train or validation.
+    """
+    flags = pd.read_parquet(SIGNAL_FLAGS, columns=[*columns, "role"])
+    if not flags["role"].isin(lq.OPEN_ROLES).all():
+        raise ValueError("the Part A flag table holds a closed role")
+    return flags.drop(columns="role").set_index("record_key")
+
+
 def signal_flag_overlap(judgements: pd.DataFrame) -> pd.DataFrame:
     """
     Share of Part A signal flags among all open records, the listed suspects and each review judgement.
@@ -1713,10 +1790,7 @@ def signal_flag_overlap(judgements: pd.DataFrame) -> pd.DataFrame:
     ValueError
         If the Part A table holds a role other than train or validation, or misses a reviewed record.
     """
-    flags = pd.read_parquet(SIGNAL_FLAGS, columns=["record_key", "role", *SIGNAL_COLUMNS])
-    if not flags["role"].isin(lq.OPEN_ROLES).all():
-        raise ValueError("the Part A flag table holds a closed role")
-    flags = flags.set_index("record_key")
+    flags = signal_flags(["record_key", *SIGNAL_COLUMNS])
     if not judgements["record_key"].isin(flags.index).all():
         raise ValueError("a reviewed record has no Part A flags")
     table = pd.read_parquet(lq.OUTPUT / "analysis.parquet", columns=["record_key"])

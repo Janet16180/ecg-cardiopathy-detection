@@ -400,6 +400,42 @@ def item5() -> str:
     )
 
 
+def rules_summary() -> str:
+    """
+    Candidate cleaning rules summed over sources and roles.
+
+    Returns
+    -------
+    str
+        Markdown table: per rule and condition, the sources it touches, the positives and negatives it
+        would set undefined, and their share of the defined positives and negatives of those sources.
+    """
+    table = pd.read_csv(OUT / "rules_candidate_counts.csv")
+    table = table.assign(
+        touched=(table["positives_to_undefined"] + table["negatives_to_undefined"]) > 0,
+        short=table["source"].map(SHORT),
+    )
+    rows = []
+    for (rule, condition), part in table.groupby(["rule", "condition"], sort=False):
+        touched = part[part["touched"]]
+        sources = touched.groupby("short", sort=False).size().index
+        within = part[part["short"].isin(sources)]
+        positives = touched["positives_to_undefined"].sum()
+        negatives = touched["negatives_to_undefined"].sum()
+        rows.append(
+            {
+                "rule": rule,
+                "condition": condition,
+                "sources": ", ".join(sources),
+                "positives to undefined": f"{positives} ({percent(positives / within['positives'].sum())})"
+                if within["positives"].sum()
+                else str(positives),
+                "negatives to undefined": f"{negatives} ({percent(negatives / within['negatives'].sum())})",
+            }
+        )
+    return markdown(pd.DataFrame(rows))
+
+
 def rules() -> str:
     """
     Candidate cleaning rules with the entries they would set undefined, by source and role.
@@ -442,6 +478,7 @@ SECTIONS = {
     "item4": item4,
     "review": review,
     "item5": item5,
+    "rules_summary": rules_summary,
     "rules": rules,
     "integrity": integrity,
 }

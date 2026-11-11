@@ -88,6 +88,16 @@ MODEL_KWARGS = {
 EVAL_BATCH = 256
 
 
+def full_precision() -> None:
+    """
+    Run convolutions and matrix products in full float32 without TF32, as in the benchmark (float32).
+
+    This sets process-wide torch flags.
+    """
+    torch.backends.cudnn.allow_tf32 = False
+    torch.backends.cuda.matmul.allow_tf32 = False
+
+
 def check_roles(roles: Iterable[str]) -> tuple[str, ...]:
     """
     Allow only the train and validation roles.
@@ -644,7 +654,8 @@ def predict(
     Three-seed S-R probabilities of raw cached windows.
 
     The input path is the training one: rail value for missing samples, 100 Hz, the saved training
-    standardizer, four 2.5 s windows, mean probability over windows, then mean over seeds.
+    standardizer, four 2.5 s windows, mean probability over windows, then mean over seeds. TF32 is switched
+    off (``full_precision``), as in training.
 
     Parameters
     ----------
@@ -670,6 +681,7 @@ def predict(
     waveforms = np.asarray(waveforms, dtype=np.float32)
     if waveforms.ndim != 3 or waveforms.shape[1:] != (LEADS, SAMPLES):
         raise ValueError(f"expected [records, 12, 5000] waveforms, got {waveforms.shape}")
+    full_precision()
     settings = read_json(Path(directory) / "settings.json")
     signals = standardize(to_model_rate(waveforms), settings["normalization"])
     probabilities = [

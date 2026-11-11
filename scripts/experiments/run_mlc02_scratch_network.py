@@ -18,7 +18,7 @@ import torch
 
 from ecg_experiment.files import read_json
 from ecg_experiment.gpu import gpu_lock
-from ecg_experiment.mlc02_scratch_network import CANDIDATE_DIR, FAMILIES, SEEDS
+from ecg_experiment.mlc02_scratch_network import CANDIDATE_DIR, FAMILIES, SEEDS, full_precision
 from ecg_experiment.mlc02_scratch_runs import (
     check_predict,
     overfit_check,
@@ -86,6 +86,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--threads", type=int, default=4)
     args = parser.parse_args(argv)
     torch.set_num_threads(args.threads)
+    full_precision()
     if args.step == "prepare":
         result = prepare()
     elif args.step in ("profile", "overfit", "check-predict"):

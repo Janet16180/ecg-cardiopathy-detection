@@ -13,8 +13,12 @@ Steps (each writes under ``outputs/mlc03_data_quality_20261111/labels/``; scratc
 - ``oof``: P0 integrity checks and five-fold grouped out-of-fold probabilities (item 4);
 - ``suspects``: confident learning and the 50 most suspected false positives and negatives per condition and
   source;
-- ``sheets``: review sheets of the suspects under ``outputs/mlc03_data_quality_20261111/review/labels/``;
-- ``rules``: counts of the candidate cleaning rules.
+- ``sheets``: review sheets of the suspects under ``outputs/mlc03_data_quality_20261111/review/labels/`` and
+  the reading list of the sheets read by eye;
+- ``windows``: method B on every 10 s window of the records longer than 10 s;
+- ``rules``: counts of the candidate cleaning rules;
+- ``tally``: counts of the judgements recorded by hand for the reading list, and their overlap with the Part A
+  signal flags.
 
 Run from the worktree:
 ``PYTHONPATH=<worktree> OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2 .venv/bin/python -m
@@ -1205,6 +1209,21 @@ def format_value(value: object) -> str:
     return str(value)
 
 
+def listed_suspects() -> pd.DataFrame:
+    """
+    Read the suspects of every condition written by step ``suspects``.
+
+    Returns
+    -------
+    pd.DataFrame
+        Rows of ``suspects/<condition>.csv`` in ``CONDITIONS`` order.
+    """
+    return pd.concat(
+        pd.read_csv(lq.OUTPUT / f"suspects/{condition}.csv", dtype={"record_key": str})
+        for condition in CONDITIONS
+    )
+
+
 def sheet_task(rows: list[dict[str, object]]) -> int:
     """
     Plot the review sheets of some suspects.
@@ -1277,7 +1296,9 @@ def sheets(workers: int) -> None:
                 }
             )
     written = sum(parallel(sheet_task, [jobs[i : i + 40] for i in range(0, len(jobs), 40)], workers))
-    receipt("sheets", started, {"sheets": written})
+    reading = lq.reading_list(listed_suspects())
+    reading.to_csv(lq.REVIEW / "reading_list.csv", index=False)
+    receipt("sheets", started, {"sheets": written, "reading_list": len(reading)})
 
 
 def windows(workers: int) -> None:
@@ -1450,6 +1471,17 @@ def candidate_rules(
         for column in (first, second):
             if column.startswith("b_"):
                 rules.append((f"R4 contradictory pair {first[2:]} + {second[2:]}", column[2:], both))
+    unstated = ~lq.rhythm_stated(table)
+    for condition in ("sinus_tachycardia", "sinus_bradycardia", "sinus_arrhythmia"):
+        rules.append(("R9 sinus rate or rhythm label where no rhythm is stated", condition, unstated))
+    rules.append(("R9b atrial fibrillation or flutter where no rhythm is stated", "af_or_flutter", unstated))
+    rules.append(
+        (
+            "R10 LVH negative meeting a voltage criterion (voltage alone stays undefined)",
+            "lvh",
+            (table["b_lvh"] == 0) & (table["status_b"] == "ok") & table["voltage_criterion"],
+        )
+    )
     paced = table["c_paced_rhythm"] == 1
     for column in lq.UNREADABLE:
         rules.append(("R8 paced rhythm with a conduction or repolarization label", column[2:], paced))
@@ -1573,6 +1605,12 @@ def tally(workers: int) -> None:
     judgements = pd.read_csv(lq.REVIEW / "review_judgements.csv", dtype={"record_key": str})
     if not judgements["judgement"].isin(JUDGEMENTS).all():
         raise ValueError("unknown judgement")
+    reading = pd.read_csv(lq.REVIEW / "reading_list.csv", dtype={"record_key": str})
+    key = ["condition", "kind", "source", "rank", "record_key"]
+    if sorted(map(tuple, judgements[key].astype(str).to_numpy())) != sorted(
+        map(tuple, reading[key].astype(str).to_numpy())
+    ):
+        raise ValueError("the judgements do not cover the reading list exactly")
     for _, row in judgements.iterrows():
         kind = "fp" if row["kind"] == "false_positive" else "fn"
         sheet = (
@@ -1589,14 +1627,121 @@ def tally(workers: int) -> None:
         .reset_index()
     )
     write_csv(counts, "item4_review_tally.csv")
+    by_source = (
+        pd.crosstab([judgements["source"], judgements["kind"]], judgements["judgement"])
+        .reindex(columns=list(JUDGEMENTS), fill_value=0)
+        .reset_index()
+    )
+    write_csv(by_source, "item4_review_by_source.csv")
+    write_csv(signal_flag_overlap(judgements), "item4_review_signal_flags.csv")
+    write_csv(rhythm_statement_tally(judgements), "item4_review_rhythm_statement.csv")
     receipt(
         "tally",
         started,
         {
             "sheets_read": len(judgements),
             "judgements_sha256": sha256_file(lq.REVIEW / "review_judgements.csv"),
+            "signal_flags_sha256": sha256_file(SIGNAL_FLAGS),
         },
     )
+
+
+RHYTHM_CONDITIONS = ("sinus_tachycardia", "sinus_bradycardia", "sinus_arrhythmia", "af_or_flutter")
+
+
+def rhythm_statement_tally(judgements: pd.DataFrame) -> pd.DataFrame:
+    """
+    Judgements of the rhythm and rate sheets by whether the record's annotation states a rhythm.
+
+    Parameters
+    ----------
+    judgements : pd.DataFrame
+        ``review_judgements.csv``.
+
+    Returns
+    -------
+    pd.DataFrame
+        Kind, rhythm stated or not, and the count of each judgement, over ``RHYTHM_CONDITIONS``.
+    """
+    table = pd.read_parquet(lq.OUTPUT / "analysis.parquet", columns=["record_key", "source", "raw_codes"])
+    table["rhythm_stated"] = lq.rhythm_stated(table)
+    part = judgements[judgements["condition"].isin(RHYTHM_CONDITIONS)].merge(
+        table[["record_key", "rhythm_stated"]], on="record_key", how="left", validate="many_to_one"
+    )
+    return (
+        pd.crosstab([part["kind"], part["rhythm_stated"]], part["judgement"])
+        .reindex(columns=list(JUDGEMENTS), fill_value=0)
+        .reset_index()
+    )
+
+
+SIGNAL_FLAGS = ROOT / "outputs/mlc03_data_quality_20261111/signal/flags_train_validation.parquet"
+SIGNAL_COLUMNS = (
+    "any_flag",
+    "flat_lead",
+    "near_flat_lead",
+    "reversal_la_ra",
+    "reversal_ra_ll",
+    "reversal_neutral",
+    "amplitude_outlier",
+    "baseline_wander",
+    "hf_noise",
+    "baseline_step",
+    "contact_loss",
+    "isolated_spike",
+    "rhythm_unmeasurable",
+)
+
+
+def signal_flag_overlap(judgements: pd.DataFrame) -> pd.DataFrame:
+    """
+    Share of Part A signal flags among all open records, the listed suspects and each review judgement.
+
+    Parameters
+    ----------
+    judgements : pd.DataFrame
+        ``review_judgements.csv``.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per group (all, suspects, suspects flagged by confident learning, each judgement) with its
+        record count and the share carrying each flag of ``SIGNAL_COLUMNS``.
+
+    Raises
+    ------
+    ValueError
+        If the Part A table holds a role other than train or validation, or misses a reviewed record.
+    """
+    flags = pd.read_parquet(SIGNAL_FLAGS, columns=["record_key", "role", *SIGNAL_COLUMNS])
+    if not flags["role"].isin(lq.OPEN_ROLES).all():
+        raise ValueError("the Part A flag table holds a closed role")
+    flags = flags.set_index("record_key")
+    if not judgements["record_key"].isin(flags.index).all():
+        raise ValueError("a reviewed record has no Part A flags")
+    table = pd.read_parquet(lq.OUTPUT / "analysis.parquet", columns=["record_key"])
+    listed = listed_suspects()
+    groups = {
+        "all open records": table["record_key"],
+        "listed suspects": listed["record_key"],
+        "listed suspects with a confident-learning flag": listed.loc[listed["cl_flag"], "record_key"],
+        **{
+            f"reviewed: {judgement}": judgements.loc[judgements["judgement"] == judgement, "record_key"]
+            for judgement in JUDGEMENTS
+        },
+    }
+    rows = []
+    for name, keys in groups.items():
+        part = flags.reindex(keys.to_numpy())
+        rows.append(
+            {
+                "group": name,
+                "records": len(part),
+                "with_part_a_row": int(part["any_flag"].notna().sum()),
+                **{column: float(part[column].astype(float).mean()) for column in SIGNAL_COLUMNS},
+            }
+        )
+    return pd.DataFrame(rows)
 
 
 def main(argv: list[str] | None = None) -> None:

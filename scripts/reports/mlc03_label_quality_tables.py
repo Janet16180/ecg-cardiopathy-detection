@@ -340,11 +340,40 @@ def item4() -> str:
     wide = table.pivot_table(
         index="condition", columns="source", values="estimate", aggfunc="first", sort=False
     ).reset_index()
-    text = [markdown(wide.fillna(""))]
-    tally = OUT / "item4_review_tally.csv"
-    if tally.exists():
-        text.append(markdown(pd.read_csv(tally)))
-    return "\n\n".join(text)
+    return markdown(wide.fillna(""))
+
+
+def review() -> str:
+    """
+    Judgements of the sheets read by eye.
+
+    By condition, by source, by rhythm statement and against the Part A signal flags.
+
+    Returns
+    -------
+    str
+        Markdown tables.
+    """
+    tally = pd.read_csv(OUT / "item4_review_tally.csv")
+    tally["sheets"] = tally[["label error", "model error", "cannot tell"]].sum(axis=1)
+    tally["label error share"] = (tally["label error"] / tally["sheets"]).map(percent)
+    by_source = pd.read_csv(OUT / "item4_review_by_source.csv")
+    by_source["source"] = by_source["source"].map(SHORT)
+    rhythm = pd.read_csv(OUT / "item4_review_rhythm_statement.csv")
+    signal = pd.read_csv(OUT / "item4_review_signal_flags.csv")
+    columns = ["any_flag", "baseline_wander", "baseline_step", "isolated_spike", "flat_lead", "contact_loss"]
+    signal = signal.assign(**{column: signal[column].map(percent) for column in columns})
+    counted = ["label error", "model error", "cannot tell", "sheets"]
+    totals = tally.groupby("kind")[counted].sum().reset_index()
+    return "\n\n".join(
+        [
+            markdown(tally),
+            markdown(totals),
+            markdown(by_source),
+            markdown(rhythm),
+            markdown(signal[["group", "records", *columns]]),
+        ]
+    )
 
 
 def item5() -> str:
@@ -411,6 +440,7 @@ SECTIONS = {
     "item2": item2,
     "item3": item3,
     "item4": item4,
+    "review": review,
     "item5": item5,
     "rules": rules,
     "integrity": integrity,

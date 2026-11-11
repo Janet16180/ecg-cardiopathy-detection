@@ -1781,6 +1781,64 @@ def suspects(y: np.ndarray, p: np.ndarray, count: int = 50) -> dict[str, np.ndar
     }
 
 
+def reading_list(listed: pd.DataFrame, per_kind: int = 12) -> pd.DataFrame:
+    """
+    Sheets to read by eye: per condition and kind, the sources in turn by rank.
+
+    Parameters
+    ----------
+    listed : pd.DataFrame
+        Suspect rows with ``condition``, ``kind``, ``source``, ``rank`` and ``record_key``.
+    per_kind : int
+        Sheets per condition and kind.
+
+    Returns
+    -------
+    pd.DataFrame
+        Rank 1 of every source in ``SOURCES`` order, then rank 2, and so on, cut at ``per_kind`` rows per
+        condition and kind.
+    """
+    order = {source: position for position, source in enumerate(SOURCES)}
+    frame = listed[["condition", "kind", "source", "rank", "record_key"]].copy()
+    frame["_source"] = frame["source"].map(order)
+    parts = []
+    for _, part in frame.groupby(["condition", "kind"], sort=False):
+        parts.append(part.sort_values(["rank", "_source"], kind="stable").head(per_kind))
+    return pd.concat(parts).drop(columns="_source").reset_index(drop=True)
+
+
+RHYTHM_STATEMENTS = {
+    "scp": frozenset({"SR", "STACH", "SBRAD", "SARRH", "BIGU", "TRIGU"}) | NON_SINUS["scp"],
+    "snomed": frozenset({"426783006", "426177001", "427084000", "427393009", "426627000"})
+    | NON_SINUS["snomed"],
+}
+
+
+def rhythm_stated(table: pd.DataFrame) -> pd.Series:
+    """
+    Whether a record's annotation states a rhythm at all.
+
+    Parameters
+    ----------
+    table : pd.DataFrame
+        Rows with ``source`` and ``raw_codes``.
+
+    Returns
+    -------
+    pd.Series
+        True when a PTB-XL rhythm statement (``SR``, ``STACH``, ``SBRAD``, ``SARRH``, ``BIGU``, ``TRIGU`` or a
+        ``NON_SINUS`` statement) or a SNOMED sinus, bradycardia or ``NON_SINUS`` code is present, whatever its
+        PTB-XL likelihood.
+    """
+    stated = []
+    for source, raw in zip(table["source"], table["raw_codes"], strict=True):
+        if source == "ptbxl":
+            stated.append(bool(set(ast.literal_eval(raw)) & RHYTHM_STATEMENTS["scp"]))
+        else:
+            stated.append(bool({code for code in raw.split(",") if code} & RHYTHM_STATEMENTS["snomed"]))
+    return pd.Series(stated, index=table.index)
+
+
 GRID_ROWS = (("I", "aVR", "V1", "V4"), ("II", "aVL", "V2", "V5"), ("III", "aVF", "V3", "V6"))
 
 

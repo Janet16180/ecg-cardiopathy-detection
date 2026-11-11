@@ -201,6 +201,37 @@ def test_suspects_rank_by_self_confidence():
     assert ranked["false_negative"].tolist() == [4, 3]
 
 
+def test_reading_list_takes_sources_in_turn_by_rank():
+    rows = [
+        (kind, source, rank)
+        for kind in ("false_positive", "false_negative")
+        for source in ("georgia", "ptbxl", "ningbo")
+        for rank in range(1, 6)
+    ]
+    listed = pd.DataFrame(rows, columns=["kind", "source", "rank"]).assign(condition="lvh")
+    listed["record_key"] = listed["source"] + ":" + listed["rank"].astype(str)
+    reading = lq.reading_list(listed, per_kind=4)
+    first = reading[reading["kind"] == "false_positive"]
+    assert first["record_key"].tolist() == ["ptbxl:1", "ningbo:1", "georgia:1", "ptbxl:2"]
+    assert reading.groupby("kind").size().tolist() == [4, 4]
+
+
+def test_rhythm_statement_reads_both_vocabularies():
+    table = pd.DataFrame(
+        {
+            "source": ["ptbxl", "ptbxl", "georgia", "georgia", "cpsc_2018"],
+            "raw_codes": [
+                "{'NORM': 100.0, 'SR': 0.0}",
+                "{'IMI': 50.0}",
+                "59118001,426783006",
+                "59118001",
+                "164889003",
+            ],
+        }
+    )
+    assert lq.rhythm_stated(table).tolist() == [True, False, True, False, True]
+
+
 def test_group_folds_keep_groups_together_and_balance_sources():
     groups = np.array([f"p{i // 3}" for i in range(300)] + [f"r{i}" for i in range(200)])
     sources = np.array(["ptbxl"] * 300 + ["georgia"] * 200)

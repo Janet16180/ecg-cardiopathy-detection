@@ -921,9 +921,9 @@ def review_titles(rows: pd.DataFrame) -> list[str]:
         Two lines per record.
     """
     return [
-        f"{row.rank}. {row.record_key} ({row.source}) label {int(row.label)} score {row.score:.4g}\n"
-        f"{kr.caption(row)}"
-        for row in rows.itertuples(index=False)
+        f"{row['rank']}. {row['record_key']} ({row['source']}) label {int(row['label'])} "
+        f"score {row['score']:.4g}\n{kr.caption(row)}"
+        for _, row in rows.iterrows()
     ]
 
 

@@ -19,12 +19,14 @@ import numpy as np
 import pandas as pd
 
 from ecg_experiment.mlc02_cache_build import build, verify
+from ecg_experiment.mlc02_candidates import build_supplement
 from ecg_experiment.mlc02_features import FEATURES, profile_positions
 from ecg_experiment.mlc02_stage1 import (
     OUTPUT,
     PUBLISHED,
     attribution,
     extract,
+    extract_supplement,
     integrity,
     key04,
     profile,
@@ -44,7 +46,18 @@ def main(argv: list[str] | None = None) -> None:
     """
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
-        "step", choices=("cache", "profile", "extract", "publish", "integrity", "attribution", "key04")
+        "step",
+        choices=(
+            "cache",
+            "profile",
+            "extract",
+            "supplement-cache",
+            "supplement-extract",
+            "publish",
+            "integrity",
+            "attribution",
+            "key04",
+        ),
     )
     parser.add_argument("--extractor", choices=("xecg", "jepa", "cpc", "measurements"))
     parser.add_argument("--gpu", type=int, choices=(0, 1))
@@ -60,10 +73,19 @@ def main(argv: list[str] | None = None) -> None:
         print(
             json.dumps({key: receipt[key] for key in ("records", "sha256_cache_ok", "verify_wall_seconds")})
         )
-    elif args.step in ("profile", "extract"):
+    elif args.step == "supplement-cache":
+        receipt = build_supplement(args.directory, args.workers, command)
+        print(
+            json.dumps(
+                {key: receipt[key] for key in ("records", "all_records", "sha256_cache_ok", "wall_seconds")}
+            )
+        )
+    elif args.step in ("profile", "extract", "supplement-extract"):
         if args.extractor is None or (args.extractor != "measurements" and args.gpu is None):
             parser.error("profile and extract need --extractor, and --gpu for an encoder")
-        function = profile if args.step == "profile" else extract
+        function = {"profile": profile, "extract": extract, "supplement-extract": extract_supplement}[
+            args.step
+        ]
         result = function(args.extractor, args.gpu, args.workers)
         print(json.dumps({key: value for key, value in result.items() if key != "environment"}, indent=1))
     elif args.step == "publish":

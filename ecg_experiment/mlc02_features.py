@@ -406,6 +406,7 @@ def run_encoder(
     shard: int = SHARD,
     required_free: int = 2 * 1024**3,
     cache: Path = CACHE,
+    index_name: str = "index.csv",
 ) -> dict[str, object]:
     """
     Extract one encoder's pooled features shard by shard under the GPU's project lock.
@@ -426,6 +427,8 @@ def run_encoder(
         Free GPU bytes required before loading the model.
     cache : Path
         Waveform cache directory.
+    index_name : str
+        Cache index file.
 
     Returns
     -------
@@ -439,7 +442,7 @@ def run_encoder(
     """
     if os.environ.get("CUDA_VISIBLE_DEVICES") != str(gpu):
         raise RuntimeError(f"Set CUDA_VISIBLE_DEVICES={gpu} for GPU {gpu}")
-    index, blocks = load_cache(cache)
+    index, blocks = load_cache(cache, index_name)
     positions = index["position"].to_numpy() if positions is None else np.asarray(positions)
     identity = plan_identity(name, index, positions, shard)
     prepare(directory, identity)
@@ -505,7 +508,7 @@ def run_encoder(
     return record
 
 
-def init_measurement_worker(cache: str) -> None:
+def init_measurement_worker(cache: str, index_name: str = "index.csv") -> None:
     """
     Open the cache once per measurement process.
 
@@ -513,8 +516,10 @@ def init_measurement_worker(cache: str) -> None:
     ----------
     cache : str
         Waveform cache directory.
+    index_name : str
+        Cache index file.
     """
-    CACHE_STATE["index"], CACHE_STATE["blocks"] = load_cache(Path(cache))
+    CACHE_STATE["index"], CACHE_STATE["blocks"] = load_cache(Path(cache), index_name)
 
 
 def measurement_shard(task: dict[str, object]) -> int:
@@ -551,7 +556,12 @@ def measurement_shard(task: dict[str, object]) -> int:
 
 
 def run_measurements(
-    directory: Path, workers: int, positions: np.ndarray | None, shard: int = 512, cache: Path = CACHE
+    directory: Path,
+    workers: int,
+    positions: np.ndarray | None,
+    shard: int = 512,
+    cache: Path = CACHE,
+    index_name: str = "index.csv",
 ) -> dict[str, object]:
     """
     Extract the 130 measurements shard by shard in a process pool.
@@ -568,13 +578,15 @@ def run_measurements(
         Records per shard.
     cache : Path
         Waveform cache directory.
+    index_name : str
+        Cache index file.
 
     Returns
     -------
     dict[str, object]
         Run record written to ``run_<start time>.json``.
     """
-    index, _ = load_cache(cache)
+    index, _ = load_cache(cache, index_name)
     positions = index["position"].to_numpy() if positions is None else np.asarray(positions)
     identity = plan_identity("measurements", index, positions, shard)
     prepare(directory, identity)
@@ -590,7 +602,7 @@ def run_measurements(
         for number in pending_shards(directory, bounds)
     ]
     started = time.time()
-    with Pool(workers, initializer=init_measurement_worker, initargs=(str(cache),)) as pool:
+    with Pool(workers, initializer=init_measurement_worker, initargs=(str(cache), index_name)) as pool:
         for count, number in enumerate(pool.imap_unordered(measurement_shard, tasks)):
             print(
                 f"measurements shard {number} ({count + 1}/{len(tasks)}) {time.time() - started:.1f} s",

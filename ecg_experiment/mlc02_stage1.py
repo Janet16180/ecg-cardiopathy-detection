@@ -15,7 +15,15 @@ import pandas as pd
 from ecg_experiment import ROOT
 from ecg_experiment.cpu_screening041 import RAW_FEATURES
 from ecg_experiment.files import sha256_file, write_json_atomic
-from ecg_experiment.mlc02_cache_build import git_state, other_manifests
+from ecg_experiment.mlc02_cache_build import git_state
+from ecg_experiment.mlc02_candidates import (
+    BUILDS,
+    CANDIDATE_RECORDS,
+    FINAL,
+    SUPPLEMENT,
+    coverage,
+    read_candidates,
+)
 from ecg_experiment.mlc02_features import (
     DIMENSIONS,
     ENCODERS,
@@ -26,8 +34,7 @@ from ecg_experiment.mlc02_features import (
     run_measurements,
 )
 from ecg_experiment.mlc02_integrity import CACHES, check_cache, key04_reproduction
-from ecg_experiment.mlc02_waveforms import CACHE, MANIFEST, read_identity
-from ecg_experiment.paths import to_stored
+from ecg_experiment.mlc02_waveforms import CACHE
 
 OUTPUT = ROOT / "outputs/mlc02_condition_models_20261110"
 PUBLISHED = OUTPUT / "features"
@@ -212,9 +219,99 @@ def missing_counts(index: pd.DataFrame, values: np.ndarray, status: pd.DataFrame
     return rows
 
 
+def extract_supplement(name: str, gpu: int | None, workers: int) -> dict[str, object]:
+    """
+    Run one extractor on the candidates added to the cache after the first run.
+
+    Parameters
+    ----------
+    name : str
+        Extractor name.
+    gpu : int | None
+        Physical GPU for an encoder.
+    workers : int
+        Processes for the measurements.
+
+    Returns
+    -------
+    dict[str, object]
+        Run record of the extraction.
+    """
+    index = pd.read_csv(CACHE / "index_all.csv", dtype={"record_key": str, "raw_path": str})
+    positions = index.loc[index["block"].str.endswith(SUPPLEMENT), "position"].to_numpy()
+    directory = FEATURES / f"{name}{SUPPLEMENT}"
+    if name == "measurements":
+        return run_measurements(directory, workers, positions, index_name="index_all.csv")
+    profiled = json.loads((FEATURES / "profile" / name / "profile.json").read_text())
+    required = profiled["run"]["peak_gpu_bytes"]["reserved"] + MARGIN
+    return run_encoder(name, directory, gpu, positions, required_free=required, index_name="index_all.csv")
+
+
+def assemble_all(name: str) -> tuple[np.ndarray, pd.DataFrame | None, dict[str, object]]:
+    """
+    Concatenate the first run and the supplement of one extractor in cache-position order.
+
+    Parameters
+    ----------
+    name : str
+        Extractor name.
+
+    Returns
+    -------
+    tuple[np.ndarray, pd.DataFrame | None, dict[str, object]]
+        Features, measurement status (or None) and the timing of both parts.
+    """
+    parts = [assemble(name, FEATURES / name), assemble(name, FEATURES / f"{name}{SUPPLEMENT}")]
+    values = np.concatenate([part[0] for part in parts])
+    status = None if parts[0][1] is None else pd.concat([part[1] for part in parts], ignore_index=True)
+    return values, status, {"first_run": parts[0][2], "supplement": parts[1][2]}
+
+
+def published_rows(index: pd.DataFrame, order: np.ndarray) -> pd.DataFrame:
+    """
+    Identity, cache location and inclusion in every MLC-01 build of the published rows.
+
+    Parameters
+    ----------
+    index : pd.DataFrame
+        ``index_all.csv`` of the cache.
+    order : np.ndarray
+        Index rows in manifest order.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per candidate in manifest order, with ``included_<build>`` for every build present and the
+        final build's ``duplicate_status``.
+    """
+    columns = [
+        "manifest_row",
+        "record_key",
+        "source",
+        "role",
+        "sha256_10s",
+        "sha256_f32",
+        "missing_samples_10s",
+        "flat_leads_10s",
+        "block",
+        "row",
+    ]
+    rows = index.iloc[order][columns].rename(columns={"block": "cache_block", "row": "cache_row"})
+    rows = rows.reset_index(drop=True)
+    for name, path in BUILDS.items():
+        if path.exists():
+            candidates = read_candidates(path, CANDIDATE_RECORDS)
+            if not candidates["record_key"].equals(rows["record_key"]):
+                raise ValueError(f"{name} candidates differ from the published rows")
+            rows[f"included_{name}"] = candidates["included"].to_numpy()
+            if name == FINAL:
+                rows["duplicate_status"] = candidates["duplicate_status"].to_numpy()
+    return rows
+
+
 def publish(command: list[str]) -> dict[str, object]:
     """
-    Assemble every extractor, write the arrays locally and copy them with a receipt to the outputs.
+    Assemble every extractor for every candidate in manifest order and copy the arrays with a receipt.
 
     Parameters
     ----------
@@ -229,55 +326,48 @@ def publish(command: list[str]) -> dict[str, object]:
     Raises
     ------
     ValueError
-        If a later manifest differs in identity, or an array is malformed.
+        If a build differs in identity, its included set is not fully covered, or an array is malformed.
     """
-    index = pd.read_csv(CACHE / "index.csv", dtype={"record_key": str})
-    identity = read_identity(MANIFEST)
-    if not identity["record_key"].reset_index(drop=True).equals(index["record_key"]):
-        raise ValueError("Cache index differs from the manifest order")
-    manifests = {
-        "manifest": to_stored(MANIFEST),
-        "manifest_sha256": sha256_file(MANIFEST),
-        "other_manifests": other_manifests(),
-    }
+    index = pd.read_csv(CACHE / "index_all.csv", dtype={"record_key": str, "raw_path": str})
+    order = np.argsort(index["manifest_row"].to_numpy(), kind="stable")
+    rows = published_rows(index, order)
+    covered = coverage(rows)
+    for name, record in covered.items():
+        if record["present"] and not (
+            record["identity_equal"] and record["included_covered"] == record["included"]
+        ):
+            raise ValueError(f"{name}: identity differs or its included set is not covered")
     local = FEATURES / "final"
     local.mkdir(parents=True, exist_ok=True)
     PUBLISHED.mkdir(parents=True, exist_ok=True)
     extractors = {}
+    final = rows[f"included_{FINAL}"].to_numpy()
     for name in (*ENCODERS, "measurements"):
-        values, status, timing = assemble(name, FEATURES / name)
+        values, status, timing = assemble_all(name)
         if values.shape != (len(index), DIMENSIONS[name]):
             raise ValueError(f"{name}: shape {values.shape}")
         if name != "measurements" and not np.isfinite(values).all():
             raise ValueError(f"{name}: nonfinite features")
+        values = values[order]
         np.save(local / f"{name}.npy", values)
         if status is not None:
-            status.insert(0, "record_key", index["record_key"].to_numpy())
+            status = status.iloc[order].reset_index(drop=True)
+            status.insert(0, "record_key", rows["record_key"].to_numpy())
             status.to_csv(local / "measurements_status.csv", index=False)
-            extractors["measurements_missing"] = missing_counts(index, values, status)
-        profiled = json.loads((FEATURES / "profile" / name / "profile.json").read_text())
+            extractors["measurements_missing"] = missing_counts(rows, values, status)
+            extractors[f"measurements_missing_included_{FINAL}"] = missing_counts(
+                rows[final], values[final], status[final].reset_index(drop=True)
+            )
         extractors[name] = {
             "shape": list(values.shape),
             "dtype": str(values.dtype),
             "plan": json.loads((FEATURES / name / "plan.json").read_text()),
+            "plan_supplement": json.loads((FEATURES / f"{name}{SUPPLEMENT}" / "plan.json").read_text()),
             "runs": runs(FEATURES / name),
+            "runs_supplement": runs(FEATURES / f"{name}{SUPPLEMENT}"),
             "timing": timing,
-            "profile": profiled,
+            "profile": json.loads((FEATURES / "profile" / name / "profile.json").read_text()),
         }
-    rows = index[
-        [
-            "position",
-            "record_key",
-            "source",
-            "role",
-            "block",
-            "row",
-            "sha256_10s",
-            "sha256_f32",
-            "missing_samples_10s",
-            "flat_leads_10s",
-        ]
-    ]
     rows.to_csv(local / "rows.csv", index=False)
     files = [*(f"{name}.npy" for name in (*ENCODERS, "measurements")), "measurements_status.csv", "rows.csv"]
     for file in files:
@@ -285,13 +375,15 @@ def publish(command: list[str]) -> dict[str, object]:
     receipt = {
         "stage": "mlc02_stage1_features",
         "command": command,
-        "records": len(index),
-        **manifests,
+        "records": len(rows),
+        "coverage": covered,
         "waveform_cache": {
             "directory": str(CACHE),
             "receipt_sha256": sha256_file(CACHE / "receipt.json"),
-            "index_sha256": sha256_file(CACHE / "index.csv"),
+            "receipt_supplement_sha256": sha256_file(CACHE / "receipt_supplement.json"),
+            "index_all_sha256": sha256_file(CACHE / "index_all.csv"),
             "receipt": json.loads((CACHE / "receipt.json").read_text()),
+            "receipt_supplement": json.loads((CACHE / "receipt_supplement.json").read_text()),
         },
         "files_sha256": {file: sha256_file(PUBLISHED / file) for file in files},
         "local_copy_sha256_equal": all(
@@ -303,9 +395,12 @@ def publish(command: list[str]) -> dict[str, object]:
         "python": sys.version,
         "packages": package_versions(),
         "rules": {
+            "records": "every MLC-01 candidate (no exclusion reason: readable, twelve leads, 500 Hz, "
+            "at least 10 s), whether or not a build includes it; select a build with included_<build> in "
+            "rows.csv",
             "missing_samples": "WFDB missing samples (format-16 value -32768, gain 1000) set to -32.768 mV "
             "before every extractor",
-            "row_order": "rows.csv: included MLC-01 manifest records in manifest order",
+            "row_order": "rows.csv and every array: candidates in manifest order",
         },
     }
     write_json_atomic(PUBLISHED / "receipt.json", receipt)
@@ -319,7 +414,7 @@ def integrity(features: Path, output: Path, positions: np.ndarray | None) -> pd.
     Parameters
     ----------
     features : Path
-        Directory with ``<extractor>.npy`` in index order (published), or the profile root.
+        Published directory (``<extractor>.npy`` aligned to ``rows.csv``), or the profile root.
     output : Path
         Directory for ``integrity.csv``, ``integrity.json`` and ``integrity_worst.csv``.
     positions : np.ndarray | None
@@ -330,9 +425,12 @@ def integrity(features: Path, output: Path, positions: np.ndarray | None) -> pd.
     pd.DataFrame
         One row per cache and extractor.
     """
-    index = pd.read_csv(CACHE / "index.csv", dtype={"record_key": str})
-    if positions is not None:
-        index = index.iloc[positions].reset_index(drop=True)
+    if positions is None:
+        index = pd.read_csv(features / "rows.csv", dtype={"record_key": str})
+    else:
+        index = (
+            pd.read_csv(CACHE / "index.csv", dtype={"record_key": str}).iloc[positions].reset_index(drop=True)
+        )
     loaded = {}
     for name in (*ENCODERS, "measurements"):
         if positions is None:

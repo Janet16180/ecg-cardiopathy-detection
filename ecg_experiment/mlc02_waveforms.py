@@ -505,21 +505,25 @@ def verify_chunk(task: dict[str, object]) -> list[dict[str, object]]:
     return results
 
 
-def load_cache(directory: Path = CACHE) -> tuple[pd.DataFrame, dict[str, np.memmap]]:
+def load_cache(
+    directory: Path = CACHE, index_name: str = "index.csv"
+) -> tuple[pd.DataFrame, dict[str, np.memmap]]:
     """
     Open the cache index and every block array read-only.
 
     Parameters
     ----------
     directory : Path
-        Cache directory holding ``index.csv`` and the block files.
+        Cache directory holding the index and the block files.
+    index_name : str
+        Index file: ``index.csv`` (included records) or ``index_all.csv`` (every candidate record).
 
     Returns
     -------
     tuple[pd.DataFrame, dict[str, np.memmap]]
         The index and the block arrays by name.
     """
-    index = pd.read_csv(directory / "index.csv", dtype={"record_key": str, "raw_path": str})
+    index = pd.read_csv(directory / index_name, dtype={"record_key": str, "raw_path": str})
     blocks = {name: open_block(directory, name, size, "r") for name, size in block_sizes(index).items()}
     return index, blocks
 

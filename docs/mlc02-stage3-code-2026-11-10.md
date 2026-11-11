@@ -13,7 +13,8 @@ because candidate F was still training.
 | `ecg_experiment/mlc02_stage3_evaluate.py` | `evaluate` from saved test predictions only, and its validation dry run |
 | `ecg_experiment/mlc02_calibration.py` | Logistic recalibration by damped Newton (see "Calibration fits") |
 | `scripts/experiments/run_mlc02_stage3.py` | Command line: `select`, `fix`, `test-predict`, `evaluate` |
-| `tests/test_mlc02_stage3.py` | 17 tests |
+| `tests/test_mlc02_stage3.py` | 18 tests |
+| `scripts/validation/check_mlc02_calibration_agreement.py` | Agreement of the damped fit with the library and sklearn on validation |
 
 Every metric, the selection metric, the tie rule, the 90% specificity threshold, the bootstrap and the paired
 comparison come from the tested scoring library (`mlc02_evaluation`, `mlc02_bootstrap`); the new modules
@@ -263,18 +264,50 @@ On the validation predictions of this record:
 
 `mlc02_evaluation.py` is pinned by the Stage 2 receipts and was not changed. `mlc02_calibration.py` maximizes
 the same likelihood by Newton steps halved until the log-likelihood does not decrease, starting from the
-identity `(a, b) = (0, 1)`.
+identity `(a, b) = (0, 1)`. The resampled fits start at the observed estimate.
 
-- On all 750 cells (140 pooled and 610 per source) it converged.
-- Where the library converged, the two agree within 2.8e-14.
-- It agrees with sklearn within 1.3e-7 (sklearn's tolerance).
-- On perfectly separated data it returns NaN, as it should (tested).
+**Addendum 2** of the MLC-02 protocol (the lead's ruling of 10 November 2026, on
+`research/mlc02-condition-models-20261110`) makes the damped fit primary:
 
-The resampled fits start at the observed estimate.
+1. the validation Platt calibration and the SPH calibration-half refit use it;
+2. the reported calibration slope and joint intercept are the damped ones, bootstrapped on the same
+   resamples, with the library's values beside them;
+3. nothing else changes.
+
+The code follows it: `fix` and the secondary analysis call `fit_platt_damped`. `evaluate` writes the damped
+tables (`raw_calibration_damped`, `platt_calibration_damped`) and the library's columns (in `raw` and `platt`),
+records `calibration_rule`, and counts the library's failures in `library_calibration_failures`. Calibration
+in the large stays the library's one-parameter fit.
+
+Agreement on the validation predictions of the provisional record (written at `a4d5278`), computed at commit
+`7d34e8a`. Command:
+
+```
+OPENBLAS_NUM_THREADS=8 OMP_NUM_THREADS=8 PYTHONPATH=. .venv/bin/python \
+    -m scripts.validation.check_mlc02_calibration_agreement --output <stage3 directory> \
+    --report <stage3 directory>/calibration_agreement.json
+```
+
+run here with `--output <scratch>/stage3_committed`. Report:
+`<scratch>/stage3_committed/calibration_agreement.json`.
+
+| quantity | value |
+|---|---|
+| cells (10 candidates; 140 pooled, 610 per source, each with at least 20 positives and 20 negatives) | 750 |
+| damped fit converged | 750 of 750 |
+| library converged | 657 (13 pooled and 80 per-source failures) |
+| largest absolute difference, damped minus library, where the library converged | 2.8e-14 |
+| largest absolute difference, damped minus sklearn, the 140 pooled cells | 1.3e-7 |
+| same, the 93 cells where the library failed | 5.6e-8 |
+| same, all 750 cells | 8.0e-7 |
+
+The largest difference from sklearn (8.0e-7) is G-M, left axis deviation, PTB-XL fold 9: 866 records, 121
+positives, nearly separated. There the damped estimate has the higher log-likelihood, by 8.0e-12, so sklearn
+stopped short of the optimum. The same holds at the next two cells (1.3e-7 and 1.25e-7).
 
 ## Tests and checks
 
-- `tests/test_mlc02_stage3.py`, 17 tests:
+- `tests/test_mlc02_stage3.py`, 18 tests:
   - E's family rule: best member per family, F replacing H-X, variants never twice, exact equality to the
     earlier candidate, refusal of E as a member and of fewer than three families;
   - the tie rule with E last;
@@ -285,6 +318,10 @@ The resampled fits start at the observed estimate.
     leave every threshold unchanged;
   - the damped Platt fit: recovery of `(a, b) = (-0.7, 1.6)`, equality with the library where it converges,
     NaN under separation, intervals around the point estimate;
+  - a well-separated synthetic case (15,000 records; 2% from N(2, 1.5) and 98% from N(-12, 1.5) on the logit
+    scale; labels drawn from the calibrated probabilities; logits taken after the library's clipping). There
+    the library's fit and `fit_platt` fail. The damped fit matches sklearn within 1e-5, recovers the identity
+    within 0.4 (intercept) and 0.25 (slope), and has no failed resample in 50;
   - on the real G-M left-axis-deviation validation scores, the library returns NaN and the damped fit matches
     sklearn within 1e-5;
   - the guards: `select` and `fix` refusing to overwrite and closing after a test file appears; `test-predict`
@@ -294,7 +331,7 @@ The resampled fits start at the observed estimate.
   - an audit hook on `open` showing that `select` and `fix` open no test-role file, feature array or waveform
     block, on synthetic candidates with test-role files planted beside them and on the real outputs;
   - `evaluate_sets` end to end on synthetic sets, including the selected-equals-P0 case.
-- `tests/test_mlc02_*.py` together: 110 passed at `5e40dac`, with no GPU visible.
+- `tests/test_mlc02_*.py` together: 111 passed at `7d34e8a`, with no GPU visible.
 - `ruff check ecg_experiment scripts tests conftest.py`: passed.
 - The dry runs above were run by `<scratch>/rerun_committed.sh` (`select --allow-missing F`, `fix`, the two
   `test-predict --dry-run-role validation --device cpu` runs, then `evaluate --dry-run-validation-standin`),
@@ -324,12 +361,9 @@ The resampled fits start at the observed estimate.
 
 All dated 10 November 2026.
 
-1. **Calibration fits by damped Newton** (previous section). The Platt calibration of `fix` and of the SPH
-   secondary analysis uses `fit_platt_damped`, the same estimator as the library's `fit_platt`, which does not
-   converge on 13 validation fits. `evaluate` keeps the library's calibration columns as computed and puts the
-   damped ones beside them. *Ruling requested:* which slope the results report calls primary. My proposal is
-   the damped fit, since it is the maximum-likelihood fit the protocol names, with the library's value beside
-   it.
+1. **Calibration fits by damped Newton**, ruled by Addendum 2 (see "Calibration fits"). The damped fit is
+   primary for the validation Platt calibration, the SPH calibration-half refit, and the reported slope and
+   joint intercept. The library's values are listed beside them with the count of failures.
 2. **E's rule.** The family definition is the lead's: same input features, different head. H-All also reads
    the xECG features, but its inputs are not the same as H-X's, so it is its own family. Inside E, the best
    member and the family ranking use the exact metric (earlier in the table on exact equality), not the 0.001

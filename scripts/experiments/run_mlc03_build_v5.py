@@ -30,6 +30,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from ecg_experiment import ROOT
 from ecg_experiment import mlc03_dataset_v5 as mv
 from ecg_experiment import mlc03_label_quality as lq
 from ecg_experiment.files import sha256_file, write_json_atomic
@@ -85,6 +86,23 @@ def log(message: str) -> None:
         Text.
     """
     print(f"{time.strftime('%H:%M:%S')} {message}", flush=True)
+
+
+def stored_name(path: Path) -> str:
+    """
+    Repository-relative name of a path, or the absolute name of a local scratch file outside the repository.
+
+    Parameters
+    ----------
+    path : Path
+        Input file.
+
+    Returns
+    -------
+    str
+        Name for the receipt.
+    """
+    return to_stored(path) if Path(os.path.abspath(path)).is_relative_to(ROOT) else str(path)
 
 
 def edac() -> str | None:
@@ -632,7 +650,7 @@ def build(workers: int, output: Path, command: list[str]) -> dict[str, object]:
         "output": to_stored(output),
         "git": git,
         "code_sha256": code_sha256(CODE),
-        "inputs_sha256": {to_stored(path): sha256_file(path) for path in INPUTS},
+        "inputs_sha256": {stored_name(path): sha256_file(path) for path in INPUTS},
         "threads": {name: os.environ.get(name) for name in THREADS},
         "workers": workers,
         "packages": {name: version(name) for name in PACKAGES},

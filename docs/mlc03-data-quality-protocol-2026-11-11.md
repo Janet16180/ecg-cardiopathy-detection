@@ -139,3 +139,15 @@ scripts only, with tests. `docs/mlc03-signal-quality-results-2026-11-11.md`,
 `docs/mlc03-label-quality-results-2026-11-11.md`, the amendment with the rules, the v5 build and
 its report, `docs/mlc03-data-quality-results-2026-11-11.md` written from the outputs, queue and
 backlog updates.
+
+## Addendum 1 (11 November 2026, before any label-quality result)
+
+Two public PhysioNet references are added to estimate the error of the measurements used in
+Part B, beside the two-method agreement named there:
+
+1. PTB-XL+ 1.0.1 feature tables (measurements of two commercial algorithms on PTB-XL). Only
+   rows of PTB-XL folds 1 to 9 are read; fold 10 rows are not.
+2. LUDB 1.0.1 (200 records with manual wave onsets and offsets).
+
+Neither supplies a label for the 14 conditions, and neither enters training. A measurement whose
+error against these references is too large to judge a label is reported as such.

@@ -1,4 +1,4 @@
-"""Tests of the MLC-03 label-quality code: new measurements, source comparison, confident learning, role guard."""
+"""Tests of the MLC-03 label-quality code: measurements, source comparison, confident learning, role guard."""
 
 from pathlib import Path
 
@@ -44,9 +44,11 @@ def test_frontal_axis_follows_the_heart_vector():
 def test_terminal_right_anterior_delay_gives_rsr_prime_in_v1():
     result, _ = measured(qrs_ms=140, rbbb=1)
     plain, _ = measured(qrs_ms=90)
-    assert result["v1_positive_peaks"] >= 2 and result["v1_terminal_mv"] > 0
+    assert result["v1_positive_peaks"] >= 2
+    assert result["v1_terminal_mv"] > 0
     assert result["term_I"] < 0
-    assert plain["v1_positive_peaks"] <= 1 and plain["v1_terminal_mv"] < 0
+    assert plain["v1_positive_peaks"] <= 1
+    assert plain["v1_terminal_mv"] < 0
     assert result["qrs_ms"] >= 130
 
 
@@ -70,12 +72,14 @@ def test_st_depression_and_t_inversion_levels():
     levels = mm.synthetic_levels(truth)
     assert abs(depressed["st60_II"] - levels["st60_II"]) < 0.05
     inverted, _ = measured(t_mv=-0.3)
-    assert inverted["t_II"] < -0.15 and inverted["t_V5"] < -0.1
+    assert inverted["t_II"] < -0.15
+    assert inverted["t_V5"] < -0.1
 
 
 def test_q_wave_of_a_negative_qrs_spans_the_complex():
     result, _ = measured(axis_deg=110)
-    assert result["qdur_I"] >= 60 and result["r_I"] < 0.2
+    assert result["qdur_I"] >= 60
+    assert result["r_I"] < 0.2
 
 
 def test_flat_record_is_reported_not_measured():
@@ -92,16 +96,27 @@ def test_synthetic_limb_leads_obey_einthoven():
 def test_q_wave_rules():
     assert mm.q_wave(np.array([0.0, 0.1, 0.5, 0.2, -0.1])) == (0.0, 0.0)
     duration, depth = mm.q_wave(np.array([0.0, -0.05, -0.2, -0.1, 0.3, 0.5] + [0.4] * 10))
-    assert duration == 8.0 and depth == pytest.approx(0.2)
+    assert duration == 8.0
+    assert depth == pytest.approx(0.2)
 
 
 def test_consensus_keeps_method_b_where_both_agree():
-    table = pd.DataFrame({"hr_a": [60.0, 60.0, np.nan], "hr_b": [62.0, 80.0, 70.0],
-                          "qrs_a": [100.0, 100.0, 100.0], "qrs_b": [110.0, 130.0, np.nan],
-                          "pr_a": [150.0, np.nan, 150.0], "pr_b": [160.0, 150.0, 200.0],
-                          "axis_a": [175.0, 0.0, 0.0], "axis_b": [-175.0, 30.0, 10.0]})
+    table = pd.DataFrame(
+        {
+            "hr_a": [60.0, 60.0, np.nan],
+            "hr_b": [62.0, 80.0, 70.0],
+            "qrs_a": [100.0, 100.0, 100.0],
+            "qrs_b": [110.0, 130.0, np.nan],
+            "pr_a": [150.0, np.nan, 150.0],
+            "pr_b": [160.0, 150.0, 200.0],
+            "axis_a": [175.0, 0.0, 0.0],
+            "axis_b": [-175.0, 30.0, 10.0],
+        }
+    )
     out = lq.consensus(table)
-    assert out["hr"].tolist()[0] == 62.0 and np.isnan(out["hr"].iloc[1]) and np.isnan(out["hr"].iloc[2])
+    assert out["hr"].tolist()[0] == 62.0
+    assert np.isnan(out["hr"].iloc[1])
+    assert np.isnan(out["hr"].iloc[2])
     assert out["axis_agree"].tolist() == [True, False, True]
     assert out["qrs_both"].tolist() == [True, True, False]
 
@@ -128,8 +143,9 @@ def prevalence_table(rates: dict[str, float], n: int) -> pd.DataFrame:
 def test_matched_prevalence_flags_a_two_fold_difference_with_disjoint_intervals(monkeypatch):
     table = prevalence_table({"ptbxl": 0.6, "ningbo": 0.2, "georgia": 0.55}, 400)
     table["status_b"] = "ok"
-    monkeypatch.setitem(lq.MATCHED, "toy", {"label": "label", "measure": "value", "population": "measured",
-                                            "bins": (40, 60)})
+    monkeypatch.setitem(
+        lq.MATCHED, "toy", {"label": "label", "measure": "value", "population": "measured", "bins": (40, 60)}
+    )
     prevalence = lq.matched_prevalence(table, "toy")
     pairs = lq.inconsistent_bins(prevalence).set_index(["higher", "lower"])
     assert pairs.loc[("ptbxl", "ningbo"), "inconsistent"]
@@ -140,10 +156,12 @@ def test_matched_prevalence_flags_a_two_fold_difference_with_disjoint_intervals(
 def test_matched_prevalence_needs_disjoint_intervals_and_enough_records(monkeypatch):
     table = prevalence_table({"ptbxl": 0.2, "ningbo": 0.08}, 40)
     table["status_b"] = "ok"
-    monkeypatch.setitem(lq.MATCHED, "toy", {"label": "label", "measure": "value", "population": "measured",
-                                            "bins": (40, 60)})
+    monkeypatch.setitem(
+        lq.MATCHED, "toy", {"label": "label", "measure": "value", "population": "measured", "bins": (40, 60)}
+    )
     pairs = lq.inconsistent_bins(lq.matched_prevalence(table, "toy"))
-    assert pairs["ratio"].iloc[0] >= 2 and not pairs["inconsistent"].iloc[0]
+    assert pairs["ratio"].iloc[0] >= 2
+    assert not pairs["inconsistent"].iloc[0]
     assert lq.inconsistent_bins(lq.matched_prevalence(table, "toy"), minimum=41).empty
 
 
@@ -168,7 +186,9 @@ def test_confident_learning_recovers_planted_label_noise():
 def test_confident_learning_finds_little_without_noise():
     rng = np.random.default_rng(6)
     truth = (rng.random(5000) < 0.3).astype(int)
-    probability = 1 / (1 + np.exp(-np.where(truth == 1, rng.normal(3, 1, truth.size), rng.normal(-3, 1, truth.size))))
+    probability = 1 / (
+        1 + np.exp(-np.where(truth == 1, rng.normal(3, 1, truth.size), rng.normal(-3, 1, truth.size)))
+    )
     result = lq.confident_learning(truth, probability)
     assert result["estimated_false_positives"] + result["estimated_false_negatives"] < 25
 
@@ -198,30 +218,52 @@ def test_open_roles_refuse_test_roles(role):
 
 
 def test_loader_never_parses_closed_rows(tmp_path: Path):
-    columns = [*lq.STRUCTURE, *[f"b_{c}" for c in CONDITIONS], *[f"c_{c}" for c in lq.EXTRA_LABELS],
-               *[f"flat_{lead}" for lead in mm.LEADS]]
+    columns = [
+        *lq.STRUCTURE,
+        *[f"b_{c}" for c in CONDITIONS],
+        *[f"c_{c}" for c in lq.EXTRA_LABELS],
+        *[f"flat_{lead}" for lead in mm.LEADS],
+    ]
     rows = []
-    for key, role, value in (("a", "train", "1"), ("b", "test_external", "not-a-number"),
-                             ("c", "validation", ""), ("d", "test_same_source", "oops")):
+    for key, role, value in (
+        ("a", "train", "1"),
+        ("b", "test_external", "not-a-number"),
+        ("c", "validation", ""),
+        ("d", "test_same_source", "oops"),
+    ):
         row = dict.fromkeys(columns, "")
-        row |= {"record_key": key, "role": role, "included": "True", "source": "ptbxl", "raw_codes": "{}",
-                "b_lvh": value, "age": "50", "duration_s": "10", "n_flat_leads": "0", "n_missing_leads": "0"}
+        row |= {
+            "record_key": key,
+            "role": role,
+            "included": "True",
+            "source": "ptbxl",
+            "raw_codes": "{}",
+            "b_lvh": value,
+            "age": "50",
+            "duration_s": "10",
+            "n_flat_leads": "0",
+            "n_missing_leads": "0",
+        }
         rows.append(row)
     path = tmp_path / "manifest.csv"
     pd.DataFrame(rows, columns=columns).to_csv(path, index=False)
     frame = lq.load_open_records(path)
     assert frame["record_key"].tolist() == ["a", "c"]
-    assert frame["b_lvh"].iloc[0] == 1.0 and np.isnan(frame["b_lvh"].iloc[1])
+    assert frame["b_lvh"].iloc[0] == 1.0
+    assert np.isnan(frame["b_lvh"].iloc[1])
 
 
 def test_undefined_reasons_follow_the_label_rules():
     none = frozenset()
     assert lq.undefined_reason("sinus_tachycardia", "cpsc_2018", frozenset({"59118001"}), none).startswith(
-        "not annotated")
+        "not annotated"
+    )
     ptb = lq.record_codes("ptbxl", "{'SR': 0.0}", "LAD")
     assert lq.undefined_reason("left_axis_deviation", "ptbxl", ptb, none) == "ambiguous: axis:LAD"
     both = frozenset({"713427006", "713426002"})
-    assert lq.undefined_reason("complete_rbbb", "georgia", both, none) == "contradictory pair: incomplete_rbbb"
+    assert (
+        lq.undefined_reason("complete_rbbb", "georgia", both, none) == "contradictory pair: incomplete_rbbb"
+    )
     flagged = frozenset({("georgia", "b_mi_any")})
     assert lq.undefined_reason("mi_any", "georgia", frozenset({"426783006"}), flagged) == "minimum positives"
 

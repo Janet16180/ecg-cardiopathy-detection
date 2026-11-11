@@ -3,9 +3,9 @@ Label-quality audit of MLC-03 Part B on the train and validation records of the 
 
 ``docs/mlc03-data-quality-protocol-2026-11-11.md`` (Part B) is the contract. Everything here reads records of
 roles ``train`` and ``validation`` only: ``open_manifest_lines`` reads the role column first and the manifest
-rows of every other role are never parsed (``load_open_records``); the feature, measurement and PTB-XL+ readers
-take the keys of those records only. No label is changed here. Rules that would set a label undefined or exclude
-a record are counted (``proposed_rule_masks``) for a later protocol amendment.
+rows of every other role are never parsed (``load_open_records``); the feature, measurement and PTB-XL+
+readers take the keys of those records only. No label is changed here. Rules that would set a label undefined
+or exclude a record are counted (``proposed_rule_masks``) for a later protocol amendment.
 
 Measurements come from two methods. Method A is MLC-02's frozen extractor, read from the stored 130-column
 array. Method B is ``mlc03_measurements.measure_record``. ``consensus`` keeps method B's value where both
@@ -27,10 +27,10 @@ import numpy as np
 import pandas as pd
 
 from ecg_experiment import ROOT, mlc_labels
+from ecg_experiment.measurement_extractor042 import FEATURE_NAMES
 from ecg_experiment.mlc02_data import CONDITIONS, MANIFEST
 from ecg_experiment.mlc02_feature_data import LOCAL, aligned_rows
 from ecg_experiment.mlc03_measurements import LEADS, UPRIGHT_T
-from ecg_experiment.measurement_extractor042 import FEATURE_NAMES
 from ecg_experiment.referral_budget import wilson_interval
 
 OPEN_ROLES = ("train", "validation")
@@ -42,20 +42,67 @@ PTBXL_PLUS = ROOT / "data/raw/ptb-xl-plus/1.0.1/features"
 LUDB = ROOT / "data/raw/ludb/1.0.1"
 SEED = 20261111
 SOURCES = ("ptbxl", "ningbo", "chapman_shaoxing", "georgia", "cpsc_2018", "cpsc_2018_extra")
-EXTRA_LABELS = ("complete_lbbb", "lpfb", "right_axis_deviation", "preexcitation", "paced_rhythm",
-                "supraventricular_tachycardia", "atrial_fibrillation", "atrial_flutter", "premature_atrial_complex")
-STRUCTURE = ("record_key", "source", "family", "role", "origin", "group_id", "included", "sex", "age",
-             "duration_s", "n_flat_leads", "n_missing_leads", "raw_codes", "heart_axis")
-NON_SINUS = {"scp": frozenset({"AFIB", "AFLT", "SVTAC", "PSVT", "PACE", "SVARR"}),
-             "snomed": frozenset({"164889003", "164890007", "195080001", "426749004", "282825002", "314208002",
-                                  "426761007", "67198005", "713422000", "233897008", "251166008", "426648003",
-                                  "10370003", "164895002", "425856008", "29320008", "426664006"})}
+EXTRA_LABELS = (
+    "complete_lbbb",
+    "lpfb",
+    "right_axis_deviation",
+    "preexcitation",
+    "paced_rhythm",
+    "supraventricular_tachycardia",
+    "atrial_fibrillation",
+    "atrial_flutter",
+    "premature_atrial_complex",
+)
+STRUCTURE = (
+    "record_key",
+    "source",
+    "family",
+    "role",
+    "origin",
+    "group_id",
+    "included",
+    "sex",
+    "age",
+    "duration_s",
+    "n_flat_leads",
+    "n_missing_leads",
+    "raw_codes",
+    "heart_axis",
+    "raw_path",
+)
+NON_SINUS = {
+    "scp": frozenset({"AFIB", "AFLT", "SVTAC", "PSVT", "PACE", "SVARR"}),
+    "snomed": frozenset(
+        {
+            "164889003",
+            "164890007",
+            "195080001",
+            "426749004",
+            "282825002",
+            "314208002",
+            "426761007",
+            "67198005",
+            "713422000",
+            "233897008",
+            "251166008",
+            "426648003",
+            "10370003",
+            "164895002",
+            "425856008",
+            "29320008",
+            "426664006",
+        }
+    ),
+}
 TOLERANCE = {"hr": 5.0, "qrs": 15.0, "pr": 25.0, "axis": 20.0}
 P_SNR_MIN = 3.0
 P_AMP_MIN = 0.02
 IRREGULAR_NRMSSD = 0.10
-GROUPS_ST = {"lateral": ("I", "aVL", "V5", "V6"), "inferior": ("II", "III", "aVF"),
-             "anterior": ("V1", "V2", "V3", "V4")}
+GROUPS_ST = {
+    "lateral": ("I", "aVL", "V5", "V6"),
+    "inferior": ("II", "III", "aVF"),
+    "anterior": ("V1", "V2", "V3", "V4"),
+}
 GROUPS_Q = {"lateral": ("I", "aVL"), "precordial": ("V2", "V3", "V4", "V5", "V6"), "inferior": ("II", "aVF")}
 
 
@@ -130,8 +177,8 @@ def load_open_records(path: Path = MANIFEST, roles: tuple[str, ...] = OPEN_ROLES
     Returns
     -------
     pd.DataFrame
-        ``STRUCTURE`` columns, the 14 space-B states as ``b_<condition>`` (1.0, 0.0, NaN), the space-C states of
-        ``EXTRA_LABELS`` as ``c_<label>``, and ``flat_<lead>`` flags; in manifest order.
+        ``STRUCTURE`` columns, the 14 space-B states as ``b_<condition>`` (1.0, 0.0, NaN), the space-C states
+        of ``EXTRA_LABELS`` as ``c_<label>``, and ``flat_<lead>`` flags; in manifest order.
 
     Raises
     ------
@@ -141,8 +188,14 @@ def load_open_records(path: Path = MANIFEST, roles: tuple[str, ...] = OPEN_ROLES
     lines = open_manifest_lines(path, roles)
     labels = [f"b_{name}" for name in CONDITIONS] + [f"c_{name}" for name in EXTRA_LABELS]
     flats = [f"flat_{lead}" for lead in LEADS]
-    frame = pd.read_csv(path, usecols=[*STRUCTURE, *labels, *flats], skiprows=lambda i: i > 0 and i not in lines,
-                        dtype={name: str for name in STRUCTURE}, keep_default_na=False, low_memory=False)
+    frame = pd.read_csv(
+        path,
+        usecols=[*STRUCTURE, *labels, *flats],
+        skiprows=lambda i: i > 0 and i not in lines,
+        dtype=dict.fromkeys(STRUCTURE, str),
+        keep_default_na=False,
+        low_memory=False,
+    )
     if not frame["role"].isin(roles).all() or not (frame["included"] == "True").all():
         raise ValueError("a row outside the open roles was read")
     for column in labels:
@@ -207,7 +260,7 @@ def load_feature_rows(name: str, keys: np.ndarray, directory: Path = LOCAL) -> n
 
 def method_a(keys: np.ndarray, directory: Path = LOCAL) -> pd.DataFrame:
     """
-    Method A measurements of open records, with the derived quantities used here.
+    Read method A measurements of open records and derive the quantities used here.
 
     Parameters
     ----------
@@ -222,12 +275,18 @@ def method_a(keys: np.ndarray, directory: Path = LOCAL) -> pd.DataFrame:
         The 130 stored columns prefixed ``a_``, ``a_status``, and ``hr_a``, ``qrs_a``, ``pr_a``, ``axis_a``
         (net QRS area in I and aVF), ``rr_nrmssd_a`` and ``rr_range_a``.
     """
-    values = pd.DataFrame(load_feature_rows("measurements.npy", keys, directory),
-                          columns=[f"a_{name}" for name in FEATURE_NAMES])
+    values = pd.DataFrame(
+        load_feature_rows("measurements.npy", keys, directory),
+        columns=[f"a_{name}" for name in FEATURE_NAMES],
+    )
     status = pd.read_csv(Path(directory) / "measurements_status.csv", dtype=str).set_index("record_key")
     values.insert(0, "record_key", np.asarray(keys))
     values["a_status"] = status.loc[np.asarray(keys), "status"].to_numpy()
-    values["hr_a"], values["qrs_a"], values["pr_a"] = values["a_hr_bpm"], values["a_qrs_dur_ms"], values["a_pr_ms"]
+    values["hr_a"], values["qrs_a"], values["pr_a"] = (
+        values["a_hr_bpm"],
+        values["a_qrs_dur_ms"],
+        values["a_pr_ms"],
+    )
     values["axis_a"] = np.degrees(np.arctan2(values["a_qrs_area_aVF"], values["a_qrs_area_I"]))
     values["rr_nrmssd_a"] = values["a_rr_rmssd_ms"] / values["a_rr_mean_ms"]
     values["rr_range_a"] = values["a_rr_range_rel"] * values["a_rr_mean_ms"]
@@ -253,7 +312,7 @@ def angle_difference(first: np.ndarray, second: np.ndarray) -> np.ndarray:
 
 def consensus(table: pd.DataFrame) -> pd.DataFrame:
     """
-    Method B's value where methods A and B agree within ``TOLERANCE``.
+    Keep method B's value where methods A and B agree within ``TOLERANCE``.
 
     Parameters
     ----------
@@ -297,7 +356,9 @@ def lead_values(table: pd.DataFrame, prefix: str, leads: tuple[str, ...]) -> np.
     return table[[f"{prefix}_{lead}" for lead in leads]].to_numpy(float)
 
 
-def grouped_count(flags: np.ndarray, leads: tuple[str, ...], groups: dict[str, tuple[str, ...]]) -> np.ndarray:
+def grouped_count(
+    flags: np.ndarray, leads: tuple[str, ...], groups: dict[str, tuple[str, ...]]
+) -> np.ndarray:
     """
     Largest number of flagged leads within one lead group.
 
@@ -323,8 +384,9 @@ def q_qualifies(table: pd.DataFrame) -> np.ndarray:
     """
     Leads with a Q wave of the infarct size of the Fourth Universal Definition (Thygesen et al., 2018).
 
-    V2-V3: Q of at least 20 ms or a QS complex. I, II, aVL, aVF, V4-V6: Q of at least 30 ms and 0.1 mV deep, or
-    a QS complex. Other leads never qualify. A QS complex is a QRS without a positive deflection of 0.05 mV.
+    V2-V3: Q of at least 20 ms or a QS complex. I, II, aVL, aVF, V4-V6: Q of at least 30 ms and 0.1 mV deep,
+    or a QS complex. Other leads never qualify. A QS complex is a QRS without a positive deflection of 0.05
+    mV.
 
     Parameters
     ----------
@@ -357,11 +419,11 @@ def derived_b(table: pd.DataFrame) -> pd.DataFrame:
     pd.DataFrame
         ``sokolow_mv`` (S V1 + larger R of V5 and V6), ``cornell_mv`` (R aVL + S V3), ``voltage_criterion``
         (Sokolow-Lyon at least 3.5 mV, or Cornell above 2.8 mV in men and 2.0 mV in women), ``st_min_mv``
-        (lowest ST 60 ms after the QRS, aVR excluded), ``st_dep_group`` (most leads of one group with ST at most
-        -0.05 mV), ``t_inverted``, ``t_low`` (leads of ``UPRIGHT_T`` with T at most -0.1 mV, or between -0.1 and
-        0.05 mV), ``q_group`` (most qualifying Q leads in one group), ``rbbb_morphology`` (V1 with two positive
-        peaks or a positive terminal 40 ms, and a negative terminal 40 ms in I or V6), ``p_present`` and
-        ``irregular``.
+        (lowest ST 60 ms after the QRS, aVR excluded), ``st_dep_group`` (most leads of one group with ST at
+        most -0.05 mV), ``t_inverted``, ``t_low`` (leads of ``UPRIGHT_T`` with T at most -0.1 mV, or between
+        -0.1 and 0.05 mV), ``q_group`` (most qualifying Q leads in one group), ``rbbb_morphology`` (V1 with
+        two positive peaks or a positive terminal 40 ms, and a negative terminal 40 ms in I or V6),
+        ``p_present`` and ``irregular``.
     """
     out = pd.DataFrame(index=table.index)
     out["sokolow_mv"] = table["s_V1"] + np.maximum(table["r_V5"], table["r_V6"])
@@ -391,7 +453,7 @@ def derived_b(table: pd.DataFrame) -> pd.DataFrame:
 
 def record_codes(source: str, raw: str, heart_axis: str) -> object:
     """
-    A record's codes in the form ``mlc_labels`` reads.
+    Parse a record's codes into the form ``mlc_labels`` reads.
 
     Parameters
     ----------
@@ -456,7 +518,7 @@ def wilson(positives: int, total: int) -> tuple[float, float]:
 
 def b_columns(measured: pd.DataFrame) -> pd.DataFrame:
     """
-    Method B results with the names used in the analysis table.
+    Rename method B results to the names used in the analysis table.
 
     Parameters
     ----------
@@ -467,12 +529,21 @@ def b_columns(measured: pd.DataFrame) -> pd.DataFrame:
     -------
     pd.DataFrame
         The same columns, with ``status``, ``flat_leads``, rate, interval, axis and RR measures renamed to
-        ``status_b``, ``flat_leads_b``, ``hr_b``, ``qrs_b``, ``pr_b``, ``axis_b``, ``rr_cv_b``, ``rr_nrmssd_b``,
-        ``rr_range_b`` and ``rr_range_dominant_b``.
+        ``status_b``, ``flat_leads_b``, ``hr_b``, ``qrs_b``, ``pr_b``, ``axis_b``, ``rr_cv_b``,
+        ``rr_nrmssd_b``, ``rr_range_b`` and ``rr_range_dominant_b``.
     """
-    names = {"status": "status_b", "flat_leads": "flat_leads_b", "hr_bpm": "hr_b", "qrs_ms": "qrs_b",
-             "pr_ms": "pr_b", "axis_deg": "axis_b", "rr_cv": "rr_cv_b", "rr_nrmssd": "rr_nrmssd_b",
-             "rr_range_ms": "rr_range_b", "rr_range_dominant_ms": "rr_range_dominant_b"}
+    names = {
+        "status": "status_b",
+        "flat_leads": "flat_leads_b",
+        "hr_bpm": "hr_b",
+        "qrs_ms": "qrs_b",
+        "pr_ms": "pr_b",
+        "axis_deg": "axis_b",
+        "rr_cv": "rr_cv_b",
+        "rr_nrmssd": "rr_nrmssd_b",
+        "rr_range_ms": "rr_range_b",
+        "rr_range_dominant_ms": "rr_range_dominant_b",
+    }
     return measured.rename(columns=names)
 
 
@@ -493,8 +564,8 @@ def analysis_table(records: pd.DataFrame, a: pd.DataFrame, b: pd.DataFrame) -> p
     -------
     pd.DataFrame
         Joined on ``record_key`` in ``records`` order, with ``consensus`` and ``derived_b`` columns, ``codes``
-        (``record_codes``), ``sinus_codes`` (``sinus_by_codes``) and ``sinus_measured`` (sinus by codes, P wave
-        present and both rate methods agree).
+        (``record_codes``), ``sinus_codes`` (``sinus_by_codes``) and ``sinus_measured`` (sinus by codes, P
+        wave present and both rate methods agree).
 
     Raises
     ------
@@ -506,8 +577,10 @@ def analysis_table(records: pd.DataFrame, a: pd.DataFrame, b: pd.DataFrame) -> p
     if table["a_status"].isna().any() or table["status_b"].isna().any():
         raise ValueError("a record has no measurement row")
     table = pd.concat([table, consensus(table), derived_b(table)], axis=1)
-    codes = [record_codes(s, r, h) for s, r, h in zip(table["source"], table["raw_codes"], table["heart_axis"],
-                                                     strict=True)]
+    codes = [
+        record_codes(s, r, h)
+        for s, r, h in zip(table["source"], table["raw_codes"], table["heart_axis"], strict=True)
+    ]
     table["codes"] = codes
     table["sinus_codes"] = [sinus_by_codes(s, c) for s, c in zip(table["source"], codes, strict=True)]
     table["sinus_measured"] = table["sinus_codes"] & table["p_present"] & table["hr_agree"]
@@ -534,76 +607,157 @@ def region_masks(value: pd.Series, low: float, high: float, tolerance: float) ->
         ``outside_tol`` (outside by more than the tolerance); all False where the value is missing.
     """
     known = value.notna()
-    return {"inside": known & (value >= low) & (value <= high),
-            "outside": known & ((value < low) | (value > high)),
-            "inside_tol": known & (value >= low + tolerance) & (value <= high - tolerance),
-            "outside_tol": known & ((value < low - tolerance) | (value > high + tolerance))}
+    return {
+        "inside": known & (value >= low) & (value <= high),
+        "outside": known & ((value < low) | (value > high)),
+        "inside_tol": known & (value >= low + tolerance) & (value <= high - tolerance),
+        "outside_tol": known & ((value < low - tolerance) | (value > high + tolerance)),
+    }
 
 
 CHECKS: dict[str, dict[str, object]] = {
-    "sinus_tachycardia": {"measure": "hr", "low": 100.0, "high": np.inf, "tolerance": 5.0, "population": "sinus",
-                          "bound": "heart rate above 100 per minute, sinus rhythm",
-                          "reference": "Mason et al. 2007 (AHA/ACCF/HRS part II)"},
-    "sinus_bradycardia": {"measure": "hr", "low": 0.0, "high": 60.0, "tolerance": 5.0, "population": "sinus",
-                          "bound": "heart rate below 60 per minute, sinus rhythm",
-                          "reference": "Mason et al. 2007 (AHA/ACCF/HRS part II)"},
-    "sinus_arrhythmia": {"measure": "rr_range_dominant_b", "low": 120.0, "high": np.inf, "tolerance": 20.0,
-                         "population": "sinus",
-                         "bound": "longest minus shortest RR between consecutive dominant beats above 120 ms",
-                         "reference": "a commonly used cut-off; no single standard"},
-    "af_or_flutter": {"measure": "rr_nrmssd_b", "low": IRREGULAR_NRMSSD, "high": np.inf, "tolerance": 0.03,
-                      "population": "measured",
-                      "bound": "irregular RR (normalized RMSSD of at least 0.10) without a detectable P wave",
-                      "reference": "AF: irregular RR and no distinct P waves (Hindricks et al. 2021, ESC)"},
-    "premature_ventricular_complex": {"measure": "n_premature_aberrant", "low": 1.0, "high": np.inf,
-                                      "tolerance": 0.0, "population": "ten_seconds",
-                                      "bound": "at least one premature beat unlike the dominant beat in the "
-                                               "first 10 s",
-                                      "reference": "premature complex of different QRS morphology"},
-    "first_degree_av_block": {"measure": "pr", "low": 200.0, "high": np.inf, "tolerance": 20.0,
-                              "population": "p_present", "bound": "PR interval above 200 ms",
-                              "reference": "Mason et al. 2007 (AHA/ACCF/HRS part II)"},
-    "complete_rbbb": {"measure": "qrs", "low": 120.0, "high": np.inf, "tolerance": 10.0,
-                      "population": "measured", "bound": "QRS duration of at least 120 ms",
-                      "reference": "Surawicz et al. 2009 (AHA/ACCF/HRS part III)"},
-    "incomplete_rbbb": {"measure": "qrs", "low": 110.0, "high": 119.999, "tolerance": 10.0,
-                        "population": "measured", "bound": "QRS duration 110-119 ms with RBBB morphology",
-                        "reference": "Surawicz et al. 2009 (AHA/ACCF/HRS part III)"},
-    "lafb": {"measure": "axis", "low": -90.0, "high": -45.0, "tolerance": 15.0, "population": "measured",
-             "bound": "frontal QRS axis -45 to -90 degrees", "reference": "Surawicz et al. 2009 (part III)"},
-    "left_axis_deviation": {"measure": "axis", "low": -90.0, "high": -30.0, "tolerance": 15.0,
-                            "population": "measured", "bound": "frontal QRS axis -30 to -90 degrees",
-                            "reference": "Surawicz et al. 2009 (part III)"},
-    "lvh": {"measure": "sokolow_mv", "low": 3.5, "high": np.inf, "tolerance": 0.5, "population": "measured",
-            "bound": "Sokolow-Lyon at least 3.5 mV or Cornell above 2.8 mV (men) / 2.0 mV (women)",
-            "reference": "Hancock et al. 2009 (AHA/ACCF/HRS part V)"},
-    "st_depression": {"measure": "st_min_mv", "low": -np.inf, "high": -0.05, "tolerance": 0.05,
-                      "population": "measured",
-                      "bound": "ST at least 0.05 mV below the PR level in two leads of one group",
-                      "reference": "Thygesen et al. 2018 (Fourth Universal Definition of MI)"},
-    "t_wave_abnormality": {"measure": "t_inverted", "low": 1.0, "high": np.inf, "tolerance": 0.0,
-                           "population": "measured",
-                           "bound": "T inverted (at most -0.1 mV) or low (below 0.05 mV) in I, II or V3-V6",
-                           "reference": "Rautaharju et al. 2009 (AHA/ACCF/HRS part IV)"},
-    "mi_any": {"measure": "q_group", "low": 2.0, "high": np.inf, "tolerance": 0.0, "population": "measured",
-               "bound": "infarct-size Q waves in two leads of one group",
-               "reference": "Thygesen et al. 2018 (Fourth Universal Definition of MI)"},
+    "sinus_tachycardia": {
+        "measure": "hr",
+        "low": 100.0,
+        "high": np.inf,
+        "tolerance": 5.0,
+        "population": "sinus",
+        "bound": "heart rate above 100 per minute, sinus rhythm",
+        "reference": "Mason et al. 2007 (AHA/ACCF/HRS part II)",
+    },
+    "sinus_bradycardia": {
+        "measure": "hr",
+        "low": 0.0,
+        "high": 60.0,
+        "tolerance": 5.0,
+        "population": "sinus",
+        "bound": "heart rate below 60 per minute, sinus rhythm",
+        "reference": "Mason et al. 2007 (AHA/ACCF/HRS part II)",
+    },
+    "sinus_arrhythmia": {
+        "measure": "rr_range_dominant_b",
+        "low": 120.0,
+        "high": np.inf,
+        "tolerance": 20.0,
+        "population": "sinus",
+        "bound": "longest minus shortest RR between consecutive dominant beats above 120 ms",
+        "reference": "a commonly used cut-off; no single standard",
+    },
+    "af_or_flutter": {
+        "measure": "rr_nrmssd_b",
+        "low": IRREGULAR_NRMSSD,
+        "high": np.inf,
+        "tolerance": 0.03,
+        "population": "measured",
+        "bound": "irregular RR (normalized RMSSD of at least 0.10) without a detectable P wave",
+        "reference": "AF: irregular RR and no distinct P waves (Hindricks et al. 2021, ESC)",
+    },
+    "premature_ventricular_complex": {
+        "measure": "n_premature_aberrant",
+        "low": 1.0,
+        "high": np.inf,
+        "tolerance": 0.0,
+        "population": "ten_seconds",
+        "bound": "at least one premature beat unlike the dominant beat in the first 10 s",
+        "reference": "premature complex of different QRS morphology",
+    },
+    "first_degree_av_block": {
+        "measure": "pr",
+        "low": 200.0,
+        "high": np.inf,
+        "tolerance": 20.0,
+        "population": "p_present",
+        "bound": "PR interval above 200 ms",
+        "reference": "Mason et al. 2007 (AHA/ACCF/HRS part II)",
+    },
+    "complete_rbbb": {
+        "measure": "qrs",
+        "low": 120.0,
+        "high": np.inf,
+        "tolerance": 10.0,
+        "population": "measured",
+        "bound": "QRS duration of at least 120 ms",
+        "reference": "Surawicz et al. 2009 (AHA/ACCF/HRS part III)",
+    },
+    "incomplete_rbbb": {
+        "measure": "qrs",
+        "low": 110.0,
+        "high": 119.999,
+        "tolerance": 10.0,
+        "population": "measured",
+        "bound": "QRS duration 110-119 ms with RBBB morphology",
+        "reference": "Surawicz et al. 2009 (AHA/ACCF/HRS part III)",
+    },
+    "lafb": {
+        "measure": "axis",
+        "low": -90.0,
+        "high": -45.0,
+        "tolerance": 15.0,
+        "population": "measured",
+        "bound": "frontal QRS axis -45 to -90 degrees",
+        "reference": "Surawicz et al. 2009 (part III)",
+    },
+    "left_axis_deviation": {
+        "measure": "axis",
+        "low": -90.0,
+        "high": -30.0,
+        "tolerance": 15.0,
+        "population": "measured",
+        "bound": "frontal QRS axis -30 to -90 degrees",
+        "reference": "Surawicz et al. 2009 (part III)",
+    },
+    "lvh": {
+        "measure": "sokolow_mv",
+        "low": 3.5,
+        "high": np.inf,
+        "tolerance": 0.5,
+        "population": "measured",
+        "bound": "Sokolow-Lyon at least 3.5 mV or Cornell above 2.8 mV (men) / 2.0 mV (women)",
+        "reference": "Hancock et al. 2009 (AHA/ACCF/HRS part V)",
+    },
+    "st_depression": {
+        "measure": "st_min_mv",
+        "low": -np.inf,
+        "high": -0.05,
+        "tolerance": 0.05,
+        "population": "measured",
+        "bound": "ST at least 0.05 mV below the PR level in two leads of one group",
+        "reference": "Thygesen et al. 2018 (Fourth Universal Definition of MI)",
+    },
+    "t_wave_abnormality": {
+        "measure": "t_inverted",
+        "low": 1.0,
+        "high": np.inf,
+        "tolerance": 0.0,
+        "population": "measured",
+        "bound": "T inverted (at most -0.1 mV) or low (below 0.05 mV) in I, II or V3-V6",
+        "reference": "Rautaharju et al. 2009 (AHA/ACCF/HRS part IV)",
+    },
+    "mi_any": {
+        "measure": "q_group",
+        "low": 2.0,
+        "high": np.inf,
+        "tolerance": 0.0,
+        "population": "measured",
+        "bound": "infarct-size Q waves in two leads of one group",
+        "reference": "Thygesen et al. 2018 (Fourth Universal Definition of MI)",
+    },
 }
 
 
 def population(table: pd.DataFrame, name: str) -> pd.Series:
     """
-    Records on which a check is read.
+    Select the records on which a check is read.
 
     Parameters
     ----------
     table : pd.DataFrame
         Output of ``analysis_table``.
     name : str
-        ``measured`` (method B delineated the record), ``sinus`` (``sinus_measured``), ``p_present``, ``no_p``,
-        ``ten_seconds`` (measured and the recording is 10 s long, so the label describes the analysed window),
-        ``longer`` (measured, longer than 10 s), ``rbbb_morphology`` or ``rbbb_labelled`` (complete or
-        incomplete RBBB positive).
+        ``measured`` (method B delineated the record), ``sinus`` (``sinus_measured``), ``p_present``,
+        ``no_p``, ``ten_seconds`` (measured and the recording is 10 s long, so the label describes the
+        analysed window), ``longer`` (measured, longer than 10 s), ``rbbb_morphology`` or ``rbbb_labelled``
+        (complete or incomplete RBBB positive).
 
     Returns
     -------
@@ -658,7 +812,9 @@ def criterion(table: pd.DataFrame, condition: str) -> dict[str, pd.Series]:
     return masks
 
 
-def adjust_criterion(table: pd.DataFrame, condition: str, masks: dict[str, pd.Series]) -> dict[str, pd.Series]:
+def adjust_criterion(
+    table: pd.DataFrame, condition: str, masks: dict[str, pd.Series]
+) -> dict[str, pd.Series]:
     """
     Condition-specific parts of ``criterion`` for LVH, ST depression and T-wave abnormality.
 
@@ -710,7 +866,11 @@ def quantiles(values: pd.Series) -> list[float]:
         Five percentiles, or NaN when no value is present.
     """
     finite = values.dropna().to_numpy(float)
-    return [round(float(v), 3) for v in np.percentile(finite, [5, 25, 50, 75, 95])] if len(finite) else [np.nan] * 5
+    return (
+        [round(float(v), 3) for v in np.percentile(finite, [5, 25, 50, 75, 95])]
+        if len(finite)
+        else [np.nan] * 5
+    )
 
 
 def label_measurement_rows(table: pd.DataFrame, condition: str) -> list[dict[str, object]]:
@@ -743,49 +903,123 @@ def label_measurement_rows(table: pd.DataFrame, condition: str) -> list[dict[str
             measured = part & table[spec["measure"]].notna()
             if not in_state.any():
                 continue
-            rows.append({"condition": condition, "source": source, "state": state, "records": int(in_state.sum()),
-                         "in_population": int(part.sum()), "measured": int(measured.sum()),
-                         "measure": spec["measure"], "p5_p25_p50_p75_p95": quantiles(table.loc[measured, spec["measure"]]),
-                         **{key: int((masks[key] & part).sum()) for key in ("inside", "inside_tol", "outside",
-                                                                             "outside_tol")}})
+            rows.append(
+                {
+                    "condition": condition,
+                    "source": source,
+                    "state": state,
+                    "records": int(in_state.sum()),
+                    "in_population": int(part.sum()),
+                    "measured": int(measured.sum()),
+                    "measure": spec["measure"],
+                    "p5_p25_p50_p75_p95": quantiles(table.loc[measured, spec["measure"]]),
+                    **{
+                        key: int((masks[key] & part).sum())
+                        for key in ("inside", "inside_tol", "outside", "outside_tol")
+                    },
+                }
+            )
     return rows
 
 
 MIN_BIN = 30
 MATCHED: dict[str, dict[str, object]] = {
-    "sinus_tachycardia": {"label": "b_sinus_tachycardia", "measure": "hr", "population": "sinus",
-                          "bins": tuple(range(80, 150, 5))},
-    "sinus_bradycardia": {"label": "b_sinus_bradycardia", "measure": "hr", "population": "sinus",
-                          "bins": tuple(range(35, 85, 5))},
-    "sinus_arrhythmia": {"label": "b_sinus_arrhythmia", "measure": "rr_range_dominant_b", "population": "sinus",
-                         "bins": (0, 40, 80, 120, 160, 200, 280, 400, np.inf)},
-    "af_or_flutter|no_p": {"label": "b_af_or_flutter", "measure": "rr_nrmssd_b", "population": "no_p",
-                           "bins": (0, 0.03, 0.06, 0.1, 0.15, 0.2, 0.3, np.inf)},
-    "af_or_flutter|p_present": {"label": "b_af_or_flutter", "measure": "rr_nrmssd_b", "population": "p_present",
-                                "bins": (0, 0.03, 0.06, 0.1, 0.15, 0.2, 0.3, np.inf)},
-    "premature_ventricular_complex|10s": {"label": "b_premature_ventricular_complex",
-                                          "measure": "n_premature_aberrant", "population": "ten_seconds",
-                                          "bins": (0, 1, 2, 3, np.inf)},
-    "premature_ventricular_complex|longer": {"label": "b_premature_ventricular_complex",
-                                             "measure": "n_premature_aberrant", "population": "longer",
-                                             "bins": (0, 1, 2, 3, np.inf)},
-    "first_degree_av_block": {"label": "b_first_degree_av_block", "measure": "pr", "population": "p_present",
-                              "bins": tuple(range(100, 340, 20))},
-    "complete_rbbb": {"label": "b_complete_rbbb", "measure": "qrs", "population": "rbbb_morphology",
-                      "bins": tuple(range(80, 190, 10))},
-    "incomplete_rbbb": {"label": "b_incomplete_rbbb", "measure": "qrs", "population": "rbbb_morphology",
-                        "bins": tuple(range(80, 190, 10))},
-    "complete_among_rbbb": {"label": "b_complete_rbbb", "measure": "qrs", "population": "rbbb_labelled",
-                            "bins": tuple(range(80, 190, 10))},
-    "lafb": {"label": "b_lafb", "measure": "axis", "population": "measured", "bins": tuple(range(-105, 61, 15))},
-    "left_axis_deviation": {"label": "b_left_axis_deviation", "measure": "axis", "population": "measured",
-                            "bins": tuple(range(-105, 61, 15))},
-    "lvh": {"label": "b_lvh", "measure": "sokolow_mv", "population": "measured",
-            "bins": (0, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, np.inf)},
-    "st_depression": {"label": "b_st_depression", "measure": "st_min_mv", "population": "measured",
-                      "bins": (-np.inf, -0.3, -0.2, -0.15, -0.1, -0.05, 0, 0.05, np.inf)},
-    "t_wave_abnormality": {"label": "b_t_wave_abnormality", "measure": "t_inverted", "population": "measured",
-                           "bins": (0, 1, 2, 3, 4, 7)},
+    "sinus_tachycardia": {
+        "label": "b_sinus_tachycardia",
+        "measure": "hr",
+        "population": "sinus",
+        "bins": tuple(range(80, 150, 5)),
+    },
+    "sinus_bradycardia": {
+        "label": "b_sinus_bradycardia",
+        "measure": "hr",
+        "population": "sinus",
+        "bins": tuple(range(35, 85, 5)),
+    },
+    "sinus_arrhythmia": {
+        "label": "b_sinus_arrhythmia",
+        "measure": "rr_range_dominant_b",
+        "population": "sinus",
+        "bins": (0, 40, 80, 120, 160, 200, 280, 400, np.inf),
+    },
+    "af_or_flutter|no_p": {
+        "label": "b_af_or_flutter",
+        "measure": "rr_nrmssd_b",
+        "population": "no_p",
+        "bins": (0, 0.03, 0.06, 0.1, 0.15, 0.2, 0.3, np.inf),
+    },
+    "af_or_flutter|p_present": {
+        "label": "b_af_or_flutter",
+        "measure": "rr_nrmssd_b",
+        "population": "p_present",
+        "bins": (0, 0.03, 0.06, 0.1, 0.15, 0.2, 0.3, np.inf),
+    },
+    "premature_ventricular_complex|10s": {
+        "label": "b_premature_ventricular_complex",
+        "measure": "n_premature_aberrant",
+        "population": "ten_seconds",
+        "bins": (0, 1, 2, 3, np.inf),
+    },
+    "premature_ventricular_complex|longer": {
+        "label": "b_premature_ventricular_complex",
+        "measure": "n_premature_aberrant",
+        "population": "longer",
+        "bins": (0, 1, 2, 3, np.inf),
+    },
+    "first_degree_av_block": {
+        "label": "b_first_degree_av_block",
+        "measure": "pr",
+        "population": "p_present",
+        "bins": tuple(range(100, 340, 20)),
+    },
+    "complete_rbbb": {
+        "label": "b_complete_rbbb",
+        "measure": "qrs",
+        "population": "rbbb_morphology",
+        "bins": tuple(range(80, 190, 10)),
+    },
+    "incomplete_rbbb": {
+        "label": "b_incomplete_rbbb",
+        "measure": "qrs",
+        "population": "rbbb_morphology",
+        "bins": tuple(range(80, 190, 10)),
+    },
+    "complete_among_rbbb": {
+        "label": "b_complete_rbbb",
+        "measure": "qrs",
+        "population": "rbbb_labelled",
+        "bins": tuple(range(80, 190, 10)),
+    },
+    "lafb": {
+        "label": "b_lafb",
+        "measure": "axis",
+        "population": "measured",
+        "bins": tuple(range(-105, 61, 15)),
+    },
+    "left_axis_deviation": {
+        "label": "b_left_axis_deviation",
+        "measure": "axis",
+        "population": "measured",
+        "bins": tuple(range(-105, 61, 15)),
+    },
+    "lvh": {
+        "label": "b_lvh",
+        "measure": "sokolow_mv",
+        "population": "measured",
+        "bins": (0, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, np.inf),
+    },
+    "st_depression": {
+        "label": "b_st_depression",
+        "measure": "st_min_mv",
+        "population": "measured",
+        "bins": (-np.inf, -0.3, -0.2, -0.15, -0.1, -0.05, 0, 0.05, np.inf),
+    },
+    "t_wave_abnormality": {
+        "label": "b_t_wave_abnormality",
+        "measure": "t_inverted",
+        "population": "measured",
+        "bins": (0, 1, 2, 3, 4, 7),
+    },
     "mi_any": {"label": "b_mi_any", "measure": "q_group", "population": "measured", "bins": (0, 1, 2, 3, 6)},
 }
 
@@ -820,10 +1054,22 @@ def matched_prevalence(table: pd.DataFrame, name: str) -> pd.DataFrame:
             inside = part & (value >= low) & (value < high)
             n, positives = int(inside.sum()), int((label[inside] == 1).sum())
             low_ci, high_ci = wilson(positives, n)
-            rows.append({"name": name, "label": spec["label"], "measure": spec["measure"],
-                         "population": spec["population"], "source": source, "bin_low": low, "bin_high": high,
-                         "defined": n, "positives": positives, "prevalence": positives / n if n else np.nan,
-                         "ci_low": low_ci, "ci_high": high_ci})
+            rows.append(
+                {
+                    "name": name,
+                    "label": spec["label"],
+                    "measure": spec["measure"],
+                    "population": spec["population"],
+                    "source": source,
+                    "bin_low": low,
+                    "bin_high": high,
+                    "defined": n,
+                    "positives": positives,
+                    "prevalence": positives / n if n else np.nan,
+                    "ci_low": low_ci,
+                    "ci_high": high_ci,
+                }
+            )
     return pd.DataFrame(rows)
 
 
@@ -853,20 +1099,34 @@ def inconsistent_bins(prevalence: pd.DataFrame, minimum: int = MIN_BIN) -> pd.Da
         for i in range(len(part)):
             for j in range(i + 1, len(part)):
                 first, second = part.loc[i], part.loc[j]
-                top, bottom = (first, second) if first["prevalence"] >= second["prevalence"] else (second, first)
+                top, bottom = (
+                    (first, second) if first["prevalence"] >= second["prevalence"] else (second, first)
+                )
                 ratio = np.inf if bottom["prevalence"] == 0 else top["prevalence"] / bottom["prevalence"]
                 ratio = 1.0 if top["prevalence"] == 0 else ratio
                 disjoint = bottom["ci_high"] < top["ci_low"]
-                rows.append({"name": name, "bin_low": low, "bin_high": high, "higher": top["source"],
-                             "lower": bottom["source"], "prevalence_higher": top["prevalence"],
-                             "prevalence_lower": bottom["prevalence"], "defined_higher": top["defined"],
-                             "defined_lower": bottom["defined"], "ratio": ratio, "disjoint": bool(disjoint),
-                             "inconsistent": bool(disjoint and ratio >= 2.0)})
+                rows.append(
+                    {
+                        "name": name,
+                        "bin_low": low,
+                        "bin_high": high,
+                        "higher": top["source"],
+                        "lower": bottom["source"],
+                        "prevalence_higher": top["prevalence"],
+                        "prevalence_lower": bottom["prevalence"],
+                        "defined_higher": top["defined"],
+                        "defined_lower": bottom["defined"],
+                        "ratio": ratio,
+                        "disjoint": bool(disjoint),
+                        "inconsistent": bool(disjoint and ratio >= 2.0),
+                    }
+                )
     return pd.DataFrame(rows)
 
 
-def implied_cutoff(table: pd.DataFrame, condition: str, source: str, draws: int = 500,
-                   seed: int = SEED) -> dict[str, float]:
+def implied_cutoff(
+    table: pd.DataFrame, condition: str, source: str, draws: int = 500, seed: int = SEED
+) -> dict[str, float]:
     """
     Heart rate at which a source's rate label reaches a probability of one half.
 
@@ -938,7 +1198,7 @@ def vocabulary(source: str) -> str:
 
 def listing(table: pd.DataFrame, specs: frozenset[str] | tuple[str, ...], source: str) -> pd.Series:
     """
-    Records of a source that list any of the given code specifications.
+    Mark the records of a source that list any of the given code specifications.
 
     Parameters
     ----------
@@ -956,8 +1216,10 @@ def listing(table: pd.DataFrame, specs: frozenset[str] | tuple[str, ...], source
     """
     specs = frozenset(specs)
     in_source = table["source"] == source
-    hits = [bool(specs) and mlc_labels.listed(specs, codes, vocabulary(source)) if inside else False
-            for codes, inside in zip(table["codes"], in_source, strict=True)]
+    hits = [
+        bool(specs) and mlc_labels.listed(specs, codes, vocabulary(source)) if inside else False
+        for codes, inside in zip(table["codes"], in_source, strict=True)
+    ]
     return pd.Series(hits, index=table.index)
 
 
@@ -981,27 +1243,41 @@ def code_usage(table: pd.DataFrame) -> pd.DataFrame:
         definition = mlc_labels.CONDITIONS[condition]
         for source in SOURCES:
             label = table.loc[table["source"] == source, f"b_{condition}"]
-            states = {"positives": int((label == 1).sum()), "negatives": int((label == 0).sum()),
-                      "undefined": int(label.isna().sum())}
+            states = {
+                "positives": int((label == 1).sum()),
+                "negatives": int((label == 0).sum()),
+                "undefined": int(label.isna().sum()),
+            }
             for role in ("positive", "ambiguous"):
                 for code in sorted(definition[role][vocabulary(source)]):
-                    rows.append({"condition": condition, "source": source, "role": role, "code": code,
-                                 "records_listing": int(listing(table, (code,), source).sum()), **states})
+                    rows.append(
+                        {
+                            "condition": condition,
+                            "source": source,
+                            "role": role,
+                            "code": code,
+                            "records_listing": int(listing(table, (code,), source).sum()),
+                            **states,
+                        }
+                    )
     return pd.DataFrame(rows)
 
 
 SIBLINGS: dict[str, dict[str, dict[str, frozenset[str]]]] = {
     "complete_rbbb": {"incomplete RBBB": mlc_labels.CONDITIONS["incomplete_rbbb"]["positive"]},
     "left_axis_deviation": {"LAFB": mlc_labels.codes(("LAFB",), ("445118002",))},
-    "af_or_flutter": {"atrial flutter": mlc_labels.CONDITIONS["atrial_flutter"]["positive"],
-                      "atrial fibrillation": mlc_labels.CONDITIONS["atrial_fibrillation"]["positive"]},
+    "af_or_flutter": {
+        "atrial flutter": mlc_labels.CONDITIONS["atrial_flutter"]["positive"],
+        "atrial fibrillation": mlc_labels.CONDITIONS["atrial_fibrillation"]["positive"],
+    },
     "lvh": {"LV high voltage": mlc_labels.LV_HIGH_VOLTAGE},
     "st_depression": {"nonspecific or ischemic ST-T": mlc_labels.ST_T_NONSPECIFIC_OR_ISCHEMIC},
     "t_wave_abnormality": {"nonspecific or ischemic ST-T": mlc_labels.ST_T_NONSPECIFIC_OR_ISCHEMIC},
     "mi_any": {"Q wave or poor R progression": mlc_labels.Q_WAVE_OR_POOR_R_PROGRESSION},
     "first_degree_av_block": {"AV block of unstated degree": mlc_labels.codes(snomed=("233917008",))},
-    "premature_ventricular_complex": {"ventricular tachycardia": mlc_labels.codes(
-        snomed=mlc_labels.VENTRICULAR_TACHYCARDIA_SNOMED)},
+    "premature_ventricular_complex": {
+        "ventricular tachycardia": mlc_labels.codes(snomed=mlc_labels.VENTRICULAR_TACHYCARDIA_SNOMED)
+    },
     "sinus_bradycardia": {"bradycardia of unstated origin": mlc_labels.codes(snomed=("426627000",))},
 }
 
@@ -1035,33 +1311,74 @@ def separate_coding(table: pd.DataFrame) -> pd.DataFrame:
             for sibling, specs in siblings.items():
                 codes = specs[vocabulary(source)]
                 count = int(listing(table, codes, source).sum()) if codes else 0
-                rows.append({"condition": condition, "source": source, "sibling": sibling,
-                             "sibling_codes": " ".join(sorted(codes)) or "(not codable)", "records_listing": count,
-                             "positives": positives, "negatives": negatives,
-                             "not_coded_separately": count == 0})
+                rows.append(
+                    {
+                        "condition": condition,
+                        "source": source,
+                        "sibling": sibling,
+                        "sibling_codes": " ".join(sorted(codes)) or "(not codable)",
+                        "records_listing": count,
+                        "positives": positives,
+                        "negatives": negatives,
+                        "not_coded_separately": count == 0,
+                    }
+                )
     return pd.DataFrame(rows)
 
 
 CONTRADICTIONS = (
     ("b_sinus_tachycardia", "b_sinus_bradycardia", "the rate cannot be above 100 and below 60 per minute"),
-    ("b_sinus_tachycardia", "b_af_or_flutter", "sinus rhythm and atrial fibrillation or flutter exclude each other"),
-    ("b_sinus_bradycardia", "b_af_or_flutter", "sinus rhythm and atrial fibrillation or flutter exclude each other"),
-    ("b_sinus_arrhythmia", "b_af_or_flutter", "sinus rhythm and atrial fibrillation or flutter exclude each other"),
-    ("b_sinus_tachycardia", "c_supraventricular_tachycardia", "sinus and supraventricular tachycardia exclude "
-                                                              "each other"),
+    (
+        "b_sinus_tachycardia",
+        "b_af_or_flutter",
+        "sinus rhythm and atrial fibrillation or flutter exclude each other",
+    ),
+    (
+        "b_sinus_bradycardia",
+        "b_af_or_flutter",
+        "sinus rhythm and atrial fibrillation or flutter exclude each other",
+    ),
+    (
+        "b_sinus_arrhythmia",
+        "b_af_or_flutter",
+        "sinus rhythm and atrial fibrillation or flutter exclude each other",
+    ),
+    (
+        "b_sinus_tachycardia",
+        "c_supraventricular_tachycardia",
+        "sinus and supraventricular tachycardia exclude each other",
+    ),
     ("b_first_degree_av_block", "b_af_or_flutter", "a PR interval needs P waves, which AF and flutter lack"),
     ("b_first_degree_av_block", "c_preexcitation", "pre-excitation shortens the PR interval"),
-    ("b_complete_rbbb", "b_incomplete_rbbb", "QRS of at least and below 120 ms (MLC-01 makes both undefined)"),
+    (
+        "b_complete_rbbb",
+        "b_incomplete_rbbb",
+        "QRS of at least and below 120 ms (MLC-01 makes both undefined)",
+    ),
     ("b_complete_rbbb", "c_complete_lbbb", "MLC-01 contradictory pair (both made undefined)"),
     ("b_incomplete_rbbb", "c_complete_lbbb", "MLC-01 contradictory pair (both made undefined)"),
     ("b_lafb", "c_lpfb", "the two fascicular blocks need opposite frontal axes"),
     ("b_lafb", "c_right_axis_deviation", "LAFB needs a frontal axis of -45 degrees or less"),
     ("b_left_axis_deviation", "c_right_axis_deviation", "one frontal axis cannot deviate both ways"),
 )
-UNREADABLE = ("b_complete_rbbb", "b_incomplete_rbbb", "b_lafb", "b_left_axis_deviation", "b_lvh",
-              "b_st_depression", "b_t_wave_abnormality", "b_mi_any")
-REQUIRED_LEADS = {"complete_rbbb": ("V1",), "incomplete_rbbb": ("V1",), "lafb": ("I", "aVF"),
-                  "left_axis_deviation": ("I", "aVF"), "lvh": ("V1", "V5", "V6"), "first_degree_av_block": ("II",)}
+UNREADABLE = (
+    "b_complete_rbbb",
+    "b_incomplete_rbbb",
+    "b_lafb",
+    "b_left_axis_deviation",
+    "b_lvh",
+    "b_st_depression",
+    "b_t_wave_abnormality",
+    "b_mi_any",
+)
+REQUIRED_LEADS = {
+    "complete_rbbb": ("V1",),
+    "incomplete_rbbb": ("V1",),
+    "lafb": ("I", "aVF"),
+    "left_axis_deviation": ("I", "aVF"),
+    "lvh": ("V1", "V5", "V6"),
+    "first_degree_av_block": ("II",),
+}
 
 
 def contradiction_rows(table: pd.DataFrame) -> list[dict[str, object]]:
@@ -1080,21 +1397,48 @@ def contradiction_rows(table: pd.DataFrame) -> list[dict[str, object]]:
         label of ``UNREADABLE``; a flat lead of ``REQUIRED_LEADS``) and source: records where both hold.
     """
     pairs = [(a, b, reason, (table[a] == 1) & (table[b] == 1)) for a, b, reason in CONTRADICTIONS]
-    pairs.append(("b_lafb", "b_left_axis_deviation = 0", "LAFB needs an axis of -45 degrees or less, a left axis",
-                  (table["b_lafb"] == 1) & (table["b_left_axis_deviation"] == 0)))
-    pairs += [("c_paced_rhythm", name, "a ventricular-paced QRS replaces intrinsic conduction",
-               (table["c_paced_rhythm"] == 1) & (table[name] == 1)) for name in UNREADABLE]
+    pairs.append(
+        (
+            "b_lafb",
+            "b_left_axis_deviation = 0",
+            "LAFB needs an axis of -45 degrees or less, a left axis",
+            (table["b_lafb"] == 1) & (table["b_left_axis_deviation"] == 0),
+        )
+    )
+    pairs += [
+        (
+            "c_paced_rhythm",
+            name,
+            "a ventricular-paced QRS replaces intrinsic conduction",
+            (table["c_paced_rhythm"] == 1) & (table[name] == 1),
+        )
+        for name in UNREADABLE
+    ]
     for condition, leads in REQUIRED_LEADS.items():
         flat = table[[f"flat_{lead}" for lead in leads]].any(axis=1)
-        pairs.append((f"b_{condition}", f"flat lead among {'/'.join(leads)}",
-                      "the condition is read on these leads", (table[f"b_{condition}"] == 1) & flat))
+        pairs.append(
+            (
+                f"b_{condition}",
+                f"flat lead among {'/'.join(leads)}",
+                "the condition is read on these leads",
+                (table[f"b_{condition}"] == 1) & flat,
+            )
+        )
     rows = []
     for first, second, reason, both in pairs:
         for source in SOURCES:
-            rows.append({"first": first, "second": second, "reason": reason, "source": source,
-                         "train": int((both & (table["source"] == source) & (table["role"] == "train")).sum()),
-                         "validation": int((both & (table["source"] == source)
-                                            & (table["role"] == "validation")).sum())})
+            rows.append(
+                {
+                    "first": first,
+                    "second": second,
+                    "reason": reason,
+                    "source": source,
+                    "train": int((both & (table["source"] == source) & (table["role"] == "train")).sum()),
+                    "validation": int(
+                        (both & (table["source"] == source) & (table["role"] == "validation")).sum()
+                    ),
+                }
+            )
     return rows
 
 
@@ -1103,7 +1447,7 @@ MINIMUM_POSITIVE = ROOT / "outputs/mlc01_condition_dataset_20261110_v4/minimum_p
 
 def undefined_reason(condition: str, source: str, codes: object, minimum: frozenset[tuple[str, str]]) -> str:
     """
-    The MLC-01 rule that makes one label undefined.
+    Name the MLC-01 rule that makes one label undefined.
 
     The rules are tried in a fixed order: the minimum-positive rule (Amendment 1, ruling 6), a source or
     vocabulary that does not annotate the condition, a contradictory pair, then ambiguous codes. This follows
@@ -1123,21 +1467,28 @@ def undefined_reason(condition: str, source: str, codes: object, minimum: frozen
     Returns
     -------
     str
-        ``minimum positives``, ``not annotated: <why>``, ``contradictory pair: <other>``, ``ambiguous: <codes>``
-        or ``unexplained``.
+        ``minimum positives``, ``not annotated: <why>``, ``contradictory pair: <other>``, ``ambiguous:
+        <codes>`` or ``unexplained``.
     """
     vocabulary_name = vocabulary(source)
     if (source, f"b_{condition}") in minimum:
         return "minimum positives"
     if not mlc_labels.annotated(condition, source):
-        listed_elsewhere = condition in mlc_labels.NOT_ANNOTATED and source in mlc_labels.NOT_ANNOTATED[condition]
+        listed_elsewhere = (
+            condition in mlc_labels.NOT_ANNOTATED and source in mlc_labels.NOT_ANNOTATED[condition]
+        )
         return "not annotated: " + ("source list" if listed_elsewhere else "outside CPSC 2018 classes")
     for pair in mlc_labels.CONTRADICTORY_PAIRS:
-        if condition in pair and all(mlc_labels.listed(mlc_labels.CONDITIONS[key]["positive"][vocabulary_name],
-                                                       codes, vocabulary_name) for key in pair):
+        if condition in pair and all(
+            mlc_labels.listed(mlc_labels.CONDITIONS[key]["positive"][vocabulary_name], codes, vocabulary_name)
+            for key in pair
+        ):
             return "contradictory pair: " + next(key for key in pair if key != condition)
-    ambiguous = sorted(code for code in mlc_labels.CONDITIONS[condition]["ambiguous"][vocabulary_name]
-                       if mlc_labels.listed(frozenset({code}), codes, vocabulary_name))
+    ambiguous = sorted(
+        code
+        for code in mlc_labels.CONDITIONS[condition]["ambiguous"][vocabulary_name]
+        if mlc_labels.listed(frozenset({code}), codes, vocabulary_name)
+    )
     return "ambiguous: " + " ".join(ambiguous) if ambiguous else "unexplained"
 
 
@@ -1188,19 +1539,34 @@ def undefined_rows(table: pd.DataFrame, minimum: frozenset[tuple[str, str]]) -> 
             undefined = in_source & label.isna()
             if not undefined.any():
                 continue
-            reasons = pd.Series([undefined_reason(condition, source, codes, minimum)
-                                 for codes in table.loc[undefined, "codes"]], index=table.index[undefined])
-            reference = {state: share(masks["inside"], in_source & included & (label == value))
-                         for state, value in (("positive", 1), ("negative", 0))}
+            reasons = pd.Series(
+                [
+                    undefined_reason(condition, source, codes, minimum)
+                    for codes in table.loc[undefined, "codes"]
+                ],
+                index=table.index[undefined],
+            )
+            reference = {
+                state: share(masks["inside"], in_source & included & (label == value))
+                for state, value in (("positive", 1), ("negative", 0))
+            }
             for reason, part in reasons.groupby(reasons):
                 mask = table.index.isin(part.index)
-                rows.append({"condition": condition, "source": source, "reason": reason,
-                             "train": int((mask & (table["role"] == "train")).sum()),
-                             "validation": int((mask & (table["role"] == "validation")).sum()),
-                             "in_population": int((mask & included).sum()),
-                             "share_meeting_definition": share(masks["inside"], pd.Series(mask, index=table.index)
-                                                               & included),
-                             "share_positives": reference["positive"], "share_negatives": reference["negative"]})
+                rows.append(
+                    {
+                        "condition": condition,
+                        "source": source,
+                        "reason": reason,
+                        "train": int((mask & (table["role"] == "train")).sum()),
+                        "validation": int((mask & (table["role"] == "validation")).sum()),
+                        "in_population": int((mask & included).sum()),
+                        "share_meeting_definition": share(
+                            masks["inside"], pd.Series(mask, index=table.index) & included
+                        ),
+                        "share_positives": reference["positive"],
+                        "share_negatives": reference["negative"],
+                    }
+                )
     return pd.DataFrame(rows)
 
 
@@ -1262,7 +1628,9 @@ def group_folds(groups: np.ndarray, sources: np.ndarray, folds: int = 5, seed: i
     return np.array([assignment[group] for group in groups])
 
 
-def fit_split(x: np.ndarray, y: np.ndarray, train: np.ndarray, test: np.ndarray, c: float) -> dict[str, object]:
+def fit_split(
+    x: np.ndarray, y: np.ndarray, train: np.ndarray, test: np.ndarray, c: float
+) -> dict[str, object]:
     """
     P0's recipe for one condition: standardizer and unit rows from the training part, logistic regression.
 
@@ -1286,12 +1654,18 @@ def fit_split(x: np.ndarray, y: np.ndarray, train: np.ndarray, test: np.ndarray,
     dict[str, object]
         ``probability`` of the test records, ``iterations`` and training ``records``.
     """
-    from ecg_experiment.mlc02_feature_models import fit_logistic, fit_scaler, logistic_inputs, logistic_probability
+    from ecg_experiment.mlc02_feature_models import (
+        fit_logistic,
+        fit_scaler,
+        logistic_inputs,
+        logistic_probability,
+    )
 
     scaler = fit_scaler(x[train])
     model = fit_logistic(logistic_inputs(x[train], scaler), y[train], c)
-    probability = logistic_probability(logistic_inputs(x[test], scaler), model["coef"][None, :],
-                                       np.array([model["intercept"]]))[:, 0]
+    probability = logistic_probability(
+        logistic_inputs(x[test], scaler), model["coef"][None, :], np.array([model["intercept"]])
+    )[:, 0]
     return {"probability": probability, "iterations": model["iterations"], "records": model["records"]}
 
 
@@ -1337,15 +1711,22 @@ def confident_learning(y: np.ndarray, p: np.ndarray) -> dict[str, object]:
     confident[above_negative & ~above_positive] = 0
     both = above_positive & above_negative
     confident[both] = (p[both] >= 0.5).astype(int)
-    joint = np.array([[np.sum((y == given) & (confident == true)) for true in (0, 1)] for given in (0, 1)],
-                     dtype=float)
+    joint = np.array(
+        [[np.sum((y == given) & (confident == true)) for true in (0, 1)] for given in (0, 1)], dtype=float
+    )
     counts = np.array([np.sum(y == 0), np.sum(y == 1)], dtype=float)
     rows = joint.sum(axis=1, keepdims=True)
     calibrated = np.divide(joint, rows, out=np.full_like(joint, np.nan), where=rows > 0) * counts[:, None]
-    return {"threshold_positive": t_positive, "threshold_negative": t_negative, "confident_joint": joint,
-            "calibrated_joint": calibrated, "estimated_false_positives": float(calibrated[1, 0]),
-            "estimated_false_negatives": float(calibrated[0, 1]),
-            "flag_false_positive": (y == 1) & (confident == 0), "flag_false_negative": (y == 0) & (confident == 1)}
+    return {
+        "threshold_positive": t_positive,
+        "threshold_negative": t_negative,
+        "confident_joint": joint,
+        "calibrated_joint": calibrated,
+        "estimated_false_positives": float(calibrated[1, 0]),
+        "estimated_false_negatives": float(calibrated[0, 1]),
+        "flag_false_positive": (y == 1) & (confident == 0),
+        "flag_false_negative": (y == 0) & (confident == 1),
+    }
 
 
 def suspects(y: np.ndarray, p: np.ndarray, count: int = 50) -> dict[str, np.ndarray]:
@@ -1369,8 +1750,10 @@ def suspects(y: np.ndarray, p: np.ndarray, count: int = 50) -> dict[str, np.ndar
     """
     y, p = np.asarray(y).astype(int), np.asarray(p, dtype=float)
     positives, negatives = np.flatnonzero(y == 1), np.flatnonzero(y == 0)
-    return {"false_positive": positives[np.argsort(p[positives], kind="stable")][:count],
-            "false_negative": negatives[np.argsort(-p[negatives], kind="stable")][:count]}
+    return {
+        "false_positive": positives[np.argsort(p[positives], kind="stable")][:count],
+        "false_negative": negatives[np.argsort(-p[negatives], kind="stable")][:count],
+    }
 
 
 GRID_ROWS = (("I", "aVR", "V1", "V4"), ("II", "aVL", "V2", "V5"), ("III", "aVF", "V3", "V6"))
@@ -1424,7 +1807,7 @@ CACHE_STATE: dict[str, object] = {}
 
 def cached_windows(keys: np.ndarray) -> np.ndarray:
     """
-    Cached first-10-s windows of open records.
+    Read the cached first-10-s windows of open records.
 
     The MLC-02 cache index is opened once per process; every requested key must belong to an open role.
 
@@ -1447,8 +1830,11 @@ def cached_windows(keys: np.ndarray) -> np.ndarray:
 
     if "index" not in CACHE_STATE:
         index, blocks = load_cache(index_name="index_all.csv")
-        CACHE_STATE.update(index=index, blocks=blocks,
-                           position=pd.Series(index["position"].to_numpy(), index=index["record_key"].to_numpy()))
+        CACHE_STATE.update(
+            index=index,
+            blocks=blocks,
+            position=pd.Series(index["position"].to_numpy(), index=index["record_key"].to_numpy()),
+        )
     index = CACHE_STATE["index"]
     positions = CACHE_STATE["position"].loc[np.asarray(keys)].to_numpy()
     check_open_roles(tuple(sorted(set(index["role"].to_numpy()[positions]))))
@@ -1457,7 +1843,7 @@ def cached_windows(keys: np.ndarray) -> np.ndarray:
 
 def measure_keys(keys: list[str]) -> list[dict[str, object]]:
     """
-    Method B on the cached windows of some open records.
+    Run method B on the cached windows of some open records.
 
     Parameters
     ----------
@@ -1476,12 +1862,44 @@ def measure_keys(keys: list[str]) -> list[dict[str, object]]:
 
 
 PLUS_COLUMNS = {
-    "12sl": ("QRS_Dur_Global", "PR_Int_Global", "HR_Ventr_Global", "R_AxisFrontal_Global", "P_Found_Global",
-             "R_Amp_V5", "R_Amp_V6", "S_Amp_V1", "R_Amp_aVL", "S_Amp_V3", "Rp_Amp_V1", "ST_Amp_V5", "T_Amp_V5",
-             "T_Amp_II", "Q_Dur_II", "Q_Dur_V5"),
-    "unig": ("QRS_Dur_Global", "PR_Int_Global", "HR__Global", "QRS_AxisFront_Global", "P_Found_Global",
-             "R_Amp_V5", "R_Amp_V6", "S_Amp_V1", "R_Amp_aVL", "S_Amp_V3", "Rp_Amp_V1", "ST_Amp80ms_V5",
-             "T+_Amp_V5", "T-_Amp_V5", "T+_Amp_II", "T-_Amp_II", "Q_Dur_II", "Q_Dur_V5"),
+    "12sl": (
+        "QRS_Dur_Global",
+        "PR_Int_Global",
+        "HR_Ventr_Global",
+        "R_AxisFrontal_Global",
+        "P_Found_Global",
+        "R_Amp_V5",
+        "R_Amp_V6",
+        "S_Amp_V1",
+        "R_Amp_aVL",
+        "S_Amp_V3",
+        "Rp_Amp_V1",
+        "ST_Amp_V5",
+        "T_Amp_V5",
+        "T_Amp_II",
+        "Q_Dur_II",
+        "Q_Dur_V5",
+    ),
+    "unig": (
+        "QRS_Dur_Global",
+        "PR_Int_Global",
+        "HR__Global",
+        "QRS_AxisFront_Global",
+        "P_Found_Global",
+        "R_Amp_V5",
+        "R_Amp_V6",
+        "S_Amp_V1",
+        "R_Amp_aVL",
+        "S_Amp_V3",
+        "Rp_Amp_V1",
+        "ST_Amp80ms_V5",
+        "T+_Amp_V5",
+        "T-_Amp_V5",
+        "T+_Amp_II",
+        "T-_Amp_II",
+        "Q_Dur_II",
+        "Q_Dur_V5",
+    ),
 }
 
 
@@ -1509,15 +1927,18 @@ def load_ptbxl_plus(keys: np.ndarray, directory: Path = PTBXL_PLUS) -> pd.DataFr
         path = Path(directory) / f"{program}_features.csv"
         ids = pd.read_csv(path, usecols=["ecg_id"])["ecg_id"]
         lines = set((np.flatnonzero(ids.isin(wanted).to_numpy()) + 1).tolist())
-        table = pd.read_csv(path, usecols=["ecg_id", *columns], skiprows=lambda i, keep=lines: i > 0 and i not in keep)
+        table = pd.read_csv(
+            path, usecols=["ecg_id", *columns], skiprows=lambda i, keep=lines: i > 0 and i not in keep
+        )
         tables.append(table.rename(columns={c: f"{c}_{program}" for c in columns}).set_index("ecg_id"))
     joined = tables[0].join(tables[1], how="outer")
     joined.insert(0, "record_key", "ptbxl:" + joined.index.astype(str))
     return joined.reset_index(drop=True)
 
 
-def error_summary(estimate: pd.Series, reference: pd.Series, tolerance: float, circular: bool = False
-                  ) -> dict[str, float]:
+def error_summary(
+    estimate: pd.Series, reference: pd.Series, tolerance: float, circular: bool = False
+) -> dict[str, float]:
     """
     Agreement of a measurement with a reference.
 
@@ -1538,11 +1959,128 @@ def error_summary(estimate: pd.Series, reference: pd.Series, tolerance: float, c
     """
     has_reference = reference.notna()
     both = has_reference & estimate.notna()
-    difference = (angle_difference(estimate[both], reference[both]) if circular
-                  else (estimate[both] - reference[both]).to_numpy(float))
+    difference = (
+        angle_difference(estimate[both], reference[both])
+        if circular
+        else (estimate[both] - reference[both]).to_numpy(float)
+    )
     absolute = np.abs(difference)
-    return {"pairs": int(has_reference.sum()), "measured": float(both.sum() / max(has_reference.sum(), 1)),
-            "bias": float(np.median(difference)) if len(difference) else np.nan,
-            "median_abs": float(np.median(absolute)) if len(absolute) else np.nan,
-            "p90_abs": float(np.percentile(absolute, 90)) if len(absolute) else np.nan,
-            "within": float((absolute <= tolerance).mean()) if len(absolute) else np.nan}
+    return {
+        "pairs": int(has_reference.sum()),
+        "measured": float(both.sum() / max(has_reference.sum(), 1)),
+        "bias": float(np.median(difference)) if len(difference) else np.nan,
+        "median_abs": float(np.median(absolute)) if len(absolute) else np.nan,
+        "p90_abs": float(np.percentile(absolute, 90)) if len(absolute) else np.nan,
+        "within": float((absolute <= tolerance).mean()) if len(absolute) else np.nan,
+    }
+
+
+def open_window_guard(table: pd.DataFrame) -> None:
+    """
+    Set the MLC-02 closed-data guard in a reader process: open record paths allowed, closed groups refused.
+
+    Parameters
+    ----------
+    table : pd.DataFrame
+        Open records with ``raw_path``.
+    """
+    from ecg_experiment.mlc02_waveforms import closed_keys, init_worker
+
+    init_worker(closed_keys(), frozenset(table["raw_path"]))
+
+
+def whole_record_windows(job: tuple[str, str, str]) -> dict[str, object]:
+    """
+    Run method B on every complete 10 s window of a whole recording.
+
+    The reader is MLC-01's (``mlc01_dataset.read_signal``) behind the closed-data guard
+    (``mlc02_waveforms.guard_path``), which must be set in the process first (``open_window_guard``).
+
+    Parameters
+    ----------
+    job : tuple[str, str, str]
+        Record key, manifest ``raw_path`` and source.
+
+    Returns
+    -------
+    dict[str, object]
+        ``record_key``, ``windows``, and per window lists of ``n_premature_aberrant``, ``af_pattern``
+        (irregular RR without a detectable P wave) and ``hr_bpm``, with the first window's values apart.
+    """
+    from ecg_experiment import mlc01_dataset
+    from ecg_experiment.eda.signals import canonical_order
+    from ecg_experiment.mlc02_waveforms import guard_path
+    from ecg_experiment.mlc03_measurements import measure_record
+
+    key, raw_path, source = job
+    signal, fs, names = mlc01_dataset.read_signal(
+        {"format": "wfdb", "stem": str(guard_path(raw_path, source))}
+    )
+    if fs != 500:
+        raise ValueError(f"{key} is not 500 Hz")
+    signal = canonical_order(signal, names).T
+    results = [
+        measure_record(signal[:, start : start + 5000]) for start in range(0, signal.shape[1] - 4999, 5000)
+    ]
+    ectopy = [float(r.get("n_premature_aberrant", np.nan)) for r in results]
+    af = [
+        bool(
+            r.get("rr_nrmssd", 0.0) >= IRREGULAR_NRMSSD
+            and r.get("status") == "ok"
+            and not (r.get("p_snr", 0.0) >= P_SNR_MIN and r.get("p_amp_mv", 0.0) >= P_AMP_MIN)
+        )
+        for r in results
+    ]
+    return {
+        "record_key": key,
+        "windows": len(results),
+        "ectopy_by_window": ectopy,
+        "af_by_window": af,
+        "hr_by_window": [float(r.get("hr_bpm", np.nan)) for r in results],
+        "ectopy_first": ectopy[0],
+        "ectopy_later": float(np.nansum(ectopy[1:])) if len(ectopy) > 1 else 0.0,
+        "af_first": af[0],
+        "af_later_windows": int(sum(af[1:])),
+    }
+
+
+def rule_counts(table: pd.DataFrame, rule: str, condition: str, mask: pd.Series) -> list[dict[str, object]]:
+    """
+    Label entries a candidate rule would set undefined, by source, role and current state.
+
+    Only defined entries count; a rule never creates or flips a positive.
+
+    Parameters
+    ----------
+    table : pd.DataFrame
+        Analysis table.
+    rule : str
+        Rule identifier.
+    condition : str
+        Space-B condition the rule acts on.
+    mask : pd.Series
+        Records the rule selects.
+
+    Returns
+    -------
+    list[dict[str, object]]
+        One row per source and role with the positives and negatives that would become undefined, beside the
+        defined entries there.
+    """
+    label = table[f"b_{condition}"]
+    rows = []
+    for (source, role), part in table.groupby(["source", "role"], sort=False):
+        selected = mask.loc[part.index] & label.loc[part.index].notna()
+        rows.append(
+            {
+                "rule": rule,
+                "condition": condition,
+                "source": source,
+                "role": role,
+                "positives_to_undefined": int((selected & (label.loc[part.index] == 1)).sum()),
+                "negatives_to_undefined": int((selected & (label.loc[part.index] == 0)).sum()),
+                "positives": int((label.loc[part.index] == 1).sum()),
+                "negatives": int((label.loc[part.index] == 0).sum()),
+            }
+        )
+    return rows

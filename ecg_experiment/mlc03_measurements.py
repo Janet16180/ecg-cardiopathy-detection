@@ -12,8 +12,8 @@ leads, one median of all beats, and slope-threshold delineation. Method B differ
   as premature aberrant complexes;
 - QRS: onset and offset where the smoothed spatial velocity of the dominant beat stays below
   ``noise + QRS_FRACTION * (peak - noise)`` for ``QUIET_MS``;
-- P wave: the maximum of the atrial envelope (root mean square of I, II, V1 and V2 around the PR baseline) in a
-  window before the QRS that excludes the preceding T wave; onset where the envelope falls to
+- P wave: the maximum of the atrial envelope (root mean square of I, II, V1 and V2 around the PR baseline) in
+  a window before the QRS that excludes the preceding T wave; onset where the envelope falls to
   ``P_FRACTION`` of its height; P presence from the template's signal-to-noise ratio, and P consistency as the
   median correlation of each dominant beat's P segment with the template's;
 - per-lead amplitudes, frontal axis from net QRS area in I and aVF, V1 morphology (number of positive peaks,
@@ -25,9 +25,9 @@ samples may be NaN. ``measure_record`` returns a flat dictionary with a ``status
 usable lead for R peaks), ``few_beats`` (fewer than three complete beats) or ``no_dominant`` (fewer than two
 beats match the median). Measurements that cannot be made are NaN.
 
-``synthetic_record`` builds a twelve-lead record from a heart vector made of raised-cosine lobes, so that every
-interval, the frontal axis, ST level and T amplitude are known exactly; the limb leads obey Einthoven's and
-Goldberger's relations by construction.
+``synthetic_record`` builds a twelve-lead record from a heart vector made of raised-cosine lobes, so that
+every interval, the frontal axis, ST level and T amplitude are known exactly; the limb leads obey Einthoven's
+and Goldberger's relations by construction.
 """
 
 from __future__ import annotations
@@ -55,13 +55,20 @@ QUIET_MS = 10
 FLAT_MV = 0.01
 UPRIGHT_T = ("I", "II", "V3", "V4", "V5", "V6")
 LIMB_ANGLES = {"I": 0.0, "II": 60.0, "III": 120.0, "aVR": -150.0, "aVL": -30.0, "aVF": 90.0}
-LIMB_GAIN = {"I": 1.0, "II": 1.0, "III": 1.0, "aVR": np.sqrt(3) / 2, "aVL": np.sqrt(3) / 2, "aVF": np.sqrt(3) / 2}
+LIMB_GAIN = {
+    "I": 1.0,
+    "II": 1.0,
+    "III": 1.0,
+    "aVR": np.sqrt(3) / 2,
+    "aVL": np.sqrt(3) / 2,
+    "aVF": np.sqrt(3) / 2,
+}
 PRECORDIAL_ANGLES = {"V1": 120.0, "V2": 90.0, "V3": 75.0, "V4": 60.0, "V5": 30.0, "V6": 0.0}
 
 
 def samples(ms: float) -> int:
     """
-    Number of samples in a duration.
+    Convert a duration to a number of samples.
 
     Parameters
     ----------
@@ -153,8 +160,9 @@ def xqrs_peaks(signal: np.ndarray, flat: np.ndarray) -> np.ndarray:
     for lead in DETECTION_LEADS:
         if flat[lead]:
             continue
-        found = processing.xqrs_detect(sig=np.nan_to_num(signal[lead].astype(np.float64)), fs=FS,
-                                       verbose=False)
+        found = processing.xqrs_detect(
+            sig=np.nan_to_num(signal[lead].astype(np.float64)), fs=FS, verbose=False
+        )
         if len(found) >= 3:
             return np.asarray(found, dtype=int)
     return np.array([], dtype=int)
@@ -164,8 +172,8 @@ def detect_peaks(signal: np.ndarray, clean: np.ndarray, flat: np.ndarray) -> np.
     """
     R peaks of method B.
 
-    XQRS runs on one lead (``xqrs_peaks``). Its detections are moved to the maximum of the QRS energy (spatial velocity
-    smoothed over 50 ms, a single hump per complex) within 75 ms. Energy maxima of at least
+    XQRS runs on one lead (``xqrs_peaks``). Its detections are moved to the maximum of the QRS energy (spatial
+    velocity smoothed over 50 ms, a single hump per complex) within 75 ms. Energy maxima of at least
     ``GAP_FRACTION`` of the median detected beat that lie more than 250 ms from every detection are added,
     because a single-lead detector misses some wide ectopic complexes.
 
@@ -186,11 +194,13 @@ def detect_peaks(signal: np.ndarray, clean: np.ndarray, flat: np.ndarray) -> np.
     found = xqrs_peaks(signal, flat)
     if not len(found):
         return found
-    energy = uniform_filter1d(spatial_velocity(clean, np.array([i for i in INDEPENDENT if not flat[i]])),
-                              size=samples(50))
+    energy = uniform_filter1d(
+        spatial_velocity(clean, np.array([i for i in INDEPENDENT if not flat[i]])), size=samples(50)
+    )
     half = samples(75)
-    moved = np.array([max(p - half, 0) + int(np.argmax(energy[max(p - half, 0): p + half])) for p in found],
-                     dtype=int)
+    moved = np.array(
+        [max(p - half, 0) + int(np.argmax(energy[max(p - half, 0) : p + half])) for p in found], dtype=int
+    )
     return merge_peaks(np.concatenate([moved, gap_candidates(energy, moved)]), energy)
 
 
@@ -237,7 +247,7 @@ def merge_peaks(peaks: np.ndarray, energy: np.ndarray) -> np.ndarray:
         Ascending positions at least 200 ms apart.
     """
     kept: list[int] = []
-    for peak in sorted(set(int(p) for p in peaks)):
+    for peak in sorted({int(p) for p in peaks}):
         if kept and peak - kept[-1] < samples(200):
             if energy[peak] > energy[kept[-1]]:
                 kept[-1] = peak
@@ -265,7 +275,7 @@ def beat_stack(clean: np.ndarray, peaks: np.ndarray) -> tuple[np.ndarray, np.nda
     inside = np.flatnonzero((peaks - PRE >= 0) & (peaks + POST <= clean.shape[1]))
     if not len(inside):
         return np.empty((0, 12, PRE + POST)), inside
-    return np.stack([clean[:, peaks[i] - PRE: peaks[i] + POST] for i in inside]), inside
+    return np.stack([clean[:, peaks[i] - PRE : peaks[i] + POST] for i in inside]), inside
 
 
 def core_correlation(beats: np.ndarray, template: np.ndarray, leads: np.ndarray) -> np.ndarray:
@@ -316,8 +326,11 @@ def classify_beats(beats: np.ndarray, leads: np.ndarray, rr_before: np.ndarray) 
         dominant = correlation >= DOMINANT_CORRELATION
     typical_rr = np.nanmedian(rr_before[dominant]) if np.isfinite(rr_before[dominant]).any() else np.nan
     premature = rr_before < PREMATURE_FRACTION * typical_rr
-    return {"correlation": correlation, "dominant": dominant,
-            "premature_aberrant": premature & (correlation < ABERRANT_CORRELATION)}
+    return {
+        "correlation": correlation,
+        "dominant": dominant,
+        "premature_aberrant": premature & (correlation < ABERRANT_CORRELATION),
+    }
 
 
 def region(velocity: np.ndarray, start: int, low: int, high: int, threshold: float) -> tuple[int, int]:
@@ -341,12 +354,14 @@ def region(velocity: np.ndarray, start: int, low: int, high: int, threshold: flo
         First and last sample of the region.
     """
     quiet = samples(QUIET_MS)
-    onset = next((i for i in range(start, low, -1) if (velocity[i - quiet: i] < threshold).all()), low)
-    offset = next((i for i in range(start, high) if (velocity[i: i + quiet] < threshold).all()), high)
+    onset = next((i for i in range(start, low, -1) if (velocity[i - quiet : i] < threshold).all()), low)
+    offset = next((i for i in range(start, high) if (velocity[i : i + quiet] < threshold).all()), high)
     return onset, offset
 
 
-def qrs_bounds(template: np.ndarray, leads: np.ndarray, fraction: float = QRS_FRACTION) -> tuple[int, int, float]:
+def qrs_bounds(
+    template: np.ndarray, leads: np.ndarray, fraction: float = QRS_FRACTION
+) -> tuple[int, int, float]:
     """
     QRS onset and offset of the dominant beat.
 
@@ -389,7 +404,7 @@ def baseline(template: np.ndarray, onset: int) -> np.ndarray:
     np.ndarray
         One level per lead, in mV.
     """
-    return np.median(template[:, onset - samples(16): onset - samples(4)], axis=1)
+    return np.median(template[:, onset - samples(16) : onset - samples(4)], axis=1)
 
 
 def t_end(centered: np.ndarray, offset: int, rr_ms: float) -> tuple[int, int]:
@@ -414,8 +429,9 @@ def t_end(centered: np.ndarray, offset: int, rr_ms: float) -> tuple[int, int]:
     start = offset + samples(80)
     if stop <= start + samples(40):
         return stop, stop
-    envelope = uniform_filter1d(np.sqrt((centered[list(INDEPENDENT), start:stop] ** 2).mean(axis=0)),
-                                size=samples(10))
+    envelope = uniform_filter1d(
+        np.sqrt((centered[list(INDEPENDENT), start:stop] ** 2).mean(axis=0)), size=samples(10)
+    )
     peak = int(np.argmax(envelope))
     if len(envelope) - peak < 3:
         return stop, stop
@@ -450,8 +466,14 @@ def p_window(onset: int, rr_ms: float, t_end_after_r: int) -> tuple[int, int]:
     return max(0, onset - samples(400), previous_t_end), onset - samples(40)
 
 
-def p_wave(beats: np.ndarray, template: np.ndarray, base: np.ndarray, bounds: tuple[int, int],
-           onset: int, fraction: float = P_FRACTION) -> dict[str, float]:
+def p_wave(
+    beats: np.ndarray,
+    template: np.ndarray,
+    base: np.ndarray,
+    bounds: tuple[int, int],
+    onset: int,
+    fraction: float = P_FRACTION,
+) -> dict[str, float]:
     """
     P-wave presence, consistency, amplitude and onset on the dominant beats.
 
@@ -490,8 +512,9 @@ def p_wave(beats: np.ndarray, template: np.ndarray, base: np.ndarray, bounds: tu
     noise = float(residual.std()) / np.sqrt(len(beats))
     result["p_amp_mv"], result["p_snr"] = height, height / noise if noise > 0 else np.inf
     segment = slice(max(start + peak - samples(50), 0), start + peak + samples(50))
-    result["p_consistency"] = float(np.median(
-        segment_correlation(beats[:, leads, segment], template[leads, segment])))
+    result["p_consistency"] = float(
+        np.median(segment_correlation(beats[:, leads, segment], template[leads, segment]))
+    )
     below = np.flatnonzero(envelope[:peak] - floor < fraction * height)
     if len(below):
         result["pr_ms"] = (onset - (start + int(below[-1]))) * 1000.0 / FS
@@ -541,7 +564,7 @@ def q_wave(lead: np.ndarray) -> tuple[float, float]:
     departed = np.flatnonzero(np.abs(lead) > 0.02)
     if not len(departed) or lead[departed[0]] > 0:
         return 0.0, 0.0
-    above = np.flatnonzero(lead[departed[0]:] > 0)
+    above = np.flatnonzero(lead[departed[0] :] > 0)
     end = departed[0] + (int(above[0]) if len(above) else len(lead) - departed[0])
     return end * 1000.0 / FS, float(-lead[:end].min())
 
@@ -562,13 +585,14 @@ def v1_morphology(v1: np.ndarray) -> dict[str, float]:
         last 40 ms) and ``v1_rprime_mv`` (height of the last positive peak when there are at least two).
     """
     peaks, _ = find_peaks(np.concatenate([[0.0], v1, [0.0]]), height=0.05, prominence=0.05)
-    terminal = float(v1[-samples(40):].mean()) if len(v1) >= samples(40) else np.nan
+    terminal = float(v1[-samples(40) :].mean()) if len(v1) >= samples(40) else np.nan
     rprime = float(v1[peaks[-1] - 1]) if len(peaks) >= 2 else 0.0
     return {"v1_positive_peaks": float(len(peaks)), "v1_terminal_mv": terminal, "v1_rprime_mv": rprime}
 
 
-def lead_amplitudes(centered: np.ndarray, onset: int, offset: int, j_plus: int,
-                    t_window: tuple[int, int]) -> dict[str, float]:
+def lead_amplitudes(
+    centered: np.ndarray, onset: int, offset: int, j_plus: int, t_window: tuple[int, int]
+) -> dict[str, float]:
     """
     Per-lead R, S and Q amplitudes, Q duration, net QRS area, terminal QRS level, ST levels and T amplitude.
 
@@ -592,17 +616,17 @@ def lead_amplitudes(centered: np.ndarray, onset: int, offset: int, j_plus: int,
     """
     values: dict[str, float] = {}
     for index, name in enumerate(LEADS):
-        qrs = centered[index, onset: offset + 1]
+        qrs = centered[index, onset : offset + 1]
         r_at = int(np.argmax(qrs))
         values[f"r_{name}"] = float(max(qrs.max(), 0.0))
         values[f"s_{name}"] = float(max(-qrs[r_at:].min(), 0.0))
         values[f"qdur_{name}"], values[f"q_{name}"] = q_wave(qrs)
         values[f"area_{name}"] = float(qrs.sum() * 1000.0 / FS)
-        values[f"term_{name}"] = float(qrs[-samples(40):].mean())
-        values[f"st60_{name}"] = float(centered[index, j_plus - samples(4): j_plus + samples(4)].mean())
+        values[f"term_{name}"] = float(qrs[-samples(40) :].mean())
+        values[f"st60_{name}"] = float(centered[index, j_plus - samples(4) : j_plus + samples(4)].mean())
         st80 = j_plus + samples(20)
-        values[f"st80_{name}"] = float(centered[index, st80 - samples(4): st80 + samples(4)].mean())
-        t_wave = centered[index, t_window[0]: t_window[1]]
+        values[f"st80_{name}"] = float(centered[index, st80 - samples(4) : st80 + samples(4)].mean())
+        t_wave = centered[index, t_window[0] : t_window[1]]
         values[f"t_{name}"] = float(t_wave[np.argmax(np.abs(t_wave))]) if len(t_wave) else np.nan
     return values
 
@@ -627,19 +651,25 @@ def rhythm(peaks: np.ndarray, kept: np.ndarray, classes: dict[str, np.ndarray]) 
         (intervals between consecutive dominant, non-premature beats).
     """
     rr = np.diff(peaks) * 1000.0 / FS
-    result = {"hr_bpm": 60000.0 / rr.mean(), "rr_cv": rr.std() / rr.mean(),
-              "rr_nrmssd": float(np.sqrt(np.mean(np.diff(rr) ** 2)) / rr.mean()) if len(rr) > 1 else np.nan,
-              "rr_range_ms": float(rr.max() - rr.min())}
+    result = {
+        "hr_bpm": 60000.0 / rr.mean(),
+        "rr_cv": rr.std() / rr.mean(),
+        "rr_nrmssd": float(np.sqrt(np.mean(np.diff(rr) ** 2)) / rr.mean()) if len(rr) > 1 else np.nan,
+        "rr_range_ms": float(rr.max() - rr.min()),
+    }
     clean = classes["dominant"] & ~classes["premature_aberrant"]
-    pairs = [peaks[kept[i + 1]] - peaks[kept[i]] for i in range(len(kept) - 1)
-             if kept[i + 1] == kept[i] + 1 and clean[i] and clean[i + 1]]
+    pairs = [
+        peaks[kept[i + 1]] - peaks[kept[i]]
+        for i in range(len(kept) - 1)
+        if kept[i + 1] == kept[i] + 1 and clean[i] and clean[i + 1]
+    ]
     result["rr_range_dominant_ms"] = float(np.ptp(pairs) * 1000.0 / FS) if len(pairs) >= 2 else np.nan
     return result
 
 
 def empty_result(status: str, flat: np.ndarray) -> dict[str, object]:
     """
-    Result of a record that could not be delineated.
+    Build the result of a record that could not be delineated.
 
     Parameters
     ----------
@@ -656,8 +686,13 @@ def empty_result(status: str, flat: np.ndarray) -> dict[str, object]:
     return {"status": status, "flat_leads": float(flat.sum())}
 
 
-def delineate(beats: np.ndarray, classes: dict[str, np.ndarray], leads: np.ndarray, rr_ms: float,
-              fractions: tuple[float, float] = (QRS_FRACTION, P_FRACTION)) -> dict[str, float]:
+def delineate(
+    beats: np.ndarray,
+    classes: dict[str, np.ndarray],
+    leads: np.ndarray,
+    rr_ms: float,
+    fractions: tuple[float, float] = (QRS_FRACTION, P_FRACTION),
+) -> dict[str, float]:
     """
     Every template measurement of the dominant beats.
 
@@ -685,20 +720,25 @@ def delineate(beats: np.ndarray, classes: dict[str, np.ndarray], leads: np.ndarr
     base = baseline(template, onset)
     centered = template - base[:, None]
     end, stop = t_end(centered, offset, rr_ms)
-    values = {"qrs_onset_ms": (onset - PRE) * 1000.0 / FS, "qrs_offset_ms": (offset - PRE) * 1000.0 / FS,
-              "qrs_ms": (offset - onset) * 1000.0 / FS, "velocity_noise": noise,
-              "t_end_ms": (end - PRE) * 1000.0 / FS}
+    values = {
+        "qrs_onset_ms": (onset - PRE) * 1000.0 / FS,
+        "qrs_offset_ms": (offset - PRE) * 1000.0 / FS,
+        "qrs_ms": (offset - onset) * 1000.0 / FS,
+        "velocity_noise": noise,
+        "t_end_ms": (end - PRE) * 1000.0 / FS,
+    }
     values |= lead_amplitudes(centered, onset, offset, offset + samples(60), (offset + samples(80), stop))
     values["axis_deg"] = float(np.degrees(np.arctan2(values["area_aVF"], values["area_I"])))
-    values |= v1_morphology(centered[6, onset: offset + 1])
+    values |= v1_morphology(centered[6, onset : offset + 1])
     values |= p_wave(dominant, template, base, p_window(onset, rr_ms, end - PRE), onset, fractions[1])
     return values
 
 
-def measure_record(signal: np.ndarray, fractions: tuple[float, float] = (QRS_FRACTION, P_FRACTION)
-                   ) -> dict[str, object]:
+def measure_record(
+    signal: np.ndarray, fractions: tuple[float, float] = (QRS_FRACTION, P_FRACTION)
+) -> dict[str, object]:
     """
-    Method B measurements of one record.
+    Measure one record with method B.
 
     Parameters
     ----------
@@ -726,10 +766,15 @@ def measure_record(signal: np.ndarray, fractions: tuple[float, float] = (QRS_FRA
     rr_all = np.diff(peaks) * 1000.0 / FS
     rr_before = np.array([rr_all[i - 1] if i > 0 else np.nan for i in kept])
     classes = classify_beats(beats, leads, rr_before)
-    result: dict[str, object] = {"status": "ok", "flat_leads": float(flat.sum()), "n_beats": float(len(peaks)),
-                                 "n_complete": float(len(beats)), "n_dominant": float(classes["dominant"].sum()),
-                                 "n_premature_aberrant": float(classes["premature_aberrant"].sum()),
-                                 "n_aberrant": float((classes["correlation"] < ABERRANT_CORRELATION).sum())}
+    result: dict[str, object] = {
+        "status": "ok",
+        "flat_leads": float(flat.sum()),
+        "n_beats": float(len(peaks)),
+        "n_complete": float(len(beats)),
+        "n_dominant": float(classes["dominant"].sum()),
+        "n_premature_aberrant": float(classes["premature_aberrant"].sum()),
+        "n_aberrant": float((classes["correlation"] < ABERRANT_CORRELATION).sum()),
+    }
     result |= rhythm(peaks, kept, classes)
     if classes["dominant"].sum() < 2:
         result["status"] = "no_dominant"
@@ -740,7 +785,7 @@ def measure_record(signal: np.ndarray, fractions: tuple[float, float] = (QRS_FRA
 
 def lead_vectors() -> np.ndarray:
     """
-    Unit directions of the twelve leads in a frontal-horizontal heart-vector space.
+    Give the unit directions of the twelve leads in a frontal-horizontal heart-vector space.
 
     Returns
     -------
@@ -804,14 +849,19 @@ def beat_components(spec: dict[str, float], ectopic: bool) -> list[tuple[float, 
     axis = np.radians(spec["axis_deg"])
     main = np.array([np.cos(axis), np.sin(axis), -0.5]) * 1.2
     if ectopic:
-        return [(0.0, 150.0, 0, np.array([-0.9, -0.6, 0.8]) * 1.4), (230.0, 200.0, 0, np.array([0.5, 0.4, -0.3]))]
+        return [
+            (0.0, 150.0, 0, np.array([-0.9, -0.6, 0.8]) * 1.4),
+            (230.0, 200.0, 0, np.array([0.5, 0.4, -0.3])),
+        ]
     qrs = spec["qrs_ms"]
     terminal = 50.0 if spec["rbbb"] else 0.0
     body = qrs - terminal
-    parts = [(-spec["pr_ms"], 100.0, 0, np.array([0.5, 0.85, 0.1]) * spec["p_mv"]),
-             (0.0, 0.25 * body, 0, np.array([-0.15, 0.0, 0.3])),
-             (0.2 * body, 0.6 * body, 0, main),
-             (0.75 * body, 0.25 * body, 0, np.array([-0.2, -0.2, -0.3]))]
+    parts = [
+        (-spec["pr_ms"], 100.0, 0, np.array([0.5, 0.85, 0.1]) * spec["p_mv"]),
+        (0.0, 0.25 * body, 0, np.array([-0.15, 0.0, 0.3])),
+        (0.2 * body, 0.6 * body, 0, main),
+        (0.75 * body, 0.25 * body, 0, np.array([-0.2, -0.2, -0.3])),
+    ]
     if spec["rbbb"]:
         parts.append((body, terminal, 0, np.array([-0.5, 0.0, 0.9]) * 0.8))
     t_vector = np.array([np.cos(axis), np.sin(axis), -0.2])
@@ -821,8 +871,9 @@ def beat_components(spec: dict[str, float], ectopic: bool) -> list[tuple[float, 
     return parts
 
 
-def synthetic_beats(spec: dict[str, float], onsets: np.ndarray, ectopic: np.ndarray,
-                    length: int) -> np.ndarray:
+def synthetic_beats(
+    spec: dict[str, float], onsets: np.ndarray, ectopic: np.ndarray, length: int
+) -> np.ndarray:
     """
     Heart vector of a sequence of synthetic beats.
 
@@ -849,21 +900,23 @@ def synthetic_beats(spec: dict[str, float], onsets: np.ndarray, ectopic: np.ndar
             shape = lobe(length, start, samples(duration_ms))
             if kind == 1:
                 shape = np.zeros(length)
-                shape[max(start, 0): min(start + samples(duration_ms), length)] = 1.0
+                shape[max(start, 0) : min(start + samples(duration_ms), length)] = 1.0
                 shape = uniform_filter1d(shape, size=samples(40))
             vector += direction[:, None] * shape[None, :]
     return vector
 
 
-def synthetic_onsets(spec: dict[str, float], rng: np.random.Generator,
-                     length: int) -> tuple[np.ndarray, np.ndarray]:
+def synthetic_onsets(
+    spec: dict[str, float], rng: np.random.Generator, length: int
+) -> tuple[np.ndarray, np.ndarray]:
     """
     QRS onsets of a synthetic rhythm and which beats are ectopic.
 
     Parameters
     ----------
     spec : dict[str, float]
-        ``rate_bpm``, ``af`` (0 or 1), ``sinus_arrhythmia_ms`` (peak RR modulation), ``pvc_every`` (0 for none).
+        ``rate_bpm``, ``af`` (0 or 1), ``sinus_arrhythmia_ms`` (peak RR modulation), ``pvc_every`` (0 for
+        none).
     rng : np.random.Generator
         Generator for AF intervals.
     length : int
@@ -889,14 +942,27 @@ def synthetic_onsets(spec: dict[str, float], rng: np.random.Generator,
     return np.asarray(onsets), np.asarray(ectopic, dtype=bool)
 
 
-SYNTHETIC_DEFAULTS = {"rate_bpm": 70.0, "pr_ms": 160.0, "qrs_ms": 90.0, "axis_deg": 45.0, "rbbb": 0.0,
-                      "st_mv": 0.0, "t_mv": 0.3, "p_mv": 0.15, "af": 0.0, "sinus_arrhythmia_ms": 0.0,
-                      "pvc_every": 0.0, "noise_mv": 0.0, "wander_mv": 0.0, "mains_mv": 0.0}
+SYNTHETIC_DEFAULTS = {
+    "rate_bpm": 70.0,
+    "pr_ms": 160.0,
+    "qrs_ms": 90.0,
+    "axis_deg": 45.0,
+    "rbbb": 0.0,
+    "st_mv": 0.0,
+    "t_mv": 0.3,
+    "p_mv": 0.15,
+    "af": 0.0,
+    "sinus_arrhythmia_ms": 0.0,
+    "pvc_every": 0.0,
+    "noise_mv": 0.0,
+    "wander_mv": 0.0,
+    "mains_mv": 0.0,
+}
 
 
 def synthetic_record(seed: int = 0, seconds: float = 10.0, **settings: float) -> tuple[np.ndarray, dict]:
     """
-    A synthetic twelve-lead record with known measurements.
+    Build a synthetic twelve-lead record with known measurements.
 
     Parameters
     ----------
@@ -940,11 +1006,16 @@ def synthetic_record(seed: int = 0, seconds: float = 10.0, **settings: float) ->
     signal += spec["wander_mv"] * np.sin(2 * np.pi * 0.3 * time)[None, :]
     signal += spec["mains_mv"] * np.sin(2 * np.pi * 50.0 * time)[None, :]
     signal += rng.normal(0.0, spec["noise_mv"], signal.shape) if spec["noise_mv"] > 0 else 0.0
-    one = synthetic_beats({**spec, "st_mv": 0.0}, np.array([samples(300)]), np.array([False]),
-                          samples(300 + spec["qrs_ms"]) + 1)
-    net = one[:2, samples(300):].sum(axis=1)
-    truth = {**spec, "axis_net_deg": float(np.degrees(np.arctan2(net[1], net[0]))), "onsets": onsets,
-             "ectopic": ectopic}
+    one = synthetic_beats(
+        {**spec, "st_mv": 0.0}, np.array([samples(300)]), np.array([False]), samples(300 + spec["qrs_ms"]) + 1
+    )
+    net = one[:2, samples(300) :].sum(axis=1)
+    truth = {
+        **spec,
+        "axis_net_deg": float(np.degrees(np.arctan2(net[1], net[0]))),
+        "onsets": onsets,
+        "ectopic": ectopic,
+    }
     return signal, truth
 
 
@@ -969,9 +1040,11 @@ def ludb_waves(record_path: str, lead: str) -> list[tuple[str, int, int, int]]:
 
     annotation = rdann(record_path, lead)
     symbols, positions = annotation.symbol, annotation.sample
-    return [(symbols[i], int(positions[i - 1]), int(positions[i]), int(positions[i + 1]))
-            for i in range(1, len(symbols) - 1)
-            if symbols[i] in ("p", "N", "t") and symbols[i - 1] == "(" and symbols[i + 1] == ")"]
+    return [
+        (symbols[i], int(positions[i - 1]), int(positions[i]), int(positions[i + 1]))
+        for i in range(1, len(symbols) - 1)
+        if symbols[i] in ("p", "N", "t") and symbols[i - 1] == "(" and symbols[i + 1] == ")"
+    ]
 
 
 def global_waves(waves: list[list[tuple[str, int, int, int]]], kind: str) -> np.ndarray:
@@ -993,15 +1066,22 @@ def global_waves(waves: list[list[tuple[str, int, int, int]]], kind: str) -> np.
     np.ndarray
         ``[waves, 3]``: onset, peak (median over leads) and offset samples, ordered by peak.
     """
-    found = sorted((peak, onset, offset) for lead in waves for wave, onset, peak, offset in lead if wave == kind)
+    found = sorted(
+        (peak, onset, offset) for lead in waves for wave, onset, peak, offset in lead if wave == kind
+    )
     groups: list[list[tuple[int, int, int]]] = []
     for item in found:
         if groups and item[0] - groups[-1][0][0] <= samples(100):
             groups[-1].append(item)
         else:
             groups.append([item])
-    return np.array([[min(g[1] for g in group), int(np.median([g[0] for g in group])), max(g[2] for g in group)]
-                     for group in groups], dtype=int).reshape(-1, 3)
+    return np.array(
+        [
+            [min(g[1] for g in group), int(np.median([g[0] for g in group])), max(g[2] for g in group)]
+            for group in groups
+        ],
+        dtype=int,
+    ).reshape(-1, 3)
 
 
 def ludb_reference(record_path: str) -> dict[str, float]:
@@ -1027,10 +1107,14 @@ def ludb_reference(record_path: str) -> dict[str, float]:
         if len(before):
             pr.append((onset - before[-1, 0]) * 1000.0 / FS)
     rr = np.diff(qrs[:, 1]) * 1000.0 / FS
-    return {"qrs_ms": float(np.median(qrs[:, 2] - qrs[:, 0]) * 1000.0 / FS) if len(qrs) else np.nan,
-            "pr_ms": float(np.median(pr)) if pr else np.nan,
-            "hr_bpm": 60000.0 / float(rr.mean()) if len(rr) else np.nan,
-            "n_qrs": float(len(qrs)), "n_p": float(len(p)), "n_pr": float(len(pr))}
+    return {
+        "qrs_ms": float(np.median(qrs[:, 2] - qrs[:, 0]) * 1000.0 / FS) if len(qrs) else np.nan,
+        "pr_ms": float(np.median(pr)) if pr else np.nan,
+        "hr_bpm": 60000.0 / float(rr.mean()) if len(rr) else np.nan,
+        "n_qrs": float(len(qrs)),
+        "n_p": float(len(p)),
+        "n_pr": float(len(pr)),
+    }
 
 
 def synthetic_cases(count: int, seed: int) -> list[dict[str, float]]:
@@ -1055,13 +1139,23 @@ def synthetic_cases(count: int, seed: int) -> list[dict[str, float]]:
     for index in range(count + 3 * (count // 4)):
         rate = float(rng.uniform(40, 140))
         rbbb = float(rng.random() < 0.3)
-        case = {"seed": index, "rate_bpm": rate, "pr_ms": float(rng.uniform(110, min(320.0, 60000.0 / rate - 250))),
-                "qrs_ms": float(rng.uniform(110 if rbbb else 70, 170 if rbbb else 130)), "rbbb": rbbb,
-                "axis_deg": float(rng.uniform(-90, 120)), "st_mv": float(rng.uniform(-0.2, 0.1)),
-                "t_mv": float(rng.uniform(-0.4, 0.5)), "noise_mv": float(rng.choice([0.0, 0.01, 0.03])),
-                "wander_mv": float(rng.choice([0.0, 0.1, 0.3])), "mains_mv": float(rng.choice([0.0, 0.02]))}
+        case = {
+            "seed": index,
+            "rate_bpm": rate,
+            "pr_ms": float(rng.uniform(110, min(320.0, 60000.0 / rate - 250))),
+            "qrs_ms": float(rng.uniform(110 if rbbb else 70, 170 if rbbb else 130)),
+            "rbbb": rbbb,
+            "axis_deg": float(rng.uniform(-90, 120)),
+            "st_mv": float(rng.uniform(-0.2, 0.1)),
+            "t_mv": float(rng.uniform(-0.4, 0.5)),
+            "noise_mv": float(rng.choice([0.0, 0.01, 0.03])),
+            "wander_mv": float(rng.choice([0.0, 0.1, 0.3])),
+            "mains_mv": float(rng.choice([0.0, 0.02])),
+        }
         kind = (index - count) // (count // 4) if index >= count else -1
-        case |= [{}, {"af": 1.0}, {"pvc_every": 4.0}, {"sinus_arrhythmia_ms": float(rng.uniform(80, 200))}][kind + 1]
+        case |= [{}, {"af": 1.0}, {"pvc_every": 4.0}, {"sinus_arrhythmia_ms": float(rng.uniform(80, 200))}][
+            kind + 1
+        ]
         cases.append(case)
     return cases
 
@@ -1087,5 +1181,8 @@ def synthetic_levels(truth: dict) -> dict[str, float]:
     leads = lead_vectors() @ vector
     j60 = start + samples(spec["qrs_ms"] + 60)
     t_peak = start + samples(spec["qrs_ms"] + 200)
-    return {f"{kind}_{lead}": float(leads[LEADS.index(lead), at])
-            for kind, at in (("st60", j60), ("t", t_peak)) for lead in ("II", "V5")}
+    return {
+        f"{kind}_{lead}": float(leads[LEADS.index(lead), at])
+        for kind, at in (("st60", j60), ("t", t_peak))
+        for lead in ("II", "V5")
+    }

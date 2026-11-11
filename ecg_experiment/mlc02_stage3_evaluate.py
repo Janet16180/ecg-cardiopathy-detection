@@ -5,9 +5,12 @@ Every metric comes from the tested scoring library (``mlc02_evaluation``, ``mlc0
 only arranges the calls. For PTB-XL fold 10 and the SPH evaluation half:
 
 - per candidate, raw probabilities: per-condition and macro AUROC, average precision with prevalence,
-  sensitivity and specificity at the validation thresholds, calibration slope, calibration in the large and
-  the joint-fit intercept, Brier score, the imprecise flag (< 100 positives) and the usability rule, with
-  2,000 patient-cluster bootstrap intervals shared by every model of the set (``interval_report``);
+  sensitivity and specificity at the validation thresholds, calibration in the large, Brier score, the
+  imprecise flag (< 100 positives) and the usability rule, with 2,000 patient-cluster bootstrap intervals
+  shared by every model of the set (``interval_report``);
+- the calibration slope and joint-fit intercept by damped Newton (``raw_calibration_damped``), primary under
+  Addendum 2 of the MLC-02 protocol, with intervals on the same resamples; the library's slope and intercept
+  stay in the ``raw`` table beside them, and ``library_calibration_failures`` counts where they are NaN;
 - the same after the validation-fitted Platt calibration (no thresholds, which were fixed on raw scores);
 - paired comparisons of every candidate against P0 (macro AUROC difference, per-condition differences with
   Holm over the entering conditions). Only the selected model against P0 on the SPH evaluation half is
@@ -78,9 +81,16 @@ REFERENCE = "P0"
 LIKELIHOOD_SET = "test_same_source"
 WORKERS = 8
 EVALUATION = "evaluation"
+CALIBRATION_RULE = (
+    "Addendum 2 of the MLC-02 protocol: the reported calibration slope and joint intercept are the "
+    "damped-Newton fits (*_calibration_damped tables); the library's values in the raw and platt tables are "
+    "listed beside them, with library_calibration_failures counting where they are NaN. Calibration in the "
+    "large is the library's."
+)
 TABLE_KINDS = ("raw", "platt", "raw_calibration_damped", "platt_calibration_damped")
 NOT_IMPLEMENTED = {
     "space_a_beside_key04": (
+        "Deferred to the backlog by Addendum 3 of the MLC-02 protocol. "
         "The candidates output the 14 space-B conditions only; KEY-04 scored space A (MI, STTC, CD, HYP). "
         "Space-A metrics need either a rule mapping the 14 outputs to the four groups (for example the "
         "maximum probability over each group's member conditions), fixed in a protocol addendum before "
@@ -89,11 +99,12 @@ NOT_IMPLEMENTED = {
         "KEY-04's 0.9608."
     ),
     "sph_window_mean_longer_records": (
+        "Deferred to the backlog by Addendum 3 of the MLC-02 protocol. "
         "The waveform cache holds the first 10 s only. The analysis needs the full SPH recordings of the "
         "evaluation half read from the raw files, every consecutive 10 s window passed through each "
-        "candidate's "
-        "input pipeline (the three encoders and the measurements for the feature candidates, S-R and F on "
-        "waveforms), and the window probabilities averaged per record, then metrics_table on the averages."
+        "candidate's input pipeline (the three encoders and the measurements for the feature candidates, "
+        "S-R and F on waveforms), and the window probabilities averaged per record, then metrics_table on "
+        "the averages."
     ),
     "source_identification": "Validation-feature audit, done in Stage 2 (source_identification/).",
     "leave_one_family_out": "Train and validation audit, done in Stage 2 (lofo/); no test input.",
@@ -592,6 +603,7 @@ def evaluate_sets(
             "better": result["comparisons"][CONFIRMATORY_SET][selected]["macro"]["better"],
             **result["comparisons"][CONFIRMATORY_SET][selected],
         }
+    result["calibration_rule"] = CALIBRATION_RULE
     result["not_implemented"] = NOT_IMPLEMENTED
     return result
 

@@ -13,8 +13,11 @@ improves the fit within ``MAX_ITERATIONS``, as under perfect separation, where n
 
 - ``fit_platt_damped``: per-condition Platt calibration on validation (Stage 3 ``fix``).
 - ``calibration_report``: joint-fit calibration intercept and slope of each condition with patient-cluster
-  bootstrap intervals on the shared resamples of ``mlc02_bootstrap.cluster_resamples``; reported beside the
-  library's values, which stay as computed.
+  bootstrap intervals on the shared resamples of ``mlc02_bootstrap.cluster_resamples``.
+
+Under Addendum 2 of the MLC-02 protocol these fits are primary: the validation Platt calibration, the SPH
+calibration-half refit, and the reported calibration slope and joint intercept. The library's values are
+listed beside them with the count of its failures.
 """
 
 from __future__ import annotations

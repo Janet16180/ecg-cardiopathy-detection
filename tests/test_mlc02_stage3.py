@@ -305,6 +305,41 @@ def test_damped_fit_matches_the_library_and_recovers_known_platt_parameters():
     assert np.isnan(damped_logistic_fit(separated, np.r_[np.full(50, -2.0), np.full(50, 2.0)])[0][0])
 
 
+def _well_separated(seed: int) -> tuple[np.ndarray, np.ndarray]:
+    rng = np.random.default_rng(seed)
+    positive_mode = rng.random(15000) < 0.02
+    x = np.where(positive_mode, rng.normal(2.0, 1.5, 15000), rng.normal(-12.0, 1.5, 15000))
+    return (rng.random(15000) < expit(x)).astype(float), logit(expit(x))
+
+
+def test_damped_fit_converges_on_well_separated_scores_where_the_library_does_not():
+    from sklearn.linear_model import LogisticRegression
+
+    from ecg_experiment.mlc02_bootstrap import cluster_resamples
+    from ecg_experiment.mlc02_evaluation import fit_platt
+
+    y, x = _well_separated(0)
+    assert 200 < y.sum() < 300
+    assert np.isnan(logistic_fit(y, x)[0][0])
+    a, b = damped_logistic_fit(y, x)
+    reference = LogisticRegression(C=np.inf, max_iter=100000, tol=1e-14).fit(x[:, None], y)
+    assert abs(a[0] - reference.intercept_[0]) < 1e-5
+    assert abs(b[0] - reference.coef_[0, 0]) < 1e-5
+    assert abs(a[0]) < 0.4
+    assert abs(b[0] - 1.0) < 0.25
+    labels, probability = np.column_stack([y] * 14), np.column_stack([expit(x)] * 14)
+    with pytest.raises(ValueError, match="did not converge"):
+        fit_platt(labels, probability)
+    np.testing.assert_allclose(
+        fit_platt_damped(labels, probability), np.tile([a[0], b[0]], (14, 1)), atol=1e-12
+    )
+    resamples = cluster_resamples(np.arange(15000).astype(str), labels, draws=50)
+    report, _ = calibration_report(labels, probability, resamples)
+    for row in report["conditions"]:
+        assert row["calibration_slope_nan_draws"] == 0
+        assert row["calibration_slope_ci_low"] <= row["calibration_slope"] <= row["calibration_slope_ci_high"]
+
+
 def test_calibration_report_gives_intervals_around_the_point_estimate():
     from ecg_experiment.mlc02_bootstrap import cluster_resamples
 

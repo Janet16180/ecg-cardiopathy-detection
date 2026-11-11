@@ -158,8 +158,7 @@ patient-cluster resamples per set shared by all candidates (seed 20261110):
 
 ## Dry runs (validation only)
 
-All dry runs wrote to the scratch directory of this session, `<scratch>` =
-`/tmp/claude-218201143/-home-janetrivera-ecg-cardiopathy-detection/23ce6ee8-fd51-4059-a2f6-6ded0be3cc80/scratchpad`.
+All dry runs wrote to a temporary scratch directory outside the repository, `<scratch>`.
 None touched `outputs/` except for reading Stage 2 files.
 
 ### Provisional selection table, without F

@@ -16,6 +16,15 @@ import time
 
 import pandas as pd
 
+from ecg_experiment.mlc03_near_duplicates import (
+    dense_pairs,
+    key_table,
+    load_fingerprints,
+    run_fingerprints,
+    run_long_records,
+    shifted_candidates,
+    verify_candidates,
+)
 from ecg_experiment.mlc03_signal_flags import (
     FLAGS,
     compute_flags,
@@ -43,6 +52,10 @@ from ecg_experiment.mlc03_signal_runs import (
 from ecg_experiment.paths import to_stored
 
 REVIEW = OUTPUT.parent / "review/signal"
+NEAR = OUTPUT / "near_duplicates"
+DENSE_FLOOR = 0.8
+NEAR_CODE = ["ecg_experiment/mlc03_near_duplicates.py", "ecg_experiment/resample.py",
+             "scripts/experiments/run_mlc03_signal_quality.py"]
 SEED = 20261111
 REVIEW_SIZE = 24
 FLAG_CODE = ["ecg_experiment/mlc03_signal_flags.py", "ecg_experiment/mlc03_signal_review.py",
@@ -205,6 +218,75 @@ def review_step(args: argparse.Namespace, command: list[str]) -> None:
                       "directory": str(directory)}))
 
 
+def pair_table(pairs: pd.DataFrame, first: str, second: str, identity: pd.DataFrame) -> pd.DataFrame:
+    """
+    Add identity columns of both records of every pair.
+
+    Parameters
+    ----------
+    pairs : pd.DataFrame
+        Pairs with row numbers in columns ``first`` and ``second``.
+    first, second : str
+        Column names of the two row numbers.
+    identity : pd.DataFrame
+        Identity in the same row order (``record_key``, ``source``, ``role``, ``included``,
+        ``duplicate_status``, ``sha256_10s``).
+
+    Returns
+    -------
+    pd.DataFrame
+        The pairs with ``<column>_a`` and ``<column>_b`` identity columns and ``same_hash``.
+    """
+    columns = ["record_key", "source", "role", "included", "duplicate_status", "sha256_10s"]
+    a = identity.iloc[pairs[first].to_numpy()][columns].reset_index(drop=True).add_suffix("_a")
+    b = identity.iloc[pairs[second].to_numpy()][columns].reset_index(drop=True).add_suffix("_b")
+    table = pd.concat([pairs.reset_index(drop=True), a, b], axis=1)
+    return table.assign(same_hash=table["sha256_10s_a"] == table["sha256_10s_b"])
+
+
+def near_duplicates_step(args: argparse.Namespace, command: list[str]) -> None:
+    """
+    Search train and validation for near-duplicate waveforms at zero lag and at RR-anchored lags.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed arguments (``workers``).
+    command : list[str]
+        Command line, for the receipt.
+    """
+    start = time.perf_counter()
+    index = read_index(DEVELOPMENT_ROLES)
+    identity = read_identity(DEVELOPMENT_ROLES).set_index("record_key").loc[index["record_key"]].reset_index()
+    run_fingerprints(WORK / "fingerprints_train_validation", index, args.workers)
+    prints = load_fingerprints(WORK / "fingerprints_train_validation", index)
+    long_records = run_long_records(identity, args.workers)
+    row_of = {key: number for number, key in enumerate(identity["record_key"])}
+    long_keys = {row_of[item["record_key"]]: item["keys"] for item in long_records}
+    verify = {number: prints["verify"][number] for number in range(len(identity))}
+    verify.update({row_of[item["record_key"]]: item["verify"] for item in long_records})
+    pairs, nearest, scores = dense_pairs(prints["dense"], prints["dense"], DENSE_FLOOR, same_set=True)
+    NEAR.mkdir(parents=True, exist_ok=True)
+    dense = pair_table(pairs, "query", "reference", identity)
+    dense.to_parquet(NEAR / "dense_pairs_train_validation.parquet", index=False)
+    keys = identity["record_key"].to_numpy()
+    neighbours = pd.DataFrame({"record_key": keys, "nearest_key": keys[nearest[:, 0]],
+                               "nearest_score": scores[:, 0], "second_score": scores[:, 1]})
+    neighbours.to_parquet(NEAR / "nearest_train_validation.parquet", index=False)
+    candidates = shifted_candidates(key_table(prints["rr"], long_keys))
+    verified = verify_candidates(candidates, verify)
+    shifted = pair_table(verified, "first", "second", identity)
+    shifted.to_parquet(NEAR / "shifted_pairs_train_validation.parquet", index=False)
+    write_receipt(NEAR / "near_duplicates_train_validation.receipt.json", {
+        "step": "near-duplicates", "command": command, "records": len(identity),
+        "long_records": len(long_records),
+        "dense_floor": DENSE_FLOOR, "dense_pairs": len(dense), "shifted_candidates": len(candidates),
+        "wall_seconds": time.perf_counter() - start, "inputs": input_hashes(),
+        "code": code_hashes(NEAR_CODE)})
+    print(json.dumps({"dense_pairs": len(dense), "shifted_candidates": len(candidates),
+                      "wall_seconds": time.perf_counter() - start}))
+
+
 def main(argv: list[str] | None = None) -> None:
     """
     Parse the command line and run one step.
@@ -215,7 +297,7 @@ def main(argv: list[str] | None = None) -> None:
         Arguments, or None for ``sys.argv``.
     """
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("step", choices=("measure", "full-records", "flags", "review"))
+    parser.add_argument("step", choices=("measure", "full-records", "flags", "review", "near-duplicates"))
     parser.add_argument("--flag", choices=tuple(FLAGS), help="review: flag to review")
     parser.add_argument("--seed", type=int, default=SEED, help="review: sampling seed")
     parser.add_argument("--tag", help="review: suffix of the review directory (for a re-sample)")
@@ -234,6 +316,8 @@ def main(argv: list[str] | None = None) -> None:
         flags_step(command)
     elif args.step == "review":
         review_step(args, command)
+    elif args.step == "near-duplicates":
+        near_duplicates_step(args, command)
 
 
 if __name__ == "__main__":

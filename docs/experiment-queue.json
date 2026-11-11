@@ -39,7 +39,7 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-11-11T15:22:00+00:00",
+  "updated_at_utc": "2026-11-11T15:42:53+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2655,6 +2655,32 @@
       "Clinical review of any rule or suspected label error (pending)",
       "SPH aggregate check of identity residuals and large values (needs user approval)",
       "Test-role scoring of v5-trained models (not part of MLC-03)"
+    ]
+  },
+  "key06_embedding_structure_20261111": {
+    "status": "complete_descriptive_no_unexplained_cluster",
+    "protocol": "docs/key06-embedding-structure-protocol-2026-11-11.md",
+    "protocol_commit": "951d7b79b85ccc3b1acac5026b5a8ced15504a5e",
+    "source_commit": "9db99066a79c5c40d52eddd5c79ed072f89578fa",
+    "flags_step_commit": "24ee16c0d95605ab16a2e7a6b0ad179622f518f9",
+    "dataset_in": "outputs/mlc01_condition_dataset_20261110_v4",
+    "features": "outputs/mlc02_condition_models_20261110/features/xecg.npy",
+    "output": "outputs/key06_embedding_structure_20261111",
+    "receipts": "outputs/key06_embedding_structure_20261111/receipts/",
+    "report": "docs/key06-embedding-structure-results-2026-11-11.md",
+    "tables": "scripts/reports/key06_tables.py",
+    "authorization": "User request of 11 November 2026 (in the protocol): study the vector space of the encoder behind the best binary detector (xECG) and its clusters, which may indicate cardiac findings without labels or something else.",
+    "scope": "Train (56,250, discovery) and validation (15,138, replication) records of MLC-01 dataset v4; dataset v4 because v5 did not exist when the protocol was frozen. Variance accounting, residual space, k-means (k 10-80) and HDBSCAN on the raw and residual spaces and on the label-negative subset, cluster description and the five rules, review sheets, ECG-CPC cross-encoder check, outliers, statement probes. CPU only. No test role read; Challenge test groups, EchoNext and MIMIC not opened.",
+    "summary": "P0's validation metric reproduced exactly (0.9642697112976489). Known factors explain 0.572 of the validation embedding variance (0.628 in the 91 kept components): measurements 0.505 alone and 0.273 unique, labels 0.197 and 0.024, heart rate 0.135 and 0.023, age and sex 0.053 and 0.005, source 0.019 and 0.003, flags 0.014 and 0.001. Source accuracy 0.738 (majority 0.461) before and 0.461 after removing linear effects (0.1965 of the variance). 606 clusters; 27 candidates, none unexplained: normal-looking ECGs and normal variants 9, label gaps 10, long and short PR 2, sub-threshold baseline drift 3, outside the 14 conditions 3 (pre-excitation with 3 validation members, low limb-lead voltage, terminal rightward QRS). The literal artefact rule fails 435 clusters, 248 on a flag carried by at most four members; 85 fail only that rule (50 would pass with a five-member minimum), including LBBB, pacemaker and Ningbo atrial-rhythm groups. 18 statements meet the step 7 rule, validation AUROC 0.782-0.978. Outliers are enriched for AF, ventricular ectopy, wide or very fast rhythms and recording defects (24% flagged against 8%).",
+    "readings": {
+      "artefact_rule": "literal: a flag more than twice as frequent inside counts however few members carry it; the five-member reading is reported beside it and decides nothing",
+      "label_negative_subset": "no positive among the defined labels; undefined labels enter it, so it is not a clean normal set"
+    },
+    "next_action": "Descriptive study; nothing is scheduled. Follow-ups are in the backlog: a minimum flagged count for the artefact rule, labels outside the 14 conditions after clinical review, a sub-threshold baseline-drift covariate, an audit of undefined labels among the normals of Experiment 030, and the Ningbo record-number structure.",
+    "not_done": [
+      "Clinical review of any cluster reading (pending)",
+      "Sheets of 108 of the 165 non-candidate stable multi-source clusters (described by tables only)",
+      "Twelve-lead detail sheets of 25 of the 27 candidates, and 6 of the 8 residual outlier sheets (drawn, not read)"
     ]
   }
 }

@@ -2101,18 +2101,17 @@
       "kind": "experiment",
       "title": "Structure of the xECG embedding space beyond the labelled conditions",
       "question": "Which clusters or directions of the xECG embedding space are not explained by the 14 labels, and do they correspond to unlabelled cardiac findings or to something else (source, device, noise, heart rate, age, sex)?",
-      "evidence": "User request of 11 November 2026. Experiment 024: k-means clusters followed device (AMI 0.22-0.23) and heart rate more than diagnosis (0.06-0.09); 024b: pooled clusters followed the label more than the hospital but none was a pure diagnosis. MLC-02: source is identifiable from xECG features with accuracy 0.852. The raw code lists of the sources hold many statements outside the 14 conditions that can name a cluster.",
+      "evidence": "KEY-06 (docs/key06-embedding-structure-results-2026-11-11.md), train and validation of MLC-01 v4: known factors explain 0.572 of the validation embedding variance (measurements 0.505 alone, 0.273 unique; labels 0.197 and 0.024; source 0.019 and 0.003, still readable with accuracy 0.738 until linear effects are removed). 27 of 606 clusters meet the five rules and none is unexplained: normal variants, label gaps, PR gradients, sub-threshold baseline drift, and three patterns outside the 14 conditions (pre-excitation with 3 validation members, low limb-lead voltage, terminal rightward QRS). The literal artefact rule rejects LBBB and pacemaker groups on one to four rare flags. 18 statements outside the 14 conditions are separated with validation AUROC 0.782-0.978.",
       "value": 4,
       "clarity": 0.4,
       "gpu_hours": 2,
       "cpu_hours": 10,
       "build_hours": 14,
       "blocked_by": [
-        "@mlc03_signal_flags",
         "@prospective_key06_protocol"
       ],
-      "status": "proposed",
-      "notes": "Scope to fix in the protocol: remove or control known factors first (source, heart rate, signal-quality flags of MLC-03, age, sex), then cluster the residual and the records all 14 labels call negative; characterise each cluster by raw codes outside the 14 conditions, measurements and plotted ECGs; require a cluster to appear in at least two source families before reading it as cardiac; cluster-stability checks under resampling. Extends clustering_multisource. Findings are descriptive; clinical reading is pending."
+      "status": "done",
+      "notes": "Measured: full run 77 minutes on CPU (05:54-07:11 on 11 November), most of it HDBSCAN on the subsamples; no GPU. Descriptive; clinical reading is pending. Follow-ups: key06_artefact_rule_minimum, key06_labels_outside_14, key06_baseline_drift_covariate, key06_undefined_labels_in_normals, ningbo_record_number_structure."
     },
     {
       "id": "mlc03_input_gap_masking",
@@ -2256,6 +2255,85 @@
       ],
       "status": "proposed",
       "notes": "One-time use; the protocol fixes the model, the rules, the metrics and the decision before the groups are opened. Related: final_frozen_test (the binary screening pipeline)."
+    },
+    {
+      "id": "key06_artefact_rule_minimum",
+      "kind": "analysis",
+      "title": "A minimum flagged-member count for the cluster artefact rule",
+      "question": "Should a signal flag need a minimum number of flagged members (for example five) before it marks a cluster as an artefact, and what do the clusters that pass only under that reading show on review?",
+      "evidence": "KEY-06: read literally, the artefact rule rejects 435 of 606 clusters, 248 of them on a flag carried by at most four members, because one flagged record among thousands exceeds twice the outside rate of a rare flag. 85 clusters fail only that rule; 50 pass with a five-member minimum, among them ten groups with PTB-XL complete LBBB on 40-54% of members and nine with the pacemaker statement on 42-88%.",
+      "value": 2,
+      "clarity": 0.7,
+      "gpu_hours": 0,
+      "cpu_hours": 0.5,
+      "build_hours": 3,
+      "blocked_by": [
+        "@prospective_key06_amendment"
+      ],
+      "status": "proposed",
+      "notes": "The 50 clusters are already seen, so a new minimum applied to KEY-06 only describes; it decides something only for a later clustering study whose protocol fixes it before any run. Sheets exist for all 85 under outputs/key06_embedding_structure_20261111/review/."
+    },
+    {
+      "id": "key06_labels_outside_14",
+      "kind": "experiment",
+      "title": "Labels outside the 14 conditions that the xECG embedding already separates",
+      "question": "Should left bundle branch block, right ventricular hypertrophy, right axis deviation, early repolarization, premature atrial contraction, low QRS voltage, paced rhythm and pre-excitation become defined labels of the condition dataset, and how well do condition models detect them?",
+      "evidence": "KEY-06 step 7: in two source families the embedding separates RVH (validation within-source AUROC 0.978, lower bound 0.961), LBBB (0.977, 0.964), right axis deviation (0.968, 0.957), early repolarization (0.968, 0.956), premature atrial contraction (0.959, 0.947) and low QRS voltage (0.944, 0.933). Paced rhythm (0.984 Ningbo, 0.983 PTB-XL) is coded in one family per vocabulary; pre-excitation forms a cluster (WPW statement on 19 of 33 members) but neither WPW statement reaches 100 train positives.",
+      "value": 4,
+      "clarity": 0.6,
+      "gpu_hours": 0.5,
+      "cpu_hours": 2,
+      "build_hours": 8,
+      "blocked_by": [
+        "@clinician_available"
+      ],
+      "status": "proposed",
+      "notes": "New label definitions wait for clinical review, then a protocol. MLC-01 already maps most of these statements to space C conditions (complete_lbbb, rvh, right_axis_deviation, premature_atrial_complex, low_qrs_voltage, paced_rhythm); early repolarization has no mapping. Pre-excitation is relevant to the student screening target, but 3 validation members cannot support any claim."
+    },
+    {
+      "id": "key06_baseline_drift_covariate",
+      "kind": "analysis",
+      "title": "A baseline-drift measure below the baseline_wander flag threshold",
+      "question": "Does a continuous baseline-drift measure (noise_drift_frac) or a lower threshold for baseline_wander explain embedding groups and model errors well enough to use it as a quality covariate or flag?",
+      "evidence": "KEY-06: three of the 27 candidate clusters are normal-looking ECGs grouped by slow baseline movement (within-source noise_drift_frac +0.99, +1.10, +1.19) while the baseline_wander flag is only 1.5-1.7 times as frequent as outside, so the artefact rule cannot see them.",
+      "value": 2,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "A lower threshold needs an independent visual check as in MLC-03 Part A before any rule; descriptive on train and validation only."
+    },
+    {
+      "id": "key06_undefined_labels_in_normals",
+      "kind": "analysis",
+      "title": "Undefined labels among the records used as normal ECGs",
+      "question": "How many records counted as normal or label-negative carry an undefined T-wave, ST or left-axis label (or a statement these labels leave undefined), and does excluding them move the referral thresholds of Experiment 030?",
+      "evidence": "KEY-06: five candidate clusters of the label-negative subset sit in the undefined part of a label: T-wave abnormality undefined in 79-88% of members against 19% of the subset (CPSC-Extra, PTB-XL records with ischemic statements), left axis deviation undefined in 58% against 38% (PTB-XL). Experiment 030 fits its referral budget as a quantile of the scores of normal ECGs, so abnormal records inside the normal set raise the threshold.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Experiment 030's normals follow the binary label (sinus rhythm alone), not KEY-06's label-negative definition, so the count must be made on 030's own normal sets; any recount of SPH normals uses already-read data and stays descriptive. Label definitions change only after clinical review."
+    },
+    {
+      "id": "ningbo_record_number_structure",
+      "kind": "analysis",
+      "title": "What the Ningbo record numbers encode",
+      "question": "Why do the KEY-06 outlier and label-negative shares change with the Ningbo record number, and do the records above JS45000 carry source codes that the MLC-01 mapping misses?",
+      "evidence": "KEY-06, Ningbo train: raw-space outlier share 2.7% in JS10000-JS20000, 0.0% in JS30000-JS40000 and 8.5% above JS45000; label-negative share 1.7% to 34.6% across the same blocks; one atrial-rhythm cluster draws 44 of its 61 Ningbo members from JS20900-JS21100. The outlier sheets show records above JS45000 with no positive label and markedly abnormal-looking tracings.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 3,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Ningbo is training data. Compare the blocks with the source's description, raw code lists, ages and signal flags; Chapman and Ningbo are one family, so check Chapman numbering too. Any resulting rule needs a protocol and applies to a successor of dataset v5."
     }
   ]
 }

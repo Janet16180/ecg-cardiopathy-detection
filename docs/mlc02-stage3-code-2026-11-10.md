@@ -339,6 +339,9 @@ stopped short of the optimum. The same holds at the next two cells (1.3e-7 and 1
 
 ## Audits not implemented
 
+Addendum 3 of the MLC-02 protocol (item 2) defers the first two to the backlog; the results report lists
+them as not done.
+
 - **Space A beside KEY-04.** The candidates output the 14 space-B conditions only; KEY-04 scored space A (MI,
   STTC, CD, HYP). Space-A metrics need one of two things, fixed before `test-predict`. Either a protocol
   addendum with a rule mapping the 14 outputs to the four groups (for example the highest probability among
@@ -364,10 +367,10 @@ All dated 10 November 2026.
 1. **Calibration fits by damped Newton**, ruled by Addendum 2 (see "Calibration fits"). The damped fit is
    primary for the validation Platt calibration, the SPH calibration-half refit, and the reported slope and
    joint intercept. The library's values are listed beside them with the count of failures.
-2. **E's rule.** The family definition is the lead's: same input features, different head. H-All also reads
-   the xECG features, but its inputs are not the same as H-X's, so it is its own family. Inside E, the best
-   member and the family ranking use the exact metric (earlier in the table on exact equality), not the 0.001
-   margin. E's validation metric is optimistic twice, since its members are chosen on the same validation
+2. **E's rule**, fixed by Addendum 3 (item 1). The family definition is the lead's: same input features,
+   different head. H-All also reads the xECG features, but its inputs are not the same as H-X's, so it is its
+   own family. Inside E, the best member and the family ranking use the exact metric (earlier in the table on
+   exact equality), not the 0.001 margin. E's validation metric is optimistic twice, since its members are chosen on the same validation
    records it is scored on. Without F, E is the mean of H-X, H-All and S-R.
 3. **Where test predictions go.** `stage3/predictions/<id>/<role>__seeds-<...>.npz`, not `candidates/<id>/`,
    so that Stage 3 outputs stay together and Stage 2 directories stay as written. The once-only guard scans the
@@ -395,12 +398,12 @@ All dated 10 November 2026.
    compares with the saved files, so it checks the loaders, the model artefacts, the seed means and E. It does
    not open a test-role block or feature row, so the first read of those happens in the real run, guarded by
    the same role and hash checks.
-9. **Audits without intervals.** Sex, flat leads, one condition against several and the multiclass view are
-   point estimates; the protocol asks for no intervals there.
-10. **Secondary analysis interval.** The local-minus-validation intervals resample the SPH evaluation half
-    with the local thresholds and Platt fit held fixed, so they do not include the variability of the fit on
-    the calibration half.
-11. **Likelihood analysis** at PTB-XL fold 10 only; SPH statements carry no likelihood.
+9. **Audits without intervals** (Addendum 3, item 3). Sex, flat leads, one condition against several and the
+   multiclass view are point estimates.
+10. **Secondary analysis interval** (Addendum 3, item 4). The local-minus-validation intervals resample the
+    SPH evaluation half with the local thresholds and Platt fit held fixed, so they do not include the
+    variability of the fit on the calibration half.
+11. **Likelihood analysis** at PTB-XL fold 10 only (Addendum 3, item 3); SPH statements carry no likelihood.
 12. **Selected model equal to P0.** If that happens, the confirmatory entry says so and "better" is false
     (no demonstrated gain), without a degenerate paired bootstrap.
 13. **Integrity.** The nine Stage 2 candidates' stored selection metrics were reproduced exactly (difference 0)

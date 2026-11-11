@@ -90,6 +90,7 @@ CALIBRATION_RULE = (
 TABLE_KINDS = ("raw", "platt", "raw_calibration_damped", "platt_calibration_damped")
 NOT_IMPLEMENTED = {
     "space_a_beside_key04": (
+        "Deferred to the backlog by Addendum 3 of the MLC-02 protocol. "
         "The candidates output the 14 space-B conditions only; KEY-04 scored space A (MI, STTC, CD, HYP). "
         "Space-A metrics need either a rule mapping the 14 outputs to the four groups (for example the "
         "maximum probability over each group's member conditions), fixed in a protocol addendum before "
@@ -98,11 +99,12 @@ NOT_IMPLEMENTED = {
         "KEY-04's 0.9608."
     ),
     "sph_window_mean_longer_records": (
+        "Deferred to the backlog by Addendum 3 of the MLC-02 protocol. "
         "The waveform cache holds the first 10 s only. The analysis needs the full SPH recordings of the "
         "evaluation half read from the raw files, every consecutive 10 s window passed through each "
-        "candidate's "
-        "input pipeline (the three encoders and the measurements for the feature candidates, S-R and F on "
-        "waveforms), and the window probabilities averaged per record, then metrics_table on the averages."
+        "candidate's input pipeline (the three encoders and the measurements for the feature candidates, "
+        "S-R and F on waveforms), and the window probabilities averaged per record, then metrics_table on "
+        "the averages."
     ),
     "source_identification": "Validation-feature audit, done in Stage 2 (source_identification/).",
     "leave_one_family_out": "Train and validation audit, done in Stage 2 (lofo/); no test input.",

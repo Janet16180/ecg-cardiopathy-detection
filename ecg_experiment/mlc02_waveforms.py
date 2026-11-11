@@ -27,6 +27,7 @@ MANIFEST = ROOT / "outputs/mlc01_condition_dataset_20261110_v3/manifest.csv"
 OTHER_MANIFESTS = (
     ROOT / "outputs/mlc01_condition_dataset_20261110/manifest.csv",
     ROOT / "outputs/mlc01_condition_dataset_20261110_v2/manifest.csv",
+    ROOT / "outputs/mlc01_condition_dataset_20261110_v4/manifest.csv",
 )
 CACHE = Path("/var/tmp/janetrivera/mlc02/waveforms")
 IDENTITY_COLUMNS = [

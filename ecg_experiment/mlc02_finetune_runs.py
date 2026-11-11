@@ -125,6 +125,7 @@ CODE = (
 GIB = 1024**3
 HEADROOM = GIB
 PROFILE_FREE = 6 * GIB
+SMOKE_FREE = 3 * GIB
 PROFILE_UPDATES = 100
 PROFILE_SKIPPED = 5
 DRIFT_RECORDS = 256
@@ -588,7 +589,7 @@ def run_profile(gpu: int, microbatch: int, updates: int, command: list[str], lim
     cached = cached_xecg_features(validation["data"])
     started = time.time()
     with gpu_lock("cuda", path=lock):
-        memory = free_memory(PROFILE_FREE)
+        memory = free_memory(SMOKE_FREE if smoke else PROFILE_FREE)
         torch.set_num_threads(4)
         torch.cuda.reset_peak_memory_stats()
         clock = time.perf_counter()

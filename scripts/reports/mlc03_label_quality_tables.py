@@ -209,6 +209,51 @@ def item1() -> str:
     return markdown(pd.DataFrame(rows))
 
 
+def records() -> str:
+    """
+    Open records by source and role, records longer than 10 s, and method B's status.
+
+    Returns
+    -------
+    str
+        Markdown tables read from ``analysis.parquet``.
+    """
+    table = pd.read_parquet(OUT / "analysis.parquet", columns=["source", "role", "duration_s", "status_b"])
+    counts = pd.crosstab(table["source"], table["role"]).reindex(list(SHORT))
+    counts["records"] = counts.sum(axis=1)
+    counts["longer than 10 s"] = (table["duration_s"] > 10.0 + 1e-6).groupby(table["source"]).sum()
+    counts.loc["total"] = counts.sum()
+    counts = counts.reset_index().assign(source=lambda f: f["source"].map({**SHORT, "total": "total"}))
+    status = table["status_b"].value_counts().rename_axis("method B status").reset_index(name="records")
+    return "\n\n".join([markdown(counts), markdown(status)])
+
+
+def definitions() -> str:
+    """
+    Measured definition of each condition used by item 1.
+
+    Returns
+    -------
+    str
+        Markdown table of ``item1_definitions.csv``.
+    """
+    table = pd.read_csv(OUT / "item1_definitions.csv")
+    return markdown(table[["condition", "measure", "population", "bound", "tolerance", "reference"]])
+
+
+def whole() -> str:
+    """
+    Count the findings of the records longer than 10 s by 10 s window.
+
+    Returns
+    -------
+    str
+        Markdown table of ``item1_whole_record_summary.csv``.
+    """
+    table = pd.read_csv(OUT / "item1_whole_record_summary.csv")
+    return markdown(table.assign(source=table["source"].map(SHORT)))
+
+
 def item2() -> str:
     """
     Inconsistent source pairs per analysis, implied rate cut-offs and sources not coding a distinction.
@@ -464,9 +509,12 @@ def integrity() -> str:
 
 
 SECTIONS = {
+    "records": records,
     "validation": validation,
     "agreement": agreement,
+    "definitions": definitions,
     "item1": item1,
+    "whole": whole,
     "item2": item2,
     "item3": item3,
     "item4": item4,

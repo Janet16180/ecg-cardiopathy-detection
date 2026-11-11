@@ -100,3 +100,19 @@ most 8 threads. New modules (`ecg_experiment/mlc04_*.py`), scripts and synthetic
 pinned file edited. Outputs in `outputs/mlc04_final_test_20261111/`. Report
 `docs/mlc04-final-test-results-2026-11-11.md` written from the outputs. Queue and backlog
 updates, and a line in `AGENTS.md`'s closed-data paragraph is proposed to the user, not edited.
+
+## Amendment 1: like-for-like validation value (11 November 2026)
+
+Timing: written after the dry run on the Challenge validation (calibration) groups and before
+the freeze record and before any test-group record was opened. No test value existed.
+
+The primary reading as first written compared the test metric (five Challenge sources, entry
+rule of 100 positives and 100 negatives) with 0.9698, which is the six-source validation
+metric with the 20-positive entry rule and includes PTB-XL. The two are not the same quantity.
+The dry run gives the like-for-like validation value: the same five-source, entry-100 metric of
+the v5-trained P0 on the validation groups, 0.9611 (0.9557, 0.9663).
+
+The primary reading therefore uses the like-for-like value: confirmed if the test interval's
+lower bound is above 0.9611 minus 0.010, that is 0.9511; not confirmed if the upper bound is
+below 0.9511; otherwise undecided. The comparison with 0.9698 is printed beside it without a
+reading. Nothing else changes.

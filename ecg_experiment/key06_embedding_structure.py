@@ -1700,7 +1700,7 @@ def draw_cluster_sheet(windows: list[np.ndarray], captions: list[str], path: Pat
     templates = [median_beat_template(window) for window in windows]
     figure = plt.figure(figsize=(14, 18))
     outer = figure.add_gridspec(2, 1, height_ratios=[0.34, 0.66], hspace=0.06, left=0.04, right=0.995,
-                                top=0.965, bottom=0.015)
+                                top=0.95, bottom=0.015)
     beats = outer[0].subgridspec(3, 4, hspace=0.35, wspace=0.18)
     for lead, name in enumerate(LEADS):
         draw_beats(figure.add_subplot(beats[lead // 4, lead % 4]), templates, lead, name)
@@ -1719,12 +1719,34 @@ def draw_cluster_sheet(windows: list[np.ndarray], captions: list[str], path: Pat
             axis.axvline(second, color="tab:blue", lw=0.3, alpha=0.4)
         axis.set_yticks([])
         axis.tick_params(axis="x", labelbottom=row == len(windows) - 1, labelsize=6, length=2)
-        axis.text(0.002, 0.92, caption, transform=axis.transAxes, fontsize=6.5, va="top",
-                  bbox={"facecolor": "white", "alpha": 0.7, "lw": 0, "pad": 0.5})
-    figure.suptitle(title, fontsize=10, x=0.01, ha="left")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    figure.savefig(path, dpi=80)
+        axis.text(0.002, 0.92, f"{caption} | II range {high - low:.1f} mV", transform=axis.transAxes,
+                  fontsize=6.5, va="top", bbox={"facecolor": "white", "alpha": 0.7, "lw": 0, "pad": 0.5})
+    figure.suptitle(title, fontsize=10, x=0.01, y=0.985, ha="left")
+    save_small_png(figure, path)
     plt.close(figure)
+
+
+def save_small_png(figure: Any, path: Path) -> None:
+    """
+    Save a figure as a 64-colour PNG to keep review sheets small.
+
+    Parameters
+    ----------
+    figure : Any
+        Matplotlib figure.
+    path : Path
+        Destination PNG.
+    """
+    import io
+
+    from PIL import Image
+
+    buffer = io.BytesIO()
+    figure.savefig(buffer, dpi=80, format="png")
+    buffer.seek(0)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    image = Image.open(buffer).convert("RGB").quantize(colors=64)
+    image.save(path, optimize=True)
 
 
 def caption(record: pd.Series, measures: dict[str, float], flags: pd.Series) -> str:

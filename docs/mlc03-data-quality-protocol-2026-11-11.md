@@ -224,3 +224,24 @@ role. On the test roles the rules are applied by the same code with no use of th
 choose anything; only counts are reported. Integrity: v5 equals v4 on every record and label
 that no rule touches; counts per rule on train and validation equal those of Parts A and B, or
 the difference is explained. Part D then runs as written.
+
+## Amendment 2: readings of C10 and C11 (11 November 2026)
+
+Timing, stated plainly: the two readings below were raised by the build agent and ruled on by
+the orchestrator after the integrity gate on train and validation and before any test-role
+count was computed. The ruling did not reach the agent, which applied the same two readings on
+its own announcement. This text was added to the protocol after the build and Part D had
+finished, so it records the decision; it is not a prospective commit.
+
+1. C10 follows the code behind its evidence (B-R3): consensus heart rate below 60 per minute
+   in a record with sinus evidence, no tolerance. The words "beyond tolerance" in Amendment 1
+   are withdrawn for C10. With a tolerance the rule selects 884 labels, all inside C11; without
+   it, the 2,595 labels that Part B reported.
+2. The negative side of C11 is not applied to SPH. It needs sinus evidence from the record's
+   diagnostic codes, and that code reads SCP and SNOMED codes, not SPH's AHA codes, so it would
+   treat every SPH record as sinus rhythm. The positive side applies to every source. No new
+   code mapping was written for SPH.
+3. Consequence: SPH heart-rate negatives are cleaned less than those of the other sources.
+4. The same principle holds for any rule whose evidence code cannot read SPH's codes. In the
+   build this is C7: the paced-rhythm label is undefined for every SPH record, so C7 selects
+   nothing there. C6 and C8 run at SPH unchanged.

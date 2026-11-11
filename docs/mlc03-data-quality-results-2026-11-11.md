@@ -2,7 +2,7 @@
 
 11 November 2026. This is the overall report of MLC-03, written from its outputs by the agent that built dataset v5
 and ran Part D. It answers the four questions of the [protocol](mlc03-data-quality-protocol-2026-11-11.md) (with
-Addendum 1 and Amendment 1). Parts A and B have their own reports, cited and not repeated:
+Addendum 1 and Amendments 1 and 2). Parts A and B have their own reports, cited and not repeated:
 [signal quality](mlc03-signal-quality-results-2026-11-11.md) and
 [label quality](mlc03-label-quality-results-2026-11-11.md). The build has its own report:
 [dataset v5](mlc03-dataset-v5-results-2026-11-11.md).

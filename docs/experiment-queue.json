@@ -2630,7 +2630,7 @@
   "mlc03_data_quality_20261111": {
     "status": "complete_v5_built_no_demonstrated_training_effect",
     "protocol": "docs/mlc03-data-quality-protocol-2026-11-11.md",
-    "amendment": "Addendum 1 (PTB-XL+ and LUDB references) and Amendment 1 (cleaning rules C1-C12, 64cb3e7) in the protocol",
+    "amendment": "Addendum 1 (PTB-XL+ and LUDB references), Amendment 1 (cleaning rules C1-C12, 64cb3e7) and Amendment 2 (readings of C10 and C11, recorded after the build, 44b22af) in the protocol",
     "source_commit": "61b1131d973aba96fa52dcb00ed9cdc4e23dfa13",
     "dataset_in": "outputs/mlc01_condition_dataset_20261110_v4",
     "dataset_out": "outputs/mlc01_condition_dataset_20261111_v5",

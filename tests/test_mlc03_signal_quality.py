@@ -317,3 +317,144 @@ def test_cached_window_reproduces_manifest_hash() -> None:
     assert window.shape == (12, SAMPLES)
     with pytest.raises(ValueError, match="does not reproduce"):
         read_checked(open_block(row["block"], allow_test=False), int(row["row"]), "0" * 64, row["record_key"])
+
+
+def test_dense_score_finds_rescaled_copy() -> None:
+    from ecg_experiment.mlc03_near_duplicates import dense_pairs, dense_vector
+
+    first, other = synthetic_ecg(seed=4), synthetic_ecg(heart_rate=61, seed=5)
+    copy = 1.7 * first + 0.2 + np.random.default_rng(6).normal(0, 0.003, first.shape)
+    vectors = np.stack([dense_vector(first), dense_vector(copy), dense_vector(other)])
+    pairs, nearest, scores = dense_pairs(vectors, vectors, floor=0.95, same_set=True, neighbours=2)
+    assert pairs[["query", "reference"]].values.tolist() == [[0, 1]]
+    assert pairs["score"].iloc[0] > 0.99
+    assert nearest[2, 0] in (0, 1)
+    assert scores[2, 0] < 0.9
+
+
+def test_shifted_copy_is_found_and_verified() -> None:
+    from ecg_experiment.mlc03_near_duplicates import (
+        fingerprint,
+        r_peaks,
+        rr_keys,
+        shifted_candidates,
+        verify_candidates,
+    )
+
+    rng = np.random.default_rng(7)
+    rr = rng.normal(0.85, 0.06, 40)
+    time = np.arange(3 * SAMPLES) / FS
+    long = np.zeros((12, 3 * SAMPLES))
+    for beat in np.cumsum(rr):
+        long += np.outer(np.r_[1.0, 1.4, 0.4, -1.2, 0.3, 0.9, -0.6, 0.4, 1.2, 1.6, 1.4, 1.0],
+                         np.exp(-0.5 * ((time - beat) / 0.012) ** 2))
+    long += rng.normal(0, 0.005, long.shape)
+    first, second = long[:, :SAMPLES], long[:, 3000 : 3000 + SAMPLES]
+    other = synthetic_ecg(heart_rate=70, seed=8)
+    keys = {number: rr_keys(r_peaks(signal)) for number, signal in enumerate((first, second, other))}
+    candidates = shifted_candidates(keys)
+    assert candidates[["first", "second"]].values.tolist() == [[0, 1]]
+    assert candidates["lag"].iloc[0] == pytest.approx(-3000, abs=8)
+    prints = {number: fingerprint(signal) for number, signal in enumerate((first, second, other))}
+    verified = verify_candidates(candidates, prints)
+    assert verified["correlation"].iloc[0] > 0.95
+    assert verified["overlap_s"].iloc[0] == pytest.approx(4.0, abs=0.1)
+
+
+def _assign(window: np.ndarray, lead: str, values: np.ndarray | float, part: slice = slice(None)) -> None:
+    """Set part of one lead in place."""
+    window[INDEX[lead], part] = values
+
+
+def _noise(scale: float) -> np.ndarray:
+    """Rounded white noise of one lead."""
+    return np.round(np.random.default_rng(11).normal(0, scale, SAMPLES) * 1000) / 1000
+
+
+TIME = np.arange(SAMPLES) / FS
+PLANTS = {
+    "missing_samples": lambda w, c: _assign(w, "V5", np.nan, slice(3000, 3010)),
+    "edge_hold": lambda w, c: w.__setitem__((slice(None), slice(-100, None)), w[:, [-101]]),
+    "adc_rail": lambda w, c: _assign(w, "V2", 32.767, slice(2400, 2410)),
+    "flat_lead": lambda w, c: _assign(w, "V4", 0.0),
+    "near_flat_lead": lambda w, c: _assign(w, "V4", _noise(0.004)),
+    "duplicate_lead": lambda w, c: _assign(w, "V3", c[INDEX["V2"]]),
+    "identity_violation": lambda w, c: _assign(w, "aVL", c[INDEX["aVL"]] + 0.2),
+    "reversal_la_ra": lambda w, c: w.__setitem__([0, 1, 2, 3, 4], np.vstack([-c[0], c[2], c[1], c[4], c[3]])),
+    "reversal_ra_ll": lambda w, c: w.__setitem__([0, 1, 2, 3, 5],
+                                                 np.vstack([-c[2], -c[1], -c[0], c[5], c[3]])),
+    "reversal_neutral": lambda w, c: _assign(w, "III", _noise(0.005)),
+    "amplitude_outlier": lambda w, c: w.__imul__(5.0),
+    "baseline_wander": lambda w, c: _assign(w, "V1", c[INDEX["V1"]] + 1.5 * np.sin(2 * np.pi * 0.2 * TIME)),
+    "mains_interference": lambda w, c: w.__iadd__(0.1 * np.sin(2 * np.pi * 50.0 * TIME)),
+    "hf_noise": lambda w, c: w.__iadd__(np.random.default_rng(11).normal(0, 0.1, w.shape)),
+    "baseline_step": lambda w, c: _assign(w, "V2", c[INDEX["V2"], 2500:] + 1.5, slice(2500, None)),
+    "isolated_spike": lambda w, c: _assign(w, "V3", c[INDEX["V3"], 2000] + 3.0, slice(2000, 2001)),
+    "contact_loss": lambda w, c: _assign(w, "V4", c[INDEX["V4"], 1500], slice(1500, None)),
+    "rhythm_unmeasurable": lambda w, c: w.__setitem__(
+        slice(None), np.round(np.random.default_rng(11).normal(0, 0.05, w.shape) * 1000) / 1000),
+}
+
+
+def plant(defect: str, clean: np.ndarray) -> np.ndarray:
+    """
+    Plant one defect in a copy of the clean synthetic ECG.
+
+    Parameters
+    ----------
+    defect : str
+        Flag name whose defect is planted.
+    clean : np.ndarray
+        Output of ``synthetic_ecg``.
+
+    Returns
+    -------
+    np.ndarray
+        The defective copy.
+    """
+    window = clean.copy()
+    PLANTS[defect](window, clean)
+    return window
+
+
+def flags_of(window: np.ndarray, key: str = "synthetic") -> dict:
+    """
+    Flags of one window.
+
+    Parameters
+    ----------
+    window : np.ndarray
+        Float ``(12, 5000)`` mV.
+    key : str
+        Record key.
+
+    Returns
+    -------
+    dict
+        The single row of ``compute_flags``.
+    """
+    import pandas as pd
+
+    from ecg_experiment.mlc03_signal_flags import compute_flags
+
+    return compute_flags(pd.DataFrame([{"record_key": key, **measure_window(window)}])).iloc[0].to_dict()
+
+
+def test_clean_ecg_raises_no_flag(clean: np.ndarray) -> None:
+    from ecg_experiment.mlc03_signal_flags import FLAGS
+
+    row = flags_of(clean)
+    assert [name for name in FLAGS if row[name]] == []
+
+
+@pytest.mark.parametrize("defect", list(PLANTS))
+def test_each_flag_detects_its_planted_defect(defect: str, clean: np.ndarray) -> None:
+    assert flags_of(plant(defect, clean))[defect]
+
+
+def test_every_flag_has_a_test_and_a_definition() -> None:
+    from ecg_experiment.mlc03_signal_flags import FLAGS
+
+    assert set(FLAGS) == set(PLANTS)
+    for spec in FLAGS.values():
+        assert set(spec) == {"item", "definition", "threshold", "reason"}

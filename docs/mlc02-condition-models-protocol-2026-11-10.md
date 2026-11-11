@@ -107,3 +107,24 @@ GPU 0. Caches live on local disk; outputs go to `outputs/mlc02_condition_models_
 New modules and scripts only, with tests; features and receipts; the committed selection record;
 predictions for every candidate and role; `docs/mlc02-condition-models-results-2026-11-10.md`
 written from the outputs; queue and backlog updates.
+
+## Addendum 1 (10 November 2026, before any fit or score)
+
+The scoring code was written and tested on synthetic data and on the real labels with random
+scores before any model existed (`docs/mlc02-evaluation-code-2026-11-10.md`). Its readings of
+the rules are adopted as written there. Three choices it left open:
+
+1. Calibration is reported as the slope of the joint fit and the calibration-in-the-large
+   intercept (slope fixed at 1). The joint-fit intercept is listed beside them.
+2. Test-set calibration, Brier score and the top-1 and top-2 views use the model's raw
+   probabilities. The same quantities after the validation-fitted Platt calibration are listed
+   beside them.
+3. The top-1 and top-2 views use records with exactly one positive condition and allow undefined
+   entries among the others (702 records at PTB-XL fold 10, 3,882 at the SPH evaluation half).
+   The stricter reading, all 14 defined, is listed beside it (204 and 3,434); it can never
+   include a left anterior fascicular block record.
+
+Logistic fits run with the default OpenBLAS kernel, which reproduces KEY-04's coefficients
+exactly on this machine; the receipt records the kernel and thread settings. The features and
+waveform cache cover all 100,158 candidate records; models use the 99,167 included in the final
+dataset build (`included_v4`).

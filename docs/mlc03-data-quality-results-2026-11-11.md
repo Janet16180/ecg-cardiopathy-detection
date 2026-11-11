@@ -101,7 +101,8 @@ Selected before overlaps / changed after earlier rules; records for C1-C4, label
 
 - The amendment's train and validation counts hold before overlaps: C1 87, C2 15, C3 116, C4 47, and every
   label rule against Part B's `rules_candidate_counts.csv` [section `part-b-totals`].
-- Readings, stated in the [v5 report](mlc03-dataset-v5-results-2026-11-11.md):
+- Readings, stated in the [v5 report](mlc03-dataset-v5-results-2026-11-11.md) and recorded as Amendment 2 of the
+  protocol, which was written after the build:
   - C10 follows the B-R3 code, a rate below 60 with no tolerance. The literal "beyond tolerance" would give
     884 labels instead of 2,595, all already in C11.
   - C11's negatives are not applied at SPH, because the sinus-evidence code does not read SPH's codes.

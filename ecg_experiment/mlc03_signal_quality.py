@@ -57,7 +57,12 @@ DETECT_LEADS = ("II", "V5")
 MIN_DETECT_AMPLITUDE_MV = 0.02
 DETECT_SCALE_MV = 2.0
 MATCH_TOLERANCE = int(0.075 * FS)
-NEIGHBOURS = 1
+INDEPENDENT = ("I", "II", "V1", "V2", "V3", "V4", "V5", "V6")
+SPIKE_BIG_MV = 0.5
+SPIKE_COINCIDENCE = 2
+SPIKE_SPREAD = 5
+DROPOUT_HALF_WIDTH = int(0.06 * FS)
+DROPOUT_MV = 0.05
 
 logging.getLogger("wfdb").setLevel(logging.ERROR)
 
@@ -144,9 +149,33 @@ def edge_runs(window: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     return head, tail
 
 
-def extreme_runs(window: np.ndarray) -> np.ndarray:
+def run_count(mask: np.ndarray, minimum: int) -> int:
     """
-    Longest run of consecutive samples equal to the lead's own maximum or minimum.
+    Count the separate runs of True values that are at least ``minimum`` samples long.
+
+    Parameters
+    ----------
+    mask : np.ndarray
+        One-dimensional boolean array.
+    minimum : int
+        Shortest run counted.
+
+    Returns
+    -------
+    int
+        Run count.
+    """
+    padded = np.concatenate(([False], np.asarray(mask, dtype=bool), [False]))
+    edges = np.flatnonzero(np.diff(padded.astype(np.int8)))
+    return int(((edges[1::2] - edges[::2]) >= minimum).sum())
+
+
+def extreme_runs(window: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Plateaus at each lead's own maximum or minimum: the longest one and how many there are.
+
+    A lead held at a converter or amplifier limit sits at its extreme value for many samples, usually at
+    several beats; a natural peak reaches the extreme once and for a sample or two.
 
     Parameters
     ----------
@@ -155,18 +184,22 @@ def extreme_runs(window: np.ndarray) -> np.ndarray:
 
     Returns
     -------
-    np.ndarray
-        Run length in samples per lead; 0 for a lead without finite samples.
+    tuple[np.ndarray, np.ndarray]
+        Per lead, the longest run (samples) at the maximum or minimum, and the larger of the number of
+        separate runs of at least two samples at the maximum and at the minimum; 0 for a lead without
+        finite samples.
     """
-    runs = []
+    runs, hits = [], []
     for lead in window:
         finite = np.isfinite(lead)
         if not finite.any():
             runs.append(0)
+            hits.append(0)
             continue
-        high, low = lead[finite].max(), lead[finite].min()
-        runs.append(max(longest_true_run(lead == high), longest_true_run(lead == low)))
-    return np.array(runs)
+        at_high, at_low = lead == lead[finite].max(), lead == lead[finite].min()
+        runs.append(max(longest_true_run(at_high), longest_true_run(at_low)))
+        hits.append(max(run_count(at_high, 2), run_count(at_low, 2)))
+    return np.array(runs), np.array(hits)
 
 
 def quantisation_step(window: np.ndarray) -> np.ndarray:
@@ -398,6 +431,63 @@ def spike_size(filled: np.ndarray) -> np.ndarray:
     return np.abs(np.diff(filled, n=2, axis=1)).max(axis=1)
 
 
+def isolated_spikes(filled: np.ndarray) -> np.ndarray:
+    """
+    Largest second difference of each independent lead at instants when few leads share it.
+
+    At each sample, the independent leads (I, II, V1-V6) with an absolute second difference of at least
+    0.5 mV within two samples are counted. A pacemaker spike, or an artefact at a limb electrode (which
+    reaches every precordial lead through the central terminal), shows in many leads; an artefact at one
+    chest electrode shows in one. The measure keeps the instants that at most two leads share.
+
+    Parameters
+    ----------
+    filled : np.ndarray
+        Float ``(12, samples)`` in mV without NaN.
+
+    Returns
+    -------
+    np.ndarray
+        One value per independent lead, in ``INDEPENDENT`` order (0 when no isolated instant exists).
+    """
+    rows = [LEAD_INDEX[lead] for lead in INDEPENDENT]
+    second = np.abs(np.diff(filled[rows], n=2, axis=1))
+    big = maximum_filter1d((second >= SPIKE_BIG_MV).astype(np.int8), SPIKE_SPREAD, axis=1)
+    isolated = big.sum(axis=0) <= SPIKE_COINCIDENCE
+    return np.where(isolated[None, :], second, 0.0).max(axis=1)
+
+
+def qrs_dropout(clean: np.ndarray, peaks: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Beats at which an independent lead shows no QRS complex.
+
+    For each R peak of the multi-lead detector, a lead drops out when the range of its 0.5-40 Hz signal
+    within 60 ms of the peak is below 0.05 mV. No precordial lead of the train and validation records has a
+    1-99 percentile amplitude that low (``amp_robust``), so a run of such beats means the electrode
+    recorded no ECG.
+
+    Parameters
+    ----------
+    clean : np.ndarray
+        Time-major ``(samples, 12)`` 0.5-40 Hz signal.
+    peaks : np.ndarray
+        R-peak locations.
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray]
+        Per independent lead, the longest run of consecutive dropped beats and the share of dropped beats
+        (NaN without beats).
+    """
+    rows = [LEAD_INDEX[lead] for lead in INDEPENDENT]
+    if not len(peaks):
+        return np.zeros(len(rows)), np.full(len(rows), np.nan)
+    spans = np.array([np.ptp(clean[max(peak - DROPOUT_HALF_WIDTH, 0) : peak + DROPOUT_HALF_WIDTH][:, rows],
+                             axis=0) for peak in peaks])
+    dropped = spans < DROPOUT_MV
+    return np.array([longest_true_run(column) for column in dropped.T]), dropped.mean(axis=0)
+
+
 def quiet_runs(window: np.ndarray, tolerance_mv: np.ndarray) -> np.ndarray:
     """
     Longest stretch over which each lead stays within a small band.
@@ -582,6 +672,8 @@ def beat_measures(filled: np.ndarray, clean: np.ndarray) -> dict[str, float]:
     dict[str, float]
         ``n_beats_multi``, ``hr_multi``, ``n_beats_<lead>`` and ``hr_<lead>`` for II and V5 (XQRS),
         ``agree_detectors`` (multi-lead against XQRS on II), ``agree_leads`` (XQRS on II against V5),
+        ``agree_multi_V5`` (multi-lead against XQRS on V5), ``dropout_run`` and ``dropout_share`` per
+        independent lead (``qrs_dropout``),
         ``rr_max_s`` (longest multi-lead RR interval) and the outputs of ``beat_morphology``.
     """
     multi = detect_r_peaks(clean)
@@ -593,6 +685,11 @@ def beat_measures(filled: np.ndarray, clean: np.ndarray) -> dict[str, float]:
         result[f"hr_{lead}"] = heart_rate(peaks)
     result["agree_detectors"] = match_f1(multi, single["II"])
     result["agree_leads"] = match_f1(single["II"], single["V5"])
+    result["agree_multi_V5"] = match_f1(multi, single["V5"])
+    dropout_run, dropout_share = qrs_dropout(clean, multi)
+    for lead, run, share in zip(INDEPENDENT, dropout_run, dropout_share, strict=True):
+        result[f"dropout_run__{lead}"] = float(run)
+        result[f"dropout_share__{lead}"] = float(share)
     result["rr_max_s"] = float(np.diff(multi).max() / FS) if len(multi) > 1 else np.nan
     result.update(beat_morphology(clean, multi))
     return result
@@ -641,7 +738,9 @@ def measure_window(window: np.ndarray) -> dict[str, float | str]:
     result.update(per_lead("tail_run", tail))
     result.update(per_lead("const_run", longest_constant_runs(window)))
     result.update(per_lead("const_run_interior", longest_constant_runs(window[:, INTERIOR])))
-    result.update(per_lead("extreme_run", extreme_runs(window)))
+    plateau, plateau_count = extreme_runs(window[:, INTERIOR])
+    result.update(per_lead("extreme_run", plateau))
+    result.update(per_lead("extreme_hits", plateau_count))
     result.update(per_lead("quant_step_uv", step))
     result.update(per_lead("quiet_run", quiet_runs(window[:, INTERIOR], tolerance)))
     result.update(identity_residuals(window))
@@ -654,6 +753,8 @@ def measure_window(window: np.ndarray) -> dict[str, float | str]:
     result.update(per_lead("step", interior_step))
     result.update(per_lead("edge_step", edge_step))
     result.update(per_lead("spike", spike_size(filled)))
+    result.update({f"spike_isolated__{lead}": float(value)
+                   for lead, value in zip(INDEPENDENT, isolated_spikes(filled), strict=True)})
     result.update(beat_measures(filled, clean))
     return result
 
@@ -688,7 +789,7 @@ def measure_full_record(signal: np.ndarray) -> dict[str, float]:
         "full_missing_samples": float((~finite).sum()),
         "full_flat_leads": float((ranges == 0).sum()),
         "full_const_run_max": float(longest_constant_runs(signal).max()),
-        "full_extreme_run_max": float(extreme_runs(signal).max()),
+        "full_extreme_run_max": float(extreme_runs(signal)[0].max()),
         "full_rail_samples": float((np.abs(np.nan_to_num(signal)) >= RAIL_MV).sum()),
         "full_peak_abs_mv": float(np.nanmax(np.abs(signal))),
         "full_tail_run_min": float(tail.min()),

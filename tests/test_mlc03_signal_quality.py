@@ -8,6 +8,7 @@ import pytest
 from ecg_experiment.eda.signals import LEADS
 from ecg_experiment.mlc03_signal_quality import (
     FS,
+    INDEPENDENT,
     SAMPLES,
     duplicate_leads,
     edge_runs,
@@ -15,6 +16,7 @@ from ecg_experiment.mlc03_signal_quality import (
     fill_missing,
     hf_noise,
     identity_residuals,
+    isolated_spikes,
     longest_true_run,
     mains_amplitude,
     match_f1,
@@ -142,6 +144,7 @@ def test_heart_rate_and_agreement(clean_measures: dict) -> None:
         assert clean_measures[name] == pytest.approx(HEART_RATE, rel=0.02)
     assert clean_measures["agree_detectors"] == pytest.approx(1.0)
     assert clean_measures["agree_leads"] == pytest.approx(1.0)
+    assert clean_measures["agree_multi_V5"] == pytest.approx(1.0)
 
 
 def test_morphology_polarity(clean_measures: dict) -> None:
@@ -170,8 +173,12 @@ def test_edge_runs_find_held_tail(clean: np.ndarray) -> None:
 def test_extreme_runs_find_clipping(clean: np.ndarray) -> None:
     window = clean.copy()
     window[1] = np.minimum(window[1], 0.5)
-    assert extreme_runs(window)[1] >= 10
-    assert extreme_runs(clean)[1] <= 3
+    runs, hits = extreme_runs(window)
+    assert runs[1] >= 10
+    assert hits[1] >= 10
+    clean_runs, clean_hits = extreme_runs(clean)
+    assert clean_runs[1] <= 3
+    assert clean_hits[1] <= 1
 
 
 def test_quantisation_step() -> None:
@@ -225,6 +232,25 @@ def test_spike_size(clean: np.ndarray) -> None:
     window[INDEX["V3"], 2000] += 3.0
     assert spike_size(window)[INDEX["V3"]] >= 5.0
     assert spike_size(clean).max() < 1.0
+
+
+def test_isolated_spike_ignores_shared_spikes(clean: np.ndarray) -> None:
+    single = clean.copy()
+    single[INDEX["V3"], 2000] += 3.0
+    shared = clean.copy()
+    shared[:, 2000] += 3.0
+    assert isolated_spikes(single)[INDEPENDENT.index("V3")] >= 5.0
+    assert isolated_spikes(shared).max() < 1.0
+    assert isolated_spikes(clean).max() < 1.0
+
+
+def test_qrs_dropout_finds_dead_lead(clean: np.ndarray, clean_measures: dict) -> None:
+    window = clean.copy()
+    window[INDEX["V4"], 2500:] = window[INDEX["V4"], 2500] + np.linspace(0, 0.02, 2500)
+    measures = measure_window(window)
+    assert measures["dropout_run__V4"] >= 5
+    assert measures["dropout_share__V4"] > 0.4
+    assert max(clean_measures[f"dropout_run__{lead}"] for lead in INDEPENDENT) == 0
 
 
 def test_quiet_run_finds_contact_loss(clean: np.ndarray) -> None:

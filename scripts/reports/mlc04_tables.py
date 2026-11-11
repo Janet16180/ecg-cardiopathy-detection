@@ -206,6 +206,21 @@ def secondary() -> str:
     )
 
 
+def comparisons_by_source() -> str:
+    """Show the stored per-source differences of each secondary comparison on the test groups."""
+    result = evaluation("challenge_test")
+    if result is None:
+        return "(no test evaluation)"
+    rows = []
+    for name, found in result["comparisons"].items():
+        row = {"comparison": COMPARISONS[name]}
+        for source in CHALLENGE_SOURCES:
+            part = found["by_source"].get(source)
+            row[SOURCE_NAMES[source]] = with_ci(part["difference"], part["ci"]) if part else ""
+        rows.append(row)
+    return table(rows)
+
+
 def models() -> str:
     """Every model's metric on both roles, entry rules 100 and 20, and on v4 labels."""
     rows = []
@@ -644,6 +659,7 @@ def integrity() -> str:
 SECTIONS: dict[str, Callable[[], str]] = {
     "primary": primary,
     "secondary": secondary,
+    "comparisons-by-source": comparisons_by_source,
     "models": models,
     "sources": sources,
     "entering": entering,

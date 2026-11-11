@@ -39,7 +39,7 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-11-11T17:05:00+00:00",
+  "updated_at_utc": "2026-11-11T21:15:00+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2711,5 +2711,41 @@
       "Stability resamples of K7 (centres have no fixed order)"
     ],
     "amendment": "Amendment 1 (4a9ae78): selection metric and readings, written after the selection record and the test read"
+  },
+  "mlc04_final_test_20261111": {
+    "status": "complete_validation_estimate_confirmed",
+    "protocol": "docs/mlc04-final-test-protocol-2026-11-11.md",
+    "amendment": "Amendment 1 (deaefa2): the primary reading uses the like-for-like validation value (five Challenge sources, entry 100); 0.9698 printed without a reading",
+    "freeze_record": "docs/mlc04-freeze-record-2026-11-11.md",
+    "freeze_commit": "9faec02",
+    "source_commit": "e9df26ed08ba66d3bc4298cea390bd84338d92f6",
+    "dataset": "outputs/mlc01_condition_dataset_20261111_v5 rules applied to the Challenge test groups",
+    "models": [
+      "outputs/mlc03_data_quality_20261111/effect/candidates/P0",
+      "outputs/mlc03_data_quality_20261111/effect/candidates/H-All",
+      "outputs/mlc02_condition_models_20261110/candidates/P0",
+      "outputs/mlc02_condition_models_20261110/candidates/H-All",
+      "outputs/key05_condition_keys_20261111/keys.npz"
+    ],
+    "output": "outputs/mlc04_final_test_20261111",
+    "receipts": "outputs/mlc04_final_test_20261111/receipts/",
+    "report": "docs/mlc04-final-test-results-2026-11-11.md",
+    "tables": "scripts/reports/mlc04_tables.py",
+    "authorization": "User approval of 11 November 2026 ('go ahead with the challenge test') to read the Challenge test groups once for the 14-condition classifier.",
+    "scope": "Dry run on the Challenge calibration groups through the same runner, freeze, then one read of the Challenge test groups (13,172 records): MLC-01 labels, rules C1-C12, MLC-02 features extracted now, the five frozen models scored once. No binary label or screening score computed; EchoNext and MIMIC not opened; PTB-XL fold 10 and SPH not rescored.",
+    "summary": "Dry run: v4 and v5 manifest rows equal cell by cell, cache bit-identical, every MLC-03 measure exact, re-extracted features within 9.54e-06, stored validation outputs reproduced (at most 4.44e-15 from stored features), P0-v5 validation metric 0.9697697420282113 exactly. Test groups, 12,914 records in v5 terms: P0-v5 0.9602 (0.9542, 0.9657) against the like-for-like validation value 0.9611 (0.9557, 0.9663), bound 0.9511, confirmed. Holm over three: P0-v5 minus P0-v4 +0.0013 (+0.0007, +0.0019) on v5-rule labels and -0.0000 (-0.0009, +0.0008) on v4 labels (cleaning helps by the rule); H-All-v5 minus P0-v5 +0.0038 (+0.0010, +0.0065); K6 minus P0-v5 +0.0010 (-0.0021, +0.0041), equivalent within -0.010, but below P0-v5 in four of five sources and above only at CPSC-Extra (+0.0208).",
+    "readings": {
+      "role_name": "test groups carry MLC-01's role test_same_source with origin test in the role manifests",
+      "minimum_positive_rule": "frozen v4 table applied, not recounted",
+      "screening_labels": "space-A groups and the normal column emptied before any test-group file was written",
+      "openblas_kernel": "MLC-03 steps with the default kernel, MLC-02 extractors and scores with Haswell",
+      "holm": "two-sided bootstrap p against each null (0, 0, -0.010); the v4-label cleaning interval is a condition"
+    },
+    "next_action": "Nothing is promoted and nothing may change in response to the result inside this project line. Follow-ups are in the backlog: same-patient overlap of the test groups, a weighting rule for sources with few entering conditions, the label dependence of the cleaning gain, and a new external test for the 14-condition task. The AGENTS.md closed-data paragraph needs the user's update (proposed, not edited).",
+    "not_done": [
+      "Clinical review of any label, rule, model or result (pending)",
+      "Patient-level intervals (the Challenge has no patient identifier)",
+      "AGENTS.md closed-data line (proposed to the user)"
+    ]
   }
 }

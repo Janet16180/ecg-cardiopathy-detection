@@ -870,7 +870,7 @@
       "value": 5,
       "clarity": 0.9,
       "build_hours": 2.5,
-      "notes": "Freeze the readout (022b pooled xECG), calibration strategy and operating-point rule first; run once; also refit the readout on 5 bootstrap resamples of the training rows to show fit variability. Report per source. Never repeat. 29 September 2026: held for an explicit user decision to freeze the pipeline, because the untouched data can be read only once and the student label (after the cardiologist meeting) and finding heads may still change the pipeline. Audit 30 September 2026: the PTB-XL test set was already evaluated in 001-008, and the Challenge test groups are per record, from sources the released encoders saw in pretraining, so neither is a fully untouched test. The strongest confirmatory data would be the student pilot."
+      "notes": "Freeze the readout (022b pooled xECG), calibration strategy and operating-point rule first; run once; also refit the readout on 5 bootstrap resamples of the training rows to show fit variability. Report per source. Never repeat. 29 September 2026: held for an explicit user decision to freeze the pipeline, because the untouched data can be read only once and the student label (after the cardiologist meeting) and finding heads may still change the pipeline. Audit 30 September 2026: the PTB-XL test set was already evaluated in 001-008, and the Challenge test groups are per record, from sources the released encoders saw in pretraining, so neither is a fully untouched test. The strongest confirmatory data would be the student pilot. 11 November 2026: MLC-04 read the Challenge test groups once for the 14-condition task. No binary label and no screening score was computed there, so this test is not spent; its readout still uses the centred-window features of outputs/features_challenge_v1/, which this machine does not hold."
     },
     {
       "kind": "experiment",
@@ -2253,8 +2253,8 @@
       "blocked_by": [
         "@user_freeze_decision"
       ],
-      "status": "proposed",
-      "notes": "One-time use; the protocol fixes the model, the rules, the metrics and the decision before the groups are opened. Related: final_frozen_test (the binary screening pipeline)."
+      "status": "done",
+      "notes": "One-time use; the protocol fixes the model, the rules, the metrics and the decision before the groups are opened. Related: final_frozen_test (the binary screening pipeline). Done 11 November 2026 as MLC-04 (docs/mlc04-final-test-results-2026-11-11.md): P0-v5 0.9602 (0.9542, 0.9657) on the test groups against the like-for-like validation value 0.9611, confirmed under Amendment 1; measured about 1.5 h build, 0.3 h GPU and 0.5 h CPU. The Challenge test groups now count as read for the 14-condition task."
     },
     {
       "id": "key06_artefact_rule_minimum",
@@ -2426,6 +2426,68 @@
       "blocked_by": [],
       "status": "proposed",
       "notes": "Train and validation only; C5's lead lists and C10's sinus-evidence condition are the likely places. Any new rule needs its own protocol and a new dataset version; v5 stays frozen."
+    },
+    {
+      "id": "mlc04_test_patient_overlap",
+      "kind": "analysis",
+      "title": "Estimate the share of Challenge test records with a same-patient training record",
+      "question": "What share of the Challenge test records of MLC-04 probably comes from a patient who also has a train or validation record, and how much does the MLC-04 metric change without them?",
+      "evidence": "MLC-01 audit (a2f_nn_meta.csv) estimated 6-13% for validation records in Ningbo, Georgia and Chapman-Ningbo by nearest-neighbour matching calibrated on PTB-XL; MLC-04 read the test groups, which were split by the same per-record rule, and its intervals resample records.",
+      "value": 3,
+      "clarity": 0.6,
+      "gpu_hours": 0,
+      "cpu_hours": 1,
+      "build_hours": 4,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Descriptive only; reuses the audit's method on the MLC-04 test features. It cannot change the MLC-04 result, and no model, rule or threshold may change in response."
+    },
+    {
+      "id": "source_averaged_metric_weighting",
+      "kind": "analysis",
+      "title": "One project rule for sources with few entering conditions in the source-averaged metric",
+      "question": "Should a source where one or two conditions enter weigh as much as a source where eleven do, before the next comparison that uses the source-averaged macro AUROC?",
+      "evidence": "MLC-04: K6 minus P0-v5 was +0.0010 (-0.0021, +0.0041), read as equivalent, while K6 was below P0-v5 with intervals below zero in four of five sources; CPSC-Extra, where any MI alone enters, gave +0.0208. CPSC-Extra also lowers the five-source metric (0.8921 test, 0.8914 validation).",
+      "value": 3,
+      "clarity": 0.8,
+      "gpu_hours": 0,
+      "cpu_hours": 0.2,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "A rule for future protocols (for example a condition-weighted mean, or a minimum number of entering conditions per source), fixed on validation data before any score; it does not reopen MLC-04."
+    },
+    {
+      "id": "cleaning_gain_label_dependence",
+      "kind": "analysis",
+      "title": "Why the v5 training gain appears only on v5-rule labels",
+      "question": "Which of rules C1-C12 make P0-v5 rank above P0-v4 on v5-rule labels while the two do not differ on v4 labels, and is the difference in the removed labels rather than in the models?",
+      "evidence": "MLC-04 test groups: P0-v5 minus P0-v4 +0.0013 (+0.0007, +0.0019) on v5-rule labels and -0.0000 (-0.0009, +0.0008) on v4 labels; at CPSC 2018 +0.0031 and -0.0023, where C9 lowered complete-RBBB positives from 341 to 235. MLC-03 Part D on validation: +0.0008 (-0.0003, +0.0019).",
+      "value": 2,
+      "clarity": 0.7,
+      "gpu_hours": 0,
+      "cpu_hours": 0.3,
+      "build_hours": 2,
+      "blocked_by": [],
+      "status": "proposed",
+      "notes": "Validation only: score both P0 models with one rule's labels restored at a time (the per-record rule columns of v5). Descriptive; decides no rule."
+    },
+    {
+      "id": "condition_classifier_new_external_test",
+      "kind": "experiment",
+      "title": "An untouched test for the 14-condition task on a new hospital",
+      "question": "Do the 14-condition results hold on human-read ECGs from a hospital and patients that no model, rule or threshold of this project has seen?",
+      "evidence": "After MLC-04 the Challenge test groups count as read for the 14-condition task; SPH and PTB-XL fold 10 were read before. MLC-04 tested new records of known hospitals only, and H-All-v5 ranked above P0-v5 there (+0.0038 (+0.0010, +0.0065)) while E and H-All were below P0 at SPH in MLC-02.",
+      "value": 5,
+      "clarity": 0.6,
+      "gpu_hours": 0.5,
+      "cpu_hours": 2,
+      "build_hours": 12,
+      "blocked_by": [
+        "@new_labelled_data"
+      ],
+      "status": "proposed",
+      "notes": "Needs data the user chooses (for example the student pilot read by a cardiologist, or another public hospital set with human-read statements). Any change of the reference model must be decided before that test and on other data."
     }
   ]
 }

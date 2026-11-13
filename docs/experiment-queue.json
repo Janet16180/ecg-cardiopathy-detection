@@ -39,7 +39,7 @@
       "numerical_amendment": "13 admitted PTB rows padded to 16 without adding rows or opening fold 10; successor features reproduce full PTB NPY bytes, unchanged 1e-9 fit gate passed; initial failure preserved."
     }
   },
-  "updated_at_utc": "2026-11-06T23:15:27.645591+00:00",
+  "updated_at_utc": "2026-11-11T21:15:00+00:00",
   "purpose": "Editable authorized experiment backlog and context-recovery index; not executed by the live scheduler.",
   "research_priority_after_019": "Paper-focused controlled replication of the ECG representation-versus-readout question across an additional encoder or task with independent patients; docs/experiment-016-paper-investigation.md. No automatic GPU job or calibration/test evaluation.",
   "authorization": "User authorized 011\u2013013 previously and all four Astra proposals (014\u2013017), with the cheapest likely experiment first.",
@@ -2548,5 +2548,204 @@
     "summary": "Joint macro AUROC 0.957750 vs whole keys 0.896102; independent 0.960845; all-other-negative keys 0.910448. All ten reference refits favor classifiers. Exact joint-state accuracy 83.95% but supported-state macro recall 31.97%; rare combinations remain poorly recovered.",
     "next_action": "No clinical promotion or new run scheduled. Review rare-combination limitations and separately freeze permitted-site replication or structured-label comparisons.",
     "delivery_verification": "reports/condition-classifiers-2026-11-06/delivery-verification.json"
+  },
+  "mlc01_condition_dataset_20261110": {
+    "status": "complete_dataset_final",
+    "protocol": "docs/mlc01-condition-dataset-protocol-2026-11-10.md",
+    "protocol_commit": "d4e25c7",
+    "label_commit": "3044b72",
+    "source_commit": "3475e13d481950ee117951fc0b26ee7abf1b5fa9",
+    "output": "outputs/mlc01_condition_dataset_20261110_v4",
+    "receipt": "outputs/mlc01_condition_dataset_20261110_v4/receipt.json",
+    "report": "docs/mlc01-condition-dataset-results-2026-11-10.md",
+    "authorization": "User asked for a carefully built dataset, test sets and evaluation rules for a condition-type classifier (10 November 2026).",
+    "scope": "Manifest, label states for spaces A, B and C, roles, duplicate resolution and count tables; no model fitted and no score computed; Challenge test groups and EchoNext not opened.",
+    "summary": "Final v4: 99,167 of 100,221 records included: train 56,250, validation 15,138, PTB-XL fold 10 2,198, SPH evaluation half 12,698, SPH calibration half 12,883. Records, roles, raw paths and waveform hashes equal v1. Independent audit of v3 agreed on 1,402,829 of 1,403,094 space-B cells; Amendment 3 applied its findings. Ruling 6 still catches the same 23 pairs. All 14 space-B conditions enter the macro at both test sets.",
+    "next_action": "Dataset final; no label rule changes from the first model fit onward. MLC-02 proceeds under its own protocol.",
+    "amendment": "Amendments 1 (8720f86), 2 (ab833a3) and 3 (4a17ca1) in the protocol",
+    "earlier_builds": {
+      "v1": {
+        "output": "outputs/mlc01_condition_dataset_20261110",
+        "commit": "b6d3b6c15854ce052764722a649e79d2d4983e2d"
+      },
+      "v2": {
+        "output": "outputs/mlc01_condition_dataset_20261110_v2",
+        "commit": "ee0481f12310a959b25dbec3b48edce95896d349"
+      },
+      "v3": {
+        "output": "outputs/mlc01_condition_dataset_20261110_v3",
+        "commit": "41845c286fad2d6017a82d3e537dd87c574bf9e7"
+      }
+    },
+    "audit": "outputs/mlc01_condition_dataset_20261110_v4/audit"
+  },
+  "mlc02_condition_models_20261110": {
+    "status": "completed_no_demonstrated_gain",
+    "protocol": "docs/mlc02-condition-models-protocol-2026-11-10.md",
+    "protocol_commit": "2516880",
+    "amendment": "Addenda 1 (b093b61), 2 (788db81) and 3 (b8c5719) in the protocol",
+    "source_commit": "7f4271c6391d445e9f2354f3c14b5a2e648c4baf",
+    "dataset": "outputs/mlc01_condition_dataset_20261110_v4",
+    "output": "outputs/mlc02_condition_models_20261110",
+    "selection_record": "docs/mlc02-selection-record-2026-11-10.md",
+    "receipt": "outputs/mlc02_condition_models_20261110/stage3/test_predictions_receipt.json",
+    "evaluation": "outputs/mlc02_condition_models_20261110/stage3/evaluation/evaluation.json",
+    "report": "docs/mlc02-condition-models-results-2026-11-10.md",
+    "tables": "scripts/reports/mlc02_results_tables.py",
+    "stage_reports": [
+      "docs/mlc02-inputs-results-2026-11-10.md",
+      "docs/mlc02-evaluation-code-2026-11-10.md",
+      "docs/mlc02-feature-candidates-validation-2026-11-10.md",
+      "docs/mlc02-scratch-network-validation-2026-11-10.md",
+      "docs/mlc02-finetune-validation-2026-11-10.md",
+      "docs/mlc02-stage3-code-2026-11-10.md"
+    ],
+    "authorization": "Model stage of the user's 10 November 2026 request for a carefully built dataset, test sets and a serious evaluation of a condition-type classifier; run under its own frozen protocol.",
+    "scope": "Ten candidates (P0, L-J, L-C, G-M, H-X, H-J, H-C, H-All, S-R, F) and their ensemble E, fitted on train and chosen on validation only; test predictions computed once on PTB-XL fold 10, the SPH evaluation half and the SPH calibration half; Challenge test groups and EchoNext not opened.",
+    "primary": "Selected model minus P0, macro AUROC over 14 conditions, SPH evaluation half, paired patient bootstrap (2,000); better only if the lower 95% end is above zero.",
+    "primary_result": {
+      "selected": "E",
+      "reference": "P0",
+      "difference": -0.001226049658349937,
+      "ci_low": -0.0025887788491599922,
+      "ci_high": 5.7708175675202884e-05,
+      "draws": 2000,
+      "redraws": 0,
+      "seed": 20261110
+    },
+    "decision": {
+      "lower_95_above_zero": false,
+      "better": false,
+      "reference_model": "P0"
+    },
+    "summary": "E (mean of H-All, S-R and F; validation metric 0.9728) minus P0 at the SPH evaluation half: -0.00123 (-0.00259, +0.00006); no demonstrated gain, P0 stays the reference model. Secondary: E leads at PTB-XL fold 10 (0.9738 against P0 0.9632), H-X leads at SPH (0.9748, +0.0011 (0.0004, 0.0018) over P0, unadjusted). Validation thresholds give SPH specificity 0.431-0.985; refitted on the SPH calibration half 0.893-0.908. Incomplete RBBB is the weakest condition at SPH (AUROC 0.843 E, 0.852 P0).",
+    "next_action": "No promotion and no further test scoring scheduled. Follow-ups are in the backlog: space A beside KEY-04 with a pre-stated mapping, SPH window mean, wider logistic C grid, F leave-one-family-out, the source-shift question, leave-one-family-out selection, incomplete RBBB at SPH, refit-aware local intervals, per-seed test results.",
+    "not_done": [
+      "Space A beside KEY-04 (Addendum 3)",
+      "Window mean over SPH recordings longer than 10 s (Addendum 3)",
+      "Leave-one-family-out for F (not required by the protocol)",
+      "Per-seed test results (test-predict wrote seed means only)"
+    ]
+  },
+  "mlc03_data_quality_20261111": {
+    "status": "complete_v5_built_no_demonstrated_training_effect",
+    "protocol": "docs/mlc03-data-quality-protocol-2026-11-11.md",
+    "amendment": "Addendum 1 (PTB-XL+ and LUDB references), Amendment 1 (cleaning rules C1-C12, 64cb3e7) and Amendment 2 (readings of C10 and C11, recorded after the build, 44b22af) in the protocol",
+    "source_commit": "61b1131d973aba96fa52dcb00ed9cdc4e23dfa13",
+    "dataset_in": "outputs/mlc01_condition_dataset_20261110_v4",
+    "dataset_out": "outputs/mlc01_condition_dataset_20261111_v5",
+    "output": "outputs/mlc03_data_quality_20261111",
+    "receipt": "outputs/mlc01_condition_dataset_20261111_v5/receipt.json",
+    "report": "docs/mlc03-data-quality-results-2026-11-11.md",
+    "stage_reports": [
+      "docs/mlc03-signal-quality-results-2026-11-11.md",
+      "docs/mlc03-label-quality-results-2026-11-11.md",
+      "docs/mlc03-dataset-v5-results-2026-11-11.md"
+    ],
+    "tables": "scripts/reports/mlc03_v5_tables.py",
+    "authorization": "User instruction of 11 November 2026: make the investigation of cleaning and data quality the most important part; every available dataset may be used.",
+    "scope": "Part A signal quality and Part B label quality on train and validation; Part C rules C1-C12 and dataset v5, applied mechanically to PTB-XL fold 10 and both SPH halves (counts only); Part D refits of P0 and H-All on v5 train, scored on v5 validation only. No test role scored; Challenge test groups, EchoNext and MIMIC not opened.",
+    "summary": "v5 includes 99,008 of v4's 99,167 records (159 excluded: 117 train, 41 validation, 1 fold 10, 0 SPH) and makes 21,276 labels undefined (1,435 positives, 19,841 negatives); every Part A and Part B count reproduced on train and validation; v5 equals v4 on every untouched cell (21,595 of 12,226,962 cells changed); no label created or flipped; no condition loses macro eligibility. Part D, v5-trained minus v4-trained on v5 validation: P0 +0.0008 (-0.0003, +0.0019), H-All +0.0001 (-0.0006, +0.0010); no per-condition difference survives Holm. Scoring on v5 labels alone raises the v4-trained metrics (P0 0.9643 to 0.9690, H-All 0.9706 to 0.9751).",
+    "readings": {
+      "C10": "B-R3 code: consensus rate below 60 per minute, no tolerance (2,595 train and validation labels; the literal 'beyond tolerance' reading gives 884, all inside C11)",
+      "C11_negatives_at_sph": "not applied: the sinus-evidence code does not parse SPH's AHA codes"
+    },
+    "next_action": "Dataset v5 is built and frozen with its rules. No test scoring is scheduled: the one final test of the frozen cleaned pipeline (Challenge test groups, with these rules) needs its own protocol and the user's approval. Follow-ups are in the backlog: input-pipeline masking of missing samples and flat leads, SPH storage check (user approval), P-wave and PR measurement, electrode-reversal rules, window labels for long records, clinical review of the suspected label errors and of the source-coding differences, SPH sinus and paced-rhythm evidence.",
+    "not_done": [
+      "Clinical review of any rule or suspected label error (pending)",
+      "SPH aggregate check of identity residuals and large values (needs user approval)",
+      "Test-role scoring of v5-trained models (not part of MLC-03)"
+    ]
+  },
+  "key06_embedding_structure_20261111": {
+    "status": "complete_descriptive_no_unexplained_cluster",
+    "protocol": "docs/key06-embedding-structure-protocol-2026-11-11.md",
+    "protocol_commit": "951d7b79b85ccc3b1acac5026b5a8ced15504a5e",
+    "source_commit": "9db99066a79c5c40d52eddd5c79ed072f89578fa",
+    "flags_step_commit": "24ee16c0d95605ab16a2e7a6b0ad179622f518f9",
+    "dataset_in": "outputs/mlc01_condition_dataset_20261110_v4",
+    "features": "outputs/mlc02_condition_models_20261110/features/xecg.npy",
+    "output": "outputs/key06_embedding_structure_20261111",
+    "receipts": "outputs/key06_embedding_structure_20261111/receipts/",
+    "report": "docs/key06-embedding-structure-results-2026-11-11.md",
+    "tables": "scripts/reports/key06_tables.py",
+    "authorization": "User request of 11 November 2026 (in the protocol): study the vector space of the encoder behind the best binary detector (xECG) and its clusters, which may indicate cardiac findings without labels or something else.",
+    "scope": "Train (56,250, discovery) and validation (15,138, replication) records of MLC-01 dataset v4; dataset v4 because v5 did not exist when the protocol was frozen. Variance accounting, residual space, k-means (k 10-80) and HDBSCAN on the raw and residual spaces and on the label-negative subset, cluster description and the five rules, review sheets, ECG-CPC cross-encoder check, outliers, statement probes. CPU only. No test role read; Challenge test groups, EchoNext and MIMIC not opened.",
+    "summary": "P0's validation metric reproduced exactly (0.9642697112976489). Known factors explain 0.572 of the validation embedding variance (0.628 in the 91 kept components): measurements 0.505 alone and 0.273 unique, labels 0.197 and 0.024, heart rate 0.135 and 0.023, age and sex 0.053 and 0.005, source 0.019 and 0.003, flags 0.014 and 0.001. Source accuracy 0.738 (majority 0.461) before and 0.461 after removing linear effects (0.1965 of the variance). 606 clusters; 27 candidates, none unexplained: normal-looking ECGs and normal variants 9, label gaps 10, long and short PR 2, sub-threshold baseline drift 3, outside the 14 conditions 3 (pre-excitation with 3 validation members, low limb-lead voltage, terminal rightward QRS). The literal artefact rule fails 435 clusters, 248 on a flag carried by at most four members; 85 fail only that rule (50 would pass with a five-member minimum), including LBBB, pacemaker and Ningbo atrial-rhythm groups. 18 statements meet the step 7 rule, validation AUROC 0.782-0.978. Outliers are enriched for AF, ventricular ectopy, wide or very fast rhythms and recording defects (24% flagged against 8%).",
+    "readings": {
+      "artefact_rule": "literal: a flag more than twice as frequent inside counts however few members carry it; the five-member reading is reported beside it and decides nothing",
+      "label_negative_subset": "no positive among the defined labels; undefined labels enter it, so it is not a clean normal set"
+    },
+    "next_action": "Descriptive study; nothing is scheduled. Follow-ups are in the backlog: a minimum flagged count for the artefact rule, labels outside the 14 conditions after clinical review, a sub-threshold baseline-drift covariate, an audit of undefined labels among the normals of Experiment 030, and the Ningbo record-number structure.",
+    "not_done": [
+      "Clinical review of any cluster reading (pending)",
+      "Sheets of 108 of the 165 non-candidate stable multi-source clusters (described by tables only)",
+      "Twelve-lead detail sheets of 25 of the 27 candidates, and 6 of the 8 residual outlier sheets (drawn, not read)"
+    ]
+  },
+  "key05_condition_keys_20261111": {
+    "status": "complete_single_key_equivalent_for_ranking_p0_stays_reference",
+    "protocol": "docs/key05-condition-keys-protocol-2026-11-11.md",
+    "selection_record": "docs/key05-selection-record-2026-11-11.md",
+    "selection_commit": "83c9fe75523d341ca3b402e8c28e0b482e5031bb",
+    "source_commit": "fad4ef5",
+    "dataset": "outputs/mlc01_condition_dataset_20261111_v5",
+    "features": "outputs/mlc02_condition_models_20261110/features/xecg.npy",
+    "reference": "outputs/mlc03_data_quality_20261111/effect/candidates/P0",
+    "output": "outputs/key05_condition_keys_20261111",
+    "receipts": "outputs/key05_condition_keys_20261111/receipts",
+    "report": "docs/key05-condition-keys-results-2026-11-11.md",
+    "tables": "scripts/reports/key05_tables.py",
+    "authorization": "User request of 11 November 2026 for an in-depth study of vector keys per cardiopathy on xECG; protocol frozen by the orchestrator before any analysis.",
+    "scope": "K1-K7 keys and the N1 neighbour bound fitted on v5 train, every validation analysis of the protocol (constructions, ladder, pairs, source, reference counts, stability, measurement agreement, review sheets), then one test read of K6, K7-m4 and P0 at PTB-XL fold 10 and the SPH evaluation half. CPU only. SPH calibration half, Challenge test groups, EchoNext and MIMIC not opened.",
+    "summary": "Validation selection metric: K6 (shrunk LDA direction on source-centred xECG) 0.9643 against P0 0.9698, difference -0.0054 (-0.0083, -0.0029); mean keys 0.897-0.924; whitening is the main step (+0.0443). Primary test comparison, K6 minus P0 at the SPH evaluation half over 12 conditions: -0.0045 (-0.0060, -0.0032); lower bound above -0.010, so equivalent for ranking by the protocol's rule, although P0 ranks slightly better. K7-m4 minus P0 at SPH -0.0071 (-0.0085, -0.0058); fold 10 K6 minus P0 -0.0031 (-0.0059, -0.0006). Largest per-condition loss at SPH: ST depression -0.0264 (-0.0354, -0.0180). Whitened keys need the full train set (500 per class: 0.942 against 0.9635), change direction under resampling (pairwise cosine 0.73-0.93) at stable AUROC, and follow their defining measurements less than mean keys or P0.",
+    "readings": {
+      "selection_metric": "within-source selection metric (MLC-02 convention), stated to the orchestrator before any score and ruled by it (ruling received after the test read, recorded as Amendment 1); the pooled macro would have selected K4 and K7-m2",
+      "test_role_support_check": "done at the start of the test read, after the selection commit, so no test label was parsed earlier",
+      "k6_at_sph": "centred on the unlabelled mean of the scored SPH half: test-role features, no labels"
+    },
+    "next_action": "Nothing is promoted: P0 stays the reference. Follow-ups are in the backlog: token-level keys, one project rule for the validation macro, few-reference local keys, K7 subtype reading, ST-depression and incomplete-RBBB gaps, the all-flat record with a positive MI label and the PTB-XL bradycardia negatives below 60 per minute.",
+    "not_done": [
+      "Clinical review of any key, sheet or label (pending)",
+      "Token-level keys (out of scope by protocol)",
+      "Stability resamples of K7 (centres have no fixed order)"
+    ],
+    "amendment": "Amendment 1 (4a9ae78): selection metric and readings, written after the selection record and the test read"
+  },
+  "mlc04_final_test_20261111": {
+    "status": "complete_validation_estimate_confirmed",
+    "protocol": "docs/mlc04-final-test-protocol-2026-11-11.md",
+    "amendment": "Amendment 1 (deaefa2): the primary reading uses the like-for-like validation value (five Challenge sources, entry 100); 0.9698 printed without a reading",
+    "freeze_record": "docs/mlc04-freeze-record-2026-11-11.md",
+    "freeze_commit": "9faec02",
+    "source_commit": "e9df26ed08ba66d3bc4298cea390bd84338d92f6",
+    "dataset": "outputs/mlc01_condition_dataset_20261111_v5 rules applied to the Challenge test groups",
+    "models": [
+      "outputs/mlc03_data_quality_20261111/effect/candidates/P0",
+      "outputs/mlc03_data_quality_20261111/effect/candidates/H-All",
+      "outputs/mlc02_condition_models_20261110/candidates/P0",
+      "outputs/mlc02_condition_models_20261110/candidates/H-All",
+      "outputs/key05_condition_keys_20261111/keys.npz"
+    ],
+    "output": "outputs/mlc04_final_test_20261111",
+    "receipts": "outputs/mlc04_final_test_20261111/receipts/",
+    "report": "docs/mlc04-final-test-results-2026-11-11.md",
+    "tables": "scripts/reports/mlc04_tables.py",
+    "authorization": "User approval of 11 November 2026 ('go ahead with the challenge test') to read the Challenge test groups once for the 14-condition classifier.",
+    "scope": "Dry run on the Challenge calibration groups through the same runner, freeze, then one read of the Challenge test groups (13,172 records): MLC-01 labels, rules C1-C12, MLC-02 features extracted now, the five frozen models scored once. No binary label or screening score computed; EchoNext and MIMIC not opened; PTB-XL fold 10 and SPH not rescored.",
+    "summary": "Dry run: v4 and v5 manifest rows equal cell by cell, cache bit-identical, every MLC-03 measure exact, re-extracted features within 9.54e-06, stored validation outputs reproduced (at most 4.44e-15 from stored features), P0-v5 validation metric 0.9697697420282113 exactly. Test groups, 12,914 records in v5 terms: P0-v5 0.9602 (0.9542, 0.9657) against the like-for-like validation value 0.9611 (0.9557, 0.9663), bound 0.9511, confirmed. Holm over three: P0-v5 minus P0-v4 +0.0013 (+0.0007, +0.0019) on v5-rule labels and -0.0000 (-0.0009, +0.0008) on v4 labels (cleaning helps by the rule); H-All-v5 minus P0-v5 +0.0038 (+0.0010, +0.0065); K6 minus P0-v5 +0.0010 (-0.0021, +0.0041), equivalent within -0.010, but below P0-v5 in four of five sources and above only at CPSC-Extra (+0.0208).",
+    "readings": {
+      "role_name": "test groups carry MLC-01's role test_same_source with origin test in the role manifests",
+      "minimum_positive_rule": "frozen v4 table applied, not recounted",
+      "screening_labels": "space-A groups and the normal column emptied before any test-group file was written",
+      "openblas_kernel": "MLC-03 steps with the default kernel, MLC-02 extractors and scores with Haswell",
+      "holm": "two-sided bootstrap p against each null (0, 0, -0.010); the v4-label cleaning interval is a condition"
+    },
+    "next_action": "Nothing is promoted and nothing may change in response to the result inside this project line. Follow-ups are in the backlog: same-patient overlap of the test groups, a weighting rule for sources with few entering conditions, the label dependence of the cleaning gain, and a new external test for the 14-condition task. The AGENTS.md closed-data paragraph needs the user's update (proposed, not edited).",
+    "not_done": [
+      "Clinical review of any label, rule, model or result (pending)",
+      "Patient-level intervals (the Challenge has no patient identifier)",
+      "AGENTS.md closed-data line (proposed to the user)"
+    ]
   }
 }

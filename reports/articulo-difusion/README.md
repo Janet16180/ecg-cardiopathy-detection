@@ -1,7 +1,8 @@
 # Producto de difusión (course article)
 
 Article for the course deliverable "Producto de difusión" (Team 8). Every number comes from the graded
-notebooks `notebooks/Avance1` to `Avance5`.
+notebooks `notebooks/Avance1` to `Avance5`, except those on the 14 findings (Section 4.4 and Appendix G), which
+come from the MLC-02, MLC-03, MLC-04, KEY-05 and KEY-06 results reports under `docs/`.
 
 - `articulo.tex`, `referencias.bib`, `logo.jpeg`, `figuras/`: sources.
 - `articulo.pdf`: built article.

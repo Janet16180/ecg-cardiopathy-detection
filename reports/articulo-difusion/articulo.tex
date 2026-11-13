@@ -79,8 +79,8 @@ A screening model built from public hospital recordings}}
 \maketitle
 
 % --- Abstract (unnumbered) ---
-\begin{abstract}
-A cardiologist who screens a university population reads mostly normal electrocardiograms (ECGs). We ask whether a model can score 12-lead ECGs so that the abnormal ones are reviewed first. The student recordings the project was planned around did not become available, so we worked with public hospital data. The label is an annotation proxy: an ECG is positive when its human-read report contains a code for infarction, ST-T change, conduction disturbance or hypertrophy, and negative when it is read as normal. On PTB-XL, a logistic regression on 111 waveform measurements reached an area under the receiver operating characteristic curve (AUROC) of 0.917 on the test fold, against 0.760 for a count of textbook criteria; non-linear models added 0.016. The final model averages two scores, gradient boosting on 130 measurements and a logistic head on the frozen xECG encoder, both fitted on 25,000 ECGs from six sources. On 10,434 ECGs from a hospital that never entered training, with the threshold set so that 5\% of that hospital's normal ECGs are flagged, it detects 2,774 of 3,584 abnormal ECGs (77.4\%) and flags 338 of 6,850 normal ones (4.9\%), with an AUROC of 0.937. Fine-tuning the whole encoder lowered sensitivity by 1.2 points and was rejected. These are development results on hospital patients. At the 0.2--0.4\% prevalence reported for young athletes, the same error rates would yield 4 to 7 true findings per 100 alerts. We recommend a supervised pilot with locally calibrated thresholds before any operational use.
+\begin{abstract}\emergencystretch=1.5em
+A cardiologist who screens university students reads mostly normal electrocardiograms (ECGs). We ask whether a model can score 12-lead ECGs so that abnormal ones are reviewed first. The planned student recordings did not become available, so we used public hospital data. The label is an annotation proxy: an ECG is positive when its human-read report has a code for infarction, ST-T change, conduction disturbance or hypertrophy, and negative when read as normal. On PTB-XL, a logistic regression on 111 waveform measurements reached an area under the receiver operating characteristic curve (AUROC) of 0.917 on the test fold, against 0.760 for a count of textbook criteria. The final model averages two scores, gradient boosting on 130 measurements and a logistic head on the frozen xECG encoder, fitted on 25,000 ECGs from six sources. On 10,434 ECGs from a hospital absent from training, at a threshold meant to flag 5\% of that hospital's normal ECGs, it detects 77.4\% of the abnormal ECGs and flags 4.9\% of the normal ones (AUROC 0.937). A second model names 14 specific findings, including rhythm disorders the binary label omits: one logistic regression per finding on the same encoder reaches a macro AUROC of 0.974 there, and a larger ensemble did not improve on it. These are development results on hospital patients. At the 0.2--0.4\% prevalence reported for young athletes, the same error rates would yield 4 to 7 true findings per 100 alerts. We recommend a supervised pilot with locally calibrated thresholds before operational use.
 \end{abstract}
 
 % =====================================================================
@@ -95,7 +95,7 @@ A standard ECG records the electrical activity of the heart for about ten second
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.78\linewidth]{figuras/fig_ecg_beat.png}
+  \includegraphics[width=0.52\linewidth]{figuras/fig_ecg_beat.png}
   \caption{Two heartbeats in one lead, drawn schematically. Each beat has a P wave, a QRS complex (the Q, R and S deflections) and a T wave. The orange spans mark the intervals a reader measures; ST is the segment between the QRS complex and the T wave.}
   \label{fig:beat}
 \end{figure}
@@ -183,29 +183,7 @@ For the baseline we chose an L2-regularized logistic regression on the 111 measu
 
 \subsection{Single-model candidates}
 
-The baseline's mild underfitting suggests that a non-linear decision boundary would help. We compared seven algorithms of different families on the same folds, all as implemented in scikit-learn \parencite{pedregosa2011scikitlearn}: logistic regression, linear discriminant analysis, Gaussian naive Bayes, $k$-nearest neighbours, a decision tree, a support vector machine (SVM) with a radial basis function kernel, and a multilayer perceptron (MLP). Only the last two beat the baseline (Table~\ref{tab:single}). A quick search over the main hyperparameter of the four weaker models (53 configurations) left all of them below the baseline, so the ranking does not depend on default settings.
-
-\begin{table}[H]
-  \centering
-  \caption{Single models on PTB-XL with 111 measurements. CV: mean AUROC over eight training folds (standard deviation between folds 0.004 to 0.013). Fold 10 was scored once per stage, after all choices; brackets are 95\% patient-bootstrap intervals. Gradient boosting is an ensemble, shown only as a reference.}
-  \label{tab:single}
-  \begin{tabular}{lccc}
-    \toprule
-    Model & AUROC, CV & AUROC, fold 9 & AUROC, test fold 10 \\
-    \midrule
-    Criteria count (no learning)   & 0.785  & 0.782  & 0.760 [0.740, 0.780] \\
-    Decision tree                  & 0.813 & 0.808 & -- \\
-    $k$-nearest neighbours         & 0.899 & 0.890 & -- \\
-    Gaussian naive Bayes           & 0.915 & 0.915 & -- \\
-    Linear discriminant analysis   & 0.924 & 0.918 & -- \\
-    Logistic regression (baseline) & 0.935 & 0.928 & 0.917 [0.905, 0.929] \\
-    MLP, tuned                     & 0.949 & 0.940 & 0.933 [0.922, 0.943] \\
-    SVM, tuned                     & 0.951 & 0.939 & 0.933 [0.923, 0.944] \\
-    \midrule
-    Gradient boosting (reference)  & 0.955 & 0.943 & 0.937 [0.927, 0.947] \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+The baseline's mild underfitting suggests that a non-linear decision boundary would help. We compared seven algorithms of different families on the same folds, all as implemented in scikit-learn \parencite{pedregosa2011scikitlearn}: logistic regression, linear discriminant analysis, Gaussian naive Bayes, $k$-nearest neighbours, a decision tree, a support vector machine (SVM) with a radial basis function kernel, and a multilayer perceptron (MLP). Only the last two beat the baseline: on test fold 10 the tuned SVM and MLP both reach 0.933, against 0.917 for the baseline and 0.760 for the criteria count (Table~\ref{tab:single}, Appendix~\ref{app:search}). A quick search over the main hyperparameter of the four weaker models (53 configurations) left all of them below the baseline, so the ranking does not depend on default settings.
 
 We then tuned the two leaders with 146 configurations and 1,168 model fits (Appendix~\ref{app:search}). Both searches ended on plateaus: the tuned SVM ($C = 3$, $\gamma = 0.0056$) gained 0.0002 over its default configuration and the tuned MLP (one hidden layer of 128 ReLU units) gained 0.0006.
 
@@ -225,22 +203,7 @@ Self-supervised pretraining addresses exactly this. An encoder is first trained 
 
 We use these encoders frozen: the ECG goes through the published weights unchanged, the pooled output vector is the feature, and only a logistic regression on top of it is trained. This is the linear-probing protocol of the benchmarks that evaluate ECG foundation models \parencite{almasud2025benchmarking,lunelli2026benchecg}. It suits our case for three reasons. A linear head has few parameters, so it can be fitted with a few thousand labels. The expensive encoder pass is done once per ECG and cached. And a frozen encoder cannot adapt to the quirks of the training hospitals.
 
-To choose one encoder we gave all three the same task: fit a logistic head ($C = 0.01$) on PTB-XL folds 1--7, set the threshold on the normal ECGs of fold 8 and evaluate on fold 9. Table~\ref{tab:encoders} shows the result. xECG and ECG-JEPA are close, and both are clearly ahead of ECG-CPC. We continued with xECG. The comparison is between published checkpoints with different pretraining data and budgets, so it tells us which checkpoint serves this task and says nothing general about the three architectures. We also checked the pretraining sources reported by the xECG authors: they include neither PTB-XL nor SPH, so both evaluation sets are new to the encoder.
-
-\begin{table}[H]
-  \centering
-  \caption{Three published self-supervised encoders, frozen, with the same logistic head on PTB-XL (fit on folds 1--7, threshold from fold 8 normals at a 5\% budget, evaluation on fold 9).}
-  \label{tab:encoders}
-  \begin{tabular}{lccccc}
-    \toprule
-    Encoder & Feature size & AUROC & Avg.\ precision & Sensitivity & Specificity \\
-    \midrule
-    xECG       & 1,024 & 0.943 & 0.961 & 0.740 & 0.963 \\
-    ECG-JEPA   &   768 & 0.941 & 0.959 & 0.739 & 0.954 \\
-    ECG-CPC (S4) & 512 & 0.919 & 0.945 & 0.687 & 0.962 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+To choose one encoder we gave all three the same task: fit a logistic head ($C = 0.01$) on PTB-XL folds 1--7, set the threshold on the normal ECGs of fold 8 and evaluate on fold 9. xECG reached an AUROC of 0.943, ECG-JEPA 0.941 and ECG-CPC 0.919 (Table~\ref{tab:encoders}, Appendix~\ref{app:search}). We continued with xECG. The comparison is between published checkpoints with different pretraining data and budgets, so it tells us which checkpoint serves this task and says nothing general about the three architectures. We also checked the pretraining sources reported by the xECG authors: they include neither PTB-XL nor SPH, so both evaluation sets are new to the encoder.
 
 \subsection{The final model: averaging two views}
 
@@ -254,7 +217,7 @@ where $m(x)$ are the 130 measurements of ECG $x$ and $e(x)$ is its 1,024-dimensi
 
 \begin{figure}[H]
   \centering
-  \resizebox{\linewidth}{!}{%
+  \resizebox{0.88\linewidth}{!}{%
   \begin{tikzpicture}
     \node[box, text width=1.9cm] (ecg) at (0,0) {12-lead ECG\\10 s, 500 Hz};
     \node[box, text width=1.9cm] (qc) at (2.9,0) {Signal-quality check};
@@ -323,7 +286,7 @@ The gain of the blend over its stronger component is small but measurable. The A
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.88\linewidth]{figuras/fig_roc_budget.png}
+  \includegraphics[width=0.72\linewidth]{figuras/fig_roc_budget.png}
   \caption{The selected model on the 10,434 SPH evaluation ECGs. (a) ROC curves of the blend and its two components; the points mark the blend's operating points for five referral budgets. (b) For each budget, the sensitivity reached and the percentage of evaluation normals actually flagged. The flagged percentage follows the budget closely; sensitivity grows more and more slowly.}
   \label{fig:roc}
 \end{figure}
@@ -334,8 +297,6 @@ At the 5\% reference budget the threshold is 0.680, and the 10,434 evaluation EC
 
 The 810 misses are the main limitation. They are 22.6\% of the abnormal ECGs and more than twice the number of false alerts. This follows from choosing a budget that keeps the reading load low, and it means that at this budget the model cannot be the only filter: ECGs below the threshold are unflagged, not cleared. A service that cannot accept this many misses has to accept a larger budget, and Figure~\ref{fig:roc}b and Table~\ref{tab:budgets} (Appendix~\ref{app:budgets}) price that choice. Moving from a 1\% to a 2.5\% budget recovers 337 more abnormal ECGs for 121 more false alerts, about one false alert for every three additional detections. From 5\% to 10\% the ratio is 1.7 false alerts per additional detection, and from 10\% to 20\% it is 3.0. The 5\% budget is the last step at which one more detection costs less than one unnecessary reading. The right budget remains the service's decision.
 
-Counts show what the blend buys at the same budget. Against xECG alone it detects 47 more abnormal ECGs with 2 fewer false alerts; against boosting alone, 96 more with 40 fewer. Logistic regression on measurements produces only 292 false alerts but detects 2,146 abnormal ECGs: it would save 46 readings and lose 628 detections.
-
 The precision of 89.1\% must not be carried over to students. Precision depends on how common abnormal ECGs are, and at SPH they are 34.3\% of the evaluation set. Two studies of young athletes in the United States found relevant cardiovascular conditions in 13 of 5,258 college athletes \parencite{drezner2016electrocardiographic} and 16 of 3,620 high-school athletes \parencite{williams2019performance}, that is, 0.2\% to 0.4\%. If the sensitivity and specificity measured at SPH held at such a prevalence, 10,000 screened people would produce about 490 false alerts and 19 to 34 true detections: between 4 and 7 of every 100 alerts would be true (Appendix~\ref{app:projection}). This is arithmetic under a strong assumption, since our sensitivity is measured against ECG annotations and those studies count clinical conditions. The order of magnitude is what matters: in a student population most alerts will be false at any budget.
 
 \subsection{An optional aid: which part of the tracing drives the score}
@@ -343,20 +304,44 @@ The precision of 89.1\% must not be carried over to students. Precision depends 
 
 A score tells the cardiologist which ECG to open. It does not say where to look in it. Alongside the classifier we built a display for that narrower question: which lead, and which wave, does the score depend on?
 
-The method is an occlusion test with a meaningful replacement. For one ECG, we replace one wave (P, QRS or ST-T) in one lead with the wave expected in a normal ECG of the same heart rate, age and sex, recompute both feature sets and the blend, and record how far the score falls. Twelve leads and three waves give a $12 \times 3$ map. A large fall means the model relied on that region.
+The method is an occlusion test with a meaningful replacement. For one ECG, we replace one wave (P, QRS or ST-T) in one lead with the wave expected in a normal ECG of the same heart rate, age and sex, recompute both feature sets and the blend, and record how far the score falls. Twelve leads and three waves give a $12 \times 3$ map. A large fall means the model relied on that region. Appendix~\ref{app:where} shows an example (Figure~\ref{fig:where}).
 
-Figure~\ref{fig:where} shows the map for one SPH recording annotated as an infarction. Its score is 0.992. The largest falls are in the QRS complex of leads V5 and II (0.006 each) and in the ST-T segment of aVR (0.004) and no single region comes close to removing the alert. Replacing the QRS complex in all twelve leads lowers the score by 0.098, and replacing the whole ECG by 0.417, which takes it below the threshold. The alert rests on information spread over several leads.
+Averaged over ECGs of one type the map points to the expected wave, but lead by lead it does no better than a control that uses only the energy of the replaced signal. We therefore present it as an aid under development (Appendix~\ref{app:where}). It shows what drives the model's score, which is not the same as where a lesion is. In the prototype it is a separate view that the cardiologist can leave switched off, and the flag never depends on it.
 
-\begin{figure}[!htb]
+\subsection{Naming the finding: fourteen conditions}
+\label{sec:conditions}
+
+The blend answers one question: should this ECG be opened first? A cardiologist who opens it has a second one: what does the model think is there? The binary label cannot say, because it merges findings as different as a wide QRS complex and an inverted T wave and leaves out rhythm disorders. We therefore built a second model that names 14 findings, among them atrial fibrillation (AF), which shows as irregular spacing between beats and no clear P waves. One ECG can show several findings, so the task is multilabel: one yes-or-no output per finding. No source annotates all 14, so each label is positive, negative or undefined, and undefined labels enter neither the loss nor any metric. The dataset holds 99,167 ECGs from the seven sources, with PTB-XL fold 10 and the ECGs of half of the SPH patients (12,698) as test sets; Appendix~\ref{app:conditions} gives the details.
+
+We compare models by the macro AUROC, the mean of the per-finding AUROCs, in which a rare finding counts as much as a common one. The reference, fixed first, is one logistic regression per finding $c$ on the frozen xECG representation, $p_c(x) = \sigma(w_c^{\top} e(x) + b_c)$: 14 independent classifiers that share only $e(x)$. Table~\ref{tab:multilabel} sets it against ten alternatives, from gradient boosting on the measurements to a residual CNN trained from scratch \parencite{strodthoff2021deep}, a fine-tuned encoder and an ensemble. The rule, committed before any test score, was that the candidate with the highest validation metric replaces the reference only if the patient-bootstrap interval of their difference at SPH lies above zero. The ensemble was selected with 0.973. On PTB-XL fold 10, a new fold of a training source, it beats the reference by $+0.0106$ $[0.0087, 0.0127]$. At SPH the difference is $-0.0012$ $[-0.0026, +0.0001]$, so the 14 logistic regressions remain the model.
+
+\begin{table}[!htb]
   \centering
-  \includegraphics[width=0.8\linewidth]{figuras/fig_where.png}
-  \caption{Fall in the blend score, in thousandths, when one wave of one lead is replaced by its normal counterpart, for one SPH recording annotated as an infarction (original score 0.992). Red: the region supported the alert. Blue: replacing it raised the score.}
-  \label{fig:where}
-\end{figure}
+  \caption{Macro AUROC over the 14 findings. Validation: mean over the six validation sources. Brackets are 95\% patient-bootstrap intervals. All encoders are frozen unless fine-tuned; ``all inputs'' are the three encoders and the measurements. Networks are averages of three seeds. Bold marks the highest value of each column.}
+  \label{tab:multilabel}
+  \small
+  \begin{tabular}{lccc}
+    \toprule
+    Model & Validation & PTB-XL fold 10 & SPH (external) \\
+    \midrule
+    Logistic regressions, xECG (reference) & 0.964 & 0.963 [0.959, 0.967] & 0.974 [0.972, 0.975] \\
+    Logistic regressions, ECG-JEPA & 0.961 & 0.961 [0.957, 0.965] & 0.966 [0.964, 0.968] \\
+    Logistic regressions, ECG-CPC & 0.940 & 0.942 [0.936, 0.947] & 0.948 [0.945, 0.951] \\
+    Gradient boosting, measurements & 0.963 & 0.967 [0.963, 0.970] & 0.969 [0.967, 0.971] \\
+    Network, xECG & 0.966 & 0.966 [0.962, 0.969] & \textbf{0.975 [0.973, 0.976]} \\
+    Network, ECG-JEPA & 0.965 & 0.964 [0.960, 0.968] & 0.969 [0.966, 0.971] \\
+    Network, ECG-CPC & 0.953 & 0.953 [0.948, 0.957] & 0.954 [0.951, 0.957] \\
+    Network, all inputs & 0.971 & 0.971 [0.967, 0.974] & 0.972 [0.969, 0.974] \\
+    xresnet1d101 from scratch & 0.966 & 0.969 [0.966, 0.973] & 0.963 [0.960, 0.965] \\
+    xECG fine-tuned & 0.969 & 0.968 [0.965, 0.972] & 0.971 [0.968, 0.973] \\
+    Ensemble of three (selected) & \textbf{0.973} & \textbf{0.974 [0.970, 0.977]} & 0.973 [0.970, 0.975] \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
-Whether the map points to the right place depends on how closely one looks. Averaged over ECGs of one type it does: for ECGs annotated with a right bundle branch block (a wide QRS complex of a typical shape) the QRS complex carries 79\% of the attribution, and for ECGs annotated with ST-T changes the ST-T segment carries 85\%. Lead by lead it does not. In 104 infarction ECGs, the lead with the largest fall lay in the region named by the annotation in 49.0\% of cases, while a control that uses only the energy of the replaced signal reached 56.7\%.
+The table repeats what fine-tuning showed for the screening model: more capacity pays inside the hospitals the model was trained on and stops paying outside them. The CNN trained from scratch falls from third on fold 10 to ninth at SPH. Only the small network on xECG is above the reference at SPH, by $+0.0011$ $[0.0004, 0.0018]$, in one of nine comparisons we had not planned to decide with. Finding by finding (Table~\ref{tab:conditions}), the reference reaches an AUROC above 0.97 at SPH for 11 of the 14, including AF (1.000). Thresholds transferred worse than rankings: fixed on validation for 90\% specificity, they gave between 78\% and 98\% at SPH, so each finding needs a locally calibrated threshold, as the flag does.
 
-We therefore present the map as an aid under development (details in Appendix~\ref{app:where}). It shows what drives the model's score, which is not the same as where a lesion is. In the prototype it is a separate view that the cardiologist can leave switched off, and the flag never depends on it.
+With the models on a plateau, we examined the data. Labels disagreed with what can be measured mostly where sources code a finding differently: two sources call a regular rhythm slow below about 50 beats per minute and the others below about 60. Twelve rules, built from signal and label checks and from no model score, exclude 159 ECGs and set 21,276 labels to undefined. Retraining the reference on the cleaned data changed its validation metric by $+0.0008$ $[-0.0003, +0.0019]$: cleaning made the evaluation more trustworthy, not the model measurably better. We then froze the cleaned pipeline and opened, once, the reserved groups of the five Challenge sources, which no model of this project had scored. On 12,914 ECGs the reference reaches a macro AUROC of 0.960 $[0.954, 0.966]$, against 0.961 on validation for the same sources. The criterion fixed in advance, a lower bound above the validation value minus 0.010, is met. These ECGs come from hospitals seen in training, so the test confirms the validation estimate and adds no new hospital. The classifier is not in the prototype, and its labels are annotation proxies too.
 
 \subsection{Results against the criteria fixed in advance}
 
@@ -390,7 +375,7 @@ Second, the blend's out-of-fold AUROC in training (0.980) is far above its value
 
 Third, no evaluation set is untouched. Fold 10 of PTB-XL was scored at the end of two stages, and fold 9 and SPH were read repeatedly during development. These are development results, not a final test.
 
-We also tried to move the training data towards the target population by preferring ECGs of people aged 18 to 25 (Appendix~\ref{app:age}). Sensitivity on SPH changed by $+0.47$ points $[-0.72, +1.64]$, below the two-point margin fixed in advance, and a 25,000-ECG selection that preferred young people still had a median age of 62. We kept the general cohort.
+We also tried to move the training data towards the target population by preferring ECGs of people aged 18 to 25 (Appendix~\ref{app:age}). Sensitivity on SPH changed by $+0.47$ points $[-0.72, +1.64]$, below the two-point margin fixed in advance, and we kept the general cohort.
 
 % =====================================================================
 \section{Implementation and operation}
@@ -406,7 +391,7 @@ Figure~\ref{fig:deploy} shows the proposed components. The nurse exports each re
 
 \begin{figure}[H]
   \centering
-  \resizebox{\linewidth}{!}{%
+  \resizebox{0.88\linewidth}{!}{%
   \begin{tikzpicture}
     \node[box, text width=2.2cm, minimum height=1.3cm] (dev) at (0,0) {ECG device export};
     \node[box, text width=3.0cm, minimum height=1.3cm] (api) at (4.0,0) {Inference service:\\quality check, features, blend};
@@ -432,7 +417,7 @@ Figure~\ref{fig:deploy} shows the proposed components. The nurse exports each re
   \label{fig:deploy}
 \end{figure}
 
-The prototype built during the project covers the inference service: a local web application that accepts a recording as a text file of 5,000 rows by twelve leads, runs the quality check before loading any model and abstains on failure. The worklist, the storage of readings and the monitoring report are not built yet.
+The prototype built during the project covers the inference service: a local web application that accepts a recording as a text file, runs the quality check before loading any model and abstains on failure. The worklist, the storage of readings and the monitoring report are not built yet.
 
 \subsection{Operating requirements and owners}
 
@@ -503,6 +488,8 @@ During the pilot the cardiologist should read every ECG, flagged or not. Only a 
 
 \textbf{A threshold set on local normal ECGs held at the external hospital.} At SPH the 5\% budget produced 4.9\% of flagged normals, and the other four budgets were met within 0.6 points. A threshold tuned for a target sensitivity did not transfer even between folds of one dataset.
 
+\textbf{Naming the finding needed no larger model.} Fourteen logistic regressions on the same frozen representation reached a macro AUROC of 0.974 at the external hospital. The ensemble selected on validation gained 0.011 on a fold of a training source and nothing demonstrable at SPH; one test on reserved recordings (0.960) confirmed the validation estimate.
+
 \textbf{At the reference budget the model orders the work but cannot filter it.} It finds 77.4\% of the abnormal ECGs at the external hospital and misses 22.6\%. Reaching 89.9\% requires flagging a fifth of the normal ECGs.
 
 \subsection{Limitations}
@@ -513,7 +500,7 @@ Four limitations bound every result above.
 
 \textbf{The population is not the target population.} Training and evaluation data come from hospital patients with a median age near 62, and selecting young patients from public data did not change the results. Patterns common in healthy young adults, such as ST elevation in lead V2, may raise the false-alert rate in ways our data cannot show.
 
-\textbf{The evaluation is a development evaluation.} Every evaluation set was read more than once, the Challenge sources are split by record, and the intervals describe one training run. We report no final test.
+\textbf{The evaluation is a development evaluation.} Every evaluation set of the screening model was read more than once, the Challenge sources are split by record, and the intervals describe one training run. We report no final test of the screening model. The one final test concerns the 14 findings, at hospitals seen in training.
 
 \textbf{Operation and explanation are untested.} Processing time, behaviour with the local device and usability have not been measured; the map of Section~\ref{sec:where} is no better than a signal-energy control at naming the lead; and no clinician has reviewed the model's output.
 
@@ -522,14 +509,14 @@ Four limitations bound every result above.
 \begin{enumerate}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
   \item \textbf{A supervised pilot on students.} Collect local ECGs with the cardiologist reading all of them, calibrate the threshold on the local normals, and measure sensitivity, false alerts and load in the population that matters. This is the step that would turn a development result into evidence for the service.
   \item \textbf{A label agreed with the cardiologist.} Decide which findings should trigger follow-up in young adults, including rhythm findings, and re-evaluate the model against that definition. Our feature selection and our sensitivity figures both depend on the current proxy.
-  \item \textbf{One final test.} Freeze the complete pipeline and score it once on the data we kept closed: fold 10 of PTB-XL for the multi-source model and the reserved Challenge groups.
+  \item \textbf{One final test.} Freeze the complete screening pipeline and score it once. The reserved Challenge groups were read for the 14 findings only, so they can still serve this purpose once.
   \item \textbf{The missed ECGs.} Describe the 810 misses at SPH by type of finding. If they concentrate in one family, a dedicated score for that family, combined with the general score under the same budget, is a more direct remedy than a larger budget.
   \item \textbf{Fine-tuning under a fairer budget.} Our negative result covers one epoch, one seed and one learning rate. Partial fine-tuning, or adaptation on local unlabeled ECGs, remains open under the same adoption rule.
 \end{enumerate}
 
 % --- AI-use statement (before the references) ---
 \section*{Statement on the use of artificial intelligence}
-We used Claude Code \parencite{anthropic2026claude} and Codex \parencite{openai2026codex} during the project, as declared in the notebooks of the stages where they were used. Their main uses were to review data, develop experimental code, and prepare plots. First, to review the data: for example, the signal checks include the rule that the limb leads of a correctly stored ECG must satisfy $\text{III} = \text{II} - \text{I}$, which flags recordings whose leads are inconsistent. Second, to write and run the code of the experiments and to produce their plots. We also used them to search for sources. For this article we used Claude Code to design the images: the heartbeat schematic (Figure~\ref{fig:beat}), the two diagrams (Figures~\ref{fig:pipeline} and~\ref{fig:deploy}) and the layout of the two data figures (Figures~\ref{fig:roc} and~\ref{fig:where}), which plot values saved by our notebooks. We checked every number in the text and figures against the outputs of the graded notebooks.
+We used Claude Code \parencite{anthropic2026claude} and Codex \parencite{openai2026codex} during the project, as declared in the notebooks of the stages where they were used. Their main uses were to review data, develop experimental code, and prepare plots. First, to review the data: for example, the signal checks include the rule that the limb leads of a correctly stored ECG must satisfy $\text{III} = \text{II} - \text{I}$, which flags recordings whose leads are inconsistent. Second, to write and run the code of the experiments and to produce their plots. We also used them to search for sources. For this article we used Claude Code to design the images: the heartbeat schematic (Figure~\ref{fig:beat}), the two diagrams (Figures~\ref{fig:pipeline} and~\ref{fig:deploy}) and the layout of the two data figures (Figures~\ref{fig:roc} and~\ref{fig:where}), which plot values saved by our notebooks. We checked every number in the text and figures against the outputs of the graded notebooks and, for the 14 findings (Section~\ref{sec:conditions}, Appendix~\ref{app:conditions}), against the experiment reports in the project repository.
 
 % --- References ---
 \printbibliography[title={References}]
@@ -612,6 +599,43 @@ Table~\ref{tab:search} summarizes the searches of the single-model stage on PTB-
   \end{tabular}
 \end{table}
 
+\begin{table}[H]
+  \centering
+  \caption{Single models on PTB-XL with 111 measurements. CV: mean AUROC over eight training folds (standard deviation between folds 0.004 to 0.013). Fold 10 was scored once per stage, after all choices; brackets are 95\% patient-bootstrap intervals. Gradient boosting is an ensemble, shown only as a reference.}
+  \label{tab:single}
+  \begin{tabular}{lccc}
+    \toprule
+    Model & AUROC, CV & AUROC, fold 9 & AUROC, test fold 10 \\
+    \midrule
+    Criteria count (no learning)   & 0.785  & 0.782  & 0.760 [0.740, 0.780] \\
+    Decision tree                  & 0.813 & 0.808 & -- \\
+    $k$-nearest neighbours         & 0.899 & 0.890 & -- \\
+    Gaussian naive Bayes           & 0.915 & 0.915 & -- \\
+    Linear discriminant analysis   & 0.924 & 0.918 & -- \\
+    Logistic regression (baseline) & 0.935 & 0.928 & 0.917 [0.905, 0.929] \\
+    MLP, tuned                     & 0.949 & 0.940 & 0.933 [0.922, 0.943] \\
+    SVM, tuned                     & 0.951 & 0.939 & 0.933 [0.923, 0.944] \\
+    \midrule
+    Gradient boosting (reference)  & 0.955 & 0.943 & 0.937 [0.927, 0.947] \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Three published self-supervised encoders, frozen, with the same logistic head on PTB-XL (fit on folds 1--7, threshold from fold 8 normals at a 5\% budget, evaluation on fold 9).}
+  \label{tab:encoders}
+  \begin{tabular}{lccccc}
+    \toprule
+    Encoder & Feature size & AUROC & Avg.\ precision & Sensitivity & Specificity \\
+    \midrule
+    xECG       & 1,024 & 0.943 & 0.961 & 0.740 & 0.963 \\
+    ECG-JEPA   &   768 & 0.941 & 0.959 & 0.739 & 0.954 \\
+    ECG-CPC (S4) & 512 & 0.919 & 0.945 & 0.687 & 0.962 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \section{Operating points for five referral budgets}
 \label{app:budgets}
 
@@ -633,6 +657,8 @@ Table~\ref{tab:budgets} gives the complete confusion counts behind Figure~\ref{f
     \bottomrule
   \end{tabular}
 \end{table}
+
+Counts show what the blend buys at the same budget. Against xECG alone it detects 47 more abnormal ECGs with 2 fewer false alerts; against boosting alone, 96 more with 40 fewer. Logistic regression on measurements produces only 292 false alerts but detects 2,146 abnormal ECGs: it would save 46 readings and lose 628 detections.
 
 \section{Does preferring young patients help?}
 \label{app:age}
@@ -687,6 +713,65 @@ Table~\ref{tab:projection} applies this to $N = 10{,}000$ with the blend's rates
 
 This appendix completes Section~\ref{sec:where}. The normal template was fitted on 2,666 normal ECGs of 2,566 patients from the training data, none of them from SPH. It is warped to the timing of each beat, and the baseline drift and noise of the original recording are kept, so that the test does not simply measure the effect of cleaning the signal. Besides the 36 lead-and-wave cells we replace whole leads, one wave in all leads and the whole ECG: 52 replacements, the same 52 with the splice control, and the original, or 105 scored variants per ECG.
 
+Figure~\ref{fig:where} shows the map for one SPH recording annotated as an infarction. Its score is 0.992. The largest falls are in the QRS complex of leads V5 and II (0.006 each) and in the ST-T segment of aVR (0.004) and no single region comes close to removing the alert. Replacing the QRS complex in all twelve leads lowers the score by 0.098, and replacing the whole ECG by 0.417, which takes it below the threshold. The alert rests on information spread over several leads.
+
+Whether the map points to the right place depends on how closely one looks. Averaged over ECGs of one type it does: for ECGs annotated with a right bundle branch block (a wide QRS complex of a typical shape) the QRS complex carries 79\% of the attribution, and for ECGs annotated with ST-T changes the ST-T segment carries 85\%. Lead by lead it does not. In 104 infarction ECGs, the lead with the largest fall lay in the region named by the annotation in 49.0\% of cases, while a control that uses only the energy of the replaced signal reached 56.7\%.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{figuras/fig_where.png}
+  \caption{Fall in the blend score, in thousandths, when one wave of one lead is replaced by its normal counterpart, for one SPH recording annotated as an infarction (original score 0.992). Red: the region supported the alert. Blue: replacing it raised the score.}
+  \label{fig:where}
+\end{figure}
+
 On the 104 infarction ECGs the method beats the energy control only when the whole distribution of falls over the leads is compared (contrast 0.190, 95\% interval $[0.134, 0.246]$). Attributions from Shapley additive explanations (SHAP) \parencite{lundberg2017unified} showed a related instability: changing the reference population changed the most important group of variables in 43.75\% of 400 patients with identical predictions. Testing the map further needs ECGs marked by specialists per lead and per wave, which we do not have.
+
+\section{The fourteen findings, the cleaning rules and two exploratory analyses}
+\label{app:conditions}
+
+\textbf{Task, labels and models.} One ECG can show several findings at once, so the task is multilabel classification: one yes-or-no output per finding, not one class per ECG. We kept 14 findings with enough positive ECGs in every evaluation set (Table~\ref{tab:conditions}), among them atrial fibrillation (AF), which shows as irregular spacing between beats and no clear P waves. No source annotates all 14. If a missing code counted as a negative, a model could learn that ECGs from that hospital never show the finding, so each label is positive, negative or undefined, and undefined labels enter neither the loss nor any metric. The dataset holds 99,167 ECGs from the seven sources: 56,250 for training, 15,138 for validation, and two test sets, PTB-XL fold 10 (2,198 ECGs) and the ECGs of half of the SPH patients (12,698). No SPH recording enters training.
+
+We compare models by the macro AUROC, the mean of the per-finding AUROCs, in which a rare finding counts as much as a common one. The reference model, fixed first, is one logistic regression per finding $c$ on the frozen xECG representation, $p_c(x) = \sigma(w_c^{\top} e(x) + b_c)$: 14 independent binary classifiers that share only $e(x)$. Against it we set ten alternatives (Table~\ref{tab:multilabel}): the same heads on ECG-JEPA and ECG-CPC; gradient boosting per finding on the 130 measurements; a network with one hidden layer of 512 units and 14 outputs, on each encoder and on all three encoders and the measurements together; xresnet1d101, a one-dimensional residual CNN from the PTB-XL benchmark \parencite{strodthoff2021deep}, trained from scratch on the waveform; xECG fine-tuned end to end; and an ensemble that averages the three best candidates with different inputs. We committed the decision rule before any test score: the candidate with the highest validation metric replaces the reference only if the paired patient-bootstrap interval of their difference at SPH lies above zero.
+
+Table~\ref{tab:conditions} describes each finding by what it looks like on the tracing and gives the AUROC of the reference model, the 14 logistic regressions on frozen xECG, on the two test sets.
+
+\begin{table}[H]
+  \centering
+  \caption{The 14 findings and the AUROC of the reference model at SPH (12,698 ECGs) and on PTB-XL fold 10 (2,198 ECGs), with the number of positive ECGs in brackets. A dagger marks fewer than 100 positives, where the value is imprecise.}
+  \label{tab:conditions}
+  \small
+  \begin{tabular}{p{3.6cm}p{6.6cm}ll}
+    \toprule
+    Finding & On the ECG & SPH & Fold 10 \\
+    \midrule
+    Sinus tachycardia & Regular rhythm with normal P waves, above 100 beats per minute & 0.999 (360) & 0.996 (82)$^\dagger$ \\
+    Sinus bradycardia & The same, below 50 or 60 beats per minute depending on the source & 0.993 (1,302) & 0.945 (64)$^\dagger$ \\
+    Sinus arrhythmia & Normal beats whose spacing varies & 0.940 (781) & 0.944 (77)$^\dagger$ \\
+    AF or flutter & Irregular spacing and no clear P waves, or a sawtooth baseline & 1.000 (379) & 0.978 (157) \\
+    Premature ventricular complex & An early, wide beat without a P wave before it & 0.991 (517) & 0.989 (114) \\
+    First-degree atrioventricular block & A long PR interval & 0.995 (112) & 0.981 (96)$^\dagger$ \\
+    Complete right bundle branch block & A wide QRS complex with a typical shape in V1 & 0.996 (350) & 0.996 (54)$^\dagger$ \\
+    Incomplete right bundle branch block & The same shape with a QRS complex that is not wide & 0.852 (619) & 0.966 (112) \\
+    Left anterior fascicular block & A QRS direction turned far to the left in the limb leads, with a narrow QRS & 0.993 (77)$^\dagger$ & 0.983 (162) \\
+    Left axis deviation & A QRS direction turned to the left in the limb leads & 0.983 (68)$^\dagger$ & 0.998 (134) \\
+    Left ventricular hypertrophy & Unusually tall QRS voltages & 0.989 (100) & 0.943 (214) \\
+    ST depression & An ST segment below the baseline & 0.940 (497) & 0.934 (101) \\
+    T-wave abnormality & Flat or inverted T waves & 0.972 (1,633) & 0.923 (255) \\
+    Any myocardial infarction & Traces of an infarction, such as deep Q waves & 0.988 (118) & 0.909 (532) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{Data, metric and training.} The 14 findings comprise five of rhythm, four of conduction and five of the direction and height of the QRS complex, the ST segment, the T wave and the traces of an infarction. We wrote rules that map the codes of each source to 32 findings and kept the 14 with at least 100 positive ECGs in the training data, at SPH and in PTB-XL folds 9--10. The 99,167 ECGs remain after removing 63 short recordings and 991 duplicates. Training and validation use PTB-XL folds 1--8 and 9 and the training and calibration groups of the five other sources; the SPH test half has 12,246 patients. To choose between models we compute the macro AUROC inside each of the six validation sources and average the six values, because a pooled score would reward a model for recognizing the source. A finding enters a source's mean only with at least 20 positive and 20 negative ECGs there. Each logistic regression is fitted on the ECGs whose label for its finding is defined, with its regularization strength chosen on validation. Every network was trained with three seeds, whose probabilities we average.
+
+\textbf{Signal checks.} Of the training and validation ECGs, 8.4\% carry at least one of 18 signal flags, most of them noise. Four defects mean that the stored samples are not a measurement: missing samples, a constant start or end, values at the limit of the 16-bit range, and leads that contradict the identity $\text{III} = \text{II} - \text{I}$.
+
+\textbf{The final test in detail.} None of the twelve rules creates or flips a positive. Before opening the reserved groups we recorded the hash of every model, threshold and feature file. A finding enters a source's mean here only with 100 positive and 100 negative ECGs. Our first protocol compared the test value with 0.970, the six-source validation metric under the 20-ECG entry rule; we replaced it with the like-for-like value 0.961 before opening the data. The split of these sources is by record, so some patients are shared with training. On the same ECGs the network on all inputs is $0.0038$ $[0.0010, 0.0065]$ above the reference, the same within-hospital advantage as on fold 10. The weakest result is infarction in the smallest source (0.892).
+
+\textbf{Cleaning rules.} Four rules exclude an ECG, one for each of the four signal defects above. Eight rules set a label to undefined: a lead needed to read the finding is flat or has lost contact; two labels of one ECG contradict each other; the ECG shows a pacemaker rhythm, which changes the QRS complex and the ST segment; the finding appears only after the first ten seconds of a longer recording; a wide-QRS label has a measured QRS duration below 110~ms in the two sources that have a single code for the complete and incomplete forms; a slow-rhythm negative has a rate below 60 in the two sources that code it from 50; a rate label contradicts the measured heart rate; and a hypertrophy negative meets a voltage criterion. Of the 21,276 labels set to undefined, 1,435 were positive and 19,841 negative. The rules were developed on training and validation data and then applied unchanged to the test sets.
+
+\textbf{One direction per finding.} A logistic regression needs iterative fitting. We asked how much is lost with one vector per finding, the linear discriminant direction computed from class means and a shared covariance after removing each source's mean. At SPH, over the 12 findings with at least 100 positives, its macro AUROC is 0.0045 below the reference $[-0.0060, -0.0032]$, inside the margin of 0.010 we had fixed. The classifier remains slightly better.
+
+\textbf{Unlabelled structure.} We also clustered the xECG representations of the training and validation ECGs to look for groups that no label explains. Labels, measurements, heart rate, age, sex and source together explain 57\% of the variance of the representation. Of 606 clusters, 27 passed our filters as candidates, and none remained unexplained by an existing label, a measurement or a signal defect. We found no group that would suggest an unlabelled condition.
 
 \end{document}

@@ -1,0 +1,561 @@
+% Verified against arXiv API, Crossref, PhysioNet and Zenodo pages on 2026-11-10. biblatex + biber, UTF-8.
+
+% ===== Self-supervised ECG models and methods =====
+
+% ECG-JEPA: released encoder used frozen in the project's encoder comparison (Experiments 011-028).
+@misc{kim2024ecgjepa,
+  author     = {Kim, Sehun},
+  title      = {Learning General Representation of 12-Lead Electrocardiogram with a Joint-Embedding Predictive Architecture},
+  year       = {2024},
+  eprint     = {2410.08559},
+  eprinttype = {arxiv},
+  url        = {https://arxiv.org/abs/2410.08559},
+}
+
+% ECG-CPC: released S4 CPC checkpoint (frozen reference, Experiment 004) and the foundation-model benchmark (ICLR 2026) that introduces it.
+@misc{almasud2025benchmarking,
+  author     = {Al-Masud, M A and Lopez Alcaraz, Juan Miguel and Strodthoff, Nils},
+  title      = {Benchmarking {ECG} Foundational Models: A Reality Check Across Clinical Tasks},
+  year       = {2025},
+  eprint     = {2509.25095},
+  eprinttype = {arxiv},
+  note       = {Accepted at ICLR 2026},
+  url        = {https://arxiv.org/abs/2509.25095},
+}
+
+% CPC for 12-lead ECG (Mehari and Strodthoff): background for the project's own CPC models and for ECG-CPC.
+@article{mehari2022selfsupervised,
+  author  = {Mehari, Temesgen and Strodthoff, Nils},
+  title   = {Self-supervised representation learning from 12-lead {ECG} data},
+  journal = {Computers in Biology and Medicine},
+  year    = {2022},
+  volume  = {141},
+  eid     = {105114},
+  doi     = {10.1016/j.compbiomed.2021.105114},
+}
+
+% xECG and BenchECG: frozen xLSTM encoder used in Experiments 007 and later (frozen probe, label efficiency, normal manifold).
+@article{lunelli2026benchecg,
+  author  = {Lunelli, Riccardo and Nicolson, Angus and Pr{\"o}ll, Samuel Martin and Reinstadler, Sebastian Johannes and Bauer, Axel and Dlaska, Clemens},
+  title   = {{BenchECG} and {xECG}: a benchmark and baseline for {ECG} foundation models},
+  journal = {npj Digital Medicine},
+  year    = {2026},
+  doi     = {10.1038/s41746-026-03196-y},
+}
+
+% Original CPC (van den Oord et al.): objective behind the project's CPC encoders and ECG-CPC.
+@misc{vandenoord2018cpc,
+  author     = {van den Oord, Aaron and Li, Yazhe and Vinyals, Oriol},
+  title      = {Representation Learning with Contrastive Predictive Coding},
+  year       = {2018},
+  eprint     = {1807.03748},
+  eprinttype = {arxiv},
+  url        = {https://arxiv.org/abs/1807.03748},
+}
+
+% xLSTM: architecture of the xECG encoder (Experiment 007).
+@inproceedings{beck2024xlstm,
+  author    = {Beck, Maximilian and P{\"o}ppel, Korbinian and Spanring, Markus and Auer, Andreas and Prudnikova, Oleksandra and Kopp, Michael and Klambauer, G{\"u}nter and Brandstetter, Johannes and Hochreiter, Sepp},
+  title     = {{xLSTM}: Extended Long Short-Term Memory},
+  booktitle = {Advances in Neural Information Processing Systems 37 ({NeurIPS} 2024)},
+  year      = {2024},
+  doi       = {10.52202/079017-3417},
+  eprint    = {2405.04517},
+  eprinttype = {arxiv},
+}
+
+% I-JEPA: the joint-embedding predictive architecture that ECG-JEPA adapts to ECG.
+@inproceedings{assran2023ijepa,
+  author    = {Assran, Mahmoud and Duval, Quentin and Misra, Ishan and Bojanowski, Piotr and Vincent, Pascal and Rabbat, Michael and LeCun, Yann and Ballas, Nicolas},
+  title     = {Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture},
+  booktitle = {Proceedings of the {IEEE/CVF} Conference on Computer Vision and Pattern Recognition ({CVPR})},
+  year      = {2023},
+  pages     = {15619--15629},
+  doi       = {10.1109/CVPR52729.2023.01499},
+  eprint    = {2301.08243},
+  eprinttype = {arxiv},
+}
+
+% ECG-FM: released wav2vec-style encoder, frozen, fine-tuned and adapted in the project's pretrained-model comparison.
+@article{mckeen2025ecgfm,
+  author  = {McKeen, Kaden and Masood, Sameer and Toma, Augustin and Rubin, Barry and Wang, Bo},
+  title   = {{ECG-FM}: an open electrocardiogram foundation model},
+  journal = {JAMIA Open},
+  year    = {2025},
+  volume  = {8},
+  number  = {5},
+  eid     = {ooaf122},
+  doi     = {10.1093/jamiaopen/ooaf122},
+}
+
+% HuBERT-ECG: small released model tested in the pretrained-model comparison; preprint version 4.
+@article{coppola2024hubertecg,
+  author  = {Coppola, Edoardo and Savardi, Mattia and Massussi, Mauro and Adamo, Marianna and Metra, Marco and Signoroni, Alberto},
+  title   = {{HuBERT-ECG} as a self-supervised foundation model for broad and scalable cardiac applications},
+  journal = {medRxiv},
+  year    = {2024},
+  doi     = {10.1101/2024.11.14.24317328},
+  note    = {Preprint; first posted 2024, version 4 cited in the project docs},
+}
+
+% MERL: ECG-report multimodal pretraining; cited in the literature review, not tested.
+@inproceedings{liu2024merl,
+  author    = {Liu, Che and Wan, Zhongwei and Ouyang, Cheng and Shah, Anand and Bai, Wenjia and Arcucci, Rossella},
+  title     = {Zero-Shot {ECG} Classification with Multimodal Learning and Test-time Clinical Knowledge Enhancement},
+  booktitle = {Proceedings of the 41st International Conference on Machine Learning},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {235},
+  pages     = {31949--31963},
+  year      = {2024},
+}
+
+% CLOCS: contrastive ECG pretraining across space, time and patients; cited in the literature guide, not tested.
+@inproceedings{kiyasseh2021clocs,
+  author    = {Kiyasseh, Dani and Zhu, Tingting and Clifton, David A},
+  title     = {{CLOCS}: Contrastive Learning of Cardiac Signals Across Space, Time, and Patients},
+  booktitle = {Proceedings of the 38th International Conference on Machine Learning},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {139},
+  pages     = {5606--5615},
+  year      = {2021},
+}
+
+% ===== Benchmarks and evaluation methodology =====
+
+% PTB-XL benchmark: source of the macro-AUROC comparison on fold 10 in the notebooks (Avance 3.8 and 4.8).
+@article{strodthoff2021deep,
+  author  = {Strodthoff, Nils and Wagner, Patrick and Schaeffter, Tobias and Samek, Wojciech},
+  title   = {Deep Learning for {ECG} Analysis: Benchmarks and Insights from {PTB-XL}},
+  journal = {IEEE Journal of Biomedical and Health Informatics},
+  year    = {2021},
+  volume  = {25},
+  number  = {5},
+  pages   = {1519--1528},
+  doi     = {10.1109/JBHI.2020.3022989},
+}
+
+% Multi-source cross-validation: evidence that single-source K-fold is optimistic; motivates the SPH external check (Experiment 022).
+@article{leinonen2024empirical,
+  author  = {Leinonen, Tuija and Wong, David and Vasankari, Antti and Wahab, Ali and Nadarajah, Ramesh and Kaisti, Matti and Airola, Antti},
+  title   = {Empirical investigation of multi-source cross-validation in clinical {ECG} classification},
+  journal = {Computers in Biology and Medicine},
+  year    = {2024},
+  volume  = {183},
+  eid     = {109271},
+  doi     = {10.1016/j.compbiomed.2024.109271},
+}
+
+% ===== Datasets =====
+
+% PTB-XL: development data, labels and folds for most experiments.
+@article{wagner2020ptbxl,
+  author  = {Wagner, Patrick and Strodthoff, Nils and Bousseljot, Ralf-Dieter and Kreiseler, Dieter and Lunze, Fatima I. and Samek, Wojciech and Schaeffter, Tobias},
+  title   = {{PTB-XL}, a large publicly available electrocardiography dataset},
+  journal = {Scientific Data},
+  year    = {2020},
+  volume  = {7},
+  eid     = {154},
+  doi     = {10.1038/s41597-020-0495-6},
+}
+
+% PTB-XL v1.0.3 release actually downloaded by the project.
+@misc{wagner2022ptbxlrelease,
+  author    = {Wagner, Patrick and Strodthoff, Nils and Bousseljot, Ralf-Dieter and Samek, Wojciech and Schaeffter, Tobias},
+  title     = {{PTB-XL}, a large publicly available electrocardiography dataset},
+  year      = {2022},
+  version   = {1.0.3},
+  publisher = {PhysioNet},
+  doi       = {10.13026/kfzx-aw45},
+}
+
+% PTB-XL+: feature dataset for PTB-XL; requested for the bibliography, not used in the experiments recorded in the docs.
+@article{strodthoff2023ptbxlplus,
+  author  = {Strodthoff, Nils and Mehari, Temesgen and Nagel, Claudia and Aston, Philip J. and Sundar, Ashish and Graff, Claus and Kanters, J{\o}rgen K. and Haverkamp, Wilhelm and D{\"o}ssel, Olaf and Loewe, Axel and B{\"a}r, Markus and Schaeffter, Tobias},
+  title   = {{PTB-XL+}, a comprehensive electrocardiographic feature dataset},
+  journal = {Scientific Data},
+  year    = {2023},
+  volume  = {10},
+  eid     = {279},
+  doi     = {10.1038/s41597-023-02153-8},
+}
+
+% MIMIC-IV-ECG v1.0: unlabeled waveforms for self-supervised pretraining (200,000 records selected).
+@misc{gow2023mimicivecg,
+  author    = {Gow, Brian and Pollard, Tom and Nathanson, Larry A. and Johnson, Alistair and Moody, Benjamin and Fernandes, Chrystinne and Greenbaum, Nathaniel and Waks, Jonathan W. and Eslami, Parastou and Carbonati, Tanner and Chaudhari, Ashish and Herbst, Elizabeth and Moukheiber, Dana and Berkowitz, Seth and Mark, Roger and Horng, Steven},
+  title     = {{MIMIC-IV-ECG}: Diagnostic Electrocardiogram Matched Subset},
+  year      = {2023},
+  version   = {1.0},
+  publisher = {PhysioNet},
+  doi       = {10.13026/4nqg-sb35},
+}
+
+% CODE-15% public subset: unlabeled pretraining source in the cohorts.
+@misc{ribeiro2021code15,
+  author    = {Ribeiro, Ant{\^o}nio H. and Paixao, Gabriela M. M. and Lima, Emilly M. and Horta Ribeiro, Manoel and Pinto Filho, Marcelo M. and Gomes, Paulo R. and Oliveira, Derick M. and Meira Jr, Wagner and Sch{\"o}n, Th{\"o}mas B. and Ribeiro, Antonio Luiz P.},
+  title     = {{CODE-15\%}: a large scale annotated dataset of 12-lead {ECGs}},
+  year      = {2021},
+  version   = {1.0.0},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.4916206},
+}
+
+% CODE study (full dataset): large supervised ECG model; origin of the CODE data behind CODE-15%.
+@article{ribeiro2020automatic,
+  author  = {Ribeiro, Ant{\^o}nio H. and Ribeiro, Manoel Horta and Paix{\~a}o, Gabriela M. M. and Oliveira, Derick M. and Gomes, Paulo R. and Canazart, J{\'e}ssica A. and Ferreira, Milton P. S. and Andersson, Carl R. and Macfarlane, Peter W. and Meira, Wagner and Sch{\"o}n, Thomas B. and Ribeiro, Antonio Luiz P.},
+  title   = {Automatic diagnosis of the 12-lead {ECG} using a deep neural network},
+  journal = {Nature Communications},
+  year    = {2020},
+  volume  = {11},
+  eid     = {1760},
+  doi     = {10.1038/s41467-020-15432-4},
+}
+
+% PhysioNet/CinC Challenge 2020 data release 1.0.2: Georgia and CPSC 2018 / CPSC-Extra sources.
+@misc{perezalday2022challenge2020data,
+  author    = {Perez Alday, Erick Andres and Gu, Annie and Shah, Amit and Liu, Chengyu and Sharma, Ashish and Seyedi, Salman and Bahrami Rad, Ali and Reyna, Matthew and Clifford, Gari},
+  title     = {Classification of 12-lead {ECGs}: The {PhysioNet/Computing in Cardiology} Challenge 2020},
+  year      = {2022},
+  version   = {1.0.2},
+  publisher = {PhysioNet},
+  doi       = {10.13026/dvyd-kd57},
+}
+
+% PhysioNet/CinC Challenge 2020 paper: describes the Challenge data (Georgia, CPSC) used in the cohorts.
+@article{perezalday2020classification,
+  author  = {Perez Alday, Erick A and Gu, Annie and Shah, Amit J and Robichaux, Chad and Wong, An-Kwok Ian and Liu, Chengyu and Liu, Feifei and Bahrami Rad, Ali and Elola, Andoni and Seyedi, Salman and Li, Qiao and Sharma, Ashish and Clifford, Gari D and Reyna, Matthew A},
+  title   = {Classification of 12-lead {ECGs}: the {PhysioNet/Computing in Cardiology} Challenge 2020},
+  journal = {Physiological Measurement},
+  year    = {2020},
+  volume  = {41},
+  number  = {12},
+  eid     = {124003},
+  doi     = {10.1088/1361-6579/abc960},
+}
+
+% PhysioNet/CinC Challenge 2021 data release 1.0.3: source of the Chapman-Shaoxing files used in the cohorts.
+@misc{reyna2022challenge2021data,
+  author    = {Reyna, Matthew and Sadr, Nadi and Gu, Annie and Perez Alday, Erick Andres and Liu, Chengyu and Seyedi, Salman and Shah, Amit and Clifford, Gari},
+  title     = {Will Two Do? Varying Dimensions in Electrocardiography: The {PhysioNet/Computing in Cardiology} Challenge 2021},
+  year      = {2022},
+  version   = {1.0.3},
+  publisher = {PhysioNet},
+  doi       = {10.13026/34va-7q14},
+}
+
+% PhysioNet/CinC Challenge 2021 paper: describes the 2021 Challenge data and its heterogeneous labels.
+@inproceedings{reyna2021will,
+  author    = {Reyna, Matthew A. and Sadr, Nadi and Perez Alday, Erick A. and Gu, Annie and Shah, Amit J. and Robichaux, Chad and Bahrami Rad, Ali and Elola, Andoni and Seyedi, Salman and Ansari, Sardar and Ghanbari, Hamid and Li, Qiao and Sharma, Ashish and Clifford, Gari D.},
+  title     = {Will Two Do? Varying Dimensions in Electrocardiography: The {PhysioNet/Computing in Cardiology} Challenge 2021},
+  booktitle = {2021 Computing in Cardiology ({CinC})},
+  year      = {2021},
+  pages     = {1--4},
+  doi       = {10.23919/CinC53138.2021.9662687},
+}
+
+% Chapman-Shaoxing: 12-lead arrhythmia database, human-read labels; Chapman-Ningbo source family.
+@article{zheng2020database,
+  author  = {Zheng, Jianwei and Zhang, Jianming and Danioko, Sidy and Yao, Hai and Guo, Hangyuan and Rakovski, Cyril},
+  title   = {A 12-lead electrocardiogram database for arrhythmia research covering more than 10,000 patients},
+  journal = {Scientific Data},
+  year    = {2020},
+  volume  = {7},
+  eid     = {48},
+  doi     = {10.1038/s41597-020-0386-x},
+}
+
+% Ningbo (with Chapman-Shaoxing): PhysioNet release 1.0.0 used for the clean Ningbo cohort.
+@misc{zheng2022ningbo,
+  author    = {Zheng, Jianwei and Guo, Hangyuan and Chu, Huimin},
+  title     = {A large scale 12-lead electrocardiogram database for arrhythmia study},
+  year      = {2022},
+  version   = {1.0.0},
+  publisher = {PhysioNet},
+  doi       = {10.13026/wgex-er52},
+}
+
+% CPSC 2018: China Physiological Signal Challenge 2018 database (CPSC and CPSC-Extra sources).
+@article{liu2018open,
+  author  = {Liu, Feifei and Liu, Chengyu and Zhao, Lina and Zhang, Xiangyu and Wu, Xiaoling and Xu, Xiaoyan and Liu, Yulin and Ma, Caiyun and Wei, Shoushui and He, Zhiqiang and Li, Jianqing and Kwee, Eddie Ng Yin},
+  title   = {An Open Access Database for Evaluating the Algorithms of Electrocardiogram Rhythm and Morphology Abnormality Detection},
+  journal = {Journal of Medical Imaging and Health Informatics},
+  year    = {2018},
+  volume  = {8},
+  number  = {7},
+  pages   = {1368--1373},
+  doi     = {10.1166/jmihi.2018.2442},
+}
+
+% SPH (Shandong Provincial Hospital) database: external test hospital in Experiments 022-037.
+@article{liu2022large,
+  author  = {Liu, Hui and Chen, Dan and Chen, Da and Zhang, Xiyu and Li, Huijie and Bian, Lipan and Shu, Minglei and Wang, Yinglong},
+  title   = {A large-scale multi-label 12-lead electrocardiogram database with standardized diagnostic statements},
+  journal = {Scientific Data},
+  year    = {2022},
+  volume  = {9},
+  eid     = {272},
+  doi     = {10.1038/s41597-022-01403-5},
+}
+
+% EchoNext: PhysioNet dataset v1.1.1 (echo-confirmed structural heart disease labels), Experiments 023 and 028.
+@misc{elias2026echonext,
+  author    = {Elias, Pierre and Finer, Joshua},
+  title     = {{EchoNext}: A Dataset for Detecting Echocardiogram-Confirmed Structural Heart Disease from {ECGs}},
+  year      = {2026},
+  version   = {1.1.1},
+  publisher = {PhysioNet},
+  doi       = {10.13026/7cfw-d091},
+}
+
+% EchoNext-Mini paper: the publication PhysioNet asks users of the EchoNext dataset to cite.
+@article{hughes2026echonextmini,
+  author  = {Hughes, John Weston and Jing, Linyuan and Finer, Joshua and Hartzel, Dustin and Kelsey, Christopher and Long, Aaron and Rocha, Daniel and Ruhl, Jeffrey and Poterucha, Timothy and Elias, Pierre},
+  title   = {{EchoNext-Mini}: A Dataset and Baseline {AI} Model for Detecting Structural Heart Disease from Electrocardiograms},
+  journal = {NEJM AI},
+  year    = {2026},
+  volume  = {3},
+  number  = {5},
+  doi     = {10.1056/aidbp2500516},
+}
+
+% EchoNext Nature paper: the full-scale study behind the EchoNext dataset.
+@article{poterucha2025detecting,
+  author  = {Poterucha, Timothy J. and Jing, Linyuan and Ricart, Ramon Pimentel and Adjei-Mosi, Michael and Finer, Joshua and Hartzel, Dustin and Kelsey, Christopher and Long, Aaron and Rocha, Daniel and Ruhl, Jeffrey A. and vanMaanen, David and Probst, Marc A. and Daniels, Brock and Joshi, Shalmali D. and Tastet, Olivier and Corbin, Denis and Avram, Robert and Barrios, Joshua P. and Tison, Geoffrey H. and Chiu, I-Min and Ouyang, David and Volodarskiy, Alexander and Castillo, Michelle and Roedan Oliver, Francisco A. and Malta, Paloma P. and Ye, Siqin and Rosner, Gregg F. and Dizon, Jose M. and Ali, Shah R. and Liu, Qi and Bradley, Corey K. and Vaishnava, Prashant and Waksmonski, Carol A. and DeFilippis, Ersilia M. and Agarwal, Vratika and Lebehn, Mark and Kampaktsis, Polydoros N. and Shames, Sofia and Beecy, Ashley N. and Kumaraiah, Deepa and Homma, Shunichi and Schwartz, Allan and Hahn, Rebecca T. and Leon, Martin and Einstein, Andrew J. and Maurer, Mathew S. and Hartman, Heidi S. and Hughes, John Weston and Haggerty, Christopher M. and Elias, Pierre},
+  title   = {Detecting structural heart disease from electrocardiograms using {AI}},
+  journal = {Nature},
+  year    = {2025},
+  volume  = {644},
+  number  = {8075},
+  pages   = {221--230},
+  doi     = {10.1038/s41586-025-09227-0},
+}
+
+% PhysioNet (Goldberger 2000): standard citation for PhysioNet resources.
+@article{goldberger2000physiobank,
+  author  = {Goldberger, Ary L. and Amaral, Luis A. N. and Glass, Leon and Hausdorff, Jeffrey M. and Ivanov, Plamen Ch. and Mark, Roger G. and Mietus, Joseph E. and Moody, George B. and Peng, Chung-Kang and Stanley, H. Eugene},
+  title   = {{PhysioBank}, {PhysioToolkit}, and {PhysioNet}: Components of a New Research Resource for Complex Physiologic Signals},
+  journal = {Circulation},
+  year    = {2000},
+  volume  = {101},
+  number  = {23},
+  pages   = {e215--e220},
+  doi     = {10.1161/01.CIR.101.23.e215},
+}
+
+% PhysioNet platform paper (2026): the citation PhysioNet dataset pages now request.
+@article{pollard2026physionet,
+  author  = {Pollard, Tom and Moody, Benjamin E. and Lehman, Li-wei H. and Gow, Brian J. and Fernandes, Chrystinne and Xie, Chen and Johnson, Alistair and Mark, Roger G. and Heldt, Thomas},
+  title   = {{PhysioNet} as a global platform for biomedical research},
+  journal = {Nature Health},
+  year    = {2026},
+  volume  = {1},
+  number  = {8},
+  pages   = {792--795},
+  doi     = {10.1038/s44360-026-00096-z},
+}
+
+% ===== Clinical context: ECG interpretation in athletes and screening of young people =====
+
+% 2017 international criteria (BJSM consensus statement): the standard the project label is compared with.
+@article{drezner2017international,
+  author  = {Drezner, Jonathan A. and Sharma, Sanjay and Baggish, Aaron and Papadakis, Michael and Wilson, Mathew G. and Prutkin, Jordan M. and La Gerche, Andre and Ackerman, Michael J. and Borjesson, Mats and Salerno, Jack C. and Asif, Irfan M. and Owens, David S. and Chung, Eugene H. and Emery, Michael S. and Froelicher, Victor F. and Heidbuchel, Hein and Adamuz, Carmen and Asplund, Chad A. and Cohen, Gordon and Harmon, Kimberly G. and Marek, Joseph C. and Molossi, Silvana and Niebauer, Josef and Pelto, Hank F. and Perez, Marco V. and Riding, Nathan R. and Saarel, Tess and Schmied, Christian M. and Shipon, David M. and Stein, Ricardo and Vetter, Victoria L. and Pelliccia, Antonio and Corrado, Domenico},
+  title   = {International criteria for electrocardiographic interpretation in athletes: Consensus statement},
+  journal = {British Journal of Sports Medicine},
+  year    = {2017},
+  volume  = {51},
+  number  = {9},
+  pages   = {704--731},
+  doi     = {10.1136/bjsports-2016-097331},
+}
+
+% 2017 international recommendations (JACC co-publication of the same consensus).
+@article{sharma2017international,
+  author  = {Sharma, Sanjay and Drezner, Jonathan A. and Baggish, Aaron and Papadakis, Michael and Wilson, Mathew G. and Prutkin, Jordan M. and La Gerche, Andre and Ackerman, Michael J. and Borjesson, Mats and Salerno, Jack C. and Asif, Irfan M. and Owens, David S. and Chung, Eugene H. and Emery, Michael S. and Froelicher, Victor F. and Heidbuchel, Hein and Adamuz, Carmen and Asplund, Chad A. and Cohen, Gordon and Harmon, Kimberly G. and Marek, Joseph C. and Molossi, Silvana and Niebauer, Josef and Pelto, Hank F. and Perez, Marco V. and Riding, Nathan R. and Saarel, Tess and Schmied, Christian M. and Shipon, David M. and Stein, Ricardo and Vetter, Victoria L. and Pelliccia, Antonio and Corrado, Domenico},
+  title   = {International Recommendations for Electrocardiographic Interpretation in Athletes},
+  journal = {Journal of the American College of Cardiology},
+  year    = {2017},
+  volume  = {69},
+  number  = {8},
+  pages   = {1057--1075},
+  doi     = {10.1016/j.jacc.2017.01.015},
+}
+
+% Avance 5.8: prevalence of cardiac findings in NCAA athletes screened with ECG, used for workload arithmetic.
+@article{drezner2016electrocardiographic,
+  author  = {Drezner, Jonathan A. and Owens, David S. and Prutkin, Jordan M. and Salerno, Jack C. and Harmon, Kimberly G. and Prosise, Shelley and Clark, Alana and Asif, Irfan M.},
+  title   = {Electrocardiographic Screening in {National Collegiate Athletic Association} Athletes},
+  journal = {The American Journal of Cardiology},
+  year    = {2016},
+  volume  = {118},
+  number  = {5},
+  pages   = {754--759},
+  doi     = {10.1016/j.amjcard.2016.06.004},
+}
+
+% Avance 5.8: AHA 14-point evaluation versus ECG in high school athletes, used for workload arithmetic.
+@article{williams2019performance,
+  author  = {Williams, Elizabeth A. and Pelto, Hank F. and Toresdahl, Brett G. and Prutkin, Jordan M. and Owens, David S. and Salerno, Jack C. and Harmon, Kimberly G. and Drezner, Jonathan A.},
+  title   = {Performance of the {American Heart Association} ({AHA}) 14-Point Evaluation Versus Electrocardiography for the Cardiovascular Screening of High School Athletes: A Prospective Study},
+  journal = {Journal of the American Heart Association},
+  year    = {2019},
+  volume  = {8},
+  number  = {14},
+  eid     = {e012235},
+  doi     = {10.1161/JAHA.119.012235},
+}
+
+% Cardiologist meeting guide: AHA/ACC statement on 12-lead ECG screening of people aged 12-25.
+@article{maron2014assessment,
+  author  = {Maron, Barry J. and Friedman, Richard A. and Kligfield, Paul and Levine, Benjamin D. and Viskin, Sami and Chaitman, Bernard R. and Okin, Peter M. and Saul, J. Philip and Salberg, Lisa and Van Hare, George F. and Soliman, Elsayed Z. and Chen, Jersey and Matherne, G. Paul and Bolling, Steven F. and Mitten, Matthew J. and Caplan, Arthur and Balady, Gary J. and Thompson, Paul D.},
+  title   = {Assessment of the 12-Lead {ECG} as a Screening Test for Detection of Cardiovascular Disease in Healthy General Populations of Young People (12--25 Years of Age): A Scientific Statement From the {American Heart Association} and the {American College of Cardiology}},
+  journal = {Circulation},
+  year    = {2014},
+  volume  = {130},
+  number  = {15},
+  pages   = {1303--1334},
+  doi     = {10.1161/CIR.0000000000000025},
+}
+
+% Cardiologist meeting guide: sudden cardiac death incidence in NCAA athletes.
+@article{harmon2015incidence,
+  author  = {Harmon, Kimberly G. and Asif, Irfan M. and Maleszewski, Joseph J. and Owens, David S. and Prutkin, Jordan M. and Salerno, Jack C. and Zigman, Monica L. and Ellenbogen, Rachel and Rao, Ashwin L. and Ackerman, Michael J. and Drezner, Jonathan A.},
+  title   = {Incidence, Cause, and Comparative Frequency of Sudden Cardiac Death in {National Collegiate Athletic Association} Athletes: A Decade in Review},
+  journal = {Circulation},
+  year    = {2015},
+  volume  = {132},
+  number  = {1},
+  pages   = {10--19},
+  doi     = {10.1161/CIRCULATIONAHA.115.015431},
+}
+
+% Cardiologist meeting guide: outcomes of cardiac screening in adolescent soccer players.
+@article{malhotra2018outcomes,
+  author  = {Malhotra, Aneil and Dhutia, Harshil and Finocchiaro, Gherardo and Gati, Sabiha and Beasley, Ian and Clift, Paul and Cowie, Charlotte and Kenny, Antoinette and Mayet, Jamil and Oxborough, David and Patel, Kiran and Pieles, Guido and Rakhit, Dhrubo and Ramsdale, David and Shapiro, Leonard and Somauroo, John and Stuart, Graham and Varnava, Amanda and Walsh, John and Yousef, Zaheer and Tome, Maite and Papadakis, Michael and Sharma, Sanjay},
+  title   = {Outcomes of Cardiac Screening in Adolescent Soccer Players},
+  journal = {New England Journal of Medicine},
+  year    = {2018},
+  volume  = {379},
+  number  = {6},
+  pages   = {524--534},
+  doi     = {10.1056/NEJMoa1714719},
+}
+
+% Cardiologist meeting guide: prevalence of ECG anomalies in young individuals (UK non-athletes).
+@article{chandra2014prevalence,
+  author  = {Chandra, Navin and Bastiaenen, Rachel and Papadakis, Michael and Panoulas, Vasileios F. and Ghani, Saqib and Duschl, Jennifer and Foldes, David and Raju, Hariharan and Osborne, Rebecca and Sharma, Sanjay},
+  title   = {Prevalence of Electrocardiographic Anomalies in Young Individuals},
+  journal = {Journal of the American College of Cardiology},
+  year    = {2014},
+  volume  = {63},
+  number  = {19},
+  pages   = {2028--2034},
+  doi     = {10.1016/j.jacc.2014.01.046},
+}
+
+% Cardiologist meeting guide: comparison of ECG criteria in elite Black and White athletes.
+@article{sheikh2014comparison,
+  author  = {Sheikh, Nabeel and Papadakis, Michael and Ghani, Saqib and Zaidi, Abbas and Gati, Sabiha and Adami, Paolo Emilio and Carr{\'e}, Fran{\c{c}}ois and Schnell, Fr{\'e}d{\'e}ric and Wilson, Mathew and Avila, Paloma and McKenna, William and Sharma, Sanjay},
+  title   = {Comparison of Electrocardiographic Criteria for the Detection of Cardiac Abnormalities in Elite Black and White Athletes},
+  journal = {Circulation},
+  year    = {2014},
+  volume  = {129},
+  number  = {16},
+  pages   = {1637--1649},
+  doi     = {10.1161/CIRCULATIONAHA.113.006179},
+}
+
+% ===== Software used in the notebooks and code =====
+
+% scikit-learn: classical classifiers, metrics and calibration in all notebooks (versions pinned in pyproject.toml).
+@article{pedregosa2011scikitlearn,
+  author  = {Pedregosa, Fabian and Varoquaux, Ga{\"e}l and Gramfort, Alexandre and Michel, Vincent and Thirion, Bertrand and Grisel, Olivier and Blondel, Mathieu and Prettenhofer, Peter and Weiss, Ron and Dubourg, Vincent and Vanderplas, Jake and Passos, Alexandre and Cournapeau, David and Brucher, Matthieu and Perrot, Matthieu and Duchesnay, {\'E}douard},
+  title   = {Scikit-learn: Machine Learning in {Python}},
+  journal = {Journal of Machine Learning Research},
+  year    = {2011},
+  volume  = {12},
+  number  = {85},
+  pages   = {2825--2830},
+}
+
+% PyTorch: training and inference of the project's neural encoders (torch 2.6 pinned).
+@misc{paszke2019pytorch,
+  author     = {Paszke, Adam and Gross, Sam and Massa, Francisco and Lerer, Adam and Bradbury, James and Chanan, Gregory and Killeen, Trevor and Lin, Zeming and Gimelshein, Natalia and Antiga, Luca and Desmaison, Alban and K{\"o}pf, Andreas and Yang, Edward and DeVito, Zach and Raison, Martin and Tejani, Alykhan and Chilamkurthy, Sasank and Steiner, Benoit and Fang, Lu and Bai, Junjie and Chintala, Soumith},
+  title      = {{PyTorch}: An Imperative Style, High-Performance Deep Learning Library},
+  year       = {2019},
+  eprint     = {1912.01703},
+  eprinttype = {arxiv},
+  note       = {NeurIPS 2019},
+  url        = {https://arxiv.org/abs/1912.01703},
+}
+
+% NumPy: array computing in all experiment code.
+@article{harris2020array,
+  author  = {Harris, Charles R. and Millman, K. Jarrod and van der Walt, St{\'e}fan J. and Gommers, Ralf and Virtanen, Pauli and Cournapeau, David and Wieser, Eric and Taylor, Julian and Berg, Sebastian and Smith, Nathaniel J. and Kern, Robert and Picus, Matti and Hoyer, Stephan and van Kerkwijk, Marten H. and Brett, Matthew and Haldane, Allan and Fern{\'a}ndez del R{\'i}o, Jaime and Wiebe, Mark and Peterson, Pearu and G{\'e}rard-Marchant, Pierre and Sheppard, Kevin and Reddy, Tyler and Weckesser, Warren and Abbasi, Hameer and Gohlke, Christoph and Oliphant, Travis E.},
+  title   = {Array programming with {NumPy}},
+  journal = {Nature},
+  year    = {2020},
+  volume  = {585},
+  number  = {7825},
+  pages   = {357--362},
+  doi     = {10.1038/s41586-020-2649-2},
+}
+
+% SciPy: signal processing and statistics in the notebooks.
+@article{virtanen2020scipy,
+  author  = {Virtanen, Pauli and Gommers, Ralf and Oliphant, Travis E. and Haberland, Matt and Reddy, Tyler and Cournapeau, David and Burovski, Evgeni and Peterson, Pearu and Weckesser, Warren and Bright, Jonathan and van der Walt, St{\'e}fan J. and Brett, Matthew and Wilson, Joshua and Millman, K. Jarrod and Mayorov, Nikolay and Nelson, Andrew R. J. and Jones, Eric and Kern, Robert and Larson, Eric and Carey, C J and Polat, {\.I}lhan and Feng, Yu and Moore, Eric W. and VanderPlas, Jake and Laxalde, Denis and Perktold, Josef and Cimrman, Robert and Henriksen, Ian and Quintero, E. A. and Harris, Charles R. and Archibald, Anne M. and Ribeiro, Ant{\'o}nio H. and Pedregosa, Fabian and van Mulbregt, Paul and {SciPy 1.0 Contributors}},
+  title   = {{SciPy} 1.0: fundamental algorithms for scientific computing in {Python}},
+  journal = {Nature Methods},
+  year    = {2020},
+  volume  = {17},
+  number  = {3},
+  pages   = {261--272},
+  doi     = {10.1038/s41592-019-0686-2},
+}
+
+% Matplotlib: figures in the notebooks.
+@article{hunter2007matplotlib,
+  author  = {Hunter, John D.},
+  title   = {Matplotlib: A 2D Graphics Environment},
+  journal = {Computing in Science \& Engineering},
+  year    = {2007},
+  volume  = {9},
+  number  = {3},
+  pages   = {90--95},
+  doi     = {10.1109/MCSE.2007.55},
+}
+
+% seaborn: statistical figures in the Avance 3.8 and 4.8 notebooks.
+@article{waskom2021seaborn,
+  author  = {Waskom, Michael L.},
+  title   = {seaborn: statistical data visualization},
+  journal = {Journal of Open Source Software},
+  year    = {2021},
+  volume  = {6},
+  number  = {60},
+  eid     = {3021},
+  doi     = {10.21105/joss.03021},
+}
+
+% ===== AI tools declared by the team =====
+
+@misc{anthropic2026claude,
+  author = {{Anthropic}},
+  title  = {{Claude Code} ({Claude Fable} 5.2) [{Large} language model]},
+  year   = {2026},
+  url    = {https://claude.com/claude-code}
+}
+
+@misc{openai2026codex,
+  author = {{OpenAI}},
+  title  = {Codex [{AI} coding agent]},
+  year   = {2026},
+  url    = {https://openai.com/codex/}
+}
+
+% SHAP: attribution method compared with the normal-beat replacement map (Avance 5.8, annex A.4).
+@inproceedings{lundberg2017unified,
+  author    = {Lundberg, Scott M. and Lee, Su-In},
+  title     = {A Unified Approach to Interpreting Model Predictions},
+  booktitle = {Advances in Neural Information Processing Systems 30 ({NIPS} 2017)},
+  year      = {2017},
+  url       = {https://proceedings.neurips.cc/paper/2017/hash/8a20a8621978632d76c43dfd28b67767-Abstract.html}
+}

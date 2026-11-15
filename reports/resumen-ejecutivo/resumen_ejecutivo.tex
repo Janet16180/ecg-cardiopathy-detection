@@ -51,8 +51,9 @@
 % Replace them with the sponsor's figures and update the numbers in the
 % text and in Tables 2 to 4, which are computed from them:
 %   1,000 ECGs per month; 3 minutes of cardiologist time per ECG;
-%   MXN 800 per cardiologist hour; MXN 500 per engineering hour;
+%   EUR 40 per cardiologist hour; EUR 25 per engineering hour;
 %   0.3% prevalence; 10% audit of unflagged ECGs; six-month pilot.
+%   Amounts were first estimated in MXN and converted at 20 MXN per euro.
 % ---------------------------------------------------------------------
 
 \title{\vspace{-1.2cm}\textbf{Reading the right electrocardiograms first:\\
@@ -97,17 +98,17 @@ Is this good enough for production? Not yet, because of the population. The data
 
 \section*{Benefits for the organization}
 
-The quantifiable benefit is cardiologist time, and it arrives in two steps. All figures are monthly and rest on assumptions that the sponsor should replace with its own: 1,000 ECGs per month, three minutes of reading per ECG and MXN 800 per cardiologist hour (Annex~A). During the pilot the reading load stays at 50 hours per month, because every ECG is still read. What changes is the order: the flagged ECGs, about 5\% of the total, are read in the first 2.6 hours instead of being spread over the 50.
+The quantifiable benefit is cardiologist time, and it arrives in two steps. All figures are monthly and rest on assumptions that the sponsor should replace with its own: 1,000 ECGs per month, three minutes of reading per ECG and EUR 40 per cardiologist hour (Annex~A). During the pilot the reading load stays at 50 hours per month, because every ECG is still read. What changes is the order: the flagged ECGs, about 5\% of the total, are read in the first 2.6 hours instead of being spread over the 50.
 
-If the pilot confirms the model on students, the service can read the flagged ECGs and audit a random 10\% of the rest. The load would fall from 1,000 to about 146 readings per month: 7.3 hours instead of 50, a saving of 42.7 hours per month (85\%), or about MXN 34,000 per month. Used the other way, the same 50 hours would cover about 6,800 ECGs per month instead of 1,000. This second step is conditional on the pilot results and on the service's decision about how many missed findings it can accept.
+If the pilot confirms the model on students, the service can read the flagged ECGs and audit a random 10\% of the rest. The load would fall from 1,000 to about 146 readings per month: 7.3 hours instead of 50, a saving of 42.7 hours per month (85\%), or about EUR 1,700 per month. Used the other way, the same 50 hours would cover about 6,800 ECGs per month instead of 1,000. This second step is conditional on the pilot results and on the service's decision about how many missed findings it can accept.
 
 Three benefits are intangible. \emph{Better-informed decisions:} the referral budget turns a clinical preference into a number the service sets and can revisit. \emph{Quality:} every recording passes a signal check, and a bad one is repeated or read directly, never reported as normal. \emph{Simpler work:} the cardiologist receives an ordered list with the suspected finding named, and the model runs on one machine inside the service's network, so no recording leaves the premises.
 
 \section*{What implementation takes}
 
-We estimate the total cost of ownership for the first 12 months at about MXN 244,000 (Annex~B): MXN 80,000 to finish the software around the model (worklist, storage of readings, monitoring report), MXN 110,000 to install it (one server without a graphics card, connection to the ECG device, staff training, and the cardiologist's reading of about 1,000 local normal ECGs to set the threshold), and MXN 54,000 to operate it for a year.
+We estimate the total cost of ownership for the first 12 months at about EUR 12,200 (Annex~B): EUR 4,000 to finish the software around the model (worklist, storage of readings, monitoring report), EUR 5,500 to install it (one server without a graphics card, connection to the ECG device, staff training, and the cardiologist's reading of about 1,000 local normal ECGs to set the threshold), and EUR 2,700 to operate it for a year.
 
-With a six-month pilot, savings start in month seven and the investment is recovered around month 14. \textbf{Our recommendation} is to fund the pilot only, about MXN 217,000 for development, installation and six months of operation, and to decide on reducing the reading load after it, on three conditions: the share of normal student ECGs flagged stays within one point of the budget; the audit of unflagged ECGs shows no consistent pattern of missed findings; and the cardiologist has agreed which findings should trigger a follow-up in young adults.
+With a six-month pilot, savings start in month seven and the investment is recovered around month 14. \textbf{Our recommendation} is to fund the pilot only, about EUR 10,850 for development, installation and six months of operation, and to decide on reducing the reading load after it, on three conditions: the share of normal student ECGs flagged stays within one point of the budget; the audit of unflagged ECGs shows no consistent pattern of missed findings; and the cardiologist has agreed which findings should trigger a follow-up in young adults.
 
 \section*{Risks and conditions to proceed}
 
@@ -145,12 +146,13 @@ Table~\ref{tab:assumptions} lists the assumptions and Table~\ref{tab:benefits} t
     \midrule
     ECGs recorded per month & 1,000 & Size of a screening campaign; to be set by the sponsor \\
     Cardiologist time per ECG & 3 minutes & To be measured in the pilot \\
-    Cost of a cardiologist hour & MXN 800 & To be replaced by the sponsor's figure \\
-    Cost of an engineering hour & MXN 500 & To be replaced by the sponsor's figure \\
+    Cost of a cardiologist hour & EUR 40 & To be replaced by the sponsor's figure \\
+    Cost of an engineering hour & EUR 25 & To be replaced by the sponsor's figure \\
     Students with a relevant condition & 0.3\% & Midpoint of 0.2--0.4\% \parencite{drezner2016electrocardiographic,williams2019performance} \\
     Normal ECGs flagged; abnormal ECGs flagged & 4.9\%; 77.4\% & Measured at the external hospital, 5\% budget \\
     Audit of unflagged ECGs after the pilot & 10\%, at random & Proposed; to be agreed with the cardiologist \\
     Length of the pilot & 6 months & Proposed \\
+    Exchange rate & 20 MXN per euro & Rounded; amounts were first estimated in MXN \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -166,7 +168,7 @@ Table~\ref{tab:assumptions} lists the assumptions and Table~\ref{tab:benefits} t
     \midrule
     Time saving, pilot & 0 hours & Every ECG is read; flagged ECGs are read in the first 2.6 of 50 hours \\
     Time saving, after the pilot & 42.7 hours (85\%) & 50 hours for 1,000 readings against 7.3 hours for 146 \\
-    Operating cost saving, after the pilot & MXN 34,160 (85\%) & 42.7 hours at MXN 800 \\
+    Operating cost saving, after the pilot & EUR 1,708 (85\%) & 42.7 hours at EUR 40 \\
     Capacity, after the pilot & 6,800 ECGs with the same 50 hours (6.8 times) & $1{,}000 \times 50 / 7.3$ \\
     \bottomrule
   \end{tabular}
@@ -181,21 +183,21 @@ Table~\ref{tab:assumptions} lists the assumptions and Table~\ref{tab:benefits} t
   \small
   \begin{tabular}{p{2.6cm}p{6.2cm}p{3.6cm}r}
     \toprule
-    Phase & Item & Basis & MXN \\
+    Phase & Item & Basis & EUR \\
     \midrule
-    Development & Worklist, storage of readings, monitoring report & 160 engineering hours & 80,000 \\
-    Implementation & Server in the service's network, no graphics card & One purchase & 45,000 \\
-    Implementation & Installation and connection to the ECG device export & 40 engineering hours & 20,000 \\
-    Implementation & Reading of 1,000 local normal ECGs for the threshold & 50 cardiologist hours & 40,000 \\
-    Implementation & Training of nursing staff and cardiologist & Lump sum & 5,000 \\
-    Operation & Monitoring, recalibration and incidents & 8 engineering hours per month & 48,000 \\
-    Operation & Electricity and upkeep of the server & MXN 500 per month & 6,000 \\
+    Development & Worklist, storage of readings, monitoring report & 160 engineering hours & 4,000 \\
+    Implementation & Server in the service's network, no graphics card & One purchase & 2,250 \\
+    Implementation & Installation and connection to the ECG device export & 40 engineering hours & 1,000 \\
+    Implementation & Reading of 1,000 local normal ECGs for the threshold & 50 cardiologist hours & 2,000 \\
+    Implementation & Training of nursing staff and cardiologist & Lump sum & 250 \\
+    Operation & Monitoring, recalibration and incidents & 8 engineering hours per month & 2,400 \\
+    Operation & Electricity and upkeep of the server & EUR 25 per month & 300 \\
     \midrule
-    Total & & & 244,000 \\
+    Total & & & 12,200 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Recovery of the investment: development and implementation cost MXN 190,000 and operation MXN 4,500 per month, so the pilot costs MXN 217,000 by month six. From month seven the net saving is $34{,}160 - 4{,}500 = 29{,}660$ per month, which recovers the MXN 217,000 in a little over seven months, around month 14.
+Recovery of the investment: development and implementation cost EUR 9,500 and operation EUR 225 per month, so the pilot costs EUR 10,850 by month six. From month seven the net saving is $1{,}708 - 225 = 1{,}483$ per month, which recovers the EUR 10,850 in a little over seven months, around month 14.
 
 \end{document}

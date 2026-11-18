@@ -1,0 +1,201 @@
+% Executive summary for the Integrative Project, Team 8.
+% Required format: letter paper, one column, 11 pt, 2.5 cm margins, 1.15 line spacing.
+% Length: 3 pages from the title to the references; annexes do not count.
+% Compile with pdfLaTeX + Biber. Files needed in the same folder: logo.jpeg, referencias.bib
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+
+\usepackage[margin=2.5cm]{geometry}
+\geometry{headheight=52pt,headsep=0.3cm}
+\usepackage{setspace}
+\setstretch{1.15}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[font=small,labelfont=bf,labelsep=colon]{caption}
+
+\usepackage{fancyhdr}
+\renewcommand{\headrulewidth}{0pt}
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyhead[C]{\includegraphics[height=1.2cm]{logo.jpeg}}%
+  \fancyfoot[C]{\thepage}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.0ex plus 0.3ex minus 0.2ex}{0.5ex}
+\setlength{\parskip}{0.35ex}
+
+\usepackage{csquotes}
+\usepackage[style=apa,backend=biber]{biblatex}
+\addbibresource{referencias.bib}
+\renewcommand*{\bibfont}{\footnotesize}
+\setlength{\bibitemsep}{0pt}
+
+\usepackage[hidelinks]{hyperref}
+\urlstyle{same}
+
+% ---------------------------------------------------------------------
+% ASSUMPTIONS OF THE ECONOMIC ESTIMATE. They are not measurements.
+% Replace them with the sponsor's figures and update the numbers in the
+% text and in Tables 2 to 4, which are computed from them:
+%   1,000 ECGs per month; 3 minutes of cardiologist time per ECG;
+%   MXN 800 per cardiologist hour; MXN 500 per engineering hour;
+%   0.3% prevalence; 10% audit of unflagged ECGs; six-month pilot.
+% ---------------------------------------------------------------------
+
+\title{\vspace{-1.2cm}\textbf{Reading the right electrocardiograms first:\\
+a screening model for a university health service}\\[4pt]
+\large Executive summary\vspace{-1ex}}
+\author{\normalsize Clara Janet Rivera Medina · José Emiliano Luna López · Andre Nicolai Gutierrez Bautista\\[2pt]
+  \normalsize Integrative Project · Master's in Applied Artificial Intelligence · Team 8 · November 2026}
+\date{\vspace{-4ex}}
+
+\begin{document}
+\maketitle
+
+\section*{The problem and the solution}
+
+A university health service that offers every student a resting electrocardiogram (ECG) creates a reading problem. A nurse records each ECG in minutes, but a cardiologist must read all of them, and almost all are normal. The few students who need a follow-up visit wait in the same queue as everyone else.
+
+We built a model that scores every ECG as soon as it is recorded and flags the ones most likely to be abnormal, so that the cardiologist opens those first. The service chooses the share of normal ECGs it accepts to have flagged, the referral budget, and the threshold is set from its own normal ECGs. A second model names what the first may have seen, out of 14 common findings such as an irregular rhythm. The model orders the cardiologist's work. It does not diagnose, and an ECG that is not flagged is not cleared. The student recordings planned for the project did not become available, so we built and tested the model on public hospital ECGs read by physicians. Every figure below comes from a hospital that contributed nothing to training, the closest test we could run to a new site.
+
+\section*{How well it works}
+
+Table~\ref{tab:metrics} gives the figures reported in our article. At a 5\% budget the model found about three of every four abnormal ECGs while flagging one in twenty normal ones. It missed 810 abnormal ECGs, 22.6\%: at this budget the model can order the reading but cannot replace it.
+
+\begin{table}[H]
+  \centering
+  \caption{Performance on 10,434 ECGs of an external hospital (3,584 abnormal, 6,850 normal), with a 5\% referral budget. ``Abnormal'' means that the physician's report contains a relevant code; it is not a confirmed diagnosis.}
+  \label{tab:metrics}
+  \small
+  \begin{tabular}{p{4.6cm}p{2.1cm}p{8.3cm}}
+    \toprule
+    Measure & Value & In plain terms \\
+    \midrule
+    Ranking quality (AUROC) & 0.937 & Of one abnormal and one normal ECG, the abnormal one gets the higher score about 94 times in 100 \\
+    Abnormal ECGs flagged & 77.4\% & 2,774 of 3,584 reach the cardiologist first; 810 do not \\
+    Normal ECGs flagged & 4.9\% & 338 of 6,850 unnecessary early readings, within the 5\% budget \\
+    Flagged ECGs that are abnormal & 89.1\% & Where a third of ECGs are abnormal; among students we expect 4 to 7 in 100 \\
+    Naming the finding (mean AUROC) & 0.974 & The same ranking measure, averaged over the 14 findings \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Is this good enough for production? Not yet, because of the population. The data come from hospital patients with a median age near 62, while studies of young athletes found relevant heart conditions in 0.2\% to 0.4\% of those screened \parencite{drezner2016electrocardiographic,williams2019performance}. At that rate most alerts will be false, and no cardiologist has yet reviewed the model's output. The results justify a supervised pilot in which the cardiologist still reads every ECG. They do not justify unsupervised use.
+
+\section*{Benefits for the organization}
+
+The quantifiable benefit is cardiologist time, and it arrives in two steps. All figures are monthly and rest on assumptions that the sponsor should replace with its own: 1,000 ECGs per month, three minutes of reading per ECG and MXN 800 per cardiologist hour (Annex~A). During the pilot the reading load stays at 50 hours per month, because every ECG is still read. What changes is the order: the flagged ECGs, about 5\% of the total, are read in the first 2.6 hours instead of being spread over the 50.
+
+If the pilot confirms the model on students, the service can read the flagged ECGs and audit a random 10\% of the rest. The load would fall from 1,000 to about 146 readings per month: 7.3 hours instead of 50, a saving of 42.7 hours per month (85\%), or about MXN 34,000 per month. Used the other way, the same 50 hours would cover about 6,800 ECGs per month instead of 1,000. This second step is conditional on the pilot results and on the service's decision about how many missed findings it can accept.
+
+Three benefits are intangible. \emph{Better-informed decisions:} the referral budget turns a clinical preference into a number the service sets and can revisit. \emph{Quality:} every recording passes a signal check, and a bad one is repeated or read directly, never reported as normal. \emph{Simpler work:} the cardiologist receives an ordered list with the suspected finding named, and the model runs on one machine inside the service's network, so no recording leaves the premises.
+
+\section*{What implementation takes}
+
+We estimate the total cost of ownership for the first 12 months at about MXN 244,000 (Annex~B): MXN 80,000 to finish the software around the model (worklist, storage of readings, monitoring report), MXN 110,000 to install it (one server without a graphics card, connection to the ECG device, staff training, and the cardiologist's reading of about 1,000 local normal ECGs to set the threshold), and MXN 54,000 to operate it for a year.
+
+With a six-month pilot, savings start in month seven and the investment is recovered around month 14. \textbf{Our recommendation} is to fund the pilot only, about MXN 217,000 for development, installation and six months of operation, and to decide on reducing the reading load after it, on three conditions: the share of normal student ECGs flagged stays within one point of the budget; the audit of unflagged ECGs shows no consistent pattern of missed findings; and the cardiologist has agreed which findings should trigger a follow-up in young adults.
+
+\section*{Risks and conditions to proceed}
+
+\begin{enumerate}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+  \item \textbf{The labels are not diagnoses} (data). The model learned what physicians wrote on hospital ECGs, and some patterns that are normal in young athletes count as abnormal there \parencite{drezner2017international}. \emph{Mitigation:} agree the definition with the cardiologist and re-evaluate against it before any change to the reading load.
+  \item \textbf{Students are not hospital patients} (model). Error rates may differ in young adults. \emph{Mitigation:} set the threshold on about 1,000 local normal ECGs, track the false-alert rate monthly and recalibrate when it leaves the budget by more than one point.
+  \item \textbf{Missed findings.} At the 5\% budget, 22.6\% of abnormal ECGs were not flagged. \emph{Mitigation:} unflagged ECGs are never treated as cleared; all are read in the pilot, a random sample afterwards.
+  \item \textbf{Most alerts will be false.} At student prevalence, 4 to 7 of 100 alerts would be true. \emph{Mitigation:} present the flag as a reading priority, never as a result.
+  \item \textbf{Operation and privacy.} A change of device or export format can degrade the scores unnoticed, and ECGs are health data. \emph{Mitigation:} the signal check abstains on bad input, abstentions and scores are monitored, and everything runs on premises with informed consent.
+\end{enumerate}
+
+\section*{Handover and continuity}
+
+The sponsor will receive: (1) the code repository, with the scripts that reproduce every reported figure; (2) the model files, with a version and file hashes; (3) the prototype web application that scores a recording and abstains on a bad signal; (4) the article and the experiment reports, including the data-quality rules; and (5) an operating guide: how to calibrate the threshold on local ECGs, what to monitor and at which levels to act, how to recalibrate and how to respond to incidents. The worklist, the storage of readings and the monitoring report are specified but not built: they are the development item of the budget.
+
+\subsubsection*{Statement on the use of artificial intelligence}
+{\footnotesize We used Claude Code \parencite{anthropic2026claude} and Codex \parencite{openai2026codex} during the project to review data, to write and run experimental code and to prepare plots. For this summary we used Claude Code to draft and revise the text and to format the document. We reviewed the content and are responsible for it.}
+
+\printbibliography[heading=subbibliography,title={References}]
+
+\clearpage
+\appendix
+\section*{Annex A. Benefit estimate and its assumptions}
+
+Table~\ref{tab:assumptions} lists the assumptions and Table~\ref{tab:benefits} the monthly benefits computed from them. The assumptions are ours and have not been checked with the sponsor; the error rates are those measured at the external hospital and may differ in students.
+
+\begin{table}[H]
+  \centering
+  \caption{Assumptions of the economic estimate.}
+  \label{tab:assumptions}
+  \small
+  \begin{tabular}{p{6.2cm}p{3.0cm}p{6.0cm}}
+    \toprule
+    Assumption & Value & Basis \\
+    \midrule
+    ECGs recorded per month & 1,000 & Size of a screening campaign; to be set by the sponsor \\
+    Cardiologist time per ECG & 3 minutes & To be measured in the pilot \\
+    Cost of a cardiologist hour & MXN 800 & To be replaced by the sponsor's figure \\
+    Cost of an engineering hour & MXN 500 & To be replaced by the sponsor's figure \\
+    Students with a relevant condition & 0.3\% & Midpoint of 0.2--0.4\% \parencite{drezner2016electrocardiographic,williams2019performance} \\
+    Normal ECGs flagged; abnormal ECGs flagged & 4.9\%; 77.4\% & Measured at the external hospital, 5\% budget \\
+    Audit of unflagged ECGs after the pilot & 10\%, at random & Proposed; to be agreed with the cardiologist \\
+    Length of the pilot & 6 months & Proposed \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Monthly benefits. Flagged ECGs: $0.049 \times 997 + 0.774 \times 3 \approx 51$. Audit: 10\% of the 949 unflagged ECGs, 95. Readings after the pilot: $51 + 95 = 146$, or 7.3 hours at three minutes each.}
+  \label{tab:benefits}
+  \small
+  \begin{tabular}{p{4.3cm}p{3.6cm}p{7.1cm}}
+    \toprule
+    Indicator & Value per month & Basis \\
+    \midrule
+    Time saving, pilot & 0 hours & Every ECG is read; flagged ECGs are read in the first 2.6 of 50 hours \\
+    Time saving, after the pilot & 42.7 hours (85\%) & 50 hours for 1,000 readings against 7.3 hours for 146 \\
+    Operating cost saving, after the pilot & MXN 34,160 (85\%) & 42.7 hours at MXN 800 \\
+    Capacity, after the pilot & 6,800 ECGs with the same 50 hours (6.8 times) & $1{,}000 \times 50 / 7.3$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section*{Annex B. Total cost of ownership, first 12 months}
+
+\begin{table}[H]
+  \centering
+  \caption{Cost by item. Hours are our estimates and unit costs are the assumptions of Table~\ref{tab:assumptions}. The cardiologist's reading of all ECGs during the pilot is the service's current cost and is not added.}
+  \label{tab:tco}
+  \small
+  \begin{tabular}{p{2.6cm}p{6.2cm}p{3.6cm}r}
+    \toprule
+    Phase & Item & Basis & MXN \\
+    \midrule
+    Development & Worklist, storage of readings, monitoring report & 160 engineering hours & 80,000 \\
+    Implementation & Server in the service's network, no graphics card & One purchase & 45,000 \\
+    Implementation & Installation and connection to the ECG device export & 40 engineering hours & 20,000 \\
+    Implementation & Reading of 1,000 local normal ECGs for the threshold & 50 cardiologist hours & 40,000 \\
+    Implementation & Training of nursing staff and cardiologist & Lump sum & 5,000 \\
+    Operation & Monitoring, recalibration and incidents & 8 engineering hours per month & 48,000 \\
+    Operation & Electricity and upkeep of the server & MXN 500 per month & 6,000 \\
+    \midrule
+    Total & & & 244,000 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Recovery of the investment: development and implementation cost MXN 190,000 and operation MXN 4,500 per month, so the pilot costs MXN 217,000 by month six. From month seven the net saving is $34{,}160 - 4{,}500 = 29{,}660$ per month, which recovers the MXN 217,000 in a little over seven months, around month 14.
+
+\end{document}
